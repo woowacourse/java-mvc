@@ -31,36 +31,38 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         try {
-            // TODO : basePackage에서 @Controller 어노테이션 붙은 클래스 전부 불러오기
             Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-            // TODO : @Controller 붙은 클래스에서 @RequestMapping 붙은 메서드들 전부 추출
-            for (Class<?> controllerClass : controllerClasses) {
-                List<Method> methods = Arrays.stream(controllerClass.getMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
-
-                // TODO : @RequestMapping의 value와 method 값을 얻어서 HandlerKey 객체 만들기
-                for (Method method : methods) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    String requestUri = requestMapping.value();
-                    RequestMethod[] requestMethods = requestMapping.method();
-                    for (RequestMethod requestMethod : requestMethods) {
-                        HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-                        // TODO : Reflection을 활용해서 클래스의 instance와 method를 생성
-                        Object instance = controllerClass.getConstructor().newInstance();
-
-                        // TODO : HandlerExecution 만들기
-                        HandlerExecution handlerExecution = new HandlerExecution(instance, method);
-
-                        // TODO : handlerExecutions Map에 넣기
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
-            }
+            initHandlerExecution(controllerClasses);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException();
+        }
+    }
+
+    private void initHandlerExecution(Set<Class<?>> controllerClasses)
+        throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        for (Class<?> controllerClass : controllerClasses) {
+            List<Method> methods = Arrays.stream(controllerClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+
+            for (Method method : methods) {
+                addHandlerExecution(controllerClass, method);
+            }
+        }
+    }
+
+    private void addHandlerExecution(Class<?> controllerClass, Method method)
+        throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String requestUri = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
+            Object instance = controllerClass.getConstructor().newInstance();
+            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 

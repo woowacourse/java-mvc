@@ -10,10 +10,12 @@ import java.util.Map;
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private final String viewName;
+
     public JspView(String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
