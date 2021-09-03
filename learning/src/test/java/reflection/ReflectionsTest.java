@@ -1,5 +1,14 @@
 package reflection;
 
+import annotation.Controller;
+import annotation.Repository;
+import annotation.Service;
+import com.google.common.graph.PredecessorsFunction;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -11,8 +20,19 @@ class ReflectionsTest {
 
     @Test
     void showAnnotationClass() throws Exception {
+
+        Stream.of(
+            findClassesByAnnotation(Controller.class).stream(),
+            findClassesByAnnotation(Service.class).stream(),
+            findClassesByAnnotation(Repository.class).stream()
+        )
+            .flatMap(Function.identity())
+            .forEach(clazz -> log.info(clazz.getName()));
+    }
+
+    private Set<Class<?>> findClassesByAnnotation(Class<? extends Annotation> annotation) {
         Reflections reflections = new Reflections("examples");
 
-        // TODO 클래스 레벨에 @Controller, @Service, @Repository 애노테이션이 설정되어 모든 클래스 찾아 로그로 출력한다.
+        return reflections.getTypesAnnotatedWith(annotation);
     }
 }
