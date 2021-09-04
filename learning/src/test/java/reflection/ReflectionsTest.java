@@ -8,6 +8,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.util.Set;
 
 class ReflectionsTest {
@@ -19,18 +20,16 @@ class ReflectionsTest {
         Reflections reflections = new Reflections("examples");
 
         final Set<Class<?>> classesWithControllerAnnotation = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> classWithControllerAnnotation : classesWithControllerAnnotation) {
-            log.debug("@Controller 애노테이션이 설정되어있는 클래스 이름 : {}", classWithControllerAnnotation.getName());
-        }
-
+        doLogging(Controller.class, classesWithControllerAnnotation);
         final Set<Class<?>> classesWithServiceAnnotation = reflections.getTypesAnnotatedWith(Service.class);
-        for (Class<?> classWithServiceAnnotation : classesWithServiceAnnotation) {
-            log.debug("@Service 애노테이션이 설정되어있는 클래스 이름 : {}", classWithServiceAnnotation.getName());
-        }
-
+        doLogging(Service.class, classesWithServiceAnnotation);
         final Set<Class<?>> classesWithRepositoryAnnotation = reflections.getTypesAnnotatedWith(Repository.class);
-        for (Class<?> classWithRepositoryAnnotation : classesWithRepositoryAnnotation) {
-            log.debug("@Repository 애노테이션이 설정되어있는 클래스 이름 : {}", classWithRepositoryAnnotation.getName());
+        doLogging(Repository.class, classesWithRepositoryAnnotation);
+    }
+
+    private void doLogging(Class<?> annotationClass, Set<Class<?>> classes) {
+        for (Class<?> clazz : classes) {
+            log.debug("@{} 애노테이션이 설정되어있는 클래스 이름 : {}", annotationClass.getSimpleName(), clazz.getSimpleName());
         }
     }
 }
