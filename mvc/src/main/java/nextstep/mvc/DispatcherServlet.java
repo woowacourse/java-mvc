@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
 
@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+        LOG.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             final Object handler = getHandler(request);
@@ -53,7 +53,7 @@ public class DispatcherServlet extends HttpServlet {
             final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            LOG.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
