@@ -1,5 +1,7 @@
 package nextstep.web.annotation;
 
+import static nextstep.web.support.RequestMethod.GET;
+
 import nextstep.web.support.RequestMethod;
 
 import java.lang.annotation.ElementType;
@@ -12,5 +14,5 @@ import java.lang.annotation.Target;
 public @interface RequestMapping {
     String value() default "";
 
-    RequestMethod[] method() default {};
+    RequestMethod method() default GET;
 }
