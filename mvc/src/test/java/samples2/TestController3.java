@@ -1,4 +1,4 @@
-package samples;
+package samples2;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,22 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class TestController {
+public class TestController3 {
 
-    private static final Logger log = LoggerFactory.getLogger(TestController.class);
+    private static final Logger log = LoggerFactory.getLogger(TestController3.class);
 
-    @RequestMapping(value = "/get-test", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-test3", method = RequestMethod.GET)
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
-        log.info("test controller get method");
-        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
+        log.info("test controller get method3");
+        final ModelAndView modelAndView = new ModelAndView(new JspView(request.getRequestURI()));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
 
-    @RequestMapping(value = "/post-test", method = RequestMethod.POST)
+    @RequestMapping(value = "/post-test3", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
-        log.info("test controller post method");
-        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
+        log.info("test controller post method3");
+        final ModelAndView modelAndView = new ModelAndView(new JspView(request.getRequestURI()));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
