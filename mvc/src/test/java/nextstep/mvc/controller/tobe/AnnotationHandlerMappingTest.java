@@ -2,6 +2,7 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping("samples1");
         handlerMapping.initialize();
     }
 
@@ -33,6 +34,7 @@ class AnnotationHandlerMappingTest {
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(((JspView) modelAndView.getView()).getViewName()).isEqualTo("/get-test");
     }
 
     @Test
@@ -48,5 +50,6 @@ class AnnotationHandlerMappingTest {
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(((JspView) modelAndView.getView()).getViewName()).isEqualTo("/post-test");
     }
 }
