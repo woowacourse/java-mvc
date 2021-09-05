@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -33,9 +33,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 addHandlerExecutions(controllerClass);
             }
         } catch (Exception e) {
-            LOG.error("Annotation Handler Mapping Fail!", e);
+            log.error("Annotation Handler Mapping Fail!", e);
         }
-        LOG.info("Initialized AnnotationHandlerMapping!");
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addHandlerExecutions(Class<?> controllerClass) throws InstantiationException, IllegalAccessException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
@@ -48,7 +48,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 HandlerKey handlerKey = new HandlerKey(url, requestMethod);
                 HandlerExecution handlerExecution = getHandlerExecution(controllerClass, method);
                 this.handlerExecutions.put(handlerKey, handlerExecution);
-                LOG.info("Add Handler Execution Key : {}, Value : {} !", handlerKey, handlerExecution);
+                log.debug("Add Handler Execution Key : {}, Value : {} !", handlerKey, handlerExecution);
             }
         }
     }
@@ -65,6 +65,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        return null;
+        String uri = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        return handlerExecutions.get(new HandlerKey(uri, requestMethod));
     }
 }
