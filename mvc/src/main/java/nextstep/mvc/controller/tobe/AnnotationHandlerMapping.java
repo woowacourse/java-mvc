@@ -33,22 +33,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        scanController(controllers);
+    }
 
-
+    @SuppressWarnings("unchecked")
+    private void scanController(Set<Class<?>> controllers) {
         Set<Method> methods = new HashSet<>();
         for (Class<?> controller : controllers) {
             Set<Method> requestMappingMethods = ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
             methods.addAll(requestMappingMethods);
-            try {
-                for (Method method : methods) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    HandlerKey key = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-                    HandlerExecution handlerExecution = new HandlerExecution(controller.getDeclaredConstructor().newInstance(), method);
-                    handlerExecutions.put(key, handlerExecution);
-                }
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-                log.error(e.getMessage());
-            }
+            initHandlerExecutions(methods, controller);
+        }
+    }
+
+    private void initHandlerExecutions(Set<Method> methods, Class<?> controller) {
+        for (Method method : methods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            HandlerKey key = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+            initHandlerExecution(controller, method, key);
+        }
+    }
+
+    private void initHandlerExecution(Class<?> controller, Method method, HandlerKey key) {
+        try {
+            HandlerExecution handlerExecution = new HandlerExecution(controller.getDeclaredConstructor().newInstance(), method);
+            handlerExecutions.put(key, handlerExecution);
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            log.error(e.getMessage());
         }
     }
 
