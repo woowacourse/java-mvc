@@ -59,9 +59,4 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
-
-    @Test
-    void notFound() {
-
-    }
 }
