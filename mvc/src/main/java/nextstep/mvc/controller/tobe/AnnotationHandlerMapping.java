@@ -48,7 +48,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 HandlerKey handlerKey = new HandlerKey(url, requestMethod);
                 HandlerExecution handlerExecution = getHandlerExecution(controllerClass, method);
                 this.handlerExecutions.put(handlerKey, handlerExecution);
-                log.debug("Add Handler Execution Key : {}, Value : {} !", handlerKey, handlerExecution);
+                log.info("Path : {}, Controller : {}", url, controllerClass.getName());
             }
         }
     }
