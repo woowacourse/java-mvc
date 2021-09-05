@@ -2,7 +2,7 @@
 
 ## 1단계 기능 요구사항
 - [ ] 학습 테스트
-  - [ ] Reflection 테스트
+  - [x] Reflection 테스트
   - [ ] Junit3 테스트
   - [ ] Junit4 테스트
   - [ ] Reflections 테스트
