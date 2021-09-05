@@ -1,32 +1,44 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.view.JspView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import nextstep.core.ApplicationContext;
+import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.adapter.RequestMappingHandlerAdapter;
+import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.exceptionresolver.ExceptionResolverContainer;
+import nextstep.mvc.view.ModelAndView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final ApplicationContext applicationContext;
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
+    private final StaticResourceHandler staticResourceHandler;
+    private final ExceptionResolverContainer exceptionResolverContainer;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
+        this.staticResourceHandler = new DefaultStaticResourceHandler();
+        this.exceptionResolverContainer = new ExceptionResolverContainer();
     }
 
     @Override
     public void init() {
+        defaultHandlerMappings();
+        defaultHandlerAdapters();
+
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
@@ -34,36 +46,53 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    private void defaultHandlerMappings() {
+        handlerMappings.add(new AnnotationHandlerMapping(applicationContext));
+    }
+
+    private void defaultHandlerAdapters() {
+        handlerAdapters.add(new RequestMappingHandlerAdapter());
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Controller controller = getController(request);
-            final String viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            final Object handler = findHandler(request);
+            if (handler == null) {
+                staticResourceHandle(request, response);
+                return;
+            }
+            ModelAndView mv = resolveHandler(request, response, handler);
+            mv.render(request, response);
+        } catch (Exception e) {
+            resolveError(request, response, e);
         }
     }
 
-    private Controller getController(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .map(Controller.class::cast)
-                .findFirst()
-                .orElseThrow();
+    private Object findHandler(HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            final Object handler = handlerMapping.getHandler(request);
+            if(handler != null) return handler;
+        }
+        return null;
     }
 
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private ModelAndView resolveHandler(HttpServletRequest request, HttpServletResponse response, Object handler)
+        throws Exception {
+        return handlerAdapters.stream().filter(adapter -> adapter.supports(handler))
+            .findAny()
+            .orElseThrow(() -> new IllegalStateException("not supported handler type"))
+            .handle(request, response, handler);
+    }
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private void staticResourceHandle(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        staticResourceHandler.handleResource(httpRequest, httpResponse);
+    }
+
+    private void resolveError(HttpServletRequest request, HttpServletResponse response,
+                              Exception exception) {
+        exceptionResolverContainer.resolve(exception, request, response);
     }
 }

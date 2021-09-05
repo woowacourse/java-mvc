@@ -2,6 +2,7 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
+import nextstep.core.AnnotationConfigApplicationContext;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
@@ -13,8 +14,10 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet(new AnnotationConfigApplicationContext(AppWebApplicationInitializer.class));
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+
+
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
