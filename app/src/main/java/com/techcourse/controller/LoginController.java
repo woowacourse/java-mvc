@@ -16,6 +16,8 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     private InMemoryUserRepository userRepository;
+    private static final String REDIRECT_HOME = "redirect:/index.jsp";
+    private static final String REDIRECT_UNAUTHORIZED = "redirect:/401.jsp";
 
     @Autowired
     public LoginController(InMemoryUserRepository userRepository) {
@@ -23,19 +25,19 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String loginPage(HttpSession httpSession) throws Exception {
+    public String loginPage(HttpSession httpSession) {
         return UserSession.getUserFrom(httpSession)
             .map(user -> {
                 log.info("logged in {}", user.getAccount());
-                return "redirect:/index.jsp";
+                return REDIRECT_HOME;
             })
             .orElse("/login.jsp");
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(HttpServletRequest req) throws Exception {
+    public String login(HttpServletRequest req) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
+            return REDIRECT_HOME;
         }
 
         return userRepository.findByAccount(req.getParameter("account"))
@@ -43,16 +45,16 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse("redirect:/401.jsp");
+                .orElse(REDIRECT_UNAUTHORIZED);
     }
 
     private String login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
+            return REDIRECT_HOME;
         } else {
-            return "redirect:/401.jsp";
+            return REDIRECT_UNAUTHORIZED;
         }
     }
 }

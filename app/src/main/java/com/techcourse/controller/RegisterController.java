@@ -20,12 +20,12 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String registerPage() throws Exception {
+    public String registerPage() {
         return "/register.jsp";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public String register(HttpServletRequest req) {
         final User user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),

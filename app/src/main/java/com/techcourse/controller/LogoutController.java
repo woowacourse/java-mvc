@@ -9,7 +9,7 @@ import nextstep.web.support.RequestMethod;
 public class LogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logout(HttpSession session) throws Exception {
+    public String logout(HttpSession session) {
         session.removeAttribute(UserSession.SESSION_KEY);
         return "redirect:/";
     }
