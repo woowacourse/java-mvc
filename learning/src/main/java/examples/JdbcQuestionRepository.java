@@ -1,6 +1,6 @@
 package examples;
 
-import annotation.Repository;
+import examples.annotations.Repository;
 
 @Repository
 public class JdbcQuestionRepository implements QuestionRepository {

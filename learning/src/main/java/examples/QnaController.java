@@ -1,9 +1,10 @@
 package examples;
 
-import annotation.Controller;
-import annotation.Inject;
+import examples.annotations.Controller;
+import examples.annotations.Inject;
 
 @Controller
+
 public class QnaController {
 
     private final MyQnaService qnaService;
