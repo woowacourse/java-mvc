@@ -15,9 +15,6 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet(new AnnotationConfigApplicationContext(AppWebApplicationInitializer.class));
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-
-
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
