@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        log.info("Initialized AnnotationHandlerMapping!");
         try {
             Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -35,7 +36,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (Exception e) {
             log.error("Annotation Handler Mapping Fail!", e);
         }
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addHandlerExecutions(Class<?> controllerClass) throws InstantiationException, IllegalAccessException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
