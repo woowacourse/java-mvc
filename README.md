@@ -7,4 +7,4 @@
   - [x] Junit3 테스트
   - [x] Junit4 테스트
 - [x] AnnotationHandlerMapping 구현하기
-- [ ] 기존 코드와 호환되도록 리팩터링
+- [x] 기존 코드와 호환되도록 리팩터링
