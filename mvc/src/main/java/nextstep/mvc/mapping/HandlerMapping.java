@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 

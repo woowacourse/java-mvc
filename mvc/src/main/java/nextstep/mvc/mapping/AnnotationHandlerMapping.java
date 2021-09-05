@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nextstep.core.ApplicationContext;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.annotation.Controller;
 import nextstep.mvc.annotation.RequestMapping;
+import nextstep.mvc.controller.tobe.HandlerKey;
+import nextstep.mvc.controller.tobe.MethodHandler;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
