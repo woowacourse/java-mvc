@@ -43,10 +43,13 @@ public class DispatcherServlet extends HttpServlet {
             final String viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
+            e.printStackTrace();
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
+
+    // TODO :: 역할 분리 리팩토링
 
     private Controller getController(HttpServletRequest request) {
         return handlerMappings.stream()

@@ -14,8 +14,6 @@ import java.util.List;
 @WebFilter("/*")
 public class ResourceFilter implements Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(ResourceFilter.class);
-
     private static final List<String> resourcePrefixs = new ArrayList<>();
 
     static {
@@ -33,16 +31,18 @@ public class ResourceFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        System.out.println(">>>>>ResourceFilter");
         this.requestDispatcher = filterConfig.getServletContext().getNamedDispatcher("default");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        System.out.println(">>>>>ResourceFilter");
+
         final HttpServletRequest req = (HttpServletRequest) request;
         final String path = req.getRequestURI().substring(req.getContextPath().length());
         if (isResourceUrl(path)) {
-            log.debug("path : {}", path);
             requestDispatcher.forward(request, response);
         } else {
             chain.doFilter(request, response);
