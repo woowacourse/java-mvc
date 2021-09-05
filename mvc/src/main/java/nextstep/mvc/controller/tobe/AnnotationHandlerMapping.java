@@ -1,30 +1,49 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.support.ControllerMappingHandlerUtils;
+import nextstep.mvc.support.RequestMappingHandlerUtils;
+import nextstep.web.support.RequestMethod;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(Object... basePackages) {
+        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        Arrays.stream(basePackages)
+                .map(basePackage -> (String) basePackage)
+                .flatMap(path -> findControllers(path).stream())
+                .forEach(this::registerController);
     }
 
     public Object getHandler(HttpServletRequest request) {
-        return null;
+        String requestPath = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+        return handlerExecutions.get(new HandlerKey(requestPath, requestMethod));
+    }
+
+    private Set<Class<?>> findControllers(String path) {
+        return ControllerMappingHandlerUtils.findControllers(path);
+    }
+
+    private void registerController(Class<?> controller) {
+        List<Method> methods = RequestMappingHandlerUtils.findByController(controller);
+        methods.stream()
+                .flatMap(key -> RequestMappingHandlerUtils.getHandlerKeys(key).stream())
+                .forEach(key -> handlerExecutions.put(key, HandlerExecution.of(controller)));
     }
 }

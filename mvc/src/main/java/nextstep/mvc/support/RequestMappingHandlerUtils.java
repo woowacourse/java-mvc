@@ -2,7 +2,6 @@ package nextstep.mvc.support;
 
 import static nextstep.mvc.support.AnnotationHandlerUtils.getMethodsAnnotatedWith;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
