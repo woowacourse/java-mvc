@@ -4,10 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import nextstep.mvc.controller.tobe.HandlerAdapterRegister;
+import nextstep.mvc.controller.tobe.HandlerMappingRegister;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -18,21 +16,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegister handlerMappingRegister;
     private final HandlerAdapterRegister handlerAdapterRegister;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegister = new HandlerMappingRegister();
         this.handlerAdapterRegister = new HandlerAdapterRegister();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegister.init();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegister.addHandlerMapping(handlerMapping);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         LOG.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
+            final Object handler = handlerMappingRegister.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapterRegister.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             final View view = modelAndView.getView();
@@ -49,14 +47,6 @@ public class DispatcherServlet extends HttpServlet {
             LOG.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
