@@ -1,4 +1,4 @@
-package com.techcourse.support.web.filter;
+package samples;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @WebFilter(urlPatterns = "/*")
-public class ResourceFilter implements Filter {
+public class TestResourceFilter implements Filter {
 
     private static final List<String> resourcePrefixs = new ArrayList<>();
 

@@ -22,6 +22,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Arrays.stream(basePackages)
                 .map(basePackage -> (String) basePackage)
@@ -29,6 +30,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .forEach(this::registerController);
     }
 
+    @Override
     public Object getHandler(HttpServletRequest request) {
         String requestPath = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
