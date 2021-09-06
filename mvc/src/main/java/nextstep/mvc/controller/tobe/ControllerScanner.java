@@ -9,16 +9,18 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    final Map<Class<?>, Object> controllers = new HashMap<>();
+    private final Map<Class<?>, Object> controllers = new HashMap<>();
+    private final String packagePath;
 
-    public ControllerScanner()
+    public ControllerScanner(String packagePath)
         throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        this.packagePath = packagePath;
         init();
     }
 
     private void init()
         throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Reflections reflections = new Reflections("com.techcourse.controller");
+        Reflections reflections = new Reflections(packagePath);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> aClass : controllers) {
