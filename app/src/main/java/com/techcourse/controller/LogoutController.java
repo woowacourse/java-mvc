@@ -3,7 +3,7 @@ package com.techcourse.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.handler.asis.Controller;
 
 public class LogoutController implements Controller {
 
