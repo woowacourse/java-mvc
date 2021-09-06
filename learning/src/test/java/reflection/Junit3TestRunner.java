@@ -12,7 +12,7 @@ class Junit3TestRunner {
     @Test
     void run() throws Exception {
         // getMethods()는 상속한 메서드를 포함해서, 접근제한자가 public 인 메서드들만 가져온다.
-        // getDeclaredMethods()는 상속한 메서드를 제외하고, 접근제한자에 관계없이 메서드들을 가져온다.
+        // getDeclaredMethods()는 상속한 메서드를 제외하고, 접근제한자에 관계없이 직접 코드로 선언된 메서드들을 가져온다.
         // getConstructor, getDeclaredConstructor도 마찬가지.
 
         Class<Junit3Test> clazz = Junit3Test.class;
