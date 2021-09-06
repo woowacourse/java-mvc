@@ -61,6 +61,14 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    private Object getHandler(HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow();
+    }
+
     private HandlerAdapter getHandlerAdapter(Object handler) {
         for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
@@ -69,13 +77,5 @@ public class DispatcherServlet extends HttpServlet {
         }
         log.error("Get Handler Adapter fail! : {}", handler);
         throw new IllegalStateException("handler adapter를 찾을 수 없습니다. handler " + handler);
-    }
-
-    private Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
     }
 }
