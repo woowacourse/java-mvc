@@ -9,7 +9,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class techcourseController {
+public class BaseController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView base(HttpServletRequest req, HttpServletResponse res) {

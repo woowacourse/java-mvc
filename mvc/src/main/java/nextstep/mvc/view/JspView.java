@@ -1,5 +1,6 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -21,18 +22,19 @@ public class JspView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // todo
-
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
-
-        // todo
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            return;
+        }
+        modelToRequestAttribute(model, request);
+        requestDispatcher.forward(request, response);
     }
 
-    @Override
-    public String getViewName() {
-        return viewName;
+    private void modelToRequestAttribute(Map<String, ?> model, HttpServletRequest request) {
+        model.forEach((key, value) -> {
+            log.debug("attribute name : {}, value : {}", key, value);
+            request.setAttribute(key, value);
+        });
     }
 }
