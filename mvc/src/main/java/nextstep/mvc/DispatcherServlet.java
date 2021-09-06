@@ -9,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdaptor;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
@@ -82,14 +81,15 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerAdapter;
             }
         }
-        throw new ServletException("핸들러 어댑터가 존재하지 않습니다.");
+        throw new ServletException("[Error] 핸들러 어댑터가 존재하지 않습니다.");
     }
 
     private HandlerExecution getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             HandlerExecution handlerExecution = handlerMapping.getHandler(request);
-            if(handlerExecution != null)
+            if (handlerExecution != null) {
                 return handlerExecution;
+            }
         }
         return null;
     }
