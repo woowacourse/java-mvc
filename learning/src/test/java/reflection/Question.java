@@ -1,8 +1,10 @@
 package reflection;
 
+import annotation.Service;
 import java.util.Date;
 import java.util.Objects;
 
+@Service
 public class Question {
 
     private long questionId;
