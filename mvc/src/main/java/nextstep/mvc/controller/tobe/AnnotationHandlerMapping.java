@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -29,8 +29,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        LOG.info("Initialized AnnotationHandlerMapping!");
         Arrays.stream(basePackage).forEach(packageName -> scanPackage((String) packageName));
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void scanPackage(String packageName) {
