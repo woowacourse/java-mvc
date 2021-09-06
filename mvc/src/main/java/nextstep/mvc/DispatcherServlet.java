@@ -51,6 +51,11 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = getHandler(request);
 
+            if (Objects.isNull(handler)) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             HandlerAdapter adapter = getHandlerAdapter(handler);
 
             ModelAndView mv = adapter.handle(request, response, handler);
@@ -66,7 +71,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElse(null);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
