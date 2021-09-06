@@ -5,7 +5,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import java.util.List;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.mapper.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.handler.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import nextstep.web.container.Assembler;
 import nextstep.web.filter.AnnotationFilterMapping;

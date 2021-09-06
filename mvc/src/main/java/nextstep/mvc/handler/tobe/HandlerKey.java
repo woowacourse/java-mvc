@@ -1,4 +1,4 @@
-package nextstep.mvc.mapper.tobe;
+package nextstep.mvc.handler.tobe;
 
 import java.util.Objects;
 import nextstep.web.support.RequestMethod;

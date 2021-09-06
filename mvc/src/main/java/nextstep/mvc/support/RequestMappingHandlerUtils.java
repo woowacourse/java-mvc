@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import nextstep.mvc.mapper.tobe.HandlerKey;
+import nextstep.mvc.handler.tobe.HandlerKey;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 

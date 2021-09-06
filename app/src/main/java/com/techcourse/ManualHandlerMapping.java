@@ -2,7 +2,7 @@ package com.techcourse;
 
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.mapper.tobe.HandlerMapping;
+import nextstep.mvc.handler.tobe.HandlerMapping;
 import nextstep.mvc.handler.asis.Controller;
 import nextstep.mvc.handler.asis.ForwardController;
 import org.slf4j.Logger;

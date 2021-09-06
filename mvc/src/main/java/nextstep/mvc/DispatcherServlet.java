@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.adaptor.HandlerAdapters;
-import nextstep.mvc.mapper.tobe.HandlerMapping;
-import nextstep.mvc.mapper.tobe.HandlerMappings;
+import nextstep.mvc.handler.tobe.HandlerMapping;
+import nextstep.mvc.handler.tobe.HandlerMappings;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import nextstep.mvc.view.resolver.ViewResolver;
@@ -46,7 +46,6 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappings.getHandler(request);
             ModelAndView modelAndView = handlerAdapters.service(request, response, handler);
-
             View view = viewResolver.resolve(modelAndView.getViewName());
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {

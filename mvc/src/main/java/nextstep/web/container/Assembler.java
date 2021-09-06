@@ -7,7 +7,7 @@ import nextstep.mvc.adaptor.ControllerAdapter;
 import nextstep.mvc.adaptor.HandlerAdapter;
 import nextstep.mvc.adaptor.HandlerAdapters;
 import nextstep.mvc.adaptor.HandlerExecutionAdapter;
-import nextstep.mvc.mapper.tobe.HandlerMappings;
+import nextstep.mvc.handler.tobe.HandlerMappings;
 import nextstep.mvc.view.resolver.ViewResolver;
 import nextstep.mvc.view.resolver.ViewResolverImpl;
 
