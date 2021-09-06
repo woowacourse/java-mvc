@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.mapper.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 
-public class HandlerExecutionAdaptor implements HandlerAdapter {
+public class HandlerExecutionAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {

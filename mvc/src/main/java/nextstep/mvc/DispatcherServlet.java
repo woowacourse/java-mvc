@@ -4,15 +4,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
-import nextstep.mvc.adaptor.HandlerAdaptors;
+import nextstep.mvc.adaptor.HandlerAdapters;
 import nextstep.mvc.mapper.tobe.HandlerMapping;
 import nextstep.mvc.mapper.tobe.HandlerMappings;
-import nextstep.mvc.view.Model;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import nextstep.mvc.view.resolver.ViewResolver;
-import nextstep.mvc.view.resolver.ViewResolverImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +19,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
-    private final HandlerAdaptors handlerAdaptors;
+    private final HandlerAdapters handlerAdapters;
 
     private final ViewResolver viewResolver;
 
-    public DispatcherServlet() {
-        this.handlerMappings = new HandlerMappings();
-        this.handlerAdaptors = new HandlerAdaptors(null);
-        this.viewResolver = new ViewResolverImpl();
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters,
+            ViewResolver viewResolver) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
+        this.viewResolver = viewResolver;
     }
 
     @Override
@@ -47,12 +45,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.getHandler(request);
-            ModelAndView modelAndView = handlerAdaptors.service(request, response, handler);
-
-            Model model = modelAndView.getModel();
+            ModelAndView modelAndView = handlerAdapters.service(request, response, handler);
 
             View view = viewResolver.resolve(modelAndView.getViewName());
-            view.render(model, request, response);
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             e.printStackTrace();
             log.error("Exception : {}", e.getMessage(), e);

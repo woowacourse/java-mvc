@@ -2,20 +2,15 @@ package nextstep.mvc.adaptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import nextstep.mvc.view.ModelAndView;
 
-public class HandlerAdaptors {
+public class HandlerAdapters {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    // TODO :: DI
-    public HandlerAdaptors(List<HandlerAdapter> handlerAdapters) {
-//        this.handlerAdapters = handlerAdapters;
-        this.handlerAdapters = new ArrayList<>();
-        this.handlerAdapters.add(new HandlerExecutionAdaptor());
-        this.handlerAdapters.add(new ControllerAdaptor());
+    public HandlerAdapters(List<HandlerAdapter> handlerAdapters) {
+        this.handlerAdapters = handlerAdapters;
     }
 
     public ModelAndView service(HttpServletRequest request, HttpServletResponse response, Object handler) {
