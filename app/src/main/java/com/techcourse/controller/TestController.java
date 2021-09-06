@@ -1,8 +1,7 @@
-package samples;
+package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -15,14 +14,11 @@ public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
-    public TestController() {
-    }
-
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller get method");
         final ModelAndView modelAndView = new ModelAndView("");
-        modelAndView.addObject("id", request.getAttribute("id"));
+        modelAndView.addObject("id", "get-test");
         return modelAndView;
     }
 
@@ -30,7 +26,7 @@ public class TestController {
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller post method");
         final ModelAndView modelAndView = new ModelAndView("");
-        modelAndView.addObject("id", request.getAttribute("id"));
+        modelAndView.addObject("id", request.getAttribute("post-test"));
         return modelAndView;
     }
 }
