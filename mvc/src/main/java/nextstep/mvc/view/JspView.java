@@ -3,6 +3,7 @@ package nextstep.mvc.view;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.support.FileNameHandlerUtils;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,10 @@ public class JspView implements View {
 
     public JspView(String viewName) {
         this.viewName = viewName;
+    }
+
+    public static boolean isJspFile(String fileName) {
+        return FileNameHandlerUtils.isExtension(fileName, "jsp") || fileName.startsWith(JspView.REDIRECT_PREFIX);
     }
 
     @Override
