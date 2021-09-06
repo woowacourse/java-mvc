@@ -1,6 +1,6 @@
-package nextstep.mvc.support;
+package nextstep.mvc.support.annotation;
 
-import static nextstep.mvc.support.AnnotationHandlerUtils.getMethodsAnnotatedWith;
+import static nextstep.mvc.support.annotation.AnnotationHandleUtils.getMethodsAnnotatedWith;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -11,9 +11,9 @@ import nextstep.mvc.handler.tobe.HandlerKey;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
-public class RequestMappingHandlerUtils {
+public class RequestMappingAnnotationUtils {
 
-    private RequestMappingHandlerUtils() {
+    private RequestMappingAnnotationUtils() {
     }
 
     public static List<Method> findByController(Class<?> controller) {

@@ -6,20 +6,21 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import nextstep.mvc.support.annotation.AnnotationHandleUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
-class AnnotationHandlerUtilsTest {
+class AnnotationHandleUtilsTest {
 
     @DisplayName("클래스를 Annotation 으로 검색한다.")
     @Test
     void searchClassesByAnnotation() {
         String basePath = "samples";
 
-        Set<Class<?>> controllers = AnnotationHandlerUtils.getClassesAnnotatedWith(basePath, Controller.class);
+        Set<Class<?>> controllers = AnnotationHandleUtils.getClassesAnnotatedWith(basePath, Controller.class);
         assertThat(controllers).contains(TestController.class);
     }
 
@@ -28,10 +29,10 @@ class AnnotationHandlerUtilsTest {
     void getAnnotatedMethodsFormClasses() {
         String basePath = "samples";
 
-        Set<Class<?>> controllers = AnnotationHandlerUtils.getClassesAnnotatedWith(basePath, Controller.class);
+        Set<Class<?>> controllers = AnnotationHandleUtils.getClassesAnnotatedWith(basePath, Controller.class);
 
         List<Method> methods = controllers.stream()
-                .flatMap(klass -> AnnotationHandlerUtils.getMethodsAnnotatedWith(klass, RequestMapping.class).stream())
+                .flatMap(klass -> AnnotationHandleUtils.getMethodsAnnotatedWith(klass, RequestMapping.class).stream())
                 .collect(Collectors.toList());
 
         assertThat(methods).contains(TestController.class.getDeclaredMethods());

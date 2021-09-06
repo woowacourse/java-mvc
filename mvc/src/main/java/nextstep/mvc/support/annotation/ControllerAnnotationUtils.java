@@ -1,13 +1,13 @@
-package nextstep.mvc.support;
+package nextstep.mvc.support.annotation;
 
-import static nextstep.mvc.support.AnnotationHandlerUtils.getClassesAnnotatedWith;
+import static nextstep.mvc.support.annotation.AnnotationHandleUtils.getClassesAnnotatedWith;
 
 import java.util.Set;
 import nextstep.web.annotation.Controller;
 
-public class ControllerMappingHandlerUtils {
+public class ControllerAnnotationUtils {
 
-    private ControllerMappingHandlerUtils() {
+    private ControllerAnnotationUtils() {
     }
 
     public static Set<Class<?>> findControllers(String basePackagePath) {

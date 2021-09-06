@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import nextstep.mvc.support.AnnotationHandlerUtils;
+import nextstep.mvc.support.annotation.AnnotationHandleUtils;
 import nextstep.mvc.support.BeanNameParserUtils;
 
 public class AnnotationFilterMapping implements FilterMapping {
@@ -36,7 +36,7 @@ public class AnnotationFilterMapping implements FilterMapping {
     private List<Class<?>> getFilterClasses() {
         return Arrays.stream(basePackages)
                 .map(basePackage -> (String) basePackage)
-                .flatMap(path -> AnnotationHandlerUtils.getClassesAnnotatedWith(path, WebFilter.class).stream())
+                .flatMap(path -> AnnotationHandleUtils.getClassesAnnotatedWith(path, WebFilter.class).stream())
                 .collect(Collectors.toList());
     }
 

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.support.ControllerMappingHandlerUtils;
-import nextstep.mvc.support.RequestMappingHandlerUtils;
+import nextstep.mvc.support.annotation.ControllerAnnotationUtils;
+import nextstep.mvc.support.annotation.RequestMappingAnnotationUtils;
 import nextstep.web.support.RequestMethod;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -37,13 +37,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Class<?>> findControllers(String path) {
-        return ControllerMappingHandlerUtils.findControllers(path);
+        return ControllerAnnotationUtils.findControllers(path);
     }
 
     private void registerController(Class<?> controller) {
-        List<Method> methods = RequestMappingHandlerUtils.findByController(controller);
+        List<Method> methods = RequestMappingAnnotationUtils.findByController(controller);
         methods.stream()
-                .flatMap(key -> RequestMappingHandlerUtils.getHandlerKeys(key).stream())
+                .flatMap(key -> RequestMappingAnnotationUtils.getHandlerKeys(key).stream())
                 .forEach(key -> handlerExecutions.put(key, HandlerExecution.of(controller)));
     }
 }

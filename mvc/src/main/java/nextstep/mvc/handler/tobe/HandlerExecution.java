@@ -3,7 +3,7 @@ package nextstep.mvc.handler.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import nextstep.mvc.support.RequestMappingHandlerUtils;
+import nextstep.mvc.support.annotation.RequestMappingAnnotationUtils;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.support.RequestMethod;
 
@@ -29,7 +29,7 @@ public class HandlerExecution {
     }
 
     private Method findRequestHandler(HttpServletRequest request) {
-        return RequestMappingHandlerUtils.findByController(controller.getClass()).stream()
+        return RequestMappingAnnotationUtils.findByController(controller.getClass()).stream()
                 .filter(method -> isRequestMapped(request, method))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("처리할 수 있는 handler가 없습니다."));
@@ -39,6 +39,6 @@ public class HandlerExecution {
         String requestPath = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        return RequestMappingHandlerUtils.isMapped(method, requestPath, requestMethod);
+        return RequestMappingAnnotationUtils.isMapped(method, requestPath, requestMethod);
     }
 }

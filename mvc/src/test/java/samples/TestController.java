@@ -2,9 +2,11 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.exception.NotFoundException;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.ExceptionHandler;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
@@ -29,5 +31,10 @@ public class TestController {
         final ModelAndView modelAndView = new ModelAndView("");
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
+    }
+
+    @ExceptionHandler(value = NotFoundException.class)
+    public ModelAndView notFoundException(Exception e) {
+        return new ModelAndView("404.html");
     }
 }

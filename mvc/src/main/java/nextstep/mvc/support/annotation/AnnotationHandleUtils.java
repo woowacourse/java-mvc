@@ -1,4 +1,4 @@
-package nextstep.mvc.support;
+package nextstep.mvc.support.annotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -9,9 +9,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
-public class AnnotationHandlerUtils {
+public class AnnotationHandleUtils {
 
-    private AnnotationHandlerUtils() {
+    private AnnotationHandleUtils() {
     }
 
     public static Set<Class<?>> getClassesAnnotatedWith(String basePath, Class<? extends Annotation> annotation) {
