@@ -2,16 +2,21 @@ package com.techcourse.support.web.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 @WebFilter("/*")
 public class CharacterEncodingFilter implements Filter {
 
+    private static final Logger log = LoggerFactory.getLogger(CharacterEncodingFilter.class);
+
     private static final String DEFAULT_ENCODING = "UTF-8";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        log.info("Filter init Servlet name : {} , Filter name : {}", filterConfig.getServletContext(), filterConfig.getFilterName());
     }
 
     @Override
