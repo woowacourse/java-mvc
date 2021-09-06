@@ -1,10 +1,8 @@
 package nextstep.mvc.adaptor;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handler.asis.Controller;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
 public class ControllerAdaptor implements HandlerAdapter {
@@ -15,21 +13,13 @@ public class ControllerAdaptor implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String viewName = "";
-
-        if(supports(handler)){
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        if (supports(handler)) {
             Controller controller = (Controller) handler;
-             viewName = controller.execute(request, response);
+            String viewName = controller.execute(request, response);
+            return new ModelAndView(viewName);
         }
-
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return null;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-        return null;
+        throw new IllegalArgumentException("유효하지 않은 핸들러, 혹은 핸들러 어뎁터입니다.");
     }
 }

@@ -35,7 +35,7 @@ public class HandlerExecution {
                 .orElseThrow(() -> new IllegalArgumentException("처리할 수 있는 handler가 없습니다."));
     }
 
-    private boolean isRequestMapped(HttpServletRequest request, Method method){
+    private boolean isRequestMapped(HttpServletRequest request, Method method) {
         String requestPath = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
