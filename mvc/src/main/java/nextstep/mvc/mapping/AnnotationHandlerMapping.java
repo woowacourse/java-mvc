@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerExecution handlerExecution = new HandlerExecution(controllers.get(controllerClass), method);
             for (HandlerKey handlerKey : handlerKeys) {
                 this.handlerExecutions.put(handlerKey, handlerExecution);
-                log.info("Key : {}, Value : {}", handlerKey, controllerClass);
+                log.info("Path : {}, Controller : {}", handlerKey, controllerClass);
             }
         }
     }
