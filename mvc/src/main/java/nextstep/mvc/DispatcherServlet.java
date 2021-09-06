@@ -1,40 +1,41 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
+import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.adapter.HandlerAdapterRegistry;
+import nextstep.mvc.adapter.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
 public class DispatcherServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final long serialVersionUID = 1L;
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initAll();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapters(handlerAdapter);
     }
 
     @Override
@@ -42,15 +43,12 @@ public class DispatcherServlet extends HttpServlet {
         LOG.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
-            if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(request, response);
-                new JspView(viewName).render(new HashMap<>(), request, response);
-                return;
-            }
-            ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-            JspView view = (JspView) modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView mv = handlerAdapter.handle(request, response, handler);
+
+            View view = mv.getView();
+            view.render(mv.getModel(), request, response);
         } catch (Throwable e) {
             LOG.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -58,10 +56,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
+        return handlerMappingRegistry.getHandler(request).orElseThrow();
     }
 }
