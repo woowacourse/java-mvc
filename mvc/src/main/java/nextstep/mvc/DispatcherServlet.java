@@ -41,12 +41,17 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = handlerMappingRegister.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapterRegister.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            final View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             LOG.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        final View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
