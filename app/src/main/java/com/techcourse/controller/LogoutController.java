@@ -11,6 +11,6 @@ public class LogoutController implements Controller {
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return "redirect:/";
+        return "redirect:/index.jsp";
     }
 }

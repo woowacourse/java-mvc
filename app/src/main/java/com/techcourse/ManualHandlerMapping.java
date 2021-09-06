@@ -1,20 +1,25 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
-
     private static final Map<String, Controller> controllers = new HashMap<>();
 
     @Override
@@ -31,9 +36,21 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+
+        if (!controllers.containsKey(requestURI)) {
+            return null;
+        }
+
+        Class<Controller> clazz = Controller.class;
+        Method[] methods = clazz.getMethods();
+        Method method = Arrays.stream(methods)
+            .filter(it -> it.getName().equals("execute"))
+            .findAny()
+            .orElseThrow();
+
+        return new HandlerExecution(controllers.get(requestURI), method);
     }
 }

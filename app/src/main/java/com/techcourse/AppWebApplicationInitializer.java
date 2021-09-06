@@ -15,6 +15,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerAdaptor(new ManualHandlerAdaptor());
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
