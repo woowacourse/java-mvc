@@ -1,5 +1,6 @@
 package nextstep.mvc.view;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,5 +27,9 @@ public class Model {
 
     public Set<String> keySet() {
         return attributes.keySet();
+    }
+
+    public Map<String, Object> asMap(){
+        return Collections.unmodifiableMap(attributes);
     }
 }

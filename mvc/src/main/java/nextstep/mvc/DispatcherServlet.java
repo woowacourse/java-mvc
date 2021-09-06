@@ -54,6 +54,7 @@ public class DispatcherServlet extends HttpServlet {
             Model model = modelAndView.getModel();
 
             View view = viewResolver.resolve(modelAndView.getViewName());
+            System.out.println(view);
             view.render(model, request, response);
         } catch (Throwable e) {
             e.printStackTrace();

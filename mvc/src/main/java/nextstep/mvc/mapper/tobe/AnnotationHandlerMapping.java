@@ -13,10 +13,10 @@ import nextstep.web.support.RequestMethod;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private final Object[] basePackages;
+    private final String[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(Object... basePackages) {
+    public AnnotationHandlerMapping(String... basePackages) {
         this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
@@ -24,7 +24,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         Arrays.stream(basePackages)
-                .map(basePackage -> (String) basePackage)
                 .flatMap(path -> findControllers(path).stream())
                 .forEach(this::registerController);
     }

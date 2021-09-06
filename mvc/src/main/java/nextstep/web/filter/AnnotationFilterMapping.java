@@ -12,10 +12,10 @@ import nextstep.mvc.support.BeanNameParserUtils;
 
 public class AnnotationFilterMapping implements FilterMapping {
 
-    private final Object[] basePackages;
+    private final String[] basePackages;
     private final List<FilterChain> filterChains = new ArrayList<>();
 
-    public AnnotationFilterMapping(Object[] basePackages) {
+    public AnnotationFilterMapping(String[] basePackages) {
         this.basePackages = basePackages;
     }
 

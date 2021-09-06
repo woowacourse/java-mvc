@@ -1,8 +1,8 @@
 package nextstep.mvc.support;
 
-public class ViewNameHandlerUtils {
+public class FileNameHandlerUtils {
 
-    private ViewNameHandlerUtils() {
+    private FileNameHandlerUtils() {
     }
 
     public static String getExtension(String fileName) {
@@ -11,5 +11,9 @@ public class ViewNameHandlerUtils {
             return null;
         }
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public static boolean isExtension(String fileName, String extension){
+        return extension.equals(getExtension(fileName));
     }
 }
