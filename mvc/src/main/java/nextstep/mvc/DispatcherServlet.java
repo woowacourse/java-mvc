@@ -7,10 +7,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import nextstep.core.ApplicationContext;
+import nextstep.mvc.adapter.ControllerImplementHandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.RequestMappingHandlerAdapter;
 import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.exceptionresolver.ExceptionResolverContainer;
+import nextstep.mvc.mapping.ControllerImplementHandlerMapping;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -49,10 +51,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private void defaultHandlerMappings() {
         handlerMappings.add(new AnnotationHandlerMapping(applicationContext));
+        handlerMappings.add(new ControllerImplementHandlerMapping(applicationContext));
     }
 
     private void defaultHandlerAdapters() {
         handlerAdapters.add(new RequestMappingHandlerAdapter());
+        handlerAdapters.add(new ControllerImplementHandlerAdapter());
     }
 
     @Override

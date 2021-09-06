@@ -15,9 +15,10 @@ import org.slf4j.LoggerFactory;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-    private InMemoryUserRepository userRepository;
     private static final String REDIRECT_HOME = "redirect:/index.jsp";
     private static final String REDIRECT_UNAUTHORIZED = "redirect:/401.jsp";
+
+    private final InMemoryUserRepository userRepository;
 
     @Autowired
     public LoginController(InMemoryUserRepository userRepository) {

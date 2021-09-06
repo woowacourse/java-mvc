@@ -1,14 +1,13 @@
 package com.techcourse.controller;
 
-import nextstep.mvc.annotation.Controller;
-import nextstep.mvc.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.controller.asis.Controller;
 
-@Controller
-public class HomeController {
+public class HomeController implements Controller {
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String execute() {
+    @Override
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         return "index.jsp";
     }
 }
