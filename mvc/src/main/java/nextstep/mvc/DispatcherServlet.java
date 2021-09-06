@@ -51,7 +51,6 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-
     private void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HandlerExecution mappedHandler = getHandler(request);
         if (mappedHandler == null || mappedHandler.getHandler() == null) {
@@ -129,22 +128,4 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters.add(handlerAdapter);
     }
 
-    private Controller getController(HttpServletRequest request) {
-        return handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .map(Controller.class::cast)
-            .findFirst()
-            .orElseThrow();
-    }
-
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-    }
 }
