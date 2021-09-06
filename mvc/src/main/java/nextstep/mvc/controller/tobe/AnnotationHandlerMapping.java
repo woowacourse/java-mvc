@@ -2,17 +2,19 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.controller.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -27,38 +29,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Arrays.stream(basePackage).forEach(this::addController);
+        Arrays.stream(basePackage).forEach(packageName -> scanPackage((String) packageName));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addController(Object packageName) {
-        Reflections reflections = new Reflections(packageName);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        controllers.forEach(this::initHandlerExecution);
-    }
-
-    private void initHandlerExecution(Class<?> controller) {
-        List<Method> methods = Arrays.stream(controller.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
-        methods.forEach(method -> {
-            try {
-                addHandlerExecution(method, controller);
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    private void addHandlerExecution(Method method, Class<?> controller) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        String uri = annotation.value();
-        RequestMethod[] requestMethods = annotation.method();
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller.getConstructor().newInstance(), method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+    private void scanPackage(String packageName) {
+        try {
+            ControllerScanner controllerScanner = new ControllerScanner(packageName);
+            controllerScanner.getControllers().entrySet().forEach(this::findAllMethods);
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
         }
+    }
+
+    private void findAllMethods(Map.Entry<Class<?>, Object> controller) {
+        Set<Method> allMethods = ReflectionUtils.getAllMethods(controller.getKey(), ReflectionUtils.withAnnotation(RequestMapping.class));
+        allMethods.forEach(method -> addHandler(controller, method));
+    }
+
+    private void addHandler(Map.Entry<Class<?>, Object> controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        Arrays.stream(requestMapping.method())
+                .forEach(requestMethod -> {
+                    HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                    HandlerExecution handlerExecution = new HandlerExecution(controller.getValue(), method);
+                    handlerExecutions.put(handlerKey, handlerExecution);
+                });
     }
 
     public Object getHandler(HttpServletRequest request) {
