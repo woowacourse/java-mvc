@@ -1,5 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
+import nextstep.mvc.exception.ControllerScanException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -16,19 +17,23 @@ public class ControllerScanner {
     private ControllerScanner() {
     }
 
-    public static Map<Class<?>, Object> scanControllersInPackage(Object[] basePackage) {
+    public static Map<Class<?>, Object> getControllers(Object[] basePackage) {
         log.info("Scan Controllers In {} !", basePackage);
-        Map<Class<?>, Object> controllers = new HashMap<>();
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        return instantiateControllers(controllerClasses);
+    }
+
+    private static Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerClasses) {
         try {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+            Map<Class<?>, Object> controllers = new HashMap<>();
             for (Class<?> controllerClass : controllerClasses) {
                 Object controller = controllerClass.getConstructor().newInstance();
                 controllers.put(controllerClass, controller);
             }
+            return controllers;
         } catch (Exception e) {
-            log.error("Scan Controllers Fail!", e);
+            throw new ControllerScanException("어노테이션 기반 Controller를 찾는데 실패하였습니다.");
         }
-        return controllers;
     }
 }
