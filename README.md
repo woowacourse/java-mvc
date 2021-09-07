@@ -4,5 +4,6 @@
 - [x] JunitTestRunner 학습 테스트 완료
 - [x] Reflections 학습 테스트 완료
 # Step1
-- [] Annotation Based MVC Framework
+- [x] Annotation Based MVC Framework 테스트 통과
+- [] JspView 구현 
 - [] Legacy MVC와 Annotation Based MVC 통합
