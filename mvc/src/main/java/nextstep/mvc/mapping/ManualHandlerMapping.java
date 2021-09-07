@@ -1,15 +1,14 @@
-package com.techcourse;
+package nextstep.mvc.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.techcourse.controller.*;
-
+import air.ApplicationContext;
 import air.annotation.Component;
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.configuration.HandlerConfigurer;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,13 +21,8 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
-
+        HandlerConfigurer handlerConfigurer = ApplicationContext.findBeanByType(HandlerConfigurer.class);
+        controllers.putAll(handlerConfigurer.customHandlerSetting());
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
                    .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));

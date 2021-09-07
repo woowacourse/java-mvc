@@ -65,8 +65,11 @@ public class ApplicationContext {
 
             methods.forEach(method -> {
                 try {
-                    Object bean = method.invoke(clazz.getConstructor().newInstance());
-                    beans.put(method.getName(), bean);
+                    String beanName = method.getName();
+                    if (!beans.containsKey(beanName)) {
+                        Object bean = method.invoke(clazz.getConstructor().newInstance());
+                        beans.put(beanName, bean);
+                    }
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                     throw new RuntimeException();
                 }
@@ -125,13 +128,30 @@ public class ApplicationContext {
         Object[] fields = new Object[parameterTypes.length];
         int index = 0;
         for (Class<?> parameter : parameterTypes) {
-            Object bean = getBean(parameter);
+            Object bean = findBeanByType(parameter);
             fields[index++] = bean;
         }
         return fields;
     }
 
-    public static Object getBean(String beanName) {
-        return beans.get(beanName);
+    public static <T> T findBeanByType(Class<T> type) {
+        for (String beanName : beans.keySet()) {
+            Object bean = beans.get(beanName);
+            if (type.isInstance(bean)) {
+                return (T) bean;
+            }
+        }
+        return registerBean(type);
+    }
+
+    private static <T> T registerBean(Class<T> type) {
+        try {
+            T instance = type.getConstructor().newInstance();
+            String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, type.getSimpleName());
+            beans.put(beanName, instance);
+            return instance;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException();
+        }
     }
 }

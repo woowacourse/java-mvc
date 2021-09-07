@@ -14,7 +14,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        DispatcherServlet dispatcherServlet = (DispatcherServlet) ApplicationContext.getBean("dispatcherServlet");
+        DispatcherServlet dispatcherServlet = ApplicationContext.findBeanByType(DispatcherServlet.class);
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
