@@ -22,7 +22,6 @@ public class JspView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // todo
 
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
@@ -33,11 +32,8 @@ public class JspView implements View {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+
         RequestDispatcher dispatcher = request.getRequestDispatcher(viewName);
         dispatcher.forward(request, response);
-
-
-
-        // todo
     }
 }
