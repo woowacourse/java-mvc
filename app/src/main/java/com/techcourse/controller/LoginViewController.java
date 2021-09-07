@@ -13,10 +13,10 @@ public class LoginViewController implements Controller {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
-                })
-                .orElse("/login.jsp");
+            .map(user -> {
+                log.info("logged in {}", user.getAccount());
+                return "redirect:/index.jsp";
+            })
+            .orElse("/login.jsp");
     }
 }

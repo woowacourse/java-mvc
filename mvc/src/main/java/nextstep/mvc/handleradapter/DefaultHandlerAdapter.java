@@ -10,7 +10,8 @@ import nextstep.mvc.view.ModelAndView;
 
 public class DefaultHandlerAdapter implements HandlerAdapter {
 
-    private static final Set<HandlerAdapter> DEFAULT_ADAPTERS = new HashSet<>(Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter()));
+    private static final Set<HandlerAdapter> DEFAULT_ADAPTERS = new HashSet<>(
+        Arrays.asList(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter()));
 
     @Override
     public boolean supports(final Object handler) {
