@@ -1,27 +1,24 @@
 package servlet;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.startup.Tomcat;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.startup.Tomcat;
+import org.junit.jupiter.api.Test;
 
 class ServletTest {
 
     /**
      * 2. 톰캣 maxThread 테스트 가능할까?
-     *
-     * 서블릿 컨테이너 설정 테스트 코드
-     * accept-count 1
-     * threads max 1
+     * <p>
+     * 서블릿 컨테이너 설정 테스트 코드 accept-count 1 threads max 1
      */
 
     @Test
@@ -42,7 +39,8 @@ class ServletTest {
         // 간단하게 HttpURLConnection을 사용해서 톰캣에 연결한다.
         final HttpURLConnection connection = connectTomcat("/hello-world");
 
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        final BufferedReader reader = new BufferedReader(
+            new InputStreamReader(connection.getInputStream()));
         final String actual = reader.readLine();
 
         // 서블릿 응답값 확인

@@ -54,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .map(Controller.class::cast)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(RuntimeException::new);
     }
 
     private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
