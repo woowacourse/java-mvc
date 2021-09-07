@@ -1,14 +1,26 @@
 package nextstep.mvc.controller.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.ModelAndView;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
 
 class AnnotationHandlerMappingTest {
 

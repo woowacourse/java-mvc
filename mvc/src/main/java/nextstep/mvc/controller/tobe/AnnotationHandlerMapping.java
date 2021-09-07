@@ -1,7 +1,19 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +34,47 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+
+        getExecutionMethods()
+            .forEach(this::addHandlerExecution);
+    }
+
+    private void addHandlerExecution(Method method) {
+        RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
+        String path = annotation.value();
+
+        Arrays.stream(annotation.method())
+            .map(requestMethod -> new HandlerKey(path, requestMethod))
+            .forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(method)));
+    }
+
+    private List<Method> getExecutionMethods() {
+        List<Method> executionMethods = new ArrayList<>();
+
+        for (Object packageName : basePackage) {
+            Reflections reflections = new Reflections(packageName);
+            List<Method[]> declaredMethods = reflections.getTypesAnnotatedWith(Controller.class).stream()
+                .map(Class::getDeclaredMethods)
+                .collect(Collectors.toList());
+
+            addAnnotatedMethods(executionMethods, declaredMethods);
+        }
+        return executionMethods;
+    }
+
+    private void addAnnotatedMethods(List<Method> executionMethods, List<Method[]> foundMethods) {
+        for (Method[] methods : foundMethods) {
+            Arrays.stream(methods)
+                .filter(it -> it.isAnnotationPresent(RequestMapping.class))
+                .forEach(executionMethods::add);
+        }
     }
 
     public Object getHandler(HttpServletRequest request) {
-        return null;
+        return handlerExecutions.entrySet().stream()
+            .filter(it -> it.getKey().isMatchingKey(request))
+            .map(Entry::getValue)
+            .findFirst()
+            .orElseThrow(IllegalArgumentException::new);
     }
 }
