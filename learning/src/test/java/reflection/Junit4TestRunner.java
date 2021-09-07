@@ -25,7 +25,6 @@ class Junit4TestRunner {
             answer += invokeMethod(method, instance);
         }
 
-        //then
         assertThat(answer).isEqualTo(2);
     }
 
