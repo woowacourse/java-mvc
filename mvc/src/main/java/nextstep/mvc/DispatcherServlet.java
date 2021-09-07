@@ -55,6 +55,6 @@ public class DispatcherServlet extends HttpServlet {
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException(String.format("적절한 핸들러를 찾지 못 했습니다.(%s)(%s)", request.getRequestURI(), request.getMethod())));
     }
 }
