@@ -42,17 +42,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
+    public Object getHandler(HttpServletRequest request) {
+        log.debug("Request Annotation Mapping Uri : {}", request.getRequestURI());
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+    }
+
     private void putHandlerExecutionByRequestMapping(Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (Objects.nonNull(requestMapping)) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), RequestMethod.valueOf(requestMapping.method()[0].name()));
             handlerExecutions.put(handlerKey, new HandlerExecution(getHandlerByAnnotatedMethod(method), method));
         }
-    }
-
-    @Override
-    public Object getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 
     private Object getHandlerByAnnotatedMethod(Method method) {
