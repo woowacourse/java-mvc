@@ -17,6 +17,9 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    public ManualHandlerMapping() {
+    }
+
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
