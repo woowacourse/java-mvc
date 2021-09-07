@@ -8,7 +8,6 @@ import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapterRegistry;
 import nextstep.mvc.adapter.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +45,7 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.handle(request, response, handler);
-
-            View view = mv.getView();
-            view.render(mv.getModel(), request, response);
+            mv.render(request, response);
         } catch (Throwable e) {
             LOG.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
