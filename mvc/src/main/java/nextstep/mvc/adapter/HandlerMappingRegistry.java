@@ -10,17 +10,20 @@ import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private static final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public void initAll() {
+    private HandlerMappingRegistry() {
+    }
+
+    public static void initAll() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
+    public static void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
+    public static Optional<Object> getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)

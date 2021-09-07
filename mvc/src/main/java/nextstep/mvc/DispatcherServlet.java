@@ -16,25 +16,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final long serialVersionUID = 1L;
 
-    private final HandlerMappingRegistry handlerMappingRegistry;
-    private final HandlerAdapterRegistry handlerAdapterRegistry;
-
-    public DispatcherServlet() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
-    }
-
     @Override
     public void init() {
-        handlerMappingRegistry.initAll();
+        HandlerMappingRegistry.initAll();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+        HandlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapterRegistry.addHandlerAdapters(handlerAdapter);
+        HandlerAdapterRegistry.addHandlerAdapters(handlerAdapter);
     }
 
     @Override
@@ -43,16 +35,20 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            HandlerAdapter handlerAdapter = HandlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.handle(request, response, handler);
             mv.render(request, response);
-        } catch (Throwable e) {
-            LOG.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
+    private void handleException(Exception e) throws ServletException {
+        LOG.error("Exception : {}", e.getMessage(), e);
+        throw new ServletException(e.getMessage());
+    }
+
     private Object getHandler(HttpServletRequest request) {
-        return handlerMappingRegistry.getHandler(request).orElseThrow();
+        return HandlerMappingRegistry.getHandler(request).orElseThrow();
     }
 }

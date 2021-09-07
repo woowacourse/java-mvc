@@ -5,13 +5,16 @@ import java.util.List;
 
 public class HandlerAdapterRegistry {
 
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private static final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public void addHandlerAdapters(HandlerAdapter adapter) {
+    private HandlerAdapterRegistry() {
+    }
+
+    public static void addHandlerAdapters(HandlerAdapter adapter) {
         handlerAdapters.add(adapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object handler) {
+    public static HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findAny()
