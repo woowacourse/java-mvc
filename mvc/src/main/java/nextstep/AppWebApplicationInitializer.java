@@ -1,5 +1,6 @@
-package com.techcourse;
+package nextstep;
 
+import air.ApplicationContext;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.DispatcherServlet;
@@ -13,9 +14,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-
+        DispatcherServlet dispatcherServlet = (DispatcherServlet) ApplicationContext.getBean("dispatcherServlet");
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");

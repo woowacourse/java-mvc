@@ -13,7 +13,9 @@ dependencies {
 
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.0.10'
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.0.10'
-    
+
+    implementation 'org.reflections:reflections:0.9.11'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
