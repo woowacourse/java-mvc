@@ -2,18 +2,15 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.utils.AnnotationScanner;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.ReflectionUtils;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,25 +26,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() throws ReflectiveOperationException {
         log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> controllers = new HashSet<>();
-        Reflections reflections;
-        for (Object basePackage : basePackages) {
-            reflections = new Reflections(basePackage);
-            controllers.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-        }
+        Set<Class<?>> controllers = AnnotationScanner.scanClassWith(this.basePackages, Controller.class);
 
-        for (Class controller : controllers) {
-            Object object = controller.getDeclaredConstructor().newInstance();
-            Set<Method> requestMappingMethods = ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
-            for (Method method : requestMappingMethods) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                RequestMethod[] requestMethods = requestMapping.method();
-                for (RequestMethod requestMethod : requestMethods) {
-                    handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod),
-                            new HandlerExecution(object, method));
-                }
+        for (Class<?> controller : controllers) {
+            Set<Method> requestMappingMethods = AnnotationScanner.scanMethod(controller, RequestMapping.class);
+            registerHandlerExecution(controller, requestMappingMethods);
+        }
+    }
+
+    public void registerHandlerExecution(Class<?> controller, Set<Method> requestMappingMethods) throws ReflectiveOperationException {
+        Object object = controller.getDeclaredConstructor().newInstance();
+        for (Method method : requestMappingMethods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            RequestMethod[] requestMethods = requestMapping.method();
+            for (RequestMethod requestMethod : requestMethods) {
+                handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod),
+                        new HandlerExecution(object, method));
             }
         }
     }

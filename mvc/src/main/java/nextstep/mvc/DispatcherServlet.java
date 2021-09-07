@@ -10,7 +10,6 @@ import nextstep.mvc.view.JspView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,13 +30,7 @@ public class DispatcherServlet extends HttpServlet {
         for (HandlerMapping handlerMapping : handlerMappings) {
             try {
                 handlerMapping.initialize();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
             }
         }
