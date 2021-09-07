@@ -48,8 +48,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public Object getHandler(HttpServletRequest request)
+    public HandlerExecution getHandler(HttpServletRequest request)
     {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod().toUpperCase())));
     }
 }
