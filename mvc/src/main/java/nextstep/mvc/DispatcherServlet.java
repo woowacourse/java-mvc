@@ -10,6 +10,7 @@ import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,10 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    // TODO HandlerMappingRegistry로 관리
     private final List<HandlerMapping> handlerMappings;
+
+    // TODO HandlerAdapterRegistry로 관리
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
@@ -52,7 +56,8 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = getController(request);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            move(modelAndView, request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -73,16 +78,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findAny()
                 .orElseThrow();
-    }
-
-    private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String viewName = modelAndView.getViewName();
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
