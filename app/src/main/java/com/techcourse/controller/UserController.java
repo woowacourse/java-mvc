@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         final JspView jspView = new JspView("redirect:/");
@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerView(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView registerView(HttpServletRequest req, HttpServletResponse res) {
         final JspView jspView = new JspView("/register.jsp");
         return new ModelAndView(jspView);
     }
