@@ -126,7 +126,6 @@ class ReflectionTest {
         final Student student = (Student) studentClass.getConstructor().newInstance();
         final Field field = student.getClass().getDeclaredField("age");
         field.setAccessible(true);
-        // todo field에 접근 할 수 있도록 만든다.
 
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
