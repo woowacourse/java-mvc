@@ -1,7 +1,6 @@
 package nextstep.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Method;
 import java.util.Set;
