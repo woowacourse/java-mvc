@@ -31,7 +31,8 @@ repositories {
 }
 
 dependencies {
-    implementation project(':mvc')
+//    implementation project(':mvc')
+    implementation project(path: ":mvc", configuration: 'default')
 
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'com.google.guava:guava:29.0-jre'
