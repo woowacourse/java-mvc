@@ -1,7 +1,7 @@
 package com.techcourse.repository;
 
 import com.techcourse.domain.User;
-
+import com.techcourse.exception.UserException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +16,11 @@ public class InMemoryUserRepository {
     }
 
     public static void save(User user) {
-        database.put(user.getAccount(), user);
+        String account = user.getAccount();
+        if (database.containsKey(account)) {
+            throw new UserException("중복된 이름입니다.");
+        }
+        database.put(account, user);
     }
 
     public static Optional<User> findByAccount(String account) {

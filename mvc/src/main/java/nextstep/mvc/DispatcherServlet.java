@@ -4,10 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import nextstep.mvc.adaptor.HandlerAdapters;
-import nextstep.mvc.exception.NotFoundException;
-import nextstep.mvc.exception.handler.AnnotationExceptionHandlerMapping;
-import nextstep.mvc.exception.handler.ExceptionHandlerExecution;
+import nextstep.mvc.handler.exception.ExceptionHandlerExecutor;
 import nextstep.mvc.handler.tobe.HandlerMapping;
 import nextstep.mvc.handler.tobe.HandlerMappings;
 import nextstep.mvc.view.ModelAndView;
@@ -23,16 +22,15 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
-
     private final ViewResolver viewResolver;
-    private final AnnotationExceptionHandlerMapping exceptionHandlerMapping;
+    private final ExceptionHandlerExecutor exceptionHandlerExecutor;
 
     public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters,
-            ViewResolver viewResolver) {
+            ViewResolver viewResolver, ExceptionHandlerExecutor exceptionHandlerExecutor) {
         this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
         this.viewResolver = viewResolver;
-        this.exceptionHandlerMapping = new AnnotationExceptionHandlerMapping();
+        this.exceptionHandlerExecutor = exceptionHandlerExecutor;
     }
 
     @Override
@@ -42,6 +40,10 @@ public class DispatcherServlet extends HttpServlet {
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void registerExceptionHandlerByPath(String... basePackagePath) {
+        this.exceptionHandlerExecutor.init(basePackagePath);
     }
 
     @Override
@@ -59,14 +61,12 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private ModelAndView processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView processRequest(HttpServletRequest request, HttpServletResponse response) throws Throwable {
         try {
             Object handler = handlerMappings.getHandler(request);
             return handlerAdapters.service(request, response, handler);
-        } catch (NotFoundException notFoundException) {
-            Object handler = exceptionHandlerMapping.getHandler(notFoundException.getClass());
-            ExceptionHandlerExecution handlerExecution = (ExceptionHandlerExecution)handler;
-            return handlerExecution.handle(notFoundException);
+        } catch (Exception exception) {
+            return exceptionHandlerExecutor.execute(exception);
         }
     }
 }

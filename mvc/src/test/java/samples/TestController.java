@@ -2,8 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.exception.NotFoundException;
-import nextstep.mvc.view.JspView;
+import nextstep.mvc.exception.UnHandledRequestException;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.ExceptionHandler;
@@ -33,7 +32,7 @@ public class TestController {
         return modelAndView;
     }
 
-    @ExceptionHandler(value = NotFoundException.class)
+    @ExceptionHandler(value = UnHandledRequestException.class)
     public ModelAndView notFoundException(Exception e) {
         return new ModelAndView("404.html");
     }

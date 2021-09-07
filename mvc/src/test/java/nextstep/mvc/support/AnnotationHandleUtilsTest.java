@@ -35,6 +35,11 @@ class AnnotationHandleUtilsTest {
                 .flatMap(klass -> AnnotationHandleUtils.getMethodsAnnotatedWith(klass, RequestMapping.class).stream())
                 .collect(Collectors.toList());
 
-        assertThat(methods).contains(TestController.class.getDeclaredMethods());
+        for(Method method : TestController.class.getMethods()){
+            boolean isSearched = methods.contains(method);
+            boolean isPresentInReal = method.isAnnotationPresent(RequestMapping.class);
+
+            assertThat(isSearched).isEqualTo(isPresentInReal);
+        }
     }
 }

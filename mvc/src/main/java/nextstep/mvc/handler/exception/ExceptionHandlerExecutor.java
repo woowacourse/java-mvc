@@ -1,24 +1,27 @@
-package nextstep.mvc.exception.handler;
+package nextstep.mvc.handler.exception;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import nextstep.mvc.exception.MvcComponentException;
 import nextstep.mvc.support.annotation.ControllerAnnotationUtils;
 import nextstep.mvc.support.annotation.ExceptionHandlerAnnotationUtils;
+import nextstep.mvc.view.ModelAndView;
 
-public class AnnotationExceptionHandlerMapping {
+public class ExceptionHandlerExecutor {
 
     private final Map<Class<?>, ExceptionHandlerExecution> handlerExecutions;
 
-    public AnnotationExceptionHandlerMapping(String... basePackages) {
+    public ExceptionHandlerExecutor(String... basePackages) {
         this.handlerExecutions = new HashMap<>();
-        Arrays.stream(basePackages).forEach(this::register);
+        init(basePackages);
     }
 
-    public Object getHandler(Class<?> exceptionType) {
-        return handlerExecutions.get(exceptionType);
+    public void init(String... basePackages){
+        Arrays.stream(basePackages).forEach(this::register);
     }
 
     private void register(String path) {
@@ -29,10 +32,22 @@ public class AnnotationExceptionHandlerMapping {
         }
     }
 
+    public ModelAndView execute(Exception exception) throws Exception {
+        if(!handlerExecutions.containsKey(exception.getClass())){
+            throw exception;
+        }
+        ExceptionHandlerExecution handlerExecution = (ExceptionHandlerExecution)getHandler(exception.getClass());
+        return handlerExecution.handle(exception);
+    }
+
+    private Object getHandler(Class<?> exceptionType) {
+        return handlerExecutions.get(exceptionType);
+    }
+
     private void registerHandler(Method method, ExceptionHandlerExecution handler) {
         Class<?> exceptionType = ExceptionHandlerAnnotationUtils.getHandleExceptionType(method);
         if (handlerExecutions.containsKey(exceptionType)) {
-            throw new IllegalArgumentException("중복 정의된 Exception Handler 입니다.");
+            throw new MvcComponentException("중복 정의된 Exception Handler 입니다.");
         }
         handlerExecutions.putIfAbsent(exceptionType, handler);
     }

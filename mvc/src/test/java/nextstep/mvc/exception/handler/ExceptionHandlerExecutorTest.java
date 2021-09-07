@@ -3,21 +3,22 @@ package nextstep.mvc.exception.handler;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import nextstep.mvc.exception.NotFoundException;
+import nextstep.mvc.exception.UnHandledRequestException;
+import nextstep.mvc.handler.exception.ExceptionHandlerExecutor;
+import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AnnotationExceptionHandlerMappingTest {
+class ExceptionHandlerExecutorTest {
 
     @DisplayName("ExceptionHandler 어노테이션을 기준으로 핸들러를 찾는다")
     @Test
-    void getHandler() {
-        AnnotationExceptionHandlerMapping handlerMapping = new AnnotationExceptionHandlerMapping("samples");
-        Object handler = handlerMapping.getHandler(NotFoundException.class);
-        ExceptionHandlerExecution handlerExecution = (ExceptionHandlerExecution) handler;
+    void getHandler() throws Exception {
+        ExceptionHandlerExecutor handlerExecutor = new ExceptionHandlerExecutor("samples");
+        ModelAndView modelAndView = handlerExecutor.execute(new UnHandledRequestException());
 
-        assertThat(handlerExecution).isNotNull();
+        assertThat(modelAndView.getViewName()).isEqualTo("404.html");
     }
 
     @Disabled
@@ -25,7 +26,8 @@ class AnnotationExceptionHandlerMappingTest {
     @Test
     void registerWithDuplicatedException() {
         assertThatThrownBy(() -> {
-            new AnnotationExceptionHandlerMapping("samples");
+            ExceptionHandlerExecutor handlerExecutor = new ExceptionHandlerExecutor("samples");
+            new ExceptionHandlerExecutor("samples");
         }).isInstanceOf(IllegalArgumentException.class);
     }
 }

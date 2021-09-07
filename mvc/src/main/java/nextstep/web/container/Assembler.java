@@ -7,6 +7,7 @@ import nextstep.mvc.adaptor.ControllerAdapter;
 import nextstep.mvc.adaptor.HandlerAdapter;
 import nextstep.mvc.adaptor.HandlerAdapters;
 import nextstep.mvc.adaptor.HandlerExecutionAdapter;
+import nextstep.mvc.handler.exception.ExceptionHandlerExecutor;
 import nextstep.mvc.handler.tobe.HandlerMappings;
 import nextstep.mvc.view.resolver.ViewResolver;
 import nextstep.mvc.view.resolver.ViewResolverImpl;
@@ -19,8 +20,9 @@ public class Assembler {
         HandlerMappings handlerMappings = new HandlerMappings();
         HandlerAdapters handlerAdapters = handlerAdaptors();
         ViewResolver viewResolver = new ViewResolverImpl();
+        ExceptionHandlerExecutor exceptionHandlerExecutor = new ExceptionHandlerExecutor();
 
-        dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters, viewResolver);
+        dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters, viewResolver, exceptionHandlerExecutor);
     }
 
     public DispatcherServlet getDispatcherServlet() {

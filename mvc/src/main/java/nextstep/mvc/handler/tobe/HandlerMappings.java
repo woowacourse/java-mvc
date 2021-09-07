@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import nextstep.mvc.exception.NotFoundException;
+import nextstep.mvc.exception.UnHandledRequestException;
 
 public class HandlerMappings {
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
@@ -22,6 +22,6 @@ public class HandlerMappings {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(()-> new UnHandledRequestException("처리할 수 있는 핸들러가 없습니다."));
     }
 }
