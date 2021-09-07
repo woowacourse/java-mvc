@@ -6,6 +6,10 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+
 dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'com.google.guava:guava:29.0-jre'
