@@ -12,9 +12,9 @@
   - [x] HandlerExecution
   - [x] HandlerExecutions
   - [x] HandlerKey
-  - [ ] JspView
-  - [ ] ModelAndView
-  - [ ] DispatcherServlet
+  - [ ] ~~JspView~~ 도저히 어떻게 테스트를 작성할지 모르겠다...!
+  - [x] ModelAndView
+  - [ ] ~~DispatcherServlet~~ 역시나 어떻게 테스트를 작성할지 모르겠다...!
   - [ ] HandlerAdapters
   - [ ] HandlerMappings
 
