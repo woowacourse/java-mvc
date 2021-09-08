@@ -28,9 +28,41 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Object targetPackage : basePackage) {
-            Reflections reflections = new Reflections(targetPackage);
+        if (basePackage.length != 0) {
+            for (Object targetPackage : basePackage) {
+                Reflections reflections = new Reflections(targetPackage);
 
+                Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+
+                for (Class<?> clazz : controllers) {
+                    Method[] methods = clazz.getDeclaredMethods();
+                    for (Method method : methods) {
+                        if (method.isAnnotationPresent(RequestMapping.class)) {
+
+                            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+                            String value = annotation.value();
+                            RequestMethod[] method1 = annotation.method();
+                            for (RequestMethod requestMethod : method1) {
+                                HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+
+                                try {
+                                    HandlerExecution handlerExecution = new HandlerExecution(method,
+                                            clazz.getConstructor().newInstance());
+
+                                    handlerExecutions.put(handlerKey, handlerExecution);
+                                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                                    log.error(e.toString());
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+
+            }
+
+            Reflections reflections = new Reflections();
             Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
             for (Class<?> clazz : controllers) {
@@ -43,20 +75,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                         RequestMethod[] method1 = annotation.method();
                         for (RequestMethod requestMethod : method1) {
                             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                            HandlerExecution handlerExecution = null;
+
                             try {
-                                handlerExecution = new HandlerExecution(method, clazz.getConstructor().newInstance());
+                                HandlerExecution handlerExecution = new HandlerExecution(method,
+                                        clazz.getConstructor().newInstance());
+
+                                handlerExecutions.put(handlerKey, handlerExecution);
                             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                                 log.error(e.toString());
                             }
-                            handlerExecutions.put(handlerKey, handlerExecution);
                         }
 
                     }
                 }
             }
-
-
         }
 
     }
