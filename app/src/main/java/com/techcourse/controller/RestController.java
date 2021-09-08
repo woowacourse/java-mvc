@@ -18,42 +18,29 @@ public class RestController {
 
     private static final Logger log = LoggerFactory.getLogger(RestController.class);
 
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView showLogin(HttpServletRequest request, HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
+        }
 
-//    @RequestMapping(value = "/" , method = RequestMethod.GET)
-//    public String main(HttpServletRequest request, HttpServletResponse response){
-//        return "/index.jsp";
-//    }
-//
-//    @RequestMapping(value="/login", method = RequestMethod.POST)
-//    public String login(HttpServletRequest request, HttpServletResponse response){
-//        if (UserSession.isLoggedIn(request.getSession())) {
-//            return "redirect:/index.jsp";
-//        }
-//
-//        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
-//                .map(user -> {
-//                    log.info("User : {}", user);
-//                    return login(request, user);
-//                })
-//                .orElse("redirect:/401.jsp");
-//    }
-//
-//    @RequestMapping(value = "login", method=RequestMethod.GET)
-//    public String showLogin(HttpServletRequest request, HttpServletResponse response){
-//        return UserSession.getUserFrom(request.getSession())
-//                .map(user -> {
-//                    log.info("logged in {}", user.getAccount());
-//                    return "redirect:/index.jsp";
-//                })
-//                .orElse("/login.jsp");
-//    }
-//
-//    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-//    public String logout(HttpServletRequest request, HttpServletResponse response){
-//        final HttpSession session = request.getSession();
-//        session.removeAttribute(UserSession.SESSION_KEY);
-//        return "redirect:/";
-//    }
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
+                .map(user -> {
+                    log.info("User : {}", user);
+                    return new ModelAndView(new JspView(login(request, user)));
+                })
+                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+        return UserSession.getUserFrom(request.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                })
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
+    }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
@@ -63,18 +50,12 @@ public class RestController {
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        JspView jspView = new JspView("redirect:/index.jsp");
-        ModelAndView modelAndView = new ModelAndView(jspView);
-
-        return modelAndView;
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView showResister(HttpServletRequest request, HttpServletResponse response) {
-        JspView jspView = new JspView("/register.jsp");
-        ModelAndView modelAndView = new ModelAndView(jspView);
-
-        return modelAndView;
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 
     private String login(HttpServletRequest request, User user) {

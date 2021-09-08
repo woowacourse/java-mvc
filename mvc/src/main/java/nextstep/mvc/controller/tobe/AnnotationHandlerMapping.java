@@ -31,66 +31,45 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (basePackage.length != 0) {
             for (Object targetPackage : basePackage) {
                 Reflections reflections = new Reflections(targetPackage);
-
-                Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-                for (Class<?> clazz : controllers) {
-                    Method[] methods = clazz.getDeclaredMethods();
-                    for (Method method : methods) {
-                        if (method.isAnnotationPresent(RequestMapping.class)) {
-
-                            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                            String value = annotation.value();
-                            RequestMethod[] method1 = annotation.method();
-                            for (RequestMethod requestMethod : method1) {
-                                HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-
-                                try {
-                                    HandlerExecution handlerExecution = new HandlerExecution(method,
-                                            clazz.getConstructor().newInstance());
-
-                                    handlerExecutions.put(handlerKey, handlerExecution);
-                                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                                    log.error(e.toString());
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-
+                register(reflections);
             }
+            return;
+        }
+        Reflections reflections = new Reflections();
+        register(reflections);
+    }
 
-            Reflections reflections = new Reflections();
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+    private void register(Reflections reflections) {
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> clazz : controllers) {
+            Method[] methods = clazz.getDeclaredMethods();
+            checkMethodWithAnnotation(clazz, methods);
+        }
+        handlerExecutions.keySet().forEach(path ->
+                log.info("Path : {}, Controller : {}", path, handlerExecutions.get(path).getClass()));
+    }
 
-            for (Class<?> clazz : controllers) {
-                Method[] methods = clazz.getDeclaredMethods();
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-
-                        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                        String value = annotation.value();
-                        RequestMethod[] method1 = annotation.method();
-                        for (RequestMethod requestMethod : method1) {
-                            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-
-                            try {
-                                HandlerExecution handlerExecution = new HandlerExecution(method,
-                                        clazz.getConstructor().newInstance());
-
-                                handlerExecutions.put(handlerKey, handlerExecution);
-                            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                                log.error(e.toString());
-                            }
-                        }
-
-                    }
-                }
+    private void checkMethodWithAnnotation(Class<?> clazz, Method[] methods) {
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                setHandlerExecutions(clazz, method);
             }
         }
+    }
 
+    private void setHandlerExecutions(Class<?> clazz, Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        String value = annotation.value();
+        RequestMethod[] method1 = annotation.method();
+        for (RequestMethod requestMethod : method1) {
+            try {
+                HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+                HandlerExecution handlerExecution = new HandlerExecution(method, clazz.getConstructor().newInstance());
+                handlerExecutions.put(handlerKey, handlerExecution);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                log.error(e.toString());
+            }
+        }
     }
 
     public Object getHandler(HttpServletRequest request) {
