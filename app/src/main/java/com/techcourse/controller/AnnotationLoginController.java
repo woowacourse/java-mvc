@@ -18,8 +18,8 @@ public class AnnotationLoginController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationLoginController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView getLoginPage(HttpServletRequest req, HttpServletResponse res) {
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
@@ -36,7 +36,7 @@ public class AnnotationLoginController {
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
-                    log.info("User : {}", user);
+                    log.info("login : {}", user.getAccount());
                     return login(req, user);
                 })
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));

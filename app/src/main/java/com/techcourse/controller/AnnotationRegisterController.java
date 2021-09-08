@@ -17,8 +17,8 @@ public class AnnotationRegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationRegisterController.class);
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView getRegisterPage(HttpServletRequest req, HttpServletResponse res) {
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 
