@@ -3,7 +3,7 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
