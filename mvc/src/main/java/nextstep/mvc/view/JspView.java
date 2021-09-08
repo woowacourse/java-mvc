@@ -1,5 +1,6 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -13,7 +14,10 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private final String viewName;
+
     public JspView(String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
@@ -25,6 +29,14 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
+
         // todo
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            return;
+        }
+
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
