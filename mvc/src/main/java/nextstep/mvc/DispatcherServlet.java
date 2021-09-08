@@ -42,21 +42,31 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object controller = getController(request);
-            if (controller instanceof Controller) {
-                Controller controller2 = (Controller) controller;
-                final String viewName = controller2.execute(request, response);
-                move(viewName, request, response);
-            }
-            if (controller instanceof HandlerExecution) {
-                HandlerExecution execution = (HandlerExecution) controller;
-                ModelAndView modelAndView = execution.handle(request, response);
-                View view = modelAndView.getView();
-                view.render(modelAndView.getModel(), request, response);
-
-            }
+            renderString(request, response, controller);
+            renderModelAndView(request, response, controller);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void renderModelAndView(HttpServletRequest request, HttpServletResponse response, Object controller)
+            throws Exception {
+        if (controller instanceof HandlerExecution) {
+            HandlerExecution execution = (HandlerExecution) controller;
+            ModelAndView modelAndView = execution.handle(request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+
+        }
+    }
+
+    private void renderString(HttpServletRequest request, HttpServletResponse response, Object controller)
+            throws Exception {
+        if (controller instanceof Controller) {
+            Controller controller2 = (Controller) controller;
+            final String viewName = controller2.execute(request, response);
+            move(viewName, request, response);
         }
     }
 
