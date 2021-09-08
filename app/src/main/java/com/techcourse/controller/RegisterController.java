@@ -4,6 +4,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -31,6 +32,8 @@ public class RegisterController {
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
+        final HttpSession session = req.getSession();
+        session.setAttribute(UserSession.SESSION_KEY, user);
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
