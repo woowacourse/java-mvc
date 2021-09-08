@@ -32,6 +32,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private Set<Class<?>> getHandlerClasses() {
+        final Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
     private void putHandlerExecutionsOfHandlerClasses(Set<Class<?>> handlerClasses) {
         for (Class<?> handlerClass : handlerClasses) {
             log.info("Annotation Controller 등록 : {}", handlerClass.getName());
@@ -48,11 +53,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             log.error("핸들러 클래스 {} 의 인스턴스 생성 중 에러가 발생했습니다.", handlerClass.getName());
             throw new IllegalStateException(String.format("핸들러 클래스 %s 의 인스턴스 생성 중 에러가 발생했습니다.", handlerClass.getName()));
         }
-    }
-
-    private Set<Class<?>> getHandlerClasses() {
-        final Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private void putHandlerExecutionsOfHandlerMethods(Object handlerInstance, Method[] methods) {
