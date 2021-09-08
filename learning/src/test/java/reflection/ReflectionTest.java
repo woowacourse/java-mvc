@@ -126,7 +126,9 @@ class ReflectionTest {
         final Student student = (Student) studentClass.getConstructor().newInstance();
         final Field field = student.getClass().getDeclaredField("age");
 
-        field.setAccessible(true);
+        if (!field.trySetAccessible()) {
+            throw new IllegalArgumentException("해당 private field의 acceesible flag를 true로 설정할 수 없습니다.");
+        }
 
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
