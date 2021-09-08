@@ -30,6 +30,8 @@ public class AnnotationRegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
+        log.info("register {}", user);
+
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
