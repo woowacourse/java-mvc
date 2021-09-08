@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 public class ModelAndView {
 
     private final View view;
@@ -14,6 +17,9 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
+    public void render(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        view.render(model, request, response);
+    }
     public ModelAndView addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
@@ -30,4 +36,5 @@ public class ModelAndView {
     public View getView() {
         return view;
     }
+
 }
