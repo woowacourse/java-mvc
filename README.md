@@ -19,15 +19,22 @@
 - [x] 학습테스트 완료
 
 ### Annotation 기반 MVC 프레임워크 구현 
-- [ ] Annotation 기반 Handler 구현
+- [x] Annotation 기반 Handler 구현
+  - [x] `@Controller` annotation이 붙은 클래스 수집
+  - [x] `@RequestMapping`이 붙은 메서드 가져와서 `HandlerKey`에 매핑
+  - [x] 해당 메서드와 메서드가 선언된 class로 `HandlerExecution` 생성 
+  - [x] `getHandler()` 로 적합한 handler 호출
 
 - [ ] HandlerAdapter 구현 
     - [ ] 인터페이스 기반 컨트롤러 handler 처리 adapter
     - [ ] 어노테이션 기반 컨트롤러 handler 처리 adapter
 
-- [ ] ModelAndView 객체 생성
-
+- [ ] ModelAndView 구현
+  - [ ] `JspView.java` todo 구현
+  
 - [ ] ViewResolver 구현
+
+## 구현 
 
 ## 학습 내용 
 - 추가 예정 
