@@ -9,7 +9,7 @@
   - [x] ManualHandlerAdapter
   - [x] AnnotationHandlerAdapter
   - [x] AnnotationHandlerMapping
-  - [ ] HandlerExecution
+  - [x] HandlerExecution
   - [ ] HandlerExecutions
   - [x] HandlerKey
   - [ ] JspView
