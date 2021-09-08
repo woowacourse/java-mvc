@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import samples.TestController;
+import samples.AnnotationTestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -34,7 +34,7 @@ class AnnotationHandlerMappingTest {
         final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
 
         // then
-        assertThat(handlerExecution.getHandler()).isExactlyInstanceOf(TestController.class);
+        assertThat(handlerExecution.getHandler()).isExactlyInstanceOf(AnnotationTestController.class);
     }
 
     @Test
@@ -51,6 +51,6 @@ class AnnotationHandlerMappingTest {
         final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
 
         // then
-        assertThat(handlerExecution.getHandler()).isExactlyInstanceOf(TestController.class);
+        assertThat(handlerExecution.getHandler()).isExactlyInstanceOf(AnnotationTestController.class);
     }
 }

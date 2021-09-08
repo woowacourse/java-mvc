@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
-import samples.TestController;
+import samples.AnnotationTestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -28,7 +28,7 @@ class HandlerExecutionTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final TestController handler = new TestController();
+        final AnnotationTestController handler = new AnnotationTestController();
         final Method method = handler.getClass().getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         final HandlerExecution handlerExecution = new HandlerExecution(handler, method);
 
