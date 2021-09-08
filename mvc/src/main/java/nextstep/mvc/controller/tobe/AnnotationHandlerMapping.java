@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -27,22 +28,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        final Set<Class<?>> handlerClasses = getHandlerClasses();
-        putHandlerExecutionsOfHandlerClasses(handlerClasses);
+        final Set<Object> handlers = getHandlers();
+        putHandlerExecutionsOfHandlers(handlers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> getHandlerClasses() {
+    private Set<Object> getHandlers() {
         final Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> handlerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        return handlerClasses.stream()
+                .map(this::createHandlerInstance)
+                .collect(Collectors.toSet());
     }
 
-    private void putHandlerExecutionsOfHandlerClasses(Set<Class<?>> handlerClasses) {
-        for (Class<?> handlerClass : handlerClasses) {
+    private void putHandlerExecutionsOfHandlers(Set<Object> handlers) {
+        for (Object handler : handlers) {
+            final Class<?> handlerClass = handler.getClass();
             log.info("Annotation Controller 등록 : {}", handlerClass.getName());
             final Method[] methods = handlerClass.getDeclaredMethods();
-            final Object handlerInstance = createHandlerInstance(handlerClass);
-            putHandlerExecutionsOfHandlerMethods(handlerInstance, methods);
+            putHandlerExecutionsOfHandlerMethods(handler, methods);
         }
     }
 
@@ -55,16 +59,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void putHandlerExecutionsOfHandlerMethods(Object handlerInstance, Method[] methods) {
+    private void putHandlerExecutionsOfHandlerMethods(Object handler, Method[] methods) {
         for (Method method : methods) {
-            log.info("Annotation Controller {} 의 method {} 등록", handlerInstance.getClass().getName(), method.getName());
+            log.info("Annotation Controller {} 의 method {} 등록", handler.getClass().getName(), method.getName());
             final RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
 
             final String requestUri = requestMappingAnnotation.value();
-            final RequestMethod requestMethod = requestMappingAnnotation.method()[0];
+            final RequestMethod requestMethod = requestMappingAnnotation.method();
 
             final HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(handlerInstance, method);
+            final HandlerExecution handlerExecution = new HandlerExecution(handler, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
