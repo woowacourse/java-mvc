@@ -1,26 +1,26 @@
-package nextstep.mvc.mapping;
+package nextstep.mvc;
 
 import nextstep.mvc.exception.ControllerScanException;
 
-public class ControllerDefinition {
+public class BeanDefinition {
     private final Class<?> clazz;
-    private final Object controller;
+    private final Object bean;
 
-    public ControllerDefinition(Class<?> clazz) {
+    public BeanDefinition(Class<?> clazz) {
         this.clazz = clazz;
-        this.controller = classToBean(clazz);
+        this.bean = classToBean(clazz);
     }
 
-    private Object classToBean(Class<?> controllerClass) {
+    private Object classToBean(Class<?> beanType) {
         try {
-            return controllerClass.getConstructor().newInstance();
+            return beanType.getConstructor().newInstance();
         } catch (Exception e) {
             throw new ControllerScanException("어노테이션 기반 Controller를 찾는데 실패하였습니다.");
         }
     }
 
-    public Object getController() {
-        return controller;
+    public Object getBean() {
+        return bean;
     }
 
     @Override
