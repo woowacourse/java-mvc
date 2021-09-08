@@ -1,14 +1,13 @@
 package nextstep.mvc.mapping;
 
-import nextstep.mvc.exception.ControllerScanException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ControllerScanner {
 
@@ -17,23 +16,17 @@ public class ControllerScanner {
     private ControllerScanner() {
     }
 
-    public static Map<Class<?>, Object> getControllers(Object[] basePackage) {
+    public static List<Object> getControllers(Object[] basePackage) {
         log.info("Scan Controllers In {} !", basePackage);
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        return instantiateControllers(controllerClasses);
+        List<ControllerDefinition> controllerDefinitions = instantiateControllers(controllerClasses);
+        return controllerDefinitions.stream().map(ControllerDefinition::getController).collect(Collectors.toList());
     }
 
-    private static Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerClasses) {
-        try {
-            Map<Class<?>, Object> controllers = new HashMap<>();
-            for (Class<?> controllerClass : controllerClasses) {
-                Object controller = controllerClass.getConstructor().newInstance();
-                controllers.put(controllerClass, controller);
-            }
-            return controllers;
-        } catch (Exception e) {
-            throw new ControllerScanException("어노테이션 기반 Controller를 찾는데 실패하였습니다.");
-        }
+    private static List<ControllerDefinition> instantiateControllers(Set<Class<?>> controllerClasses) {
+        return controllerClasses.stream()
+                .map(ControllerDefinition::new)
+                .collect(Collectors.toList());
     }
 }
