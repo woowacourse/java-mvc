@@ -4,6 +4,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -24,6 +25,15 @@ class ServletTest {
      * threads max 1
      */
 
+    @DisplayName("ㅎㅎ")
+    @Test
+    void tomcatMaxThread() {
+        final Tomcat tomcat = createTomcat();
+        final Context context = tomcat.addContext("", null);
+
+
+    }
+
     @Test
     void 서블릿_구현_테스트() throws LifecycleException, IOException {
         final Tomcat tomcat = createTomcat();
@@ -39,7 +49,7 @@ class ServletTest {
         // 톰캣 띄우고
         tomcat.start();
 
-        // 간단하게 HttpURLConnection을 사용해서 톰캣에 연결한다.
+        // 간단하게 HttpURLConnection 을 사용해서 톰캣에 연결한다.
         final HttpURLConnection connection = connectTomcat("/hello-world");
 
         final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -47,11 +57,6 @@ class ServletTest {
 
         // 서블릿 응답값 확인
         assertThat(actual).isEqualTo("Hello world");
-    }
-
-    private HttpURLConnection connectTomcat(String path) throws IOException {
-        final URL url = new URL("http://localhost:8080" + path);
-        return (HttpURLConnection) url.openConnection();
     }
 
     private Tomcat createTomcat() {
@@ -64,5 +69,10 @@ class ServletTest {
     private void skipBindOnInit(Tomcat tomcat) {
         final Connector connector = tomcat.getConnector();
         connector.setProperty("bindOnInit", "false");
+    }
+
+    private HttpURLConnection connectTomcat(String path) throws IOException {
+        final URL url = new URL("http://localhost:8080" + path);
+        return (HttpURLConnection) url.openConnection();
     }
 }
