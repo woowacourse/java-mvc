@@ -26,38 +26,38 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
-        Set<Object> controllers = new HashSet<>();
-        for (Class<?> controllerType : controllerTypes) {
-            try {
-                controllers.add(controllerType.getDeclaredConstructor().newInstance());
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                log.info("AnnotationHandlerMapping#initialize, 인스턴스화를 할 수 없습니다.");
-            }
-        }
-
+        log.info("Scan @Controller from basePackage#{}", basePackage);
+        Set<Object> controllers = ControllerScanner.scan(basePackage);
         for (Object controller : controllers) {
-            Set<Method> methods = new HashSet<>();
-            Method[] declaredMethods = controller.getClass().getDeclaredMethods();
+            Set<Method> methods = methods(controller);
+            methods.forEach(method -> putToHandlerExecutions(controller, method));
+        }
+    }
 
-            // controller에 선언되어있는 method들을 methods에 담는다.
-            for (Method method : declaredMethods) {
-                if (Arrays.stream(method.getDeclaredAnnotations()).anyMatch(annotation -> annotation.annotationType().equals(RequestMapping.class))) {
-                    methods.add(method);
-                }
-            }
+    private void putToHandlerExecutions(Object controller, Method method) {
+        // RequestMapping 어노테이션이 붙은 annotation의 uri와 value를 가져와서 handlerExecutions에 담는다.
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        String uri = annotation.value();
 
-            // RequestMapping 어노테이션이 붙은 annotation의 uri와 value를 가져와서 handlerExecutions에 담는다.
-            for (Method method : methods) {
-                RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                String uri = annotation.value();
+        for (RequestMethod requestMethod : annotation.method()) {
+            log.info("Path : {} {}, {} to Handler", requestMethod, uri, controller.getClass().getSimpleName());
+            handlerExecutions.put(new HandlerKey(uri, requestMethod), new HandlerExecution(controller, method));
+        }
+    }
 
-                for (RequestMethod requestMethod : annotation.method()) {
-                    handlerExecutions.put(new HandlerKey(uri, requestMethod), new HandlerExecution(controller, method));
-                }
+    public Set<Method> methods (Object controller) {
+        Set<Method> methods = new HashSet<>();
+        Method[] declaredMethods = controller.getClass().getDeclaredMethods();
+
+        // controller에 선언되어있는 method들을 methods에 담는다.
+        for (Method method : declaredMethods) {
+            if (Arrays.stream(method.getDeclaredAnnotations())
+                    .anyMatch(annotation -> annotation.annotationType().equals(RequestMapping.class)))
+            {
+                methods.add(method);
             }
         }
+        return methods;
     }
 
     public Object getHandler(HttpServletRequest request) {
