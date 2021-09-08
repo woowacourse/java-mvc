@@ -33,7 +33,7 @@ class AnnotationLoginControllerTest {
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
-        when(session.getAttribute("user")).thenReturn(null);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(null);
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
@@ -51,7 +51,8 @@ class AnnotationLoginControllerTest {
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
-        when(session.getAttribute("user")).thenReturn(new User(1L, "account", "password", "email@email.com"));
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(
+                new User(1L, "account", "password", "email@email.com"));
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
@@ -69,7 +70,7 @@ class AnnotationLoginControllerTest {
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(session);
-        when(session.getAttribute("user")).thenReturn(null);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(null);
 
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("password");
@@ -90,7 +91,7 @@ class AnnotationLoginControllerTest {
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(session);
-        when(session.getAttribute("user")).thenReturn(null);
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(null);
 
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("notPassword");
@@ -111,7 +112,8 @@ class AnnotationLoginControllerTest {
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(session);
-        when(session.getAttribute("user")).thenReturn(new User(1L, "account", "password", "email@email.com"));
+        when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(
+                new User(1L, "account", "password", "email@email.com"));
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
