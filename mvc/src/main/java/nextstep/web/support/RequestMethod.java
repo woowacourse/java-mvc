@@ -5,7 +5,7 @@ import java.util.Arrays;
 public enum RequestMethod {
     GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
 
-    public static RequestMethod find(String methodName){
+    public static RequestMethod find(String methodName) {
         return Arrays.stream(RequestMethod.values())
                 .filter(method -> method.name().equalsIgnoreCase(methodName))
                 .findFirst()
