@@ -1,9 +1,10 @@
-package nextstep.mvc;
+package nextstep.mvc.handler.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class HandlerMappings {
 
@@ -21,12 +22,12 @@ public class HandlerMappings {
         this.values.add(handlerMapping);
     }
 
-    public Object get(HttpServletRequest request) {
+    public Optional<Object> get(HttpServletRequest request) {
         return values.stream()
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findAny()
-            .orElseThrow();
+            .or(Optional::empty);
     }
 
     public void initialize() {

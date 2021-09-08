@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
+import nextstep.mvc.handler.mapping.HandlerMapping;
+import nextstep.mvc.handler.mapping.HandlerMappings;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +21,7 @@ class HandlerMappingsTest {
             new TestHandlerMapping2()
         ));
 
-        Object handlerMapping = handlerMappings.get(null);
+        Object handlerMapping = handlerMappings.get(null).get();
         assertThat(handlerMapping).isInstanceOf(TestHandlerMapping2.class);
     }
 

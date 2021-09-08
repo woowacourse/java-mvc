@@ -13,7 +13,7 @@ public class JwpApplication {
 
     private static final Logger log = LoggerFactory.getLogger(JwpApplication.class);
 
-    private static final int DEFAULT_PORT = 8080;
+    private static final int DEFAULT_PORT = 9000;
 
     public static void main(String[] args) throws Exception {
         final int port = defaultPortIfNull(args);
