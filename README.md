@@ -10,7 +10,7 @@
   - [x] AnnotationHandlerAdapter
   - [x] AnnotationHandlerMapping
   - [x] HandlerExecution
-  - [ ] HandlerExecutions
+  - [x] HandlerExecutions
   - [x] HandlerKey
   - [ ] JspView
   - [ ] ModelAndView
