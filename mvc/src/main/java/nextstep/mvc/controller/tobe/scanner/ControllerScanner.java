@@ -21,10 +21,9 @@ public class ControllerScanner {
         Map<Class<?>, Object> controllers = new HashMap<>();
         Set<Class<?>> annotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Object controller : annotatedWithController.toArray()) {
-            Class<?> controllerClass = (Class<?>) controller;
-            controllers.put(controllerClass, createInstance(controllerClass));
-        }
+        annotatedWithController.forEach(controller ->
+                controllers.put(controller, createInstance(controller))
+        );
 
         return controllers;
     }
