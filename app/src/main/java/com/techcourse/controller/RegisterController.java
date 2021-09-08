@@ -9,17 +9,15 @@ import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.RequestParam;
 import nextstep.web.support.RequestMethod;
 
 @Controller
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
-        final User user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
+    public ModelAndView save(@RequestParam String account, @RequestParam String password, @RequestParam String email) {
+        final User user = new User(2, account, password, email);
         InMemoryUserRepository.save(user);
 
         return new ModelAndView("redirect:/index.jsp");

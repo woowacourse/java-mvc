@@ -9,6 +9,4 @@ public @interface RequestParam {
     String value() default "";
 
     String name() default "";
-
-    boolean required() default true;
 }

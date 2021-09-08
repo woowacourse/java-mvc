@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import nextstep.mvc.exception.MvcComponentException;
+import nextstep.mvc.handler.param.ArgumentResolver;
 import nextstep.mvc.support.annotation.RequestMappingAnnotationUtils;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.support.RequestMethod;
@@ -28,7 +29,9 @@ public class HandlerExecution {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Throwable {
         try {
             Method handler = findRequestHandler(request);
-            return (ModelAndView) handler.invoke(controller, request, response);
+            Object[] arguments = ArgumentResolver.resolveRequestParam(controller, handler, request, response);
+
+            return (ModelAndView) handler.invoke(controller, arguments);
         } catch (InvocationTargetException invocationTargetException){
             throw invocationTargetException.getCause();
         }

@@ -7,6 +7,7 @@ import java.util.List;
 import nextstep.web.annotation.ExceptionHandler;
 
 public class ExceptionHandlerAnnotationUtils {
+
     private ExceptionHandlerAnnotationUtils() {
     }
 
