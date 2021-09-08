@@ -100,7 +100,7 @@ public class ApplicationContext {
         return createBean(clazz);
     }
 
-    private Object createBean(Class<?> clazz) {
+    private static Object createBean(Class<?> clazz) {
         try {
             Constructor<?> constructor = findAutowiredConstructor(clazz);
             Class<?>[] parameterTypes = constructor.getParameterTypes();
@@ -111,7 +111,7 @@ public class ApplicationContext {
         }
     }
 
-    private Constructor<?> findAutowiredConstructor(Class<?> clazz) {
+    private static Constructor<?> findAutowiredConstructor(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredConstructors())
                      .filter(c -> c.isAnnotationPresent(Autowired.class))
                      .findAny()
@@ -124,7 +124,7 @@ public class ApplicationContext {
                      });
     }
 
-    private Object[] getParametersForInjection(Class<?>[] parameterTypes) {
+    private static Object[] getParametersForInjection(Class<?>[] parameterTypes) {
         Object[] fields = new Object[parameterTypes.length];
         int index = 0;
         for (Class<?> parameter : parameterTypes) {
@@ -141,17 +141,9 @@ public class ApplicationContext {
                 return (T) bean;
             }
         }
-        return registerBean(type);
-    }
-
-    private static <T> T registerBean(Class<T> type) {
-        try {
-            T instance = type.getConstructor().newInstance();
-            String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, type.getSimpleName());
-            beans.put(beanName, instance);
-            return instance;
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException();
-        }
+        String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, type.getSimpleName());
+        T bean = (T) createBean(type);
+        beans.put(beanName, bean);
+        return bean;
     }
 }
