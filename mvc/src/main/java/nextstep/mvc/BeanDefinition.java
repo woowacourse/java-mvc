@@ -1,6 +1,6 @@
 package nextstep.mvc;
 
-import nextstep.mvc.exception.ControllerScanException;
+import nextstep.mvc.exception.GenerateBeanException;
 
 public class BeanDefinition {
     private final Class<?> clazz;
@@ -15,7 +15,7 @@ public class BeanDefinition {
         try {
             return beanType.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new ControllerScanException("어노테이션 기반 Controller를 찾는데 실패하였습니다.");
+            throw new GenerateBeanException("빈 생성을 실패하였습니다.");
         }
     }
 
