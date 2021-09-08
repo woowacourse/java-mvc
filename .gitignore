@@ -123,4 +123,4 @@ gen
 # Ignore Gradle build output directory
 build
 
-/tomcat.8080/
+/tomcat./
