@@ -1,7 +1,10 @@
 package nextstep.mvc.controller.tobe;
 
+import air.context.ApplicationContext;
+import air.context.ApplicationContextProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +19,10 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        ApplicationContext context = new ApplicationContext("samples");
+        ApplicationContextProvider.setApplicationContext(context);
+        context.initializeContext();
+        handlerMapping = context.findBeanByType(AnnotationHandlerMapping.class);
         handlerMapping.initialize();
     }
 

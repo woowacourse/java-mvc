@@ -20,7 +20,7 @@ public class Application {
     private static final int DEFAULT_PORT = 8080;
 
     public static void run(String[] args) throws LifecycleException {
-        ApplicationContext context = new ApplicationContext();
+        ApplicationContext context = new ApplicationContext("air", "com.techcourse", "nextstep");
         ApplicationContextProvider.setApplicationContext(context);
         context.initializeContext();
 

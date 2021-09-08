@@ -21,7 +21,7 @@ public class ApplicationContext {
     private static final Logger log = LoggerFactory.getLogger(ApplicationContext.class);
 
     private static final Map<Class<?>, Object> DEFAULT_VALUES;
-    private static final String[] BASE_PACKAGES;
+    private static final List<String> BASE_PACKAGES = new ArrayList<>();
     private static final Map<String, Object> BEANS = new ConcurrentHashMap<>();
 
     static {
@@ -32,9 +32,10 @@ public class ApplicationContext {
                 int.class, 0,
                 long.class, (long) 0
         );
-        BASE_PACKAGES = new String[]{
-                "air", "com.techcourse", "nextstep"
-        };
+    }
+
+    public ApplicationContext(String... basePackages) {
+        BASE_PACKAGES.addAll(Arrays.asList(basePackages));
     }
 
     public void initializeContext() {

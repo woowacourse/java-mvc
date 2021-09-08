@@ -5,12 +5,14 @@ import air.context.ApplicationContextProvider;
 import air.annotation.Bean;
 import air.annotation.Configuration;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.resolver.ViewResolver;
 import nextstep.mvc.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.SimpleControllerHandlerAdapter;
 import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.mapping.ManualHandlerMapping;
+import nextstep.mvc.resolver.JspViewResolver;
 
 @Configuration
 public class DispatcherServletConfiguration {
@@ -20,10 +22,14 @@ public class DispatcherServletConfiguration {
     @Bean
     public DispatcherServlet dispatcherServlet() {
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
+
         dispatcherServlet.addHandlerMapping(getHandlerMapping(ManualHandlerMapping.class));
         dispatcherServlet.addHandlerMapping(getHandlerMapping(AnnotationHandlerMapping.class));
+
         dispatcherServlet.addHandlerAdapter(getHandlerAdapter(SimpleControllerHandlerAdapter.class));
         dispatcherServlet.addHandlerAdapter(getHandlerAdapter(AnnotationHandlerAdapter.class));
+
+        dispatcherServlet.addViewResolver(getViewResolver(JspViewResolver.class));
         return dispatcherServlet;
     }
 
@@ -32,6 +38,10 @@ public class DispatcherServletConfiguration {
     }
 
     private HandlerAdapter getHandlerAdapter(Class<? extends HandlerAdapter> clazz) {
+        return context.findBeanByType(clazz);
+    }
+
+    private ViewResolver getViewResolver(Class<? extends ViewResolver> clazz) {
         return context.findBeanByType(clazz);
     }
 }
