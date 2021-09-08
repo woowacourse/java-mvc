@@ -1,13 +1,13 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Map;
 
-public class JsonView implements View {
+public class JsonView extends AbstractView {
 
-    @Override
-    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public JsonView(String viewName) {
+        super(viewName);
     }
 }
