@@ -7,11 +7,15 @@ import nextstep.mvc.view.ModelAndView;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
+    private final Object controllerInstance;
+    private final Method method;
 
     public HandlerExecution(final Object controllerInstance, final Method method) {
+        this.controllerInstance = controllerInstance;
+        this.method = method;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        return (ModelAndView) method.invoke(controllerInstance, request, response);
     }
 }
