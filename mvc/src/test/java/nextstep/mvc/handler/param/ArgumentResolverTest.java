@@ -1,12 +1,7 @@
 package nextstep.mvc.handler.param;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import nextstep.mvc.handler.asis.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.annotation.RequestParam;
 import nextstep.web.annotation.SessionAttribute;
@@ -14,6 +9,11 @@ import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ArgumentResolverTest {
 
@@ -26,7 +26,6 @@ class ArgumentResolverTest {
     void getArguments() {
         Method testMethod = getTestMethod("requestParam");
 
-        Mockito.when(controller instanceof Controller).thenReturn(false);
         Mockito.when(mockRequest.getAttribute("id")).thenReturn("id");
 
         Object[] arguments = ArgumentResolver.resolveRequestParam(controller, testMethod, mockRequest, mockResponse);
@@ -38,7 +37,6 @@ class ArgumentResolverTest {
     void nonExistentValue() {
         Method testMethod = getTestMethod("requestParam");
 
-        Mockito.when(controller instanceof Controller).thenReturn(false);
         Mockito.when(mockRequest.getAttribute("id")).thenReturn(null);
 
         Object[] arguments = ArgumentResolver.resolveRequestParam(controller, testMethod, mockRequest, mockResponse);
@@ -49,8 +47,6 @@ class ArgumentResolverTest {
     @Test
     void httpSession() {
         Method testMethod = getTestMethod("session");
-
-        Mockito.when(controller instanceof Controller).thenReturn(false);
 
         ArgumentResolver.resolveRequestParam(controller, testMethod, mockRequest, mockResponse);
         Mockito.verify(mockRequest).getSession();
@@ -77,14 +73,6 @@ class ArgumentResolverTest {
 class TestController {
     @RequestMapping(value = "/request-param", method = RequestMethod.POST)
     public void requestParam(@RequestParam("id") String id) {
-    }
-
-    @RequestMapping(value = "/request-param-without-value", method = RequestMethod.POST)
-    public void requestParamWithOutValue(@RequestParam String id) {
-    }
-
-    @RequestMapping(value = "/request-param-without-value", method = RequestMethod.POST)
-    public void notRequestParam(HttpServletRequest request) {
     }
 
     @RequestMapping(value = "/request-param-session", method = RequestMethod.POST)
