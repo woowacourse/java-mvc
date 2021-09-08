@@ -3,9 +3,9 @@ package nextstep.mvc.mapping;
 import java.util.HashMap;
 import java.util.Map;
 
+import air.annotation.Component;
 import air.context.ApplicationContext;
 import air.context.ApplicationContextProvider;
-import air.annotation.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.configuration.HandlerConfigurer;
 import nextstep.mvc.controller.asis.Controller;

@@ -1,11 +1,10 @@
 package nextstep.configuration;
 
-import air.context.ApplicationContext;
-import air.context.ApplicationContextProvider;
 import air.annotation.Bean;
 import air.annotation.Configuration;
+import air.context.ApplicationContext;
+import air.context.ApplicationContextProvider;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.resolver.ViewResolver;
 import nextstep.mvc.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.SimpleControllerHandlerAdapter;
@@ -13,6 +12,7 @@ import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.mapping.ManualHandlerMapping;
 import nextstep.mvc.resolver.JspViewResolver;
+import nextstep.mvc.resolver.ViewResolver;
 
 @Configuration
 public class DispatcherServletConfiguration {
