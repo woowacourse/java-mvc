@@ -28,7 +28,7 @@ class AnnotationRegisterControllerTest {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("GET");
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);

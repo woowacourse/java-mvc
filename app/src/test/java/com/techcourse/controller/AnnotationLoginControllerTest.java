@@ -30,7 +30,7 @@ class AnnotationLoginControllerTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
         final HttpSession session = mock(HttpSession.class);
 
-        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
         when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(null);
@@ -48,7 +48,7 @@ class AnnotationLoginControllerTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
         final HttpSession session = mock(HttpSession.class);
 
-        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
         when(session.getAttribute(UserSession.SESSION_KEY)).thenReturn(
