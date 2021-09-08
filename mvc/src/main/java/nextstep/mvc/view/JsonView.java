@@ -10,9 +10,8 @@ import java.util.Map;
 
 public class JsonView extends AbstractView {
 
-    private static final Logger log = LoggerFactory.getLogger(JsonView.class);
-
     public static final String REDIRECT_PREFIX = "redirect:";
+    private static final Logger log = LoggerFactory.getLogger(JsonView.class);
 
     public JsonView(String viewName) {
         super(viewName);

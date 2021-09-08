@@ -10,9 +10,8 @@ import java.util.Map;
 
 public class JspView extends AbstractView {
 
-    private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     public static final String REDIRECT_PREFIX = "redirect:";
+    private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     public JspView(String viewName) {
         super(viewName);

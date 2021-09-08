@@ -43,17 +43,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
             // controller에 선언되어있는 method들을 methods에 담는다.
             for (Method method : declaredMethods) {
-                if (Arrays.stream(method.getDeclaredAnnotations()).anyMatch(annotation -> annotation.annotationType().equals(RequestMapping.class))){
+                if (Arrays.stream(method.getDeclaredAnnotations()).anyMatch(annotation -> annotation.annotationType().equals(RequestMapping.class))) {
                     methods.add(method);
                 }
             }
 
             // RequestMapping 어노테이션이 붙은 annotation의 uri와 value를 가져와서 handlerExecutions에 담는다.
-            for (Method method: methods) {
+            for (Method method : methods) {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                 String uri = annotation.value();
 
-                for (RequestMethod requestMethod: annotation.method()) {
+                for (RequestMethod requestMethod : annotation.method()) {
                     handlerExecutions.put(new HandlerKey(uri, requestMethod), new HandlerExecution(controller, method));
                 }
             }
