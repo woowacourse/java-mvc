@@ -7,12 +7,12 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
-    private final Method method;
     private final Object instance;
+    private final Method method;
 
-    public HandlerExecution(Method method, Object instance) {
-        this.method = method;
+    public HandlerExecution(Object instance, Method method) {
         this.instance = instance;
+        this.method = method;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
