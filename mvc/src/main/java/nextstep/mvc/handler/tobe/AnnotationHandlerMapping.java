@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import nextstep.mvc.assembler.ComponentScanner;
+import nextstep.mvc.handler.asis.Controller;
 import nextstep.mvc.support.annotation.ControllerAnnotationUtils;
 import nextstep.mvc.support.annotation.RequestMappingAnnotationUtils;
 import nextstep.web.support.RequestMethod;
@@ -25,7 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Arrays.stream(basePackages)
                 .flatMap(path -> findControllers(path).stream())
-                .forEach(this::registerController);
+                .forEach(controller -> registerController(controller));
     }
 
     @Override
@@ -40,8 +42,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return ControllerAnnotationUtils.findControllers(path);
     }
 
-    private void registerController(Class<?> controller) {
+    public void registerController(Class<?> controller) {
         List<Method> methods = RequestMappingAnnotationUtils.findByController(controller);
+        methods.stream()
+                .flatMap(key -> RequestMappingAnnotationUtils.getHandlerKeys(key).stream())
+                .forEach(key -> handlerExecutions.put(key, HandlerExecution.of(controller)));
+    }
+
+    public void registerController(Controller controller) {
+        List<Method> methods = RequestMappingAnnotationUtils.findByController(controller.getClass());
         methods.stream()
                 .flatMap(key -> RequestMappingAnnotationUtils.getHandlerKeys(key).stream())
                 .forEach(key -> handlerExecutions.put(key, HandlerExecution.of(controller)));

@@ -17,10 +17,6 @@ public class ExceptionHandlerExecutor {
 
     public ExceptionHandlerExecutor(String... basePackages) {
         this.handlerExecutions = new HashMap<>();
-        init(basePackages);
-    }
-
-    public void init(String... basePackages){
         Arrays.stream(basePackages).forEach(this::register);
     }
 
@@ -47,7 +43,7 @@ public class ExceptionHandlerExecutor {
     private void registerHandler(Method method, ExceptionHandlerExecution handler) {
         Class<?> exceptionType = ExceptionHandlerAnnotationUtils.getHandleExceptionType(method);
         if (handlerExecutions.containsKey(exceptionType)) {
-            throw new MvcComponentException("중복 정의된 Exception Handler 입니다.");
+            throw new MvcComponentException("중복 정의된 Exception Handler 입니다. "+ exceptionType);
         }
         handlerExecutions.putIfAbsent(exceptionType, handler);
     }

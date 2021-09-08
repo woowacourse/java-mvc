@@ -42,10 +42,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    public void registerExceptionHandlerByPath(String... basePackagePath) {
-        this.exceptionHandlerExecutor.init(basePackagePath);
-    }
-
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
@@ -65,8 +61,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappings.getHandler(request);
             return handlerAdapters.service(request, response, handler);
-        } catch (Exception exception) {
-            return exceptionHandlerExecutor.execute(exception);
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            return exceptionHandlerExecutor.execute(e);
         }
     }
 }

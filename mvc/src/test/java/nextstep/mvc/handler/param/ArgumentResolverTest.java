@@ -25,8 +25,7 @@ class ArgumentResolverTest {
     @Test
     void getArguments() {
         Method testMethod = getTestMethod("requestParam");
-
-        Mockito.when(mockRequest.getAttribute("id")).thenReturn("id");
+        Mockito.when(mockRequest.getParameter("id")).thenReturn("id");
 
         Object[] arguments = ArgumentResolver.resolveRequestParam(controller, testMethod, mockRequest, mockResponse);
         assertThat(arguments).isEqualTo(new Object[]{"id"});
@@ -36,8 +35,7 @@ class ArgumentResolverTest {
     @Test
     void nonExistentValue() {
         Method testMethod = getTestMethod("requestParam");
-
-        Mockito.when(mockRequest.getAttribute("id")).thenReturn(null);
+        Mockito.when(mockRequest.getParameter("id")).thenReturn(null);
 
         Object[] arguments = ArgumentResolver.resolveRequestParam(controller, testMethod, mockRequest, mockResponse);
         assertThat(arguments).isEqualTo(new Object[]{null});

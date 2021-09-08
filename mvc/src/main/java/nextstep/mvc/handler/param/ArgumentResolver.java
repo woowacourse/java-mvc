@@ -22,13 +22,13 @@ public class ArgumentResolver {
             return new Object[]{request, response};
         }
         return Arrays.stream(method.getParameters())
-                .map(parameter -> getAttributes(parameter, request, response))
+                .map(parameter -> getParameter(parameter, request, response))
                 .toArray();
     }
 
-    private static Object getAttributes(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
+    private static Object getParameter(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
         if (parameter.getDeclaredAnnotations().length > 0) {
-            return getAttributeByAnnotation(parameter, request);
+            return getParameterByAnnotation(parameter, request);
         }
 
         if (parameter.getType().equals(HttpServletRequest.class)) {
@@ -42,7 +42,7 @@ public class ArgumentResolver {
         throw new UnHandledRequestException("적절하지 않은 인자입니다.");
     }
 
-    private static Object getAttributeByAnnotation(Parameter parameter, HttpServletRequest request) {
+    private static Object getParameterByAnnotation(Parameter parameter, HttpServletRequest request) {
         if (parameter.isAnnotationPresent(RequestParam.class)) {
             String requestParamValue = parameter.getAnnotation(RequestParam.class).value();
             return request.getParameter(requestParamValue);

@@ -17,44 +17,45 @@ public class ComponentScanner {
     private static final Class<? extends Annotation>[] COMPONENT_ANNOTATIONS
             = new Class[]{Component.class, ComponentScan.class, Controller.class};
 
-    private final Map<Class<?>, Object> container = new HashMap<>();
+    public Map<Class<?>, Object> scan(String rootPath) {
+        Map<Class<?>, Object> container = new HashMap<>();
 
-    public ComponentScanner(String rootPath) {
         Set<Class<?>> components = AnnotationHandleUtils.getClassesAnnotated(rootPath, COMPONENT_ANNOTATIONS);
-        components.forEach(this::registerBean);
+        components.forEach(component -> registerBean(container, component));
+
+        return container;
     }
 
-    private Object registerBean(Class<?> component) {
+    public boolean contains(Map<Class<?>, Object> container, Class<?> type) {
+        return container.containsKey(type);
+    }
+
+    private Object registerBean(Map<Class<?>, Object> container, Class<?> component) {
         if (container.containsKey(component)) {
             throw new MvcComponentException("빈 타입은 중복될 수 없습니다.");
         }
-
-        Object bean = instanceWithInjection(component);
+        Object bean = instanceBean(container, component);
         container.put(component, bean);
         return bean;
     }
 
-    private Object instanceWithInjection(Class<?> component) {
+    private Object instanceBean(Map<Class<?>, Object> container, Class<?> component) {
         try {
             Constructor<?> constructor = component.getConstructors()[0];
             Object[] parameterBeans = Arrays.stream(constructor.getParameterTypes())
-                    .map(this::getBean)
+                    .map(parameterType -> injectConstructorParam(container, parameterType))
                     .toArray();
             return constructor.newInstance(parameterBeans);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new MvcComponentException("빈 타입은 중복될 수 없습니다.");
+            throw new MvcComponentException("빈 생성 실패");
         }
     }
 
-    private Object getBean(Class<?> type) {
-        if (container.containsKey(type)) {
-            return container.get(type);
+    private Object injectConstructorParam(Map<Class<?>, Object> container, Class<?> parameterType) {
+        if (container.containsKey(parameterType)) {
+            return container.get(parameterType);
         }
-        return registerBean(type);
-    }
-
-    public boolean contains(Class<?> type) {
-        return container.containsKey(type);
+        return registerBean(container, parameterType);
     }
 }

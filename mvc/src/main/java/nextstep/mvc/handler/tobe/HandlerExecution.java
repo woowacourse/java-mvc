@@ -4,7 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import javax.naming.ldap.Control;
 import nextstep.mvc.exception.MvcComponentException;
+import nextstep.mvc.handler.asis.Controller;
 import nextstep.mvc.handler.param.ArgumentResolver;
 import nextstep.mvc.support.annotation.RequestMappingAnnotationUtils;
 import nextstep.mvc.view.ModelAndView;
@@ -21,6 +23,14 @@ public class HandlerExecution {
     public static HandlerExecution of(Class<?> controller) {
         try {
             return new HandlerExecution(controller.getConstructor().newInstance());
+        } catch (Exception e) {
+            throw new MvcComponentException("적절한 컨트롤러가 아닙니다.");
+        }
+    }
+
+    public static HandlerExecution of(Controller controller) {
+        try {
+            return new HandlerExecution(controller);
         } catch (Exception e) {
             throw new MvcComponentException("적절한 컨트롤러가 아닙니다.");
         }
