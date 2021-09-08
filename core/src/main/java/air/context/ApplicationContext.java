@@ -179,4 +179,9 @@ public class ApplicationContext {
         }
         return result;
     }
+
+    public void refresh() {
+        BASE_PACKAGES.clear();
+        BEANS.clear();
+    }
 }
