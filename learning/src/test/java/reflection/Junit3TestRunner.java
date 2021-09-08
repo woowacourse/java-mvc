@@ -4,18 +4,30 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-class Junit3TestRunner {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class Junit3TestRunner extends JunitOutput {
 
     @Test
     void run() throws Exception {
-        final Class<Junit3Test> clazz = Junit3Test.class;
-        final Junit3Test test = clazz.getConstructor().newInstance();
+        // given
+        Class<Junit3Test> clazz = Junit3Test.class;
+        Junit3Test test = clazz.getConstructor().newInstance();
 
+        // when
         for (Method method : clazz.getMethods()) {
-            final String methodName = method.getName();
+            String methodName = method.getName();
             if (methodName.startsWith("test")) {
                 method.invoke(test);
             }
         }
+
+        // then
+        String output = captor.toString().trim();
+        assertThat(output)
+                .contains(
+                        "Running Test1",
+                        "Running Test2")
+                .doesNotContain("Running Test3");
     }
 }

@@ -16,8 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ReflectionTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ReflectionTest.class);
-
     @Test
     void givenObject_whenGetsClassName_thenCorrect() {
         final Class<Question> clazz = Question.class;

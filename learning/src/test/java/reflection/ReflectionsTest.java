@@ -18,8 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ReflectionsTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ReflectionsTest.class);
-
     @Test
     void showAnnotationClass() {
         Reflections reflections = new Reflections("examples");
