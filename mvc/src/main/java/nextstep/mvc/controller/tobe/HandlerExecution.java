@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 
 public class HandlerExecution {
     private final Object declaredObject;
@@ -16,7 +17,7 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 
     @Override
