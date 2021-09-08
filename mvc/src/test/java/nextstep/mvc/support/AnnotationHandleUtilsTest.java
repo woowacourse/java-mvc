@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import nextstep.mvc.assembler.annotation.Component;
 import nextstep.mvc.support.annotation.AnnotationHandleUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -20,8 +21,8 @@ class AnnotationHandleUtilsTest {
     void searchClassesByAnnotation() {
         String basePath = "samples";
 
-        Set<Class<?>> controllers = AnnotationHandleUtils.getClassesAnnotatedWith(basePath, Controller.class);
-        assertThat(controllers).contains(TestController.class);
+        Set<Class<?>> controllers = AnnotationHandleUtils.getClassesAnnotated(basePath, Controller.class);
+        assertThat(controllers).isEqualTo(TestController.class);
     }
 
     @DisplayName("클래스 내부의 메서드를 Annotation 으로 검색한다.")
@@ -29,7 +30,7 @@ class AnnotationHandleUtilsTest {
     void getAnnotatedMethodsFormClasses() {
         String basePath = "samples";
 
-        Set<Class<?>> controllers = AnnotationHandleUtils.getClassesAnnotatedWith(basePath, Controller.class);
+        Set<Class<?>> controllers = AnnotationHandleUtils.getClassesAnnotated(basePath, Controller.class);
 
         List<Method> methods = controllers.stream()
                 .flatMap(klass -> AnnotationHandleUtils.getMethodsAnnotatedWith(klass, RequestMapping.class).stream())

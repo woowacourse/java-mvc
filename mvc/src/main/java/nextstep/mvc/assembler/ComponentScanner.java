@@ -1,32 +1,34 @@
 package nextstep.mvc.assembler;
 
-import nextstep.mvc.assembler.annotation.Component;
-import nextstep.mvc.exception.MvcComponentException;
-import nextstep.mvc.support.annotation.AnnotationHandleUtils;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import nextstep.mvc.assembler.annotation.Component;
+import nextstep.mvc.assembler.annotation.ComponentScan;
+import nextstep.mvc.exception.MvcComponentException;
+import nextstep.mvc.support.annotation.AnnotationHandleUtils;
+import nextstep.web.annotation.Controller;
 
 public class ComponentScanner {
+
+    private static final Class<? extends Annotation>[] COMPONENT_ANNOTATIONS
+            = new Class[]{Component.class, ComponentScan.class, Controller.class};
+
     private final Map<Class<?>, Object> container = new HashMap<>();
 
-    public void scanFromComponentScan() {
-    }
-
-    public void scanFromComponentScan(String rootPath) {
-        Set<Class<?>> components = AnnotationHandleUtils.getClassesAnnotated(rootPath, Component.class);
-        for (Class<?> component : components) {
-            if (container.containsKey(component)) {
-                throw new MvcComponentException("빈 타입은 중복될 수 없습니다.");
-            }
-            registerBean(component);
-        }
+    public ComponentScanner(String rootPath) {
+        Set<Class<?>> components = AnnotationHandleUtils.getClassesAnnotated(rootPath, COMPONENT_ANNOTATIONS);
+        components.forEach(this::registerBean);
     }
 
     private Object registerBean(Class<?> component) {
+        if (container.containsKey(component)) {
+            throw new MvcComponentException("빈 타입은 중복될 수 없습니다.");
+        }
+
         Object bean = instanceWithInjection(component);
         container.put(component, bean);
         return bean;
@@ -34,10 +36,6 @@ public class ComponentScanner {
 
     private Object instanceWithInjection(Class<?> component) {
         try {
-//            System.out.println(component.getConstructors().length);
-//            Constructor<?> constructor1 = component.getConstructors()[0];
-//            System.out.println(constructor1.getParameterCount());
-
             Constructor<?> constructor = component.getConstructors()[0];
             Object[] parameterBeans = Arrays.stream(constructor.getParameterTypes())
                     .map(this::getBean)

@@ -14,16 +14,15 @@ public class AnnotationHandleUtils {
     private AnnotationHandleUtils() {
     }
 
-    public static Set<Class<?>> getClassesAnnotatedWith(String basePath, Class<? extends Annotation> annotation) {
-        return new Reflections(basePath).getTypesAnnotatedWith(annotation);
+    public static Set<Class<?>> getClassesAnnotated(String basePath, Class<? extends Annotation>... annotations) {
+        Reflections reflections = new Reflections(basePath);
+        return Arrays.stream(annotations)
+                .flatMap(annotation -> reflections.getTypesAnnotatedWith(annotation).stream())
+                .collect(Collectors.toSet());
     }
 
-    public static Set<Class<?>> getClassesAnnotatedRecursive(String basePath, Class<? extends Annotation> annotation) {
-        Set<Class<?>> typesAnnotatedWith = new Reflections(basePath).getTypesAnnotatedWith(annotation);
-        typesAnnotatedWith.stream()
-                .map(p -> p.getA)
-        typesAnnotatedWith.stream().forEach(p -> p.getSimpleName());
-        return typesAnnotatedWith;
+    public static Set<Class<?>> getClassesAnnotated(String basePath, Class<? extends Annotation> annotation) {
+        return new Reflections(basePath).getTypesAnnotatedWith(annotation);
     }
 
     public static List<Method> getMethodsAnnotatedWith(Class<?> type, Class<? extends Annotation> annotation) {

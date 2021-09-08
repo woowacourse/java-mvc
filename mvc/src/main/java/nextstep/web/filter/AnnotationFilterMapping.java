@@ -36,7 +36,7 @@ public class AnnotationFilterMapping implements FilterMapping {
     private List<Class<?>> getFilterClasses() {
         return Arrays.stream(basePackages)
                 .map(basePackage -> (String) basePackage)
-                .flatMap(path -> AnnotationHandleUtils.getClassesAnnotatedWith(path, WebFilter.class).stream())
+                .flatMap(path -> AnnotationHandleUtils.getClassesAnnotated(path, WebFilter.class).stream())
                 .collect(Collectors.toList());
     }
 
