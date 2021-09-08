@@ -22,6 +22,7 @@ public class JspView extends AbstractView {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            return;
         }
 
         model.keySet().forEach(key -> {
