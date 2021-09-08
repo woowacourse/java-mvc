@@ -15,8 +15,8 @@
   - [ ] ~~JspView~~ 도저히 어떻게 테스트를 작성할지 모르겠다...!
   - [x] ModelAndView
   - [ ] ~~DispatcherServlet~~ 역시나 어떻게 테스트를 작성할지 모르겠다...!
-  - [ ] HandlerAdapters
-  - [ ] HandlerMappings
+  - [x] HandlerAdapters
+  - [x] HandlerMappings
 
 - DispatcherServlet에선 Controller가 redirect 해야할 경로를 줬건 말건 알바 아니지 않을까?
   - 그건 View의 '정보'를 넘겨 받은 View 단에서 알아서 Model 참고해서 렌더링 해야지?
