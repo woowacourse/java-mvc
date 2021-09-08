@@ -6,7 +6,7 @@
 - [x] `AnnotationHandlerAdapter` 클래스 완성
 - [x] Legacy MVC도 Annotation Based MVC와 함께 동작하도록 하기
 - [ ] 직접 짠 코드는 테스트 코드를 짜보자!!!
-  - [ ] ManualHandlerAdapter
+  - [x] ManualHandlerAdapter
   - [x] AnnotationHandlerAdapter
   - [ ] A notationHandlerMapping
   - [ ] HandlerExecution
