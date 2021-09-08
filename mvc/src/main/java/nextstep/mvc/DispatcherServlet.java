@@ -9,15 +9,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.adaptor.HandlerAdapter;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    // todo 이건 왜 필요하지?
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -63,18 +60,5 @@ public class DispatcherServlet extends HttpServlet {
                               .filter(Objects::nonNull)
                               .findFirst()
                               .orElseThrow();
-    }
-
-    private Controller getController(HttpServletRequest request) {
-        return handlerMappings.stream()
-                              .map(handlerMapping -> handlerMapping.getHandler(request))
-                              .filter(Objects::nonNull)
-                              .map(Controller.class::cast)
-                              .findFirst()
-                              .orElseThrow();
-    }
-
-    private void move(View view, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
     }
 }

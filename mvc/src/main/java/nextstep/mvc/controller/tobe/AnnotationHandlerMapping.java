@@ -12,12 +12,8 @@ import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     // todo 왜 Object 로 받을까?
     private final Object[] basePackages;

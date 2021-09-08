@@ -8,6 +8,7 @@ import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 
 public class ControllerAdaptor implements HandlerAdapter {
+
     @Override
     public boolean supports(Object handler) {
         return handler instanceof Controller;

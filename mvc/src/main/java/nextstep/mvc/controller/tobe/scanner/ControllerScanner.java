@@ -8,12 +8,8 @@ import java.util.Set;
 
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ControllerScanner {
-
-    private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
     private final Reflections reflections;
 
