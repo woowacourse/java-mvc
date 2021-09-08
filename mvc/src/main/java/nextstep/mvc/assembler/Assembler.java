@@ -1,4 +1,4 @@
-package nextstep.web.container;
+package nextstep.mvc.assembler;
 
 import java.util.Arrays;
 import java.util.List;

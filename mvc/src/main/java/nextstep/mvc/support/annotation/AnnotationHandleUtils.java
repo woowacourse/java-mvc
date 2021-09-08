@@ -18,6 +18,14 @@ public class AnnotationHandleUtils {
         return new Reflections(basePath).getTypesAnnotatedWith(annotation);
     }
 
+    public static Set<Class<?>> getClassesAnnotatedRecursive(String basePath, Class<? extends Annotation> annotation) {
+        Set<Class<?>> typesAnnotatedWith = new Reflections(basePath).getTypesAnnotatedWith(annotation);
+        typesAnnotatedWith.stream()
+                .map(p -> p.getA)
+        typesAnnotatedWith.stream().forEach(p -> p.getSimpleName());
+        return typesAnnotatedWith;
+    }
+
     public static List<Method> getMethodsAnnotatedWith(Class<?> type, Class<? extends Annotation> annotation) {
         final List<Method> methods = new ArrayList<>();
         Class<?> klass = type;
