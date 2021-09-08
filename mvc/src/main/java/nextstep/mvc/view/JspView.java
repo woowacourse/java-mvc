@@ -12,18 +12,10 @@ public class JspView implements View {
     public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     private static final String SUFFIX = ".jsp";
-    private static final String FILE_FORMAT_DELIMITER = ".";
     private final String viewName;
 
     public JspView(String viewName) {
-        if (viewName.contains(FILE_FORMAT_DELIMITER)) {
-            if (viewName.endsWith(SUFFIX)) {
-                this.viewName = viewName;
-                return;
-            }
-            throw new IllegalArgumentException("JSP 파일 형식에 맞지 않습니다.");
-        }
-        this.viewName = viewName + SUFFIX;
+        this.viewName = getAppropriateViewName(viewName);
     }
 
     @Override
@@ -40,6 +32,13 @@ public class JspView implements View {
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    private String getAppropriateViewName(String viewName) {
+        if (viewName.endsWith(SUFFIX)) {
+            return viewName;
+        }
+        return viewName + SUFFIX;
     }
 
     public String getViewName() {

@@ -1,10 +1,10 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
+import com.techcourse.controller.manual.LoginController;
+import com.techcourse.controller.manual.LoginViewController;
+import com.techcourse.controller.manual.LogoutController;
+import com.techcourse.controller.manual.RegisterController;
+import com.techcourse.controller.manual.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
