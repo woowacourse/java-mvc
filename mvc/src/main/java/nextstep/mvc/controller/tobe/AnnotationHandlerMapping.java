@@ -30,6 +30,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
 
@@ -61,10 +62,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 controllers.get(method.getDeclaringClass().getName()), method);
 
             handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("Register HandlerMapping value: {}, method: {}", value, requestMethod);
+            log.info("Path : {}, Controller : {}", value, method.getDeclaringClass().getSimpleName());
         }
     }
 
+    @Override
     public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey =
             new HandlerKey(

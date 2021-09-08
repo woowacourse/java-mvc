@@ -25,14 +25,12 @@
   - [x] 해당 메서드와 메서드가 선언된 class로 `HandlerExecution` 생성 
   - [x] `getHandler()` 로 적합한 handler 호출
 
-- [ ] HandlerAdapter 구현 
-    - [ ] 인터페이스 기반 컨트롤러 handler 처리 adapter
-    - [ ] 어노테이션 기반 컨트롤러 handler 처리 adapter
+- [x] HandlerAdapter 구현 
+    - [x] 인터페이스 기반 컨트롤러 handler 처리 adapter
+    - [x] 어노테이션 기반 컨트롤러 handler 처리 adapter
 
-- [ ] ModelAndView 구현
-  - [ ] `JspView.java` todo 구현
-  
-- [ ] ViewResolver 구현
+- [x] ModelAndView 구현
+  - [x] `JspView.java` todo 구현
 
 ## 구현 
 
