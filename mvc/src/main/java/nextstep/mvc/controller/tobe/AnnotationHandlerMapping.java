@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +44,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
         String path = annotation.value();
 
-        Arrays.stream(annotation.method())
-            .map(requestMethod -> new HandlerKey(path, requestMethod))
-            .forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(method)));
+        for (RequestMethod requestMethod : annotation.method()) {
+            HandlerKey handlerKey = new HandlerKey(path, requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+
+            log.info("Handler : {} {}", requestMethod.name(), path);
+        }
     }
 
     private List<Method> getExecutionMethods() {
@@ -70,7 +74,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public Object getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         return handlerExecutions.entrySet().stream()
             .filter(it -> it.getKey().isMatchingKey(request))
             .map(Entry::getValue)
