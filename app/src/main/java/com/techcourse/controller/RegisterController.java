@@ -1,7 +1,8 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.exception.DuplicateException;
+import com.techcourse.service.RegisterService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -18,6 +19,12 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
+    private final RegisterService registerService;
+
+    public RegisterController() {
+        this.registerService = new RegisterService();
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         log.info("RegisterController GET method");
@@ -25,15 +32,19 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView register(HttpServletRequest req, HttpServletResponse res) {
         log.info("RegisterController POST method");
-        final User user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
-        InMemoryUserRepository.save(user);
-        final HttpSession session = req.getSession();
-        session.setAttribute(UserSession.SESSION_KEY, user);
+        try {
+            final User user = registerService.register(
+                    req.getParameter("account"),
+                    req.getParameter("password"),
+                    req.getParameter("email")
+            );
+            final HttpSession session = req.getSession();
+            session.setAttribute(UserSession.SESSION_KEY, user);
+        } catch (DuplicateException e) {
+            log.info("account 또는 email 중복으로 인한 회원가입 실패");
+        }
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
