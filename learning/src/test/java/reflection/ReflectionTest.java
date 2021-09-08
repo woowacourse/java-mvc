@@ -1,19 +1,18 @@
 package reflection;
 
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
@@ -57,8 +56,8 @@ class ReflectionTest {
             .collect(Collectors.toList());
 
         assertThat(actualMethods)
-                .hasSize(4)
-                .contains("getAge", "toString", "getName", "getScore");
+            .hasSize(4)
+            .contains("getAge", "toString", "getName", "getScore");
     }
 
     @Test
@@ -74,10 +73,13 @@ class ReflectionTest {
         final Class<?> questionClass = Question.class;
 
         final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
-        final Constructor<?> secondConstructor = questionClass.getConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
+        final Constructor<?> secondConstructor = questionClass
+            .getConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(1, "gugu", "제목2", "내용2", Date.from(Instant.EPOCH), 0);;
+        final Question secondQuestion = (Question) secondConstructor
+            .newInstance(1, "gugu", "제목2", "내용2", Date.from(Instant.EPOCH), 0);
+        ;
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");

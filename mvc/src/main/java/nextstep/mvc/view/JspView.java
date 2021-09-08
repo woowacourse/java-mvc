@@ -3,23 +3,21 @@ package nextstep.mvc.view;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 public class JspView implements View {
 
+    public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     private static final String SUFFIX = ".jsp";
     private static final String FILE_FORMAT_DELIMITER = ".";
-    public static final String REDIRECT_PREFIX = "redirect:";
-
     private final String viewName;
 
     public JspView(String viewName) {
         if (viewName.contains(FILE_FORMAT_DELIMITER)) {
-            if (viewName.endsWith(SUFFIX)){
+            if (viewName.endsWith(SUFFIX)) {
                 this.viewName = viewName;
                 return;
             }
