@@ -2,16 +2,14 @@ package nextstep.mvc.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 public class JspView implements View {
 
-    private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     public static final String REDIRECT_PREFIX = "redirect:";
+    private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     public JspView(String viewName) {
     }
