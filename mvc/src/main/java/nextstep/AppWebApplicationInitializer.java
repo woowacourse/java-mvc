@@ -1,6 +1,7 @@
 package nextstep;
 
-import air.ApplicationContext;
+import air.context.ApplicationContext;
+import air.context.ApplicationContextProvider;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.DispatcherServlet;
@@ -12,9 +13,11 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(AppWebApplicationInitializer.class);
 
+    private final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+
     @Override
     public void onStartup(ServletContext servletContext) {
-        DispatcherServlet dispatcherServlet = ApplicationContext.findBeanByType(DispatcherServlet.class);
+        DispatcherServlet dispatcherServlet = context.findBeanByType(DispatcherServlet.class);
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");

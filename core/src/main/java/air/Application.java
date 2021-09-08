@@ -3,6 +3,8 @@ package air;
 import java.io.File;
 import java.util.stream.Stream;
 
+import air.context.ApplicationContext;
+import air.context.ApplicationContextProvider;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
@@ -19,6 +21,7 @@ public class Application {
 
     public static void run(String[] args) throws LifecycleException {
         ApplicationContext context = new ApplicationContext();
+        ApplicationContextProvider.setApplicationContext(context);
         context.initializeContext();
 
         final int port = defaultPortIfNull(args);

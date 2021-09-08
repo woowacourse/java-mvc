@@ -3,11 +3,11 @@ package nextstep.mvc.mapping;
 import java.util.HashMap;
 import java.util.Map;
 
-import air.ApplicationContext;
+import air.context.ApplicationContext;
+import air.context.ApplicationContextProvider;
 import air.annotation.Component;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.configuration.HandlerConfigurer;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +19,11 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    private final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+
     @Override
     public void initialize() {
-        HandlerConfigurer handlerConfigurer = ApplicationContext.findBeanByType(HandlerConfigurer.class);
+        HandlerConfigurer handlerConfigurer = context.findBeanByType(HandlerConfigurer.class);
         controllers.putAll(handlerConfigurer.customHandlerSetting());
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
