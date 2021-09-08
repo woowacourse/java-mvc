@@ -25,7 +25,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         CONTROLLERS.put("/logout", new LogoutController());
 
         LOG.info("Initialized Handler Mapping!");
-        CONTROLLERS.keySet().forEach(path -> LOG.info("Path : {}, Controller : {}", path, CONTROLLERS.get(path).getClass()));
+        CONTROLLERS.forEach((path, controller) -> LOG.info("Path : {}, Controller : {}", path, controller.getClass()));
     }
 
     @Override
