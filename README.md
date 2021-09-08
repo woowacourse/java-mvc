@@ -6,4 +6,4 @@
 # Step1
 - [x] Annotation Based MVC Framework 테스트 통과
 - [x] JspView 구현 
-- [] Legacy MVC와 Annotation Based MVC 통합
+- [x] Legacy MVC와 Annotation Based MVC 통합

@@ -1,9 +1,12 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import nextstep.mvc.handlermapping.HandlerMapping;
+import java.util.Optional;
+import nextstep.mvc.controller.tobe.ControllerScanner;
+import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.tobe.HandlerKey;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final ControllerScanner controllerScanner = new ControllerScanner();
@@ -34,7 +38,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         handlerExecutions.putAll(onePackageMap);
     }
 
-    public Object getHandler(HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
