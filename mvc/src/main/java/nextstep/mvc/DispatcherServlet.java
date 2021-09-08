@@ -33,14 +33,14 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
-        handlerAdapters.addAll(Arrays.asList(
-                new LegacyHandlerAdapter(),
-                new AnnotationHandlerAdapter()
-        ));
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     @Override
