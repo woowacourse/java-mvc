@@ -9,6 +9,10 @@ public class ModelAndView {
     private final View view;
     private final Map<String, Object> model;
 
+    public ModelAndView(String viewPath) {
+        this(new JspView(viewPath));
+    }
+
     public ModelAndView(View view) {
         this.view = view;
         this.model = new HashMap<>();

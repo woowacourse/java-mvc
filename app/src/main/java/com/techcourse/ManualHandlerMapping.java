@@ -26,14 +26,14 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());
 
-        log.info("Initialized Handler Mapping!");
-        controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+        log.info("Initialized Manual Handler Mapping!");
+        controllers.forEach((path, value) -> log.info("Path : {}, Controller : {}", path, value.getClass()));
     }
 
     @Override
     public Controller getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
-        log.debug("Request Mapping Uri : {}", requestURI);
+        log.info("Request Manual Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
 }
