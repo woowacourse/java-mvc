@@ -34,17 +34,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void putToHandlerExecutions(Object controller, Method method) {
-        // RequestMapping 어노테이션이 붙은 annotation의 uri와 value를 가져와서 handlerExecutions에 담는다.
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        String uri = annotation.value();
-
-        for (RequestMethod requestMethod : annotation.method()) {
-            log.info("Path : {} {}, {} to Handler", requestMethod, uri, controller.getClass().getSimpleName());
-            handlerExecutions.put(new HandlerKey(uri, requestMethod), new HandlerExecution(controller, method));
-        }
-    }
-
     public Set<Method> methods (Object controller) {
         Set<Method> methods = new HashSet<>();
         Method[] declaredMethods = controller.getClass().getDeclaredMethods();
@@ -58,6 +47,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             }
         }
         return methods;
+    }
+
+    private void putToHandlerExecutions(Object controller, Method method) {
+        // RequestMapping 어노테이션이 붙은 annotation의 uri와 value를 가져와서 handlerExecutions에 담는다.
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        String uri = annotation.value();
+
+        for (RequestMethod requestMethod : annotation.method()) {
+            log.info("Path : {} {}, {} to Handler", requestMethod, uri, controller.getClass().getSimpleName());
+            handlerExecutions.put(new HandlerKey(uri, requestMethod), new HandlerExecution(controller, method));
+        }
     }
 
     public Object getHandler(HttpServletRequest request) {
