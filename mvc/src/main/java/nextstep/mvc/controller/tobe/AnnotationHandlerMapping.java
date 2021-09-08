@@ -57,6 +57,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String method = request.getMethod();
         return handlerExecutions.keySet().stream()
                 .filter(handlerKey -> handlerKey.isSame(requestURI, method))
+                .map(handlerKey -> handlerExecutions.get(handlerKey))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }

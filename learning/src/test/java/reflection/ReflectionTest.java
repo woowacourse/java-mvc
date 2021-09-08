@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Date;
@@ -41,7 +42,7 @@ class ReflectionTest {
         final Object student = new Student();
         final Field[] fields = student.getClass().getDeclaredFields();
         final List<String> actualFieldNames = Arrays.stream(fields)
-                .map(field -> field.getName())
+                .map(Field::getName)
                 .collect(Collectors.toList());
 
         assertThat(actualFieldNames).contains("name", "age");
@@ -52,7 +53,7 @@ class ReflectionTest {
         final Class<?> animalClass = Student.class;
         final Method[] methods = animalClass.getDeclaredMethods();
         final List<String> actualMethods = Arrays.stream(methods)
-                .map(method -> method.getName())
+                .map(Method::getName)
                 .collect(Collectors.toList());
 
         assertThat(actualMethods)
