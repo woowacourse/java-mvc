@@ -8,12 +8,23 @@
 
 ## 기능 요구 사항
 
+- [x] AnnotationHandlerMapping 구현
+
 - [ ] jacoco 설정 추가
 
 - [ ] JspView render 메서드 구현
 
 - [ ] 기존의 컨트롤러를 annotation 기반으로 변경하더라도 정상 작동
 - [ ] 새로운 TestController를 포함하면 해당 컨트롤러의 기능이 애플리케이션에서 작동
+
+### 생각
+* Reflections를 이용하여 주어진 basePackage 안에서 @Controller 어노테이션이 있는 클래스를 가지고 온다 (@RestController도 있으면 좋겠지만 일단 패스)
+  * 하나의 메서드에 여러 RequestMethod가 들어갈 수 있다. 그래서 여러 RequestMethod가 있다면 각각이 하나의 Handler가 되도록 했는데 이게 맞으려나?
+  * HandlerExecution이 뭐지 - 완료
+  * HandlerKey의 정적 팩토리 메서드를 만들었다. 주 생성자를 닫아야 할까? 주 생성자를 사용할 상황도 있는데? - 기존에는 닫았지만, 이번엔 닫지 않음
+  * mvc 패키지 안에 asis, tobe 패키지가 있는데, 이게 도대체 뭘까
+    * as-is와 to-be, 즉 "기존의 것", 그리고 "개선 방향" 인건가? 그럼 지워도 되나?
+* @RequestMapping 어노테이션을 찾아야 한다. 타깃이 Type, Method 둘 다 되기 때문에 클래스 단위, 메서드 단위로 있는지 확인해야 한다
 
 ##### TestController 소스코드
 
