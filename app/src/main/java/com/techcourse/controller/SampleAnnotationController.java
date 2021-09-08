@@ -19,7 +19,15 @@ public class SampleAnnotationController {
     public ModelAndView doSample(HttpServletRequest request, HttpServletResponse response) {
         log.info("sample controller get sample method invoked");
         final ModelAndView modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
+        modelAndView.addObject("id", "sample");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/sample2", method = RequestMethod.GET)
+    public ModelAndView doSample2(HttpServletRequest request, HttpServletResponse response) {
+        log.info("sample controller get sample2222 method invoked");
+        final ModelAndView modelAndView = new ModelAndView(new JspView("redirect:/login"));
+        modelAndView.addObject("id", "sample");
         return modelAndView;
     }
 
