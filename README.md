@@ -8,10 +8,10 @@
 - [ ] 직접 짠 코드는 테스트 코드를 짜보자!!!
   - [x] ManualHandlerAdapter
   - [x] AnnotationHandlerAdapter
-  - [ ] A notationHandlerMapping
+  - [x] AnnotationHandlerMapping
   - [ ] HandlerExecution
   - [ ] HandlerExecutions
-  - [ ] HandlerKey
+  - [x] HandlerKey
   - [ ] JspView
   - [ ] ModelAndView
   - [ ] DispatcherServlet

@@ -16,7 +16,7 @@ public class HandlerKey {
 
     @Override
     public String toString() {
-        return String.format("HandlerKey{url='%s', requestMethod=%s", url, requestMethod);
+        return String.format("HandlerKey{url='%s', requestMethod=%s}", url, requestMethod);
     }
 
     @Override
