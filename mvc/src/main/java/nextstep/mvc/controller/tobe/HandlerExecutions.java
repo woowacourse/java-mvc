@@ -1,6 +1,5 @@
 package nextstep.mvc.controller.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
