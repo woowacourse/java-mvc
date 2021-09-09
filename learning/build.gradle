@@ -1,5 +1,8 @@
 plugins {
     id 'application'
+    id 'org.sonarqube' version '3.3'
+    id 'jacoco'
+    id 'idea'
 }
 
 application {
@@ -30,8 +33,6 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.20.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
-
-
 
 jacoco {
     toolVersion = '0.8.5'

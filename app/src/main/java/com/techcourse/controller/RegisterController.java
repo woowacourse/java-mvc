@@ -14,7 +14,6 @@ public class RegisterController {
     public ModelAndView save(@RequestParam("account") String account,
                              @RequestParam("password") String password,
                              @RequestParam("email") String email) {
-        System.out.println(account + " "+ password + " "+ email);
         InMemoryUserRepository.save(account, password, email);
 
         return new ModelAndView("redirect:/index.jsp");

@@ -1,5 +1,8 @@
 plugins {
     id 'java'
+    id 'org.sonarqube' version '3.3'
+    id 'jacoco'
+    id 'idea'
 }
 
 repositories {

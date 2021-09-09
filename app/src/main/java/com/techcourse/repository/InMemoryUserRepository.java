@@ -24,10 +24,10 @@ public class InMemoryUserRepository {
     }
 
     public static void save(String account, String password, String email) {
-        save(new User(count() + 1, account, password, email));
+        save(new User(count() + 1L, account, password, email));
     }
 
-    public static int count() {
+    public static long count() {
         return database.size();
     }
 

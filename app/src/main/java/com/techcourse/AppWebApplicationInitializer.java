@@ -5,9 +5,8 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import java.util.List;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.handler.tobe.AnnotationHandlerMapping;
-import nextstep.web.WebApplicationInitializer;
 import nextstep.mvc.assembler.Assembler;
+import nextstep.web.WebApplicationInitializer;
 import nextstep.web.filter.AnnotationFilterMapping;
 import nextstep.web.filter.FilterChain;
 import nextstep.web.filter.FilterMapping;
@@ -15,10 +14,10 @@ import nextstep.web.filter.FilterMapping;
 public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private static final String[] FILTER_BASE_PACKAGE_PATHS = new String[]{"com/techcourse/support/web/filter"};
-    private static final String[] HANDLER_BASE_PACKAGE_PATHS = new String[]{"com/techcourse/controller"};
 
     private static final Assembler assembler = new Assembler();
-    {
+
+    public AppWebApplicationInitializer() {
         assembler.componentScan("com/techcourse");
     }
 
@@ -27,7 +26,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         final List<FilterChain> filters = findFilters();
         addFilters(servletContext, filters);
 
-        final DispatcherServlet dispatcherServlet = (DispatcherServlet) assembler.getBeanByType(DispatcherServlet.class);
+        final DispatcherServlet dispatcherServlet = (DispatcherServlet) assembler
+                .getBeanByType(DispatcherServlet.class);
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
