@@ -60,8 +60,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappings.getHandler(request);
             return handlerAdapters.service(request, response, handler);
-        } catch (Exception exception) {
-            return exceptionHandlerExecutor.execute(exception);
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            return exceptionHandlerExecutor.execute(e);
         }
     }
 }
