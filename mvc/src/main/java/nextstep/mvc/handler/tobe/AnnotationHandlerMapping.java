@@ -48,11 +48,4 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .flatMap(key -> RequestMappingAnnotationUtils.getHandlerKeys(key).stream())
                 .forEach(key -> handlerExecutions.put(key, HandlerExecution.of(controller)));
     }
-
-    public void registerController(Controller controller) {
-        List<Method> methods = RequestMappingAnnotationUtils.findByController(controller.getClass());
-        methods.stream()
-                .flatMap(key -> RequestMappingAnnotationUtils.getHandlerKeys(key).stream())
-                .forEach(key -> handlerExecutions.put(key, HandlerExecution.of(controller)));
-    }
 }
