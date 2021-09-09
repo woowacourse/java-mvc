@@ -11,6 +11,6 @@ public class JsonView implements View {
         Map<String, ?> model,
         HttpServletRequest request,
         HttpServletResponse response
-    ) throws Exception {
+    ) {
     }
 }

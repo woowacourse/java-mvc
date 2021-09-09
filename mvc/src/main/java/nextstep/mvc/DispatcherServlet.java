@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.view.JspView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final Long serialVersionUID = 1L;
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private final List<HandlerMapping> handlerMappings;
 
@@ -64,8 +64,8 @@ public class DispatcherServlet extends HttpServlet {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
 
