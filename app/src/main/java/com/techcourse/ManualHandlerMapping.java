@@ -2,9 +2,9 @@ package com.techcourse;
 
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.mvc.mapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,8 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());
 
+        controllers.forEach((path, value) -> log.info("Path: [{}], Controller: [{}]", path, value.getClass()));
         log.info("Initialized Manual Handler Mapping!");
-        controllers.forEach((path, value) -> log.info("Path : {}, Controller : {}", path, value.getClass()));
     }
 
     @Override

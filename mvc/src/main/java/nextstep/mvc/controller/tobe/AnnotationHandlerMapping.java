@@ -1,15 +1,11 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.exeption.HandlerMappingException;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.mapping.HandlerMapping;
+import nextstep.mvc.scanner.HandlerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +29,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage, new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
-        for (Class<?> annotatedClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+        final HandlerScanner handlerScanner = new HandlerScanner(basePackage);
+        for (Class<?> annotatedClass : handlerScanner.getHandler().keySet()) {
             for (Method declaredMethod : annotatedClass.getDeclaredMethods()) {
                 putHandlerExecutionByRequestMapping(declaredMethod);
             }
         }
+        handlerExecutions.forEach((key, value) -> log.info("Path: [{}], Controller: [{}], Method: [{}]", key.getUrl(), value.getHandler(), key.getRequestMethod()));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -60,8 +57,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             return method.getDeclaringClass().getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            log.info("핸들러 매핑 예외입니다. 이유: {}", e.getMessage());
-            throw new HandlerMappingException("핸들러 매핑 예외입니다. 이유: " + e.getMessage());
+            log.info("메소드 인스턴스화 예외입니다. 이유: {}", e.getMessage());
+            throw new HandlerMappingException("메소드 인스턴스화 예외입니다. 이유: {}" + e.getMessage());
         }
     }
 }

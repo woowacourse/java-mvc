@@ -23,6 +23,10 @@ public class HandlerExecution {
         this.method = method;
     }
 
+    public Object getHandler() {
+        return handler;
+    }
+
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
         try {
             final Object invoke = method.invoke(handler, request, response);
