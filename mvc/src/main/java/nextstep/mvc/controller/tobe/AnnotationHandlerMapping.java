@@ -62,9 +62,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerRequestMappingMethods(Class<?> controller) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        List<Method> mappedMethods = getRequestMappingMethods(controller);
-
         Object instance = controller.getDeclaredConstructor().newInstance();
+
+        List<Method> mappedMethods = getRequestMappingMethods(controller);
 
         for (Method mappedMethod : mappedMethods) {
             RequestMapping requestMapping = mappedMethod.getAnnotation(RequestMapping.class);
@@ -82,8 +82,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private List<Method> getRequestMappingMethods(Class<?> controller) {
         return Arrays.stream(controller.getDeclaredMethods())
-                .filter(method -> Stream.of(method.getAnnotations())
-                        .anyMatch(annotation -> annotation.annotationType().equals(RequestMapping.class)))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
     }
 }
