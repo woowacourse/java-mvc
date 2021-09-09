@@ -30,7 +30,7 @@ public class UserController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+                .orElseGet(() -> new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -49,7 +49,7 @@ public class UserController {
                     final JspView jspView = new JspView("redirect:/index.jsp");
                     return new ModelAndView(jspView);
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElseGet(() -> new ModelAndView(new JspView("/login.jsp")));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -77,10 +77,8 @@ public class UserController {
             session.setAttribute(UserSession.SESSION_KEY, user);
             final JspView jspView = new JspView("redirect:/index.jsp");
             return new ModelAndView(jspView);
-        } else {
-            final JspView jspView = new JspView("redirect:/401.jsp");
-            return new ModelAndView(jspView);
         }
+        final JspView jspView = new JspView("redirect:/401.jsp");
+        return new ModelAndView(jspView);
     }
-
 }
