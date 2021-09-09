@@ -8,7 +8,6 @@ import air.context.ApplicationContext;
 import air.context.ApplicationContextProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import samples.TestInterfaceController;
 
@@ -53,6 +52,6 @@ class SimpleControllerHandlerAdapterTest {
 
         // then
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                                          .isEqualTo(new JspView("/login.jsp"));
+                                          .isEqualTo("/login.jsp");
     }
 }

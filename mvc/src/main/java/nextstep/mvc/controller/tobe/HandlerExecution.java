@@ -18,12 +18,11 @@ public class HandlerExecution {
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object result = method.invoke(declaredObject, request, response);
-        if (result instanceof String) {
-            JspView jspView = new JspView((String) result);
-            return new ModelAndView(jspView);
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
         }
 
-        return (ModelAndView) result;
+        return new ModelAndView(result);
     }
 
     @Override
