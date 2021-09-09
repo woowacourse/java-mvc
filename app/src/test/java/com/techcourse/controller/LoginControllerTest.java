@@ -1,5 +1,6 @@
 package com.techcourse.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,16 +17,22 @@ import static org.mockito.Mockito.*;
 
 class LoginControllerTest {
 
+    private final LoginController controller = new LoginController();
+
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+
+    @BeforeEach
+    void setUp() {
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+    }
+
     @Test
     @DisplayName("유저가 로그인되어 있다면 index.jsp 반환")
     void loggedInTest() {
 
         // given
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-
-        LoginController controller = new LoginController();
-
         try (MockedStatic<UserSession> session = mockStatic(UserSession.class)) {
             session.when(() -> UserSession.isLoggedIn(any())).thenReturn(true);
 
@@ -45,15 +52,11 @@ class LoginControllerTest {
         try (MockedStatic<UserSession> session = mockStatic(UserSession.class)) {
             session.when(() -> UserSession.isLoggedIn(any())).thenReturn(false);
 
-            final HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getParameter("account")).thenReturn("gugu");
             when(request.getParameter("password")).thenReturn("password");
             when(request.getSession()).thenReturn(mock(HttpSession.class));
 
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-
             // when
-            LoginController controller = new LoginController();
             final ModelAndView modelAndView = controller.execute(request, response);
 
             // then
@@ -69,13 +72,9 @@ class LoginControllerTest {
         try (MockedStatic<UserSession> session = mockStatic(UserSession.class)) {
             session.when(() -> UserSession.isLoggedIn(any())).thenReturn(false);
 
-            final HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getParameter("account")).thenReturn("seed");
 
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-
             // when
-            LoginController controller = new LoginController();
             final ModelAndView modelAndView = controller.execute(request, response);
 
             // then
@@ -91,14 +90,10 @@ class LoginControllerTest {
         try (MockedStatic<UserSession> session = mockStatic(UserSession.class)) {
             session.when(() -> UserSession.isLoggedIn(any())).thenReturn(false);
 
-            final HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getParameter("account")).thenReturn("gugu");
             when(request.getParameter("password")).thenReturn("wrong pass word");
 
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-
             // when
-            LoginController controller = new LoginController();
             final ModelAndView modelAndView = controller.execute(request, response);
 
             // then

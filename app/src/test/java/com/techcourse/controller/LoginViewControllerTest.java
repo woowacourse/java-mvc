@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 class LoginViewControllerTest {
 
-    private final LoginController controller = new LoginController();
+    private final LoginViewController controller = new LoginViewController();
 
     private HttpSession httpSession;
     private HttpServletRequest request;
