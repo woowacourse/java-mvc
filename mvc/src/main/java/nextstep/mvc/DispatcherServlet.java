@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,14 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdaptor;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.ControllerScanner;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JsonViewResolver;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.JspViewResolver;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -25,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
@@ -97,9 +92,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             ControllerScanner controllerScanner = new ControllerScanner("com.techcourse.controller");
             handlerMappings.add(new AnnotationHandlerMapping(controllerScanner));
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                handlerMapping.initialize();
-            }
+
+            handlerMappings.forEach(HandlerMapping::initialize);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -115,13 +109,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        try {
-            handlerMapping.initialize();
-            handlerMappings.add(handlerMapping);
-
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        handlerMapping.initialize();
+        handlerMappings.add(handlerMapping);
     }
 
     public void addHandlerAdaptor(HandlerAdapter handlerAdapter) {
