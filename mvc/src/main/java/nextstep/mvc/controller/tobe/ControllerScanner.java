@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
-    private final Reflections reflections = new Reflections("com.techcourse.controller");
 
-    private ControllerScanner() {
+    private final Reflections reflections;
+
+    public ControllerScanner(String prefix) {
+        this.reflections = new Reflections(prefix);
     }
 
     public Map<Class<?>, Object> getControllers() {
