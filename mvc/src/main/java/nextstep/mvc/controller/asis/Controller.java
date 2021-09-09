@@ -5,5 +5,5 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface Controller {
 
-    String execute(HttpServletRequest req, HttpServletResponse res) throws Exception;
+    String execute(HttpServletRequest req, HttpServletResponse res);
 }

@@ -11,12 +11,12 @@ public class LoginViewController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
-                })
-                .orElse("/login.jsp");
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        return UserSession.getUserFrom(request.getSession())
+            .map(user -> {
+                log.info("logged in {}", user.getAccount());
+                return "redirect:/index.jsp";
+            })
+            .orElse("/login.jsp");
     }
 }
