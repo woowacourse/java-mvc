@@ -2,7 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import com.techcourse.air.mvc.core.controller.asis.Controller;
 
 public class TestInterfaceController implements Controller {
 

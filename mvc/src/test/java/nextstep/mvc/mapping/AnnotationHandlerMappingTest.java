@@ -3,12 +3,14 @@ package nextstep.mvc.mapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import air.context.ApplicationContext;
-import air.context.ApplicationContextProvider;
+import com.techcourse.air.core.context.ApplicationContext;
+import com.techcourse.air.core.context.ApplicationContextProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.ModelAndView;
+import com.techcourse.air.mvc.core.controller.tobe.HandlerExecution;
+import com.techcourse.air.mvc.core.mapping.AnnotationHandlerMapping;
+
+import com.techcourse.air.mvc.core.view.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

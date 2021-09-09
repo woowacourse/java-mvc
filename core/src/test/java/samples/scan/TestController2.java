@@ -1,6 +1,6 @@
 package samples.scan;
 
-import air.annotation.Controller;
+import com.techcourse.air.core.annotation.Controller;
 
 @Controller
 public class TestController2 {

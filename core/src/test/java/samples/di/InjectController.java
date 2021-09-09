@@ -1,7 +1,7 @@
 package samples.di;
 
-import air.annotation.Autowired;
-import air.annotation.Controller;
+import com.techcourse.air.core.annotation.Autowired;
+import com.techcourse.air.core.annotation.Controller;
 
 @Controller
 public class InjectController {

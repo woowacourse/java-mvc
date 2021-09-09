@@ -9,14 +9,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import air.context.ApplicationContext;
-import air.context.ApplicationContextProvider;
+import com.techcourse.air.core.context.ApplicationContext;
+import com.techcourse.air.core.context.ApplicationContextProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
-import nextstep.web.annotation.RequestMapping;
+import com.techcourse.air.mvc.core.controller.tobe.HandlerExecution;
+import com.techcourse.air.mvc.core.view.JspView;
+import com.techcourse.air.mvc.core.view.ModelAndView;
+
+import com.techcourse.air.mvc.core.adapter.AnnotationHandlerAdapter;
+import com.techcourse.air.mvc.web.annotation.RequestMapping;
 import org.reflections.ReflectionUtils;
 import samples.TestController;
 

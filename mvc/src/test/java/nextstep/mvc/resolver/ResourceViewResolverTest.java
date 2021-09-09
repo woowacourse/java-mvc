@@ -1,10 +1,12 @@
 package nextstep.mvc.resolver;
 
+import com.techcourse.air.mvc.core.resolver.ResourceViewResolver;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.View;
+import com.techcourse.air.mvc.core.view.JspView;
+import com.techcourse.air.mvc.core.view.View;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -4,11 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import air.context.ApplicationContext;
-import air.context.ApplicationContextProvider;
+import com.techcourse.air.core.context.ApplicationContext;
+import com.techcourse.air.core.context.ApplicationContextProvider;
+import com.techcourse.air.mvc.core.adapter.SimpleControllerHandlerAdapter;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.ModelAndView;
+import com.techcourse.air.mvc.core.view.ModelAndView;
 import samples.TestInterfaceController;
 
 import static org.assertj.core.api.Assertions.assertThat;

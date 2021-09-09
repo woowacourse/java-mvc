@@ -3,9 +3,9 @@ package samples;
 import java.util.HashMap;
 import java.util.Map;
 
-import air.annotation.Component;
-import nextstep.configuration.HandlerConfigurer;
-import nextstep.mvc.controller.asis.Controller;
+import com.techcourse.air.core.annotation.Component;
+import com.techcourse.air.mvc.configuration.HandlerConfigurer;
+import com.techcourse.air.mvc.core.controller.asis.Controller;
 
 @Component
 public class ManualHandlerConfig implements HandlerConfigurer {

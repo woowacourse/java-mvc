@@ -1,7 +1,7 @@
 package samples.scan;
 
-import air.annotation.Bean;
-import air.annotation.Configuration;
+import com.techcourse.air.core.annotation.Bean;
+import com.techcourse.air.core.annotation.Configuration;
 
 @Configuration
 public class TestConfiguration {
