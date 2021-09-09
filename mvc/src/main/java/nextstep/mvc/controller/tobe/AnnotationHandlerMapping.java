@@ -2,12 +2,9 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.ControllerScanner;
 import nextstep.web.annotation.Controller;
@@ -51,12 +48,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod requestMethod : requestMapping.method()) {
             handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod), new HandlerExecution(instance, method));
         }
-    }
-
-    private List<Method> getMethodsOfRequestMappingByClass(final Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredMethods())
-            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-            .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
