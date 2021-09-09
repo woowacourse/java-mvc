@@ -1,13 +1,35 @@
 package reflection;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
-class Junit4TestRunner {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class Junit4TestRunner extends Output {
 
     @Test
     void run() throws Exception {
-        Class<Junit4Test> clazz = Junit4Test.class;
+        final Class<Junit4Test> clazz = Junit4Test.class;
+        final Junit4Test junit4Test = clazz.getConstructor().newInstance();
+        final Method[] methods = clazz.getDeclaredMethods();
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        Arrays.stream(methods)
+              .filter(method -> method.isAnnotationPresent(MyTest.class))
+              .forEach(method -> {
+                  try {
+                      method.invoke(junit4Test);
+                  } catch (IllegalAccessException | InvocationTargetException e) {
+                      e.printStackTrace();
+                  }
+              });
+
+        String output = captor.toString().trim();
+
+        assertThat(output).contains("Running Test1");
+        assertThat(output).contains("Running Test2");
+        assertThat(output).doesNotContain("Running Test3");
     }
 }

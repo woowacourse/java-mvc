@@ -1,12 +1,12 @@
 package samples;
 
+import com.techcourse.air.core.annotation.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
-import nextstep.web.annotation.Controller;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
+import com.techcourse.air.mvc.core.view.JspView;
+import com.techcourse.air.mvc.core.view.ModelAndView;
+import com.techcourse.air.mvc.web.annotation.RequestMapping;
+import com.techcourse.air.mvc.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

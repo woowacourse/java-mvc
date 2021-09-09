@@ -1,1 +1,1 @@
-nextstep.web.NextstepServletContainerInitializer
+com.techcourse.air.mvc.web.NextstepServletContainerInitializer
