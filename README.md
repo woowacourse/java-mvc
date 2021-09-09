@@ -25,7 +25,7 @@
 - [x] Service 레이어 및 회원가입 검증로직 추가
 
 ##  2단계 - 리팩터링
-- [ ] ControllerScanner 추가
-  - [ ] Relfections 라이브러리를 사용한다.
-  - [ ] Relfections 객체로 @Controller가 설정된 모든 클래스를 찾는다.
-  - [ ] 각 클래스의 인스턴스를 생성한다.
+- [x] ControllerScanner 추가
+  - [x] Relfections 라이브러리를 사용한다.
+  - [x] Relfections 객체로 @Controller가 설정된 모든 클래스를 찾는다.
+  - [x] 각 클래스의 인스턴스를 생성한다.
