@@ -21,7 +21,7 @@ public class HandlerMappings {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
+                .findAny()
                 .orElseThrow(()-> new UnHandledRequestException("처리할 수 있는 핸들러가 없습니다."));
     }
 }
