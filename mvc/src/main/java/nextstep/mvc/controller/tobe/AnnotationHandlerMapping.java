@@ -25,54 +25,38 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
+        Map<Class<?>, Object> controllers = ControllerScanner.getControllers(basePackage);
 
-    public Object getHandler(HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
-
-        HandlerExecution cachedHandlerExecution = handlerExecutions.get(handlerKey);
-        if (Objects.nonNull(cachedHandlerExecution)) {
-            return cachedHandlerExecution;
-        }
-
-        return getHandlerExecution(handlerKey);
-    }
-
-    private HandlerExecution getHandlerExecution(HandlerKey handlerKey) {
-        Reflections reflections = new Reflections(basePackage);
-
-        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+        for (Class<?> controllerClass : controllers.keySet()) {
             for (Method handlerMethod : controllerClass.getDeclaredMethods()) {
                 if (!handlerMethod.isAnnotationPresent(RequestMapping.class)) {
                     continue;
                 }
 
                 RequestMapping annotation = handlerMethod.getAnnotation(RequestMapping.class);
-                if (handlerKey.match(annotation)) {
-                    Object instance = newInstance(controllerClass);
-                    return getHandlerExecution(handlerKey, handlerMethod, instance);
+                Object controllerInstance = controllers.get(controllerClass);
+                handlerMethod.setAccessible(true);
+
+                for (RequestMethod requestMethod : annotation.method()) {
+                    HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+                    HandlerExecution handlerExecution = createHandlerExecution(handlerKey, handlerMethod, controllerInstance);
+                    handlerExecutions.put(handlerKey, handlerExecution);
                 }
             }
         }
-        return null;
+
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Object newInstance(Class<?> controllerClass) {
-        try {
-            return controllerClass.getConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-            // todo
-            log.error("컨트롤러 객체 생성 실패");
-            throw new RuntimeException("컨트롤러 객체 생성 실패");
-        }
-    }
-
-    private HandlerExecution getHandlerExecution(HandlerKey handlerKey, Method handlerMethod, Object instance) {
-        handlerMethod.setAccessible(true);
-        HandlerExecution handlerExecution = new HandlerExecution(handlerMethod, instance);
+    private HandlerExecution createHandlerExecution(HandlerKey handlerKey, Method handlerMethod, Object controller) {
+        HandlerExecution handlerExecution = new HandlerExecution(handlerMethod, controller);
         handlerExecutions.put(handlerKey, handlerExecution);
         return handlerExecution;
+    }
+
+    public Object getHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+
+        return handlerExecutions.get(handlerKey);
     }
 }

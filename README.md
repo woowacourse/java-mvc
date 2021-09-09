@@ -5,5 +5,7 @@
     - [x] 컨트롤러, 핸들러 메서드 찾기
     - [x] AnnotationHandlerMapping#getHandler -> HandlerExecution 반환
     - [x] AnnotationHandlerMappingTest 통과
+    - [x] initialize로 모든 HandlerExecution 초기화 하기
+        - [x] ControllerScanner 생성
 - [ ] Legacy MVC와 Annotation Based MVC 통합
 - [ ] JspView 구현
