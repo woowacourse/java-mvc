@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.view.JspView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        addDefaultHandlerMappings();
         handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
+    private void addDefaultHandlerMappings() {
+        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
