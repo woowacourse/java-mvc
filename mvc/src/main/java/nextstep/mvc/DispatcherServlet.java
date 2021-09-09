@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,12 +33,12 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+    public void addHandlerMapping(HandlerMapping...handlerMappings) {
+        this.handlerMappings.addAll(Arrays.asList(handlerMappings));
     }
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public void addHandlerAdapter(HandlerAdapter...handlerAdapter) {
+        this.handlerAdapters.addAll(Arrays.asList(handlerAdapter));
     }
 
     @Override
@@ -46,13 +47,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-
             render(modelAndView, request, response);
-
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

@@ -27,29 +27,40 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        log.info("Initialized AnnotationHandlerMapping!");
         try {
-            for (Object base : basePackage) {
-                Reflections reflections = new Reflections(base);
-                final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-                for (Class<?> controllerClass : controllerClasses) {
-                    final Method[] methods = controllerClass.getMethods();
-                    for (Method method : methods) {
-                        if (method.isAnnotationPresent(RequestMapping.class)) {
-                            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                            final RequestMethod[] requestMethods = requestMapping.method();
-                            final String path = requestMapping.value();
-                            for (RequestMethod requestMethod : requestMethods) {
-                                handlerExecutions.put(new HandlerKey(path, requestMethod),
-                                        new HandlerExecution(controllerClass.getDeclaredConstructor().newInstance(), method));
-                            }
-                        }
-                    }
-                }
+            Reflections reflections = new Reflections(basePackage);
+            final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+            for (Class<?> controllerClass : controllerClasses) {
+                final Method[] methods = controllerClass.getMethods();
+                initializeHandlerExecutions(controllerClass.getDeclaredConstructor().newInstance(), methods);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet().forEach(handlerKey -> log.info(handlerKey.toString()));
+    }
+
+    private void initializeHandlerExecutions(Object controller, Method[] methods) {
+        for (Method method : methods) {
+            checkMethod(controller, method);
+        }
+    }
+
+    private void checkMethod(Object controller, Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            final RequestMethod[] requestMethods = requestMapping.method();
+            final String path = requestMapping.value();
+            addHandlerExecution(controller, method, requestMethods, path);
+        }
+    }
+
+    private void addHandlerExecution(Object controller, Method method, RequestMethod[] requestMethods, String path) {
+        for (RequestMethod requestMethod : requestMethods) {
+            handlerExecutions.put(new HandlerKey(path, requestMethod),
+                    new HandlerExecution(controller, method));
+        }
     }
 
     public Object getHandler(HttpServletRequest request) {

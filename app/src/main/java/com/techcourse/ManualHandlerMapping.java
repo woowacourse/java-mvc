@@ -1,6 +1,10 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.manual.LoginController;
+import com.techcourse.controller.manual.LoginViewController;
+import com.techcourse.controller.manual.LogoutController;
+import com.techcourse.controller.manual.RegisterController;
+import com.techcourse.controller.manual.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
@@ -26,7 +30,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());
 
-        log.info("Initialized Handler Mapping!");
+        log.info("Initialized Manual Handler Mapping!");
         controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 

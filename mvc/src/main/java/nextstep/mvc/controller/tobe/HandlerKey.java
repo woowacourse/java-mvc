@@ -34,9 +34,4 @@ public class HandlerKey {
     public int hashCode() {
         return Objects.hash(url, requestMethod);
     }
-
-
-    public boolean isSame(String requestURI, String method) {
-        return url.equals(requestURI) && requestMethod.name().equals(method);
-    }
 }
