@@ -17,7 +17,7 @@
 
 - [ ] 기존의 컨트롤러를 annotation 기반으로 변경하더라도 정상 작동
   - [ ] DispatcherServlet이 ModelAndView를 처리할 수 있도록 기능 추가
-  - [ ] JspView render 메서드 구현
+  - [x] JspView render 메서드 구현
 - [ ] 새로운 TestController를 포함하면 해당 컨트롤러의 기능이 애플리케이션에서 작동
 
 - [ ] TODO 처리
