@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 class Junit3TestRunner {
 
-    private static final Logger log = LoggerFactory.getLogger(Junit3Test.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Junit3Test.class);
 
     @Test
     void run() throws Exception {
@@ -25,7 +25,7 @@ class Junit3TestRunner {
                 try {
                     method.invoke(instance);
                 } catch (Exception e) {
-                    log.error("method error : {}", e.getMessage());
+                    LOG.error("method error : {}", e.getMessage());
                 }
             });
     }

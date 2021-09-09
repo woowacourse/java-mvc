@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
@@ -25,15 +25,15 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
 
-        log.info("Initialized Handler Mapping!");
+        LOG.info("Initialized Handler Mapping!");
         controllers.keySet().forEach(
-            path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+            path -> LOG.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
     @Override
     public Controller getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
-        log.info("Request Mapping Uri : {}", requestURI);
+        LOG.info("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
 }

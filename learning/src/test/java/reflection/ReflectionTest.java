@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ReflectionTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReflectionTest.class);
 
     @Test
     void givenObject_whenGetsClassName_thenCorrect() {
@@ -66,7 +66,7 @@ class ReflectionTest {
 
         Arrays.stream(constructors)
             .forEach(
-                constructor -> log.debug(constructor.toString())
+                constructor -> LOG.debug(constructor.toString())
             );
         assertThat(constructors).hasSize(2);
     }

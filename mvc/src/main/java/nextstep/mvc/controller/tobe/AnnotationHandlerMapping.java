@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -34,7 +34,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             List<Method> declaredMethods = getRequestMappingMethods(aClass);
             addHandleExecution(instance, declaredMethods);
         });
-        log.info("Initialized AnnotationHandlerMapping!");
+        LOG.info("Initialized AnnotationHandlerMapping!");
     }
 
     private List<Method> getRequestMappingMethods(Class<?> aClass) {
@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 HandlerKey handlerKey = new HandlerKey(url, requestMethod);
                 validateHandleKeyDuplicate(handlerKey);
                 handlerExecutions.put(handlerKey, new HandlerExecution(instance, aMethod));
-                log.info("Request Mapping Uri : {}", url);
+                LOG.info("Request Mapping Uri : {}", url);
             }
         }
     }

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 class ReflectionsTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ReflectionsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReflectionsTest.class);
 
     @Test
     void showAnnotationClass() throws Exception {
@@ -22,8 +22,8 @@ class ReflectionsTest {
         Set<Class<?>> repositories = reflections.getTypesAnnotatedWith(Repository.class);
         Set<Class<?>> services = reflections.getTypesAnnotatedWith(Service.class);
 
-        controllers.forEach(controller -> log.debug("controller: {}", controller.getSimpleName()));
-        repositories.forEach(repository -> log.debug("repository: {}", repository.getSimpleName()));
-        services.forEach(service -> log.debug("service: {}", service.getSimpleName()));
+        controllers.forEach(controller -> LOG.debug("controller: {}", controller.getSimpleName()));
+        repositories.forEach(repository -> LOG.debug("repository: {}", repository.getSimpleName()));
+        services.forEach(service -> LOG.debug("service: {}", service.getSimpleName()));
     }
 }

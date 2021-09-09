@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 @WebFilter("/*")
 public class ResourceFilter implements Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(ResourceFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceFilter.class);
 
     private static final List<String> resourcePrefixs = new ArrayList<>();
 
@@ -47,7 +47,7 @@ public class ResourceFilter implements Filter {
         final HttpServletRequest req = (HttpServletRequest) request;
         final String path = req.getRequestURI().substring(req.getContextPath().length());
         if (isResourceUrl(path)) {
-            log.debug("path : {}", path);
+            LOG.debug("path : {}", path);
             requestDispatcher.forward(request, response);
         } else {
             chain.doFilter(request, response);

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class JwpApplication {
 
-    private static final Logger log = LoggerFactory.getLogger(JwpApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JwpApplication.class);
 
     private static final int DEFAULT_PORT = 8080;
 
@@ -38,7 +38,7 @@ public class JwpApplication {
     private static Context addWebapp(Tomcat tomcat) {
         final String docBase = new File("app/webapp/").getAbsolutePath();
         final Context context = tomcat.addWebapp("/", docBase);
-        log.info("configuring app with basedir: {}", docBase);
+        LOG.info("configuring app with basedir: {}", docBase);
         return context;
     }
 

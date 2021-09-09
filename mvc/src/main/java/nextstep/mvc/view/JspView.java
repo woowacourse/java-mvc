@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class JspView implements View {
 
-    private static final Logger log = LoggerFactory.getLogger(JspView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JspView.class);
     public static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
@@ -27,7 +27,7 @@ public class JspView implements View {
         }
 
         model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
+            LOG.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
