@@ -54,11 +54,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final RequestMapping annotation = (RequestMapping) method.getAnnotation(methodAnnotation);
 
         for (RequestMethod annotationMethod : annotation.method()) {
-            handlerExecutions.put(new HandlerKey(annotation.value(), annotationMethod), new HandlerExecution(instance, method));
+            final HandlerKey handlerKey = HandlerKey.of(annotation.value(), annotationMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
     public Object getHandler(HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod().toUpperCase())));
+        final String requestURI = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod().toUpperCase());
+        final HandlerKey handlerKey = HandlerKey.of(requestURI, requestMethod);
+
+        return handlerExecutions.get(handlerKey);
     }
 }
