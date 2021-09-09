@@ -51,28 +51,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
             for (Class<?> controller : controllers) {
-                List<Method> mappedMethods = getRequestMappingMethods(controller);
-
-                Object instance = controller.getDeclaredConstructor().newInstance();
-
-                for (Method mappedMethod : mappedMethods) {
-                    RequestMapping requestMapping = mappedMethod.getAnnotation(RequestMapping.class);
-
-                    String mappedUrl = requestMapping.value();
-                    RequestMethod[] mappedHttpMethods = requestMapping.method();
-
-                    for (RequestMethod mappedHttpMethod : mappedHttpMethods) {
-                        HandlerKey handlerKey = new HandlerKey(mappedUrl, mappedHttpMethod);
-                        HandlerExecution handlerExecution = new HandlerExecution(instance, mappedMethod);
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
+                registerRequestMappingMethods(controller);
             }
         } catch (InvocationTargetException |
                 InstantiationException |
                 IllegalAccessException |
                 NoSuchMethodException exception) {
             throw new HandlerMappingInitiationException(exception);
+        }
+    }
+
+    private void registerRequestMappingMethods(Class<?> controller) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        List<Method> mappedMethods = getRequestMappingMethods(controller);
+
+        Object instance = controller.getDeclaredConstructor().newInstance();
+
+        for (Method mappedMethod : mappedMethods) {
+            RequestMapping requestMapping = mappedMethod.getAnnotation(RequestMapping.class);
+
+            String mappedUrl = requestMapping.value();
+            RequestMethod[] mappedHttpMethods = requestMapping.method();
+
+            for (RequestMethod mappedHttpMethod : mappedHttpMethods) {
+                HandlerKey handlerKey = new HandlerKey(mappedUrl, mappedHttpMethod);
+                HandlerExecution handlerExecution = new HandlerExecution(instance, mappedMethod);
+                handlerExecutions.put(handlerKey, handlerExecution);
+            }
         }
     }
 
