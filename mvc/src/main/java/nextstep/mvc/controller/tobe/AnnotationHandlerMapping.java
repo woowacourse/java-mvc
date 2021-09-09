@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,18 +33,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Start AnnotationHandlerMapping Initialization!");
         final Map<Class<?>, Object> controllers = ControllerScanner.getControllers(basePackage);
 
-        for (final Class<?> controller : controllers.keySet()) {
-            Arrays.stream(controller.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> getHandlerExecutions(controllers, controller, method));
+        for (final Map.Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
+            addHandlerExecutions(controllerEntry);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void getHandlerExecutions(Map<Class<?>, Object> controllers, Class<?> controller, Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-        HandlerExecution handlerExecution = new HandlerExecution(controllers.get(controller), method);
-        handlerExecutions.put(handlerKey, handlerExecution);
+    private void addHandlerExecutions(Map.Entry<Class<?>, Object> controllerEntry) {
+        final Class<?> controllerClass = controllerEntry.getKey();
+        final Object controllerInstance = controllerEntry.getValue();
+
+        final Set<Method> methods = ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class));
+        for (final Method method : methods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 }
