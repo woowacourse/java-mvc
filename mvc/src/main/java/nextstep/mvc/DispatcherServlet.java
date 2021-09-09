@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +15,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final HandlerAdapter HANDLER_ADAPTER = new HandlerExecutionHandlerAdapter();
 
     private final List<HandlerMapping> handlerMappings;
+    private final HandlerAdapter handlerAdapter;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(HandlerAdapter handlerAdapter) {
+        this.handlerAdapter = handlerAdapter;
         this.handlerMappings = new ArrayList<>();
     }
 
@@ -40,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = getHandler(request);
 
-            if (HANDLER_ADAPTER.supports(handler)) {
-                ModelAndView mav = HANDLER_ADAPTER.handle(request, response, handler);
+            if (handlerAdapter.supports(handler)) {
+                ModelAndView mav = handlerAdapter.handle(request, response, handler);
                 mav.render(request, response);
             }
         } catch (Throwable e) {
