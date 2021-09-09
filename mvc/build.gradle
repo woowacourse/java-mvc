@@ -1,8 +1,12 @@
 plugins {
     id 'java'
+    id 'application'
     id 'org.sonarqube' version '3.3'
     id 'jacoco'
 }
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 jacoco {
     toolVersion = "0.8.5"
@@ -31,8 +35,13 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
+application {
+    mainClass = 'com.techcourse.JwpApplication'
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy(jacocoTestReport)
 }
 
 sonarqube {
