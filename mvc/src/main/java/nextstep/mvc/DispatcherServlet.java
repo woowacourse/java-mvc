@@ -51,9 +51,9 @@ public class DispatcherServlet extends HttpServlet {
                 View view = modelAndView.getView();
                 view.render(modelAndView.getModel(), request, response);
             } else {
-                throw new Throwable("맞는 핸들러가 없습니다.");
+                throw new Exception("맞는 핸들러가 없습니다.");
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOGGER.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
