@@ -39,7 +39,7 @@ public class TestController {
 
 ## Legacy MVC와 Annotation Based MVC 통합
 
-- 컨트롤러 인터페이스 기반 MVC 프레임워크 + 어노테이션 기반 MVC 프레임워크 공존
+- [x] 컨트롤러 인터페이스 기반 MVC 프레임워크 + 어노테이션 기반 MVC 프레임워크 공존
   - e.g. `RegisterController`를 컨트롤러 인터페이스 기반 컨트롤러 -> 어노테이션 기반 컨트롤러 변경해도 정상 동작
 ```java
 @Controller

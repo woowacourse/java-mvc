@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.tobe.handler.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.exception.controller.NoSuchConstructorException;
+import nextstep.mvc.handler.mapping.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;

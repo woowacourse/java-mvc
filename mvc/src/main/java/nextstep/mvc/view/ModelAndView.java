@@ -1,8 +1,10 @@
 package nextstep.mvc.view;
 
-import java.util.Collections;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import nextstep.mvc.exception.view.IllegalRenderException;
 
 public class ModelAndView {
 
@@ -26,11 +28,19 @@ public class ModelAndView {
         return model.get(attributeName);
     }
 
-    public Map<String, Object> getModel() {
-        return Collections.unmodifiableMap(model);
+    public void render(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            view.render(model, request, response);
+        } catch (Exception e) {
+            throw new IllegalRenderException();
+        }
     }
 
     public View getView() {
         return view;
+    }
+
+    public Map<String, Object> getModel() {
+        return model;
     }
 }

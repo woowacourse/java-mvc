@@ -4,8 +4,6 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-import nextstep.mvc.exception.view.IllegalRenderException;
-import nextstep.mvc.exception.view.NoSuchPathException;
 import nextstep.mvc.exception.view.NoSuchRequestDispatcherException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +12,7 @@ public class JspView implements View {
 
     private static final Logger LOG = LoggerFactory.getLogger(JspView.class);
     private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String JSP_SUFFIX = ".jsp";
 
     private final String name;
 
@@ -26,18 +25,16 @@ public class JspView implements View {
         Map<String, ?> model,
         HttpServletRequest request,
         HttpServletResponse response
-    ) {
+    ) throws Exception {
         setAttributes(model, request);
 
-        String path = preparePath();
-
-        RequestDispatcher requestDispatcher = getRequestDispatcher(request, path);
-
-        try {
-            requestDispatcher.forward(request, response);
-        } catch (Exception e) {
-            throw new IllegalRenderException();
+        if (name.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(parsePath());
+            return;
         }
+
+        RequestDispatcher requestDispatcher = getRequestDispatcher(request, getPath());
+        requestDispatcher.forward(request, response);
     }
 
     private void setAttributes(Map<String, ?> model, HttpServletRequest request) {
@@ -51,15 +48,15 @@ public class JspView implements View {
         });
     }
 
-    private String preparePath() {
-        if (name.startsWith(REDIRECT_PREFIX)) {
-            int index = name.indexOf(":");
-            return name.substring(index + 1);
-        }
-        if (name.startsWith("/")) {
+    private String parsePath() {
+        return name.substring(REDIRECT_PREFIX.length());
+    }
+
+    private String getPath() {
+        if (name.endsWith(JSP_SUFFIX)) {
             return name;
         }
-        throw new NoSuchPathException();
+        return name + JSP_SUFFIX;
     }
 
     private RequestDispatcher getRequestDispatcher(HttpServletRequest request, String path) {
