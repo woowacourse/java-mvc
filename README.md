@@ -18,7 +18,7 @@
 - [x] 기존의 컨트롤러를 annotation 기반으로 변경하더라도 정상 작동
   - [x] DispatcherServlet이 ModelAndView를 처리할 수 있도록 기능 추가
   - [x] JspView render 메서드 구현
-- [ ] 새로운 TestController를 포함하면 해당 컨트롤러의 기능이 애플리케이션에서 작동
+- [x] 새로운 TestController를 포함하면 해당 컨트롤러의 기능이 애플리케이션에서 작동
 
 - [ ] TODO 처리
 
@@ -31,28 +31,3 @@
     * as-is와 to-be, 즉 "기존의 것", 그리고 "개선 방향" 인건가? 그럼 지워도 되나?
 * @RequestMapping 어노테이션을 찾아야 한다. 타깃이 Type, Method 둘 다 되기 때문에 클래스 단위, 메서드 단위로 있는지 확인해야 한다
 
-##### TestController 소스코드
-
-```java
-@Controller
-public class TestController {
-
-    private static final Logger log = LoggerFactory.getLogger(TestController.class);
-
-    @RequestMapping(value = "/get-test", method = RequestMethod.GET)
-    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
-        log.info("test controller get method");
-        final ModelAndView modelAndView = new ModelAndView(new JspView("/get-test.jsp"));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/post-test", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
-        log.info("test controller post method");
-        final ModelAndView modelAndView = new ModelAndView(new JspView("/post-test.jsp"));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
-    }
-}
-```
