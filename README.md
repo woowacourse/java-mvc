@@ -31,6 +31,28 @@ public class TestController {
 ```
 - 멀티모듈 분리
     - mvc 모듈은 프레임워크 영역, app 모듈은 서비스 영역
-- [x] `AnnotationHandlerMappingTest.java`를 참고해서 실패하는 테스트가 통과하게 구현
+- [x] `AnnotationHandlerMappingTest`를 참고해서 실패하는 테스트가 통과하게 구현
 - JspView
-    - [x] `DispatcherServlet.java`를 참고해서 View 처리를 어떻게 하는지 확인하고, todo 완료
+    - [x] `DispatcherServlet`를 참고해서 View 처리를 어떻게 하는지 확인하고, todo 완료
+
+<br/>
+
+## Legacy MVC와 Annotation Based MVC 통합
+
+- 컨트롤러 인터페이스 기반 MVC 프레임워크 + 어노테이션 기반 MVC 프레임워크 공존
+  - e.g. `RegisterController`를 컨트롤러 인터페이스 기반 컨트롤러 -> 어노테이션 기반 컨트롤러 변경해도 정상 동작
+```java
+@Controller
+public class RegisterController {
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+        //
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+        //
+    }
+}
+```
