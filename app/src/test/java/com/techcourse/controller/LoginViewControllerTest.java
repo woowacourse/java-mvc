@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -40,10 +38,10 @@ class LoginViewControllerTest {
         when(request.getSession()).thenReturn(httpSession);
 
         // when
-        final ModelAndView modelAndView = controller.execute(request, response);
+        final String viewName = controller.execute(request, response);
 
         // then
-        assertThat(modelAndView).usingRecursiveComparison().isEqualTo(new ModelAndView(new JspView("redirect:/index.jsp")));
+        assertThat(viewName).isEqualTo("redirect:/index.jsp");
     }
 
     @Test
@@ -54,9 +52,9 @@ class LoginViewControllerTest {
         when(request.getSession()).thenReturn(httpSession);
 
         // when
-        final ModelAndView modelAndView = controller.execute(request, response);
+        final String viewName = controller.execute(request, response);
 
         // then
-        assertThat(modelAndView).usingRecursiveComparison().isEqualTo(new ModelAndView(new JspView("/login.jsp")));
+        assertThat(viewName).isEqualTo("/login.jsp");
     }
 }

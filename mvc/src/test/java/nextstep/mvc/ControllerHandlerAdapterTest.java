@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import samples.AnnotationTestController;
 import samples.TestController;
@@ -66,6 +67,6 @@ class ControllerHandlerAdapterTest {
         final ModelAndView modelAndView = new ControllerHandlerAdapter().handle(request, response, handler);
 
         // then
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView).usingRecursiveComparison().isEqualTo(new ModelAndView(new JspView("/index.jsp")));
     }
 }

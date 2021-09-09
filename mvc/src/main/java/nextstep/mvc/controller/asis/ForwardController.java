@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
 
 public class ForwardController implements Controller {
 
@@ -16,7 +14,7 @@ public class ForwardController implements Controller {
     }
 
     @Override
-    public ModelAndView execute(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView(path));
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        return path;
     }
 }
