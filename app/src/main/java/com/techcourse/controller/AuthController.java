@@ -50,4 +50,11 @@ public class AuthController {
             return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
     }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        final HttpSession session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        return new ModelAndView(new JspView("redirect:/"));
+    }
 }
