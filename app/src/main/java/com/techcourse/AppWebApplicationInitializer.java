@@ -14,10 +14,13 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        HandlerMappings handlerMappings = new HandlerMappings(new ManualHandlerMapping(), new AnnotationHandlerMapping("controller"));
-        HandlerAdapters handlerAdapters = new HandlerAdapters(new ControllerHandlerAdapter(), new RequestMappingHandlerAdapter());
+        HandlerMappings handlerMappings = new HandlerMappings(
+                new ManualHandlerMapping(), new AnnotationHandlerMapping("controller"));
+
+        HandlerAdapters handlerAdapters = new HandlerAdapters(
+                new ControllerHandlerAdapter(), new RequestMappingHandlerAdapter());
+
         final DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
-        dispatcherServlet.init();
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

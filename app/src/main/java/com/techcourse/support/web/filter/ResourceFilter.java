@@ -60,6 +60,6 @@ public class ResourceFilter implements Filter {
 
     @Override
     public void destroy() {
-        throw new UnsupportedOperationException();
+        // Do nothing
     }
 }

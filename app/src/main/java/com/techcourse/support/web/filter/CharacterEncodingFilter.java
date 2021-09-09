@@ -12,7 +12,7 @@ public class CharacterEncodingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        throw new UnsupportedOperationException();
+        // Don nothing
     }
 
     @Override
@@ -25,6 +25,6 @@ public class CharacterEncodingFilter implements Filter {
 
     @Override
     public void destroy() {
-        throw new UnsupportedOperationException();
+        // Don nothing
     }
 }

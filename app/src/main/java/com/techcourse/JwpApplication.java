@@ -1,7 +1,8 @@
 package com.techcourse;
 
-import java.io.File;
 import java.util.stream.Stream;
+
+import com.techcourse.support.PathUtils;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -40,19 +41,11 @@ public class JwpApplication {
     }
 
     private static Context addWebapp(Tomcat tomcat) {
-        final String docBase = determinePath();
+        final String docBase = PathUtils.getWebAppPath();
 
         log.info("configuring app with basedir: {}", docBase);
 
         return tomcat.addWebapp("/", docBase);
-    }
-
-    private static String determinePath() {
-        final String absolutePath = new File("").getAbsolutePath();
-        if (absolutePath.endsWith("/app")) {
-            return absolutePath + "/webapp";
-        }
-        return absolutePath + "/app/webapp";
     }
 
     private static void skipBindOnInit(Tomcat tomcat) {
