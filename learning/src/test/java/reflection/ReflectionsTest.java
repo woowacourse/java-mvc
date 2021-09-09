@@ -11,7 +11,9 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ReflectionsTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ReflectionsTest extends Output {
 
     private static final Logger log = LoggerFactory.getLogger(ReflectionsTest.class);
 
@@ -30,5 +32,12 @@ class ReflectionsTest {
 
         log.info("[@Repository 클래스]");
         repositoryClasses.forEach(c -> log.info(c.getName()));
+
+        String output = captor.toString().trim();
+
+        assertThat(output).contains("examples.QnaController");
+        assertThat(output).contains("examples.MyQnaService");
+        assertThat(output).contains("examples.JdbcUserRepository");
+        assertThat(output).contains("examples.JdbcQuestionRepository");
     }
 }

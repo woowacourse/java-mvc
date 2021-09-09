@@ -6,7 +6,9 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-class Junit3TestRunner {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class Junit3TestRunner extends Output {
 
     @Test
     void run() throws Exception {
@@ -23,5 +25,11 @@ class Junit3TestRunner {
                       e.printStackTrace();
                   }
               });
+
+        String output = captor.toString().trim();
+
+        assertThat(output).contains("Running Test1");
+        assertThat(output).contains("Running Test2");
+        assertThat(output).doesNotContain("Running Test3");
     }
 }
