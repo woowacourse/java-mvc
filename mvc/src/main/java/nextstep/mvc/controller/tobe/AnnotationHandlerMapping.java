@@ -28,18 +28,28 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
             Class<?> clazz = entry.getKey();
             Object controller = entry.getValue();
-
-            for (Method method : clazz.getMethods()) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    return;
-                }
-                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method());
-                HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                handlerExecutions.put(handlerKey, handlerExecution);
-            }
+            findHandlerExecutions(clazz, controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void findHandlerExecutions(Class<?> clazz, Object controller) {
+        for (Method method : clazz.getMethods()) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping == null) {
+                break;
+            }
+            addHandlerExecutions(controller, method, requestMapping);
+        }
+    }
+
+    private void addHandlerExecutions(Object controller, Method method, RequestMapping requestMapping) {
+        RequestMethod[] methods = requestMapping.method();
+        for(RequestMethod requestMethod : methods){
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
