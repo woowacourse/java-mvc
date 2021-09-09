@@ -19,6 +19,7 @@
   - [x] DispatcherServlet이 ModelAndView를 처리할 수 있도록 기능 추가
   - [x] JspView render 메서드 구현
 - [x] 새로운 TestController를 포함하면 해당 컨트롤러의 기능이 애플리케이션에서 작동
+- [x] HandlerAdapter 이용하여 DispatcherServlet 전략 추가 가능하도록 구현
 
 - [ ] TODO 처리
 

@@ -4,10 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -23,19 +20,27 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
         addDefaultHandlerMappings();
+        addDefaultHandlerAdapters();
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     private void addDefaultHandlerMappings() {
         addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
+    }
+
+    private void addDefaultHandlerAdapters() {
+        handlerAdapters.add(new AnnotationBasedAdapter());
+        handlerAdapters.add(new ControllerBasedAdapter());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -48,7 +53,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(request);
-            ModelAndView modelAndView = execute(handler, request, response);
+            HandlerAdapter adapter = getAdapter(handler);
+            ModelAndView modelAndView = adapter.handle(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Exception exception) {
@@ -62,39 +68,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new HandlerNotFoundException(request));
     }
 
-    private ModelAndView execute(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-        if (handler instanceof Controller) {
-            return new ModelAndView(
-                    new JspView(
-                            ((Controller) handler).execute(request, response)
-                    )
-            );
-        }
-        return null;
+    private HandlerAdapter getAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new AdapterNotFoundException(handler));
     }
-
-//    private Controller getController(HttpServletRequest request) {
-//        return handlerMappings.stream()
-//                .map(handlerMapping -> handlerMapping.getHandler(request))
-//                .filter(Objects::nonNull)
-//                .map(Controller.class::cast)
-//                .findFirst()
-//                .orElseThrow();
-//    }
-
-//    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-//        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-//            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-//            return;
-//        }
-//
-//        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-//        requestDispatcher.forward(request, response);
-//    }
 }
