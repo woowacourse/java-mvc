@@ -42,7 +42,7 @@ public class ExceptionHandlerExecutor {
     private void registerHandler(Method method, ExceptionHandlerExecution handler) {
         Class<?> exceptionType = ExceptionHandlerAnnotationUtils.getHandleExceptionType(method);
         if (handlerExecutions.containsKey(exceptionType)) {
-            throw new MvcComponentException("중복 정의된 Exception Handler 입니다. "+ exceptionType);
+            throw new MvcComponentException("중복 정의된 Exception Handler 입니다. ");
         }
         handlerExecutions.putIfAbsent(exceptionType, handler);
     }
