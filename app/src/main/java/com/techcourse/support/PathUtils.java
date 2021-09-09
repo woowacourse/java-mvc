@@ -7,7 +7,10 @@ public class PathUtils {
     private PathUtils() {}
 
     public static String getWebAppPath() {
-        final String absolutePath = new File("").getAbsolutePath();
+        return addRightWebAppPath(new File("").getAbsolutePath());
+    }
+
+    static String addRightWebAppPath(String absolutePath) {
         if (absolutePath.endsWith("/app")) {
             return absolutePath + "/webapp";
         }
