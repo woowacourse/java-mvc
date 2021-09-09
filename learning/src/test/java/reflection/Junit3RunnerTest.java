@@ -33,6 +33,7 @@ class Junit3RunnerTest {
         }
 
         // then
-        assertThat(captor.toString().trim()).isEqualTo("Running Test1\nRunning Test2");
+        assertThat(captor.toString().trim()).contains("Running Test1", "Running Test2")
+                                            .doesNotContain("Running Test3");
     }
 }

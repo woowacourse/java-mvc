@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Junit4TestRunnerTest {
+class Junit4RunnerTest {
 
     @Test
     void run() throws Exception {
@@ -20,19 +20,20 @@ class Junit4TestRunnerTest {
         final ByteArrayOutputStream captor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(captor));
 
-        Class<Junit4Test> clazz = Junit4Test.class;
+        Class<Junit4> clazz = Junit4.class;
         final List<Method> methods = Arrays.stream(clazz.getDeclaredMethods())
                                            .filter(method -> method.isAnnotationPresent(MyTest.class))
                                            .collect(Collectors.toList());
 
-        final Junit4Test junit4Test = clazz.getConstructor().newInstance();
+        final Junit4 junit4 = clazz.getConstructor().newInstance();
 
         // when
         for (Method method : methods) {
-            method.invoke(junit4Test);
+            method.invoke(junit4);
         }
 
         // then
-        assertThat(captor.toString().trim()).isEqualTo("Running Test1\nRunning Test2");
+        assertThat(captor.toString().trim()).contains("Running Test1", "Running Test2")
+                                            .doesNotContain("Running Test3");
     }
 }

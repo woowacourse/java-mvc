@@ -1,6 +1,6 @@
 package reflection;
 
-public class Junit4Test {
+public class Junit4 {
 
     @MyTest
     public void one() throws Exception {
