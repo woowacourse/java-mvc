@@ -14,6 +14,7 @@ public class JspView implements View {
     public static final String REDIRECT_PREFIX = "redirect:";
 
     public JspView(String viewName) {
+        // todo
     }
 
     @Override
