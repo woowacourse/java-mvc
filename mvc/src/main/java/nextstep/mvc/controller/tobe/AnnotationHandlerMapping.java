@@ -28,25 +28,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         for (Object packageName : basePackage) {
-            final ReflectionUtils reflectionUtils = new ReflectionUtils(packageName);
-            createHandlerKey(reflectionUtils, Controller.class, RequestMapping.class);
+            final ControllerScanner controllerScanner = new ControllerScanner(packageName);
+            createHandlerKey(controllerScanner, Controller.class, RequestMapping.class);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void createHandlerKey(ReflectionUtils reflectionUtils, Class<? extends Annotation> classAnnotation, Class<? extends Annotation> methodAnnotation) {
-        final Set<Class<?>> typesAnnotatedWith = reflectionUtils.getTypesAnnotatedWith(classAnnotation);
+    private void createHandlerKey(ControllerScanner controllerScanner, Class<? extends Annotation> classAnnotation,
+        Class<? extends Annotation> methodAnnotation) {
+        final Set<Class<?>> typesAnnotatedWith = controllerScanner.getTypesAnnotatedWith(classAnnotation);
 
         for (Class<?> controller : typesAnnotatedWith) {
-            List<Method> methods = reflectionUtils.methods(controller, methodAnnotation);
+            List<Method> methods = controllerScanner.methods(controller, methodAnnotation);
 
-            iterateMethods(reflectionUtils, methodAnnotation, controller, methods);
+            iterateMethods(controllerScanner, methodAnnotation, controller, methods);
         }
     }
 
-    private void iterateMethods(ReflectionUtils reflectionUtils, Class<? extends Annotation> methodAnnotation, Class<?> controller, List<Method> methods) {
+    private void iterateMethods(ControllerScanner controllerScanner, Class<? extends Annotation> methodAnnotation, Class<?> controller, List<Method> methods) {
         for (Method method : methods) {
-            putHandlerKey(reflectionUtils.newInstance(controller), method, methodAnnotation);
+            putHandlerKey(controllerScanner.newInstance(controller), method, methodAnnotation);
         }
     }
 

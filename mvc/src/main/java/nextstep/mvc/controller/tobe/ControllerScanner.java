@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
-public class ReflectionUtils {
+public class ControllerScanner {
 
     private Reflections reflections;
 
-    public ReflectionUtils(Object basePackage) {
+    public ControllerScanner(Object basePackage) {
         this.reflections = new Reflections((String) basePackage);
     }
 
