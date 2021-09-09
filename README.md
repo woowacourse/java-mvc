@@ -4,8 +4,8 @@
 
 ## Annotation Based MVC Framework
 
-- [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크 -> 어노테이션 기반 MVC 프레임워크 개선
-    - [ ] URL, HTTP 메소드를 매핑 조건에 포함
+- 컨트롤러 인터페이스 기반 MVC 프레임워크 -> 어노테이션 기반 MVC 프레임워크 개선
+    - [x] URL, HTTP 메소드를 매핑 조건에 포함
 ```java
 @Controller
 public class TestController {
