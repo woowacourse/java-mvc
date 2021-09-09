@@ -23,7 +23,7 @@ public class HandlerAdapterRegistry {
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
             .filter(handlerAdapter -> handlerAdapter.supports(handler))
-            .findAny()
+            .findFirst()
             .orElseThrow(
                 () -> new IllegalArgumentException("Can not find appropriate handler adapter"));
     }

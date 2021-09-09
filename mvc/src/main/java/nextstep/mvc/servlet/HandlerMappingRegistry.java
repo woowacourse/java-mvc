@@ -30,7 +30,7 @@ public class HandlerMappingRegistry {
         return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
-            .findAny()
+            .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Can not find appropriate handler"));
     }
 }
