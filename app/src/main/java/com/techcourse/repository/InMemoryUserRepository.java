@@ -10,13 +10,15 @@ import nextstep.core.annotation.Component;
 public class InMemoryUserRepository {
 
     private final Map<String, User> database = new ConcurrentHashMap<>();
+    private Long id = 0L;
 
     public InMemoryUserRepository() {
-        final User user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+        final User user = new User(++id, "gugu", "password", "hkkang@woowahan.com");
         database.put(user.getAccount(), user);
     }
 
     public void save(User user) {
+        user.setId(++id);
         database.put(user.getAccount(), user);
     }
 

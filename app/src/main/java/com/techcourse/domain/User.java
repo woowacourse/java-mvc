@@ -2,7 +2,7 @@ package com.techcourse.domain;
 
 public class User {
 
-    private final long id;
+    private long id;
     private final String account;
     private final String password;
     private final String email;
@@ -14,12 +14,20 @@ public class User {
         this.email = email;
     }
 
+    public User(String account, String password, String email) {
+        this(0, account, password, email);
+    }
+
     public boolean checkPassword(String password) {
         return this.password.equals(password);
     }
 
     public String getAccount() {
         return account;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
