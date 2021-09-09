@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.techcourse.air.mvc.core.view.JspView;
+import com.techcourse.air.mvc.core.view.ResourceView;
 import com.techcourse.air.mvc.core.view.View;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +38,7 @@ class ResourceViewResolverTest {
         View view = resourceViewResolver.resolveViewName(viewName);
 
         // then
-        assertThat(view).isNull();
+        assertThat(view).isInstanceOf(ResourceView.class);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.techcourse.air.core.context;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import com.google.common.base.CaseFormat;
-
 import com.techcourse.air.core.annotation.*;
 
 import org.reflections.Reflections;
@@ -60,7 +60,7 @@ public class ApplicationContext {
 
             Set<Class<?>> allClasses = reflections.getSubTypesOf(Object.class);
             Set<Class<?>> components = allClasses.stream()
-                                                 .filter(this::isComponent)
+                                                 .filter(this::hasComponentAnnotation)
                                                  .collect(Collectors.toSet());
 
             allComponents.addAll(components);
@@ -102,14 +102,40 @@ public class ApplicationContext {
                      .collect(Collectors.toList());
     }
 
-    private boolean isComponent(Class<?> clazz) {
-        return isComponentFriends(clazz) && !clazz.isAnnotation();
+    private boolean hasComponentAnnotation(Class<?> clazz) {
+        return (clazz.isAnnotationPresent(Component.class) || hasComponentFriends(clazz))
+                && !clazz.isAnnotation();
     }
 
-    private boolean isComponentFriends(Class<?> clazz) {
-        return clazz.isAnnotationPresent(Component.class)
-                || clazz.isAnnotationPresent(Controller.class)
-                || clazz.isAnnotationPresent(Configuration.class);
+    private boolean hasComponentFriends(Class<?> clazz) {
+        Annotation[] annotations = clazz.getDeclaredAnnotations();
+        return Arrays.stream(annotations)
+                     .anyMatch(this::includeComponentAnnotation);
+    }
+
+    private boolean includeComponentAnnotation(Annotation annotation) {
+        Class<? extends Annotation> type = annotation.annotationType();
+        Method[] methods = type.getDeclaredMethods();
+        return Arrays.stream(methods)
+                     .anyMatch(this::checkAliasComponent);
+    }
+
+    private boolean checkAliasComponent(Method method) {
+        AliasFor aliasFor = getDeclaredAnnotation(method, AliasFor.class);
+        if (aliasFor != null) {
+            return aliasFor.annotation().equals(Component.class);
+        }
+        return false;
+    }
+
+    private <A extends Annotation> A getDeclaredAnnotation(AnnotatedElement source, Class<A> annotationType) {
+        Annotation[] annotations = source.getDeclaredAnnotations();
+        for (Annotation annotation : annotations) {
+            if (annotation != null && annotationType == annotation.annotationType()) {
+                return (A) annotation;
+            }
+        }
+        return null;
     }
 
     private Object getBean(Class<?> clazz) {

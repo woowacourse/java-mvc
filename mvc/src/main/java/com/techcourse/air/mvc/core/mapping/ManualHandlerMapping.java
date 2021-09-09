@@ -3,17 +3,15 @@ package com.techcourse.air.mvc.core.mapping;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.techcourse.air.core.annotation.Component;
 import com.techcourse.air.core.context.ApplicationContext;
 import com.techcourse.air.core.context.ApplicationContextProvider;
-import jakarta.servlet.http.HttpServletRequest;
 import com.techcourse.air.mvc.configuration.HandlerConfigurer;
 import com.techcourse.air.mvc.core.controller.asis.Controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component
 public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
