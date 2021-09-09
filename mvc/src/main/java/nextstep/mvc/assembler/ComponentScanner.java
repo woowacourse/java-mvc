@@ -6,13 +6,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.assembler.annotation.Component;
 import nextstep.mvc.assembler.annotation.ComponentScan;
 import nextstep.mvc.exception.MvcComponentException;
 import nextstep.mvc.support.annotation.AnnotationHandleUtils;
 import nextstep.web.annotation.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ComponentScanner {
+
+    private static final Logger log = LoggerFactory.getLogger(ComponentScanner.class);
 
     private static final Class<? extends Annotation>[] COMPONENT_ANNOTATIONS
             = new Class[]{Component.class, ComponentScan.class, Controller.class};
@@ -26,6 +31,7 @@ public class ComponentScanner {
 
     private Object registerBean(Class<?> component) {
         if (container.containsKey(component)) {
+            System.out.println(component);
             throw new MvcComponentException("빈 타입은 중복될 수 없습니다.");
         }
 
@@ -42,7 +48,7 @@ public class ComponentScanner {
                     .toArray();
             return constructor.newInstance(parameterBeans);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage(), e);
             throw new MvcComponentException("빈 타입은 중복될 수 없습니다.");
         }
     }

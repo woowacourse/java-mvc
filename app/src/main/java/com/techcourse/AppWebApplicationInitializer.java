@@ -18,16 +18,17 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     private static final String[] HANDLER_BASE_PACKAGE_PATHS = new String[]{"com/techcourse/controller"};
 
     private static final Assembler assembler = new Assembler();
+    {
+        assembler.componentScan("com/techcourse");
+    }
 
     @Override
     public void onStartup(ServletContext servletContext) {
         final List<FilterChain> filters = findFilters();
         addFilters(servletContext, filters);
 
-        final DispatcherServlet dispatcherServlet = assembler.getDispatcherServlet();
+        final DispatcherServlet dispatcherServlet = (DispatcherServlet) assembler.getBeanByType(DispatcherServlet.class);
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(HANDLER_BASE_PACKAGE_PATHS));
-        dispatcherServlet.registerExceptionHandlerByPath(HANDLER_BASE_PACKAGE_PATHS);
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

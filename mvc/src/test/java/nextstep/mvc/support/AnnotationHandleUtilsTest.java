@@ -22,7 +22,7 @@ class AnnotationHandleUtilsTest {
         String basePath = "samples";
 
         Set<Class<?>> controllers = AnnotationHandleUtils.getClassesAnnotated(basePath, Controller.class);
-        assertThat(controllers).isEqualTo(TestController.class);
+        assertThat(controllers).contains(TestController.class);
     }
 
     @DisplayName("클래스 내부의 메서드를 Annotation 으로 검색한다.")

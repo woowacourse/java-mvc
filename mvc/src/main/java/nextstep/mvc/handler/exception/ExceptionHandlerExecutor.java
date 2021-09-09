@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import nextstep.mvc.exception.MvcComponentException;
 import nextstep.mvc.support.annotation.ControllerAnnotationUtils;
 import nextstep.mvc.support.annotation.ExceptionHandlerAnnotationUtils;
@@ -17,10 +16,6 @@ public class ExceptionHandlerExecutor {
 
     public ExceptionHandlerExecutor(String... basePackages) {
         this.handlerExecutions = new HashMap<>();
-        init(basePackages);
-    }
-
-    public void init(String... basePackages){
         Arrays.stream(basePackages).forEach(this::register);
     }
 
@@ -33,11 +28,11 @@ public class ExceptionHandlerExecutor {
     }
 
     public ModelAndView execute(Exception exception) throws Exception {
-        if(!handlerExecutions.containsKey(exception.getClass())){
-            throw exception;
+        if (handlerExecutions.containsKey(exception.getClass())) {
+            ExceptionHandlerExecution handlerExecution = (ExceptionHandlerExecution) getHandler(exception.getClass());
+            return handlerExecution.handle(exception);
         }
-        ExceptionHandlerExecution handlerExecution = (ExceptionHandlerExecution)getHandler(exception.getClass());
-        return handlerExecution.handle(exception);
+        throw exception;
     }
 
     private Object getHandler(Class<?> exceptionType) {

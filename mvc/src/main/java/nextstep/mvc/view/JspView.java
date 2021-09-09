@@ -20,7 +20,7 @@ public class JspView implements View {
     }
 
     public static boolean isJspFile(String fileName) {
-        return FileNameHandlerUtils.isExtension(fileName, "jsp") || fileName.startsWith(JspView.REDIRECT_PREFIX);
+        return FileNameHandlerUtils.isExtension(fileName, "jsp") || fileName.startsWith(REDIRECT_PREFIX);
     }
 
     @Override
