@@ -61,6 +61,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 HandlerKey handlerKey = new HandlerKey(url, requestMethod);
                 validateHandleKeyDuplicate(handlerKey);
                 handlerExecutions.put(handlerKey, new HandlerExecution(instance, aMethod));
+                log.info("Request Mapping Uri : {}", url);
             }
         }
     }
