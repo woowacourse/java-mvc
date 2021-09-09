@@ -26,7 +26,7 @@ public enum ContentType {
                 .contentType;
     }
 
-    public static String contentTypeKey() {
+    public static String headerKey() {
         return "Content-Type";
     }
 

@@ -11,7 +11,6 @@ import nextstep.web.support.StatusCode;
 
 public class FileViewUtils {
 
-
     public static FileOption render(HttpServletRequest request, HttpServletResponse response) {
         return new FileOption(request, response);
     }
@@ -27,6 +26,7 @@ public class FileViewUtils {
         public FileOption(HttpServletRequest request, HttpServletResponse response) {
             this.request = request;
             this.response = response;
+            this.statusCode = StatusCode.OK;
         }
 
         public FileOption path(String path) {
@@ -55,8 +55,8 @@ public class FileViewUtils {
         }
 
         private static class HeaderPair {
-            private String key;
-            private String value;
+            private final String key;
+            private final String value;
 
             public HeaderPair(String key, String value) {
                 this.key = key;

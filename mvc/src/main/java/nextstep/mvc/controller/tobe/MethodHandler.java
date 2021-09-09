@@ -53,7 +53,7 @@ public class MethodHandler {
         return annotations.stream().anyMatch(annotation -> annotation.getClass().isAssignableFrom(responseClass));
     }
 
-    public boolean isReturnType(Class<?> returnClass) {
+    public boolean sameReturnTypeWith(Class<?> returnClass) {
         return method.getReturnType().isAssignableFrom(returnClass);
     }
 }

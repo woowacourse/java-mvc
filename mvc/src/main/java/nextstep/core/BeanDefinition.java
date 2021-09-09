@@ -12,8 +12,8 @@ public class BeanDefinition {
         this.bean = bean;
     }
 
-    public <U> boolean isTypeOf(Class<U> tClass) {
-        return tClass.isAssignableFrom(clazz);
+    public <U> boolean isTypeOf(Class<U> targetClass) {
+        return targetClass.isAssignableFrom(clazz);
     }
 
     public Object getTarget() {
@@ -26,5 +26,9 @@ public class BeanDefinition {
 
     public Class<?> getTargetClass() {
         return clazz;
+    }
+
+    public String getBeanName() {
+        return clazz.getName();
     }
 }

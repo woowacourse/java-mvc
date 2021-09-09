@@ -16,12 +16,12 @@ public class BeanContainer {
     }
 
     public void addBeans(BeanDefinition beanDefinition) {
-        beanContainer.put(beanDefinition.getTargetClass().getName(), beanDefinition);
+        beanContainer.put(beanDefinition.getBeanName(), beanDefinition);
     }
 
     public void addBeans(List<BeanDefinition> beanDefinitions) {
         for (BeanDefinition beanDefinition : beanDefinitions) {
-            beanContainer.put(beanDefinition.getTargetClass().getName(), beanDefinition);
+            beanContainer.put(beanDefinition.getBeanName(), beanDefinition);
         }
     }
 
@@ -40,5 +40,4 @@ public class BeanContainer {
                 .findAny()
                 .orElseThrow(NotFoundBeanException::new);
     }
-
 }

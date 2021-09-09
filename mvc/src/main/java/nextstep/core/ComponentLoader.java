@@ -24,13 +24,17 @@ public class ComponentLoader {
 
         List<BeanDefinition> beanDefinitions = new ArrayList<>();
 
-        classes.stream().filter(aClass -> !aClass.isAnnotation())
-            .forEach(aClass -> mapToBean(aClass, beanDefinitions));
+        for (Class<?> targetClass : classes) {
+            if(!targetClass.isAnnotation()) {
+                createAsBean(targetClass, beanDefinitions);
+            }
+        }
+
         return beanDefinitions;
     }
 
-    private static <T> BeanDefinition mapToBean(Class<T> tClass,
-                                                List<BeanDefinition> beanDefinitions) {
+    private static <T> BeanDefinition createAsBean(Class<T> tClass,
+                                                   List<BeanDefinition> beanDefinitions) {
 
         return beanDefinitions.stream().filter(beanDefinition -> beanDefinition.isTypeOf(tClass))
             .findAny()
@@ -52,7 +56,7 @@ public class ComponentLoader {
                     return beanWithAnnotation;
                 }
             }
-            final T target = tClass.getConstructor((Class<?>[]) null).newInstance();
+            final T target = tClass.getConstructor().newInstance();
             return new BeanDefinition(tClass, target);
         } catch (Exception e) {
             throw new NotFoundBeanException();
@@ -82,7 +86,7 @@ public class ComponentLoader {
             final BeanDefinition definition = beanDefinitions.stream()
                 .filter(beanDefinition -> beanDefinition.isTypeOf(parameterType))
                 .findAny()
-                .orElseGet(() -> mapToBean(parameterType, beanDefinitions));
+                .orElseGet(() -> createAsBean(parameterType, beanDefinitions));
 
             parameterTargets[i] = definition.getTarget();
         }

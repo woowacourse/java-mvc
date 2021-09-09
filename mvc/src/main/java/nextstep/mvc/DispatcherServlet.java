@@ -97,7 +97,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void resolveError(HttpServletRequest request, HttpServletResponse response,
-                              Exception exception) {
+                              Exception exception) throws ServletException {
         exceptionResolverContainer.resolve(exception, request, response);
     }
 }

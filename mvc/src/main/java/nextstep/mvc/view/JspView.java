@@ -1,7 +1,7 @@
 package nextstep.mvc.view;
 
 import static nextstep.web.support.ContentType.HTML;
-import static nextstep.web.support.ContentType.contentTypeKey;
+import static nextstep.web.support.ContentType.headerKey;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,7 +39,7 @@ public class JspView implements View {
         }
         FileViewUtils.render(request, response)
             .path(viewName)
-            .header(contentTypeKey(), HTML.contentType())
+            .header(headerKey(), HTML.contentType())
             .statusCode(StatusCode.OK)
             .flush();
     }

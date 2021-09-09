@@ -1,7 +1,8 @@
 package nextstep.mvc.exceptionresolver;
 
-import static nextstep.web.support.ContentType.contentTypeKey;
+import static nextstep.web.support.ContentType.headerKey;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ public class ExceptionResolverContainer {
         return exceptionResolvers;
     }
 
-    public void resolve(Exception e, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    public void resolve(Exception e, HttpServletRequest httpRequest, HttpServletResponse httpResponse)
+        throws ServletException {
         try {
             for (ExceptionResolver exceptionResolver : exceptionResolvers) {
                 if(exceptionResolver.supportsException(e)) {
@@ -38,7 +40,7 @@ public class ExceptionResolverContainer {
             }
             serverError(httpRequest, httpResponse, e);
         } catch (Exception exception) {
-            serverError(httpRequest, httpResponse, exception);
+            throw new ServletException();
         }
     }
 
@@ -47,7 +49,7 @@ public class ExceptionResolverContainer {
             FileViewUtils.render(httpRequeset, httpResponse)
                 .path("500.jsp")
                 .statusCode(StatusCode.SERVER_ERROR)
-                .header(contentTypeKey(), ContentType.HTML.contentType())
+                .header(headerKey(), ContentType.HTML.contentType())
                 .flush();
             for (StackTraceElement stackTraceElement : exception.getStackTrace()) {
                 log.error(stackTraceElement.toString());

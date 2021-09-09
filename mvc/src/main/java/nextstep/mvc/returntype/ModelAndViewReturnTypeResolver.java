@@ -7,7 +7,7 @@ public class ModelAndViewReturnTypeResolver implements ReturnTypeResolver {
 
     @Override
     public boolean supportsReturnType(MethodHandler methodHandler) {
-        return methodHandler.isReturnType(ModelAndView.class);
+        return methodHandler.sameReturnTypeWith(ModelAndView.class);
     }
 
     @Override

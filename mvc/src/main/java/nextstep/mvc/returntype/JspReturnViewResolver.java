@@ -9,7 +9,7 @@ public class JspReturnViewResolver implements ReturnTypeResolver {
 
     @Override
     public boolean supportsReturnType(MethodHandler methodHandler) {
-        return !methodHandler.isAnnotationPresents(ResponseBody.class) && methodHandler.isReturnType(String.class);
+        return !methodHandler.isAnnotationPresents(ResponseBody.class) && methodHandler.sameReturnTypeWith(String.class);
     }
 
     @Override

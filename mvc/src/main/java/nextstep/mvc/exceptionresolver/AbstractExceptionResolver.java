@@ -2,7 +2,7 @@ package nextstep.mvc.exceptionresolver;
 
 import static nextstep.mvc.FileViewUtils.render;
 import static nextstep.web.support.ContentType.HTML;
-import static nextstep.web.support.ContentType.contentTypeKey;
+import static nextstep.web.support.ContentType.headerKey;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,13 +22,13 @@ public abstract class AbstractExceptionResolver implements ExceptionResolver {
             render(httpRequest, httpResponse)
                 .path(pageName)
                 .statusCode(statusCode)
-                .header(contentTypeKey(), HTML.contentType())
+                .header(headerKey(), HTML.contentType())
                 .flush();
         } catch (Exception e) {
             try {
                 render(httpRequest, httpResponse)
                     .path("500.jsp")
-                    .header(contentTypeKey(), HTML.contentType())
+                    .header(headerKey(), HTML.contentType())
                     .statusCode(StatusCode.SERVER_ERROR)
                     .flush();
             } catch (Exception exc) {
