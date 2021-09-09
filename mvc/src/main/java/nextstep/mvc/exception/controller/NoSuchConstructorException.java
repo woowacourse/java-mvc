@@ -1,4 +1,4 @@
-package nextstep.mvc.exception.tobe;
+package nextstep.mvc.exception.controller;
 
 import nextstep.mvc.exception.MvcException;
 
