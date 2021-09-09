@@ -11,7 +11,7 @@ import nextstep.mvc.adapter.SimpleControllerHandlerAdapter;
 import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.mapping.ManualHandlerMapping;
-import nextstep.mvc.resolver.JspViewResolver;
+import nextstep.mvc.resolver.ResourceViewResolver;
 import nextstep.mvc.resolver.ViewResolver;
 
 @Configuration
@@ -29,7 +29,7 @@ public class DispatcherServletConfiguration {
         dispatcherServlet.addHandlerAdapter(getHandlerAdapter(SimpleControllerHandlerAdapter.class));
         dispatcherServlet.addHandlerAdapter(getHandlerAdapter(AnnotationHandlerAdapter.class));
 
-        dispatcherServlet.addViewResolver(getViewResolver(JspViewResolver.class));
+        dispatcherServlet.addViewResolver(getViewResolver(ResourceViewResolver.class));
         return dispatcherServlet;
     }
 

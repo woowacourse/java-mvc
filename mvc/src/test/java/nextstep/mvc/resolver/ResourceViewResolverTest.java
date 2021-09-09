@@ -8,17 +8,17 @@ import nextstep.mvc.view.View;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JspViewResolverTest {
+class ResourceViewResolverTest {
 
     @Test
     @DisplayName("jsp 파일인 경우")
     void resolveViewName() {
         // given
         String viewName = "/login.jsp";
-        JspViewResolver jspViewResolver = new JspViewResolver();
+        ResourceViewResolver resourceViewResolver = new ResourceViewResolver();
 
         // when
-        View view = jspViewResolver.resolveViewName(viewName);
+        View view = resourceViewResolver.resolveViewName(viewName);
 
         // then
         assertThat(view).isInstanceOf(JspView.class);
@@ -29,10 +29,10 @@ class JspViewResolverTest {
     void resolveViewNameFail() {
         // given
         String viewName = "/login.html";
-        JspViewResolver jspViewResolver = new JspViewResolver();
+        ResourceViewResolver resourceViewResolver = new ResourceViewResolver();
 
         // when
-        View view = jspViewResolver.resolveViewName(viewName);
+        View view = resourceViewResolver.resolveViewName(viewName);
 
         // then
         assertThat(view).isNull();
