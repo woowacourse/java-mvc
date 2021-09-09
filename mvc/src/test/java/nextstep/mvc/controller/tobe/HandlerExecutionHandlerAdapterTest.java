@@ -10,19 +10,39 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.view.ModelAndView;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class HandlerExecutionHandlerAdapterTest {
 
+    private HandlerAdapter handlerAdapter;
+    private AnnotationHandlerMapping handlerMapping;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private Object handler;
+
+    @BeforeEach
+    void setUp() {
+        handlerAdapter = new HandlerExecutionHandlerAdapter();
+        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping.initialize();
+
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        handler = handlerMapping.getHandler(request);
+    }
+
     @DisplayName("지원 가능한 핸들러인지 확인한다.")
     @Test
     void support() {
-        //given
-        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
-
         //when
-        boolean samples = handlerAdapter.supports(new AnnotationHandlerMapping("samples"));
+        boolean samples = handlerAdapter.supports(handler);
 
         //then
         assertThat(samples).isTrue();
@@ -31,20 +51,6 @@ class HandlerExecutionHandlerAdapterTest {
     @DisplayName("핸들러 동작을 확인한다.")
     @Test
     void handle() throws Exception {
-        //given
-        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
-        final HandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
-
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
-
-        final Object handler = handlerMapping.getHandler(request);
-
         //when
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
