@@ -25,10 +25,6 @@ public class ModelAndView {
         return model.get(attributeName);
     }
 
-    public Map<String, Object> getModel() {
-        return Collections.unmodifiableMap(model);
-    }
-
     public View getView() {
         return view;
     }

@@ -13,7 +13,7 @@ class Junit3TestRunner {
     void run() throws Exception {
         Class<Junit3Test> clazz = Junit3Test.class;
         List<Method> runMethods = Arrays.stream(clazz.getMethods())
-            .filter(method -> method.isAnnotationPresent(Test.class))
+            .filter(method -> method.getName().contains("test"))
             .collect(Collectors.toList());
 
         Junit3Test junit3Test = new Junit3Test();
