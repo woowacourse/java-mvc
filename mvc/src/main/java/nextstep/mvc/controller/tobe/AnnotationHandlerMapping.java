@@ -6,11 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.exception.HandleKeyDuplicationException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -30,19 +28,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> aClass : classes) {
-            try {
-                Object instance = aClass.getDeclaredConstructor().newInstance();
-                List<Method> declaredMethods = getRequestMappingMethods(aClass);
-
-                addHandleExecution(instance, declaredMethods);
-            } catch (Exception e) {
-                log.error("initializeError : {}", e.getMessage());
-            }
-        }
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        Map<Class<?>, Object> controllers = controllerScanner.getController();
+        controllers.forEach((aClass, instance) -> {
+            List<Method> declaredMethods = getRequestMappingMethods(aClass);
+            addHandleExecution(instance, declaredMethods);
+        });
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
