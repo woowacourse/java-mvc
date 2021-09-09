@@ -8,14 +8,19 @@
 
 ## 기능 요구 사항
 
+- [x] jacoco 설정 추가 - 이미 추가되어 있다 (근데 다른 사람들 PR 보면 작동 안 함)
+
 - [x] AnnotationHandlerMapping 구현
-
-- [ ] jacoco 설정 추가
-
-- [ ] JspView render 메서드 구현
+- [ ] AnnotationHandlerMapping 리팩토링
+  - [ ] RequestMapping이 클래스 단위로 있는경우
+  - [ ] 클래스, 메서드 둘 다 있는 경우
 
 - [ ] 기존의 컨트롤러를 annotation 기반으로 변경하더라도 정상 작동
+  - [ ] DispatcherServlet이 ModelAndView를 처리할 수 있도록 기능 추가
+  - [ ] JspView render 메서드 구현
 - [ ] 새로운 TestController를 포함하면 해당 컨트롤러의 기능이 애플리케이션에서 작동
+
+- [ ] TODO 처리
 
 ### 생각
 * Reflections를 이용하여 주어진 basePackage 안에서 @Controller 어노테이션이 있는 클래스를 가지고 온다 (@RestController도 있으면 좋겠지만 일단 패스)
