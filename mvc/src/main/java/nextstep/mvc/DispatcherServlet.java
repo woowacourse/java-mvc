@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
+        //todo: adaptor pattern 적용
         try {
             final Object controller = getController(request);
             renderString(request, response, controller);
