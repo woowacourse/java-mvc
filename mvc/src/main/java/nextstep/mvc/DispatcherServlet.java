@@ -17,10 +17,10 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private final HandlerAdapter handlerAdapter;
+    private final HandlerAdapter adapter;
 
-    public DispatcherServlet(HandlerAdapter handlerAdapter) {
-        this.handlerAdapter = handlerAdapter;
+    public DispatcherServlet(HandlerAdapter adapter) {
+        this.adapter = adapter;
         this.handlerMappings = new ArrayList<>();
     }
 
@@ -40,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = getHandler(request);
 
-            if (handlerAdapter.supports(handler)) {
-                ModelAndView mav = handlerAdapter.handle(request, response, handler);
+            if (adapter.supports(handler)) {
+                ModelAndView mav = adapter.handle(request, response, handler);
                 mav.render(request, response);
             }
         } catch (Throwable e) {
