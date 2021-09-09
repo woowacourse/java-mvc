@@ -31,6 +31,6 @@ public class TestController {
 ```
 - 멀티모듈 분리
     - mvc 모듈은 프레임워크 영역, app 모듈은 서비스 영역
-- `AnnotationHandlerMappingTest.java`를 참고해서 실패하는 테스트가 통과하게 구현
+- [x] `AnnotationHandlerMappingTest.java`를 참고해서 실패하는 테스트가 통과하게 구현
 - JspView
-    - `DispatcherServlet.java`를 참고해서 View 처리를 어떻게 하는지 확인하고, todo 완료
+    - [ ] `DispatcherServlet.java`를 참고해서 View 처리를 어떻게 하는지 확인하고, todo 완료

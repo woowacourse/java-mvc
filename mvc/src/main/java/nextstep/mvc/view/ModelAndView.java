@@ -10,13 +10,16 @@ public class ModelAndView {
     private final Map<String, Object> model;
 
     public ModelAndView(View view) {
-        this.view = view;
-        this.model = new HashMap<>();
+        this(view, new HashMap<>());
     }
 
-    public ModelAndView addObject(String attributeName, Object attributeValue) {
+    private ModelAndView(View view, Map<String, Object> model) {
+        this.view = view;
+        this.model = model;
+    }
+
+    public void addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
-        return this;
     }
 
     public Object getObject(String attributeName) {
