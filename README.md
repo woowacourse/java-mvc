@@ -21,6 +21,10 @@
 - [x] 새로운 TestController를 포함하면 해당 컨트롤러의 기능이 애플리케이션에서 작동
 - [x] HandlerAdapter 이용하여 DispatcherServlet 전략 추가 가능하도록 구현
 
+- [ ] HandlerMappings, HandlerAdapters 일급컬렉션으로 리팩토링
+  - [x] HandlerMappings
+  - [ ] HandlerAdapters
+
 - [ ] TODO 처리
 
 ### 생각

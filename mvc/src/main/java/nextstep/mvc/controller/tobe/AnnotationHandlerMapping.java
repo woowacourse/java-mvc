@@ -57,7 +57,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerExecution handlerExecution = new HandlerExecution(handler, instance);
             handlerExecutions.put(handlerKey, handlerExecution);
 
-            log.info("Used {} class to map {} method as handler for {} {}",
+            log.info("Used {} class to map [{}] method as handler for {} {}",
                     controllerClass.getSimpleName(),
                     handler.getName(),
                     requestMethod,
@@ -69,9 +69,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             return controllerClass.getConstructor().newInstance();
         } catch (Exception exception) {
-            // TODO : take care of exception and delete this log
-            log.error("exception while making controller instance");
-            throw new ControllerCreationException(controllerClass.getSimpleName());
+            String controllerName = controllerClass.getSimpleName();
+            log.error("exception while making controller instance of {}", controllerName);
+            throw new ControllerCreationException(controllerName);
         }
     }
 
