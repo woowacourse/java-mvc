@@ -17,10 +17,6 @@ class Junit3TestRunner extends JunitOutput {
         Junit3Test junit3Test = clazz.getDeclaredConstructor().newInstance();
         Method[] methods = clazz.getDeclaredMethods();
 
-        // 아래 방법으로도 가능.
-//        Junit3Test junit3Test = new Junit3Test();
-//        Method[] methods = junit3Test.getClass().getDeclaredMethods();
-
         // when
         for (Method method : methods) {
             if (method.getName().startsWith("test")) {
