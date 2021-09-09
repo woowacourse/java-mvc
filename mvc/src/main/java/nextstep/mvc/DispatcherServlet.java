@@ -13,12 +13,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappings handlerMappings;
-    private final HandlerAdapters handlerAdapters;
-
-    public DispatcherServlet() {
-        this(new HandlerMappings(), new HandlerAdapters());
-    }
+    private final transient HandlerMappings handlerMappings;
+    private final transient HandlerAdapters handlerAdapters;
 
     public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters) {
         this.handlerMappings = handlerMappings;
@@ -39,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerAdapters.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            log.error("Exception", e);
             throw new ServletException(e.getMessage());
         }
     }

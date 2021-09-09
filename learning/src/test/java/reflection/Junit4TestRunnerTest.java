@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Junit4TestRunner {
+class Junit4TestRunnerTest {
 
     @Test
     void run() throws Exception {

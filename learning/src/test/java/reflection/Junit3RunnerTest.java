@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Junit3TestRunner {
+class Junit3RunnerTest {
 
     @Test
     void run() throws Exception {
@@ -20,16 +20,16 @@ class Junit3TestRunner {
         final ByteArrayOutputStream captor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(captor));
 
-        Class<Junit3Test> clazz = Junit3Test.class;
+        Class<Junit3> clazz = Junit3.class;
         final List<Method> methods = Arrays.stream(clazz.getDeclaredMethods())
                                                     .filter(method -> method.getName().startsWith("test"))
                                                     .collect(Collectors.toList());
 
-        final Junit3Test junit3Test = clazz.getConstructor().newInstance();
+        final Junit3 junit3 = clazz.getConstructor().newInstance();
 
         // when
         for (Method method : methods) {
-            method.invoke(junit3Test);
+            method.invoke(junit3);
         }
 
         // then

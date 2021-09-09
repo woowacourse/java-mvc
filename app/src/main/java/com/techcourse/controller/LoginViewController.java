@@ -13,7 +13,7 @@ public class LoginViewController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());

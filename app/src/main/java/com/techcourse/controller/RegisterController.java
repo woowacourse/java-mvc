@@ -11,7 +11,7 @@ import nextstep.mvc.view.ModelAndView;
 public class RegisterController implements Controller {
 
     @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         final User user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),

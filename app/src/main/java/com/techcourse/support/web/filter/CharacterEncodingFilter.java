@@ -1,9 +1,9 @@
 package com.techcourse.support.web.filter;
 
+import java.io.IOException;
+
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
-
-import java.io.IOException;
 
 @WebFilter("/*")
 public class CharacterEncodingFilter implements Filter {
@@ -12,6 +12,7 @@ public class CharacterEncodingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -24,5 +25,6 @@ public class CharacterEncodingFilter implements Filter {
 
     @Override
     public void destroy() {
+        throw new UnsupportedOperationException();
     }
 }

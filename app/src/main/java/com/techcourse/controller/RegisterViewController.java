@@ -9,7 +9,7 @@ import nextstep.mvc.view.ModelAndView;
 public class RegisterViewController implements Controller {
 
     @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 }

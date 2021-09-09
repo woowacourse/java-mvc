@@ -17,7 +17,7 @@ public class LoginController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }

@@ -5,5 +5,5 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 
 public interface Controller {
-    ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception;
+    ModelAndView execute(HttpServletRequest req, HttpServletResponse res);
 }

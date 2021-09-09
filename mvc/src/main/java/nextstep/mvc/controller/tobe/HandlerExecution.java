@@ -1,5 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
         return (ModelAndView) method.invoke(handler, request, response);
     }
 

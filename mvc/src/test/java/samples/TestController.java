@@ -13,7 +13,7 @@ public class TestController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
     @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         log.info("test controller get method");
         final ModelAndView modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", req.getAttribute("id"));
