@@ -24,6 +24,6 @@ class ControllerScannerTest {
             .map(Class::getSimpleName)
             .collect(Collectors.toList());
 
-        assertThat(controllerNames).hasSameSizeAs(classNames).hasSameElementsAs(classNames);
+        assertThat(controllerNames).containsExactlyInAnyOrderElementsOf(classNames);
     }
 }

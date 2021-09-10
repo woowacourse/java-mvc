@@ -6,15 +6,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionTest.class);
 
     @Test
     void givenObject_whenGetsClassName_thenCorrect() {
@@ -51,9 +48,7 @@ class ReflectionTest {
         final Method[] methods = animalClass.getDeclaredMethods();
         final List<String> actualMethods = getMethodNames(methods);
 
-        assertThat(actualMethods)
-            .hasSize(3)
-            .contains("getAge", "toString", "getName");
+        assertThat(actualMethods).containsExactlyInAnyOrderElementsOf(Arrays.asList("getAge", "toString", "getName"));
     }
 
     @Test
@@ -71,7 +66,7 @@ class ReflectionTest {
         final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
         final Constructor<?> secondConstructor = questionClass.getConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
 
-        Object[] arg1 = {"gugu", "제목1",  "내용1"};
+        Object[] arg1 = {"gugu", "제목1", "내용1"};
         Object[] arg2 = {1L, "gugu", "제목2", "내용2", new Date(1), 0};
 
         final Question firstQuestion = (Question) firstConstructor.newInstance(arg1);

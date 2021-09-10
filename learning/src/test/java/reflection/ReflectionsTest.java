@@ -11,12 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class ReflectionsTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionsTest.class);
 
     @Test
     void showAnnotationClass() {
@@ -37,6 +33,6 @@ class ReflectionsTest {
             .map(Class::getSimpleName)
             .collect(Collectors.toList());
 
-        assertThat(controllerNames).hasSameSizeAs(classNames).hasSameElementsAs(classNames);
+        assertThat(controllerNames).containsExactlyInAnyOrderElementsOf(classNames);
     }
 }
