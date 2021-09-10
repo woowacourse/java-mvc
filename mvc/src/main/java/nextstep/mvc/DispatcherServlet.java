@@ -43,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             final Object controller = getController(request);
-            ModelAndView modelAndView = getHandlerAdapter(request, response, controller);
+            ModelAndView modelAndView = invokeHandlerMethod(request, response, controller);
             render(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -57,7 +57,7 @@ public class DispatcherServlet extends HttpServlet {
         view.render(modelAndView.getModel(), request, response);
     }
 
-    private ModelAndView getHandlerAdapter(HttpServletRequest request, HttpServletResponse response, Object controller)
+    private ModelAndView invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response, Object controller)
             throws Exception {
         for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(controller)) {
