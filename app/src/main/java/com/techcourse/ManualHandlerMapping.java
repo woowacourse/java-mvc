@@ -1,10 +1,13 @@
 package com.techcourse;
 
 import com.techcourse.controller.*;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.mvc.view.JspView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,5 +38,28 @@ public class ManualHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
+        return controllers.containsKey(requestURI);
+    }
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final Controller controller = getHandler(request);
+        final String viewName = controller.execute(request, response);
+        move(viewName, request, response);
+    }
+
+    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            return;
+        }
+
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }

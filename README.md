@@ -14,6 +14,7 @@
     - [x] AppWebApplicationInitializer에 해당 핸들러 매핑 추가
 
 - [ ] 디스패처 서블릿에서 AnnotationHandlerMapping을 사용하여 요청 처리해주기
-    - [ ] 응답 받은 JspView를 활용하여 어떻게 Response를 반환할지 고민해보기
+    - [x] 컨트롤러의 응답을 JspView에서 어떻게 Response로 반환할지 고민해보기
+        - [ ] `${key}` 문법을 활용하면 model에 있던 정보가 jsp 파일에 담기는 듯
     - [ ] 기존의 레거시 코드를 어노테이션 기반으로 수정해보기
     - [ ] 어떤 핸들러 매핑을 우선 순위에 둘지 고민해보기

@@ -1,7 +1,10 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -69,9 +72,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         final String url = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
         return handlerExecutions.get(new HandlerKey(url, requestMethod));
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        final String url = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
+        return handlerExecutions.containsKey(new HandlerKey(url, requestMethod));
+    }
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final HandlerExecution handlerExecution = getHandler(request);
+        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        move(modelAndView, request, response);
+    }
+
+    private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final Map<String, Object> model = modelAndView.getModel();
+        final View view = modelAndView.getView();
+        view.render(model, request, response);
     }
 }

@@ -39,31 +39,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Controller controller = getController(request);
-            final String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            for (HandlerMapping handlerMapping : handlerMappings) {
+                if (handlerMapping.canHandle(request)) {
+                    handlerMapping.handle(request, response);
+                }
+            }
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Controller getController(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .map(Controller.class::cast)
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
