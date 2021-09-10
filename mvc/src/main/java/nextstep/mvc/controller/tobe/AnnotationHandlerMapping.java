@@ -3,7 +3,6 @@ package nextstep.mvc.controller.tobe;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.logging.Handler;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,32 +29,39 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Reflections reflections = new Reflections(basePackage);
 
-        // TODO: @Controller 붙어 있는 클래스들 가져오기
         Set<Class<?>> classesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
 
-        // TODO: 각 Controller 클래스마다 @RequestMapping 붙어 있는 메서드 가져오기
+        fillOutHandlerExecutions(classesAnnotatedWithController);
+        log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void fillOutHandlerExecutions(Set<Class<?>> classesAnnotatedWithController) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (Class<?> controllerClass : classesAnnotatedWithController) {
-            Method[] declaredMethods = controllerClass.getDeclaredMethods();
-            List<Method> methodsAnnotatedWithRequestMapping = Arrays.stream(declaredMethods)
-                                                                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                                                                    .collect(Collectors.toList());
+            List<Method> methodsWithRequestMapping = getMethodsAnnotatedWithRequestMapping(controllerClass);
 
-            // TODO: @RequestMapping 붙어 있는 각 메서드마다 request Url, HTTP METHOD(S) 가져오기
-            for (Method method : methodsAnnotatedWithRequestMapping) {
+            for (Method method : methodsWithRequestMapping) {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                String requestUri = annotation.value();
-                RequestMethod[] requestMethods = annotation.method();
-
-                // TODO: HandlerExecutions 채워넣기
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-                    Object handler = controllerClass.getConstructor().newInstance();
-                    // handler가 사실상 controller
-                    handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
-                }
+                createHandler(controllerClass, method, annotation);
             }
         }
-        log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private List<Method> getMethodsAnnotatedWithRequestMapping(Class<?> controllerClass) {
+        Method[] declaredMethods = controllerClass.getDeclaredMethods();
+        return Arrays.stream(declaredMethods)
+                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                     .collect(Collectors.toList());
+    }
+
+    private void createHandler(Class<?> controllerClass, Method method, RequestMapping annotation) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String requestUri = annotation.value();
+        RequestMethod[] requestMethods = annotation.method();
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
+            Object handler = controllerClass.getConstructor().newInstance();
+            handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
+        }
     }
 
     public Object getHandler(HttpServletRequest request) {
