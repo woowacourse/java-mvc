@@ -16,10 +16,10 @@ public class ResourceFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceFilter.class);
 
-    private static final List<String> resourcePrefixs = new ArrayList<>();
+    private static final List<String> resourcePrefixes = new ArrayList<>();
 
     static {
-        resourcePrefixs.addAll(Arrays.asList(
+        resourcePrefixes.addAll(Arrays.asList(
                 "/css",
                 "/js",
                 "/assets",
@@ -34,6 +34,7 @@ public class ResourceFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.requestDispatcher = filterConfig.getServletContext().getNamedDispatcher("default");
+        log.info("Filter init Servlet name : {} , Filter name : {}", filterConfig.getServletContext(), filterConfig.getFilterName());
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ResourceFilter implements Filter {
         final HttpServletRequest req = (HttpServletRequest) request;
         final String path = req.getRequestURI().substring(req.getContextPath().length());
         if (isResourceUrl(path)) {
-            log.debug("path : {}", path);
+            log.info("resource path : {}", path);
             requestDispatcher.forward(request, response);
         } else {
             chain.doFilter(request, response);
@@ -50,7 +51,7 @@ public class ResourceFilter implements Filter {
     }
 
     private boolean isResourceUrl(String url) {
-        for (String prefix : resourcePrefixs) {
+        for (String prefix : resourcePrefixes) {
             if (url.startsWith(prefix)) {
                 return true;
             }

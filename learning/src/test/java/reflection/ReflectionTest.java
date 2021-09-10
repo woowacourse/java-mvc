@@ -7,7 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,25 +22,39 @@ class ReflectionTest {
     void givenObject_whenGetsClassName_thenCorrect() {
         final Class<Question> clazz = Question.class;
 
-        assertThat(clazz.getSimpleName()).isEqualTo("");
-        assertThat(clazz.getName()).isEqualTo("");
-        assertThat(clazz.getCanonicalName()).isEqualTo("");
+        assertThat(clazz.getSimpleName()).isEqualTo("Question");
+        assertThat(clazz.getName()).isEqualTo("reflection.Question");
+        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
+
+        /*
+        getName 사용시
+        String.class.getName()
+           returns "java.lang.String"
+       byte.class.getName()
+           returns "byte"
+       (new Object[3]).getClass().getName()
+           returns "[Ljava.lang.Object;"
+       (new int[3][4][5][6][7][8][9]).getClass().getName()
+           returns "[[[[[[[I"
+        */
     }
 
     @Test
     void givenClassName_whenCreatesObject_thenCorrect() throws ClassNotFoundException {
         final Class<?> clazz = Class.forName("reflection.Question");
 
-        assertThat(clazz.getSimpleName()).isEqualTo("");
-        assertThat(clazz.getName()).isEqualTo("");
-        assertThat(clazz.getCanonicalName()).isEqualTo("");
+        assertThat(clazz.getSimpleName()).isEqualTo("Question");
+        assertThat(clazz.getName()).isEqualTo("reflection.Question");
+        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
     }
 
     @Test
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
         final Object student = new Student();
-        final Field[] fields = null;
-        final List<String> actualFieldNames = null;
+        final Field[] fields = student.getClass().getDeclaredFields();
+        final List<String> actualFieldNames = Arrays.stream(fields)
+                .map(Field::getName)
+                .collect(Collectors.toList());
 
         assertThat(actualFieldNames).contains("name", "age");
     }
@@ -45,8 +62,10 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsMethods_thenCorrect() {
         final Class<?> animalClass = Student.class;
-        final Method[] methods = null;
-        final List<String> actualMethods = null;
+        final Method[] methods = animalClass.getDeclaredMethods();
+        final List<String> actualMethods = Arrays.stream(methods)
+                .map(Method::getName)
+                .collect(Collectors.toList());
 
         assertThat(actualMethods)
                 .hasSize(3)
@@ -56,7 +75,7 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsAllConstructors_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Constructor<?>[] constructors = null;
+        final Constructor<?>[] constructors = questionClass.getDeclaredConstructors();
 
         assertThat(constructors).hasSize(2);
     }
@@ -65,11 +84,15 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = null;
-        final Constructor<?> secondConstructor = null;
+        Constructor<?>[] declaredConstructors = questionClass.getDeclaredConstructors();
+        final Constructor<?> firstConstructor = declaredConstructors[0];
+        final Constructor<?> secondConstructor = declaredConstructors[1];
 
-        final Question firstQuestion = null;
-        final Question secondQuestion = null;
+        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
+        Object[] args = {1L, "gugu", "제목2", "내용2", new Date(1L), 0};
+        final Question secondQuestion1 = (Question) secondConstructor.newInstance(args);
+
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(0L), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -77,12 +100,15 @@ class ReflectionTest {
         assertThat(secondQuestion.getWriter()).isEqualTo("gugu");
         assertThat(secondQuestion.getTitle()).isEqualTo("제목2");
         assertThat(secondQuestion.getContents()).isEqualTo("내용2");
+        assertThat(secondQuestion1.getWriter()).isEqualTo("gugu");
+        assertThat(secondQuestion1.getTitle()).isEqualTo("제목2");
+        assertThat(secondQuestion1.getContents()).isEqualTo("내용2");
     }
 
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = null;
+        final Field[] fields = questionClass.getFields();
 
         assertThat(fields).hasSize(0);
     }
@@ -90,7 +116,7 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsDeclaredFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = null;
+        final Field[] fields = questionClass.getDeclaredFields();
 
         assertThat(fields).hasSize(6);
         assertThat(fields[0].getName()).isEqualTo("questionId");
@@ -99,7 +125,7 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsFieldsByName_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
-        final Field field = null;
+        final Field field = questionClass.getDeclaredField("questionId");
 
         assertThat(field.getName()).isEqualTo("questionId");
     }
@@ -107,7 +133,7 @@ class ReflectionTest {
     @Test
     void givenClassField_whenGetsType_thenCorrect() throws Exception {
         final Field field = Question.class.getDeclaredField("questionId");
-        final Class<?> fieldClass = null;
+        final Class<?> fieldClass = field.getType();
 
         assertThat(fieldClass.getSimpleName()).isEqualTo("long");
     }
@@ -115,15 +141,16 @@ class ReflectionTest {
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         final Class<?> studentClass = Student.class;
-        final Student student = null;
-        final Field field = null;
+        final Student student = (Student) studentClass.getDeclaredConstructor().newInstance();
+        final Field field = studentClass.getDeclaredField("age");
 
         // todo field에 접근 할 수 있도록 만든다.
+        field.setAccessible(true);
 
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
 
-        field.set(null, null);
+        field.set(student, 99);
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
