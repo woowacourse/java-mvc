@@ -10,6 +10,8 @@ import nextstep.mvc.view.JspView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +29,13 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            try {
+                handlerMapping.initialize();
+            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -57,13 +65,16 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+                response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+                return;
+            }
+            final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+            requestDispatcher.forward(request, response);
+        } catch (IOException | ServletException e) {
+            e.printStackTrace();
         }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
