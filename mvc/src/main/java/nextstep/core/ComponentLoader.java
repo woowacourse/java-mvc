@@ -1,5 +1,7 @@
 package nextstep.core;
 
+import static nextstep.core.exception.BeanErrorMessage.*;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.Set;
 import nextstep.core.annotation.Autowired;
 import nextstep.core.annotation.Component;
 import nextstep.core.annotation.Configuration;
-import nextstep.core.exception.NotFoundBeanException;
+import nextstep.core.exception.BeanException;
 import nextstep.mvc.annotation.Controller;
 import org.reflections.Reflections;
 
@@ -39,15 +41,15 @@ public class ComponentLoader {
         return beanDefinitions.stream().filter(beanDefinition -> beanDefinition.isTypeOf(tClass))
             .findAny()
             .orElseGet(() -> {
-                final BeanDefinition beanDefinition = createBeanDefinition(tClass,
+                final BeanDefinition beanDefinition = loadClassAsBeanDefinition(tClass,
                     beanDefinitions);
                 beanDefinitions.add(beanDefinition);
                 return beanDefinition;
             });
     }
 
-    private static <T> BeanDefinition createBeanDefinition(Class<T> tClass,
-                                                           List<BeanDefinition> beanDefinitions) {
+    private static <T> BeanDefinition loadClassAsBeanDefinition(Class<T> tClass,
+                                                                List<BeanDefinition> beanDefinitions) {
         try {
             for (Constructor<?> constructor : tClass.getConstructors()) {
                 BeanDefinition beanWithAnnotation = getBeanWithAnnotation(tClass, beanDefinitions,
@@ -59,7 +61,7 @@ public class ComponentLoader {
             final T target = tClass.getConstructor().newInstance();
             return new BeanDefinition(tClass, target);
         } catch (Exception e) {
-            throw new NotFoundBeanException();
+            throw new BeanException(NOT_FOUND);
         }
     }
 

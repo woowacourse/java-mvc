@@ -1,11 +1,14 @@
 package nextstep.core;
 
+import static nextstep.core.exception.BeanErrorMessage.*;
+
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import nextstep.core.exception.NotFoundBeanException;
+import nextstep.core.exception.BeanErrorMessage;
+import nextstep.core.exception.BeanException;
 
 public class BeanContainer {
 
@@ -38,6 +41,6 @@ public class BeanContainer {
                 .filter(bean -> bean.isTypeOf(type))
                 .map(bean -> (T) bean.getTarget())
                 .findAny()
-                .orElseThrow(NotFoundBeanException::new);
+                .orElseThrow(() -> new BeanException(NOT_FOUND));
     }
 }
