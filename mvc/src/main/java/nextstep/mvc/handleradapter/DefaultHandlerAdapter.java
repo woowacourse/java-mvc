@@ -32,6 +32,6 @@ public class DefaultHandlerAdapter implements HandlerAdapter {
                 }
             })
             .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(String.format("처리할 수 없는 핸들러입니다.(%s)", handler.getClass())));
+            .orElseThrow(() -> new IllegalStateException(String.format("지원하지 않는 핸들러입니다.(%s)", handler.getClass())));
     }
 }
