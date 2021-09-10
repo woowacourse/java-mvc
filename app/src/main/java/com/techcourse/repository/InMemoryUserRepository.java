@@ -1,27 +1,28 @@
 package com.techcourse.repository;
 
 import com.techcourse.domain.User;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import nextstep.core.annotation.Component;
 
+@Component
 public class InMemoryUserRepository {
 
-    private static final Map<String, User> database = new ConcurrentHashMap<>();
+    private final Map<String, User> database = new ConcurrentHashMap<>();
+    private Long id = 0L;
 
-    static {
-        final User user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+    public InMemoryUserRepository() {
+        final User user = new User(++id, "gugu", "password", "hkkang@woowahan.com");
         database.put(user.getAccount(), user);
     }
 
-    public static void save(User user) {
+    public void save(User user) {
+        user.setId(++id);
         database.put(user.getAccount(), user);
     }
 
-    public static Optional<User> findByAccount(String account) {
+    public Optional<User> findByAccount(String account) {
         return Optional.ofNullable(database.get(account));
     }
-
-    private InMemoryUserRepository() {}
 }

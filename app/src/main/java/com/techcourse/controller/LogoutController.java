@@ -1,15 +1,15 @@
 package com.techcourse.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.annotation.Controller;
+import nextstep.mvc.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class LogoutController implements Controller {
+@Controller
+public class LogoutController {
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final HttpSession session = req.getSession();
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(HttpSession session) {
         session.removeAttribute(UserSession.SESSION_KEY);
         return "redirect:/";
     }
