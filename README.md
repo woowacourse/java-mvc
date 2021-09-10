@@ -7,5 +7,6 @@
     - [x] AnnotationHandlerMappingTest 통과
     - [x] initialize로 모든 HandlerExecution 초기화 하기
         - [x] ControllerScanner 생성
-- [ ] Legacy MVC와 Annotation Based MVC 통합
-- [ ] JspView 구현
+- [x] Legacy MVC와 Annotation Based MVC 통합
+    - [x] JspView 구현
+- [ ] 정적파일 처리
