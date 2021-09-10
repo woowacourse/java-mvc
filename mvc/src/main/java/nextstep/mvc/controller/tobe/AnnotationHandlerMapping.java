@@ -27,38 +27,48 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         try {
             for (Object targetPackage : basePackage) {
-                final Reflections reflections = new Reflections(targetPackage);
-                final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-                for (Class<?> controller : controllers) {
-                    handleMapping(controller);
-                }
+                handleMappingSinglePackage(targetPackage);
             }
+            log.info("Initialized AnnotationHandlerMapping!");
         } catch (Exception e) {
             log.error("AnnotationHandlerMapping Failed!");
         }
     }
 
-    private void handleMapping(Class<?> controller) throws Exception {
-        final Object controllerObject = controller.getConstructor().newInstance();
+    private void handleMappingSinglePackage(Object targetPackage) throws Exception {
+        final Reflections reflections = new Reflections(targetPackage);
+        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controller : controllers) {
+            handleMappingSingleController(controller);
+        }
+    }
+
+    private void handleMappingSingleController(Class<?> controller) throws Exception {
+        final Object controllerInstance = controller.getConstructor().newInstance();
         final Method[] methods = controller.getMethods();
         for (Method method : methods) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             if (!Objects.isNull(requestMapping)) {
-                final String url = requestMapping.value();
-                final RequestMethod[] requestMethods = requestMapping.method();
-                for (RequestMethod requestMethod : requestMethods) {
-                    final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                    final HandlerExecution handlerExecution = new HandlerExecution(method, controllerObject);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
+                registerHandler(controllerInstance, method, requestMapping);
             }
         }
     }
 
+    private void registerHandler(Object controllerInstance, Method method, RequestMapping requestMapping) {
+        final String url = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(method, controllerInstance);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    @Override
     public Object getHandler(HttpServletRequest request) {
         final String url = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.of(request.getMethod());

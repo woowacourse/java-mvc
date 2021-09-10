@@ -11,7 +11,7 @@
 
 - [x] 어노테이션 기반의 핸들러 매핑 구현
     - [x] AnnotationHandlerMapping 구현
-    - [ ] AppWebApplicationInitializer에 해당 핸들러 매핑 추가
+    - [x] AppWebApplicationInitializer에 해당 핸들러 매핑 추가
 
 - [ ] 디스패처 서블릿에서 AnnotationHandlerMapping을 사용하여 요청 처리해주기
     - [ ] 응답 받은 JspView를 활용하여 어떻게 Response를 반환할지 고민해보기
