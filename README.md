@@ -6,6 +6,6 @@
 
 - [x] url과 HTTP 메서드를 조건에 포함하기
 
-- [ ] JspView 구현
+- [x] JspView 구현
 
-- [ ] Legacy와 Annotation Based 통합
+- [x] Legacy와 Annotation Based 통합
