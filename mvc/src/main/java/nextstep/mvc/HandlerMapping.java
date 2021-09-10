@@ -1,10 +1,11 @@
 package nextstep.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 
 public interface HandlerMapping {
 
     void initialize();
 
-    Object getHandler(HttpServletRequest request);
+    HandlerExecution getHandler(HttpServletRequest request);
 }
