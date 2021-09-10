@@ -30,17 +30,17 @@ public class DispatcherServlet extends HttpServlet {
         this.handlerAdapters = new HandlerAdapters();
     }
 
-    @Override
-    public void init() {
-        handlerMappings.initialize();
-    }
-
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
+    }
+
+    @Override
+    public void init() {
+        handlerMappings.initialize();
     }
 
     @Override
