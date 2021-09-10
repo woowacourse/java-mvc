@@ -2,7 +2,6 @@ package nextstep.mvc.controller.tobe;
 
 import java.util.HashSet;
 import java.util.Set;
-import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class ControllerScanner {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
     public static Set<Object> scan(Object... basePackage) {
         Reflections reflections = new Reflections(basePackage);

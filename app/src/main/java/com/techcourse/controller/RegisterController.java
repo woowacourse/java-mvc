@@ -17,7 +17,7 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         log.info("uri : {}, method : {}", req.getRequestURI(), req.getMethod());
         return new ModelAndView(new JspView("/register.jsp"));

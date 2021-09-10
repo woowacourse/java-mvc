@@ -32,9 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Object> controllers = ControllerScanner.scan(basePackage);
         for (Object controller : controllers) {
             Set<Method> methods = getMethods(controller);
-            for (Method method : methods) {
-                putHandlerExecutions(controller, method);
-            }
+            putRequestMethods(controller, methods);
         }
     }
 
@@ -50,6 +48,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             }
         }
         return methods;
+    }
+
+    private void putRequestMethods(Object controller, Set<Method> methods) {
+        for (Method method : methods) {
+            putHandlerExecutions(controller, method);
+        }
     }
 
     private void putHandlerExecutions(Object controller, Method method) {
