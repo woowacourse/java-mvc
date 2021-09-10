@@ -9,6 +9,8 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
+    private ControllerScanner() {}
+
     public static Set<Class<?>> scanController(String... basePackages) {
         return scanController(Arrays.asList(basePackages));
     }
