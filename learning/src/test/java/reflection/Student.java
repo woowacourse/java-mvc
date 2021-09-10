@@ -1,8 +1,5 @@
 package reflection;
 
-import annotation.Controller;
-
-@Controller
 public class Student {
 
     private String name;
