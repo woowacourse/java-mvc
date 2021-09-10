@@ -14,8 +14,8 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
-    public boolean isMatchingKey(HttpServletRequest request) {
-        return url.equals(request.getRequestURI()) && requestMethod.name().equals(request.getMethod());
+    public static HandlerKey of(HttpServletRequest request) {
+        return new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
     }
 
     @Override

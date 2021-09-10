@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -53,28 +55,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Object packageName : basePackage) {
             Reflections reflections = new Reflections(packageName);
-            List<Method[]> declaredMethods = reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .map(Class::getDeclaredMethods)
-                .collect(Collectors.toList());
+            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-            addAnnotatedMethods(executionMethods, declaredMethods);
+            controllers.stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Stream::of)
+                .filter(it -> it.isAnnotationPresent(RequestMapping.class))
+                .forEach(executionMethods::add);
         }
         return executionMethods;
     }
 
-    private void addAnnotatedMethods(List<Method> executionMethods, List<Method[]> foundMethods) {
-        for (Method[] methods : foundMethods) {
-            Arrays.stream(methods)
-                .filter(it -> it.isAnnotationPresent(RequestMapping.class))
-                .forEach(executionMethods::add);
-        }
-    }
-
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return handlerExecutions.entrySet().stream()
-            .filter(it -> it.getKey().isMatchingKey(request))
-            .map(Entry::getValue)
-            .findFirst()
-            .orElseThrow(IllegalArgumentException::new);
+        return handlerExecutions.get(HandlerKey.of(request));
     }
 }
