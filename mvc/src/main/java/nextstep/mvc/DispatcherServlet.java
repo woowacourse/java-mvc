@@ -62,10 +62,10 @@ public class DispatcherServlet extends HttpServlet {
             resolveView(mv, request, response);
         } catch (NotFoundException e) {
             log.error("Exception : {}", e.getMessage());
-            render("404", request, response);
+            render("404.jsp", request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            render("500", request, response);
+            render("500.jsp", request, response);
         }
     }
 
