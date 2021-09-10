@@ -13,15 +13,28 @@ public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
-    public static Set<Object> scan (Object... basePackage) {
+    private final Object[] basePackage;
+    private final Set<Object> controllers;
+
+    public ControllerScanner(Object[] basePackage) {
+        this.basePackage = basePackage;
+        this.controllers = new HashSet<>();
+    }
+
+    public Set<Class<?>> getControllerTypes() {
+        log.info("Scan @Controller from basePackage#{}", basePackage);
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
-        Set<Object> controllers = new HashSet<>();
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    public Set<Object> getControllers() {
+        final Set<Class<?>> controllerTypes = getControllerTypes();
         for (Class<?> controllerType : controllerTypes) {
             try {
                 controllers.add(controllerType.getDeclaredConstructor().newInstance());
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 log.info("AnnotationHandlerMapping#initialize, 인스턴스화를 할 수 없습니다.");
+                throw new IllegalStateException("Controller의 인스턴스화 과정에서 문제가 발생했습니다.");
             }
         }
         return controllers;
