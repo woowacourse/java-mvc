@@ -22,16 +22,20 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
+        // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
+        // mock
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
+        // when
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
