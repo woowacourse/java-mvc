@@ -10,20 +10,12 @@ public class HandlerExecution {
     private final Method method;
     private final Object controller;
 
-    public HandlerExecution(Method method) {
+    public HandlerExecution(Method method, Object controller) {
         this.method = method;
-        this.controller = getController(method);
+        this.controller = controller;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         return (ModelAndView) method.invoke(controller, request, response);
-    }
-
-    private Object getController(Method method) {
-        try {
-            return method.getDeclaringClass().getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Method로부터 Controller를 찾을 수 없습니다.");
-        }
     }
 }
