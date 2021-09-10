@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -29,11 +29,15 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            try {
-                handlerMapping.initialize();
-            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            initHandlerMapping(handlerMapping);
+        }
+    }
+
+    private void initHandlerMapping(HandlerMapping handlerMapping) {
+        try {
+            handlerMapping.initialize();
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 
@@ -51,15 +55,20 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            if (handler != null && handlerAdapter != null) {
-                final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-                modelAndView.getView().render(modelAndView.getModel(), request, response);
-            }
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+
+            if (isContent(handler, handlerAdapter)) return;
+
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private boolean isContent(Object handler, HandlerAdapter handlerAdapter) {
+        return handler == null || handlerAdapter == null;
     }
 
     private Object getHandler(HttpServletRequest request) {
