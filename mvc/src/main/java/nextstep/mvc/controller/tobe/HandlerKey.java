@@ -1,8 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
-import nextstep.web.support.RequestMethod;
-
 import java.util.Objects;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
 
@@ -16,10 +15,7 @@ public class HandlerKey {
 
     @Override
     public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
+        return "url= " + url +", requestMethod=" + requestMethod;
     }
 
     @Override
