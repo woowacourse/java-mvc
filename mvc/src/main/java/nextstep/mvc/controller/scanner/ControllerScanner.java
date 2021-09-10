@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.scanner;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,9 +18,9 @@ public class ControllerScanner {
 
     public static Set<Class<?>> scanController(List<String> basePackages) {
         return basePackages.stream()
-            .map(basePackage -> new Reflections(basePackage))
+            .map(Reflections::new)
             .map(reflections -> reflections.getTypesAnnotatedWith(Controller.class))
-            .flatMap(controller -> controller.stream())
+            .flatMap(Collection::stream)
             .collect(Collectors.toSet());
     }
 }

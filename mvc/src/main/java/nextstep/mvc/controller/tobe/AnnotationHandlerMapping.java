@@ -30,7 +30,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        // TODO: 리팩토링
         Set<Class<?>> controllers = ControllerScanner.scanController(basePackages);
         for (Class<?> controller : controllers) {
             List<Method> requestMappingMethods = scanRequestMappingMethod(controller);
