@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,8 @@ public class DispatcherServlet extends HttpServlet {
                     handlerMapping.handle(request, response);
                 }
             }
-        } catch (Throwable e) {
+            throw new IllegalArgumentException("해당 요청을 처리할 핸들러가 없습니다.");
+        } catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException | IOException | ServletException e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }

@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.techcourse.controller.asis.LogoutController;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerMapping;
@@ -11,6 +12,7 @@ import nextstep.mvc.view.JspView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,13 +45,13 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         final Controller controller = getHandler(request);
         final String viewName = controller.execute(request, response);
         move(viewName, request, response);
     }
 
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;

@@ -1,5 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerMapping;
@@ -12,6 +13,8 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,13 +90,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException, IOException, ServletException {
         final HandlerExecution handlerExecution = getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
         move(modelAndView, request, response);
     }
 
-    private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         final Map<String, Object> model = modelAndView.getModel();
         final View view = modelAndView.getView();
         view.render(model, request, response);
