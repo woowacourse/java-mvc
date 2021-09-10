@@ -3,6 +3,9 @@ package com.techcourse;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.adapter.AnnotationHandlerAdapter;
+import nextstep.mvc.adapter.ManualHandlerAdapter;
+import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +17,17 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerMappings(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.techcourse")
+        );
+        dispatcherServlet.addHandlerAdapters(
+                new AnnotationHandlerAdapter(),
+                new ManualHandlerAdapter()
+        );
 
-        final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
+        final ServletRegistration.Dynamic dispatcher = servletContext
+                .addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 
