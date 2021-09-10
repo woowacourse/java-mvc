@@ -13,6 +13,7 @@ import nextstep.mvc.HandlerMapping;
 
 public class ResourceHandlerMapping implements HandlerMapping {
 
+    private static final char DIRECTORY_CHARACTER = '/';
     private final String defaultDirectory;
     private final Map<String, String> resources = new HashMap<>();
 
@@ -22,18 +23,18 @@ public class ResourceHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        for (final String path : scanAllFiles()) {
-            final String requestPath = path.split(defaultDirectory)[1];
+        for (final Path path : scanAllFiles()) {
+            final String requestPath = DIRECTORY_CHARACTER + path.getFileName().toString();
+            final String actualPath = path.toString();
 
-            resources.put(requestPath, path);
+            resources.put(requestPath, actualPath);
         }
     }
 
-    private List<String> scanAllFiles() {
+    private List<Path> scanAllFiles() {
         try {
             return Files.walk(Paths.get(defaultDirectory))
                 .filter(Files::isRegularFile)
-                .map(Path::toString)
                 .collect(Collectors.toList());
         } catch (IOException ioException) {
             throw new IllegalArgumentException(String.format("존재하지 않는 디렉토리입니다.(%s)", defaultDirectory));
