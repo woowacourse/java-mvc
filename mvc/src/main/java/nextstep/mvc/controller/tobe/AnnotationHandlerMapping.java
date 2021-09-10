@@ -37,6 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 handleMappingSinglePackage(targetPackage);
             }
             log.info("Initialized AnnotationHandlerMapping!");
+            handlerExecutions.keySet().forEach(handlerKey -> log.info("Path : {}, Controller : {}", handlerKey.getUrl(), handlerExecutions.get(handlerKey).getController().getClass()));
         } catch (Exception e) {
             log.error("AnnotationHandlerMapping Failed!");
         }
