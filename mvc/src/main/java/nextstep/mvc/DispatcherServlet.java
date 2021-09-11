@@ -71,4 +71,8 @@ public class DispatcherServlet extends HttpServlet {
     public void addHandlerAdapters(HandlerAdapter handlerAdaptor) {
         this.handlerAdapters.add(handlerAdaptor);
     }
+
+    public void addHandlerAdapters(HandlerAdapter handlerAdaptor) {
+        this.handlerAdapters.add(handlerAdaptor);
+    }
 }
