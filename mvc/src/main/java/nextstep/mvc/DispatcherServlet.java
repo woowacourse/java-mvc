@@ -40,9 +40,6 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = handlerMappings.getHandler(request);
-            if (!HANDLER_ADAPTER.supports(handler)) {
-                throw new IllegalStateException(String.format("지원하지 않는 핸들러입니다.(%s)", handler.getClass()));
-            }
             final ModelAndView modelAndView = HANDLER_ADAPTER.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
