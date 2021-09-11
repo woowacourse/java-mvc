@@ -6,8 +6,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
-import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.handler.HandlerAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
@@ -35,18 +34,6 @@ class ControllerHandlerAdapterTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("word")).thenReturn("hello");
-        when(request.getAttributeNames()).thenReturn(new Enumeration<String>() {
-            int count = 0;
-            @Override
-            public boolean hasMoreElements() {
-                return count++ < 1;
-            }
-
-            @Override
-            public String nextElement() {
-                return "word";
-            }
-        });
         when(request.getMethod()).thenReturn("GET");
 
         //when
@@ -55,7 +42,7 @@ class ControllerHandlerAdapterTest {
         ModelAndView handle = adapter.handle(request, response, controller);
 
         //then
-        assertThat(((JspView)handle.getView()).getViewName()).isEqualTo("/index.jsp");
-        assertThat(handle.getObject("word")).isEqualTo("hello");
+        JspView expectedView = (JspView)handle.getView();
+        assertThat(expectedView.getViewName()).isEqualTo("/index.jsp");
     }
 }

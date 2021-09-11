@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.handler.HandlerMapping;
 import nextstep.util.ReflectionUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
