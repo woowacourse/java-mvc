@@ -4,12 +4,15 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
+import nextstep.mvc.ComponentScanner;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -32,38 +35,40 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-
-        Map<String, ? extends Class<?>> controllers = reflections
-            .getTypesAnnotatedWith(Controller.class).stream()
-            .collect(toMap(Class::getName, controller -> controller));
-
-        List<Method> requestMappingMethods = controllers.values().stream()
-            .map(Class::getDeclaredMethods)
-            .flatMap(Arrays::stream)
-            .filter(method -> method.getDeclaredAnnotation(RequestMapping.class) != null)
-            .collect(toList());
-
-        requestMappingMethods.forEach(method -> {
-            RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-            String value = requestMapping.value();
-            RequestMethod[] requestMethods = requestMapping.method();
-
-            addHandlerExecution(controllers, method, value, requestMethods);
-        });
+        Map<String, Object> controllers = ComponentScanner.getComponent(basePackage, Controller.class);
+        List<Method> requestMappingMethods = getRequestMappingMethods(controllers);
+        requestMappingMethods.forEach(method -> addHandlerExecution(controllers, method));
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecution(Map<String, ? extends Class<?>> controllers, Method method, String value, RequestMethod[] requestMethods) {
-        for (RequestMethod requestMethod: requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(
-                controllers.get(method.getDeclaringClass().getName()), method);
+    private List<Method> getRequestMappingMethods(Map<String, Object> controllers) {
+        return controllers.values().stream()
+            .map(controller -> controller.getClass().getDeclaredMethods())
+            .flatMap(Arrays::stream)
+            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+            .collect(toList());
+    }
 
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("Path : {}, Controller : {}", value, method.getDeclaringClass().getSimpleName());
-        }
+    private void addHandlerExecution(Map<String, Object> controllers, Method method) {
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+
+        Arrays.stream(requestMapping.method())
+            .forEach(requestMethod -> {
+                handlerExecutions.put(
+                    new HandlerKey(requestMapping.value(), requestMethod),
+                    new HandlerExecution(
+                        controllers.get(method.getDeclaringClass().getSimpleName()),
+                        method
+                    )
+                );
+
+                log.info("Path : {}, Controller : {}, Method : {}",
+                    requestMapping.value(),
+                    method.getDeclaringClass().getSimpleName(),
+                    method.getName()
+                );
+            });
     }
 
     @Override

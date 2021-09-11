@@ -20,7 +20,7 @@ public class AnnotationLoginController {
     private static final Logger log = LoggerFactory.getLogger(
         AnnotationLoginController.class);
 
-    @RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
@@ -54,10 +54,7 @@ public class AnnotationLoginController {
             .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
 
-    @RequestMapping(
-        value = "/logout",
-        method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE}
-    )
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
