@@ -1,8 +1,6 @@
 package nextstep.web.support;
 
 import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
 
 public enum RequestMethod {
     GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
@@ -15,6 +13,6 @@ public enum RequestMethod {
     }
 
     public boolean isSame(String methodName) {
-        return Objects.equals(name(), methodName.toUpperCase(Locale.ROOT));
+        return name().equalsIgnoreCase(methodName);
     }
 }
