@@ -4,9 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import nextstep.mvc.handleradapter.DefaultHandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMappings;
 import nextstep.mvc.view.ModelAndView;
@@ -19,7 +16,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final HandlerAdapter HANDLER_ADAPTER = new DefaultHandlerAdapter();
 
-    private final HandlerMappings handlerMappings;
+    private transient final HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();

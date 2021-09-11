@@ -33,7 +33,7 @@ public class ResourceHandlerMapping implements HandlerMapping {
     }
 
     private List<Path> scanAllFiles() {
-        try (final Stream<Path> fileStream = Files.walk(Paths.get(defaultDirectory))){
+        try (final Stream<Path> fileStream = Files.walk(Paths.get(defaultDirectory))) {
             return fileStream
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());

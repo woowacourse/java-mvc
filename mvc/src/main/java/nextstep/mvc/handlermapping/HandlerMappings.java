@@ -1,13 +1,12 @@
 package nextstep.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.HandlerMapping;
 
-public class HandlerMappings implements Serializable {
+public class HandlerMappings {
 
     private final List<HandlerMapping> elements;
 
