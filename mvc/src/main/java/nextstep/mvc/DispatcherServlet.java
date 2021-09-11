@@ -16,7 +16,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final HandlerAdapter HANDLER_ADAPTER = new DefaultHandlerAdapter();
 
-    private transient final HandlerMappings handlerMappings;
+    private final transient HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();
