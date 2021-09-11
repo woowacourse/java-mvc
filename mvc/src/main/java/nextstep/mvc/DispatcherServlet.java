@@ -1,13 +1,11 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +32,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
-    }
-
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
@@ -52,13 +46,6 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter findHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new NotFoundHandlerAdapterException(handler));
-    }
-
     private Object findHandler(HttpServletRequest request) {
         log.debug("requestUrI:{}", request.getRequestURI());
         return handlerMappings.stream()
@@ -68,8 +55,15 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new NotFoundHandlerException(request));
     }
 
-    public void addHandlerAdapters(HandlerAdapter handlerAdaptor) {
-        this.handlerAdapters.add(handlerAdaptor);
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new NotFoundHandlerAdapterException(handler));
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
     }
 
     public void addHandlerAdapters(HandlerAdapter handlerAdaptor) {
