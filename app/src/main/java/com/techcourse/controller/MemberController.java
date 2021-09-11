@@ -23,7 +23,7 @@ public class MemberController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final User user = new User(2,
+        final User user = new User(
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
