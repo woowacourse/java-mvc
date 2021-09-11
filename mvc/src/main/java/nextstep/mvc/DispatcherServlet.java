@@ -9,31 +9,23 @@ import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
         handlerMappings.init();
-        addDefaultHandlerAdapters();
-    }
-
-    private void addDefaultHandlerAdapters() {
-        handlerAdapters.add(new AnnotationBasedAdapter());
-        handlerAdapters.add(new ControllerBasedAdapter());
+        handlerAdapters.init();
     }
 
     @Override
@@ -42,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.getHandler(request);
-            HandlerAdapter adapter = getAdapter(handler);
+            HandlerAdapter adapter = handlerAdapters.getAdapter(handler);
             ModelAndView modelAndView = adapter.handle(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
@@ -50,13 +42,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", exception.getMessage(), exception);
             throw new ServletException(exception.getMessage());
         }
-    }
-
-    private HandlerAdapter getAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(adapter -> adapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new AdapterNotFoundException(handler));
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {

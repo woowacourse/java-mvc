@@ -2,12 +2,16 @@ package nextstep.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class HandlerMappings {
+
+    private static final Logger log = LoggerFactory.getLogger(HandlerMappings.class);
 
     private final List<HandlerMapping> handlerMappings;
 
@@ -16,7 +20,9 @@ public class HandlerMappings {
     }
 
     public void init() {
+        log.info("Adding default handler mappings");
         addDefaultHandlerMappings();
+        log.info("initializing handler mappings");
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
