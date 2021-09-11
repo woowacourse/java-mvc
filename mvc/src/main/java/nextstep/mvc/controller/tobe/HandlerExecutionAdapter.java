@@ -7,6 +7,13 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecutionAdapter implements HandlerAdapter {
 
+    private final ParameterResolverExecutor parameterResolverExecutor;
+
+    public HandlerExecutionAdapter(
+        ParameterResolverExecutor parameterResolverExecutor) {
+        this.parameterResolverExecutor = parameterResolverExecutor;
+    }
+
     @Override
     public boolean supports(Object handler) {
         return handler instanceof HandlerExecution;
@@ -15,6 +22,9 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response,
                                Object handler) throws Exception {
-        return ((HandlerExecution) handler).handle(request, response);
+        HandlerExecution handlerExecution = (HandlerExecution) handler;
+        Object[] parameters = parameterResolverExecutor
+            .captureProperParameter(handlerExecution.getMethod(), request, response);
+        return handlerExecution.handle(parameters);
     }
 }

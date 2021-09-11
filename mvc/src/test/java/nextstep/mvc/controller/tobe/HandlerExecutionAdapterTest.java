@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
+import java.util.Collections;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,9 @@ class HandlerExecutionAdapterTest {
     void supportsTest() {
         //given
         //when
-        HandlerExecutionAdapter adapter = new HandlerExecutionAdapter();
+        HandlerExecutionAdapter adapter = new HandlerExecutionAdapter(new ParameterResolverExecutor(
+            Collections.emptyList())
+        );
         //then
         assertThat(adapter.supports(execution)).isTrue();
     }
@@ -48,23 +50,13 @@ class HandlerExecutionAdapterTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getAttributeNames()).thenReturn(new Enumeration<String>() {
-            int count = 0;
-            @Override
-            public boolean hasMoreElements() {
-                return count++ < 1;
-            }
-
-            @Override
-            public String nextElement() {
-                return "id";
-            }
-        });
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
         //when
-        HandlerExecutionAdapter adapter = new HandlerExecutionAdapter();
+        HandlerExecutionAdapter adapter = new HandlerExecutionAdapter(new ParameterResolverExecutor(
+            Collections.emptyList())
+        );
         ModelAndView modelAndView = adapter.handle(request, response, execution);
 
         //then
