@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import nextstep.mvc.HandlerMapping;
 
 public class ResourceHandlerMapping implements HandlerMapping {
@@ -32,8 +33,8 @@ public class ResourceHandlerMapping implements HandlerMapping {
     }
 
     private List<Path> scanAllFiles() {
-        try {
-            return Files.walk(Paths.get(defaultDirectory))
+        try (final Stream<Path> fileStream = Files.walk(Paths.get(defaultDirectory))){
+            return fileStream
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
         } catch (IOException ioException) {

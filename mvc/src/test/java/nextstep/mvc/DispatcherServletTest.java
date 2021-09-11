@@ -41,6 +41,7 @@ class DispatcherServletTest {
         doNothing().when(requestDispatcher).forward(request, response);
 
         dispatcherServlet.addHandlerMapping(handlerMapping);
+        dispatcherServlet.init();
     }
 
     @DisplayName("해당 타입을 지원하는 어댑터가 있는 경우 렌더링")
