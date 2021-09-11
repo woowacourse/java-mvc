@@ -9,6 +9,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,8 +56,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Object instance = createInstance(controllerClass);
             HandlerKey handlerKey = new HandlerKey(annotationValue, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(handler, instance);
-            handlerExecutions.put(handlerKey, handlerExecution);
 
+            handlerExecutions.put(handlerKey, handlerExecution);
             log.info("Used {} class to map [{}] method as handler for {} {}",
                     controllerClass.getSimpleName(),
                     handler.getName(),
@@ -68,7 +69,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private Object createInstance(Class<?> controllerClass) {
         try {
             return controllerClass.getConstructor().newInstance();
-        } catch (Exception exception) {
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException exception) {
             String controllerName = controllerClass.getSimpleName();
             log.error("exception while making controller instance of {}", controllerName);
             throw new ControllerCreationException(controllerName);

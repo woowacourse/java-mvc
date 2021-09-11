@@ -20,13 +20,13 @@ public class HandlerMappings {
     }
 
     public void init() {
-        log.info("Adding default handler mappings");
-        addDefaultHandlerMappings();
         log.info("initializing handler mappings");
+        addDefaultHandlerMappings();
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     private void addDefaultHandlerMappings() {
+        log.info("Adding default handler mappings");
         addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
     }
 
