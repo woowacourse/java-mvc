@@ -10,18 +10,23 @@ public class InMemoryUserRepository {
 
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 
+    private static Long nextId = 1L;
+
     static {
-        final User user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+        final User user = new User(1L, "gugu", "password", "hkkang@woowahan.com");
         database.put(user.getAccount(), user);
     }
 
-    public static void save(User user) {
-        database.put(user.getAccount(), user);
+    public static User save(User user) {
+        User savedUser = new User(++nextId, user.getAccount(), user.getPassword(), user.getEmail());
+        database.put(user.getAccount(), savedUser);
+        return savedUser;
     }
 
     public static Optional<User> findByAccount(String account) {
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {}
+    private InMemoryUserRepository() {
+    }
 }

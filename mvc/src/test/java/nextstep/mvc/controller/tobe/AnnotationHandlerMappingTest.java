@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +22,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("URL: /get-test, Method: GET에 대한 HandlerExecution을 찾아와 handle 로직을 실행할 수 있다.")
     void get() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
@@ -36,6 +38,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("URL: /post-test, Method: POST에 대한 HandlerExecution을 찾아와 handle 로직을 실행할 수 있다.")
     void post() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);

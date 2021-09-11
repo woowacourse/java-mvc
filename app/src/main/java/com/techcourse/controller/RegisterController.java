@@ -10,7 +10,7 @@ public class RegisterController implements Controller {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final User user = new User(2,
+        final User user = new User(2L,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
