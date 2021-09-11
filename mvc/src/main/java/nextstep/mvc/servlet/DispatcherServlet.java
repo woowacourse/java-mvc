@@ -8,6 +8,7 @@ import nextstep.mvc.handleradapter.HandlerAdapterRegistry;
 import nextstep.mvc.handleradapter.HandlerAdapter;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.handlermapping.HandlerMappingRegistry;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,8 @@ public class DispatcherServlet extends HttpServlet {
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
+            final ModelAndView modelAndView = new ModelAndView(new JspView("500.jsp"));
+            modelAndView.render(request, response);
         }
     }
 
