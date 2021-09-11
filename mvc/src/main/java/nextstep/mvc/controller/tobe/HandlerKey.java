@@ -16,7 +16,6 @@ public class HandlerKey {
     }
 
     public static HandlerKey of(HttpServletRequest request) {
-        //todo: request.getMethod() 의 결과가 GET, POST와 같이 들어오는지 확인할 것!
         return new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
     }
 

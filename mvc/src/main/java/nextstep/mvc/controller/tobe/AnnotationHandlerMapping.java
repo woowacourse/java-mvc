@@ -26,7 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() { // todo: 작성중!
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
@@ -35,10 +35,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 if (!handler.isAnnotationPresent(RequestMapping.class)) {
                     continue;
                 }
-
                 registerRequestMappingMethods(controller, handler);
             }
         }
+
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.debug("등록된 handler: {}", handlerKey));
     }
 
     private void registerRequestMappingMethods(Class<?> controller, Method handler) {
