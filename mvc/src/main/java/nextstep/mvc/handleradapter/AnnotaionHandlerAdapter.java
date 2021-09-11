@@ -8,10 +8,7 @@ import nextstep.mvc.view.ModelAndView;
 public class AnnotaionHandlerAdapter implements HandlerAdapter{
     @Override
     public boolean supports(Object handler) {
-        if (handler instanceof HandlerExecution) {
-            return true;
-        }
-        return false;
+        return handler instanceof HandlerExecution;
     }
 
     @Override

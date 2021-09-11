@@ -10,10 +10,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        if (handler instanceof Controller) {
-            return true;
-        }
-        return false;
+        return handler instanceof Controller;
     }
 
     @Override
