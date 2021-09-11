@@ -1,15 +1,9 @@
 plugins {
     id 'application'
-    id 'org.sonarqube' version '3.3'
-    id 'jacoco'
 }
 
 application {
     mainClass = 'com.techcourse.JwpApplication'
-}
-
-jacoco {
-    toolVersion = "0.8.7"
 }
 
 group = 'nextstep.jwp'
@@ -39,21 +33,4 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-sonarqube {
-    properties {
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.projectKey", "woowacourse_jwp-dashboard-mvc"
-        property "sonar.organization", "woowacourse"
-        property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.coverage.jacoco.xmlReportPaths", "jacoco/jacoco.xml"
-    }
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled(true)
-        xml.destination(new File("jacoco/jacoco.xml"))
-    }
 }
