@@ -20,7 +20,7 @@ public class ControllerScanner {
     }
 
     private static Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
-        final HashMap<Class<?>, Object> controllerInstances = new HashMap<>();
+        final Map<Class<?>, Object> controllerInstances = new HashMap<>();
         for (final Class<?> controller : controllers) {
             controllerInstances.put(controller, instantiateController(controller));
         }
