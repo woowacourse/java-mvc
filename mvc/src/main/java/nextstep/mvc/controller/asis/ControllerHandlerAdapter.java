@@ -16,13 +16,8 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response,
                                Object handler) throws Exception {
-        String urlPath = ((Controller) handler).execute(request, response);
-        ModelAndView modelAndView = new ModelAndView(new JspView(urlPath));
-
-        request.getAttributeNames()
-            .asIterator()
-            .forEachRemaining(name -> modelAndView.addObject(name, request.getAttribute(name)));
-
-        return modelAndView;
+        Controller controller = (Controller) handler;
+        String urlPath = controller.execute(request, response);
+        return new ModelAndView(new JspView(urlPath));
     }
 }

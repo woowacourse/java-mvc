@@ -15,13 +15,8 @@ public class HandlerExecution {
         this.handler = handler;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = (ModelAndView) method.invoke(handler, request, response);
-
-        request.getAttributeNames()
-            .asIterator()
-            .forEachRemaining(name -> modelAndView.addObject(name, request.getAttribute(name)));
-
-        return modelAndView;
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
+        throws Exception {
+        return (ModelAndView) method.invoke(handler, request, response);
     }
 }
