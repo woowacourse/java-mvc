@@ -1,33 +1,32 @@
 package nextstep.mvc.view;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 public class ModelAndView {
 
-    private final View view;
-    private final Map<String, Object> model;
+    private final String viewName;
+    private final Model model;
 
-    public ModelAndView(View view) {
-        this.view = view;
-        this.model = new HashMap<>();
+    public ModelAndView(Model model, String viewName) {
+        this.model = model;
+        this.viewName = viewName;
     }
 
-    public ModelAndView addObject(String attributeName, Object attributeValue) {
-        model.put(attributeName, attributeValue);
-        return this;
+    public ModelAndView(String viewName) {
+        this(new Model(), viewName);
+    }
+
+    public void addObject(String attributeName, Object attributeValue) {
+        model.addAttribute(attributeName, attributeValue);
     }
 
     public Object getObject(String attributeName) {
-        return model.get(attributeName);
+        return model.getAttribute(attributeName);
     }
 
-    public Map<String, Object> getModel() {
-        return Collections.unmodifiableMap(model);
+    public Model getModel() {
+        return model;
     }
 
-    public View getView() {
-        return view;
+    public String getViewName() {
+        return viewName;
     }
 }

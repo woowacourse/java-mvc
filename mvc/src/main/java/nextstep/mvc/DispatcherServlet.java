@@ -1,33 +1,40 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.view.JspView;
+import nextstep.mvc.adaptor.HandlerAdapters;
+import nextstep.mvc.handler.exception.ExceptionHandlerExecutor;
+import nextstep.mvc.handler.tobe.HandlerMapping;
+import nextstep.mvc.handler.tobe.HandlerMappings;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
+import nextstep.mvc.view.resolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappings handlerMappings;
+    private final HandlerAdapters handlerAdapters;
+    private final ViewResolver viewResolver;
+    private final ExceptionHandlerExecutor exceptionHandlerExecutor;
 
-    public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters,
+            ViewResolver viewResolver, ExceptionHandlerExecutor exceptionHandlerExecutor) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
+        this.viewResolver = viewResolver;
+        this.exceptionHandlerExecutor = exceptionHandlerExecutor;
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappings.init();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -39,31 +46,22 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Controller controller = getController(request);
-            final String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            ModelAndView modelAndView = processRequest(request, response);
+            View view = viewResolver.resolve(modelAndView.getViewName());
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
+            e.printStackTrace();
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Controller getController(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .map(Controller.class::cast)
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    public ModelAndView processRequest(HttpServletRequest request, HttpServletResponse response) throws Throwable {
+        try {
+            Object handler = handlerMappings.getHandler(request);
+            return handlerAdapters.service(request, response, handler);
+        } catch (Exception e) {
+            return exceptionHandlerExecutor.execute(e);
         }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }

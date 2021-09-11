@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebFilter;
 
 import java.io.IOException;
 
-@WebFilter("/*")
+@WebFilter(urlPatterns = "/*")
 public class CharacterEncodingFilter implements Filter {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
