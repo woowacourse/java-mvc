@@ -2,6 +2,7 @@ package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.service.RegisterService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -19,14 +20,21 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
+    private final RegisterService registerService;
+
+    public RegisterController() {
+        this.registerService = new RegisterService();
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: POST, Request URI: {}", request.getRequestURI());
-        final User user = new User(2,
-                request.getParameter("account"),
-                request.getParameter("password"),
-                request.getParameter("email"));
-        InMemoryUserRepository.save(user);
+
+        final String account = request.getParameter("account");
+        final String password = request.getParameter("password");
+        final String email = request.getParameter("email");
+
+        final User user = registerService.join(account, password, email);
 
         final HttpSession session = request.getSession();
         session.setAttribute(UserSession.SESSION_KEY, user);
