@@ -22,8 +22,6 @@ public class HandlerExecutions {
     }
 
     public void initializeWith(Set<Class<?>> handlers) throws Exception {
-        LOG.info("Initialized AnnotationHandlerMapping!");
-
         for (Class<?> handler : handlers) {
             initializeMethods(handler);
         }
