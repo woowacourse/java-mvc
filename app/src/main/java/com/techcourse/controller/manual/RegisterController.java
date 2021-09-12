@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.manual;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -9,11 +9,13 @@ import nextstep.mvc.controller.asis.Controller;
 public class RegisterController implements Controller {
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final User user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        final User user = new User(
+            2L,
+            request.getParameter("account"),
+            request.getParameter("password"),
+            request.getParameter("email")
+        );
         InMemoryUserRepository.save(user);
 
         return "redirect:/index.jsp";

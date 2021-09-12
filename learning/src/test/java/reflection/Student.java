@@ -1,6 +1,7 @@
 package reflection;
 
 public class Student {
+
     private String name;
 
     private int age;
@@ -16,8 +17,8 @@ public class Student {
     @Override
     public String toString() {
         return "Student{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+            "name='" + name + '\'' +
+            ", age=" + age +
+            '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.manual;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,7 +7,7 @@ import nextstep.mvc.controller.asis.Controller;
 public class RegisterViewController implements Controller {
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
         return "/register.jsp";
     }
 }

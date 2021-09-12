@@ -1,14 +1,17 @@
 package nextstep.mvc.controller.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.controller.tobe.handler.mapping.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.handler.mapping.HandlerExecution;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -21,32 +24,46 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void get() {
+        // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestURI()).willReturn("/get-test");
+        given(request.getMethod()).willReturn("GET");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping
+            .getHandler(request);
+
+        // when
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        JspView jspView = (JspView) modelAndView.getView();
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(jspView.getName()).isEqualTo("/get-test");
     }
 
     @Test
-    void post() throws Exception {
+    void post() {
+        // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+        given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestURI()).willReturn("/post-test");
+        given(request.getMethod()).willReturn("POST");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping
+            .getHandler(request);
+
+        // when
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        JspView jspView = (JspView) modelAndView.getView();
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(jspView.getName()).isEqualTo("/post-test");
     }
 }

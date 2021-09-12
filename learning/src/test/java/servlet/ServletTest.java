@@ -49,11 +49,6 @@ class ServletTest {
         assertThat(actual).isEqualTo("Hello world");
     }
 
-    private HttpURLConnection connectTomcat(String path) throws IOException {
-        final URL url = new URL("http://localhost:8080" + path);
-        return (HttpURLConnection) url.openConnection();
-    }
-
     private Tomcat createTomcat() {
         final Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);
@@ -64,5 +59,10 @@ class ServletTest {
     private void skipBindOnInit(Tomcat tomcat) {
         final Connector connector = tomcat.getConnector();
         connector.setProperty("bindOnInit", "false");
+    }
+
+    private HttpURLConnection connectTomcat(String path) throws IOException {
+        final URL url = new URL("http://localhost:8080" + path);
+        return (HttpURLConnection) url.openConnection();
     }
 }
