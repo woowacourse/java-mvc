@@ -3,7 +3,6 @@ package com.techcourse.service;
 import com.techcourse.domain.User;
 import com.techcourse.exception.LoginFailedException;
 import com.techcourse.exception.UserNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LoginServiceTest {
 
-    private LoginService loginService;
-
-    @BeforeEach
-    void setUp() {
-        loginService = new LoginService();
-    }
+    private static final LoginService loginService = new LoginService();
 
     @DisplayName("로그인을 한다. - 성공")
     @Test
