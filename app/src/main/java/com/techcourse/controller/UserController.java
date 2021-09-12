@@ -41,7 +41,7 @@ public class UserController {
         return new ModelAndView(jspView);
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
@@ -64,7 +64,7 @@ public class UserController {
         return new ModelAndView(jspView);
     }
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerView(HttpServletRequest req, HttpServletResponse res) throws Exception {
         final JspView jspView = new JspView("/register.jsp");
         return new ModelAndView(jspView);

@@ -12,6 +12,7 @@ import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +40,6 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
         try {
             final HandlerExecution handlerExecution = getHandler(request);
             final ModelAndView modelAndView = handlerExecution.handle(request, response);
@@ -50,19 +50,27 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerExecution getHandler(HttpServletRequest request) {
+    private HandlerExecution getHandler(HttpServletRequest request) throws NoSuchMethodException {
         for (HandlerMapping handlerMapping : handlerMappings) {
             final Object handler = handlerMapping.getHandler(request);
-            if (Objects.nonNull(handler)) {
+            if (Objects.nonNull(handler) && handler instanceof HandlerExecution) {
                 return (HandlerExecution) handler;
             }
+            return getManualHandler(request);
         }
-        log.info("No handler found.");
+        log.debug("No handler found.");
         throw new IllegalArgumentException();
+    }
+
+    private HandlerExecution getManualHandler(HttpServletRequest request) throws NoSuchMethodException {
+        Controller controller = (Controller) getController(request);
+        Method method = controller.getClass().getMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
+        return new HandlerExecution(controller, method);
     }
 
     private Object getController(HttpServletRequest request) {
         return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.getClass().toString().contains("ManualHandlerMapping"))
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .map(Controller.class::cast)
