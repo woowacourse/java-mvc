@@ -12,6 +12,7 @@ import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -52,7 +53,7 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (HandlerNotFoundException e) {
-            // TODO : 404 페이지로 리다이렉팅
+            response.sendRedirect("/404.jsp");
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
