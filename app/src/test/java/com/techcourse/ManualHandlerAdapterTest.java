@@ -35,7 +35,7 @@ class ManualHandlerAdapterTest {
             Object handler = mock(Controller.class);
 
             // when, then
-            assertThat(manualHandlerAdapter.supports(handler)).isTrue();
+            assertThat(manualHandlerAdapter.isCompatible(handler)).isTrue();
         }
 
         @DisplayName("handler가 Controller 구현체가 아닌 경우 false를 반환한다.")
@@ -45,7 +45,7 @@ class ManualHandlerAdapterTest {
             Object handler = mock(HandlerExecution.class);
 
             // when, then
-            assertThat(manualHandlerAdapter.supports(handler)).isFalse();
+            assertThat(manualHandlerAdapter.isCompatible(handler)).isFalse();
         }
     }
 

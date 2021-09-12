@@ -17,7 +17,7 @@ public class HandlerAdapters {
 
     public HandlerAdapter getAdapter(Object handler) {
         return handlerAdapters.stream()
-            .filter(handlerAdapter -> handlerAdapter.supports(handler))
+            .filter(handlerAdapter -> handlerAdapter.isCompatible(handler))
             .findFirst()
             .orElseThrow();
     }
