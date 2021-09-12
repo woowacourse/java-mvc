@@ -1,7 +1,9 @@
 package nextstep.mvc.controller.tobe;
 
+import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class HandlerKey {
@@ -12,6 +14,18 @@ public class HandlerKey {
     public HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public boolean match(RequestMapping annotation) {
+        return isUrlMatch(annotation) && isMethodMatch(annotation);
+    }
+
+    private boolean isUrlMatch(RequestMapping annotation) {
+        return Objects.equals(url, annotation.value());
+    }
+
+    private boolean isMethodMatch(RequestMapping annotation) {
+        return Arrays.asList(annotation.method()).contains(requestMethod);
     }
 
     @Override
