@@ -9,11 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.handler.HandlerMapping;
 import nextstep.util.ReflectionUtils;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Method declaredMethod : ReflectionUtils
             .scanAllMethodByAnnotationWith(controllerClass, RequestMapping.class)) {
             HandlerKey handlerKey = createHandlerKeyFrom(declaredMethod);
-            inputHandlerKeyAndHandler(handlerKey, new HandlerExecution(declaredMethod, createHandler(controllerClass)));
+            inputHandlerKeyAndHandler(handlerKey,
+                new HandlerExecution(declaredMethod, createHandler(controllerClass)));
         }
     }
 
@@ -74,8 +74,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        return handlerExecutions
-            .get(new HandlerKey(request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod())));
+        return handlerExecutions.get(new HandlerKey(request));
     }
 }

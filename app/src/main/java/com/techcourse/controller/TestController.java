@@ -1,7 +1,6 @@
 package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -17,7 +16,7 @@ public class TestController {
     private static final String JSP_EXTENSION = ".jsp";
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
-    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView findUserId(HttpServletRequest request) {
         log.info("test controller get method, url -> {}", request.getRequestURI());
         String viewNameWithoutExtension = request.getRequestURI();
         final ModelAndView modelAndView = new ModelAndView(new JspView(viewNameWithoutExtension + JSP_EXTENSION));
@@ -26,7 +25,7 @@ public class TestController {
     }
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView save(HttpServletRequest request) {
         log.info("test controller get method, url -> {}", request.getRequestURI());
         String viewNameWithoutExtension = request.getRequestURI();
         final ModelAndView modelAndView = new ModelAndView(new JspView(viewNameWithoutExtension + JSP_EXTENSION));
