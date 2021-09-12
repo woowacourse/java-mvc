@@ -60,7 +60,7 @@ public class DispatcherServlet extends HttpServlet {
             if (isContent(handler, handlerAdapter)) return;
 
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
