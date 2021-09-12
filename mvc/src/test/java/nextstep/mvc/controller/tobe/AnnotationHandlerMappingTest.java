@@ -1,10 +1,10 @@
 package nextstep.mvc.controller.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import samples.AnnotationTestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -22,31 +22,35 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
+
+        // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        // when
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        // then
+        assertThat(handlerExecution.getHandler()).isExactlyInstanceOf(AnnotationTestController.class);
     }
 
     @Test
     void post() throws Exception {
+
+        // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        // when
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        // then
+        assertThat(handlerExecution.getHandler()).isExactlyInstanceOf(AnnotationTestController.class);
     }
 }

@@ -1,15 +1,18 @@
 package reflection;
 
-public class Junit3Test {
-    public void test1() throws Exception {
+public class Junit4 {
+
+    @MyTest
+    public void one() throws Exception {
         System.out.println("Running Test1");
     }
 
-    public void test2() throws Exception {
+    @MyTest
+    public void two() throws Exception {
         System.out.println("Running Test2");
     }
 
-    public void three() throws Exception {
+    public void testThree() throws Exception {
         System.out.println("Running Test3");
     }
 }
