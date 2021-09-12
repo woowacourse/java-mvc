@@ -11,7 +11,7 @@
 - [x] **HandlerExecutionAdapter 구현하기** (AnnotationHandlerMapping 이용)
 - [x] **ManualHandlerAdapter 구현하기** (ManualHandlerMapping 이용)
 - [x] **ModelAndView 와 JspView 채우기**
-- [ ] **DispatcherServlet 에서 HandlerExecution 과 Controller 를 찾는 분기 만들기**
+- [x] **DispatcherServlet 에서 HandlerExecution 과 Controller 를 선택하는 동작 구현**
 
 
 ## APP 패키지
