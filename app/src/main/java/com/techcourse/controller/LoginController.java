@@ -1,7 +1,9 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
+import com.techcourse.exception.AuthException;
 import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -13,26 +15,31 @@ public class LoginController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
+    private final LoginService loginService;
+
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) {
+        log.info("Method: POST, Request URI: {}", req.getRequestURI());
+
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
-    }
+        final String account = req.getParameter("account");
+        final String password = req.getParameter("password");
 
-    private String login(HttpServletRequest request, User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
-            final HttpSession session = request.getSession();
+        try {
+            User user = loginService.login(account, password);
+
+            HttpSession session = req.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
+
             return "redirect:/index.jsp";
-        } else {
+        } catch (AuthException e) {
             return "redirect:/401.jsp";
         }
     }
