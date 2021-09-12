@@ -45,6 +45,11 @@ public class RegisterController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
+
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
+        }
+
         return new ModelAndView(new JspView("/register.jsp"));
     }
 }

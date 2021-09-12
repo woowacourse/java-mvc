@@ -13,10 +13,10 @@ public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
-    private final String basePackage;
+    private final Object[] basePackage;
     private final Set<Object> controllers;
 
-    public ControllerScanner(String basePackage) {
+    public ControllerScanner(Object[] basePackage) {
         this.basePackage = basePackage;
         this.controllers = new HashSet<>();
     }

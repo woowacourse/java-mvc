@@ -22,20 +22,20 @@ public class LoginController implements Controller {
     }
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) {
-        log.info("Method: POST, Request URI: {}", req.getRequestURI());
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Method: POST, Request URI: {}", request.getRequestURI());
 
-        if (UserSession.isLoggedIn(req.getSession())) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             return "redirect:/index.jsp";
         }
 
-        final String account = req.getParameter("account");
-        final String password = req.getParameter("password");
+        final String account = request.getParameter("account");
+        final String password = request.getParameter("password");
 
         try {
             User user = loginService.login(account, password);
 
-            HttpSession session = req.getSession();
+            HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
 
             return "redirect:/index.jsp";
