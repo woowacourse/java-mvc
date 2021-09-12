@@ -14,6 +14,11 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
+    public static HandlerKey from(String requestURI, String method) {
+
+        return new HandlerKey(requestURI, RequestMethod.match(method));
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +
