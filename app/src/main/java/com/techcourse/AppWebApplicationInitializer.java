@@ -2,7 +2,13 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
-import nextstep.mvc.DispatcherServlet;
+import java.util.ArrayList;
+import nextstep.mvc.handleradapter.AnnotaionHandlerAdapter;
+import nextstep.mvc.handlermapping.AnnotationHandlerMapping;
+import nextstep.mvc.handleradapter.HandlerAdapterRegistry;
+import nextstep.mvc.handleradapter.ManualHandlerAdapter;
+import nextstep.mvc.handlermapping.HandlerMappingRegistry;
+import nextstep.mvc.servlet.DispatcherServlet;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +19,25 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        final DispatcherServlet dispatcherServlet = generateDispatchServletWithRegistry();
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
+        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new AnnotaionHandlerAdapter());
 
-        final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
+        final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher",
+            dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet generateDispatchServletWithRegistry() {
+        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
+            new ArrayList<>());
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(
+            new ArrayList<>());
+        return new DispatcherServlet(handlerAdapterRegistry, handlerMappingRegistry);
     }
 }
