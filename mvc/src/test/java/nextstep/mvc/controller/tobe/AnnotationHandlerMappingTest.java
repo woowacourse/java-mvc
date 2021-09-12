@@ -27,7 +27,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void get() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -42,7 +42,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void post() throws Exception {
+    void post() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
