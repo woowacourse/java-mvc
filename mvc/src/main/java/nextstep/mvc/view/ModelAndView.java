@@ -14,24 +14,19 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
-    public ModelAndView addObject(String attributeName, Object attributeValue) {
+    public void addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
-        return this;
     }
 
     public Object getObject(String attributeName) {
         return model.get(attributeName);
     }
 
-    public Map<String, Object> getModel() {
+    public Map<String, Object> model() {
         return Collections.unmodifiableMap(model);
     }
 
-    public View getView() {
+    public View view() {
         return view;
-    }
-
-    public String getViewName() {
-        return view.getViewName();
     }
 }

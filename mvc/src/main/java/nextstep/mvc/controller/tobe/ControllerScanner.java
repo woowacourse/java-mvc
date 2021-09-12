@@ -13,18 +13,12 @@ public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
-    private final Object[] basePackage;
+    private final String basePackage;
     private final Set<Object> controllers;
 
-    public ControllerScanner(Object[] basePackage) {
+    public ControllerScanner(String basePackage) {
         this.basePackage = basePackage;
         this.controllers = new HashSet<>();
-    }
-
-    public Set<Class<?>> getControllerTypes() {
-        log.info("Scan @Controller from basePackage#{}", basePackage);
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     public Set<Object> getControllers() {
@@ -38,5 +32,11 @@ public class ControllerScanner {
             }
         }
         return controllers;
+    }
+
+    public Set<Class<?>> getControllerTypes() {
+        log.info("Scan @Controller from basePackage#{}", basePackage);
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 }

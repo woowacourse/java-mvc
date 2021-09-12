@@ -20,7 +20,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(Object... basePackage) {
+    public AnnotationHandlerMapping(String basePackage) {
         this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
@@ -37,7 +37,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void putToHandlerExecutions(Object controller, Method method) {
-        // RequestMapping 어노테이션이 붙은 annotation의 uri와 value를 가져와서 handlerExecutions에 담는다.
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String uri = annotation.value();
 

@@ -27,6 +27,6 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalStateException("요청에 해당하는 HandlerMapping을 찾을 수 없습니다."));
     }
 }
