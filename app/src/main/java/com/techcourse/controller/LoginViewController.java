@@ -8,15 +8,15 @@ import org.slf4j.LoggerFactory;
 
 public class LoginViewController implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
-                })
-                .orElse("/login.jsp");
+            .map(user -> {
+                LOG.info("logged in {}", user.getAccount());
+                return "redirect:/index.jsp";
+            })
+            .orElse("/login.jsp");
     }
 }
