@@ -1,0 +1,67 @@
+package nextstep.mvc.controller.tobe;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import nextstep.web.support.RequestMethod;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+class HandlerKeyTest {
+
+    @DisplayName("서로 다른 HandlerKey의 url이 같은 경우")
+    @Nested
+    class SameUrl {
+
+        private static final String URL = "wow";
+
+        @DisplayName("RequestMethod까지 같다면 서로 같다.")
+        @Test
+        void sameRequestMethod() {
+            // given
+            HandlerKey handlerKey1 = new HandlerKey(URL, RequestMethod.GET);
+            HandlerKey handlerKey2 = new HandlerKey(URL, RequestMethod.GET);
+
+            // when, then
+            assertThat(handlerKey1).isEqualTo(handlerKey2);
+        }
+
+        @DisplayName("RequestMethod가 다르다면 서로 다르다.")
+        @Test
+        void differentRequestMethod() {
+            // given
+            HandlerKey handlerKey1 = new HandlerKey(URL, RequestMethod.GET);
+            HandlerKey handlerKey2 = new HandlerKey(URL, RequestMethod.POST);
+
+            // when, then
+            assertThat(handlerKey1).isNotEqualTo(handlerKey2);
+        }
+    }
+
+    @DisplayName("서로 다른 HandlerKey의 url이 다른 경우")
+    @Nested
+    class DifferentUrl {
+
+        @DisplayName("RequestMethod가 같아도 서로 다르다.")
+        @Test
+        void sameRequestMethod() {
+            // given
+            HandlerKey handlerKey1 = new HandlerKey("wow", RequestMethod.GET);
+            HandlerKey handlerKey2 = new HandlerKey("toc", RequestMethod.GET);
+
+            // when, then
+            assertThat(handlerKey1).isNotEqualTo(handlerKey2);
+        }
+
+        @DisplayName("RequestMethod가 다르다면 서로 다르다.")
+        @Test
+        void differentRequestMethod() {
+            // given
+            HandlerKey handlerKey1 = new HandlerKey("wow", RequestMethod.GET);
+            HandlerKey handlerKey2 = new HandlerKey("toc", RequestMethod.POST);
+
+            // when, then
+            assertThat(handlerKey1).isNotEqualTo(handlerKey2);
+        }
+    }
+}

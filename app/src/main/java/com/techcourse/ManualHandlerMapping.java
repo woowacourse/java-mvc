@@ -13,27 +13,27 @@ import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private static final Map<String, Controller> CONTROLLERS = new HashMap<>();
 
     @Override
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+        CONTROLLERS.put("/", new ForwardController("/index.jsp"));
+        CONTROLLERS.put("/login", new LoginController());
+        CONTROLLERS.put("/login/view", new LoginViewController());
+        CONTROLLERS.put("/logout", new LogoutController());
 
-        log.info("Initialized Handler Mapping!");
-        controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+        LOG.info("Initialized Handler Mapping!");
+        CONTROLLERS.forEach((path, controller) -> LOG.info("Path : {}, Controller : {}", path, controller.getClass()));
     }
 
     @Override
     public Controller getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+
+        LOG.debug("Request Mapping Uri : {}", requestURI);
+
+        return CONTROLLERS.get(requestURI);
     }
 }
