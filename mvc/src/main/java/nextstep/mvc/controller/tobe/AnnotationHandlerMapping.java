@@ -37,13 +37,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void scanPackage(String packageName) {
         try {
             ControllerScanner controllerScanner = new ControllerScanner(packageName);
-            controllerScanner.getControllers().forEach(this::findAllMethods);
+            controllerScanner.getControllers().forEach(this::findAllMethodsOfController);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private void findAllMethods(Map.Entry<Class<?>, Object> controller) {
+    private void findAllMethodsOfController(Map.Entry<Class<?>, Object> controller) {
         Set<Method> allMethods = ReflectionUtils.getAllMethods(controller.getKey(), ReflectionUtils.withAnnotation(RequestMapping.class));
         allMethods.forEach(method -> addHandler(controller, method));
     }
