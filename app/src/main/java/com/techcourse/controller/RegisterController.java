@@ -32,14 +32,4 @@ public class RegisterController {
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
-
-//    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-//        final User user = new User(2,
-//                req.getParameter("account"),
-//                req.getParameter("password"),
-//                req.getParameter("email"));
-//        InMemoryUserRepository.save(user);
-//
-//        return "redirect:/index.jsp";
-//    }
 }

@@ -35,18 +35,27 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Class<?>> controllers = ControllerScanner.scanController(basePackages);
         for (Class<?> controller : controllers) {
             List<Method> requestMappingMethods = scanRequestMappingMethod(controller);
-            Object controllerInstance = getControllerInstance(controller);
+            Object controllerInstance = createControllerInstance(controller);
 
-            for (Method requestMappingMethod : requestMappingMethods) {
-                RequestMapping annotation = requestMappingMethod.getDeclaredAnnotation(RequestMapping.class);
-                String url = annotation.value();
+            scanRequestMappingMethods(requestMappingMethods, controllerInstance);
+        }
+    }
 
-                for (RequestMethod requestMethod : annotation.method()) {
-                    handlerExecutions.put(new HandlerKey(url, requestMethod),
-                        new HandlerExecution(controllerInstance, requestMappingMethod)
-                    );
-                }
-            }
+    private void scanRequestMappingMethods(List<Method> requestMappingMethods, Object controllerInstance) {
+        for (Method requestMappingMethod : requestMappingMethods) {
+            RequestMapping annotation = requestMappingMethod.getDeclaredAnnotation(RequestMapping.class);
+            String url = annotation.value();
+
+            extractHandlerExecution(controllerInstance, requestMappingMethod, annotation, url);
+        }
+    }
+
+    private void extractHandlerExecution(Object controllerInstance, Method requestMappingMethod,
+        RequestMapping annotation, String url) {
+        for (RequestMethod requestMethod : annotation.method()) {
+            handlerExecutions.put(new HandlerKey(url, requestMethod),
+                new HandlerExecution(controllerInstance, requestMappingMethod)
+            );
         }
     }
 
@@ -56,7 +65,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             .collect(Collectors.toList());
     }
 
-    private Object getControllerInstance(Class<?> controller) {
+    private Object createControllerInstance(Class<?> controller) {
         try {
             return controller.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

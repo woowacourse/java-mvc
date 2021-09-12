@@ -6,11 +6,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import nextstep.mvc.adapter.HandlerAdapterRegistry;
 import nextstep.mvc.exception.NotFoundException;
+import nextstep.mvc.mapping.HandlerMappingRegistry;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -22,25 +20,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -49,10 +47,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = getHandlerMapping(request)
+            Object handler = handlerMappingRegistry.getHandlerMapping(request)
                 .orElseThrow(NotFoundException::new);
 
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler)
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler)
                 .orElseThrow();
 
             ModelAndView mv = handlerAdapter.handle(request, response, handler);
@@ -65,19 +63,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             render("500.jsp", request, response);
         }
-    }
-
-    private Optional<Object> getHandlerMapping(HttpServletRequest request) {
-        return this.handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .findAny();
-    }
-
-    private Optional<HandlerAdapter> getHandlerAdapter(Object handler) {
-        return this.handlerAdapters.stream()
-            .filter(handlerAdapter -> handlerAdapter.supports(handler))
-            .findAny();
     }
 
     private void resolveView(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
