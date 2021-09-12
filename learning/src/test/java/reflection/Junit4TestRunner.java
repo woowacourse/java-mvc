@@ -2,8 +2,10 @@ package reflection;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 class Junit4TestRunner {
 
@@ -12,14 +14,12 @@ class Junit4TestRunner {
         Class<Junit4Test> clazz = Junit4Test.class;
         Junit4Test junit4Test = clazz.getConstructor().newInstance();
 
-        Method[] methods = clazz.getMethods();
+        List<Method> methods = Arrays.stream(clazz.getMethods())
+                .filter(method -> method.isAnnotationPresent(MyTest.class))
+                .collect(Collectors.toList());
+
         for (Method method : methods) {
-            Annotation[] annotations = method.getAnnotations();
-            for (Annotation annotation : annotations) {
-                if (annotation.annotationType() == MyTest.class) {
-                    method.invoke(junit4Test);
-                }
-            }
+            method.invoke(junit4Test);
         }
     }
 }
