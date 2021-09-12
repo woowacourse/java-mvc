@@ -4,12 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@DisplayName("AnnotationHandlerMapping은")
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
@@ -20,6 +22,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET /get-test 요청시 매칭되는 핸들러를 찾아 결과를 반환한다.")
     @Test
     void get() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -35,6 +38,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("POST /post-test 요청시 매칭되는 핸들러를 찾아 결과를 반환한다.")
     @Test
     void post() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);

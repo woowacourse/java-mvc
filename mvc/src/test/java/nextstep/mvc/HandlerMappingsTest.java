@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("HandlerMappings 일급 컬렉션은")
 class HandlerMappingsTest {
 
     private HandlerMappings handlerMappings;
