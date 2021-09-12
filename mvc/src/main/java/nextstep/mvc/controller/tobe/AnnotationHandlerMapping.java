@@ -18,6 +18,7 @@ import java.util.Set;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final String SLASH = "/";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -66,34 +67,42 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private String defaultUrl(Class<?> controllerClass) {
-        String defaultUrl = controllerClass.getAnnotation(Controller.class).value();
+        String defaultUri = controllerClass.getAnnotation(Controller.class).value();
         if (controllerClass.isAnnotationPresent(RequestMapping.class)) {
-            defaultUrl = controllerClass.getAnnotation(RequestMapping.class).value();
+            defaultUri = controllerClass.getAnnotation(RequestMapping.class).value();
         }
-        return addSlashIfNeeded(defaultUrl);
+        return defaultUri;
     }
 
-    private String addSlashIfNeeded(String url) {
-        if (url.isEmpty() || url.startsWith("/")) {
-            return url;
-        }
-        return "/" + url;
-    }
-
-    private Map<HandlerKey, HandlerExecution> extractAsMethods(Method[] methods, String defaultUrl, Object instance) {
+    private Map<HandlerKey, HandlerExecution> extractAsMethods(Method[] methods, String defaultUri, Object instance) {
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
         for (Method method : methods) {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            String detailedUrl = addSlashIfNeeded(requestMapping.value());
+            String detailedUri = requestMapping.value();
             RequestMethod[] requestMethods = requestMapping.method();
             HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-            String url = defaultUrl + detailedUrl;
+            String url = makeCompleteUri(defaultUri, detailedUri);
             handlerExecutions.putAll(extractAsRequestMethods(requestMethods, url, handlerExecution));
         }
         return handlerExecutions;
+    }
+
+    private String makeCompleteUri(String defaultUri, String detailedUri) {
+        String uri = concatSlashIfNeeded(defaultUri) + concatSlashIfNeeded(detailedUri);
+        if (uri.isEmpty()) {
+            return SLASH;
+        }
+        return uri;
+    }
+
+    private String concatSlashIfNeeded(String uri) {
+        if (uri.isEmpty() || uri.startsWith(SLASH)) {
+            return uri;
+        }
+        return SLASH + uri;
     }
 
     private Map<HandlerKey, HandlerExecution> extractAsRequestMethods(
