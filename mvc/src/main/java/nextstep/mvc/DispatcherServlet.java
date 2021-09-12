@@ -1,12 +1,12 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.view.JspView;
+import nextstep.mvc.exception.NotFoundHandlerAdapterException;
+import nextstep.mvc.exception.NotFoundHandlerException;
+import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -30,40 +32,41 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
-    }
-
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
         try {
-            final Controller controller = getController(request);
-            final String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Object handler = findHandler(request);
+            HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Controller getController(HttpServletRequest request) {
+    private Object findHandler(HttpServletRequest request) {
+        log.debug("requestUrI:{}", request.getRequestURI());
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .map(Controller.class::cast)
-                .findFirst()
-                .orElseThrow();
+                .findAny()
+                .orElseThrow(() -> new NotFoundHandlerException(request));
     }
 
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new NotFoundHandlerAdapterException(handler));
+    }
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapters(HandlerAdapter handlerAdaptor) {
+        this.handlerAdapters.add(handlerAdaptor);
     }
 }
