@@ -16,6 +16,6 @@
 
 ## APP 패키지
 - [x] AppWebApplicationInitializer 에서 ManualHandlerAdapter 적용하여 레거시 코드 돌아가게 하기
-- [ ] AnnotationHandlerMapping 과 HandlerExecutionAdapter 등록 및 컨트롤러 구현
-  - [ ] IndexController
+- [x] AnnotationHandlerMapping 과 HandlerExecutionAdapter 등록 및 어노테이션 기반 컨트롤러 구현
+
 
