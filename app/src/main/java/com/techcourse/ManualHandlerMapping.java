@@ -21,14 +21,14 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
 
-        // 어노테이션 기반 컨트롤러로 대체
+                // 어노테이션 기반 컨트롤러로 대체
 //        controllers.put("/login", new LoginController());
 //        controllers.put("/login/view", new LoginViewController());
 //        controllers.put("/logout", new LogoutController());
 //        controllers.put("/register/view", new RegisterViewController());
 //        controllers.put("/register", new RegisterController());
 
-        log.info("Initialized Handler Mapping!");
+                log.info("Initialized Handler Mapping!");
         controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
