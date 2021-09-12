@@ -6,6 +6,8 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -20,7 +22,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         try {
-            Reflections reflections = new Reflections(basePackage);
+            // TODO: MethodAnnotationsScanner 사용 위치 알아보고 기입 결정.
+            Reflections reflections = new Reflections(basePackage, new TypeAnnotationsScanner(), new SubTypesScanner());
             Set<Class<?>> annotatedHandlers = reflections.getTypesAnnotatedWith(Controller.class);
 
             handlerExecutions.initializeWith(annotatedHandlers);

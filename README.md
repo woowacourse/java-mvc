@@ -20,3 +20,12 @@
 
 - DispatcherServlet에선 Controller가 redirect 해야할 경로를 줬건 말건 알바 아니지 않을까?
   - 그건 View의 '정보'를 넘겨 받은 View 단에서 알아서 Model 참고해서 렌더링 해야지?
+
+<br>
+
+- [x] 리플렉션 스캐너 명시적으로 기입하기
+- [ ] given 코드 리팩토링
+- [ ] AnnotationHandlerMapping 로거 왜 제거했는지 떠올리기
+- [ ] `orElseThrow()` Throw 할 예외 추가해주기
+- [ ] Adapter 인터페이스 supports 네이밍 리팩토링
+- [ ] 테스트 클래스 레벨에도 `@DisplayName` 어노테이션 기입하기
