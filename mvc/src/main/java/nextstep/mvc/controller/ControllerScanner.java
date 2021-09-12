@@ -16,12 +16,12 @@ public class ControllerScanner {
         this.reflections = new Reflections(packageName);
     }
 
-    public Map<Class<?>, Object> getControllers() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Set<Map.Entry<Class<?>, Object>> getControllers() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Map<Class<?>, Object> results = new HashMap<>();
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
             results.put(controller, controller.getConstructor().newInstance());
         }
-        return results;
+        return results.entrySet();
     }
 }

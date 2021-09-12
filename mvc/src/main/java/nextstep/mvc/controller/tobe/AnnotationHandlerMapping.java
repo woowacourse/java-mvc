@@ -30,13 +30,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         LOG.info("Initialized AnnotationHandlerMapping!");
-        Arrays.stream(basePackage).forEach(packageName -> scanPackage((String) packageName));
+        Arrays.stream(basePackage)
+                .forEach(packageName -> scanPackage((String) packageName));
     }
 
     private void scanPackage(String packageName) {
         try {
             ControllerScanner controllerScanner = new ControllerScanner(packageName);
-            controllerScanner.getControllers().entrySet().forEach(this::findAllMethods);
+            controllerScanner.getControllers().forEach(this::findAllMethods);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
