@@ -15,5 +15,5 @@
 
 
 ## APP 패키지
-- [ ] AppWebApplicationInitializer 에서 ManualHandlerAdapter 적용하여 레거시 코드 돌아가게 하기
+- [x] AppWebApplicationInitializer 에서 ManualHandlerAdapter 적용하여 레거시 코드 돌아가게 하기
 - [ ] DispatcherServlet 에 AnnotationHandlerMapping 등록하기
