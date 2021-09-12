@@ -17,6 +17,8 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        Object controllerInstance = controller.getDeclaredConstructor().newInstance();
+        method.setAccessible(true);
+        return (ModelAndView) method.invoke(controllerInstance, request, response);
     }
 }
