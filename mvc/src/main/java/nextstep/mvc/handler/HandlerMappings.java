@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class HandlerMappings {
 
@@ -14,8 +13,8 @@ public class HandlerMappings {
         values.add(handlerMapping);
     }
 
-    public void forEach(Consumer<? super HandlerMapping> action) {
-        values.forEach(action);
+    public void initializeAll() {
+        values.forEach(HandlerMapping::initialize);
     }
 
     public Object getHandler(HttpServletRequest request) {

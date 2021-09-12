@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappings.initializeAll();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {

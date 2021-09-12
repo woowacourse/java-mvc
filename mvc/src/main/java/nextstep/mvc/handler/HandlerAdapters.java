@@ -6,15 +6,15 @@ import java.util.Set;
 
 public class HandlerAdapters {
 
-    private final Set<HandlerAdapter> values = new HashSet<>();
+    private final Set<HandlerAdapter> values;
 
     public HandlerAdapters(List<HandlerAdapter> handlerAdapters) {
+        this.values = new HashSet<>();
         this.values.addAll(handlerAdapters);
     }
 
     public HandlerAdapter chooseProperAdapter(Object handler) {
-        return values
-            .stream()
+        return values.stream()
             .filter(adapter -> adapter.supports(handler))
             .findAny()
             .orElseThrow();
