@@ -57,18 +57,18 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = getHandler(request);
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
 
-            if (isContent(handler, handlerAdapter)) return;
-
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.render(request, response);
+            if (isAvailable(handler, handlerAdapter)) {
+                final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+                modelAndView.render(request, response);
+            }
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private boolean isContent(Object handler, HandlerAdapter handlerAdapter) {
-        return handler == null || handlerAdapter == null;
+    private boolean isAvailable(Object handler, HandlerAdapter handlerAdapter) {
+        return handler!= null && handlerAdapter != null;
     }
 
     private Object getHandler(HttpServletRequest request) {
