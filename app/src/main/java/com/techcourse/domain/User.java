@@ -1,21 +1,36 @@
 package com.techcourse.domain;
 
+import com.techcourse.exception.UnauthorizedException;
+
 public class User {
 
-    private final long id;
+    private final Long id;
     private final String account;
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
+    public User(String account, String password, String email) {
+        this.id = null;
+        this.account = account;
+        this.password = password;
+        this.email = email;
+    }
+
+    public User(Long id, String account, String password, String email) {
         this.id = id;
         this.account = account;
         this.password = password;
         this.email = email;
     }
 
-    public boolean checkPassword(String password) {
-        return this.password.equals(password);
+    public static User withId(Long id, User user) {
+        return new User(id, user.account, user.password, user.email);
+    }
+
+    public void checkPassword(String password) {
+        if (!this.password.equals(password)) {
+            throw new UnauthorizedException();
+        }
     }
 
     public String getAccount() {

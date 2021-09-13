@@ -1,6 +1,8 @@
 package com.techcourse;
 
 import com.techcourse.controller.*;
+import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
@@ -19,8 +21,10 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
+        LoginService loginService = new LoginService(InMemoryUserRepository.initialize());
+
         CONTROLLERS.put("/", new ForwardController("/index.jsp"));
-        CONTROLLERS.put("/login", new LoginController());
+        CONTROLLERS.put("/login", new LoginController(loginService));
         CONTROLLERS.put("/login/view", new LoginViewController());
         CONTROLLERS.put("/logout", new LogoutController());
 
