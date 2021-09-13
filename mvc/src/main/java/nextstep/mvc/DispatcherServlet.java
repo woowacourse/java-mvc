@@ -40,6 +40,7 @@ public class DispatcherServlet extends HttpServlet {
             for (HandlerMapping handlerMapping : handlerMappings) {
                 if (handlerMapping.canHandle(request)) {
                     handlerMapping.handle(request, response);
+                    return;
                 }
             }
             throw new IllegalArgumentException("해당 요청을 처리할 핸들러가 없습니다.");
