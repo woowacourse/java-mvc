@@ -25,6 +25,7 @@ public class ResourceFilter implements Filter {
 
     static {
         resourcePrefixs.addAll(Arrays.asList(
+                "/",
                 "/css",
                 "/js",
                 "/assets",
