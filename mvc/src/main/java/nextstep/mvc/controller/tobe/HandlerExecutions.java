@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import nextstep.web.ComponentContainer;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
@@ -21,15 +22,15 @@ public class HandlerExecutions {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initializeWith(Set<Class<?>> handlers) throws Exception {
+    public void initializeWith(Set<Class<?>> handlers) {
         for (Class<?> handler : handlers) {
             initializeMethods(handler);
         }
     }
 
-    private void initializeMethods(Class<?> handler) throws Exception {
+    private void initializeMethods(Class<?> handler) {
         Set<Method> annotatedMethods = getAnnotatedMethods(handler);
-        Object instance = handler.getConstructor().newInstance();
+        Object instance = ComponentContainer.getInstance(handler);
 
         for (Method method : annotatedMethods) {
             initializeMethod(instance, method);

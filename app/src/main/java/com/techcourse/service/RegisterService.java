@@ -3,7 +3,9 @@ package com.techcourse.service;
 import com.techcourse.controller.request.RegisterRequest;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import nextstep.web.annotation.Service;
 
+@Service
 public class RegisterService {
 
     private final InMemoryUserRepository userRepository;

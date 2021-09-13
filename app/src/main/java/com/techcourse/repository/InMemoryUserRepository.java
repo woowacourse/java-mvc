@@ -3,13 +3,16 @@ package com.techcourse.repository;
 import com.techcourse.domain.User;
 
 import com.techcourse.exception.DuplicateAccountException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import nextstep.web.annotation.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Repository
 public class InMemoryUserRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryUserRepository.class);
@@ -17,19 +20,13 @@ public class InMemoryUserRepository {
     private final Map<String, User> database;
     private final AtomicLong autoIncrementId;
 
+    public InMemoryUserRepository() {
+        this(new HashMap<>(), new AtomicLong(1));
+    }
+
     public InMemoryUserRepository(Map<String, User> database, AtomicLong autoIncrementId) {
         this.database = database;
         this.autoIncrementId = autoIncrementId;
-    }
-
-    public static InMemoryUserRepository initialize() {
-        AtomicLong id = new AtomicLong(1);
-        User user = new User(id.getAndIncrement(), "gugu", "password", "hkkang@woowahan.com");
-
-        Map<String, User> database = new ConcurrentHashMap<>();
-        database.put(user.getAccount(), user);
-
-        return new InMemoryUserRepository(database, id);
     }
 
     public void save(User user) {

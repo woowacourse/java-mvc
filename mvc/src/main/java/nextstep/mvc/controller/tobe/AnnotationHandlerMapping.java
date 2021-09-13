@@ -26,7 +26,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         try {
-            // TODO: MethodAnnotationsScanner 사용 위치 알아보고 기입 결정.
             Reflections reflections = new Reflections(basePackage, new TypeAnnotationsScanner(), new SubTypesScanner());
             Set<Class<?>> annotatedHandlers = reflections.getTypesAnnotatedWith(Controller.class);
 

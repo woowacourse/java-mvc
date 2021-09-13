@@ -6,7 +6,9 @@ import com.techcourse.domain.User;
 import com.techcourse.exception.UnauthorizedException;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpSession;
+import nextstep.web.annotation.Service;
 
+@Service
 public class LoginService {
 
     private final InMemoryUserRepository userRepository;

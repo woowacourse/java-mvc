@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.web.ComponentContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        LoginService loginService = new LoginService(InMemoryUserRepository.initialize());
+        LoginService loginService = (LoginService) ComponentContainer.getInstance(LoginService.class);
 
         CONTROLLERS.put("/", new ForwardController("/index.jsp"));
         CONTROLLERS.put("/login", new LoginController(loginService));
