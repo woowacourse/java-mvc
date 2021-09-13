@@ -9,6 +9,7 @@ import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final HandlerExecution handlerExecution = getHandler(request);
             final ModelAndView modelAndView = handlerExecution.handle(request, response);
-            move(modelAndView.getView().getViewName(), request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
