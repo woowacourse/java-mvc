@@ -25,7 +25,7 @@ public class HandlerMappings {
         return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
-            .findFirst()
+            .findAny()
             .orElseThrow();
     }
 }
