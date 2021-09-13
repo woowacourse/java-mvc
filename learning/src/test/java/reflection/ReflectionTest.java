@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,8 +77,11 @@ class ReflectionTest {
         final Constructor<?> firstConstructor = questionClass.getConstructors()[0];
         final Constructor<?> secondConstructor = questionClass.getConstructors()[1];
 
-        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) firstConstructor.newInstance("gugu", "제목2", "내용2");
+        Object[] argsOfFirstQuestion = {"gugu", "제목1", "내용1"};
+        Object[] argsOfSecondQuestion = {1L, "gugu", "제목2", "내용2", new Date(1L), 0};
+
+        final Question firstQuestion = (Question) firstConstructor.newInstance(argsOfFirstQuestion);
+        final Question secondQuestion = (Question) secondConstructor.newInstance(argsOfSecondQuestion);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
