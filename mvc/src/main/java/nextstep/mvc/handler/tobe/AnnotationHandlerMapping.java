@@ -41,12 +41,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void fillHandlerExecutions(Class<?> controllerClass) {
-        List<Method> handlers = Arrays.stream(controllerClass.getMethods())
+        Arrays.stream(controllerClass.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
-        for (Method handler : handlers) {
-            fillHandlerExecutions(controllerClass, handler);
-        }
+                .forEach(method -> fillHandlerExecutions(controllerClass, method));
     }
 
     private void fillHandlerExecutions(Class<?> controllerClass, Method handler) {
