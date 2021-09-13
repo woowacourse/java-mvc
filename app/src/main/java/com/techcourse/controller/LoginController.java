@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class LoginController implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
@@ -21,7 +21,7 @@ public class LoginController implements Controller {
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
-                    log.info("User : {}", user);
+                    LOG.info("User : {}", user);
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
