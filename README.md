@@ -26,7 +26,7 @@
 - [x] 리플렉션 스캐너 명시적으로 기입하기
 - [ ] given 코드 리팩토링
 - [x] AnnotationHandlerMapping 로거 왜 제거했는지 떠올리기
-- [ ] `orElseThrow()` Throw 할 예외 추가해주기
+- [x] `orElseThrow()` Throw 할 예외 추가해주기
 - [x] Adapter 인터페이스 supports 네이밍 리팩토링
 - [x] 테스트 클래스 레벨에도 `@DisplayName` 어노테이션 기입하기
 - [x] 일급컬렉션 `findFirst()` 에서 `findAny()`를 사용하도록 리팩토링

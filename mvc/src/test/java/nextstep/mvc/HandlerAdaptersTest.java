@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import java.util.NoSuchElementException;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +37,7 @@ class HandlerAdaptersTest {
 
         @DisplayName("핸들링을 지원하는 Adapter를 찾으면 반환한다.")
         @Test
-        void getAdapter() {
+        void getAdapter() throws HandlerAdapterNotFoundException {
             // given
             AnnotationHandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
             handlerAdapters.add(handlerAdapter);
@@ -48,7 +50,7 @@ class HandlerAdaptersTest {
         @Test
         void getAdapterException() {
             assertThatThrownBy(() -> handlerAdapters.getAdapter(handlerExecution))
-                .isExactlyInstanceOf(NoSuchElementException.class);
+                .isExactlyInstanceOf(HandlerAdapterNotFoundException.class);
         }
     }
 }
