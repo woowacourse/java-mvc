@@ -18,7 +18,8 @@ class Junit4TestRunner {
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(myTestClass)) {
-                method.invoke(new Junit4Test());
+                Junit4Test instance = clazz.getDeclaredConstructor().newInstance();
+                method.invoke(instance);
             }
         }
     }
