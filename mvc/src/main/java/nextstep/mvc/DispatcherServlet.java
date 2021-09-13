@@ -51,15 +51,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerExecution getHandler(HttpServletRequest request) throws NoSuchMethodException {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
-            if (Objects.nonNull(handler) && handler instanceof HandlerExecution) {
-                return (HandlerExecution) handler;
-            }
-            return getManualHandler(request);
-        }
-        log.debug("No handler found.");
-        throw new IllegalArgumentException();
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(handler -> Objects.nonNull(handler) && handler instanceof HandlerExecution)
+                .map(handler -> (HandlerExecution) handler)
+                .findAny()
+                .orElse(getManualHandler(request));
     }
 
     private HandlerExecution getManualHandler(HttpServletRequest request) throws NoSuchMethodException {
