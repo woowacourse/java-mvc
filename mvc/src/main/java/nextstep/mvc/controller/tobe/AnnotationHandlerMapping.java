@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.handler.mapping.HandlerMapping;
 import nextstep.mvc.controller.scanner.ControllerScanner;
 import nextstep.mvc.controller.scanner.RequestMappingScanner;
 import nextstep.web.support.RequestMethod;
