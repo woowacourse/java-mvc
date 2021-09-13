@@ -24,7 +24,7 @@
 <br>
 
 - [x] 리플렉션 스캐너 명시적으로 기입하기
-- [ ] given 코드 리팩토링
+- [x] given 코드 리팩토링
 - [x] AnnotationHandlerMapping 로거 왜 제거했는지 떠올리기
 - [x] `orElseThrow()` Throw 할 예외 추가해주기
 - [x] Adapter 인터페이스 supports 네이밍 리팩토링
