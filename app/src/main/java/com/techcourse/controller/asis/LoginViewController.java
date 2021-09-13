@@ -1,5 +1,6 @@
-package com.techcourse.controller;
+package com.techcourse.controller.asis;
 
+import com.techcourse.controller.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
@@ -11,7 +12,7 @@ public class LoginViewController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public String execute(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());

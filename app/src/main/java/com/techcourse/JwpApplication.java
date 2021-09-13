@@ -23,7 +23,6 @@ public class JwpApplication {
 
         addWebapp(tomcat);
 
-        // 불필요한 설정은 skip
         skipBindOnInit(tomcat);
 
         tomcat.start();
