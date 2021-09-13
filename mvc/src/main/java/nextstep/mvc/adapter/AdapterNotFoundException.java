@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.adapter;
 
 public class AdapterNotFoundException extends RuntimeException {
 

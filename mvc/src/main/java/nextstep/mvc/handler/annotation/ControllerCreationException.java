@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.handler.annotation;
 
 public class ControllerCreationException extends RuntimeException {
 

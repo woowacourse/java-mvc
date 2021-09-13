@@ -1,7 +1,9 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.handler.annotation.ControllerCreationException;
+import nextstep.mvc.handler.annotation.HandlerExecution;
+import nextstep.mvc.handler.annotation.HandlerKey;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -13,10 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -43,10 +43,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void fillHandlerExecutions(Class<?> controllerClass) {
         Arrays.stream(controllerClass.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> fillHandlerExecutions(controllerClass, method));
+                .forEach(method -> fillHandlerExecutionsByMethods(controllerClass, method));
     }
 
-    private void fillHandlerExecutions(Class<?> controllerClass, Method handler) {
+    private void fillHandlerExecutionsByMethods(Class<?> controllerClass, Method handler) {
         RequestMapping annotation = handler.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : annotation.method()) {
             String annotationValue = annotation.value();

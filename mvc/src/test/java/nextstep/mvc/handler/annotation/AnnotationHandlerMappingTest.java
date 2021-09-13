@@ -1,7 +1,8 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.handler.annotation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

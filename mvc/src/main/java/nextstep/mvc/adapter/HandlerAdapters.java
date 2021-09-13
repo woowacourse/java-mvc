@@ -1,5 +1,6 @@
-package nextstep.mvc;
+package nextstep.mvc.adapter;
 
+import nextstep.mvc.handler.controller.ControllerBasedAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
