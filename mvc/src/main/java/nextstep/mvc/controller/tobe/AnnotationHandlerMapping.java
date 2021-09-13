@@ -26,7 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
 
         Set<Class<?>> classesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
@@ -35,14 +35,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void fillOutHandlerExecutions(Set<Class<?>> classesAnnotatedWithController) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void fillOutHandlerExecutions(Set<Class<?>> classesAnnotatedWithController) {
         for (Class<?> controllerClass : classesAnnotatedWithController) {
             List<Method> methodsWithRequestMapping = getMethodsAnnotatedWithRequestMapping(controllerClass);
 
             for (Method method : methodsWithRequestMapping) {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                createHandler(controllerClass, method, annotation);
+                initializeHandler(controllerClass, method, annotation);
             }
+        }
+    }
+
+    private void initializeHandler(Class<?> controllerClass, Method method, RequestMapping annotation) {
+        try {
+            createHandler(controllerClass, method, annotation);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            log.error("Exception occurred while AnnotationHandlerMapping initialization" + e.getMessage());
         }
     }
 

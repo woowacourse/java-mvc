@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +30,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            try {
-                handlerMapping.initialize();
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            handlerMapping.initialize();
         }
     }
 

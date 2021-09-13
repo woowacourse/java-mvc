@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface HandlerMapping {
 
-    void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException;
+    void initialize();
 
     Object getHandler(HttpServletRequest request);
 }
