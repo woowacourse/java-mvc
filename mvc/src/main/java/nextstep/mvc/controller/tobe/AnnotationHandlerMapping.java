@@ -9,6 +9,7 @@ import nextstep.mvc.view.View;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -56,12 +56,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void handleMappingSingleController(Class<?> controller) throws Exception {
         final Object controllerInstance = controller.getConstructor().newInstance();
-        final Method[] methods = controller.getMethods();
+        final Set<Method> methods = ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
         for (Method method : methods) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            if (!Objects.isNull(requestMapping)) {
-                registerHandler(controllerInstance, method, requestMapping);
-            }
+            registerHandler(controllerInstance, method, method.getAnnotation(RequestMapping.class));
         }
     }
 
