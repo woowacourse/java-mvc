@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.web.ComponentContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,8 @@ class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+        ComponentContainer.initializeComponents("samples");
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
