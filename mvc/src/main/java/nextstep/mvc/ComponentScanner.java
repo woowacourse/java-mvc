@@ -9,17 +9,18 @@ import org.reflections.Reflections;
 
 public class ComponentScanner {
 
-    public static Map<String, Object> getComponent(
-        Object[] basePackage, Class<? extends Annotation> annotation
-    ) {
-        Reflections reflections = new Reflections(basePackage);
-        return findComponentWithName(reflections, annotation);
+    private final Object[] basePackage;
+
+    public ComponentScanner(Object... basePackage) {
+        this.basePackage = basePackage;
     }
 
-    private static Map<String, Object> findComponentWithName(
-        Reflections reflections, Class<? extends Annotation> annotation
-    ) {
-        Set<Class<?>> componentClass = reflections.getTypesAnnotatedWith(annotation);
+    public Map<String, Object> getComponent(Class<? extends Annotation> annotation) {
+        Reflections reflections = new Reflections(basePackage);
+        return findComponentWithName(reflections.getTypesAnnotatedWith(annotation));
+    }
+
+    private Map<String, Object> findComponentWithName(Set<Class<?>> componentClass) {
         Map<String, Object> componentInstances = new HashMap<>();
 
         try {
