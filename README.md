@@ -2,8 +2,8 @@
 
 ## step 3 todo
 
-- [ ] DispatcherServlet가 아닌 뷰에서 JSP 반환하도록 한다
-- [ ] JSON 뷰를 추가한다
+- [x] DispatcherServlet가 아닌 뷰에서 JSP 반환하도록 한다 - 이전 미션에서 완료
+- [x] JSON 뷰를 추가한다
 - [ ] 레거시 MVC를 제거한다
 
 ## check
