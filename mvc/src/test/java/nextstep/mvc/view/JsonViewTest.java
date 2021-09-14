@@ -47,7 +47,7 @@ class JsonViewTest {
         model.put("key", "value");
         jsonView.render(model, request, response);
 
-        assertThat(writer.toString()).isEqualTo("\"value\"");
+        assertThat(writer).hasToString("\"value\"");
     }
 
     @DisplayName("데이터가 2개 이상이면 json 형태로 반환")
@@ -57,6 +57,6 @@ class JsonViewTest {
         model.put("key2", "value2");
         jsonView.render(model, request, response);
 
-        assertThat(writer.toString()).isEqualTo(new ObjectMapper().writeValueAsString(model));
+        assertThat(writer).hasToString(new ObjectMapper().writeValueAsString(model));
     }
 }
