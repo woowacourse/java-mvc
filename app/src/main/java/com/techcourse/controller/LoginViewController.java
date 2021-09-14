@@ -2,21 +2,27 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.RedirectView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginViewController implements Controller {
+@Controller
+public class LoginViewController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginViewController.class);
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     LOG.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
+                    return new ModelAndView(new RedirectView( "/index.jsp"));
                 })
-                .orElse("/login.jsp");
+                .orElse(new ModelAndView( new JspView("/login.jsp")));
     }
 }

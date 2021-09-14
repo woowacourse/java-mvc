@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.techcourse.adapter.AnnotationHandlerAdapter;
-import com.techcourse.adapter.ManualHandlerAdapter;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.DispatcherServlet;
@@ -14,13 +13,13 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AppWebApplicationInitializer.class);
     private static final String PACKAGE_PATH = "com.techcourse";
+    public static final String NEXTSTEP_MVC_PACKAGE_PATH = "nextstep.mvc";
 
     @Override
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(PACKAGE_PATH));
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(NEXTSTEP_MVC_PACKAGE_PATH));
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
