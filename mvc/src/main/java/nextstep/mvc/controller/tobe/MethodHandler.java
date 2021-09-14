@@ -50,7 +50,7 @@ public class MethodHandler {
     }
 
     public boolean isAnnotationPresents(Class<? extends Annotation> responseClass) {
-        return annotations.stream().anyMatch(annotation -> annotation.getClass().isAssignableFrom(responseClass));
+        return annotations.stream().anyMatch(annotation -> annotation.annotationType().isAssignableFrom(responseClass));
     }
 
     public boolean sameReturnTypeWith(Class<?> returnClass) {

@@ -15,9 +15,14 @@ public class ModelAndView {
     private final StatusCode statusCode;
 
     public ModelAndView(View view) {
+        this(view, new HashMap<>(), StatusCode.OK);
+    }
+
+    public ModelAndView(View view, Map<String, Object> model,
+                        StatusCode statusCode) {
         this.view = view;
-        this.model = new HashMap<>();
-        this.statusCode = StatusCode.OK;
+        this.model = model;
+        this.statusCode = statusCode;
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
