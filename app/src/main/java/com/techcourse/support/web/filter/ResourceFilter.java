@@ -16,10 +16,10 @@ public class ResourceFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceFilter.class);
 
-    private static final List<String> resourcePrefixs = new ArrayList<>();
+    private static final List<String> resourcePrefixes = new ArrayList<>();
 
     static {
-        resourcePrefixs.addAll(Arrays.asList(
+        resourcePrefixes.addAll(Arrays.asList(
                 "/css",
                 "/js",
                 "/assets",
@@ -32,7 +32,7 @@ public class ResourceFilter implements Filter {
     private RequestDispatcher requestDispatcher;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         this.requestDispatcher = filterConfig.getServletContext().getNamedDispatcher("default");
     }
 
@@ -50,7 +50,7 @@ public class ResourceFilter implements Filter {
     }
 
     private boolean isResourceUrl(String url) {
-        for (String prefix : resourcePrefixs) {
+        for (String prefix : resourcePrefixes) {
             if (url.startsWith(prefix)) {
                 return true;
             }

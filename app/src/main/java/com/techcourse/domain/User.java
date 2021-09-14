@@ -1,11 +1,17 @@
 package com.techcourse.domain;
 
+import java.util.Objects;
+
 public class User {
 
-    private final long id;
+    private long id;
     private final String account;
     private final String password;
     private final String email;
+
+    public User(String account, String password, String email) {
+        this(0, account, password, email);
+    }
 
     public User(long id, String account, String password, String email) {
         this.id = id;
@@ -22,6 +28,10 @@ public class User {
         return account;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -30,5 +40,18 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
