@@ -12,7 +12,7 @@ import nextstep.web.support.RequestMethod;
 public class BaseController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView base(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("/index.jsp"));
+    public String base(HttpServletRequest req, HttpServletResponse res) {
+        return "/index.jsp";
     }
 }

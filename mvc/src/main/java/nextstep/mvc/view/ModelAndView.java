@@ -6,16 +6,24 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
+    private View view;
     private final Map<String, Object> model;
 
-    public ModelAndView(String viewPath) {
-        this(new JspView(viewPath));
+    public ModelAndView() {
+        this(null);
     }
 
     public ModelAndView(View view) {
+        this(view, new HashMap<>());
+    }
+
+    public ModelAndView(View view, Map<String, Object> model) {
         this.view = view;
-        this.model = new HashMap<>();
+        this.model = model;
+    }
+
+    public void changeView(View view) {
+        this.view = view;
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
