@@ -14,7 +14,7 @@ public class HandlerAdapterRegistry {
     }
 
     public HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+        this.handlerAdapters = new ArrayList<>(handlerAdapters);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
