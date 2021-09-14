@@ -72,7 +72,6 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView mv = resolveHandler(request, response, handler);
             mv.render(request, response);
         } catch (Exception e) {
-            e.printStackTrace();
             resolveError(request, response, e);
         }
     }
