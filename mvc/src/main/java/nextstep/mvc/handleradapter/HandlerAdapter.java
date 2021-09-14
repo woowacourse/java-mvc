@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handleradapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
