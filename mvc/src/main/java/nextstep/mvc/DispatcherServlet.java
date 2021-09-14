@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
-    
+
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
@@ -49,30 +49,14 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappingRegistry.getHandler(request);
-            if (handler instanceof Controller) {
-                Controller controller = (Controller) handler;
-                String viewName = controller.execute(request, response);
-                move(viewName, request, response);
-            }
-            if (handler instanceof HandlerExecution) {
-                HandlerExecution handlerExecution = (HandlerExecution) handler;
-                final ModelAndView modelAndView = handlerExecution.handle(request, response);
-                final View view = modelAndView.getView();
-                view.render(modelAndView.getModel(), request, response);
-            }
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
