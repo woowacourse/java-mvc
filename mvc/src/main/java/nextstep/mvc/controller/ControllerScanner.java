@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
@@ -10,12 +10,12 @@ import java.util.*;
 
 public class ControllerScanner {
 
-    private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ControllerScanner.class);
 
     private final Object[] basePackage;
     private final Map<Class<?>, Object> controllers;
 
-    public ControllerScanner(Object[] basePackage) {
+    public ControllerScanner(Object... basePackage) {
         this.basePackage = basePackage;
         controllers = new HashMap<>();
     }
@@ -36,12 +36,17 @@ public class ControllerScanner {
                 | IllegalAccessException
                 | InvocationTargetException
                 | NoSuchMethodException e) {
-            log.error("Contoller Annotation이 달려있는 클래스의 인스턴스 생성에 실패했습니다. 클래스 : {}", controllerClass.getName());
+            LOG.error("Contoller Annotation이 달려있는 클래스의 인스턴스 생성에 실패했습니다. 클래스 : {}", controllerClass.getName());
             throw new IllegalStateException("Contoller Annotation이 달려있는 클래스의 인스턴스 생성에 실패했습니다. 클래스 : " + controllerClass.getName());
         }
     }
 
     public List<Object> getControllers() {
         return new ArrayList<>(controllers.values());
+    }
+
+    public boolean contains(Object handler) {
+        return controllers.values().stream()
+                .anyMatch(controller -> controller.equals(handler));
     }
 }

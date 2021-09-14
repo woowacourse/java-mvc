@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class RegisterController {
 
-    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RegisterController.class);
 
     private final RegisterService registerService;
 
@@ -26,24 +26,24 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        log.info("RegisterController GET method");
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        LOG.info("RegisterController GET method");
         return new ModelAndView(new JspView("/register.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(HttpServletRequest req, HttpServletResponse res) {
-        log.info("RegisterController POST method");
+    public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
+        LOG.info("RegisterController POST method");
         try {
             final User user = registerService.register(
-                    req.getParameter("account"),
-                    req.getParameter("password"),
-                    req.getParameter("email")
+                    request.getParameter("account"),
+                    request.getParameter("password"),
+                    request.getParameter("email")
             );
-            final HttpSession session = req.getSession();
+            final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
         } catch (DuplicateException e) {
-            log.info("account 또는 email 중복으로 인한 회원가입 실패");
+            LOG.info("account 또는 email 중복으로 인한 회원가입 실패");
         }
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }

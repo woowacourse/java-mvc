@@ -2,40 +2,57 @@ package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.exception.UnAuthorizedException;
-import com.techcourse.repository.InMemoryUserRepository;
 import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+import java.util.Optional;
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+@Controller
+public class LoginController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
     private final LoginService loginService;
 
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
+    public LoginController() {
+        this.loginService = new LoginService();
     }
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView loginView(HttpServletRequest request, HttpServletResponse response) {
+        final Optional<User> sessionUser = UserSession.getUserFrom(request.getSession());
+        if (sessionUser.isPresent()) {
+            final User user = sessionUser.get();
+            LOG.info("logged in {}", user.getAccount());
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
-        final String requestAccount = req.getParameter("account");
-        final String requestPassword = req.getParameter("password");
-        log.info("로그인 요청 => account : {}, password: {}", requestAccount, requestPassword);
+        return new ModelAndView(new JspView("/login.jsp"));
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
+        }
+        final String requestAccount = request.getParameter("account");
+        final String requestPassword = request.getParameter("password");
+        LOG.info("로그인 요청 => account : {}, password: {}", requestAccount, requestPassword);
         try {
             final User user = loginService.login(requestAccount, requestPassword);
-            final HttpSession session = req.getSession();
+            final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         } catch (UnAuthorizedException e) {
-            return "redirect:/401.jsp";
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
     }
 }

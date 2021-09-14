@@ -8,12 +8,11 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.util.Set;
 
 class ReflectionsTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ReflectionsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReflectionsTest.class);
 
     @Test
     void showAnnotationClass() throws Exception {
@@ -29,7 +28,7 @@ class ReflectionsTest {
 
     private void doLogging(Class<?> annotationClass, Set<Class<?>> classes) {
         for (Class<?> clazz : classes) {
-            log.debug("@{} 애노테이션이 설정되어있는 클래스 이름 : {}", annotationClass.getSimpleName(), clazz.getSimpleName());
+            LOG.debug("@{} 애노테이션이 설정되어있는 클래스 이름 : {}", annotationClass.getSimpleName(), clazz.getSimpleName());
         }
     }
 }
