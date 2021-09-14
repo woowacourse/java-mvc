@@ -15,7 +15,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         HandlerMappings handlerMappings = new HandlerMappings(
-                new ManualHandlerMapping(), new AnnotationHandlerMapping("controller"));
+                new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse.controller"));
 
         HandlerAdapters handlerAdapters = new HandlerAdapters(
                 new ControllerHandlerAdapter(), new RequestMappingHandlerAdapter());
