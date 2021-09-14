@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapterRegistry;
 import nextstep.mvc.adapter.HandlerMappingRegistry;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +34,16 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         LOG.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
+        ModelAndView mv;
         try {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = HandlerAdapterRegistry.getHandlerAdapter(handler);
-            ModelAndView mv = handlerAdapter.handle(request, response, handler);
+            mv = handlerAdapter.handle(request, response, handler);
+        } catch (ClassNotFoundException e) {
+            mv = new ModelAndView(new JspView("/404.jsp"));
+        }
+
+        try {
             mv.render(request, response);
         } catch (Exception e) {
             handleException(e);
@@ -48,7 +55,8 @@ public class DispatcherServlet extends HttpServlet {
         throw new ServletException(e.getMessage());
     }
 
-    private Object getHandler(HttpServletRequest request) {
-        return HandlerMappingRegistry.getHandler(request).orElseThrow();
+    private Object getHandler(HttpServletRequest request) throws ClassNotFoundException {
+        return HandlerMappingRegistry.getHandler(request)
+                .orElseThrow(() -> new ClassNotFoundException("해당 url을 찾을 수 없습니다."));
     }
 }
