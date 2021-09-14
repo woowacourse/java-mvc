@@ -5,8 +5,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.adapter.HandlerAdapter;
-import nextstep.mvc.adapter.asis.ManualHandlerAdapter;
-import nextstep.mvc.adapter.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -32,16 +30,14 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
-        initialHandlerAdapters();
-    }
-
-    private void initialHandlerAdapters() {
-        this.handlerAdapters.add(new AnnotationHandlerAdapter());
-        this.handlerAdapters.add(new ManualHandlerAdapter());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdaptor(HandlerAdapter handlerAdapter) {
+        this.handlerAdapters.add(handlerAdapter);
     }
 
     @Override
