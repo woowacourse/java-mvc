@@ -9,11 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.NoSuchElementException;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("HandlerMappings 일급 컬렉션은")
 class HandlerMappingsTest {
 
     private HandlerMappings handlerMappings;
@@ -39,7 +41,7 @@ class HandlerMappingsTest {
 
         @DisplayName("요청과 일치하는 Handler를 찾으면 반환한다.")
         @Test
-        void getHandler() {
+        void getHandler() throws HandlerNotFoundException {
             // given
             AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
 
@@ -55,7 +57,7 @@ class HandlerMappingsTest {
         @Test
         void getHandlerException() {
             assertThatThrownBy(() -> handlerMappings.getHandler(request))
-                .isExactlyInstanceOf(NoSuchElementException.class);
+                .isExactlyInstanceOf(HandlerNotFoundException.class);
         }
     }
 }

@@ -1,10 +1,13 @@
 package com.techcourse;
 
 import com.techcourse.controller.*;
+import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.web.ComponentContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +22,10 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
+        LoginService loginService = (LoginService) ComponentContainer.getInstance(LoginService.class);
+
         CONTROLLERS.put("/", new ForwardController("/index.jsp"));
-        CONTROLLERS.put("/login", new LoginController());
+        CONTROLLERS.put("/login", new LoginController(loginService));
         CONTROLLERS.put("/login/view", new LoginViewController());
         CONTROLLERS.put("/logout", new LogoutController());
 

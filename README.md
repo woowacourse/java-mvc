@@ -20,3 +20,21 @@
 
 - DispatcherServlet에선 Controller가 redirect 해야할 경로를 줬건 말건 알바 아니지 않을까?
   - 그건 View의 '정보'를 넘겨 받은 View 단에서 알아서 Model 참고해서 렌더링 해야지?
+
+<br>
+
+- [x] 리플렉션 스캐너 명시적으로 기입하기
+- [x] given 코드 리팩토링
+- [x] AnnotationHandlerMapping 로거 왜 제거했는지 떠올리기
+- [x] `orElseThrow()` Throw 할 예외 추가해주기
+- [x] Adapter 인터페이스 supports 네이밍 리팩토링
+- [x] 테스트 클래스 레벨에도 `@DisplayName` 어노테이션 기입하기
+- [x] 일급컬렉션 `findFirst()` 에서 `findAny()`를 사용하도록 리팩토링
+- [x] Controller, Service, Repository 인스턴스 싱글톤화
+
+Repository, Service를 주입하기 위해선 AnnotationHandlerMapping에서 
+이미 Service, Repotisory를 전달 받아서 Controller 인스턴스를 생성해야 했다.
+
+그러려면 이미 Service, Repostiroy 인스턴스가 생성되어 있어야했는데, 
+이 과정에서 Repository의 인스턴스가 생성되게 되면, AnnotationHandlerMapping을 사용하지 않는 기존 
+LegacyMVC와 Repository가 달라질 가능성이 존재했다.

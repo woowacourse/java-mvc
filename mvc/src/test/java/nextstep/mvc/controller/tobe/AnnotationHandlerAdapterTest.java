@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("AnnotationHandlerAdapter는")
 class AnnotationHandlerAdapterTest {
 
     private AnnotationHandlerAdapter annotationHandlerAdapter;
@@ -34,7 +35,7 @@ class AnnotationHandlerAdapterTest {
             Object handler = mock(HandlerExecution.class);
 
             // when, then
-            assertThat(annotationHandlerAdapter.supports(handler)).isTrue();
+            assertThat(annotationHandlerAdapter.isCompatible(handler)).isTrue();
         }
 
         @DisplayName("handler가 HandlerExecution 구현체가 아닌 경우 false를 반환한다.")
@@ -44,7 +45,7 @@ class AnnotationHandlerAdapterTest {
             Object handler = mock(Controller.class);
 
             // when, then
-            assertThat(annotationHandlerAdapter.supports(handler)).isFalse();
+            assertThat(annotationHandlerAdapter.isCompatible(handler)).isFalse();
         }
     }
 

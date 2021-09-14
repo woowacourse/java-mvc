@@ -7,9 +7,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("HandlerKey는")
 class HandlerKeyTest {
 
-    @DisplayName("서로 다른 HandlerKey의 url이 같은 경우")
+    @DisplayName("다른 HandlerKey과 url이 같을 때")
     @Nested
     class SameUrl {
 
@@ -38,7 +39,7 @@ class HandlerKeyTest {
         }
     }
 
-    @DisplayName("서로 다른 HandlerKey의 url이 다른 경우")
+    @DisplayName("다른 HandlerKey과 url이 다를 때")
     @Nested
     class DifferentUrl {
 

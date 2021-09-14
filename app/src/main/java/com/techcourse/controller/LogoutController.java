@@ -8,8 +8,8 @@ import nextstep.mvc.controller.asis.Controller;
 public class LogoutController implements Controller {
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final HttpSession session = req.getSession();
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        final HttpSession session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return "redirect:/";
     }

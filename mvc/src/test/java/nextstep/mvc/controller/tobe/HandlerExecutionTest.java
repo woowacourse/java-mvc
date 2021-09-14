@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 
+@DisplayName("HandlerExecution은")
 class HandlerExecutionTest {
 
     @DisplayName("handle 호출시 생성자로 받은 instance의 method 동작을 수행한다.")
@@ -40,7 +41,7 @@ class HandlerExecutionTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    private Class<?> findHandler() throws Exception {
+    private Class<?> findHandler() {
         Reflections reflections = new Reflections("samples");
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 

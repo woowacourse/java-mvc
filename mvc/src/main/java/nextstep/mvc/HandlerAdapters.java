@@ -2,6 +2,7 @@ package nextstep.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 
 public class HandlerAdapters {
 
@@ -15,10 +16,10 @@ public class HandlerAdapters {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getAdapter(Object handler) {
+    public HandlerAdapter getAdapter(Object handler) throws HandlerAdapterNotFoundException {
         return handlerAdapters.stream()
-            .filter(handlerAdapter -> handlerAdapter.supports(handler))
-            .findFirst()
-            .orElseThrow();
+            .filter(handlerAdapter -> handlerAdapter.isCompatible(handler))
+            .findAny()
+            .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 }

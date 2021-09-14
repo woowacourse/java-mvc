@@ -11,7 +11,7 @@ import nextstep.mvc.view.View;
 public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
-    public boolean supports(Object handler) {
+    public boolean isCompatible(Object handler) {
         return (handler instanceof Controller);
     }
 

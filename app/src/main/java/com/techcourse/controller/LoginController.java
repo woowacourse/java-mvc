@@ -1,7 +1,8 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.controller.request.LoginRequest;
+import com.techcourse.exception.UnauthorizedException;
+import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -13,27 +14,39 @@ public class LoginController implements Controller {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
-        }
+    private final LoginService loginService;
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    LOG.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
     }
 
-    private String login(HttpServletRequest request, User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
-            final HttpSession session = request.getSession();
-            session.setAttribute(UserSession.SESSION_KEY, user);
+    @Override
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             return "redirect:/index.jsp";
         }
 
-        return "redirect:/401.jsp";
+        try {
+            LoginRequest loginRequest = getLoginRequest(request);
+            loginService.login(loginRequest);
+
+            LOG.debug("Login Success!!");
+
+            return "redirect:/index.jsp";
+        } catch (UnauthorizedException e) {
+            LOG.debug("Login Failed...");
+
+            return "redirect:/401.jsp";
+        }
+    }
+
+    private LoginRequest getLoginRequest(HttpServletRequest request) {
+        String account = request.getParameter("account");
+        String password = request.getParameter("password");
+        HttpSession httpSession = request.getSession();
+
+        LOG.debug("Login Request => account: {}", account);
+
+        return new LoginRequest(account, password, httpSession);
     }
 }

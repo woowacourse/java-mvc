@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 
+@DisplayName("HandlerExecutions 일급 컬렉션은")
 class HandlerExecutionsTest {
 
     private HandlerExecutions handlerExecutions;
