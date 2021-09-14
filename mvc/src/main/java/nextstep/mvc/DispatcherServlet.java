@@ -67,14 +67,14 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
+                .findAny()
                 .orElseThrow(NotExistException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
+                .findAny()
                 .orElseThrow(NotExistException::new);
     }
 }

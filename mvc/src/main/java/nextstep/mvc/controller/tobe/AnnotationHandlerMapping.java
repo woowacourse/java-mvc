@@ -30,10 +30,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         try {
             Reflections reflections = new Reflections(basePackage);
-            final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            for (Class<?> controllerClass : controllerClasses) {
-                final Method[] methods = controllerClass.getMethods();
-                initializeHandlerExecutions(controllerClass.getDeclaredConstructor().newInstance(), methods);
+            final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+            for (Class<?> controller : controllers) {
+                final Method[] methods = controller.getMethods();
+                Object instance = controller.getDeclaredConstructor().newInstance();
+                initializeHandlerExecutions(instance, methods);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -43,11 +44,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void initializeHandlerExecutions(Object controller, Method[] methods) {
         for (Method method : methods) {
-            checkMethod(controller, method);
+            addHandlerExecutionIfMethodIsRequestMapping(controller, method);
         }
     }
 
-    private void checkMethod(Object controller, Method method) {
+    private void addHandlerExecutionIfMethodIsRequestMapping(Object controller, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             final RequestMethod[] requestMethods = requestMapping.method();
@@ -64,8 +65,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
-        final String method = request.getMethod();
-        return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
+        return handlerExecutions.get(HandlerKey.of(request));
     }
 }
