@@ -22,19 +22,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.init();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = getHandler(request);
+            Object handler = handlerMappingRegistry.getHandler(request);
             if (handler instanceof Controller) {
                 Controller controller = (Controller) handler;
                 String viewName = controller.execute(request, response);
@@ -58,14 +58,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("올바른 요청이 아닙니다."));
     }
 
     private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
