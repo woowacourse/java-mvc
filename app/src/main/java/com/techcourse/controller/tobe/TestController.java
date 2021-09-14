@@ -1,7 +1,10 @@
-package com.techcourse.controller;
+package com.techcourse.controller.tobe;
+
+import com.techcourse.domain.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;

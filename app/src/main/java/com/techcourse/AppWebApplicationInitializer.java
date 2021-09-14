@@ -17,7 +17,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        // legacy 코드 제거를 위한 주석 - 비교를 위해 package만 분리해놓고 남겨놓을 예정
+        //dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
         dispatcherServlet.addHandlerAdapter(new ControllerAdaptor());
