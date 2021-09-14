@@ -13,8 +13,6 @@ public class JspView implements View {
 
     private final String viewName;
 
-    private final String viewName;
-
     public JspView(String viewName) {
         this.viewName = viewName;
     }
