@@ -1,22 +1,20 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import nextstep.mvc.controller.tobe.ControllerScanner;
+import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.tobe.HandlerKey;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -32,35 +30,41 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
 
-        Set<Class<?>> controllerAnnotationClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(this.basePackage);
 
-        for (Class<?> controllerClass : controllerAnnotationClasses) {
-            requestMapping(controllerClass);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+
+        initController(controllers);
+    }
+
+    private void initController(Map<Class<?>, Object> controllers) {
+        for (Map.Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            requestMapping(controller);
         }
     }
 
-    private void requestMapping(Class<?> controllerClass) {
-        List<Method> requestMappingMethods = Arrays.stream(controllerClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
+    private void requestMapping(Entry<Class<?>, Object> controller) {
+        Class<?> controllerClass = controller.getKey();
 
-        for(Method method : requestMappingMethods) {
+        Set<Method> methods = ReflectionUtils.getAllMethods(controllerClass,
+                ReflectionUtils.withAnnotation(RequestMapping.class));
+
+        for (Method method : methods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-            String uri = requestMapping.value();
             RequestMethod[] requestMethods = requestMapping.method();
 
             for(RequestMethod requestMethod : requestMethods) {
-                addHandlerExecution(uri, requestMethod, controllerClass, method);
+                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+
+                addHandlerExecution(handlerKey, controllerClass, method);
             }
         }
     }
 
-    private void addHandlerExecution(String uri, RequestMethod requestMethod, Class<?> controllerClass, Method method) {
+    private void addHandlerExecution(HandlerKey handlerKey, Class<?> controllerClass, Method method) {
         try {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             Object handler = controllerClass.getConstructor().newInstance();
             HandlerExecution handlerExecution = new HandlerExecution(handler, method);
 
