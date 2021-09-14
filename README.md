@@ -12,4 +12,10 @@
   - [x] HandlerAdapter 내에서 getHandler() 반환값을 이용해서 handle 후 ModelAndView를 반환한다
   
 - [x] JspView의 render를 구현한다.
+
+- [ ] JsonView의 render를 구현한다.
+
+- [ ] UserController를 추가시키고 /api/user url 요청을 구현한다.
+
+- [ ] 기존의 Legacy MVC를 제거한다.
   
