@@ -47,15 +47,10 @@ class HandlerAdapterTest {
     void manualHandlerAdapterTest() throws Exception {
         //given
         final HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
-
-        final HandlerExecution handlerExecution = mock(HandlerExecution.class);
+        final ManualController manualController = new ManualController();
         //when
-        willReturn(new ManualController()).given(handlerExecution).getHandler();
-        willReturn("manualController").given(handlerExecution).handle(any(HttpServletRequest.class),
-                any(HttpServletResponse.class), any(ModelAndView.class));
-
-        final boolean isSupport = handlerAdapter.supports(handlerExecution);
-        final ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerExecution);
+        final boolean isSupport = handlerAdapter.supports(manualController);
+        final ModelAndView modelAndView = handlerAdapter.handle(request, response, manualController);
         //then
         assertThat(isSupport).isTrue();
         assertThat(modelAndView.getView().getViewName()).isEqualTo("manualController");

@@ -21,12 +21,12 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object handlerExecution) {
+    public HandlerAdapter getHandlerAdapter(Object handler) {
         for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handlerExecution)) {
+            if (handlerAdapter.supports(handler)) {
                 return handlerAdapter;
             }
         }
-        throw new HandlerAdapterException("Handler Adapter를 찾을 수 없습니다. 입력 값: " + handlerExecution);
+        throw new HandlerAdapterException("Handler Adapter를 찾을 수 없습니다. 입력 값: " + handler);
     }
 }
