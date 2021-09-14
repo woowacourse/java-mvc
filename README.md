@@ -18,3 +18,11 @@
     - [x] 기존의 레거시 코드를 어노테이션 기반으로 수정해보기
     - [x] 어떤 핸들러 매핑을 우선 순위에 둘지 고민해보기
         - [x] 레거시인 ManualHandlerMapping을 먼저 등록하기로 결정
+
+- [ ] HandlerAdapter 적용
+    - [ ] HandlerMapping에서 getHandler 메서드로 Controller나 HandlerExecutor 가져오기
+    - [ ] 해당 Handler 처리를 지원하는지를 검사하기
+    - [ ] 해당 Handler 처리하여 ModelAndView 반환
+    - [ ] DispatcherServlet에서 ModelAndView 처리
+
+- [ ] Jackson 라이브러리를 활용한 JSONView 구현
