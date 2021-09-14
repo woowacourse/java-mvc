@@ -36,9 +36,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             try {
                 Object instance = aClass.getDeclaredConstructor().newInstance();
 
-                List<Method> methods = getMethodsPresentRequestMapping(aClass);
+                List<Method> methods = getMethodsOfRequestMapping(aClass);
 
-                putHandlerMappingsByMethodWithRequestMapping(instance, methods);
+                addHandler(instance, methods);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 log.error("HandlerMapping initialize failed!", e);
                 throw new HandlerMappingInitializeException();
@@ -47,13 +47,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private List<Method> getMethodsPresentRequestMapping(Class<?> aClass) {
+    private List<Method> getMethodsOfRequestMapping(Class<?> aClass) {
         return Arrays.stream(aClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
     }
 
-    private void putHandlerMappingsByMethodWithRequestMapping(Object instance, List<Method> methods) {
+    private void addHandler(Object instance, List<Method> methods) {
         for (Method method : methods) {
             RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
             HandlerKey handlerKey = HandlerKey.of(requestMapping);
