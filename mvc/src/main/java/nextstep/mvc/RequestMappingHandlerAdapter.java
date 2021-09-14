@@ -16,6 +16,6 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws InvocationTargetException, IllegalAccessException {
-        return ((HandlerExecution) handler).handle(request,response);
+        return ((HandlerExecution) handler).handle(request, response);
     }
 }
