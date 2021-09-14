@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import samples.TestController;
 import samples.TestController2;
 import samples.TestController3;
+import samples.TestController4;
 
 class ControllerScannerTest {
 
@@ -16,7 +17,8 @@ class ControllerScannerTest {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        Class<?>[] expected = {TestController.class, TestController2.class, TestController3.class};
+        Class<?>[] expected = {TestController.class, TestController2.class, TestController3.class,
+                TestController4.class};
         assertThat(controllers.keySet()).containsExactlyInAnyOrder(expected);
     }
 }
