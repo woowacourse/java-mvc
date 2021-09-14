@@ -1,15 +1,12 @@
 # MVC 프레임워크 구현하기
 
-## step 3 todo
+## todo
 
 - [x] DispatcherServlet가 아닌 뷰에서 JSP 반환하도록 한다 - 이전 미션에서 완료
 - [x] JSON 뷰를 추가한다
 - [ ] 레거시 MVC를 제거한다
+- [x] UserController가 잘 작동되는지 확인한다
 
-## check
-- [ ] UserController가 잘 작동되는지 확인한다
-
-## todo
 - [x] `ReflectionTest`의 테스트를 통과시킨다
 - [x] `ReflectionsTest`를 완성하여 로그를 출력한다
 - [x] `Junit3TestRunner`를 이용하여 `Junit3Test`에서 test로 시작하는 메서드를 실행한다
