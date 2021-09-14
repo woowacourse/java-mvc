@@ -26,6 +26,6 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("올바른 요청이 아닙니다."));
+                .orElseThrow(() -> new IllegalStateException("올바른 요청이 아닙니다. Handler Mapping Error!"));
     }
 }
