@@ -49,6 +49,6 @@ class UserTest {
         user.setId(1);
 
         // then
-        assertThat(user.equals(compareUser)).isTrue();
+        assertThat(user).isEqualTo(compareUser);
     }
 }
