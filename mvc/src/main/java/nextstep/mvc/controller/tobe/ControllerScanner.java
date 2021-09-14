@@ -16,7 +16,7 @@ public class ControllerScanner {
     private final Object[] basePackage;
     private final Set<Object> controllers;
 
-    public ControllerScanner(Object[] basePackage) {
+    public ControllerScanner(Object... basePackage) {
         this.basePackage = basePackage;
         this.controllers = new HashSet<>();
     }
@@ -34,7 +34,7 @@ public class ControllerScanner {
         return controllers;
     }
 
-    public Set<Class<?>> getControllerTypes() {
+    private Set<Class<?>> getControllerTypes() {
         log.info("Scan @Controller from basePackage#{}", basePackage);
         Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
