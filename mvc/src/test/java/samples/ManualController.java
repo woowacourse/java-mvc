@@ -8,6 +8,6 @@ public class ManualController implements Controller {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) {
-        return null;
+        return "redirect:/index.jsp";
     }
 }
