@@ -2,6 +2,8 @@ package nextstep.mvc.controller;
 
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.Set;
 
 public class ControllerScanner {
 
-    private Reflections reflections;
+    private final Reflections reflections;
 
     public ControllerScanner(String packageName) {
         this.reflections = new Reflections(packageName);

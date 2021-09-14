@@ -19,7 +19,6 @@ import java.util.Set;
 public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
@@ -37,7 +36,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void scanPackage(String packageName) {
         try {
             ControllerScanner controllerScanner = new ControllerScanner(packageName);
-            controllerScanner.getControllers().forEach(this::findAllMethodsOfController);
+            controllerScanner.getControllers().forEach(entry -> {
+                findAllMethodsOfController(entry);
+                LOG.info("Controller : {}",  entry.getKey().getName());
+            });
+            LOG.info("Initialized Annotation Handler Mapping!");
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
