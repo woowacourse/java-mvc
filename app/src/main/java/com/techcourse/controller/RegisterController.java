@@ -15,7 +15,7 @@ public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register"));
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -25,6 +25,6 @@ public class RegisterController {
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
-        return new ModelAndView(new JspView("redirect:index.jsp"));
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
