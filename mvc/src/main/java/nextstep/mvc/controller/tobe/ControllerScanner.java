@@ -39,6 +39,7 @@ public class ControllerScanner {
         for (Class<?> controller : controllers) {
             try {
                 this.controllers.put(controller, controller.getConstructor().newInstance());
+                log.info("Controllers : {}", controller.getName());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 log.error("Exception : {}", e.getMessage(), e);
             }
