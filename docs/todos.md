@@ -10,6 +10,5 @@
 # 3단계
 - [x] HTML 이외에 REST API를 지원할 수 있도록 JSON 뷰를 추가
 - [x] UserController 추가해서 정상동작하는지 확인
-- [ ] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환
-- [ ] Legacy MVC 제거
+- [x] Legacy MVC 제거
 - [ ] 테스트코드 작성

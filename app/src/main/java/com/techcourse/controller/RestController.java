@@ -18,6 +18,11 @@ public class RestController {
 
     private static final Logger log = LoggerFactory.getLogger(RestController.class);
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView index(HttpServletRequest request, HttpServletResponse response){
+        return new ModelAndView(new JspView("/index.jsp"));
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView showLogin(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
@@ -56,6 +61,11 @@ public class RestController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView showResister(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView(new JspView("/register.jsp"));
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("redirect:/"));
     }
 
     private String login(HttpServletRequest request, User user) {
