@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface HandlerMapping {
 
-    void initialize();
+    void initialize() throws ReflectiveOperationException;
 
     Object getHandler(HttpServletRequest request);
 }
