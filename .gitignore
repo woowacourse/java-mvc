@@ -127,3 +127,5 @@ build
 
 /app/tomcat.*/
 /app/jacoco/*
+
+/mvc/jacoco/**
