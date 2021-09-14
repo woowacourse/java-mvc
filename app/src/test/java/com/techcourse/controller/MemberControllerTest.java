@@ -36,4 +36,29 @@ class MemberControllerTest {
         assertThat(result.getJsonBody())
             .isEqualTo("[{\"id\":1,\"account\":\"gugu\",\"password\":\"password\",\"email\":\"hkkang@woowahan.com\"}]");
     }
+
+    @Test
+    @DisplayName("single member test")
+    public void singleMemberTest() {
+        final MockMvcResponse result =
+            mvc.get("/single-members")
+                .withParams("account", "gugu")
+                .result();
+
+        assertThat(result.getJsonBody()).isEqualTo("{\"id\":1,\"account\":\"gugu\",\"password\":\"password\",\"email\":\"hkkang@woowahan.com\"}");
+    }
+
+    @Test
+    @DisplayName("single member with multi model test")
+    public void singleMemberTestWithMultiModel() {
+        final MockMvcResponse result =
+            mvc.get("/single-members/model")
+                .withParams("account", "gugu")
+                .result();
+
+        assertThat(result.getHeaders().get(ContentType.headerKey()))
+            .isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(result.getStatusCode()).isEqualTo(StatusCode.OK);
+        assertThat(result.getJsonBody()).isEqualTo("{\"account\":\"gugu\",\"email\":\"hkkang@woowahan.com\"}");
+    }
 }

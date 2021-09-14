@@ -15,7 +15,7 @@ public class RequestParamsArgumentResolver implements HandlerMethodArgumentResol
     @Override
     public Object resolveArgument(MethodParameter parameter, HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
-        final RequestParams requestParams = parameter.getAnnotationOf(RequestParams.class);
+        final RequestParams requestParams = (RequestParams) parameter.getAnnotationOf(RequestParams.class);
         return httpRequest.getAttribute(requestParams.name());
     }
 }

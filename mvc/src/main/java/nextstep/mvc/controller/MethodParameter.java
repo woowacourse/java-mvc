@@ -34,8 +34,8 @@ public class MethodParameter {
         return parameterClass.isTypeOf(aClass);
     }
 
-    public <T> T getAnnotationOf(Class<T> annotationClass) {
-        return (T) Arrays.stream(annotations).filter(annotation -> annotation.getClass().isInstance(annotationClass))
+    public Object getAnnotationOf(Class<?> annotationClass) {
+        return Arrays.stream(annotations).filter(annotation -> annotation.annotationType().isAssignableFrom(annotationClass))
                 .findAny()
                 .orElseThrow(() -> new IllegalStateException("no exists parameter value"));
     }

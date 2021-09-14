@@ -17,6 +17,10 @@ public class HttpRequestProxyHandler implements InvocationHandler {
             return requestInfo.path();
         }
 
+        if (method.getName().equals("getAttribute")) {
+            return requestInfo.getParam((String) args[0]);
+        }
+
         return method.invoke(proxy, args);
     }
 
