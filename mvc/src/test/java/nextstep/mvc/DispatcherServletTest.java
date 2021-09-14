@@ -3,15 +3,12 @@ package nextstep.mvc;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +22,6 @@ class DispatcherServletTest {
     private DispatcherServlet dispatcherServlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
-    private Controller controller;
     private HandlerMapping handlerMapping;
 
     @BeforeEach
@@ -33,27 +29,13 @@ class DispatcherServletTest {
         dispatcherServlet = new DispatcherServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        controller = mock(Controller.class);
         handlerMapping = mock(HandlerMapping.class);
         final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        when(controller.execute(request, response)).thenReturn(TEST_VIEW);
         when(request.getRequestDispatcher(TEST_VIEW)).thenReturn(requestDispatcher);
         doNothing().when(requestDispatcher).forward(request, response);
 
         dispatcherServlet.addHandlerMapping(handlerMapping);
         dispatcherServlet.init();
-    }
-
-    @DisplayName("해당 타입을 지원하는 어댑터가 있는 경우 렌더링")
-    @Test
-    void service() throws Exception {
-        when(handlerMapping.getHandler(request)).thenReturn(controller);
-        when(request.getRequestURI()).thenReturn("/manual");
-        when(request.getMethod()).thenReturn("GET");
-
-        dispatcherServlet.service(request, response);
-
-        verify(controller, times(1)).execute(request, response);
     }
 
     @DisplayName("핸들러 매핑에서 적절한 핸들러를 찾지 못한 경우 예외 처리")
