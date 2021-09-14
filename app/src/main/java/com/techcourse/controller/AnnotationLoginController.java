@@ -21,7 +21,7 @@ public class AnnotationLoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
         return InMemoryUserRepository.findByAccount(request.getParameter("account"))
@@ -29,7 +29,7 @@ public class AnnotationLoginController {
                     log.info("User : {}", user);
                     return login(request, user);
                 })
-                .orElse(new ModelAndView(new JspView("/401.jsp")));
+                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
@@ -37,7 +37,7 @@ public class AnnotationLoginController {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("/index.jsp"));
+                    return new ModelAndView(new JspView("redirect:/index.jsp"));
                 })
                 .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
@@ -46,9 +46,9 @@ public class AnnotationLoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         } else {
-            return new ModelAndView(new JspView("/401.jsp"));
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
     }
 }

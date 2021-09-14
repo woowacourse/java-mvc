@@ -16,6 +16,6 @@ public class AnnotationLogoutController {
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
         final HttpSession session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("/"));
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }
