@@ -6,7 +6,7 @@ import java.io.Writer;
 
 public class FakeWriter extends PrintWriter {
 
-    private StringBuilder body = new StringBuilder();
+    private final StringBuilder body = new StringBuilder();
 
     public FakeWriter() {
         super(new Writer() {

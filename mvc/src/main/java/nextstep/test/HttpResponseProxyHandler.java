@@ -6,7 +6,7 @@ import nextstep.web.support.StatusCode;
 
 public class HttpResponseProxyHandler implements InvocationHandler {
 
-    private MockMvcResponse mockMvcResponse;
+    private final MockMvcResponse mockMvcResponse;
 
     public HttpResponseProxyHandler(MockMvcResponse mockMvcResponse) {
         this.mockMvcResponse = mockMvcResponse;

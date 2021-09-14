@@ -6,7 +6,7 @@ import nextstep.web.support.StatusCode;
 
 public class MockMvcResponse {
 
-    private Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new HashMap<>();
     private StatusCode statusCode;
     private FakeWriter fakeWriter;
 

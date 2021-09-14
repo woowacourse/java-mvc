@@ -25,7 +25,7 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("members test")
-    public void membersTest() throws Exception{
+    public void membersTest() {
         final MockMvcResponse result =
             mvc.get("/members")
                 .result();
