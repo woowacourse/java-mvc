@@ -29,3 +29,11 @@
   - [x] Relfections 라이브러리를 사용한다.
   - [x] Relfections 객체로 @Controller가 설정된 모든 클래스를 찾는다.
   - [x] 각 클래스의 인스턴스를 생성한다.
+
+
+## 3단계 - View 구현하기
+- [x] View 구현하기
+  - [x] JSON View 구현
+  
+- [x] Legacy MVC 제거하기
+  - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 구현
