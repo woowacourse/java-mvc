@@ -5,7 +5,6 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -23,16 +22,16 @@ public class LoginController {
         String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
+                    return "redirect:/";
                 })
                 .orElse("/login.jsp");
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(viewName);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView("redirect:/");
         }
 
         String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -41,14 +40,14 @@ public class LoginController {
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(viewName);
     }
 
     private String login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
+            return "redirect:/";
         } else {
             return "redirect:/401.jsp";
         }

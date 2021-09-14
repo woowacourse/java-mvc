@@ -1,10 +1,11 @@
 package nextstep.mvc.view;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 
 import static nextstep.web.support.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -14,18 +15,20 @@ public class JsonView implements View {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(APPLICATION_JSON_UTF8_VALUE);
-        String jsonValue = convertToJsonValue(model);
-        response.getWriter().write(objectMapper.writeValueAsString(jsonValue));
+        Writer writer = response.getWriter();
+        writeToResponse(writer, model);
     }
 
-    private String convertToJsonValue(Map<String, ?> model) throws JsonProcessingException {
+    private void writeToResponse(Writer writer, Map<String, Object> model) throws IOException {
         if (model.size() == 1) {
             Map.Entry<String, ?> entry = model.entrySet().iterator().next();
             String key = entry.getKey();
-            return objectMapper.writeValueAsString(model.get(key));
+            objectMapper.writeValue(writer, model.get(key));
         }
-        return objectMapper.writeValueAsString(model);
+        if (model.size() > 1) {
+            objectMapper.writeValue(writer, model);
+        }
     }
 }

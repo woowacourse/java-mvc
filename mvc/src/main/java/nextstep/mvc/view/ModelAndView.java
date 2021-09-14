@@ -1,19 +1,20 @@
 package nextstep.mvc.view;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
+    private String viewName;
     private final Map<String, Object> model;
 
-    public ModelAndView(View view) {
-        this.view = view;
+    public ModelAndView() {
+        this.model = new HashMap<>();
+    }
+
+    public ModelAndView(String viewName) {
+        this.viewName = viewName;
         this.model = new HashMap<>();
     }
 
@@ -22,19 +23,15 @@ public class ModelAndView {
         return this;
     }
 
+    public String getViewName() {
+        return viewName;
+    }
+
     public Object getObject(String attributeName) {
         return model.get(attributeName);
     }
 
     public Map<String, Object> getModel() {
         return Collections.unmodifiableMap(model);
-    }
-
-    public View getView() {
-        return view;
-    }
-
-    public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
     }
 }
