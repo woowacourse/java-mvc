@@ -14,7 +14,6 @@ public class ControllerScanner {
 
     private final Reflections reflections;
 
-
     public ControllerScanner(Reflections reflections) {
         this.reflections = reflections;
     }
