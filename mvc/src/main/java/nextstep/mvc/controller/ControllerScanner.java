@@ -44,9 +44,4 @@ public class ControllerScanner {
     public List<Object> getControllers() {
         return new ArrayList<>(controllers.values());
     }
-
-    public boolean contains(Object handler) {
-        return controllers.values().stream()
-                .anyMatch(controller -> controller.equals(handler));
-    }
 }
