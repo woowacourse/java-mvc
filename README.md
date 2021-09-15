@@ -18,4 +18,8 @@
 - [x] AppWebApplicationInitializer 에서 ManualHandlerAdapter 적용하여 레거시 코드 돌아가게 하기
 - [x] AnnotationHandlerMapping 과 HandlerExecutionAdapter 등록 및 어노테이션 기반 컨트롤러 구현
 
+# 2단계 - 리팩터링
+- [ ] handlerMappings 일급컬렉션으로 분리
+- [ ] handlerAdapters 일급컬렉션으로 분리
 
+# 3단계 - View 구현하기**
