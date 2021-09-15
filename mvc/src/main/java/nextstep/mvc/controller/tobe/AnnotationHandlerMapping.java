@@ -32,13 +32,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             String packagePrefix = (String) obj;
             ControllerScanner controllerScanner = new ControllerScanner(packagePrefix);
             Map<Class<?>, Object> controllerMap = controllerScanner.getControllers();
-            initControllers(controllerMap);
+            controllerMap.entrySet().forEach(entry -> initMethod(controllerMap, entry));
         });
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private void initControllers(Map<Class<?>, Object> controllers) {
-        controllers.entrySet().forEach(entry -> initMethod(controllers, entry));
     }
 
     private void initMethod(Map<Class<?>, Object> controllers,
@@ -73,6 +69,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public Object getHandler(HttpServletRequest request) {
         return handlerExecutions.get(
-            new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+            HandlerKey.of(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 }

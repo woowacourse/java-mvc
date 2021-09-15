@@ -13,6 +13,10 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
+    public static HandlerKey of(String url, RequestMethod requestMethod) {
+        return new HandlerKey(url, requestMethod);
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +
