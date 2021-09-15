@@ -12,6 +12,7 @@ import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,8 @@ public class DispatcherServlet extends HttpServlet {
                 move(viewName, request, response);
             } else if (handler instanceof HandlerExecution) {
                 ModelAndView mav = ((HandlerExecution) handler).handle(request, response);
+                View view = mav.getView();
+                view.render(mav.getModel(), request, response);
             } else {
                 log.debug("mapping Error");
                 throw new Exception("mapping Error");
