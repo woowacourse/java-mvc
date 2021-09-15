@@ -17,6 +17,10 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
+    public static ModelAndView jspView(final String url) {
+        return new ModelAndView(new JspView(url));
+    }
+
     public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         view.render(model, req, resp);
     }
