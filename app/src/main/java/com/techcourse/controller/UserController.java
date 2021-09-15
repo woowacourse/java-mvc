@@ -4,6 +4,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -26,6 +27,15 @@ public class UserController {
         final User user = InMemoryUserRepository.findByAccount(account)
             .orElseThrow();
         modelAndView.addObject("user", user);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView showUsers() {
+        List<User> users = InMemoryUserRepository.findAll();
+
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("users", users);
         return modelAndView;
     }
 }

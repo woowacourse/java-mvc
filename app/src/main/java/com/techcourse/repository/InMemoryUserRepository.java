@@ -2,7 +2,10 @@ package com.techcourse.repository;
 
 import com.techcourse.domain.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,4 +32,12 @@ public class InMemoryUserRepository {
     }
 
     private InMemoryUserRepository() {}
+
+    public static List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        for (Entry<String, User> entry : database.entrySet()) {
+            users.add(entry.getValue());
+        }
+        return users;
+    }
 }
