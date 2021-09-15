@@ -30,10 +30,8 @@ public class UserController {
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
-        final String account = request.getParameter("account");
 
-        log.debug("Request User id : {}", account);
-        final User user = userService.findByAccount(account);
+        final User user = userService.findByAccount(request.getParameter("account"));
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
@@ -43,23 +41,16 @@ public class UserController {
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
     public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
-        final String[] accounts = request.getParameterValues("account");
 
-        logMultipleData(accounts);
-        final List<User> users = userService.findByAccounts(accounts);
+        final List<User> users = userService.findByAccounts(
+            request.getParameterValues("account")
+        );
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         for (User user: users) {
             modelAndView.addObject("users", user);
         }
         return modelAndView;
-    }
-
-    private void logMultipleData(String[] datum) {
-        StringJoiner stringJoiner = new StringJoiner(", ");
-        Arrays.stream(datum)
-                .forEach(stringJoiner::add);
-        log.debug("Request User ids : {}", stringJoiner);
     }
 }
 

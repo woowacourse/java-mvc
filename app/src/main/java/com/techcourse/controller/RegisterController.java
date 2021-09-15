@@ -3,6 +3,7 @@ package com.techcourse.controller;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import com.techcourse.service.RegisterService;
+import com.techcourse.service.dto.RegisterDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -29,11 +30,7 @@ public class RegisterController {
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: POST, Request URI: {}", request.getRequestURI());
 
-        final String account = request.getParameter("account");
-        final String password = request.getParameter("password");
-        final String email = request.getParameter("email");
-
-        final User user = registerService.join(account, password, email);
+        final User user = registerService.join(RegisterDto.of(request));
 
         final HttpSession session = request.getSession();
         session.setAttribute(UserSession.SESSION_KEY, user);

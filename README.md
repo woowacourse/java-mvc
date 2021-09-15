@@ -35,3 +35,10 @@ public class UserController {
     }
 }
 ```
+
+### 소롱 리뷰 반영
+- [ ] 가입 시 account가 중복되지 않도록 검증 추가
+- [ ] AnnotationHandlerMapping Methods명을 명시적으로 변경하기
+
+### 추가
+- [x] DTO로 service에 넘기도록 한번 감싸기

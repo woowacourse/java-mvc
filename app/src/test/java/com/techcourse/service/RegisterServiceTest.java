@@ -1,6 +1,7 @@
 package com.techcourse.service;
 
 import com.techcourse.domain.User;
+import com.techcourse.service.dto.RegisterDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class RegisterServiceTest {
         String email = "joanne@woowahan.com";
 
         // when
-        final User user = registerService.join(account, password, email);
+        final User user = registerService.join(RegisterDto.of(account, password, email));
 
         // then
         assertThat(user).isNotNull();

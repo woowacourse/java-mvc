@@ -3,6 +3,7 @@ package com.techcourse.service;
 import com.techcourse.domain.User;
 import com.techcourse.exception.LoginFailedException;
 import com.techcourse.exception.UserNotFoundException;
+import com.techcourse.service.dto.LoginDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class LoginServiceTest {
         String password = "password";
 
         // when
-        final User user = loginService.login(account, password);
+        final User user = loginService.login(LoginDto.of(account, password));
 
         // then
         assertThat(user).isNotNull();
@@ -36,7 +37,7 @@ class LoginServiceTest {
         String password = "password";
 
         // when - then
-        assertThatThrownBy(() -> loginService.login(account, password))
+        assertThatThrownBy(() -> loginService.login(LoginDto.of(account, password)))
                 .isInstanceOf(UserNotFoundException.class);
     }
 
@@ -48,7 +49,7 @@ class LoginServiceTest {
         String password = "melong";
 
         // when - then
-        assertThatThrownBy(() -> loginService.login(account, password))
+        assertThatThrownBy(() -> loginService.login(LoginDto.of(account, password)))
                 .isInstanceOf(LoginFailedException.class);
     }
 }

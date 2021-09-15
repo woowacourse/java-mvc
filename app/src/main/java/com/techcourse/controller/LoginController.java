@@ -3,6 +3,7 @@ package com.techcourse.controller;
 import com.techcourse.domain.User;
 import com.techcourse.exception.AuthException;
 import com.techcourse.service.LoginService;
+import com.techcourse.service.dto.LoginDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -32,11 +33,8 @@ public class LoginController {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        final String account = request.getParameter("account");
-        final String password = request.getParameter("password");
-
         try {
-            User user = loginService.login(account, password);
+            User user = loginService.login(LoginDto.of(request));
 
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
