@@ -3,6 +3,7 @@ package com.techcourse.controller;
 import com.techcourse.domain.User;
 import com.techcourse.exception.UnAuthorizedException;
 import com.techcourse.service.LoginService;
+import com.techcourse.session.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
+
+import static com.techcourse.view.ViewName.*;
 
 @Controller
 public class LoginController {
@@ -33,15 +36,15 @@ public class LoginController {
         if (sessionUser.isPresent()) {
             final User user = sessionUser.get();
             LOG.info("logged in {}", user.getAccount());
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP_VIEW_NAME));
         }
-        return new ModelAndView(new JspView("/login.jsp"));
+        return new ModelAndView(new JspView(LOGIN_JSP_VIEW_NAME));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP_VIEW_NAME));
         }
         final String requestAccount = request.getParameter("account");
         final String requestPassword = request.getParameter("password");
@@ -50,9 +53,9 @@ public class LoginController {
             final User user = loginService.login(requestAccount, requestPassword);
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP_VIEW_NAME));
         } catch (UnAuthorizedException e) {
-            return new ModelAndView(new JspView("redirect:/401.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + UNAUTHORIZED_JSP_VIEW_NAME));
         }
     }
 }
