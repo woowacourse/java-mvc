@@ -25,10 +25,7 @@ public class AnnotationUserController {
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow();
-        User user2 = new User(5L, "bepoz", "pwd", "kang@naver.com");
-
         modelAndView.addObject("user", user);
-        modelAndView.addObject("user2", user2);
         return modelAndView;
     }
 }
