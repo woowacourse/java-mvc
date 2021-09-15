@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import com.google.common.collect.Sets;
 import jakarta.servlet.http.HttpServletRequest;
