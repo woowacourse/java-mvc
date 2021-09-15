@@ -73,8 +73,8 @@
     - [x] adapter 패키지
       - [x] AnnotationHandlerAdapter.class
       - [x] HandlerAdapters.class
-    - [ ] mapping 패키지
-      - [ ] HandlerMappings.class
+    - [x] mapping 패키지
+      - [x] HandlerMappings.class
   - [ ] servlet 패키지
     - [ ] DispatcherServlet.class
   - [ ] view 패키지
