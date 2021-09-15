@@ -7,7 +7,7 @@
   - [X] AnnotationHandlerMapping 테스트 통과
   - [X] JspView Todo (DispatcherServlet 참고)
 - [X] Legacy MVC와 Annotation Based MVC 통합
-- [ ] TestController 구현
+- [X] TestController 구현
 
 ## 2,3단계 요구사항
 - [X] JsonView 동작 구현
