@@ -42,12 +42,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
             }
-            Set<Method> methods = AnnotationScanner.scanMethod(aClass, RequestMapping.class);
-            enrollMethods(clazz, methods);
+            enrollRequestMappingMethods(clazz, aClass);
         }
     }
 
-    private void enrollMethods(Object clazz, Set<Method> methods) {
+    private void enrollRequestMappingMethods(Object clazz, Class<?> aClass) {
+        Set<Method> methods = AnnotationScanner.scanMethod(aClass, RequestMapping.class);
         for (Method method : methods) {
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
             for (RequestMethod requestMethod : annotation.method()) {
