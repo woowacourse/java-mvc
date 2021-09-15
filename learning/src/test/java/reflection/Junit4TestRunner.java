@@ -8,7 +8,6 @@ class Junit4TestRunner {
     @Test
     void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
-        MyTest targetAnnotation = clazz.getAnnotation(MyTest.class);
 
         Method[] methods = clazz.getMethods();
 
