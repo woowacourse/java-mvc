@@ -34,6 +34,51 @@
 ## 3단계 - View 구현하기
 - [x] View 구현하기
   - [x] JSON View 구현
-  
+
 - [x] Legacy MVC 제거하기
   - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 구현
+
+
+### 조앤 코드리뷰 - 1차
+- [ ] Controller Annotation이 달려있는 클래스 스캔 패키지 범위 좁히기
+- [ ] View name 분리해서 관리하도록 수정
+- [ ] 로그인한 사용자가 `GET /register` 요청 시, 루트 경로로 리다이렉트 하도록 수정
+- [ ] app 모듈의 클래스 테스트 코드 추가
+  - [ ] controller 패키지
+    - [ ] HelloController
+    - [ ] HomeController
+    - [ ] LoginController
+    - [ ] LogoutController
+    - [ ] RegisterController
+    - [ ] UserController
+  - [ ] domain 패키지
+   - [ ] User.class
+  - [ ] repository 패키지
+    - [ ] InMemoryUserRepository.class
+  - [ ] service 패키지
+    - [ ] LoginService.class
+    - [ ] RegisterService.class
+    - [ ] UserService.class
+  - [ ] session 패키지
+    - [ ] UserSession.class 
+- [ ] mvc 모듈의 클래스 테스트 코드 추가
+  - [ ] controller 패키지
+    - [ ] AnnotationHandlerMapping.class
+    - [ ] ControllerScanner.class
+    - [ ] HandlerExecution.class
+    - [ ] HandlerKey.class
+  - [ ] handler 패키지
+    - [ ] adapter 패키지
+      - [ ] AnnotationHandlerAdapter.class
+      - [ ] HandlerAdapters.class
+    - [ ] mapping 패키지
+      - [ ] HandlerMappings.class
+  - [ ] servlet 패키지
+    - [ ] DispatcherServlet.class
+  - [ ] view 패키지
+    - [ ] JsonView.class
+    - [ ] JspView.class
+    - [ ] ModelAndView.class
+  - [ ] support 패키지
+    - [ ] MediaType.class
+    - [ ] RequestMethod.class
