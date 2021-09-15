@@ -1,19 +1,16 @@
 package nextstep.mvc.controller.tobe;
 
+import com.google.common.collect.Sets;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.ReflectionUtils;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,36 +28,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        scanController(controllers);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        Set<Method> methods = getRequestMappingMethods(controllers.keySet());
+        initHandlerExecutions(controllers, methods);
     }
 
-    @SuppressWarnings("unchecked")
-    private void scanController(Set<Class<?>> controllers) {
-        Set<Method> methods = new HashSet<>();
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> controllers) {
+        Set<Method> requestMappingMethods = Sets.newHashSet();
         for (Class<?> controller : controllers) {
-            Set<Method> requestMappingMethods = ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
-            methods.addAll(requestMappingMethods);
-            initHandlerExecutions(methods, controller);
+            requestMappingMethods.addAll(ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class)));
         }
+        return requestMappingMethods;
     }
 
-    private void initHandlerExecutions(Set<Method> methods, Class<?> controller) {
+    private void initHandlerExecutions(Map<Class<?>, Object> controllers, Set<Method> methods) {
         for (Method method : methods) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            HandlerKey key = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-            initHandlerExecution(controller, method, key);
+            RequestMapping rm = method.getAnnotation(RequestMapping.class);
+            handlerExecutions.put(createHandlerKey(rm), createHandlerExecution(controllers, method));
         }
     }
 
-    private void initHandlerExecution(Class<?> controller, Method method, HandlerKey key) {
-        try {
-            HandlerExecution handlerExecution = new HandlerExecution(controller.getDeclaredConstructor().newInstance(), method);
-            handlerExecutions.put(key, handlerExecution);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            log.error(e.getMessage());
-        }
+    private HandlerKey createHandlerKey(RequestMapping rm) {
+        return new HandlerKey(rm.value(), rm.method()[0]);
+    }
+
+    private HandlerExecution createHandlerExecution(Map<Class<?>, Object> controllers, Method method) {
+        return new HandlerExecution(controllers.get(method.getDeclaringClass()), method);
     }
 
     public Object getHandler(HttpServletRequest request) {
