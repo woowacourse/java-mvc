@@ -20,7 +20,7 @@ public class JsonView implements View {
     }
 
     private String modelToJson(Map<String, ?> model) throws JsonProcessingException {
-        if(model.size() == 1) {
+        if (model.size() == 1) {
             objectMapper.writeValueAsString(model.values().toArray()[0]);
         }
 
