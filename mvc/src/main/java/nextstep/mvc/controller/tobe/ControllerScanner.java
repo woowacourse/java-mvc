@@ -17,18 +17,18 @@ public class ControllerScanner {
     public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-        return instantiateControllers(controllerClasses);
+        return InstantiateControllers(controllerClasses);
     }
 
-    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerClasses) {
-        Map<Class<?>, Object> instantedControllers = new HashMap<>();
+    private Map<Class<?>, Object> InstantiateControllers(Set<Class<?>> controllerClasses) {
+        Map<Class<?>, Object> instantiateControllers = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
             try {
-                instantedControllers.put(controllerClass, controllerClass.getConstructor().newInstance());
+                instantiateControllers.put(controllerClass, controllerClass.getConstructor().newInstance());
             } catch (Exception e) {
                 throw new IllegalArgumentException("컨트롤러 인스턴트화 실패");
             }
         }
-        return instantedControllers;
+        return instantiateControllers;
     }
 }
