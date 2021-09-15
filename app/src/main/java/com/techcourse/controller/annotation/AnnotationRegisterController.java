@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 public class AnnotationRegisterController {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationRegisterController.class);
+    private static final String REDIRECT_PREFIX = "redirect:";
     private static final String HOME_PATH = "/index";
 
     @RequestMapping(value = "/register", method = GET)
@@ -38,6 +39,6 @@ public class AnnotationRegisterController {
         );
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView(HOME_PATH));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + HOME_PATH));
     }
 }

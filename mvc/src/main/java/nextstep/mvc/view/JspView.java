@@ -28,12 +28,14 @@ public class JspView implements View {
     ) throws Exception {
         setAttributes(model, request);
 
-        if (name.startsWith(REDIRECT_PREFIX)) {
-            response.sendRedirect(parsePath());
+        String path = getPath();
+
+        if (path.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(parsePath(path));
             return;
         }
 
-        RequestDispatcher requestDispatcher = getRequestDispatcher(request, getPath());
+        RequestDispatcher requestDispatcher = getRequestDispatcher(request, path);
         requestDispatcher.forward(request, response);
     }
 
@@ -48,15 +50,15 @@ public class JspView implements View {
         });
     }
 
-    private String parsePath() {
-        return name.substring(REDIRECT_PREFIX.length());
-    }
-
     private String getPath() {
         if (name.endsWith(JSP_SUFFIX)) {
             return name;
         }
         return name + JSP_SUFFIX;
+    }
+
+    private String parsePath(String path) {
+        return path.substring(REDIRECT_PREFIX.length());
     }
 
     private RequestDispatcher getRequestDispatcher(HttpServletRequest request, String path) {
