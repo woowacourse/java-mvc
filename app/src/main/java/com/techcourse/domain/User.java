@@ -1,5 +1,8 @@
 package com.techcourse.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+@JsonView(nextstep.mvc.view.JsonView.class)
 public class User {
 
     private final long id;
