@@ -58,10 +58,10 @@
     - [x] User.class
   - [x] repository 패키지
     - [x] InMemoryUserRepository.class
-  - [ ] service 패키지
-    - [ ] LoginService.class
-    - [ ] RegisterService.class
-    - [ ] UserService.class
+  - [x] service 패키지
+    - [x] LoginService.class
+    - [x] RegisterService.class
+    - [x] UserService.class
   - [ ] session 패키지
     - [ ] UserSession.class 
 - [ ] mvc 모듈의 클래스 테스트 코드 추가
