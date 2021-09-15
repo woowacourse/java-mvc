@@ -4,9 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +18,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -35,15 +34,20 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             final Object handler = getHandler(request);
-            final ModelAndView mav = handle(handler, request, response);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView mav = handlerAdapter.handle(request, response, handler);
             mav.render(request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
@@ -57,16 +61,10 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private ModelAndView handle(Object handler, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        ModelAndView mav;
-        if (handler instanceof Controller) {
-            String viewName = ((Controller)handler).execute(req, resp);
-            mav = new ModelAndView(new JspView(viewName));
-        } else if (handler instanceof HandlerExecution) {
-            mav = ((HandlerExecution)handler).handle(req, resp);
-        } else {
-            throw new HandlerNotFoundException();
-        }
-        return mav;
+    private HandlerAdapter getHandlerAdapter(Object handler) throws Exception {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(HandlerNotFoundException::new);
     }
 }
