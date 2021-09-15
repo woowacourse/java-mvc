@@ -7,19 +7,32 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapterRegistry;
 import nextstep.mvc.adapter.HandlerMappingRegistry;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
+import nextstep.mvc.view.resolver.UrlBasedViewResolver;
+import nextstep.mvc.view.resolver.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(DispatcherServlet.class);
+
     private static final long serialVersionUID = 1L;
+    private static final List<ViewResolver> viewResolvers = new ArrayList<>();
 
     @Override
     public void init() {
         HandlerMappingRegistry.initAll();
+        initViewResolvers();
+    }
+
+    private void initViewResolvers() {
+        viewResolvers.add(new UrlBasedViewResolver());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -35,19 +48,32 @@ public class DispatcherServlet extends HttpServlet {
         LOG.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         ModelAndView mv;
+        View view;
         try {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = HandlerAdapterRegistry.getHandlerAdapter(handler);
             mv = handlerAdapter.handle(request, response, handler);
         } catch (ClassNotFoundException e) {
-            mv = new ModelAndView(new JspView("/404.jsp"));
+            mv = new ModelAndView("/404.jsp");
+
         }
 
         try {
-            mv.render(request, response);
+            view = resolveViewName(mv.getViewName());
+            Objects.requireNonNull(view).render(mv.getModel(), request, response);
         } catch (Exception e) {
             handleException(e);
         }
+    }
+
+    private View resolveViewName(String viewName) {
+        for (ViewResolver viewResolver : viewResolvers) {
+            View view = viewResolver.resolveViewName(viewName);
+            if (Objects.nonNull(view)) {
+                return view;
+            }
+        }
+        return null;
     }
 
     private void handleException(Exception e) throws ServletException {

@@ -4,7 +4,6 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -22,7 +21,7 @@ public class UserController {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final ModelAndView modelAndView = new ModelAndView();
         final User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 

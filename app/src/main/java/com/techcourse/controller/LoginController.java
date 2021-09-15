@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.RedirectView;
-import nextstep.mvc.view.View;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -22,7 +20,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new RedirectView("/index.jsp"));
+            return new ModelAndView("redirect:/index.jsp");
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -30,16 +28,16 @@ public class LoginController {
                     LOG.info("User : {}", user);
                     return new ModelAndView(login(req, user));
                 })
-                .orElse(new ModelAndView(new RedirectView("/401.jsp")));
+                .orElse(new ModelAndView("redirect:/401.jsp"));
     }
 
-    private View login(HttpServletRequest request, User user) {
+    private String login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new RedirectView("/index.jsp");
+            return "redirect:/index.jsp";
         } else {
-            return new RedirectView("/401.jsp");
+            return "redirect:/401.jsp";
         }
     }
 }

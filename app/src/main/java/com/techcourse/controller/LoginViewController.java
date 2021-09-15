@@ -2,9 +2,7 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -21,8 +19,8 @@ public class LoginViewController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     LOG.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new RedirectView( "/index.jsp"));
+                    return new ModelAndView("redirect:/index.jsp");
                 })
-                .orElse(new ModelAndView( new JspView("/login.jsp")));
+                .orElse(new ModelAndView("/login.jsp"));
     }
 }

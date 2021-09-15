@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.RedirectView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -16,6 +15,6 @@ public class LogoutController {
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new RedirectView("/"));
+        return new ModelAndView("redirect:/");
     }
 }
