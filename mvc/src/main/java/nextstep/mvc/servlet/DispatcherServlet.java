@@ -8,45 +8,32 @@ import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>());
+        this.handlerMappingRegistry = new HandlerMappingRegistry(new ArrayList<>());
     }
 
     @Override
     public void init() {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            initHandlerMapping(handlerMapping);
-        }
-    }
-
-    private void initHandlerMapping(HandlerMapping handlerMapping) {
-        try {
-            handlerMapping.initialize();
-        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        handlerMappingRegistry.initHandlerMappings();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -54,35 +41,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final Object handler = handlerMappingRegistry.getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
-            if (isAvailable(handler, handlerAdapter)) {
-                final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-                modelAndView.render(request, response);
-            }
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private boolean isAvailable(Object handler, HandlerAdapter handlerAdapter) {
-        return handler!= null && handlerAdapter != null;
-    }
-
-    private Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private HandlerAdapter getHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(adapter -> adapter.supports(handler))
-                .findAny()
-                .orElse(null);
     }
 }
