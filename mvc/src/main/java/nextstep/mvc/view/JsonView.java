@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+// TODO JsonView에 맞게 수정하기
 public class JsonView extends AbstractView {
 
     public static final String REDIRECT_PREFIX = "redirect:";
