@@ -25,4 +25,10 @@
     - [x] 해당 Handler 처리하여 ModelAndView 반환
     - [x] DispatcherServlet에서 ModelAndView 처리
 
+- [x] Legacy MVC 제거하기
+
 - [ ] Jackson 라이브러리를 활용한 JSONView 구현
+
+## 📜 리팩터링 목록
+- [ ] 없는 URL에 대한 요청을 404로 반환하기
+- [ ] 테스트 system.out 수정

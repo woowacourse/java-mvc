@@ -51,4 +51,11 @@ public class AnnotatedLoginController {
                 })
                 .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
+        final HttpSession session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        return new ModelAndView(new JspView("redirect:/"));
+    }
 }
