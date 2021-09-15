@@ -6,7 +6,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +42,23 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Controller controller = getController(request);
-            final String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final HandlerExecution handlerExecution = getHandlerExecution(request);
+            final ModelAndView mav = handlerExecution.handle(request, response);
+            View view = mav.getView();
+            view.render(mav.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerExecution getHandlerExecution(HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .map(HandlerExecution.class::cast)
+                .findAny()
+                .orElseThrow();
     }
 
     private Controller getController(HttpServletRequest request) {
