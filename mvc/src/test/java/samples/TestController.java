@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.ViewName;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -18,7 +19,7 @@ public class TestController {
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         log.debug("test controller get method");
-        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
+        final ModelAndView modelAndView = new ModelAndView(new JspView(ViewName.EMPTY));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
@@ -26,7 +27,7 @@ public class TestController {
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.debug("test controller post method");
-        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
+        final ModelAndView modelAndView = new ModelAndView(new JspView(ViewName.EMPTY));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
