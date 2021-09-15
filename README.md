@@ -12,8 +12,8 @@
 - [x] JsonView, JSPView 구현하기
 - [x] JSON으로 응답할 때 ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE으로 반환
 - [x] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환
-- [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
-- [ ] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 구현
+- [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+- [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 구현
 - [x] 아래 컨트롤러를 추가했을 때 정상 동작하도록 구현
 ```java
 @Controller

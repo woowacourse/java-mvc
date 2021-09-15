@@ -15,12 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class LoginTestController {
-    private static final Logger log = LoggerFactory.getLogger(LoginTestController.class);
+public class LoginController {
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     private final LoginService loginService;
 
-    public LoginTestController() {
+    public LoginController() {
         this.loginService = new LoginService();
     }
 
