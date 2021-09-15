@@ -15,8 +15,6 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 import static com.techcourse.view.ViewName.*;
 
 @Controller
@@ -32,10 +30,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginView(HttpServletRequest request, HttpServletResponse response) {
-        final Optional<User> sessionUser = UserSession.getUserFrom(request.getSession());
-        if (sessionUser.isPresent()) {
-            final User user = sessionUser.get();
-            LOG.info("logged in {}", user.getAccount());
+        if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP_VIEW_NAME));
         }
         return new ModelAndView(new JspView(LOGIN_JSP_VIEW_NAME));

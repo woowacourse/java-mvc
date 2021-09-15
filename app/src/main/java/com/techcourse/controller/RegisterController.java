@@ -15,8 +15,6 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 import static com.techcourse.view.ViewName.*;
 
 @Controller
@@ -33,10 +31,7 @@ public class RegisterController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         LOG.info("RegisterController GET method");
-        final Optional<User> sessionUser = UserSession.getUserFrom(request.getSession());
-        if (sessionUser.isPresent()) {
-            final User user = sessionUser.get();
-            LOG.info("logged in {}", user.getAccount());
+        if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP_VIEW_NAME));
         }
         return new ModelAndView(new JspView(REGISTER_JSP_VIEW_NAME));
@@ -45,6 +40,9 @@ public class RegisterController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         LOG.info("RegisterController POST method");
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP_VIEW_NAME));
+        }
         try {
             final User user = registerService.register(
                     request.getParameter("account"),
