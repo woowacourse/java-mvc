@@ -46,15 +46,16 @@
 - [x] 불필요한 객체 생성을 막도록 private 생성자 추가
 - [x] 로그인한 사용자가 `GET /register` 요청 시, `/index.jsp` 로 리다이렉트 하도록 수정
 - [ ] app 모듈의 클래스 테스트 코드 추가
-  - [ ] controller 패키지
-    - [ ] HelloController
-    - [ ] HomeController
-    - [ ] LoginController
-    - [ ] LogoutController
-    - [ ] RegisterController
-    - [ ] UserController
+  - [x] controller 패키지
+    - [x] api 패키지
+      - [x] HelloController.class
+      - [x] UserController.class
+    - [x] HomeController.class
+    - [x] LoginController.class
+    - [x] LogoutController.class
+    - [x] RegisterController.class
   - [ ] domain 패키지
-   - [ ] User.class
+    - [ ] User.class
   - [ ] repository 패키지
     - [ ] InMemoryUserRepository.class
   - [ ] service 패키지
