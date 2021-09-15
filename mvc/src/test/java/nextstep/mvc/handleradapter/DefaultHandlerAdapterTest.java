@@ -55,10 +55,10 @@ class DefaultHandlerAdapterTest {
     @DisplayName("ResourceHandler 처리")
     @Test
     void handlerResourceHandler() throws Exception {
-        // given
+
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
-        // when
+
         final ModelAndView expected = new ModelAndView(new ResourceView("abc.txt"));
         final ModelAndView actual = defaultHandlerAdapter.handle(request, response, new ResourceHandler("abc.txt"));
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
