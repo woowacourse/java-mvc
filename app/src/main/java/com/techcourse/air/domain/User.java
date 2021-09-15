@@ -1,7 +1,6 @@
 package com.techcourse.air.domain;
 
 public class User {
-
     private final long id;
     private final String account;
     private final String password;
