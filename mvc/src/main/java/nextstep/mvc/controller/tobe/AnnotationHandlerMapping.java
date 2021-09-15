@@ -6,6 +6,7 @@ import nextstep.mvc.utils.AnnotationScanner;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,30 +21,31 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackages = basePackage;
         this.handlerExecutions = new HashMap<>();
+        this.controllerScanner = new ControllerScanner();
     }
 
     public void initialize() throws ReflectiveOperationException {
         log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> controllers = AnnotationScanner.scanClassWith(this.basePackages, Controller.class);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers(this.basePackages);
 
-        for (Class<?> controller : controllers) {
-            Set<Method> requestMappingMethods = AnnotationScanner.scanMethod(controller, RequestMapping.class);
-            registerHandlerExecution(controller, requestMappingMethods);
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Set<Method> requestMappingMethods = AnnotationScanner.scanMethod(entry.getKey(), RequestMapping.class);
+            registerHandlerExecution(entry.getValue(), requestMappingMethods);
         }
     }
 
-    public void registerHandlerExecution(Class<?> controller, Set<Method> requestMappingMethods) throws ReflectiveOperationException {
-        Object object = controller.getDeclaredConstructor().newInstance();
+    public void registerHandlerExecution(Object controller, Set<Method> requestMappingMethods) {
         for (Method method : requestMappingMethods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             RequestMethod[] requestMethods = requestMapping.method();
             for (RequestMethod requestMethod : requestMethods) {
                 handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod),
-                        new HandlerExecution(object, method));
+                        new HandlerExecution(controller, method));
             }
         }
     }
