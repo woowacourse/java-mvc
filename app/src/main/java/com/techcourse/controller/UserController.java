@@ -21,6 +21,8 @@ public class UserController {
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
 
+        LOG.info("user id : {}", account);
+
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", new User(0L, account, "password", "mungto@gmail.com"));
         return modelAndView;
