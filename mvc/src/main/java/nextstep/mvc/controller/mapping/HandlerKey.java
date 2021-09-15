@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.web.support.RequestMethod;

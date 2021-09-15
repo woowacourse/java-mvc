@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.controller;
 
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
