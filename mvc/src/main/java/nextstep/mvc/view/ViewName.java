@@ -6,13 +6,10 @@ public enum ViewName {
     REDIRECT_HOME(REDIRECT.url + HOME.url),
     EMPTY(""),
     LOGIN("/login.jsp"),
-    REDIRECT_LOGIN(REDIRECT.url + LOGIN.url),
     REGISTER("/register.jsp"),
-    REDIRECT_REGISTER(REDIRECT.url + REGISTER.url),
     INDEX("/index.jsp"),
     REDIRECT_INDEX(REDIRECT.url + INDEX.url),
     BAD_REQUEST("/400.jsp"),
-    REDIRECT_BADREQUEST(REDIRECT.url + BAD_REQUEST.url),
     UNAUTHORIZED("/401.jsp"),
     REDIRECT_UNAUTHORIZED(REDIRECT.url + UNAUTHORIZED.url),
     ;

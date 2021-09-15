@@ -63,7 +63,7 @@ class LoginControllerTest extends ControllerTest {
         final ModelAndView modelAndView = loginController.show(request, response);
 
         // then
-        assertThat(modelAndView.view().viewName()).isEqualTo("login.jsp");
+        assertThat(modelAndView.view().viewName()).isEqualTo("/login.jsp");
     }
 
     @DisplayName("logout을 한다.")

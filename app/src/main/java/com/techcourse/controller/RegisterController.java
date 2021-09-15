@@ -36,7 +36,7 @@ public class RegisterController {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
         } catch (BadRequestException e) {
-            return new ModelAndView(new JspView(ViewName.REDIRECT_BADREQUEST));
+            return new ModelAndView(new JspView(ViewName.BAD_REQUEST));
         }
 
         return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
