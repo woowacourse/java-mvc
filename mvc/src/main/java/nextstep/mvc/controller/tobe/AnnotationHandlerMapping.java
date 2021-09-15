@@ -44,7 +44,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void setHandlerExecutionsOf(Class<?> controller) {
         Method[] methods = controller.getDeclaredMethods();
 
-        Arrays.stream(methods).forEach(method -> setHandlerExecutionsOf(controller, method));
+        Arrays.stream(methods)
+                .forEach(method -> setHandlerExecutionsOf(controller, method));
     }
 
     private void setHandlerExecutionsOf(Class<?> controller, Method method) {
