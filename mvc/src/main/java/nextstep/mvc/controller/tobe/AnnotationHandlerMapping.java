@@ -35,6 +35,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         controllers.forEach(this::mapMethods);
 
         log.info("Initialized AnnotationHandlerMapping!");
+        controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
     private void mapMethods(Class<?> controller, Object instance) {
