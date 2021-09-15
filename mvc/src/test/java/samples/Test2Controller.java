@@ -17,7 +17,7 @@ public class Test2Controller {
     @RequestMapping(value = "/get-test2", method = RequestMethod.GET)
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller get method");
-        final ModelAndView modelAndView = new ModelAndView();
+        final ModelAndView modelAndView = new ModelAndView("index.jsp");
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
