@@ -25,12 +25,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Set<Object> controllers = controllerScanner.getControllers();
         for (Object controller : controllers) {
-            Set<Method> methods = methods(controller);
+            Set<Method> methods = methodsAnnotatedWithRequestMapping(controller);
             methods.forEach(method -> putToHandlerExecutions(controller, method));
         }
     }
 
-    public Set<Method> methods (Object controller) {
+    public Set<Method> methodsAnnotatedWithRequestMapping(Object controller) {
         Set<Method> methods = new HashSet<>();
         Method[] declaredMethods = controller.getClass().getDeclaredMethods();
 
