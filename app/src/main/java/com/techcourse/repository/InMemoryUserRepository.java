@@ -1,7 +1,8 @@
 package com.techcourse.repository;
 
 import com.techcourse.domain.User;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +17,9 @@ public class InMemoryUserRepository {
         database.put(user.getAccount(), user);
     }
 
+    private InMemoryUserRepository() {
+    }
+
     public static void save(User user) {
         User saveUser = new User(++id, user.getAccount(), user.getPassword(), user.getEmail());
         database.put(user.getAccount(), saveUser);
@@ -25,5 +29,7 @@ public class InMemoryUserRepository {
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {}
+    public static List<User> findAll() {
+        return new ArrayList<>(database.values());
+    }
 }

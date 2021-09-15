@@ -22,6 +22,10 @@ public class User {
         return this.password.equals(password);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getAccount() {
         return account;
     }
@@ -37,10 +41,10 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", email='" + email + '\'' +
+            ", password='" + password + '\'' +
+            '}';
     }
 }

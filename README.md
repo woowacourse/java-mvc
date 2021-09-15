@@ -10,7 +10,7 @@
 - [ ] TestController 구현
 
 ## 2,3단계 요구사항
-- [ ] JsonView 동작 구현
-- [ ] Legacy MVC 제거
+- [X] JsonView 동작 구현
+- [X] Legacy MVC 제거
   - [X] Forward Controller 어노테이션 기반으로 변경
-  - [ ] User Controller 추가
+  - [X] User Controller 추가
