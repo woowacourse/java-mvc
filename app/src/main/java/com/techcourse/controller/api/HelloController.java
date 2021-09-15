@@ -12,7 +12,7 @@ import nextstep.web.support.RequestMethod;
 public class HelloController {
 
     @RequestMapping(value = "/api/hello", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView hello(HttpServletRequest request, HttpServletResponse response) {
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("hello", "Hello, World!");
         return modelAndView;
