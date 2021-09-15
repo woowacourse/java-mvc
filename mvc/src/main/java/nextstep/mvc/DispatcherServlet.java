@@ -27,7 +27,7 @@ public class DispatcherServlet extends HttpServlet {
         this(new ArrayList<>(), new ArrayList<>());
     }
 
-    public DispatcherServlet(
+    private DispatcherServlet(
         List<HandlerMapping> handlerMappings,
         List<HandlerAdapter> handlerAdapters
     ) {
