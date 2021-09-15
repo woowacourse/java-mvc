@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class JspView implements View {
 
-    public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger LOG = LoggerFactory.getLogger(JspView.class);
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
 
