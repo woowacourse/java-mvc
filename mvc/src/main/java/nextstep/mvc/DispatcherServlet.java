@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Optional<Object> handlerMapping = handlerMappings.get(request);
             if (handlerMapping.isEmpty()) {
-                render(request, response, "404");
+                ViewResolver.resolve("404.jsp", request, response);
                 return;
             }
 
@@ -68,13 +68,7 @@ public class DispatcherServlet extends HttpServlet {
             ViewResolver.resolve(mv, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            render(request, response, "500");
+            ViewResolver.resolve("500.jsp", request, response);
         }
-    }
-
-    private void render(HttpServletRequest request, HttpServletResponse response, String viewName)
-        throws ServletException, IOException {
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
