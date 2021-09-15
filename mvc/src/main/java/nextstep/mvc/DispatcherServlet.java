@@ -55,14 +55,6 @@ public class DispatcherServlet extends HttpServlet {
             throw new ServletException(e.getMessage());
         }
 
-//        try {
-//            final Controller controller = getController(request);
-//            final String viewName = controller.execute(request, response);
-//            move(viewName, request, response);
-//        } catch (Throwable e) {
-//            log.error("Exception : {}", e.getMessage(), e);
-//            throw new ServletException(e.getMessage());
-//        }
     }
 
     private Controller getController(HttpServletRequest request) throws Exception {
