@@ -1,10 +1,8 @@
 package nextstep.mvc.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.exception.NotExistException;
 import nextstep.web.support.MediaType;
 
 import java.io.PrintWriter;
