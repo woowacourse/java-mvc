@@ -4,8 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
+import nextstep.mvc.exception.HandlerMappingNotFoundException;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,17 +44,19 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             final Object handler = findHandler(request);
             final ModelAndView modelAndView = handleRequest(request, response, handler);
-            final View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
-        } catch (InvocationTargetException | IllegalAccessException | IOException | ServletException e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            modelAndView.render(request, response);
+        } catch (HandlerMappingNotFoundException e) {
+            log.error("Handler Not Found : {}", e.getMessage(), e);
+            JspView.renderNotFound(request, response);
+        } catch (Exception e) {
+            log.error("Internal Server Error : {}", e.getMessage(), e);
+            JspView.renderInternalServerError(request, response);
         }
     }
 
@@ -63,7 +67,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
-        throw new IllegalArgumentException("해당 요청을 처리할 핸들러가 없습니다.");
+        throw new HandlerMappingNotFoundException();
     }
 
     private ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response, Object handler) throws InvocationTargetException, IllegalAccessException {
@@ -72,6 +76,6 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerAdapter.handle(request, response, handler);
             }
         }
-        throw new IllegalArgumentException("해당 요청을 처리할 어댑터가 없습니다.");
+        throw new HandlerAdapterNotFoundException();
     }
 }

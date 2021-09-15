@@ -1,6 +1,7 @@
 package com.techcourse.controller.tobe;
 
 import com.techcourse.domain.User;
+import com.techcourse.exception.ApplicationException;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +25,7 @@ public class UserController {
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+                .orElseThrow(() -> new ApplicationException("사용자를 찾을 수 없습니다."));
 
         modelAndView.addObject("user", user);
         return modelAndView;
