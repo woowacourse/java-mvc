@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    public ModelAndView showUsers() {
+    public ModelAndView showUsers(HttpServletRequest request, HttpServletResponse response) {
         List<User> users = InMemoryUserRepository.findAll();
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());

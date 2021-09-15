@@ -3,21 +3,18 @@ package nextstep.mvc.handlermapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.controller.tobe.ControllerScanner;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.HandlerKey;
+import nextstep.mvc.controller.ControllerScanner;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.controller.HandlerKey;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -68,17 +65,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Method> methods = ReflectionUtils.getAllMethods(
             controllerEntry.getKey(), ReflectionUtils.withAnnotation(RequestMapping.class)
         );
-        for(Method method : methods) {
+        for (Method method : methods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            addHandlerExecutions(controllerMap.get(controllerEntry.getKey()), method, requestMapping);
+            addHandlerExecutions(controllerMap.get(controllerEntry.getKey()), method,
+                requestMapping);
         }
     }
 
-    private void addHandlerExecutions(Object declaredObject, Method method, RequestMapping requestMapping) {
-       String url = requestMapping.value();
-       List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMapping.method());
-       for (HandlerKey handlerKey : handlerKeys) {
-           handlerExecutions.put(handlerKey, new HandlerExecution(declaredObject, method));
-       }
+    private void addHandlerExecutions(Object declaredObject, Method method,
+        RequestMapping requestMapping) {
+        String url = requestMapping.value();
+        List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMapping.method());
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, new HandlerExecution(declaredObject, method));
+        }
     }
 }
