@@ -17,10 +17,10 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addToHandlerMappingRegistry(
-                new AnnotationHandlerMapping("com.techcourse.controller")
+            new AnnotationHandlerMapping("com.techcourse.controller")
         );
         dispatcherServlet.addToHandlerAdapterRegistry(
-                new AnnotationHandlerAdapter()
+            new AnnotationHandlerAdapter()
         );
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);

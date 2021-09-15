@@ -1,14 +1,14 @@
 package com.techcourse.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.techcourse.domain.User;
 import com.techcourse.exception.LoginFailedException;
 import com.techcourse.exception.UserNotFoundException;
 import com.techcourse.service.dto.LoginDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LoginServiceTest {
 
@@ -38,7 +38,7 @@ class LoginServiceTest {
 
         // when - then
         assertThatThrownBy(() -> loginService.login(LoginDto.of(account, password)))
-                .isInstanceOf(UserNotFoundException.class);
+            .isInstanceOf(UserNotFoundException.class);
     }
 
     @DisplayName("로그인을 한다. - 실패, 비밀번호가 일치하지 않음.")
@@ -50,6 +50,6 @@ class LoginServiceTest {
 
         // when - then
         assertThatThrownBy(() -> loginService.login(LoginDto.of(account, password)))
-                .isInstanceOf(LoginFailedException.class);
+            .isInstanceOf(LoginFailedException.class);
     }
 }

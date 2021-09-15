@@ -6,13 +6,15 @@ import nextstep.mvc.controller.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
+
     @Override
     public boolean supports(Object handler) {
         return handler instanceof HandlerExecution;
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+        throws Exception {
         HandlerExecution handlerExecution = (HandlerExecution) handler;
         return handlerExecution.handle(request, response);
     }

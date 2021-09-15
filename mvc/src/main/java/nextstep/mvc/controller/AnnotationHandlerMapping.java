@@ -1,14 +1,17 @@
 package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Method;
-import java.util.*;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -36,8 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Method method : declaredMethods) {
             if (Arrays.stream(method.getDeclaredAnnotations())
-                    .anyMatch(annotation -> annotation.annotationType().equals(RequestMapping.class)))
-            {
+                .anyMatch(annotation -> annotation.annotationType().equals(RequestMapping.class))) {
                 methods.add(method);
             }
         }

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.ViewName;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 @Controller
 public class LoginController {
+
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     private final LoginService loginService;
@@ -26,11 +28,11 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(HttpServletRequest request, HttpServletResponse response){
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: POST, Request URI: {}", request.getRequestURI());
 
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
         }
 
         try {
@@ -39,9 +41,9 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
 
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
         } catch (AuthException e) {
-            return new ModelAndView(new JspView("redirect:/401.jsp"));
+            return new ModelAndView(new JspView(ViewName.REDIRECT_UNAUTHORIZED));
         }
     }
 
@@ -50,9 +52,9 @@ public class LoginController {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
 
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
         }
-        return new ModelAndView(new JspView("login.jsp"));
+        return new ModelAndView(new JspView(ViewName.LOGIN));
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -61,6 +63,6 @@ public class LoginController {
 
         final HttpSession session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView(new JspView(ViewName.REDIRECT_HOME));
     }
 }

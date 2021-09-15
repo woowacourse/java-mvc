@@ -2,7 +2,6 @@ package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.exception.BadRequestException;
-import com.techcourse.repository.InMemoryUserRepository;
 import com.techcourse.service.RegisterService;
 import com.techcourse.service.dto.RegisterDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.ViewName;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -36,10 +36,10 @@ public class RegisterController {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
         } catch (BadRequestException e) {
-            return new ModelAndView(new JspView("/400.jsp"));
+            return new ModelAndView(new JspView(ViewName.REDIRECT_BADREQUEST));
         }
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -47,9 +47,9 @@ public class RegisterController {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
 
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
         }
 
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(new JspView(ViewName.REGISTER));
     }
 }

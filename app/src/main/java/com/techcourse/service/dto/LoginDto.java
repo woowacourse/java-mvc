@@ -3,15 +3,16 @@ package com.techcourse.service.dto;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class LoginDto {
+
     private final String account;
     private final String password;
 
-    public static LoginDto of (HttpServletRequest request) {
+    public static LoginDto of(HttpServletRequest request) {
         return new LoginDto(request.getParameter("account"),
                             request.getParameter("password"));
     }
 
-    public static LoginDto of (String account, String password) {
+    public static LoginDto of(String account, String password) {
         return new LoginDto(account, password);
     }
 

@@ -4,6 +4,7 @@ import com.techcourse.domain.User;
 import com.techcourse.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -11,10 +12,6 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
 
 @Controller
 public class UserController {
@@ -47,7 +44,7 @@ public class UserController {
         );
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        for (User user: users) {
+        for (User user : users) {
             modelAndView.addObject("users", user);
         }
         return modelAndView;

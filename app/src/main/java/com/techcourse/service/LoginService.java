@@ -7,9 +7,10 @@ import com.techcourse.repository.InMemoryUserRepository;
 import com.techcourse.service.dto.LoginDto;
 
 public class LoginService {
+
     public User login(LoginDto loginDto) {
         User user = InMemoryUserRepository.findByAccount(loginDto.getAccount())
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         if (!user.checkPassword(loginDto.getPassword())) {
             throw new LoginFailedException();
         }

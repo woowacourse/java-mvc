@@ -3,6 +3,7 @@ package com.techcourse.service.dto;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class RegisterDto {
+
     private final String account;
     private final String password;
     private final String email;

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ControllerTest {
+
     protected HttpServletRequest request;
     protected HttpServletResponse response;
 

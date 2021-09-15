@@ -1,17 +1,14 @@
 package com.techcourse.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class UserControllerTest extends ControllerTest{
+class UserControllerTest extends ControllerTest {
 
     @DisplayName("user를 json으로 응답한다.")
     @Test

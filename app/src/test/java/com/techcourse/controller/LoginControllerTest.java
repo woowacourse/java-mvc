@@ -1,16 +1,11 @@
 package com.techcourse.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.techcourse.domain.User;
-import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpSession;
-import java.util.Optional;
 import nextstep.mvc.view.ModelAndView;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

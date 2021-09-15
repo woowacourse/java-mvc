@@ -1,11 +1,10 @@
 package com.techcourse.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.techcourse.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryUserRepositoryTest {
 
@@ -13,7 +12,7 @@ class InMemoryUserRepositoryTest {
     @Test
     void save() {
         // given
-        User user = new User("joanne", "1234","joanne@woowahan.com");
+        User user = new User("joanne", "1234", "joanne@woowahan.com");
 
         // when
         final User saveUser = InMemoryUserRepository.save(user);
@@ -28,7 +27,7 @@ class InMemoryUserRepositoryTest {
     @Test
     void findByAccount() {
         // given
-        User user = new User("joanne", "1234","joanne@woowahan.com");
+        User user = new User("joanne", "1234", "joanne@woowahan.com");
 
         // when
         InMemoryUserRepository.save(user);
