@@ -8,13 +8,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class JspView extends AbstractView {
+public class JspView implements View{
 
     public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
+    private final String viewName;
+
     public JspView(String viewName) {
-        super(viewName);
+       this.viewName = viewName;
     }
 
     @Override
@@ -31,5 +33,9 @@ public class JspView extends AbstractView {
 
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }
