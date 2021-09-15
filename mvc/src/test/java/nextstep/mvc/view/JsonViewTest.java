@@ -13,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 @DisplayName("JsonView 테스트")
 class JsonViewTest {
 
@@ -31,19 +30,6 @@ class JsonViewTest {
         stringWriter = new StringWriter();
         writer = new PrintWriter(stringWriter);
     }
-
-    @Test
-    void stringValueReturnWhenJsonDataSet() throws Exception {
-        //given
-        JsonView jsonView = new JsonView("hihi?");
-        //when
-        when(response.getWriter()).thenReturn(writer);
-
-        jsonView.render(modelAndView.getModel(), request, response);
-        //then
-        assertThat(stringWriter.toString()).isEqualTo("hihi?");
-    }
-
 
     @Test
     void mapToJsonSingleValue() throws Exception {
