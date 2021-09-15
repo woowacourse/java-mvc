@@ -14,7 +14,7 @@ import nextstep.mvc.HandlerMapping;
 
 public class ResourceHandlerMapping implements HandlerMapping {
 
-    private static final char DIRECTORY_CHARACTER = '/';
+    private static final int RELATIVE_PATH_INDEX = 1;
     private final String defaultDirectory;
     private final Map<String, String> resources = new HashMap<>();
 
@@ -25,7 +25,7 @@ public class ResourceHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         for (final Path path : scanAllFiles()) {
-            final String requestPath = DIRECTORY_CHARACTER + path.getFileName().toString();
+            final String requestPath = path.toString().split(defaultDirectory)[RELATIVE_PATH_INDEX];
             final String actualPath = path.toString();
 
             resources.put(requestPath, actualPath);

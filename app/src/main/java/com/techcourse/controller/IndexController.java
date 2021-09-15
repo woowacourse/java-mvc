@@ -2,7 +2,6 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -10,13 +9,10 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class LogoutController {
+public class IndexController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView view(HttpServletRequest request, HttpServletResponse response) {
-        final HttpSession session = request.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

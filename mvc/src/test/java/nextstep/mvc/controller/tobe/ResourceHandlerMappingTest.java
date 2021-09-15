@@ -15,7 +15,7 @@ class ResourceHandlerMappingTest {
     void initialize() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/TestManualController.java");
+        when(request.getRequestURI()).thenReturn("/TestAnnotationController.java");
         when(request.getMethod()).thenReturn("GET");
 
         final ResourceHandlerMapping handlerMapping = new ResourceHandlerMapping("src/test/java/samples");
