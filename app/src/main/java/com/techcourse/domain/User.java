@@ -10,10 +10,7 @@ public class User {
     private final String email;
 
     public User(String account, String password, String email) {
-        this.id = null;
-        this.account = account;
-        this.password = password;
-        this.email = email;
+        this(null, account, password, email);
     }
 
     public User(Long id, String account, String password, String email) {
