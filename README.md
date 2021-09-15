@@ -61,7 +61,7 @@ public class RegisterController {
 
 ## 리팩터링
 ### AnnotationHandlerMapping
-- [ ] `HandlerScanner` 추가 for 역할/책임 분리
+- [x] `HandlerScanner` 추가 for 역할/책임 분리
   - @Controller 어노테이션이 붙은 클래스를 찾고, 해당 클래스의 인스턴스 생성
 
 ### DispatcherServlet
