@@ -1,7 +1,7 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JsonView;
@@ -12,22 +12,54 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+
 @Controller
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
+    private final UserService userService;
+
+    public UserController() {
+        this.userService = new UserService();
+    }
+
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Method: GET, Request URI: {}", request.getRequestURI());
         final String account = request.getParameter("account");
-        log.debug("user id : {}", account);
+
+        log.debug("Request User id : {}", account);
+        final User user = userService.findByAccount(account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
-
         modelAndView.addObject("user", user);
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Method: GET, Request URI: {}", request.getRequestURI());
+        final String[] accounts = request.getParameterValues("account");
+
+        logMultipleData(accounts);
+        final List<User> users = userService.findByAccounts(accounts);
+
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        for (User user: users) {
+            modelAndView.addObject("users", user);
+        }
+        return modelAndView;
+    }
+
+    private void logMultipleData(String[] datum) {
+        StringJoiner stringJoiner = new StringJoiner(", ");
+        Arrays.stream(datum)
+                .forEach(stringJoiner::add);
+        log.debug("Request User ids : {}", stringJoiner);
     }
 }
 

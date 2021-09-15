@@ -1,13 +1,11 @@
 package nextstep.mvc.view;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ModelAndView {
 
     private final View view;
-    private final Map<String, Object> model;
+    private final Map<String, List<Object>> model;
 
     public ModelAndView(View view) {
         this.view = view;
@@ -15,10 +13,16 @@ public class ModelAndView {
     }
 
     public void addObject(String attributeName, Object attributeValue) {
-        model.put(attributeName, attributeValue);
+        if (model.containsKey(attributeName)) {
+            model.get(attributeName).add(attributeValue);
+        } else {
+            List<Object> attributeValues = new ArrayList<>();
+            attributeValues.add(attributeValue);
+            model.put(attributeName, attributeValues);
+        }
     }
 
-    public Object getObject(String attributeName) {
+    public List<Object> getObject(String attributeName) {
         return model.get(attributeName);
     }
 
