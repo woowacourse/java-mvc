@@ -40,7 +40,7 @@
 
 
 ### 조앤 코드리뷰 - 1차
-- [ ] Controller Annotation이 달려있는 클래스 스캔 패키지 범위 좁히기
+- [x] Controller Annotation이 달려있는 클래스 스캔 패키지 범위 더 좁게 수정
 - [ ] View name 분리해서 관리하도록 수정
 - [ ] 로그인한 사용자가 `GET /register` 요청 시, 루트 경로로 리다이렉트 하도록 수정
 - [ ] app 모듈의 클래스 테스트 코드 추가
