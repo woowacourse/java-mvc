@@ -54,8 +54,8 @@
     - [x] LoginController.class
     - [x] LogoutController.class
     - [x] RegisterController.class
-  - [ ] domain 패키지
-    - [ ] User.class
+  - [x] domain 패키지
+    - [x] User.class
   - [ ] repository 패키지
     - [ ] InMemoryUserRepository.class
   - [ ] service 패키지
