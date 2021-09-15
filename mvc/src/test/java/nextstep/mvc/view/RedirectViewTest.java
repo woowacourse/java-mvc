@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ class RedirectViewTest {
         model = new HashMap<>();
     }
 
-    @Disabled("redirect가 되었는지 확인하다.")
+    @DisplayName("redirect가 되었는지 확인하다.")
     @Test
     void render() throws Exception {
         RedirectView redirectView = new RedirectView("redirect:/");

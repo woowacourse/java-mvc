@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.adapter.HandlerAdapter;
-import nextstep.mvc.adapter.tobe.AnnotationHandlerAdapter;
+import nextstep.mvc.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -101,7 +101,7 @@ public class DispatcherServlet extends HttpServlet {
         ViewResolver resolver = viewResolvers.stream()
                 .filter(viewResolver -> viewResolver.supports(viewName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("ViewResolver를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("view resolver를 찾을 수 없습니다."));
         View view = resolver.resolveViewName(viewName);
         view.render(mv.getModel(), request, response);
     }
