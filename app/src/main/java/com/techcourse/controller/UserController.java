@@ -1,6 +1,7 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JsonView;
@@ -17,11 +18,19 @@ public class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView doGet(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
 
         ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", new User(0L, account, "password", "mungto@gmail.com"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/multiUser", method = RequestMethod.GET)
+    public ModelAndView multiUser(HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("mungto", new User(0L, "mungto", "password", "mungto@gmail.com"));
+        modelAndView.addObject("gugu", InMemoryUserRepository.findByAccount("gugu").orElseThrow());
         return modelAndView;
     }
 }
