@@ -1,6 +1,7 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
+import com.techcourse.exception.BadRequestException;
 import com.techcourse.repository.InMemoryUserRepository;
 import com.techcourse.service.RegisterService;
 import com.techcourse.service.dto.RegisterDto;
@@ -30,10 +31,13 @@ public class RegisterController {
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: POST, Request URI: {}", request.getRequestURI());
 
-        final User user = registerService.join(RegisterDto.of(request));
-
-        final HttpSession session = request.getSession();
-        session.setAttribute(UserSession.SESSION_KEY, user);
+        try {
+            final User user = registerService.join(RegisterDto.of(request));
+            final HttpSession session = request.getSession();
+            session.setAttribute(UserSession.SESSION_KEY, user);
+        } catch (BadRequestException e) {
+            return new ModelAndView(new JspView("/400.jsp"));
+        }
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
