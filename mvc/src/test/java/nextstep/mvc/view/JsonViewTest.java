@@ -28,7 +28,7 @@ class JsonViewTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        jsonView = new JsonView();
+        jsonView = new JsonView(HttpServletResponse.SC_OK);
         model = new HashMap<>();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
