@@ -1,7 +1,6 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JsonView;
@@ -19,12 +18,11 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        final String account = req.getParameter("account");
-        log.debug("user id : {}", account);
+        User user = UserSession.getUserFrom(req.getSession())
+            .orElseThrow();
+        log.debug("user id : {}", user.getAccount());
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-            .orElseThrow();
 
         modelAndView.addObject("user", user);
         return modelAndView;
