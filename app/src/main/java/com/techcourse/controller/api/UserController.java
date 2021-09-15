@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.api;
 
 import com.techcourse.domain.User;
 import com.techcourse.exception.NotFoundException;
