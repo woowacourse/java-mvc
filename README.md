@@ -65,5 +65,5 @@ public class RegisterController {
   - @Controller 어노테이션이 붙은 클래스를 찾고, 해당 클래스의 인스턴스 생성
 
 ### DispatcherServlet
-- [ ] `HandlerAdapter` 추가 for 다른 Handler 타입
+- [x] `HandlerAdapter` 추가 for 다른 Handler 타입
   - Request URI에 따라 ManualHandlerMapping -> Controller, AnnoationHandlerMapping -> HandlerExecution 반환  
