@@ -9,10 +9,10 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class AnnotatedController {
+public class DashboardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView showLandingPage(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
 }
