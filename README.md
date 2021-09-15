@@ -14,5 +14,5 @@
 - [x] ControllerScanner 추가
 - [x] HandlerAdapter 인터페이스 사용
 - [x] HandlerAdapterRegistry, HandlerMappingRegistry 추가
-- [ ] Legacy 코드 Annotation 기반으로 수정
+- [x] Legacy 코드 Annotation 기반으로 수정
 - [ ] View 구현하기
