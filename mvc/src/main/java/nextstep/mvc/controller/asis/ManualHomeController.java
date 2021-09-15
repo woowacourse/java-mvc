@@ -4,11 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
-public class ForwardController implements Controller {
+public class ManualHomeController implements Controller {
 
     private final String path;
 
-    public ForwardController(String path) {
+    public ManualHomeController(String path) {
         this.path = Objects.requireNonNull(path);
     }
 

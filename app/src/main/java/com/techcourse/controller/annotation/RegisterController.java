@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class AnnotationRegisterController {
+public class RegisterController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnnotationRegisterController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RegisterController.class);
     private static final String REDIRECT_PREFIX = "redirect:";
     private static final String HOME_PATH = "/index";
 

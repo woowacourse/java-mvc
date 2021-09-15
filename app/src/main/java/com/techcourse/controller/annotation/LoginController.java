@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class AnnotationLoginController {
+public class LoginController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnnotationLoginController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
     private static final String REDIRECT_PREFIX = "redirect:";
     private static final String HOME_PATH = "/index";
     private static final String UNAUTHORIZED_PATH = "/401";
@@ -28,7 +28,7 @@ public class AnnotationLoginController {
     public ModelAndView getLogin(HttpServletRequest request, HttpServletResponse response) {
         return UserSession.getUserFrom(request.getSession())
             .map(user -> {
-                LOG.info("logged in {}", user.getAccount());
+                LOG.info("Login: {}", user.getAccount());
                 return new ModelAndView(new JspView(REDIRECT_PREFIX + HOME_PATH));
             })
             .orElse(new ModelAndView(new JspView(request.getRequestURI())));

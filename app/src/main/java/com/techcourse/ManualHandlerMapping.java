@@ -1,15 +1,15 @@
 package com.techcourse;
 
-import com.techcourse.controller.manual.LoginController;
-import com.techcourse.controller.manual.LoginViewController;
-import com.techcourse.controller.manual.LogoutController;
-import com.techcourse.controller.manual.RegisterController;
-import com.techcourse.controller.manual.RegisterViewController;
+import com.techcourse.controller.manual.ManualLoginController;
+import com.techcourse.controller.manual.ManualLoginViewController;
+import com.techcourse.controller.manual.ManualLogoutController;
+import com.techcourse.controller.manual.ManualRegisterController;
+import com.techcourse.controller.manual.ManualRegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.mvc.controller.asis.ManualHomeController;
 import nextstep.mvc.handler.mapping.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +21,12 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/manual/login", new LoginController());
-        controllers.put("/manual/login/view", new LoginViewController());
-        controllers.put("/manual/logout", new LogoutController());
-        controllers.put("/manual/register/view", new RegisterViewController());
-        controllers.put("/manual/register", new RegisterController());
+        controllers.put("/manual", new ManualHomeController("/index.jsp"));
+        controllers.put("/manual/login", new ManualLoginController());
+        controllers.put("/manual/login/view", new ManualLoginViewController());
+        controllers.put("/manual/logout", new ManualLogoutController());
+        controllers.put("/manual/register/view", new ManualRegisterViewController());
+        controllers.put("/manual/register", new ManualRegisterController());
 
         LOG.info("Initialize ManualHandlerMapping!");
 
