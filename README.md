@@ -44,7 +44,7 @@
 - [x] View name 분리해서 관리하도록 수정
 - [x] API Controller 패키지 분리 
 - [x] 불필요한 객체 생성을 막도록 private 생성자 추가
-- [ ] 로그인한 사용자가 `GET /register` 요청 시, 루트 경로로 리다이렉트 하도록 수정
+- [x] 로그인한 사용자가 `GET /register` 요청 시, `/index.jsp` 로 리다이렉트 하도록 수정
 - [ ] app 모듈의 클래스 테스트 코드 추가
   - [ ] controller 패키지
     - [ ] HelloController
