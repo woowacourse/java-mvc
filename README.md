@@ -10,3 +10,7 @@
 - [x] HandlerScanner 구현
 - [x] HandlerAdapter 구현
 - [x] 리팩터링
+
+### 3단계
+- [x] View 구현하기
+- [ ] Legacy MVC 제거하기

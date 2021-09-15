@@ -61,6 +61,9 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
             final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
+        } catch (RuntimeException e) {
+            log.error("RuntimeException : {}", e.getMessage(), e);
+            throw new RuntimeException("RuntimeException : " + e.getMessage());
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
