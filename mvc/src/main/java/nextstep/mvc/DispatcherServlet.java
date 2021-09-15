@@ -82,10 +82,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseGet(null);
+            .map(handlerMapping -> handlerMapping.getHandler(request))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElseGet(null);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {

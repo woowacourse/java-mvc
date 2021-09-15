@@ -6,8 +6,8 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private String view;
     private final Map<String, Object> model;
+    private String view;
 
     public ModelAndView() {
         this.model = new HashMap<>();

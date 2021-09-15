@@ -6,6 +6,7 @@ import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
+
     @Override
     public boolean supports(Object handler) {
         return (handler instanceof HandlerExecution);
