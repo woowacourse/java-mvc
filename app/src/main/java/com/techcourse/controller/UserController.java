@@ -18,14 +18,17 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
-        final String account = request.getParameter("account");
-        log.debug("user id : {}", account);
-
         final ModelAndView modelAndView = new ModelAndView();
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+        try {
+            final String account = request.getParameter("account");
+            log.debug("user id : {}", account);
 
-        modelAndView.addObject("user", user);
+            final User user = InMemoryUserRepository.findByAccount(account)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 user 입니다."));
+            modelAndView.addObject("user", user);
+        } catch (Exception exception) {
+            modelAndView.addObject("message", exception.getMessage());
+        }
         return modelAndView;
     }
 }
