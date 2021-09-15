@@ -45,7 +45,7 @@
 - [x] API Controller 패키지 분리 
 - [x] 불필요한 객체 생성을 막도록 private 생성자 추가
 - [x] 로그인한 사용자가 `GET /register` 요청 시, `/index.jsp` 로 리다이렉트 하도록 수정
-- [ ] app 모듈의 클래스 테스트 코드 추가
+- [x] app 모듈의 클래스 테스트 코드 추가
   - [x] controller 패키지
     - [x] api 패키지
       - [x] HelloController.class
@@ -64,7 +64,7 @@
     - [x] UserService.class
   - [x] session 패키지
     - [x] UserSession.class 
-- [ ] mvc 모듈의 클래스 테스트 코드 추가
+- [x] mvc 모듈의 클래스 테스트 코드 추가
   - [x] controller 패키지
     - [x] AnnotationHandlerMapping.class
     - [x] ControllerScanner.class
