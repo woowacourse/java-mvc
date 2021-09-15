@@ -33,7 +33,7 @@ class LoginServiceTest {
     @Test
     void loginFailedWhenNotFound() {
         // given
-        String account = "solong";
+        String account = "존재하지 않는 회원";
         String password = "password";
 
         // when - then

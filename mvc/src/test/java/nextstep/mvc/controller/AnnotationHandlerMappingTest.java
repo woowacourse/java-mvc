@@ -32,7 +32,7 @@ class AnnotationHandlerMappingTest {
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject("id").get(0)).isEqualTo("gugu");
     }
 
     @Test
@@ -47,6 +47,6 @@ class AnnotationHandlerMappingTest {
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject("id").get(0)).isEqualTo("gugu");
     }
 }

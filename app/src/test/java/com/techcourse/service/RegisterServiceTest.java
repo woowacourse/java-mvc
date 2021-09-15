@@ -17,8 +17,8 @@ class RegisterServiceTest {
     @Test
     void join() {
         // given
-        String account = "joanne";
-        String password = "1234";
+        String account = "새로운_계정";
+        String password = "새로운_비밀번호";
         String email = "joanne@woowahan.com";
 
         // when

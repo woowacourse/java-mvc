@@ -20,10 +20,6 @@ class DispatcherServletTest {
     private DispatcherServlet dispatcherServlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
-//
-//    private HandlerMappingRegistry handlerMappingRegistry;
-//    private HandlerAdapterRegistry handlerAdapterRegistry;
-
     private HandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
 
@@ -34,9 +30,6 @@ class DispatcherServletTest {
 
         handlerMapping = mock(HandlerMapping.class);
         handlerAdapter = mock(HandlerAdapter.class);
-
-//        handlerMappingRegistry = mock(HandlerMappingRegistry.class);
-//        handlerAdapterRegistry = mock(HandlerAdapterRegistry.class);
 
         dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addToHandlerAdapterRegistry(handlerAdapter);

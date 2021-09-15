@@ -39,4 +39,9 @@ public class JsonView implements View {
         log.debug("Render To Json\n {}", json);
         out.print(json);
     }
+
+    @Override
+    public String viewName() {
+        return null;
+    }
 }
