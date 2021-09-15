@@ -32,12 +32,14 @@ public class AnnotationRegisterController {
         LOG.info("Annotation Register Controller - POST Method");
 
         User user = new User(
-            2L,
+            null,
             request.getParameter("account"),
             request.getParameter("password"),
             request.getParameter("email")
         );
         InMemoryUserRepository.save(user);
+
+        LOG.info("User id: {}, account: {}", user.getId(), user.getAccount());
 
         return new ModelAndView(new JspView(REDIRECT_PREFIX + HOME_PATH));
     }

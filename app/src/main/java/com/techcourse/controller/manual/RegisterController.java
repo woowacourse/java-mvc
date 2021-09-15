@@ -11,7 +11,7 @@ public class RegisterController implements Controller {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         final User user = new User(
-            2L,
+            null,
             request.getParameter("account"),
             request.getParameter("password"),
             request.getParameter("email")
