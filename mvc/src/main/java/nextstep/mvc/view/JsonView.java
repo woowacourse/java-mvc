@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -27,7 +27,7 @@ public class JsonView implements View {
     }
 
     private void responseJson(HttpServletResponse response, Object responseBodyObject) throws IOException {
-        final String responseBody = objectMapper.writeValueAsString(responseBodyObject);
+        final String responseBody = OBJECT_MAPPER.writeValueAsString(responseBodyObject);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(responseBody);
     }
