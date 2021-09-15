@@ -58,7 +58,7 @@ public class DispatcherServlet extends HttpServlet {
                 ModelAndView modelAndView = adapter.handle(request, response, obj);
                 modelAndView.render(request, response);
             } catch (Exception e) {
-                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }, () -> response.setStatus(HttpServletResponse.SC_NOT_FOUND));
     }
