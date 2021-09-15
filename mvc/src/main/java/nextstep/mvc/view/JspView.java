@@ -3,6 +3,8 @@ package nextstep.mvc.view;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.web.support.Header;
+import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,8 @@ public class JspView implements View {
             log.debug("attribute name : {}, value : {}", key, value);
             request.setAttribute(key, value);
         });
+
+        response.setHeader(Header.CONTENT_TYPE_HEADER_VALUE, MediaType.TEXT_HTML_UTF8_VALUE);
 
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
