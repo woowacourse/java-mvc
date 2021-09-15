@@ -138,7 +138,7 @@ public class ApplicationContext {
         return null;
     }
 
-    private Object getBean(Class<?> clazz) {
+    public Object getBean(Class<?> clazz) {
         if (BEANS.containsKey(clazz.getSimpleName())) {
             return BEANS.get(clazz.getSimpleName());
         }
@@ -194,6 +194,19 @@ public class ApplicationContext {
         T bean = (T) createBean(type);
         BEANS.put(beanName, bean);
         return bean;
+    }
+
+    public <T> List<T> findAllBeanByType(Class<T> type) {
+        List<T> result = new ArrayList<>();
+
+        for (String beanName : BEANS.keySet()) {
+            Object bean = BEANS.get(beanName);
+
+            if (type.isInstance(bean)) {
+                result.add((T) bean);
+            }
+        }
+        return result;
     }
 
     public List<Object> findAllBeanHasAnnotation(Class<? extends Annotation> type) {
