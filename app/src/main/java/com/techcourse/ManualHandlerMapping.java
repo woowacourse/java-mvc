@@ -20,12 +20,11 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        // legacy, 사용을 위해 주석 해제시, annotationcontroller 패키지 내의 컨트롤러 어노테이션 주석 처리 혹은 삭제
-//        controllers.put("/login", new LoginController());
-//        controllers.put("/login/view", new LoginViewController());
-//        controllers.put("/logout", new LogoutController());
-//        controllers.put("/register/view", new RegisterViewController());
-//        controllers.put("/register", new RegisterController());
+        controllers.put("/login", new LoginController());
+        controllers.put("/login/view", new LoginViewController());
+        controllers.put("/logout", new LogoutController());
+        controllers.put("/register/view", new RegisterViewController());
+        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
