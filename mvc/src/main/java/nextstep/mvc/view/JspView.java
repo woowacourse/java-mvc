@@ -42,7 +42,8 @@ public class JspView implements View {
     private void setAttributes(Map<String, ?> model, HttpServletRequest request) {
         model.forEach((key, value) -> {
             if (value != null) {
-                LOG.debug("attribute name: {}, attribute value: {}", key, model.get(key));
+                LOG.debug("attribute name: {}, attribute value: {}", key, value);
+
                 request.setAttribute(key, value);
                 return;
             }
