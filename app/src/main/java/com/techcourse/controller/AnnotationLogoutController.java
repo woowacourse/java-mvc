@@ -9,6 +9,8 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
+import static nextstep.mvc.view.JspView.*;
+
 @Controller
 public class AnnotationLogoutController {
 
@@ -16,6 +18,6 @@ public class AnnotationLogoutController {
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
         final HttpSession session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + "/"));
     }
 }
