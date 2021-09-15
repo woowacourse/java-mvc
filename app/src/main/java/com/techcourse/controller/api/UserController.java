@@ -14,6 +14,9 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.techcourse.view.ViewName.INDEX_JSP_VIEW_NAME;
+import static com.techcourse.view.ViewName.REDIRECT_PREFIX;
+
 @Controller
 public class UserController {
 
@@ -35,7 +38,7 @@ public class UserController {
             user = userService.findByAccount(account);
         } catch (NotFoundException e) {
             LOG.info("회원 조회 실패 : account에 대항하는 User가 존재하지 않음. 입력 account: {}", account);
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP_VIEW_NAME));
         }
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
