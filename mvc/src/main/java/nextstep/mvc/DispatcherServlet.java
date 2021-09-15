@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
             mv = handlerAdapter.handle(request, response, handler);
         } catch (ClassNotFoundException e) {
             mv = new ModelAndView("/404.jsp");
-
+            LOG.debug("{}, {}" , e.getException(), e.getMessage());
         }
 
         try {
