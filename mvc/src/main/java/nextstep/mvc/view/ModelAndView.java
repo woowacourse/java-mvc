@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import nextstep.mvc.exception.view.IllegalRenderException;
+import nextstep.mvc.exception.view.RenderingException;
 
 public class ModelAndView {
 
@@ -32,7 +32,7 @@ public class ModelAndView {
         try {
             view.render(model, request, response);
         } catch (Exception e) {
-            throw new IllegalRenderException();
+            throw new RenderingException();
         }
     }
 

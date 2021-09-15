@@ -71,8 +71,8 @@ public class RegisterController {
 <br/>
 
 ## View 구현하기
-- [ ] JSP를 지원하는 JspView 구현
-- [ ] REST API를 지원하는 JsonView 구현
+- [x] JSP를 지원하는 JspView 구현
+- [x] REST API를 지원하는 JsonView 구현
   - e.g. `UserController`를 추가했을 때, 정상 동작
 ```java
 @Controller
@@ -95,9 +95,9 @@ public class UserController {
 }
 ```
 
-- [ ] JSON <-> Java Object 변환할 때, Jackson 라이브러리 사용 -> 공식 문서 참고
-- [ ] JSON으로 응답할 때, Content-Type은 `MediaType.APPLICATION_JSON_UTF8_VALUE`로 반환
-- [ ] Model에 데이터가 1개면 값을 그대로 반환, 2개 이상이면 값을 JSON으로 변환해서 반환
+- [x] JSON <-> Java Object 변환할 때, Jackson 라이브러리 사용 -> 공식 문서 참고
+- [x] JSON으로 응답할 때, Content-Type은 `MediaType.APPLICATION_JSON_UTF8_VALUE`로 반환
+- [x] Model에 데이터가 1개면 값을 그대로 반환, 2개 이상이면 값을 JSON으로 변환해서 반환
 
 <br/>
 
