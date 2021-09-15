@@ -27,7 +27,7 @@ public class HandlerExecution {
         return handler;
     }
 
-    public String handle(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) {
+    public Object handle(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) {
         try {
             final Class<?>[] parameterTypes = method.getParameterTypes();
             final Object[] argument = new Object[parameterTypes.length];
@@ -43,8 +43,7 @@ public class HandlerExecution {
                     argument[idx] = modelAndView;
                 }
             }
-            final Object invoke = method.invoke(handler, argument);
-            return (String) invoke;
+            return method.invoke(handler, argument);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.info("핸들러 실행을 실패했습니다. 이유: {}", e.getMessage());
             throw new HandlerMappingException("핸들러 실행을 실패했습니다. 이유: " + e.getMessage());

@@ -17,7 +17,7 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
         final ModelAndView modelAndView = new ModelAndView();
-        final String handle = handlerExecution.handle(request, response, modelAndView);
+        final String handle = (String) handlerExecution.handle(request, response, modelAndView);
         modelAndView.changeView(new JspView(handle));
         return modelAndView;
     }
