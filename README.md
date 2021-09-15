@@ -56,8 +56,8 @@
     - [x] RegisterController.class
   - [x] domain 패키지
     - [x] User.class
-  - [ ] repository 패키지
-    - [ ] InMemoryUserRepository.class
+  - [x] repository 패키지
+    - [x] InMemoryUserRepository.class
   - [ ] service 패키지
     - [ ] LoginService.class
     - [ ] RegisterService.class
