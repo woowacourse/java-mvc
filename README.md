@@ -69,10 +69,10 @@
     - [x] AnnotationHandlerMapping.class
     - [x] ControllerScanner.class
     - [x] HandlerKey.class
-  - [ ] handler 패키지
-    - [ ] adapter 패키지
-      - [ ] AnnotationHandlerAdapter.class
-      - [ ] HandlerAdapters.class
+  - [x] handler 패키지
+    - [x] adapter 패키지
+      - [x] AnnotationHandlerAdapter.class
+      - [x] HandlerAdapters.class
     - [ ] mapping 패키지
       - [ ] HandlerMappings.class
   - [ ] servlet 패키지
