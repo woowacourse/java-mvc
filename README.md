@@ -27,7 +27,8 @@
 
 - [x] Legacy MVC 제거하기
 
-- [ ] Jackson 라이브러리를 활용한 JSONView 구현
+- [x] Jackson 라이브러리를 활용한 JsonView 구현
+    - [x] DispatcherServlet이 아닌 View에서 JSP 반환하도록 수정
 
 ## 📜 리팩터링 목록
 - [ ] 없는 URL에 대한 요청을 404로 반환하기

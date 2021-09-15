@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
@@ -49,7 +48,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = findHandler(request);
             final ModelAndView modelAndView = handleRequest(request, response, handler);
-            move(modelAndView, request, response);
+            final View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (InvocationTargetException | IllegalAccessException | IOException | ServletException e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -73,11 +73,5 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         throw new IllegalArgumentException("해당 요청을 처리할 어댑터가 없습니다.");
-    }
-
-    private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        final Map<String, Object> model = modelAndView.getModel();
-        final View view = modelAndView.getView();
-        view.render(model, request, response);
     }
 }
