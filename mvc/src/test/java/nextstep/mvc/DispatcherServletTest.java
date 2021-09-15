@@ -1,11 +1,9 @@
 package nextstep.mvc;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,22 +15,17 @@ import org.junit.jupiter.api.Test;
 
 class DispatcherServletTest {
 
-    private static final String TEST_VIEW = "testView";
-
     private DispatcherServlet dispatcherServlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private HandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         dispatcherServlet = new DispatcherServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         handlerMapping = mock(HandlerMapping.class);
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher(TEST_VIEW)).thenReturn(requestDispatcher);
-        doNothing().when(requestDispatcher).forward(request, response);
 
         dispatcherServlet.addHandlerMapping(handlerMapping);
         dispatcherServlet.init();
