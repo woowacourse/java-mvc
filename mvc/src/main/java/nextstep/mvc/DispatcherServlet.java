@@ -5,8 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -22,9 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -36,24 +36,30 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             final Object controller = getController(request);
-
-            if (controller instanceof  Controller) {
-                final String viewName = ((Controller) controller).execute(request, response);
-                move(viewName, request, response);
-            } else if (controller instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) controller).handle(request, response);
-                modelAndView.render(request, response);
-            }
-        } catch (Throwable e) {
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(controller);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
+            modelAndView.render(request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object controller) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(controller))
+                .findAny()
+                .orElseThrow();
     }
 
     private Object getController(HttpServletRequest request) {

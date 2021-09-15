@@ -12,6 +12,6 @@
 
 ## 2,3단계 기능 요구사항
 - [x] ControllerScanner 추가
-- [ ] HandlerAdapter 인터페이스 사용
+- [x] HandlerAdapter 인터페이스 사용
 - [ ] View 구현하기
 - 
