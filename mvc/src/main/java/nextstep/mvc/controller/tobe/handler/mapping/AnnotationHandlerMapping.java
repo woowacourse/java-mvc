@@ -42,7 +42,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Class<?>> handlers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> handler : handlers) {
             Method[] methods = handler.getDeclaredMethods();
-            getAnnotation(handler, methods);
+            initializeWith(handler, methods);
         }
 
         for (HandlerKey key : handlerExecutions.keySet()) {
@@ -50,13 +50,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void getAnnotation(Class<?> handler, Method[] methods) {
+    private void initializeWith(Class<?> handler, Method[] methods) {
         for (Method method : methods) {
-            getAnnotationBasedOn(handler, method);
+            initializeWithEach(handler, method);
         }
     }
 
-    private void getAnnotationBasedOn(Class<?> handler, Method method) {
+    private void initializeWithEach(Class<?> handler, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
