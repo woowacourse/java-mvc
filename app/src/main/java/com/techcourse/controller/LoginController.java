@@ -25,16 +25,16 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginPage(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(REDIRECT_INDEX));
+            return new ModelAndView(REDIRECT_INDEX);
         }
 
-        return new ModelAndView(new JspView(LOGIN));
+        return new ModelAndView(LOGIN);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(REDIRECT_INDEX));
+            return new ModelAndView(REDIRECT_INDEX);
         }
 
         String viewName =  InMemoryUserRepository.findByAccount(request.getParameter("account"))
@@ -44,7 +44,7 @@ public class LoginController {
              })
              .orElse(REDIRECT_401);
 
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(viewName);
 
     }
 

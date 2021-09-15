@@ -11,8 +11,13 @@ public class ModelAndView {
     private final View view;
     private final Map<String, Object> model;
 
-    public ModelAndView(View view) {
-        this.view = view;
+    public ModelAndView() {
+        this.view = new JsonView();
+        this.model = new HashMap<>();
+    }
+
+    public ModelAndView(String viewName) {
+        this.view = new JspView(viewName);
         this.model = new HashMap<>();
     }
 
@@ -39,6 +44,5 @@ public class ModelAndView {
         } catch (Exception e) {
             throw new IllegalArgumentException();
         }
-
     }
 }

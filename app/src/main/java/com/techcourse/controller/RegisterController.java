@@ -10,7 +10,6 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
-
 @Controller
 public class RegisterController {
 
@@ -19,7 +18,7 @@ public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView(REDIRECT_REGISTER));
+        return new ModelAndView(REDIRECT_REGISTER);
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -29,6 +28,6 @@ public class RegisterController {
             request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView(REDIRECT_INDEX));
+        return new ModelAndView(REDIRECT_INDEX);
     }
 }

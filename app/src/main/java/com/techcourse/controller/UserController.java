@@ -23,7 +23,7 @@ public class UserController {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final ModelAndView modelAndView = new ModelAndView();
         final User user = InMemoryUserRepository.findByAccount(account)
             .orElseThrow();
         modelAndView.addObject("user", user);
@@ -34,7 +34,7 @@ public class UserController {
     public ModelAndView showUsers(HttpServletRequest request, HttpServletResponse response) {
         List<User> users = InMemoryUserRepository.findAll();
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("users", users);
         return modelAndView;
     }

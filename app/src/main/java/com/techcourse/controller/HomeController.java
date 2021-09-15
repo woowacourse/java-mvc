@@ -11,8 +11,10 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class HomeController {
 
+    private static final String INDEX = "/index.jsp";
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView home(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView(INDEX);
     }
 }

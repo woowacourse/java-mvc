@@ -18,6 +18,6 @@ public class LogoutController {
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
         final HttpSession session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView(REDIRECT_HOME));
+        return new ModelAndView(REDIRECT_HOME);
     }
 }
