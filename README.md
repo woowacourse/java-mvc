@@ -65,11 +65,10 @@
   - [x] session 패키지
     - [x] UserSession.class 
 - [ ] mvc 모듈의 클래스 테스트 코드 추가
-  - [ ] controller 패키지
-    - [ ] AnnotationHandlerMapping.class
-    - [ ] ControllerScanner.class
-    - [ ] HandlerExecution.class
-    - [ ] HandlerKey.class
+  - [x] controller 패키지
+    - [x] AnnotationHandlerMapping.class
+    - [x] ControllerScanner.class
+    - [x] HandlerKey.class
   - [ ] handler 패키지
     - [ ] adapter 패키지
       - [ ] AnnotationHandlerAdapter.class

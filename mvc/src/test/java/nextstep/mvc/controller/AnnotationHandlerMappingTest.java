@@ -13,43 +13,61 @@ import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private AnnotationHandlerMapping annotationHandlerMapping;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
+        annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        annotationHandlerMapping.initialize();
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
     }
 
     @DisplayName("TestController GET 요청 테스트")
     @Test
     void get() throws Exception {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-
+        // given
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        // when
+        final HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @DisplayName("TestController POST 요청 테스트")
     @Test
     void post() throws Exception {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-
+        // given
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        // when
+        final HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("HttpServletRequest로 handler 찾기 테스트 - 존재하지 않는 경우")
+    @Test
+    void getHandlerWhenNotExists() {
+        // given
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        // when
+        final Object handler = annotationHandlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isNull();
     }
 }
