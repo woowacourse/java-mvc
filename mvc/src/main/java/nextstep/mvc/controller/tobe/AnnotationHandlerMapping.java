@@ -57,7 +57,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private Object getInitializedController(Class<?> controller) {
         try {
             return controller.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException |
+            InstantiationException |
+            IllegalAccessException |
+            InvocationTargetException e) {
             throw new IllegalArgumentException(e);
         }
     }

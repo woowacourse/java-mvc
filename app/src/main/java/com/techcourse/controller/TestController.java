@@ -2,6 +2,8 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -14,14 +16,18 @@ public class TestController {
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
-    public String findUserId(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller get method");
-        return "redirect:/index.html";
+        final ModelAndView modelAndView = new ModelAndView(new JspView("/get-test.jsp"));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
     }
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
-    public String save(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller post method");
-        return "redirect:/index.html";
+        final ModelAndView modelAndView = new ModelAndView(new JspView("/post-test.jsp"));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
     }
 }

@@ -10,15 +10,14 @@ public class AnnotationHandlerAdaptor implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof AnnotationHandlerMapping;
+        return handler instanceof HandlerExecution;
     }
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response,
                                Object handler) throws Exception {
-        AnnotationHandlerMapping cast = (AnnotationHandlerMapping) handler;
-        HandlerExecution handler1 = cast.getHandler(request);
+        HandlerExecution cast = (HandlerExecution) handler;
 
-        return handler1.handle(request, response);
+        return cast.handle(request, response);
     }
 }
