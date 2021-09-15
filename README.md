@@ -62,8 +62,8 @@
     - [x] LoginService.class
     - [x] RegisterService.class
     - [x] UserService.class
-  - [ ] session 패키지
-    - [ ] UserSession.class 
+  - [x] session 패키지
+    - [x] UserSession.class 
 - [ ] mvc 모듈의 클래스 테스트 코드 추가
   - [ ] controller 패키지
     - [ ] AnnotationHandlerMapping.class
