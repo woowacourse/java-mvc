@@ -184,16 +184,25 @@ public class ApplicationContext {
     }
 
     public <T> T findBeanByType(Class<T> type) {
+        T bean = findBeanByTypeOrNull(type);
+        if (bean != null) {
+            return bean;
+        }
+
+        String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, type.getSimpleName());
+        bean = (T) createBean(type);
+        BEANS.put(beanName, bean);
+        return bean;
+    }
+
+    public <T> T findBeanByTypeOrNull(Class<T> type) {
         for (String beanName : BEANS.keySet()) {
             Object bean = BEANS.get(beanName);
             if (type.isInstance(bean)) {
                 return (T) bean;
             }
         }
-        String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, type.getSimpleName());
-        T bean = (T) createBean(type);
-        BEANS.put(beanName, bean);
-        return bean;
+        return null;
     }
 
     public <T> List<T> findAllBeanByType(Class<T> type) {

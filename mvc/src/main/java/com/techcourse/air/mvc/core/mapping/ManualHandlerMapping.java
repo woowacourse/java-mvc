@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.techcourse.air.core.context.ApplicationContext;
 import com.techcourse.air.core.context.ApplicationContextProvider;
+import com.techcourse.air.mvc.configuration.DefaultHandlerConfiguration;
 import com.techcourse.air.mvc.configuration.HandlerConfigurer;
 import com.techcourse.air.mvc.core.controller.asis.Controller;
 
@@ -22,7 +23,10 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        HandlerConfigurer handlerConfigurer = context.findBeanByType(HandlerConfigurer.class);
+        HandlerConfigurer handlerConfigurer = context.findBeanByTypeOrNull(HandlerConfigurer.class);
+        if (handlerConfigurer == null) {
+            handlerConfigurer = new DefaultHandlerConfiguration();
+        }
         controllers.putAll(handlerConfigurer.customHandlerSetting());
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

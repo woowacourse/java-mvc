@@ -1,15 +1,24 @@
 package com.techcourse.air.controller;
 
+import com.techcourse.air.core.annotation.Controller;
 import com.techcourse.air.domain.User;
+import com.techcourse.air.mvc.web.annotation.RequestMapping;
+import com.techcourse.air.mvc.web.support.RequestMethod;
 import com.techcourse.air.repository.InMemoryUserRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.techcourse.air.mvc.core.controller.asis.Controller;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String registerView(HttpServletRequest req, HttpServletResponse res) {
+        return "/register.jsp";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String register(HttpServletRequest req, HttpServletResponse res) {
         final User user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
