@@ -1,16 +1,18 @@
 package nextstep.mvc.mapping;
 
+import com.techcourse.air.core.context.ApplicationContext;
+import com.techcourse.air.core.context.ApplicationContextProvider;
+import com.techcourse.air.mvc.core.controller.tobe.HandlerExecution;
+import com.techcourse.air.mvc.core.mapping.AnnotationHandlerMapping;
+import com.techcourse.air.mvc.core.returnvalue.JsonReturnValueHandler;
+import com.techcourse.air.mvc.core.returnvalue.ViewReturnValueHandler;
+import com.techcourse.air.mvc.core.view.ModelAndView;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.techcourse.air.core.context.ApplicationContext;
-import com.techcourse.air.core.context.ApplicationContextProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.techcourse.air.mvc.core.controller.tobe.HandlerExecution;
-import com.techcourse.air.mvc.core.mapping.AnnotationHandlerMapping;
-
-import com.techcourse.air.mvc.core.view.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -25,6 +27,8 @@ class AnnotationHandlerMappingTest {
         ApplicationContext context = new ApplicationContext("samples");
         ApplicationContextProvider.setApplicationContext(context);
         context.initializeContext();
+        context.getBean(ViewReturnValueHandler.class);
+        context.getBean(JsonReturnValueHandler.class);
         handlerMapping = context.findBeanByType(AnnotationHandlerMapping.class);
         handlerMapping.initialize();
     }
