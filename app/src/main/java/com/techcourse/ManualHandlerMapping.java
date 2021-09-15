@@ -39,7 +39,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     public Controller getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
 
-        LOG.debug("Request Mapping Uri : {}", requestURI);
+        LOG.debug("Request Mapping URI : {}", requestURI);
 
         return controllers.get(requestURI);
     }

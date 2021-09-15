@@ -44,6 +44,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Method[] methods = handler.getDeclaredMethods();
             getAnnotation(handler, methods);
         }
+
+        for (HandlerKey key : handlerExecutions.keySet()) {
+            LOG.info("Path: {}, Method: {}", key.getUrl(), key.getRequestMethod());
+        }
     }
 
     private void getAnnotation(Class<?> handler, Method[] methods) {
