@@ -5,8 +5,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManualHandlerAdapter implements HandlerAdapter {
+
+    private static final Logger log = LoggerFactory.getLogger(ManualHandlerAdapter.class);
 
     @Override
     public boolean supports(Object handler) {
@@ -18,6 +22,8 @@ public class ManualHandlerAdapter implements HandlerAdapter {
         Object handler) throws Exception {
         Controller controller = (Controller) handler;
         String viewName = controller.execute(request, response);
+        log.debug("viewName = {}", viewName);
+
         return new ModelAndView(new JspView(viewName));
     }
 }
