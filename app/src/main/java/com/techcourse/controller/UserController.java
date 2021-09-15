@@ -39,7 +39,7 @@ public class UserController {
         final List<User> users = InMemoryUserRepository.findAll();
 
         for (final User user : users) {
-            modelAndView.addObject(String.valueOf(user.getId()), user.getAccount());
+            modelAndView.addObject(String.valueOf(user.getId()), user);
         }
 
         return modelAndView;
