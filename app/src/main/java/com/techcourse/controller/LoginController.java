@@ -19,7 +19,6 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
