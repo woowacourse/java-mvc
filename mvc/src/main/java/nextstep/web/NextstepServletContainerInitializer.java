@@ -13,15 +13,17 @@ public class NextstepServletContainerInitializer implements ServletContainerInit
 
     @Override
     public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
-            throws ServletException {
+        throws ServletException {
         final List<WebApplicationInitializer> initializers = new LinkedList<>();
 
         if (webAppInitializerClasses != null) {
             for (Class<?> waiClass : webAppInitializerClasses) {
                 try {
-                    initializers.add((WebApplicationInitializer) waiClass.getDeclaredConstructor().newInstance());
+                    initializers.add((WebApplicationInitializer) waiClass.getDeclaredConstructor()
+                        .newInstance());
                 } catch (Throwable e) {
-                    throw new ServletException("Failed to instantiate WebApplicationInitializer class", e);
+                    throw new ServletException(
+                        "Failed to instantiate WebApplicationInitializer class", e);
                 }
             }
         }
