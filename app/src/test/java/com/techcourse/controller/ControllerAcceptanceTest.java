@@ -1,8 +1,6 @@
 package com.techcourse.controller;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.adapter.HandlerAdapter;
-import nextstep.mvc.exeption.HandlerAdapterException;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
@@ -20,7 +18,6 @@ import java.net.URL;
 
 import static nextstep.web.support.MediaType.APPLICATION_FORM;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("컨트롤러 인수 테스트")
 public class ControllerAcceptanceTest {
@@ -36,7 +33,7 @@ public class ControllerAcceptanceTest {
 
     private static Tomcat createTomcat() {
         final Tomcat tomcat = new Tomcat();
-        tomcat.setPort(8080);
+        tomcat.setPort(8081);
         skipBindOnInit(tomcat);
         return tomcat;
     }
@@ -145,12 +142,12 @@ public class ControllerAcceptanceTest {
 
 
     private HttpURLConnection connectTomcat(String path) throws IOException {
-        final URL url = new URL("http://localhost:8080" + path);
+        final URL url = new URL("http://localhost:8081" + path);
         return (HttpURLConnection) url.openConnection();
     }
 
     private HttpURLConnection postConnectTomcat(String path, String contentType) throws IOException {
-        final URL url = new URL("http://localhost:8080" + path);
+        final URL url = new URL("http://localhost:8081" + path);
         final HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestMethod("POST");
         httpURLConnection.setRequestProperty("Content-Type", contentType);

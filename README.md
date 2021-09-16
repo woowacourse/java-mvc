@@ -13,4 +13,4 @@
 
 ### 3단계
 - [x] View 구현하기
-- [ ] Legacy MVC 제거하기
+- [x] Legacy MVC 제거하기
