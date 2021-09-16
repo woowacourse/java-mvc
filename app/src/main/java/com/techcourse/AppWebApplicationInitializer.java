@@ -4,7 +4,6 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.adapter.ControllerHandlerAdapter;
 import nextstep.mvc.controller.adapter.HandlerAdapter;
 import nextstep.mvc.controller.adapter.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
@@ -21,7 +20,6 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
-        addFrameWork(dispatcherServlet, new ManualHandlerMapping(), new ControllerHandlerAdapter());
         addFrameWork(dispatcherServlet, new AnnotationHandlerMapping(BASE_PACKAGE), new HandlerExecutionHandlerAdapter());
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
