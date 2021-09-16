@@ -4,8 +4,8 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.servlet.AnnotationHandlerMapping;
+import nextstep.mvc.servlet.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,9 +21,6 @@ import static org.mockito.Mockito.when;
 
 class LoginControllerTest {
     private AnnotationHandlerMapping handlerMapping;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-    private HttpSession httpSession;
 
     @BeforeEach
     void setUp() {
@@ -33,14 +30,15 @@ class LoginControllerTest {
         } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        httpSession = mock(HttpSession.class);
     }
 
     @Test
     @DisplayName("로그인 성공 시")
     void login() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getParameter("account")).thenReturn("gugu");
@@ -52,12 +50,16 @@ class LoginControllerTest {
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/"));
+                .isEqualTo(new JspView("redirect:/index.jsp"));
     }
 
     @Test
     @DisplayName("로그인 실패 시")
     void loginFail() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getParameter("account")).thenReturn("gugu");
@@ -75,6 +77,10 @@ class LoginControllerTest {
     @Test
     @DisplayName("세션 존재 시")
     void loginSession() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(httpSession);
@@ -84,12 +90,16 @@ class LoginControllerTest {
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/"));
+                .isEqualTo(new JspView("redirect:/index.jsp"));
     }
 
     @Test
     @DisplayName("로그인 페이지")
     void loginView() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(httpSession);
@@ -105,6 +115,10 @@ class LoginControllerTest {
     @Test
     @DisplayName("로그인 페이지 세션")
     void loginViewWithSession() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(httpSession);
@@ -114,6 +128,6 @@ class LoginControllerTest {
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/"));
+                .isEqualTo(new JspView("redirect:/index.jsp"));
     }
 }
