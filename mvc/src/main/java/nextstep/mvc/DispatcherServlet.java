@@ -1,11 +1,11 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
+import nextstep.mvc.exception.NoSuchHandlerAdapterException;
+import nextstep.mvc.exception.NoSuchRequestMappingException;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -62,12 +62,12 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMapping selectHandlerMapping(HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(request)))
-                .findFirst().orElseThrow();
+                .findFirst().orElseThrow(() -> new NoSuchRequestMappingException("No such request mapping"));
     }
 
     private HandlerAdapter selectHandlerAdapter(Object findHandler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(findHandler))
-                .findFirst().orElseThrow();
+                .findFirst().orElseThrow(() -> new NoSuchHandlerAdapterException("No such handler adapter"));
     }
 }
