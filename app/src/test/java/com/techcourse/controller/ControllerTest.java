@@ -6,6 +6,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.*;
@@ -27,7 +28,7 @@ public abstract class ControllerTest {
         tomcat.start();
     }
 
-    protected void skipBindOnInit(Tomcat tomcat) {
+    protected static void skipBindOnInit(Tomcat tomcat) {
         final Connector connector = tomcat.getConnector();
         connector.setProperty("bindOnInit", "false");
     }

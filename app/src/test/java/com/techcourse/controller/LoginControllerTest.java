@@ -16,11 +16,8 @@ class LoginControllerTest extends ControllerTest{
     @DisplayName("로그인에 성공한다.")
     @Test
     public void loginSuccess() throws IOException {
-        //given
-        InMemoryUserRepository.save(new User(Integer.MAX_VALUE,"test1", "test1", "test@email.com"));
-
         //when
-        HttpURLConnection connection = connectTomcatPost("/login?account=test&password=test",
+        HttpURLConnection connection = connectTomcatPost("/login?account=gugu1&password=password",
                 APPLICATION_JSON_UTF8_VALUE);
 
         //then
@@ -46,7 +43,7 @@ class LoginControllerTest extends ControllerTest{
     @Test
     public void loginFailInvalidPassword() throws IOException {
         //given
-        InMemoryUserRepository.save(new User(Integer.MAX_VALUE,"test2", "test2", "test@email.com"));
+        InMemoryUserRepository.save(new User("test2", "test2", "test@email.com"));
 
         //when
         HttpURLConnection connection = connectTomcatPost("/login?account=test2&password=password",

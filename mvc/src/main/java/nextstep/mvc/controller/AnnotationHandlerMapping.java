@@ -39,6 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void registerHandlerExecution(Object controller, Set<Method> requestMappingMethods) {
         for (Method method : requestMappingMethods) {
+            log.info(method.getName() + method.getModifiers());
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             RequestMethod[] requestMethods = requestMapping.method();
             for (RequestMethod requestMethod : requestMethods) {

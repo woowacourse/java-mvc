@@ -24,7 +24,6 @@ public class LoginController {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView( "redirect:/index.jsp"));
         }
-
         User user = findUser(request);
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();

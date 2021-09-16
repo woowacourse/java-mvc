@@ -15,9 +15,6 @@ class LoginViewControllerTest extends ControllerTest {
     @DisplayName("login/view 응답에 성공한다.")
     @Test
     public void loginViewSuccess() throws IOException {
-        //given
-        InMemoryUserRepository.save(new User(Integer.MAX_VALUE,"test1", "test1", "test@email.com"));
-
         //when
         HttpURLConnection connection = connectTomcat("/login/view");
         InputStream inputStream = connection.getInputStream();

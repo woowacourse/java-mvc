@@ -17,7 +17,7 @@ class RegisterViewControllerTest extends ControllerTest {
     @Test
     public void registerViewSuccess() throws IOException {
         //given
-        InMemoryUserRepository.save(new User(Integer.MAX_VALUE,"test1", "test1", "test@email.com"));
+        InMemoryUserRepository.save(new User("test1", "test1", "test@email.com"));
 
         //when
         HttpURLConnection connection = connectTomcat("/register/view");

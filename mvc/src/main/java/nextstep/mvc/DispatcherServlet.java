@@ -8,6 +8,7 @@ import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,8 +56,11 @@ public class DispatcherServlet extends HttpServlet {
                 HandlerAdapter adapter = getHandlerAdapter(obj);
                 ModelAndView modelAndView = adapter.handle(request, response, obj);
                 modelAndView.render(request, response);
-            } catch (Exception e) {
+            } catch (InvocationTargetException e) {
+                e.getTargetException().printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }, () -> response.setStatus(HttpServletResponse.SC_NOT_FOUND));
     }

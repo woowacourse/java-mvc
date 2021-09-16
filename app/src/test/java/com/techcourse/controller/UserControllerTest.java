@@ -15,10 +15,10 @@ class UserControllerTest extends ControllerTest{
     @Test
     public void successUserGet() throws IOException {
         //given
-        InMemoryUserRepository.save(new User(Integer.MAX_VALUE,"test", "test", "test@email.com"));
+        InMemoryUserRepository.save(new User("test1234", "test1234", "test@email.com"));
 
         //when
-        HttpURLConnection connection = connectTomcat("/api/user?account=test");
+        HttpURLConnection connection = connectTomcat("/api/user?account=test1234");
         int actual = connection.getResponseCode();
 
         //then

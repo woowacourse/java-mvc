@@ -14,9 +14,9 @@ class RegisterControllerTest extends ControllerTest {
 
     @DisplayName("회원가입 성공 시 /index.html로 리다이렉트한다.")
     @Test
-    public void loginSuccess() throws IOException {
+    public void registerSuccess() throws IOException {
         //when
-        HttpURLConnection connection = connectTomcatPost("/register?account=test&password=password&email=tset@tset.com",
+        HttpURLConnection connection = connectTomcatPost("/register?account=test&password=password&email=test@tset.com",
                 APPLICATION_JSON_UTF8_VALUE);
         InputStream inputStream = connection.getInputStream();
 
