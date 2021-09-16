@@ -44,7 +44,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         );
     }
 
-
     private void registerHandlerExecutions() throws ReflectiveOperationException {
         Set<Class<?>> controllerClasses = findClassesContainsControllerAnnotation();
         for (Class<?> controllerClass : controllerClasses) {
