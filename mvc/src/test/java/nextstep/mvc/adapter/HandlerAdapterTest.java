@@ -28,15 +28,4 @@ class HandlerAdapterTest {
         //then
         assertThat(isSupport).isTrue();
     }
-
-    @Test
-    void manualHandlerAdapterTest() {
-        //given
-        final HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
-        final ManualController manualController = new ManualController();
-        //when
-        final boolean isSupport = handlerAdapter.supports(manualController);
-        //then
-        assertThat(isSupport).isTrue();
-    }
 }

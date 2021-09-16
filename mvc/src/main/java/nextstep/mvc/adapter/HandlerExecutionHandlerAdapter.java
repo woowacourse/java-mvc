@@ -9,6 +9,8 @@ import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.TextView;
 import nextstep.web.support.FileType;
 
+import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
+
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
     @Override
@@ -37,7 +39,7 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     }
 
     private void changeViewWithStringValue(ModelAndView modelAndView, String handledValue) {
-        if (FileType.matches(handledValue)) {
+        if (FileType.matches(handledValue) || handledValue.startsWith(REDIRECT_PREFIX)) {
             modelAndView.changeView(new JspView(handledValue));
             return;
         }
