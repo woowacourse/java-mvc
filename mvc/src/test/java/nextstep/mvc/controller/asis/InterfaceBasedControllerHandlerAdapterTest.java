@@ -1,9 +1,11 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.asis.InterfaceBasedControllerHandlerAdapter;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +32,7 @@ class InterfaceBasedControllerHandlerAdapterTest {
                 .willReturn(expectedViewName);
 
         HandlerExecution mockHandlerExecution = mock(HandlerExecution.class);
-        ;
+
         given(mockHandlerExecution.handle(any(HttpServletRequest.class), any(HttpServletResponse.class)))
                 .willReturn(new ModelAndView(new JspView("fail")));
 
