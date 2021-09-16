@@ -1,19 +1,18 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,46 +31,46 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Start Initializing AnnotationHandlerMapping!");
 
-        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner();
 
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers(basePackage);
+        Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
 
-        controllers.forEach(this::setHandlerExecutionsOf);
+        for (Method method : requestMappingMethods) {
+            addHandlerExecution(controllers, method);
+        }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void setHandlerExecutionsOf(Class<?> controller) {
-        Method[] methods = controller.getDeclaredMethods();
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> controllers) {
+        Set<Method> methods = new HashSet<>();
 
-        Arrays.stream(methods)
-                .forEach(method -> setHandlerExecutionsOf(controller, method));
+        for (Class<?> controller : controllers) {
+            methods.addAll(
+                    ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class))
+            );
+        }
+
+        return methods;
     }
 
-    private void setHandlerExecutionsOf(Class<?> controller, Method method) {
+    private void addHandlerExecution(Map<Class<?>, Object> maps, Method method) {
+        Class<?> clazz = method.getDeclaringClass();
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (Objects.isNull(requestMapping)) {
-            return;
-        }
 
-        String requestURL = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method();
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
 
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey key = new HandlerKey(requestURL, requestMethod);
-            handlerExecutions.put(key, getHandlerExecutionOf(controller, method));
-            log.info("Path : {}, Controller : {}", key, controller);
+        for (HandlerKey key : handlerKeys) {
+            handlerExecutions.put(key, new HandlerExecution(maps.get(clazz), method));
+            log.info("Path : {}, Controller : {}", key, clazz);
         }
     }
 
-    private HandlerExecution getHandlerExecutionOf(Class<?> controller, Method method) {
-        try {
-            Constructor<?> constructor = controller.getConstructor();
-            constructor.setAccessible(true);
-            return new HandlerExecution(constructor.newInstance(), method);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException("Handler initializing error");
-        }
+    private List<HandlerKey> mapHandlerKeys(String requestUrl, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(requestUrl, requestMethod))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(HttpServletRequest request) {
