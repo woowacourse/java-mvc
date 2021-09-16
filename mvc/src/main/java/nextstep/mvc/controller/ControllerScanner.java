@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import nextstep.mvc.utils.AnnotationScanner;
 import nextstep.web.annotation.Controller;
