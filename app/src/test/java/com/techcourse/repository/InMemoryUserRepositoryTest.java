@@ -43,7 +43,7 @@ class InMemoryUserRepositoryTest {
         InMemoryUserRepository.save(newUser1);
 
         // when then
-        assertThatThrownBy(() -> InMemoryUserRepository.save(newUser1))
+        assertThatThrownBy(() -> InMemoryUserRepository.save(newUser2))
                 .isInstanceOf(DuplicatedUserException.class);
     }
 
