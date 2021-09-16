@@ -19,7 +19,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
         ModelAndView modelAndView;
         if (UserSession.isLoggedIn(req.getSession())) {
             modelAndView = new ModelAndView(new JspView("redirect:/index.jsp"));
