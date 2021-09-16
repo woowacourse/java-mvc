@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 class LoginControllerTest {
 
@@ -79,5 +79,21 @@ class LoginControllerTest {
 
         // then
         assertThat(modelAndView.getViewName()).isEqualTo("redirect:/401.jsp");
+    }
+
+    @DisplayName("로그아웃을 성공하면 index.jsp로 리다이렉트된다.")
+    @Test
+    void logout() {
+        // given
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getMethod()).thenReturn(RequestMethod.POST.name());
+        when(request.getSession()).thenReturn(session);
+        doNothing().when(session).removeAttribute(anyString());
+
+        // when
+        String viewName = loginController.logout(request, response);
+
+        // then
+        assertThat(viewName).isEqualTo("redirect:/");
     }
 }

@@ -5,12 +5,20 @@ import com.techcourse.exception.DuplicatedUserException;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) {
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public String view(HttpServletRequest req, HttpServletResponse res) {
+        return "/register.jsp";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String register(HttpServletRequest req, HttpServletResponse res) {
         final User user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
