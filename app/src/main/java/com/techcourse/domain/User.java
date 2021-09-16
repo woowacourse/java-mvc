@@ -28,7 +28,14 @@ public class User {
                 "id=" + id +
                 ", account='" + account + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 '}';
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }
