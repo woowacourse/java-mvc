@@ -13,7 +13,7 @@ import nextstep.mvc.mapper.HandlerMapping;
 import nextstep.mvc.view.JsonViewResolver;
 import nextstep.mvc.view.JspViewResolver;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.UrlBasedViewResolver;
+import nextstep.mvc.view.RedirectViewResolver;
 import nextstep.mvc.view.View;
 import nextstep.mvc.view.ViewResolver;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initialViewResolver() {
         this.viewResolvers.add(new JsonViewResolver());
-        this.viewResolvers.add(new UrlBasedViewResolver());
+        this.viewResolvers.add(new RedirectViewResolver());
         this.viewResolvers.add(new JspViewResolver());
     }
 

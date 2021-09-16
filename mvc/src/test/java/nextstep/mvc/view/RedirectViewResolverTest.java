@@ -6,20 +6,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class UrlBasedViewResolverTest {
+class RedirectViewResolverTest {
 
-    private UrlBasedViewResolver urlBasedViewResolver;
+    private RedirectViewResolver redirectViewResolver;
 
     @BeforeEach
     void setUp() {
-        urlBasedViewResolver = new UrlBasedViewResolver();
+        redirectViewResolver = new RedirectViewResolver();
     }
 
     @DisplayName("Jsp 관련 뷰인지 확인한다.")
     @Test
     void supports() {
-        boolean isSupport = urlBasedViewResolver.supports("redirect:/");
-        boolean isNotSupport = urlBasedViewResolver.supports("index.htm");
+        boolean isSupport = redirectViewResolver.supports("redirect:/");
+        boolean isNotSupport = redirectViewResolver.supports("index.htm");
 
         assertThat(isSupport).isTrue();
         assertThat(isNotSupport).isFalse();
@@ -28,7 +28,7 @@ class UrlBasedViewResolverTest {
     @DisplayName("뷰 이름으로 뷰 객체를 반환한다.")
     @Test
     void resolveViewName() {
-        View view = urlBasedViewResolver.resolveViewName("redirect:/");
+        View view = redirectViewResolver.resolveViewName("redirect:/");
 
         assertThat(view).isInstanceOf(RedirectView.class);
     }
