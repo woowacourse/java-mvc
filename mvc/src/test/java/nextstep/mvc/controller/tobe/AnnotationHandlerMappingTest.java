@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("/get-test GET : 요청이 잘 매핑되는지 테스트")
     @Test
     void get() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -35,6 +37,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("/post-test POST: 요청이 잘 매핑되는지 테스트")
     @Test
     void post() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
