@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecution;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 

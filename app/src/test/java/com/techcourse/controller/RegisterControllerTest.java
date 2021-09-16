@@ -1,52 +1,58 @@
-package nextstep.mvc.controller.tobe;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.ModelAndView;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+package com.techcourse.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AnnotationHandlerMappingTest {
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class RegisterControllerTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         handlerMapping.initialize();
     }
 
     @Test
-    void get() throws Exception {
+    void getRegisterPage() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("GET");
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        JspView view = (JspView) modelAndView.getView();
+        assertThat(view.getViewName()).isEqualTo("/register.jsp");
     }
 
     @Test
-    void post() throws Exception {
+    void register() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("account")).thenReturn("account");
+        when(request.getParameter("password")).thenReturn("password");
+        when(request.getParameter("email")).thenReturn("email@email.com");
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        JspView view = (JspView) modelAndView.getView();
+        assertThat(view.getViewName()).isEqualTo("redirect:/index.jsp");
     }
 }

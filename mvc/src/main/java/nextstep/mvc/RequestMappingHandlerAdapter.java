@@ -2,7 +2,7 @@ package nextstep.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
