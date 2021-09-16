@@ -72,7 +72,7 @@ class ControllerAcceptanceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/login", "/login/view", "/logout" , "/register", "/register/view"})
+    @ValueSource(strings = {"/login", "/login/view", "/logout", "/register", "/register/view"})
     void controller_get_method(String path) throws IOException {
         //given
         //when

@@ -15,11 +15,12 @@ import org.slf4j.LoggerFactory;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final String REDIRECT_MAIN_PAGE = "redirect:/index.jsp";
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
+            return REDIRECT_MAIN_PAGE;
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -42,7 +43,7 @@ public class UserController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
+                    return REDIRECT_MAIN_PAGE;
                 })
                 .orElseGet(() -> "/login.jsp");
     }
@@ -54,7 +55,7 @@ public class UserController {
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
-        return "redirect:/index.jsp";
+        return REDIRECT_MAIN_PAGE;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -67,7 +68,7 @@ public class UserController {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
+            return REDIRECT_MAIN_PAGE;
         }
         return "redirect:/401.jsp";
     }
