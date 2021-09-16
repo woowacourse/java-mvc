@@ -48,6 +48,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(method, clazz);
             handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("Path : {}, Method : {}", value, requestMethod);
         }
     }
 
