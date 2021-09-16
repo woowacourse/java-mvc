@@ -9,5 +9,5 @@
 - [x] Legacy MVC와 Annotation Based MVC 통합
 
 # Step3
-- [] View 구현하기
+- [x] JsonView 구현하기
 - [] Legacy MVC 제거하기
