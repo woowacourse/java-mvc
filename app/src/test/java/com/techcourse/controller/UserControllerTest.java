@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -47,5 +48,30 @@ class UserControllerTest {
 
         assertThat(modelAndView.getObject("user")).usingRecursiveComparison()
                 .isEqualTo(user);
+    }
+
+    @Test
+    void showAll() {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/api/users");
+        when(request.getMethod()).thenReturn("GET");
+
+        User user = new User(1L, "gugu", "1234", "gugu@gugu");
+        User user2 = new User(2L, "sally", "1234", "sally@sally");
+        InMemoryUserRepository.save(user);
+        InMemoryUserRepository.save(user2);
+
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        modelAndView.render(request, response);
+
+        Map<String, Object> model = modelAndView.getModel();
+        assertThat(model).hasSize(2);
+        assertThat(model.get("gugu")).usingRecursiveComparison()
+                .isEqualTo(user);
+        assertThat(model.get("sally")).usingRecursiveComparison()
+                .isEqualTo(user2);
     }
 }
