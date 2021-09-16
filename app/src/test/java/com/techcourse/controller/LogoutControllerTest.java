@@ -2,6 +2,7 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class RegisterControllerTest {
+class LogoutControllerTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
@@ -29,36 +30,20 @@ class RegisterControllerTest {
     }
 
     @Test
-    void get() {
+    void logout() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession httpSession = mock(HttpSession.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/logout");
         when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(httpSession);
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("/register.jsp"));
+                .isEqualTo(new JspView("redirect:/"));
     }
 
-
-    @Test
-    void post() {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/register");
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getParameter("account")).thenReturn("gugu");
-        when(request.getParameter("password")).thenReturn("1234");
-        when(request.getParameter("email")).thenReturn("gugu@gugu");
-
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/index.jsp"));
-    }
 }

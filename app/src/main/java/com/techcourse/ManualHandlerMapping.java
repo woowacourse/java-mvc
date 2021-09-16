@@ -1,10 +1,9 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.servlet.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.mvc.servlet.HandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
