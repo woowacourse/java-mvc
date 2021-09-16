@@ -1,11 +1,10 @@
 package nextstep.mvc.servlet;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.handleradapter.HandlerAdapterRegistry;
 import nextstep.mvc.handleradapter.HandlerAdapter;
+import nextstep.mvc.handleradapter.HandlerAdapterRegistry;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.handlermapping.HandlerMappingRegistry;
 import nextstep.mvc.view.JspView;

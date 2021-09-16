@@ -34,11 +34,11 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
         return InMemoryUserRepository.findByAccount(req.getParameter(ACCOUNT))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse(new ModelAndView(new JspView(REDIRECT_INDEX_JSP)));
+            .map(user -> {
+                log.info("User : {}", user);
+                return login(req, user);
+            })
+            .orElse(new ModelAndView(new JspView(REDIRECT_INDEX_JSP)));
     }
 
     private ModelAndView login(HttpServletRequest request, User user) {
