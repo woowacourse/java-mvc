@@ -9,8 +9,8 @@ import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
 
-    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static String MEDIA_TYPE = MediaType.APPLICATION_JSON_UTF8_VALUE;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String MEDIA_TYPE = MediaType.APPLICATION_JSON_UTF8_VALUE;
 
     private final int status;
 
