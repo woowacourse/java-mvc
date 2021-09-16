@@ -101,7 +101,7 @@ public class DispatcherServlet extends HttpServlet {
         String viewName = mv.getView();
         ViewResolver resolver = viewResolvers.stream()
             .filter(viewResolver -> viewResolver.supports(viewName))
-            .findAny()
+            .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("ViewResolver를 찾을 수 없습니다."));
         View view = resolver.resolveViewName(viewName);
         view.render(mv.getModel(), request, response);
