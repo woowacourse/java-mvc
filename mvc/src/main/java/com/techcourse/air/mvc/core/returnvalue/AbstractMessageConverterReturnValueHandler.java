@@ -10,11 +10,11 @@ import com.techcourse.air.mvc.core.returnvalue.messageconverter.StringHttpMessag
 
 import jakarta.servlet.http.HttpServletResponse;
 
-public abstract class AbstractMessageConverterHandler implements ReturnValueHandler {
+public abstract class AbstractMessageConverterReturnValueHandler implements ReturnValueHandler {
 
     protected List<HttpMessageConverter<?>> messageConverters;
 
-    public AbstractMessageConverterHandler() {
+    public AbstractMessageConverterReturnValueHandler() {
         this.messageConverters = new ArrayList<>();
         this.messageConverters.add(new StringHttpMessageConverter());
         this.messageConverters.add(new ObjectHttpMessageConverter());

@@ -8,7 +8,7 @@ import com.techcourse.air.mvc.web.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-public class JsonReturnValueHandler extends AbstractMessageConverterHandler {
+public class JsonReturnValueHandler extends AbstractMessageConverterReturnValueHandler {
 
     @Override
     public boolean supportsReturnType(Method method) {
