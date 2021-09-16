@@ -47,5 +47,8 @@ LegacyMVC와 Repository가 달라질 가능성이 존재했다.
 - [x] 로깅 레벨 수정
 - [ ] ~~DisplayName 명사형으로~~ Nested를 사용하다보니 동사가 더 자연스러운거 같다!!
 - [x] LegacyMVC 제거
-  - [ ] Controller 관련 테스트 코드 작성
+  - [x] Controller 관련 테스트 코드 작성
 - [x] Jackson 라이브러리를 이용한 JSON 반환
+
+ModelAndView 를 어떻게 테스트 해야할지는 도저히 모르겠고, 그런 와중에 테스트는 진행하고 싶어서
+ModelAndView 쪽에 getter를 만들어버렸다... 테스트를 위한 getter를 사용한게 올바른 행동인지 모르겠다 ㅠㅠ..
