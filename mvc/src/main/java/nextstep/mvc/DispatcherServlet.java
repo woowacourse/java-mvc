@@ -9,9 +9,13 @@ import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.adapater.AnnotationHandlerAdapter;
 import nextstep.mvc.adapater.HandlerAdapter;
-import nextstep.mvc.adapater.ManualHandlerAdapter;
 import nextstep.mvc.mapper.HandlerMapping;
+import nextstep.mvc.view.JsonViewResolver;
+import nextstep.mvc.view.JspViewResolver;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.RedirectViewResolver;
+import nextstep.mvc.view.View;
+import nextstep.mvc.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,21 +26,34 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final List<ViewResolver> viewResolvers;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
+        this.viewResolvers = new ArrayList<>();
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
         initHandlerAdapters();
+        initialHandlerAdapters();
+        initialViewResolver();
     }
 
     private void initHandlerAdapters() {
         this.handlerAdapters.add(new AnnotationHandlerAdapter());
-        this.handlerAdapters.add(new ManualHandlerAdapter());
+    }
+
+    private void initialHandlerAdapters() {
+        this.handlerAdapters.add(new AnnotationHandlerAdapter());
+    }
+
+    private void initialViewResolver() {
+        this.viewResolvers.add(new JsonViewResolver());
+        this.viewResolvers.add(new RedirectViewResolver());
+        this.viewResolvers.add(new JspViewResolver());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -56,8 +73,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             HandlerAdapter adapter = getHandlerAdapter(handler);
             ModelAndView mv = adapter.handle(request, response, handler);
-            mv.render(request, response);
-
+            render(mv, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -66,10 +82,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseGet(null);
+            .map(handlerMapping -> handlerMapping.getHandler(request))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElseGet(null);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
@@ -79,5 +95,15 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         throw new RuntimeException("존재하지 않는 handler adapter 입니다.");
+    }
+
+    private void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String viewName = mv.getView();
+        ViewResolver resolver = viewResolvers.stream()
+            .filter(viewResolver -> viewResolver.supports(viewName))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("ViewResolver를 찾을 수 없습니다."));
+        View view = resolver.resolveViewName(viewName);
+        view.render(mv.getModel(), request, response);
     }
 }

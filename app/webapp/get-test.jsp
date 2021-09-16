@@ -6,7 +6,7 @@
     <title>get-test</title>
 </head>
 <body class="bg-primary">
-    <h1>get-test</h1>
+<h1>get-test</h1>
 <%@ include file="include/footer.jspf" %>
 </body>
 </html>
