@@ -1,4 +1,5 @@
 # MVC 프레임워크 구현하기
+## 1단계
 - [x] `AnnotationHandlerMapping.initialize` 메서드 완성
 - [x] `AnnotationHandlerMappingTest` 테스트 통과 시키기
 - [x] `AnnotationHandlerMapping` 리팩토링
@@ -23,6 +24,7 @@
 
 <br>
 
+## 2단계
 - [x] 리플렉션 스캐너 명시적으로 기입하기
 - [x] given 코드 리팩토링
 - [x] AnnotationHandlerMapping 로거 왜 제거했는지 떠올리기
@@ -38,3 +40,11 @@ Repository, Service를 주입하기 위해선 AnnotationHandlerMapping에서
 그러려면 이미 Service, Repostiroy 인스턴스가 생성되어 있어야했는데, 
 이 과정에서 Repository의 인스턴스가 생성되게 되면, AnnotationHandlerMapping을 사용하지 않는 기존 
 LegacyMVC와 Repository가 달라질 가능성이 존재했다.
+
+<br>
+
+## 3단계
+- [x] 로깅 레벨 수정
+- [ ] ~~DisplayName 명사형으로~~ Nested를 사용하다보니 동사가 더 자연스러운거 같다!!
+- [ ] LegacyMVC 제거
+- [ ] Jackson 라이브러리를 이용한 JSON 반환
