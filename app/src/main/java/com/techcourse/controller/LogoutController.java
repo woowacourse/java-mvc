@@ -1,17 +1,21 @@
 package com.techcourse.controller;
 
+import com.techcourse.domain.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class LogoutController implements Controller {
+@Controller
+public class LogoutController {
 
-    @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         View view = new JspView("redirect:/");
