@@ -17,6 +17,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String ERROR_TO_JSP = "500.jsp";
 
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerMappingRegistry handlerMappingRegistry;
@@ -51,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            final ModelAndView modelAndView = new ModelAndView(new JspView("500.jsp"));
+            final ModelAndView modelAndView = new ModelAndView(new JspView(ERROR_TO_JSP));
             modelAndView.render(request, response);
         }
     }
