@@ -4,16 +4,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.adapter.HandlerAdapters;
 import nextstep.mvc.controller.HandlerMappings;
 import nextstep.mvc.exception.HandlerNotFoundException;
-import nextstep.mvc.exception.MvcException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,11 +19,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapters = new HandlerAdapters();
     }
 
     @Override
@@ -47,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.findHandler(request);
-            HandlerAdapter adapter = findAdapter(handler);
+            HandlerAdapter adapter = handlerAdapters.findAdapter(handler);
             ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (HandlerNotFoundException e) {
@@ -56,14 +54,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerAdapter findAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new MvcException(
-                        String.format("%s 타입 핸들러를 처리하는 어댑터가 없습니다.", handler.getClass().getSimpleName()))
-                );
     }
 }
