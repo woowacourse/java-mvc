@@ -15,7 +15,7 @@ class RegisterViewControllerTest extends ControllerTest {
 
     @DisplayName("/register/view 응답에 성공한다.")
     @Test
-    public void registerViewSuccess() throws IOException {
+    void registerViewSuccess() throws IOException {
         //given
         InMemoryUserRepository.save(new User("test1", "test1", "test@email.com"));
 
