@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(AppWebApplicationInitializer.class);
-    private static final String BASE_PACKAGE = "com.techcourse";
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
 
     @Override
     public void onStartup(ServletContext servletContext) {
