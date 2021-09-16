@@ -17,7 +17,7 @@ public class LoginViewController implements Controller {
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
             User user = UserSession.getUser(request.getSession());
-            LOG.info("logged in {}", user.getAccount());
+            LOG.debug("logged in {}", user.getAccount());
             return "redirect:/index.jsp";
         }
 
