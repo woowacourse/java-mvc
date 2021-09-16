@@ -14,7 +14,7 @@ class TestControllerTest extends ControllerTest{
 
     @DisplayName("/get-test 응답에 성공한다.")
     @Test
-    public void successGetTest() throws IOException {
+    void successGetTest() throws IOException {
         //when
         HttpURLConnection connection = connectTomcat("/get-test");
         InputStream inputStream = connection.getInputStream();
@@ -27,7 +27,7 @@ class TestControllerTest extends ControllerTest{
 
     @DisplayName("/post-test 응답에 성공한다.")
     @Test
-    public void successPostTest() throws IOException {
+    void successPostTest() throws IOException {
         //when
         HttpURLConnection connection = connectTomcatPost("/post-test", APPLICATION_JSON_UTF8_VALUE);
         InputStream inputStream = connection.getInputStream();

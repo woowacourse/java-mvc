@@ -5,13 +5,9 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.web.support.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 
 public class JsonView implements View {
-    private static final Logger log = LoggerFactory.getLogger(JsonView.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

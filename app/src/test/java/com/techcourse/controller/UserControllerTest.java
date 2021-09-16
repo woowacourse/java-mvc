@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UserControllerTest extends ControllerTest{
     @DisplayName("유저 조회에 성공한다.")
     @Test
-    public void successUserGet() throws IOException {
+    void successUserGet() throws IOException {
         //given
         InMemoryUserRepository.save(new User("test1234", "test1234", "test@email.com"));
 
@@ -27,7 +27,7 @@ class UserControllerTest extends ControllerTest{
 
     @DisplayName("존재하지 않는 유저를 조회한다.")
     @Test
-    public void failUserGet() throws IOException {
+    void failUserGet() throws IOException {
         //when
         HttpURLConnection connection = connectTomcat("/api/user?account=who");
         int actual = connection.getResponseCode();

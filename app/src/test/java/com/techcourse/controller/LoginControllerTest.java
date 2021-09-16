@@ -16,7 +16,7 @@ class LoginControllerTest extends ControllerTest{
 
     @DisplayName("로그인에 성공한다.")
     @Test
-    public void loginSuccess() throws IOException {
+    void loginSuccess() throws IOException {
         //when
         HttpURLConnection connection = connectTomcatPost("/login?account=gugu&password=password",
                 APPLICATION_JSON_UTF8_VALUE);
@@ -28,7 +28,7 @@ class LoginControllerTest extends ControllerTest{
 
     @DisplayName("회원가입 되지 않은 회원으로 로그인하면 실패한다.")
     @Test
-    public void loginFailNotRegistered() throws IOException {
+    void loginFailNotRegistered() throws IOException {
         //given
         HttpURLConnection connection = connectTomcatPost("/login?account=NotRegisteredUser&password=test",
                 APPLICATION_JSON_UTF8_VALUE);
@@ -42,7 +42,7 @@ class LoginControllerTest extends ControllerTest{
 
     @DisplayName("비밀번호가 틀릴 경우 로그인에 실패하고, 401페이지로 리다이렉트한다.")
     @Test
-    public void loginFailInvalidPassword() throws IOException {
+    void loginFailInvalidPassword() throws IOException {
         //given
         InMemoryUserRepository.save(new User("test2", "test2", "test@email.com"));
 

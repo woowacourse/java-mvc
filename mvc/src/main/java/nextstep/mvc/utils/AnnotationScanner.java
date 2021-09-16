@@ -10,6 +10,9 @@ import java.util.Set;
 
 public class AnnotationScanner {
 
+    private AnnotationScanner() {
+    }
+
     public static Set<Class<?>> scanClassWith(Object[] basePackages, Class<? extends Annotation> annotation) {
         Set<Class<?>> classes = new HashSet<>();
         Reflections reflections;
@@ -21,7 +24,7 @@ public class AnnotationScanner {
         return classes;
     }
 
-    public static Set<Method> scanMethod(Class clazz, Class<? extends Annotation> annotation) {
+    public static Set<Method> scanMethod(Class<?> clazz, Class<? extends Annotation> annotation) {
        return ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(annotation));
     }
 }

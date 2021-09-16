@@ -20,7 +20,6 @@ public class InMemoryUserRepository {
     }
 
     public static void save(User user) {
-        log.debug("Saved User : {}", user.toString());
         autoIncrementId++;
         database.put(user.getAccount(), new User(autoIncrementId, user.getAccount(), user.getPassword(), user.getEmail()));
     }

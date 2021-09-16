@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LoginViewControllerTest extends ControllerTest {
     @DisplayName("login/view 응답에 성공한다.")
     @Test
-    public void loginViewSuccess() throws IOException {
+    void loginViewSuccess() throws IOException {
         //when
         HttpURLConnection connection = connectTomcat("/login/view");
         InputStream inputStream = connection.getInputStream();
