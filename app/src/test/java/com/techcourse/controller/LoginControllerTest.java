@@ -1,5 +1,6 @@
 package com.techcourse.controller;
 
+import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,10 +40,13 @@ class LoginControllerTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         HttpSession httpSession = mock(HttpSession.class);
 
+        User user = new User(1L, "gugu", "password", "gugu@gugu");
+        InMemoryUserRepository.save(user);
+
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("POST");
-        when(request.getParameter("account")).thenReturn("gugu");
-        when(request.getParameter("password")).thenReturn("password");
+        when(request.getParameter("account")).thenReturn(user.getAccount());
+        when(request.getParameter("password")).thenReturn(user.getPassword());
         when(request.getSession()).thenReturn(httpSession);
         when(httpSession.getAttribute(SESSION_KEY)).thenReturn(null);
 
