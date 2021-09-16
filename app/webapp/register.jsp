@@ -36,7 +36,7 @@
                                         </form>
                                     </div>
                                     <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="/login/view">이미 가입하셨나요? 로그인 하러가기</a></div>
+                                        <div class="small"><a href="/login">이미 가입하셨나요? 로그인 하러가기</a></div>
                                     </div>
                                 </div>
                             </div>

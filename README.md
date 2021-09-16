@@ -5,3 +5,9 @@
 - [x] AnnotationHandlerMappingTest 클래스를 참고하여 테스트 통과시키도록 구현하기
 - [x] Controller 인터페이스를 구현한 컨트롤러와 어노테이션을 가진 컨트롤러 둘 다 쓸 수 있어야 함
 - [x] HandlerAdapter 구현
+- [x] View 구현하기
+  - [x] JsonView
+  - [x] JspView
+  - [x] RedirectView
+- [x] ViewResolver 구현해보기
+  
