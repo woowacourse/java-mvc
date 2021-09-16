@@ -44,8 +44,9 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = getHandlerMapping(request);
 
             if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(request, response);
-                move(viewName, request, response);
+                ModelAndView modelAndView = ((Controller) handler).execute(request, response);
+                View view = modelAndView.getView();
+                view.render(modelAndView.getModel(), request, response);
             } else if (handler instanceof HandlerExecution) {
                 ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
                 View view = modelAndView.getView();
