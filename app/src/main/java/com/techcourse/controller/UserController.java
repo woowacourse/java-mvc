@@ -29,18 +29,18 @@ public class UserController {
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         String account = request.getParameter("account");
         LOG.debug("user account : {}", account);
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
 
         try {
             User user = userService.findUserByAccount(account);
 
-            ModelAndView modelAndView = new ModelAndView(new JsonView());
             modelAndView.addObject("user", user);
-
             return modelAndView;
         } catch (UserNotFoundException e) {
             LOG.debug("Not found User by Account: {}", account);
 
-            return new ModelAndView(new JspView("redirect:/404.jsp"));
+            modelAndView.addObject("exception", "Not found User by Account");
+            return modelAndView;
         }
     }
 }
