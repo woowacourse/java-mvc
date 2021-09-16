@@ -11,6 +11,7 @@ import nextstep.web.support.RequestMethod;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestMapping {
+
     String value() default "";
 
     RequestMethod method() default GET;

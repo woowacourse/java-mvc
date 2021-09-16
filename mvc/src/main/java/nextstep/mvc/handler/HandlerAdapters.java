@@ -1,16 +1,16 @@
 package nextstep.mvc.handler;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class HandlerAdapters {
 
     private final Set<HandlerAdapter> values;
 
-    public HandlerAdapters(List<HandlerAdapter> handlerAdapters) {
+    public HandlerAdapters(HandlerAdapter... handlerAdapters) {
         this.values = new HashSet<>();
-        this.values.addAll(handlerAdapters);
+        this.values.addAll(Arrays.asList(handlerAdapters));
     }
 
     public HandlerAdapter chooseProperAdapter(Object handler) {

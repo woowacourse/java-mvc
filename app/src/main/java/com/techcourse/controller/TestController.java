@@ -19,7 +19,8 @@ public class TestController {
     public ModelAndView findUserId(HttpServletRequest request) {
         log.info("test controller get method, url -> {}", request.getRequestURI());
         String viewNameWithoutExtension = request.getRequestURI();
-        final ModelAndView modelAndView = new ModelAndView(new JspView(viewNameWithoutExtension + JSP_EXTENSION));
+        final ModelAndView modelAndView = new ModelAndView(
+            new JspView(viewNameWithoutExtension + JSP_EXTENSION));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
@@ -28,7 +29,8 @@ public class TestController {
     public ModelAndView save(HttpServletRequest request) {
         log.info("test controller get method, url -> {}", request.getRequestURI());
         String viewNameWithoutExtension = request.getRequestURI();
-        final ModelAndView modelAndView = new ModelAndView(new JspView(viewNameWithoutExtension + JSP_EXTENSION));
+        final ModelAndView modelAndView = new ModelAndView(
+            new JspView(viewNameWithoutExtension + JSP_EXTENSION));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }

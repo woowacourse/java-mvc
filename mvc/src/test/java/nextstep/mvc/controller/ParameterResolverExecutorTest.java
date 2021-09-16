@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -8,9 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import nextstep.mvc.resolver.parameter.ParameterResolverExecutor;
+import nextstep.mvc.resolver.parameter.RequestAndResponseParameterResolver;
+import nextstep.mvc.resolver.parameter.RequestParameterResolver;
+import nextstep.mvc.resolver.parameter.SessionResolver;
 import nextstep.web.annotation.RequestParam;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +31,10 @@ class ParameterResolverExecutorTest {
         when(request.getAttribute("id")).thenReturn("wedge");
 
         ParameterResolverExecutor parameterResolverExecutor = new ParameterResolverExecutor(
-            Collections.emptyList());
+            new RequestAndResponseParameterResolver(),
+            new RequestParameterResolver(),
+            new SessionResolver()
+        );
         TestController controller = new TestController();
 
         Map<String, Class<?>[]> testCases = new LinkedHashMap<>();
@@ -38,13 +44,15 @@ class ParameterResolverExecutorTest {
         testCases.put("withResponse", new Class[]{HttpServletResponse.class});
         testCases.put("withSession", new Class[]{HttpSession.class});
         testCases.put("withRequestParam", new Class[]{String.class, HttpServletRequest.class});
+
         //when
         //then
         for (String methodName : testCases.keySet()) {
             Class<?>[] parametersClasses = testCases.get(methodName);
             Method declaredMethods = controller.getClass()
                 .getDeclaredMethod(methodName, testCases.get(methodName));
-            Object[] parameters = parameterResolverExecutor.captureProperParameter(declaredMethods, request, response);
+            Object[] parameters = parameterResolverExecutor
+                .captureProperParameter(declaredMethods, request, response);
 
             assertThat(parameters).hasSize(parametersClasses.length);
             assertParameterTypes(parametersClasses, parameters);

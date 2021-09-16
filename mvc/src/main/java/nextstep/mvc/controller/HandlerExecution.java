@@ -1,7 +1,6 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import java.lang.reflect.Method;
-import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
@@ -13,9 +12,9 @@ public class HandlerExecution {
         this.handler = handler;
     }
 
-    public ModelAndView handle(Object... parameters)
+    public Object handle(Object... parameters)
         throws Exception {
-        return (ModelAndView) method.invoke(handler, parameters);
+        return method.invoke(handler, parameters);
     }
 
     public Method getMethod() {

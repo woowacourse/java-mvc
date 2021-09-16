@@ -11,8 +11,12 @@ public class ModelAndView {
     private final Map<String, Object> model;
 
     public ModelAndView(View view) {
+        this(view, new HashMap<>());
+    }
+
+    public ModelAndView(View view, Map<String, Object> model) {
         this.view = view;
-        this.model = new HashMap<>();
+        this.model = model;
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
@@ -29,7 +33,7 @@ public class ModelAndView {
     }
 
     public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
+        this.view.render(model, request, response);
     }
 
 }

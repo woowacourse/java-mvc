@@ -1,13 +1,19 @@
 package com.techcourse.domain;
 
+import java.util.Objects;
+
 public class User {
 
-    private final long id;
-    private final String account;
+    private final Long id;
+    private final Account account;
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
+    public User(String account, String password, String email) {
+        this(null, new Account(account), password, email);
+    }
+
+    public User(Long id, Account account, String password, String email) {
         this.id = id;
         this.account = account;
         this.password = password;
@@ -18,17 +24,33 @@ public class User {
         return this.password.equals(password);
     }
 
-    public String getAccount() {
+    public User newInstanceWithId(Long id) {
+        return new User(id, account, password, email);
+    }
+
+    public Long id() {
+        return id;
+    }
+
+    public Account account() {
         return account;
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }

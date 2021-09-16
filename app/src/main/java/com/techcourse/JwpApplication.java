@@ -12,7 +12,7 @@ public class JwpApplication {
 
     private static final Logger log = LoggerFactory.getLogger(JwpApplication.class);
 
-    private static final int DEFAULT_PORT = 8080;
+    private static final int DEFAULT_PORT = 8081;
 
     public static void main(String[] args) throws Exception {
         final int port = defaultPortIfNull(args);
@@ -30,9 +30,9 @@ public class JwpApplication {
 
     private static int defaultPortIfNull(String[] args) {
         return Stream.of(args)
-                .findFirst()
-                .map(Integer::parseInt)
-                .orElse(DEFAULT_PORT);
+            .findFirst()
+            .map(Integer::parseInt)
+            .orElse(DEFAULT_PORT);
     }
 
     private static Context addWebapp(Tomcat tomcat) {
