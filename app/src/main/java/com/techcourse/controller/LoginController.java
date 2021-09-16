@@ -17,11 +17,12 @@ import org.slf4j.LoggerFactory;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView postLogin(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -37,7 +38,7 @@ public class LoginController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
                 })
                 .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
@@ -46,7 +47,7 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new JspView("redirect:/index.jsp");
+            return new JspView(REDIRECT_INDEX_JSP);
         } else {
             return new JspView("redirect:/401.jsp");
         }
