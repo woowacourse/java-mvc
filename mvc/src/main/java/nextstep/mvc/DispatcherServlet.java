@@ -3,7 +3,6 @@ package nextstep.mvc;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.ControllerHandlerAdapter;
 import nextstep.mvc.controller.ExecutionHandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -41,7 +40,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdapter() {
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new ExecutionHandlerAdapter());
     }
 
