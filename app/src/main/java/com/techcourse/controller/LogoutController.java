@@ -13,10 +13,12 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class LogoutController {
 
+    private static final String REDIRECT_PREFIX = "redirect:";
+
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + "/"));
     }
 }

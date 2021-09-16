@@ -17,37 +17,41 @@ import org.slf4j.LoggerFactory;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String INDEX_JSP = "/index.jsp";
+    private static final String UNAUTHORIZED_ERROR = "/401.jsp";
+    private static final String LOGIN_JSP = "/login.jsp";
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView get(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP));
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse(new ModelAndView(new JspView(LOGIN_JSP)));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP));
         }
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+                .orElse(new ModelAndView(new JspView(REDIRECT_PREFIX + UNAUTHORIZED_ERROR)));
     }
 
     private ModelAndView login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP));
         } else {
-            return new ModelAndView(new JspView("redirect:/401.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + UNAUTHORIZED_ERROR));
         }
     }
 }
