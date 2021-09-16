@@ -23,7 +23,7 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("/get-test GET : 요청이 잘 매핑되는지 테스트")
     @Test
-    void get() throws Exception {
+    void get() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -39,7 +39,7 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("/post-test POST: 요청이 잘 매핑되는지 테스트")
     @Test
-    void post() throws Exception {
+    void post() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
