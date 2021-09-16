@@ -3,9 +3,6 @@ package reflection;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 class Junit3TestRunner {
 
@@ -15,7 +12,7 @@ class Junit3TestRunner {
 
         final Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            invokeMethodIfNameStartsWith( "test", clazz, method);
+            invokeMethodIfNameStartsWith("test", clazz, method);
         }
     }
 

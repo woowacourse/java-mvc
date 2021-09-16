@@ -29,3 +29,49 @@
   - [x] Relfections 라이브러리를 사용한다.
   - [x] Relfections 객체로 @Controller가 설정된 모든 클래스를 찾는다.
   - [x] 각 클래스의 인스턴스를 생성한다.
+
+
+## 3단계 - View 구현하기
+- [x] View 구현하기
+  - [x] JSON View 구현
+
+- [x] Legacy MVC 제거하기
+  - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 구현
+
+
+### 조앤 코드리뷰 - 1차
+- [x] Controller Annotation이 달려있는 클래스 스캔 패키지 범위 더 좁게 수정
+- [x] View name 분리해서 관리하도록 수정
+- [x] API Controller 패키지 분리 
+- [x] 불필요한 객체 생성을 막도록 private 생성자 추가
+- [x] 로그인한 사용자가 `GET /register` 요청 시, `/index.jsp` 로 리다이렉트 하도록 수정
+- [x] app 모듈의 클래스 테스트 코드 추가
+  - [x] controller 패키지
+    - [x] api 패키지
+      - [x] HelloController.class
+      - [x] UserController.class
+    - [x] HomeController.class
+    - [x] LoginController.class
+    - [x] LogoutController.class
+    - [x] RegisterController.class
+  - [x] domain 패키지
+    - [x] User.class
+  - [x] repository 패키지
+    - [x] InMemoryUserRepository.class
+  - [x] service 패키지
+    - [x] LoginService.class
+    - [x] RegisterService.class
+    - [x] UserService.class
+  - [x] session 패키지
+    - [x] UserSession.class 
+- [x] mvc 모듈의 클래스 테스트 코드 추가
+  - [x] controller 패키지
+    - [x] AnnotationHandlerMapping.class
+    - [x] ControllerScanner.class
+    - [x] HandlerKey.class
+  - [x] handler 패키지
+    - [x] adapter 패키지
+      - [x] AnnotationHandlerAdapter.class
+      - [x] HandlerAdapters.class
+    - [x] mapping 패키지
+      - [x] HandlerMappings.class

@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.handler.mapping.HandlerMapping;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -30,13 +30,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         controllerScanner.initialize();
         final List<Object> controllers = controllerScanner.getControllers();
         putHandlerExecutionsOfHandlers(controllers);
-        log.info("Initialized AnnotationHandlerMapping!");
+        LOG.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void putHandlerExecutionsOfHandlers(List<Object> handlers) {
         for (Object handler : handlers) {
             final Class<?> handlerClass = handler.getClass();
-            log.info("Annotation Controller 등록 : {}", handlerClass.getName());
+            LOG.info("Annotation Controller 등록 : {}", handlerClass.getName());
             final Set<Method> methods = ReflectionUtils.getAllMethods(handlerClass, ReflectionUtils.withAnnotation(RequestMapping.class));
             putHandlerExecutionsOfHandlerMethods(handler, methods);
         }
@@ -44,7 +44,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void putHandlerExecutionsOfHandlerMethods(Object handler, Set<Method> methods) {
         for (Method method : methods) {
-            log.info("Annotation Controller {} 의 method {} 등록", handler.getClass().getName(), method.getName());
+            LOG.info("Annotation Controller {} 의 method {} 등록", handler.getClass().getName(), method.getName());
             final RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
 
             final String requestUri = requestMappingAnnotation.value();

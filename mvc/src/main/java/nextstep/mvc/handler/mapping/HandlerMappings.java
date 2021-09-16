@@ -1,12 +1,16 @@
 package nextstep.mvc.handler.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class HandlerMappings {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HandlerMappings.class);
 
     private final List<HandlerMapping> handlerMappings;
 
@@ -23,6 +27,7 @@ public class HandlerMappings {
     }
 
     public Object getHandler(HttpServletRequest request) {
+        LOG.debug("Request Mapping Uri : {}", request.getRequestURI());
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
