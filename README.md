@@ -48,4 +48,4 @@ LegacyMVC와 Repository가 달라질 가능성이 존재했다.
 - [ ] ~~DisplayName 명사형으로~~ Nested를 사용하다보니 동사가 더 자연스러운거 같다!!
 - [x] LegacyMVC 제거
   - [ ] Controller 관련 테스트 코드 작성
-- [ ] Jackson 라이브러리를 이용한 JSON 반환
+- [x] Jackson 라이브러리를 이용한 JSON 반환
