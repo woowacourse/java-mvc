@@ -46,5 +46,6 @@ LegacyMVC와 Repository가 달라질 가능성이 존재했다.
 ## 3단계
 - [x] 로깅 레벨 수정
 - [ ] ~~DisplayName 명사형으로~~ Nested를 사용하다보니 동사가 더 자연스러운거 같다!!
-- [ ] LegacyMVC 제거
+- [x] LegacyMVC 제거
+  - [ ] Controller 관련 테스트 코드 작성
 - [ ] Jackson 라이브러리를 이용한 JSON 반환
