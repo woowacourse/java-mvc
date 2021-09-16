@@ -17,7 +17,7 @@ class LoginControllerTest extends ControllerTest{
     @Test
     public void loginSuccess() throws IOException {
         //when
-        HttpURLConnection connection = connectTomcatPost("/login?account=gugu1&password=password",
+        HttpURLConnection connection = connectTomcatPost("/login?account=gugu&password=password",
                 APPLICATION_JSON_UTF8_VALUE);
 
         //then
