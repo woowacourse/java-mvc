@@ -37,4 +37,9 @@ public class JsonView implements View {
     private Object toDatum(Map<String, ?> model) {
         return model.values().toArray()[0];
     }
+
+    @Override
+    public String getViewName() {
+        return null;
+    }
 }
