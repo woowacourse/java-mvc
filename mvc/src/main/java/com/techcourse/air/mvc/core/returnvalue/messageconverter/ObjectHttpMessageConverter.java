@@ -3,10 +3,12 @@ package com.techcourse.air.mvc.core.returnvalue.messageconverter;
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.techcourse.air.core.annotation.Order;
 import com.techcourse.air.mvc.web.support.MediaType;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+@Order(2)
 public class ObjectHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
 
     @Override

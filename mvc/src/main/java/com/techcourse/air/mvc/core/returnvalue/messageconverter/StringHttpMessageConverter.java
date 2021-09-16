@@ -2,10 +2,12 @@ package com.techcourse.air.mvc.core.returnvalue.messageconverter;
 
 import java.io.IOException;
 
+import com.techcourse.air.core.annotation.Order;
 import com.techcourse.air.mvc.web.support.MediaType;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+@Order(1)
 public class StringHttpMessageConverter extends AbstractHttpMessageConverter<String> {
 
     @Override
