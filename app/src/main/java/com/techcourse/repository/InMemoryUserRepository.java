@@ -1,6 +1,5 @@
 package com.techcourse.repository;
 
-import com.techcourse.controller.LoginController;
 import com.techcourse.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

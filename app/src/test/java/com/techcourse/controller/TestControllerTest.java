@@ -1,7 +1,5 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,12 +1,10 @@
 package com.techcourse.controller;
 
-import nextstep.mvc.DispatcherServlet;
 import nextstep.web.support.RequestMethod;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.*;

@@ -5,7 +5,8 @@ import com.techcourse.repository.InMemoryUserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 
 import static nextstep.web.support.MediaType.APPLICATION_JSON_UTF8_VALUE;
