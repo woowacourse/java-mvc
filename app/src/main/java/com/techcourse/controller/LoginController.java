@@ -5,16 +5,19 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+@Controller
+public class LoginController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String loginPost(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
@@ -25,6 +28,16 @@ public class LoginController implements Controller {
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
+    }
+
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public String loginGet(HttpServletRequest req, HttpServletResponse res) {
+        return UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    LOG.info("logged in {}", user.getAccount());
+                    return "redirect:/index.jsp";
+                })
+                .orElse("/login.jsp");
     }
 
     private String login(HttpServletRequest request, User user) {

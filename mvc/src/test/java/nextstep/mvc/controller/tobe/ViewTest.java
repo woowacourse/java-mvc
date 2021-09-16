@@ -35,7 +35,7 @@ class ViewTest {
         when(request.getMethod()).thenReturn("GET");
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        final ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView() instanceof JsonView).isTrue();
     }
