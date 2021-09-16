@@ -2,6 +2,8 @@ package com.techcourse.repository;
 
 import com.techcourse.domain.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,5 +25,12 @@ public class InMemoryUserRepository {
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {}
+    public static List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        database.keySet().forEach(s -> users.add(database.get(s)));
+        return users;
+    }
+
+    private InMemoryUserRepository() {
+    }
 }

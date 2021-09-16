@@ -43,6 +43,7 @@ class UserControllerTest {
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        modelAndView.render(request, response);
 
         assertThat(modelAndView.getObject("user")).usingRecursiveComparison()
                 .isEqualTo(user);

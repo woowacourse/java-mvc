@@ -12,6 +12,8 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 @Controller
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -26,6 +28,17 @@ public class UserController {
                 .orElseThrow();
 
         modelAndView.addObject("user", user);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response) {
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final List<User> users = InMemoryUserRepository.findAll();
+
+        for (User user : users) {
+            modelAndView.addObject(user.getAccount(), user);
+        }
         return modelAndView;
     }
 }
