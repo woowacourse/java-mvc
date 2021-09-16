@@ -19,7 +19,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView postLogin(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
@@ -30,6 +30,16 @@ public class LoginController {
                     return new ModelAndView(login(req, user));
                 })
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+    }
+
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
+        return UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                })
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
 
     private JspView login(HttpServletRequest request, User user) {

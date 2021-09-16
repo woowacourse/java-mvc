@@ -36,8 +36,6 @@ class LoginControllerTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         httpSession = mock(HttpSession.class);
-        when(request.getRequestURI()).thenReturn("/login");
-        when(request.getMethod()).thenReturn("POST");
         when(request.getSession()).thenReturn(httpSession);
 
     }
@@ -45,6 +43,8 @@ class LoginControllerTest {
     @Test
     @DisplayName("로그인 성공 시")
     void login() {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("password");
         when(httpSession.getAttribute(SESSION_KEY)).thenReturn(null);
@@ -59,6 +59,8 @@ class LoginControllerTest {
     @Test
     @DisplayName("로그인 실패 시")
     void loginFail() {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("pass");
         when(httpSession.getAttribute(SESSION_KEY)).thenReturn(null);
@@ -73,6 +75,36 @@ class LoginControllerTest {
     @Test
     @DisplayName("세션 존재 시")
     void loginSession() {
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getSession()).thenReturn(httpSession);
+        when(httpSession.getAttribute(SESSION_KEY)).thenReturn(InMemoryUserRepository.findByAccount("gugu").get());
+
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getView()).usingRecursiveComparison()
+                .isEqualTo(new JspView("redirect:/index.jsp"));
+    }
+
+    @Test
+    @DisplayName("로그인 페이지")
+    void loginView() {
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
+
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getView()).usingRecursiveComparison()
+                .isEqualTo(new JspView("/login.jsp"));
+    }
+
+    @Test
+    @DisplayName("로그인 페이지 세션")
+    void loginViewWithSession() {
+        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(httpSession);
         when(httpSession.getAttribute(SESSION_KEY)).thenReturn(InMemoryUserRepository.findByAccount("gugu").get());
 
