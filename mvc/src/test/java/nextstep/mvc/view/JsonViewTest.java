@@ -1,6 +1,7 @@
 package nextstep.mvc.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 import nextstep.web.support.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -34,6 +36,13 @@ class JsonViewTest {
         jsonView = new JsonView();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+    }
+
+    @DisplayName("viewName 요청시 예외가 발생한다.")
+    @Test
+    void viewNameException() {
+        // when, then
+        assertThatThrownBy(() -> jsonView.getViewName()).isExactlyInstanceOf(IllegalStateException.class);
     }
 
     @DisplayName("model data가 1개라면 data 내부의 필드 정보만을 반환한다.")

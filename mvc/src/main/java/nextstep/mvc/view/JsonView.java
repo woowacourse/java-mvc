@@ -40,6 +40,6 @@ public class JsonView implements View {
 
     @Override
     public String getViewName() {
-        return null;
+        throw new IllegalStateException();
     }
 }
