@@ -20,7 +20,7 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(new JspView("redirect:/"));
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)

@@ -36,8 +36,6 @@ class LoginControllerTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         httpSession = mock(HttpSession.class);
-        when(request.getSession()).thenReturn(httpSession);
-
     }
 
     @Test
@@ -47,13 +45,14 @@ class LoginControllerTest {
         when(request.getMethod()).thenReturn("POST");
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("password");
+        when(request.getSession()).thenReturn(httpSession);
         when(httpSession.getAttribute(SESSION_KEY)).thenReturn(null);
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/index.jsp"));
+                .isEqualTo(new JspView("redirect:/"));
     }
 
     @Test
@@ -63,6 +62,7 @@ class LoginControllerTest {
         when(request.getMethod()).thenReturn("POST");
         when(request.getParameter("account")).thenReturn("gugu");
         when(request.getParameter("password")).thenReturn("pass");
+        when(request.getSession()).thenReturn(httpSession);
         when(httpSession.getAttribute(SESSION_KEY)).thenReturn(null);
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
@@ -84,7 +84,7 @@ class LoginControllerTest {
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/index.jsp"));
+                .isEqualTo(new JspView("redirect:/"));
     }
 
     @Test
@@ -92,6 +92,8 @@ class LoginControllerTest {
     void loginView() {
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(httpSession);
+        when(httpSession.getAttribute(SESSION_KEY)).thenReturn(null);
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
@@ -112,6 +114,6 @@ class LoginControllerTest {
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/index.jsp"));
+                .isEqualTo(new JspView("redirect:/"));
     }
 }

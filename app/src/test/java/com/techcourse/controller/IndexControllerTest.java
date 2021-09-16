@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class RegisterControllerTest {
+class IndexControllerTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
@@ -33,32 +33,14 @@ class RegisterControllerTest {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("/register.jsp"));
+                .isEqualTo(new JspView("/index.jsp"));
     }
 
-
-    @Test
-    void post() {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/register");
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getParameter("account")).thenReturn("gugu");
-        when(request.getParameter("password")).thenReturn("1234");
-        when(request.getParameter("email")).thenReturn("gugu@gugu");
-
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getView()).usingRecursiveComparison()
-                .isEqualTo(new JspView("redirect:/"));
-    }
 }
