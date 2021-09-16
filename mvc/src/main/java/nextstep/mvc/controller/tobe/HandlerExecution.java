@@ -2,7 +2,7 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.exeption.HandlerMappingException;
+import nextstep.mvc.exeption.HandlerAdapterException;
 import nextstep.mvc.mapping.AnnotationHandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -44,9 +44,9 @@ public class HandlerExecution {
                 }
             }
             return method.invoke(handler, argument);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            log.info("핸들러 실행을 실패했습니다. 이유: {}", e.getMessage());
-            throw new HandlerMappingException("핸들러 실행을 실패했습니다. 이유: " + e.getMessage());
+        } catch (Exception e) {
+            log.info("핸들러 실행을 실패했습니다. 이유: {}", ((InvocationTargetException) e).getTargetException().getMessage());
+            throw new HandlerAdapterException("핸들러 실행을 실패했습니다. 이유: " +((InvocationTargetException) e).getTargetException().getMessage());
         }
     }
 }

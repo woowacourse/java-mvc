@@ -1,6 +1,8 @@
 package com.exception;
 
-public class NotFoundException extends RuntimeException {
+import nextstep.mvc.exeption.CustomException;
+
+public class NotFoundException extends CustomException {
 
     public NotFoundException(String message) {
         super(message);

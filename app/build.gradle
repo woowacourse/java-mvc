@@ -61,8 +61,23 @@ sonarqube {
 }
 
 jacocoTestReport {
+    dependsOn test // 리포트가 만들어지기 전 테스트 실행되어야 한다.
     reports {
+        html.enabled(true)
         xml.enabled(true)
         xml.destination(new File("jacoco/jacoco.xml"))
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification { // 코드 커버리지 측정항목 시행
+    violationRules { // 위반 규칙
+        rule {
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.95
+            }
+        }
     }
 }

@@ -6,7 +6,6 @@ import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.ManualController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
