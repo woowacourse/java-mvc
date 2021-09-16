@@ -20,8 +20,7 @@ public class InMemoryUserRepository {
     }
 
     public static void save(User user) {
-        User saveUser = new User(user.getAccount(), user.getPassword(), user.getEmail());
-        database.put(user.getAccount(), saveUser);
+        database.put(user.getAccount(), user);
     }
 
     public static Optional<User> findByAccount(String account) {
