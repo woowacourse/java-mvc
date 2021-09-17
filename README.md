@@ -24,5 +24,7 @@
 - [x] AnnotationHandlerMapping 리팩터링
   - ControllerScanner 객체 분리
   - extract 대신 register 메서드로 변경
-  
+ 
 # 3단계 - View 구현하기**
+- [x] ObjectMapper 를 이용하여 객체를 Json 으로 변환하는 JsonConverter 구현
+
