@@ -1,6 +1,7 @@
 package com.techcourse.repository;
 
 import com.techcourse.domain.User;
+import com.techcourse.repository.exception.SaveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +21,13 @@ public class InMemoryUserRepository {
         database.put(user.getAccount(), user);
     }
 
-    public static void save(User user) {
-        setAutoIncrementId(user);
+    public static void save(User user)  {
+        try {
+            setAutoIncrementId(user);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new SaveException();
+        }
+
         database.put(user.getAccount(), user);
     }
 
@@ -31,15 +37,13 @@ public class InMemoryUserRepository {
     }
 
 
-    private static void setAutoIncrementId(User user) {
-        try {
-            Field id = user.getClass().getDeclaredField("id");
-            id.setAccessible(true);
-            id.set(user, Long.valueOf(++autoIncrementId));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+    private static void setAutoIncrementId(User user) throws NoSuchFieldException, IllegalAccessException {
+        Field id = user.getClass().getDeclaredField("id");
+        id.setAccessible(true);
+        id.set(user, ++autoIncrementId);
+
     }
 
-    private InMemoryUserRepository() {}
+    private InMemoryUserRepository() {
+    }
 }
