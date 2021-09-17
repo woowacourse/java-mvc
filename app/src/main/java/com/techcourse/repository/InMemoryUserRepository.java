@@ -4,6 +4,7 @@ import com.techcourse.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,13 +21,24 @@ public class InMemoryUserRepository {
     }
 
     public static void save(User user) {
-        autoIncrementId++;
-        database.put(user.getAccount(), new User(autoIncrementId, user.getAccount(), user.getPassword(), user.getEmail()));
+        setAutoIncrementId(user);
+        database.put(user.getAccount(), user);
     }
 
     public static Optional<User> findByAccount(String account) {
         log.debug("findByAccount User : {}", account);
         return Optional.ofNullable(database.get(account));
+    }
+
+
+    private static void setAutoIncrementId(User user) {
+        try {
+            Field id = user.getClass().getDeclaredField("id");
+            id.setAccessible(true);
+            id.set(user, Long.valueOf(++autoIncrementId));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private InMemoryUserRepository() {}
