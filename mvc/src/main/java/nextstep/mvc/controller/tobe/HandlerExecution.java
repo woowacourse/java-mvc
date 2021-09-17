@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class HandlerExecution {
 
@@ -27,26 +28,27 @@ public class HandlerExecution {
         return handler;
     }
 
-    public Object handle(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) {
+    public Object handle(Object... parameters) {
         try {
             final Class<?>[] parameterTypes = method.getParameterTypes();
             final Object[] argument = new Object[parameterTypes.length];
+            final List<Object> params = List.of(parameters);
 
             for (int idx = 0; idx < parameterTypes.length; idx++) {
-                if (parameterTypes[idx].isAssignableFrom(HttpServletRequest.class)) {
-                    argument[idx] = request;
-                }
-                if (parameterTypes[idx].isAssignableFrom(HttpServletResponse.class)) {
-                    argument[idx] = response;
-                }
-                if (parameterTypes[idx].isAssignableFrom(ModelAndView.class)) {
-                    argument[idx] = modelAndView;
-                }
+                final int finalIdx = idx;
+                params.stream()
+                        .filter(it -> isAssignableFrom(parameterTypes[finalIdx], it))
+                        .findAny()
+                        .ifPresent(it -> argument[finalIdx] = it);
             }
             return method.invoke(handler, argument);
         } catch (Exception e) {
             log.info("핸들러 실행을 실패했습니다. 이유: {}", ((InvocationTargetException) e).getTargetException().getMessage());
             throw new HandlerAdapterException("핸들러 실행을 실패했습니다. 이유: " + ((InvocationTargetException) e).getTargetException().getMessage());
         }
+    }
+
+    private boolean isAssignableFrom(Class<?> parameterType, Object param) {
+        return parameterType.isAssignableFrom(param.getClass());
     }
 }
