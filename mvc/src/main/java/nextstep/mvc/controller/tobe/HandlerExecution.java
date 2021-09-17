@@ -1,10 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.exeption.HandlerAdapterException;
 import nextstep.mvc.mapping.AnnotationHandlerMapping;
-import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

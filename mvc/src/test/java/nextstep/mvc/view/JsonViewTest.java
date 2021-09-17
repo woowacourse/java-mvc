@@ -59,7 +59,7 @@ class JsonViewTest {
         //then
         assertThat(stringWriter.toString()).isEqualTo(
                 "{\"bibi\":{\"id\":3,\"account\":\"bibiAccount\",\"password\":\"bibiPassword\",\"email\":\"bibiEmail\"}," +
-                "\"hihi\":{\"id\":2,\"account\":\"hihiAccount\",\"password\":\"hihiPassword\",\"email\":\"hihiEmail\"}}"
+                        "\"hihi\":{\"id\":2,\"account\":\"hihiAccount\",\"password\":\"hihiPassword\",\"email\":\"hihiEmail\"}}"
         );
     }
 

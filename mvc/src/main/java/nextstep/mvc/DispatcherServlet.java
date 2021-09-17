@@ -9,7 +9,6 @@ import nextstep.mvc.adapter.HandlerAdapterRegistry;
 import nextstep.mvc.executor.HandlerExecutor;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.mapping.HandlerMappingRegistry;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import nextstep.mvc.view.ViewResolver;
@@ -22,7 +21,7 @@ import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
-    public static final String JSON_VIEW_NAME ="JSON_VIEW_NAME";
+    public static final String JSON_VIEW_NAME = "JSON_VIEW_NAME";
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
