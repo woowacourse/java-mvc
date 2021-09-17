@@ -1,7 +1,7 @@
 package nextstep.mvc.adapter;
 
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecution;
 import nextstep.mvc.exception.MvcException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

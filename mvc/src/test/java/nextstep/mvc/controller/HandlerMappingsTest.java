@@ -2,7 +2,6 @@ package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.exception.HandlerNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

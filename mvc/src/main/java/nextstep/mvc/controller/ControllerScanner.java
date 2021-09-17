@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import nextstep.mvc.exception.MvcException;
 import nextstep.web.annotation.Controller;

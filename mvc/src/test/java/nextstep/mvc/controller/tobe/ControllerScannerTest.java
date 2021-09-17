@@ -1,5 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
+import nextstep.mvc.controller.ControllerScanner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
