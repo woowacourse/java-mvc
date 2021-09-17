@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 public class JsonView implements View {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonView.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -25,13 +26,11 @@ public class JsonView implements View {
     }
 
     private String toJsonData(Map<String, ?> data) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         if (data.size() > 1) {
-            return objectMapper.writeValueAsString(data);
+            return MAPPER.writeValueAsString(data);
         }
 
-        return objectMapper.writeValueAsString(toDatum(data));
+        return MAPPER.writeValueAsString(toDatum(data));
     }
 
     private Object toDatum(Map<String, ?> model) {
