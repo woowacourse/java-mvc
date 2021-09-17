@@ -2,18 +2,15 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.exception.MvcException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -30,12 +27,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        try {
-            registerHandlerExecutions();
-        } catch (ReflectiveOperationException exception) {
-            log.error(exception.getMessage());
-            throw new MvcException("AnnotationHandlerMapping 초기화에 실패했습니다.");
-        }
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.scanControllers();
+        registerHandlerExecutions(controllers);
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.forEach(
@@ -44,28 +38,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         );
     }
 
-    private void registerHandlerExecutions() throws ReflectiveOperationException {
-        Set<Class<?>> controllerClasses = findClassesContainsControllerAnnotation();
-        for (Class<?> controllerClass : controllerClasses) {
-            this.handlerExecutions.putAll(extractHandlerExecutions(controllerClass));
+    private void registerHandlerExecutions(Map<Class<?>, Object> controllers) {
+        for (Map.Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            Class<?> aClass = controller.getKey();
+            Method[] methods = aClass.getDeclaredMethods();
+            Object instance = controller.getValue();
+            String defaultUri = defaultUri(aClass);
+            registerFromMethods(methods, instance, defaultUri);
         }
     }
 
-    private Set<Class<?>> findClassesContainsControllerAnnotation() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private Map<HandlerKey, HandlerExecution> extractHandlerExecutions(Class<?> controllerClass)
-            throws ReflectiveOperationException {
-
-        String defaultUrl = defaultUrl(controllerClass);
-        Object instance = controllerClass.getDeclaredConstructor().newInstance();
-        Method[] methods = controllerClass.getDeclaredMethods();
-        return extractAsMethods(methods, defaultUrl, instance);
-    }
-
-    private String defaultUrl(Class<?> controllerClass) {
+    private String defaultUri(Class<?> controllerClass) {
         String defaultUri = controllerClass.getAnnotation(Controller.class).value();
         if (controllerClass.isAnnotationPresent(RequestMapping.class)) {
             defaultUri = controllerClass.getAnnotation(RequestMapping.class).value();
@@ -73,20 +56,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return defaultUri;
     }
 
-    private Map<HandlerKey, HandlerExecution> extractAsMethods(Method[] methods, String defaultUri, Object instance) {
-        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    private void registerFromMethods(Method[] methods, Object instance, String defaultUri) {
         for (Method method : methods) {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            String detailedUri = requestMapping.value();
-            RequestMethod[] requestMethods = requestMapping.method();
-            HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-            String url = makeCompleteUri(defaultUri, detailedUri);
-            handlerExecutions.putAll(extractAsRequestMethods(requestMethods, url, handlerExecution));
+            registerFromMethod(method, instance, defaultUri);
         }
-        return handlerExecutions;
+    }
+
+    private void registerFromMethod(Method method, Object instance, String defaultUri) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String detailedUri = requestMapping.value();
+        String completeUri = makeCompleteUri(defaultUri, detailedUri);
+        RequestMethod[] requestMethods = requestMapping.method();
+        HandlerExecution handlerExecution = new HandlerExecution(method, instance);
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(completeUri, requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     private String makeCompleteUri(String defaultUri, String detailedUri) {
@@ -104,22 +93,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return SLASH + uri;
     }
 
-    private Map<HandlerKey, HandlerExecution> extractAsRequestMethods(
-            RequestMethod[] requestMethods, String url, HandlerExecution handlerExecution) {
-
-        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
-        return handlerExecutions;
-    }
-
     @Override
     public Object getHandler(HttpServletRequest request) {
-        String url = request.getRequestURI();
+        String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
 }
