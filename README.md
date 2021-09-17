@@ -27,4 +27,4 @@
  
 # 3단계 - View 구현하기**
 - [x] ObjectMapper 를 이용하여 객체를 Json 으로 변환하는 JsonConverter 구현
-
+- [x] JsonView 구현
