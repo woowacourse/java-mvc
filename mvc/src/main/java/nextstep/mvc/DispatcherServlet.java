@@ -12,10 +12,12 @@ import nextstep.mvc.mapping.HandlerMappingRegistry;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
+import nextstep.mvc.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
@@ -26,11 +28,13 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerExecutor handlerExecutor;
+    private final ViewResolver viewResolver;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         this.handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
+        this.viewResolver = new ViewResolver();
     }
 
     @Override
@@ -50,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            final Optional<Object> handler = handlerMappingRegistry.getHandlerMapping(request);
+            final Optional<Object> handler = handlerMappingRegistry.getHandlerMapping(request, Objects::nonNull);
             if (handler.isEmpty()) {
                 log.info("찾을 수 없는 핸들러입니다.");
                 response.setStatus(404);

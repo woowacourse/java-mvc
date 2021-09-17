@@ -63,7 +63,6 @@ public class UserController {
         return "/register.jsp";
     }
 
-
     private String login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();

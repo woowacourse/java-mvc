@@ -8,10 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class HandlerMappingRegistry {
-
-    private static final Logger log = LoggerFactory.getLogger(HandlerMappingRegistry.class);
 
     private final List<HandlerMapping> handlerMappings;
 
@@ -33,13 +32,10 @@ public class HandlerMappingRegistry {
         }
     }
 
-    public Optional<Object> getHandlerMapping(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
-            if (Objects.nonNull(handler)) {
-                return Optional.of(handler);
-            }
-        }
-        return Optional.empty();
+    public Optional<Object> getHandlerMapping(HttpServletRequest request, Predicate<Object> predicate) {
+        return handlerMappings.stream()
+                .map(it -> it.getHandler(request))
+                .filter(predicate)
+                .findAny();
     }
 }
