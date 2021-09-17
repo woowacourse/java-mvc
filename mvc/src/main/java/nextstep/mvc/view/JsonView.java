@@ -3,8 +3,8 @@ package nextstep.mvc.view;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.Map;
-import java.util.Optional;
 import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
@@ -14,15 +14,17 @@ public class JsonView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        PrintWriter writer = response.getWriter();
 
         if (model.size() <= 1) {
-            Optional<?> firstValue = model.values().stream()
-                .findFirst();
-            String jsonValue = objectMapper.writeValueAsString(firstValue.get());
-            response.getWriter().write(jsonValue);
+            Object firstValue = model.values().stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("표시할 값이 없습니다."));
+            String jsonValue = objectMapper.writeValueAsString(firstValue);
+            writer.write(jsonValue);
             return;
         }
         String value = objectMapper.writeValueAsString(model);
-        response.getWriter().write(value);
+        writer.write(value);
     }
 }
