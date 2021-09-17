@@ -66,7 +66,7 @@ public class UserController {
     public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
