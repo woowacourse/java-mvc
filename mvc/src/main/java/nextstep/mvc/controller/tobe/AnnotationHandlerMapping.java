@@ -45,12 +45,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerHandlerMapping(Object packageName) {
-        Reflections reflections = new Reflections(packageName);
-
         try {
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+            ControllerScanner controllerScanner = new ControllerScanner(packageName);
+            List<Object> controllers = controllerScanner.createInstances();
 
-            for (Class<?> controller : controllers) {
+            for (Object controller : controllers) {
                 registerRequestMappingMethods(controller);
             }
         } catch (InvocationTargetException |
@@ -61,10 +60,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void registerRequestMappingMethods(Class<?> controller) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Object instance = controller.getDeclaredConstructor().newInstance();
-
-        List<Method> mappedMethods = getRequestMappingMethods(controller);
+    private void registerRequestMappingMethods(Object instance) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        List<Method> mappedMethods = getRequestMappingMethods(instance.getClass());
 
         for (Method mappedMethod : mappedMethods) {
             RequestMapping requestMapping = mappedMethod.getAnnotation(RequestMapping.class);
