@@ -21,5 +21,7 @@
 # 2단계 - 리팩터링
 - [x] handlerMappings 일급컬렉션으로 분리
 - [x] handlerAdapters 일급컬렉션으로 분리
-
+- [ ] AnnotationHandlerMapping 리팩터링
+  - ControllerScanner 객체 분리
+  
 # 3단계 - View 구현하기**
