@@ -9,14 +9,13 @@ import org.reflections.Reflections;
 
 public class ComponentScanner {
 
-    private final Object[] basePackage;
+    private final Reflections reflections;
 
     public ComponentScanner(Object... basePackage) {
-        this.basePackage = basePackage;
+        this.reflections = new Reflections(basePackage);
     }
 
     public Map<String, Object> getComponent(Class<? extends Annotation> annotation) {
-        Reflections reflections = new Reflections(basePackage);
         return findComponentWithName(reflections.getTypesAnnotatedWith(annotation));
     }
 
