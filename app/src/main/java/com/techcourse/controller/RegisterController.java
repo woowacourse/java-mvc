@@ -10,6 +10,9 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
+import static nextstep.mvc.view.ViewName.REDIRECT_PREFIX;
+import static nextstep.mvc.view.ViewName.VIEW_INDEX;
+
 @Controller
 public class RegisterController {
 
@@ -21,6 +24,6 @@ public class RegisterController {
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + VIEW_INDEX));
     }
 }

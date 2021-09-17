@@ -8,12 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static nextstep.mvc.view.ViewName.REDIRECT_PREFIX;
+
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
-    public static final String REDIRECT_PREFIX = "redirect:";
-
     private String viewName;
 
     public JspView(String viewName) {

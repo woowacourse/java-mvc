@@ -10,6 +10,8 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static nextstep.mvc.view.ViewName.*;
+
 @Controller
 public class LoginViewController {
 
@@ -20,8 +22,8 @@ public class LoginViewController {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return new ModelAndView(new JspView(REDIRECT_PREFIX + VIEW_INDEX));
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse(new ModelAndView(new JspView(VIEW_LOGIN)));
     }
 }
