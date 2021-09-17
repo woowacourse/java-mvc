@@ -32,7 +32,17 @@
 - [x] ModelAndView 구현
   - [x] `JspView.java` todo 구현
 
-## 구현 
+## 구현로직 흐름 
+- `AppWebApplicationInitializer` 에서 해당 어플리케이션에서 사용하는 HandlerMapping을 추가
+- `DispatcherServlet`을 초기화 하면 각 handlerMappings를 초기화
+- 요청이 들어오면 적합한 `HandlerMapping`을 찾아서 반환
+- `HandlerMapping`을 지원하는 `HandlerAdapter`를 반환
+  - `AnnotationHandlerMapping`의 handler는 `@RequestMapping` 어노테이션이 붙은 메서드
+  - `ManualHandlerMapping`의 handler는 `Controller` 인터페이스를 구현하는 클래스
+- 각 `HandlerAdapter`에서 `View`와 `Model` 속성을 담은 `ModelAndView`를 반환
+- `ModelAndView`에 저장된 `View`에서 응답 뷰를 렌더링하여 response에 출력
+
+
 
 ## 학습 내용 
 - 추가 예정 
