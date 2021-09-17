@@ -1,6 +1,7 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -24,6 +25,9 @@ class LoginControllerTest {
 
     @BeforeEach
     void setUp() {
+        InMemoryUserRepository.removeAll();
+        InMemoryUserRepository.save(new User(1L,"gugu", "password", "hkkang@woowahan.com"));
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         session = mock(HttpSession.class);
