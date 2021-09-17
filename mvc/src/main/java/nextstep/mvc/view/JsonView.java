@@ -23,9 +23,9 @@ public class JsonView implements View {
     public String responseToJson(Map<String, ?> model) throws Exception {
         if (model.size() == 1) {
             for (Object value : model.values()) {
-                return JsonParser.writeValueAsString(value);
+                return JsonUtils.writeValueAsString(value);
             }
         }
-        return JsonParser.writeValueAsString(model);
+        return JsonUtils.writeValueAsString(model);
     }
 }
