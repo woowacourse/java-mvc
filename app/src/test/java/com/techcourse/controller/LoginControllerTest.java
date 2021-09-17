@@ -91,9 +91,9 @@ class LoginControllerTest {
         doNothing().when(session).removeAttribute(anyString());
 
         // when
-        String viewName = loginController.logout(request, response);
+        ModelAndView modelAndView = loginController.logout(request, response);
 
         // then
-        assertThat(viewName).isEqualTo("redirect:/");
+        assertThat(modelAndView.getViewName()).isEqualTo("redirect:/");
     }
 }

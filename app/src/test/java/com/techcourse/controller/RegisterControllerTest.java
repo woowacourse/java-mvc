@@ -2,6 +2,7 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,10 +37,10 @@ class RegisterControllerTest {
         when(request.getParameter("email")).thenReturn("test@test.com");
 
         // when
-        String viewName = registerController.register(request, response);
+        ModelAndView modelAndView = registerController.register(request, response);
 
         // then
-        assertThat(viewName).isEqualTo("redirect:/index.jsp");
+        assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
     }
 
     @DisplayName("이미 존재하는 계정으로 회원가입하면 409.jsp로 리다이렉트 된다.")
@@ -53,10 +54,10 @@ class RegisterControllerTest {
         when(request.getParameter("email")).thenReturn("test@test.com");
 
         // when
-        String viewName = registerController.register(request, response);
+        ModelAndView modelAndView = registerController.register(request, response);
 
         // then
-        assertThat(viewName).isEqualTo("409.jsp");
+        assertThat(modelAndView.getViewName()).isEqualTo("409.jsp");
     }
 
     @Test
@@ -66,9 +67,9 @@ class RegisterControllerTest {
         when(request.getMethod()).thenReturn(RequestMethod.GET.name());
 
         // when
-        String viewName = registerController.view(request, response);
+        ModelAndView modelAndView = registerController.view(request, response);
 
         // then
-        assertThat(viewName).isEqualTo("/register.jsp");
+        assertThat(modelAndView.getViewName()).isEqualTo("/register.jsp");
     }
 }

@@ -21,13 +21,13 @@ public class LoginController {
     private static final String REDIRECT_VIEW = "redirect:/index.jsp";
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public String view(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView view(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return REDIRECT_VIEW;
+                    return new ModelAndView(new JspView(REDIRECT_VIEW));
                 })
-                .orElse("/login.jsp");
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -49,10 +49,10 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public String logout(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return "redirect:/";
+        return new ModelAndView(new JspView("redirect:/"));
     }
 
     private ModelAndView login(HttpServletRequest request, User user) {
