@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 @Controller
 public class TestController {
-
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
