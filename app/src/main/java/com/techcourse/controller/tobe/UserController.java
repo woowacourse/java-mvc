@@ -69,7 +69,7 @@ public class UserController {
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerPage(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
