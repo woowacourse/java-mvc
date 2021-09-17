@@ -2,6 +2,7 @@ package nextstep.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.core.ApplicationContext;
+import nextstep.core.exception.BeanException;
 import nextstep.mvc.WebMvcConfigurer;
 import nextstep.mvc.controller.ControllerContainer;
 
@@ -17,9 +18,11 @@ public class ControllerImplementHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        final WebMvcConfigurer webMvcConfigurer = applicationContext.getBean(WebMvcConfigurer.class);
-        if(webMvcConfigurer != null) {
+        try {
+            final WebMvcConfigurer webMvcConfigurer = applicationContext.getBean(WebMvcConfigurer.class);
             webMvcConfigurer.addController(controllerContainer);
+        } catch (BeanException e) {
+            return;
         }
     }
 

@@ -26,6 +26,10 @@ public class User {
         return account;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

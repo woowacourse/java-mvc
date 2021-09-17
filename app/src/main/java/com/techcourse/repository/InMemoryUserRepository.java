@@ -1,9 +1,12 @@
 package com.techcourse.repository;
 
 import com.techcourse.domain.User;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import nextstep.core.annotation.Component;
 
 @Component
@@ -24,5 +27,9 @@ public class InMemoryUserRepository {
 
     public Optional<User> findByAccount(String account) {
         return Optional.ofNullable(database.get(account));
+    }
+
+    public List<User> findAll() {
+        return new ArrayList<>(database.values());
     }
 }
