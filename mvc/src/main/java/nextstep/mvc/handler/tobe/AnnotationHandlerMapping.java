@@ -27,7 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Arrays.stream(basePackages)
                 .flatMap(path -> findControllers(path).stream())
-                .forEach(controller -> registerController(controller));
+                .forEach(this::registerController);
     }
 
     @Override
