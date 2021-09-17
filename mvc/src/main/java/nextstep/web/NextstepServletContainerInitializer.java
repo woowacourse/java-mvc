@@ -1,13 +1,13 @@
 package nextstep.web;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.HandlesTypes;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 @HandlesTypes(WebApplicationInitializer.class)
 public class NextstepServletContainerInitializer implements ServletContainerInitializer {

@@ -1,11 +1,11 @@
 package com.techcourse.support.web.filter;
 
+import java.io.IOException;
+
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 @WebFilter("/*")
 public class CharacterEncodingFilter implements Filter {

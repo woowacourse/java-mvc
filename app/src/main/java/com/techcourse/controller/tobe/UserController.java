@@ -30,9 +30,9 @@ public class UserController {
     public ModelAndView loginPage(HttpServletRequest req, HttpServletResponse res) {
         String page = UserSession.getUserFrom(req.getSession())
                                  .map(user -> {
-                                  log.info("logged in {}", user.getAccount());
-                                  return "redirect:/index.jsp";
-                              })
+                                     log.info("logged in {}", user.getAccount());
+                                     return "redirect:/index.jsp";
+                                 })
                                  .orElse("/login.jsp");
         return new ModelAndView(new JspView(page));
     }
