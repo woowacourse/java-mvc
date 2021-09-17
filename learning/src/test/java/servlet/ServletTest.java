@@ -1,16 +1,17 @@
 package servlet;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.startup.Tomcat;
-import org.junit.jupiter.api.Test;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.junit.jupiter.api.Test;
+
+import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.startup.Tomcat;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +19,7 @@ class ServletTest {
 
     /**
      * 2. 톰캣 maxThread 테스트 가능할까?
-     *
+     * <p>
      * 서블릿 컨테이너 설정 테스트 코드
      * accept-count 1
      * threads max 1

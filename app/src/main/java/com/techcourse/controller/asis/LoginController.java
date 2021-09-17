@@ -1,7 +1,9 @@
-package com.techcourse.controller;
+package com.techcourse.controller.asis;
 
+import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -20,11 +22,11 @@ public class LoginController implements Controller {
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
+                                     .map(user -> {
+                                         log.info("User : {}", user);
+                                         return login(req, user);
+                                     })
+                                     .orElse("redirect:/401.jsp");
     }
 
     private String login(HttpServletRequest request, User user) {

@@ -1,7 +1,8 @@
-package com.techcourse.controller;
+package com.techcourse.controller.asis;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
