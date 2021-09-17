@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
 import org.mockito.MockedStatic;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,10 +37,10 @@ class LoginControllerTest {
             session.when(() -> UserSession.isLoggedIn(any())).thenReturn(true);
 
             // when
-            final String viewName = controller.execute(request, response);
+            final ModelAndView modelAndView = controller.execute(request, response);
 
             // then
-            assertThat(viewName).isEqualTo("redirect:/index.jsp");
+            assertThat(modelAndView.getView()).usingRecursiveComparison().isEqualTo(new JspView("redirect:/index.jsp"));
         }
     }
 
@@ -55,10 +57,10 @@ class LoginControllerTest {
             when(request.getSession()).thenReturn(mock(HttpSession.class));
 
             // when
-            final String viewName = controller.execute(request, response);
+            final ModelAndView modelAndView = controller.execute(request, response);
 
             // then
-            assertThat(viewName).isEqualTo("redirect:/index.jsp");
+            assertThat(modelAndView.getView()).usingRecursiveComparison().isEqualTo(new JspView("redirect:/index.jsp"));
         }
     }
 
@@ -73,10 +75,10 @@ class LoginControllerTest {
             when(request.getParameter("account")).thenReturn("seed");
 
             // when
-            final String viewName = controller.execute(request, response);
+            final ModelAndView modelAndView = controller.execute(request, response);
 
             // then
-            assertThat(viewName).isEqualTo("redirect:/401.jsp");
+            assertThat(modelAndView.getView()).usingRecursiveComparison().isEqualTo(new JspView("redirect:/401.jsp"));
         }
     }
 
@@ -92,10 +94,10 @@ class LoginControllerTest {
             when(request.getParameter("password")).thenReturn("wrong pass word");
 
             // when
-            final String viewName = controller.execute(request, response);
+            final ModelAndView modelAndView = controller.execute(request, response);
 
             // then
-            assertThat(viewName).isEqualTo("redirect:/401.jsp");
+            assertThat(modelAndView.getView()).usingRecursiveComparison().isEqualTo(new JspView("redirect:/401.jsp"));
         }
     }
 }

@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 import samples.AnnotationTestController;
-import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -32,20 +31,6 @@ class RequestMappingHandlerAdapterTest {
 
         // then
         assertThat(supports).isTrue();
-    }
-
-    @Test
-    @DisplayName("처리 불가 테스트")
-    void cannotSupportsTest() {
-
-        // given
-        TestController handler = new TestController();
-
-        // when
-        final boolean supports = new RequestMappingHandlerAdapter().supports(handler);
-
-        // then
-        assertThat(supports).isFalse();
     }
 
     @Test

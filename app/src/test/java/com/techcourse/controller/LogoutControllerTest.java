@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -26,9 +28,9 @@ class LogoutControllerTest {
         LogoutController controller = new LogoutController();
 
         // when
-        final String viewName = controller.execute(request, response);
+        final ModelAndView modelAndView = controller.execute(request, response);
 
         // then
-        assertThat(viewName).isEqualTo("redirect:/");
+        assertThat(modelAndView.getView()).usingRecursiveComparison().isEqualTo(new JspView("redirect:/"));
     }
 }

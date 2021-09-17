@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.sonarqube' version '3.3'
     id 'jacoco'
+    id 'java-library'
 }
 
 repositories {
@@ -19,7 +20,7 @@ dependencies {
 
     implementation 'org.reflections:reflections:0.9.11'
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.3'
     testImplementation 'org.mockito:mockito-core:3.12.3'
