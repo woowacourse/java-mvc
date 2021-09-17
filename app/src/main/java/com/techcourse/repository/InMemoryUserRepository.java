@@ -19,7 +19,7 @@ public class InMemoryUserRepository {
     public static void save(User user) {
         Optional<User> byAccount = findByAccount(user.getAccount());
         if (byAccount.isPresent()) {
-            throw new DuplicatedUserException();
+            throw new DuplicatedUserException("이미 저장된 계정입니다.");
         }
         database.put(user.getAccount(), user);
     }
