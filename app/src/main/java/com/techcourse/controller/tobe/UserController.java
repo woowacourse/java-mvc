@@ -26,7 +26,7 @@ public class UserController {
         return new ModelAndView(new JspView("index.jsp"));
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginPage(HttpServletRequest req, HttpServletResponse res) {
         String page = UserSession.getUserFrom(req.getSession())
                                  .map(user -> {
