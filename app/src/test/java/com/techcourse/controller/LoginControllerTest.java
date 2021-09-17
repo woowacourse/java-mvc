@@ -35,6 +35,38 @@ class LoginControllerTest {
         loginController = new LoginController();
     }
 
+    @DisplayName("/login/view GET : 로그인 페이지 이동시 로그인하지 않은 상태면 login.jsp를 응답한다..")
+    @Test
+    void view() {
+        // given
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn(RequestMethod.GET.name());
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(anyString())).thenReturn(null);
+
+        // when
+        ModelAndView modelAndView = loginController.view(request, response);
+
+        // then
+        assertThat(modelAndView.getViewName()).isEqualTo("/login.jsp");
+    }
+
+    @DisplayName("/login/view GET : 로그인 페이지 이동시 이미 로그인 상태면 index.jsp로 리다이렉트한다.")
+    @Test
+    void viewAlreadyLoggedIn() {
+        // given
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn(RequestMethod.GET.name());
+        when(request.getSession()).thenReturn(session);
+        when(request.getSession().getAttribute("user")).thenReturn(new User(1L, "gugu", "password", "hkkang@woowahan.com"));
+
+        // when
+        ModelAndView modelAndView = loginController.view(request, response);
+
+        // then
+        assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
+    }
+
     @DisplayName("/login POST : 이미 로그인된 상태일 시 index.jsp로 리다이렉트 된다.")
     @Test
     void executeAlreadyLoggedIn() {
