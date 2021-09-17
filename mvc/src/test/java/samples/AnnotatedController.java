@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 @Controller
 public class AnnotatedController {
+
     private static final Logger log = LoggerFactory.getLogger(AnnotatedController.class);
 
     @RequestMapping(value = "/get-test-annotation", method = RequestMethod.GET)
