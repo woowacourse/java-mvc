@@ -2,6 +2,8 @@ package nextstep.mvc.view;
 
 import static nextstep.web.support.MediaType.*;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ public class JsonView implements View {
         this.newModel = newModel;
         this.statusCode = statusCode;
         this.objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
     }
 
     @Override
@@ -41,9 +44,9 @@ public class JsonView implements View {
         try {
             model.putAll(newModel);
             if (model.size() == 1) {
-                for (Object value : model.values()) {
-                    return objectMapper.writeValueAsString(value);
-                }
+                return objectMapper.writeValueAsString(
+                    model.values().iterator().next()
+                );
             }
 
             return objectMapper.writeValueAsString(model);

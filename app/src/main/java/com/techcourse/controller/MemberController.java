@@ -1,7 +1,9 @@
 package com.techcourse.controller;
 
-import com.techcourse.MemberNotFoundException;
+import static com.techcourse.exception.MemberExceptionMessage.NO_ACCOUNT;
+
 import com.techcourse.domain.User;
+import com.techcourse.exception.MemberNotFoundException;
 import com.techcourse.repository.InMemoryUserRepository;
 import nextstep.core.annotation.Autowired;
 import nextstep.mvc.annotation.Controller;
@@ -33,13 +35,13 @@ public class MemberController {
     @RequestMapping(value = "/single-members", method = RequestMethod.GET)
     public ResponseEntity singleMember(@RequestParams(name = "account") String account) {
         return ResponseEntity.ok(repository.findByAccount(account)
-            .orElseThrow(MemberNotFoundException::new));
+            .orElseThrow(() -> new MemberNotFoundException(NO_ACCOUNT)));
     }
 
     @RequestMapping(value = "/single-members/model", method = RequestMethod.GET)
     public ModelAndView singleMemberWithModel(@RequestParams(name = "account") String account) {
         final User user = repository.findByAccount(account)
-            .orElseThrow(MemberNotFoundException::new);
+            .orElseThrow(() -> new MemberNotFoundException(NO_ACCOUNT));
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("account", user.getAccount());

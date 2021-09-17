@@ -1,19 +1,21 @@
 package com.techcourse.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import jakarta.servlet.http.HttpSession;
+import nextstep.mvc.annotation.Controller;
+import nextstep.mvc.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginViewController implements Controller {
+@Controller
+public class LoginViewController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
     private static final String REDIRECT_HOME = "redirect:/index.jsp";
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return UserSession.getUserFrom(req.getSession())
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String loginPage(HttpSession httpSession) {
+        return UserSession.getUserFrom(httpSession)
             .map(user -> {
                 log.info("logged in {}", user.getAccount());
                 return REDIRECT_HOME;

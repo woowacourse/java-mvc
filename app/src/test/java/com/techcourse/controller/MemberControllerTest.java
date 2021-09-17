@@ -24,7 +24,6 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("members test")
     public void membersTest() {
         final MockMvcResponse result =
             mvc.get("/members")
@@ -38,7 +37,6 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("single member test")
     public void singleMemberTest() {
         final MockMvcResponse result =
             mvc.get("/single-members")
@@ -49,7 +47,6 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("single member with multi model test")
     public void singleMemberTestWithMultiModel() {
         final MockMvcResponse result =
             mvc.get("/single-members/model")
