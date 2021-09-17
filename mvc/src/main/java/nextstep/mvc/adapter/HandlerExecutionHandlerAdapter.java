@@ -3,13 +3,7 @@ package nextstep.mvc.adapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JsonView;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.TextView;
-import nextstep.web.support.FileType;
-
-import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
@@ -23,26 +17,13 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
         final ModelAndView modelAndView = new ModelAndView();
         final Object handledValue = handlerExecution.handle(request, response, modelAndView);
-
-        changeView(modelAndView, handledValue);
-        return modelAndView;
+        return resolveModelAndView(modelAndView, handledValue);
     }
 
-    private void changeView(ModelAndView modelAndView, Object handledValue) {
+    private ModelAndView resolveModelAndView(ModelAndView modelAndView, Object handledValue) {
         if (handledValue instanceof String) {
-            changeViewWithStringValue(modelAndView, (String) handledValue);
-            return;
+            modelAndView.changeViewName((String) handledValue);
         }
-        if (handledValue instanceof ModelAndView) {
-            modelAndView.changeView(new JsonView());
-        }
-    }
-
-    private void changeViewWithStringValue(ModelAndView modelAndView, String handledValue) {
-        if (FileType.matches(handledValue) || handledValue.startsWith(REDIRECT_PREFIX)) {
-            modelAndView.changeView(new JspView(handledValue));
-            return;
-        }
-        modelAndView.changeView(new TextView(handledValue));
+        return modelAndView;
     }
 }

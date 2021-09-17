@@ -22,6 +22,8 @@ import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
+    public static final String JSON_VIEW_NAME ="JSON_VIEW_NAME";
+
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -58,19 +60,33 @@ public class DispatcherServlet extends HttpServlet {
             if (handler.isEmpty()) {
                 log.info("찾을 수 없는 핸들러입니다.");
                 response.setStatus(404);
-                final View view = new JspView("redirect:/404.jsp");
+                final View view = viewResolver.resolveViewName("redirect:/404.jsp");
                 view.render(new HashMap<>(), request, response);
                 return;
             }
             final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
-            final View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            render(modelAndView, request, response);
         } catch (RuntimeException e) {
             log.error("RuntimeException : {}", e.getMessage(), e);
             throw new RuntimeException("RuntimeException : " + e.getMessage());
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        View view;
+        String viewName = modelAndView.getViewName();
+        if (Objects.nonNull(viewName)) {
+            view = viewResolver.resolveViewName(viewName);
+            view.render(modelAndView.getModel(), request, response);
+            return;
+        }
+        view = modelAndView.getView();
+        if (Objects.isNull(view)) {
+            view = viewResolver.resolveViewName(JSON_VIEW_NAME);
+            view.render(modelAndView.getModel(), request, response);
         }
     }
 }
