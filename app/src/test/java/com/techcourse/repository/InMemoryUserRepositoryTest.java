@@ -52,7 +52,7 @@ class InMemoryUserRepositoryTest {
     void findByAccount() {
         // given
         String account = "charlie";
-        User newUser = new User(1L, "charlie", "1234", "test@test.com");
+        User newUser = new User(1L, account, "1234", "test@test.com");
         InMemoryUserRepository.save(newUser);
 
         // when
