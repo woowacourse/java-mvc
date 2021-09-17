@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import com.techcourse.air.mvc.core.adapter.HandlerAdapter;
 import com.techcourse.air.mvc.core.mapping.HandlerMapping;
 import com.techcourse.air.mvc.core.resolver.ViewResolver;
 import com.techcourse.air.mvc.core.view.ModelAndView;
 import com.techcourse.air.mvc.core.view.View;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,9 @@ public class DispatcherServlet extends HttpServlet {
 
             final ModelAndView mv = handlerAdapter.handle(request, response, handler);
 
-            render(mv, request, response);
+            if (mv != null) {
+                render(mv, request, response);
+            }
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

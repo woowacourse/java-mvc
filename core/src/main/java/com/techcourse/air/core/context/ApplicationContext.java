@@ -42,9 +42,7 @@ public class ApplicationContext {
     public void initializeContext() {
         Set<Class<?>> components = componentScan();
         for (Class<?> component : components) {
-            Object bean = getBean(component);
-            String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, component.getSimpleName());
-            BEANS.put(beanName, bean);
+            getBean(component);
         }
 
         registerAllConfigurationBeans();
@@ -138,7 +136,7 @@ public class ApplicationContext {
         return null;
     }
 
-    private Object getBean(Class<?> clazz) {
+    public Object getBean(Class<?> clazz) {
         if (BEANS.containsKey(clazz.getSimpleName())) {
             return BEANS.get(clazz.getSimpleName());
         }
@@ -150,7 +148,10 @@ public class ApplicationContext {
             Constructor<?> constructor = findAutowiredConstructor(clazz);
             Class<?>[] parameterTypes = constructor.getParameterTypes();
             Object[] fields = getParametersForInjection(parameterTypes);
-            return constructor.newInstance(fields);
+            Object bean = constructor.newInstance(fields);
+            String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, clazz.getSimpleName());
+            BEANS.put(beanName, bean);
+            return bean;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException();
         }
@@ -184,16 +185,34 @@ public class ApplicationContext {
     }
 
     public <T> T findBeanByType(Class<T> type) {
+        T bean = findBeanByTypeOrNull(type);
+        if (bean != null) {
+            return bean;
+        }
+        return (T) createBean(type);
+    }
+
+    public <T> T findBeanByTypeOrNull(Class<T> type) {
         for (String beanName : BEANS.keySet()) {
             Object bean = BEANS.get(beanName);
             if (type.isInstance(bean)) {
                 return (T) bean;
             }
         }
-        String beanName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, type.getSimpleName());
-        T bean = (T) createBean(type);
-        BEANS.put(beanName, bean);
-        return bean;
+        return null;
+    }
+
+    public <T> List<T> findAllBeanByType(Class<T> type) {
+        List<T> result = new ArrayList<>();
+
+        for (String beanName : BEANS.keySet()) {
+            Object bean = BEANS.get(beanName);
+
+            if (type.isInstance(bean)) {
+                result.add((T) bean);
+            }
+        }
+        return result;
     }
 
     public List<Object> findAllBeanHasAnnotation(Class<? extends Annotation> type) {

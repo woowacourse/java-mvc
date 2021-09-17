@@ -5,20 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.techcourse.air.core.context.ApplicationContext;
+import com.techcourse.air.core.context.ApplicationContextProvider;
+import com.techcourse.air.mvc.core.adapter.AnnotationHandlerAdapter;
+import com.techcourse.air.mvc.core.controller.tobe.HandlerExecution;
+import com.techcourse.air.mvc.core.returnvalue.JsonReturnValueHandler;
+import com.techcourse.air.mvc.core.returnvalue.ViewReturnValueHandler;
+import com.techcourse.air.mvc.core.view.JspView;
+import com.techcourse.air.mvc.core.view.ModelAndView;
+import com.techcourse.air.mvc.web.annotation.RequestMapping;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.techcourse.air.core.context.ApplicationContext;
-import com.techcourse.air.core.context.ApplicationContextProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.techcourse.air.mvc.core.controller.tobe.HandlerExecution;
-import com.techcourse.air.mvc.core.view.JspView;
-import com.techcourse.air.mvc.core.view.ModelAndView;
-
-import com.techcourse.air.mvc.core.adapter.AnnotationHandlerAdapter;
-import com.techcourse.air.mvc.web.annotation.RequestMapping;
 import org.reflections.ReflectionUtils;
 import samples.TestController;
 
@@ -34,6 +36,8 @@ class AnnotationHandlerAdapterTest {
         ApplicationContext context = new ApplicationContext("samples");
         ApplicationContextProvider.setApplicationContext(context);
         context.initializeContext();
+        context.getBean(ViewReturnValueHandler.class);
+        context.getBean(JsonReturnValueHandler.class);
         handlerAdapter = context.findBeanByType(AnnotationHandlerAdapter.class);
     }
 

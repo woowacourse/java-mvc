@@ -1,4 +1,4 @@
-package com.techcourse.air.domain;
+package samples;
 
 public class User {
     private final long id;
@@ -11,10 +11,6 @@ public class User {
         this.account = account;
         this.password = password;
         this.email = email;
-    }
-
-    public boolean checkPassword(String password) {
-        return this.password.equals(password);
     }
 
     public long getId() {
@@ -31,15 +27,5 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
     }
 }
