@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.CannotFindHandlerException;
 
 public class HandlerMappings {
 
@@ -27,6 +28,6 @@ public class HandlerMappings {
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findAny()
-            .orElseThrow(IllegalStateException::new);
+            .orElseThrow(CannotFindHandlerException::new);
     }
 }
