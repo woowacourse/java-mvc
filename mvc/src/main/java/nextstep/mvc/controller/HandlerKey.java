@@ -1,8 +1,7 @@
 package nextstep.mvc.controller;
 
-import nextstep.web.support.RequestMethod;
-
 import java.util.Objects;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
 
