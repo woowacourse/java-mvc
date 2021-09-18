@@ -22,6 +22,12 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
+    public static void renderException(HttpServletRequest request, HttpServletResponse response, JspViewException jspViewException) throws ServletException, IOException {
+        response.setStatus(jspViewException.getStatusCode());
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(jspViewException.getView());
+        requestDispatcher.forward(request, response);
+    }
+
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (viewName.startsWith(REDIRECT_PREFIX)) {

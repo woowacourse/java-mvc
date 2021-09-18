@@ -28,5 +28,9 @@ public class InMemoryUserRepository {
         return Optional.ofNullable(database.get(account));
     }
 
+    public static Map<String, User> findAllUsers() {
+        return database;
+    }
+
     private InMemoryUserRepository() {}
 }

@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-class Junit3TestRunner {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class Junit3TestRunner extends JunitOutput {
 
     @Test
     void run() throws Exception {
@@ -18,5 +20,12 @@ class Junit3TestRunner {
                 method.invoke(junit3Test);
             }
         }
+
+        String output = captor.toString().trim();
+
+        assertThat(output)
+                .contains("Running Test1")
+                .contains("Running Test2")
+                .doesNotContain("Running Test3");
     }
 }
