@@ -4,8 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerMapping;
+import nextstep.mvc.controller.HandlerMapping;
 import nextstep.mvc.handleradapter.HandlerAdapter;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +48,15 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
+        } catch (IllegalArgumentException e) {
+            log.debug("404 Exception : {}", e.getMessage());
+            ModelAndView notFoundView = new ModelAndView(new JspView("/404.jsp"));
+            notFoundView.render(request, response);
         } catch (Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            log.error("Unexpected Error occurred! : {}", e.getMessage(), e);
+            ModelAndView internalServerView = new ModelAndView(new JspView("/500.jsp"));
+            internalServerView.render(request, response);
+            throw new ServletException();
         }
     }
 }
