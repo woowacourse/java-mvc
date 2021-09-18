@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class InMemoryUserRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(AppWebApplicationInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
     private static final AtomicLong id = new AtomicLong(1L);
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 

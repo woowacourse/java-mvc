@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class RegisterController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
     private static final String REGISTER_VIEW = "/register.jsp";
     private static final String REDIRECT_INDEX_VIEW = "redirect:/index.jsp";
 
