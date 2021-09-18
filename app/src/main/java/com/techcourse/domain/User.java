@@ -2,20 +2,20 @@ package com.techcourse.domain;
 
 public class User {
 
-    private static Long id = 1L;
     private final String account;
     private final String password;
     private final String email;
+    private Long id;
 
     public User(Long id, String account, String password, String email) {
-        User.id = id;
+        this.id = id;
         this.account = account;
         this.password = password;
         this.email = email;
     }
 
     public User(String account, String password, String email) {
-        this(id++, account, password, email);
+        this(null, account, password, email);
     }
 
     public boolean checkPassword(String password) {
@@ -24,6 +24,10 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getAccount() {
