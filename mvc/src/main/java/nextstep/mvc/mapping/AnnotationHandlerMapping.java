@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.scanner.ControllerScanner;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.HandlerKey;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.controller.HandlerKey;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
@@ -34,6 +33,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Set<Class<?>> controllers = ControllerScanner.scanController(basePackages);
         for (Class<?> controller : controllers) {
+            log.debug("Scanned Controller : {}", controller.getName());
             List<Method> requestMappingMethods = scanRequestMappingMethod(controller);
             Object controllerInstance = createControllerInstance(controller);
 
@@ -45,6 +45,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Method requestMappingMethod : requestMappingMethods) {
             RequestMapping annotation = requestMappingMethod.getDeclaredAnnotation(RequestMapping.class);
             String url = annotation.value();
+            log.debug("Scanned Method : {}, Path : {}, Method: {}",
+                requestMappingMethod.getName(),
+                url,
+                annotation.method()
+            );
 
             extractHandlerExecution(controllerInstance, requestMappingMethod, annotation, url);
         }

@@ -1,17 +1,17 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapterRegistry;
 import nextstep.mvc.exception.NotFoundException;
+import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.mapping.HandlerMappingRegistry;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
+import nextstep.mvc.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,30 +55,13 @@ public class DispatcherServlet extends HttpServlet {
 
             ModelAndView mv = handlerAdapter.handle(request, response, handler);
 
-            resolveView(mv, request, response);
+            ViewResolver.resolve(mv, request, response);
         } catch (NotFoundException e) {
             log.error("Exception : {}", e.getMessage());
-            render("404.jsp", request, response);
+            ViewResolver.resolveJsp("404.jsp", request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            render("500.jsp", request, response);
+            ViewResolver.resolveJsp("500.jsp", request, response);
         }
-    }
-
-    private void resolveView(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
-    }
-
-    private void render(String viewName, HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
