@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import nextstep.mvc.exception.HandlerMappingNotFoundException;
 import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.JspViewException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,10 @@ public class DispatcherServlet extends HttpServlet {
             modelAndView.render(request, response);
         } catch (HandlerMappingNotFoundException e) {
             log.error("Handler Not Found : {}", e.getMessage(), e);
-            JspView.renderNotFound(request, response);
+            JspView.renderException(request, response, JspViewException.NOT_FOUND);
         } catch (Exception e) {
             log.error("Internal Server Error : {}", e.getMessage(), e);
-            JspView.renderInternalServerError(request, response);
+            JspView.renderException(request, response, JspViewException.INTERNAL_SERVER_ERROR);
         }
     }
 
