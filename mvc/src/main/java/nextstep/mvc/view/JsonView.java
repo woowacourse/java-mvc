@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import nextstep.web.support.MediaType;
 
@@ -12,12 +13,23 @@ public class JsonView implements View {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private final Map<String, Object> model;
+
+    public JsonView() {
+        this(new HashMap<>());
+    }
+
+    public JsonView(Map<String, Object> model) {
+        this.model = new HashMap<>(model);
+    }
+
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
+        this.model.putAll(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
-        printByModelSize(model, writer);
+        printByModelSize(this.model, writer);
     }
 
     private void printByModelSize(Map<String, ?> model, PrintWriter writer)
