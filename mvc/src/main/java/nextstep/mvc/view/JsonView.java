@@ -1,6 +1,8 @@
 package nextstep.mvc.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -13,9 +15,17 @@ public class JsonView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String responseBody = objectMapper.writerWithDefaultPrettyPrinter()
-            .writeValueAsString(model);
+        String responseBody = getResponseBody(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(responseBody);
+    }
+
+    private String getResponseBody(Map<String, ?> model) throws JsonProcessingException {
+        ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
+        if (model.size() == 1) {
+            Object value = model.values().iterator().next();
+            return objectWriter.writeValueAsString(value);
+        }
+        return objectWriter.writeValueAsString(model);
     }
 }
