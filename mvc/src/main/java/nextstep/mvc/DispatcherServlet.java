@@ -47,20 +47,20 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         LOG.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        ModelAndView mv;
+        ModelAndView modelAndView;
         View view;
         try {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = HandlerAdapterRegistry.getHandlerAdapter(handler);
-            mv = handlerAdapter.handle(request, response, handler);
+            modelAndView = handlerAdapter.handle(request, response, handler);
         } catch (ClassNotFoundException e) {
-            mv = new ModelAndView("/404.jsp");
+            modelAndView = new ModelAndView("/404.jsp");
             LOG.debug("{}, {}" , e.getException(), e.getMessage());
         }
 
         try {
-            view = resolveViewName(mv.getViewName());
-            Objects.requireNonNull(view).render(mv.getModel(), request, response);
+            view = resolveViewName(modelAndView.getViewName());
+            Objects.requireNonNull(view).render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             handleException(e);
         }
