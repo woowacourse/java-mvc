@@ -7,12 +7,13 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryUserRepository {
 
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 
-    private static Long id = 1L;
+    private static AtomicLong id = new AtomicLong(1);
 
     static {
         final User user = new User(1L, "gugu", "password", "hkkang@woowahan.com");
@@ -32,7 +33,7 @@ public class InMemoryUserRepository {
             Class userClass = user.getClass();
             Field userId = userClass.getDeclaredField("id");
             if (userId.trySetAccessible()) {
-                userId.set(user, ++id);
+                userId.set(user, id.incrementAndGet());
             }
         } catch (Exception e) {
             throw new ReflectionException();
@@ -42,7 +43,7 @@ public class InMemoryUserRepository {
     }
 
     private static boolean isMaximum() {
-        return id == Long.MAX_VALUE;
+        return id.get() == Long.MAX_VALUE;
     }
 
     public static Optional<User> findByAccount(String account) {
