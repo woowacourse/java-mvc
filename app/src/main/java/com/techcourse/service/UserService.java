@@ -1,11 +1,11 @@
 package com.techcourse.service;
 
-import com.techcourse.Pages;
 import com.techcourse.domain.User;
 import com.techcourse.domain.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import nextstep.mvc.Pages;
 import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Service;
 

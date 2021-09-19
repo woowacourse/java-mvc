@@ -1,6 +1,5 @@
 package nextstep.mvc.controller.tobe;
 
-import com.fasterxml.jackson.databind.util.ObjectBuffer;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.exception.HandleKeyDuplicationException;
+import nextstep.mvc.controller.exception.InternalServerException;
 import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -98,7 +97,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void validateHandleKeyDuplicate(HandlerKey handlerKey) {
         if (handlerExecutions.containsKey(handlerKey)) {
-            throw new HandleKeyDuplicationException();
+            throw new InternalServerException();
         }
     }
 

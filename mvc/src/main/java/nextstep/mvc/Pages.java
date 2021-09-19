@@ -1,4 +1,4 @@
-package com.techcourse;
+package nextstep.mvc;
 
 public enum Pages {
     REDIRECT("redirect:"),
@@ -7,7 +7,7 @@ public enum Pages {
     INDEX("/index.jsp"),
     UNAUTHORIZED("/401.jsp"),
     BAD_REQUEST("/404.jsp"),
-    ETERNAL_SERVER("/500.jsp");
+    INTERNAL_SERVER("/500.jsp");
 
     private final String pageName;
 

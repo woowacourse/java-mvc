@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import nextstep.mvc.controller.exception.InternalServerException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.Repository;
 import nextstep.web.annotation.Service;
@@ -35,6 +36,7 @@ public class ComponentScanner {
                 beans.put(component, instance);
             } catch (Exception e) {
                 LOG.error("Instance Create Error!! : {}", e.getMessage());
+                throw new InternalServerException();
             }
         }
     }
