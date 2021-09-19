@@ -14,7 +14,7 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class RegisterController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView view(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
     }

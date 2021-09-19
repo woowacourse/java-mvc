@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -77,7 +76,7 @@ class LoginControllerTest {
         when(request.getSession().getAttribute("user")).thenReturn(new User(1L, "gugu", "password", "hkkang@woowahan.com"));
 
         // when
-        ModelAndView modelAndView = loginController.execute(request, response);
+        ModelAndView modelAndView = loginController.loginRequest(request, response);
 
         // then
         assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
@@ -94,7 +93,7 @@ class LoginControllerTest {
         when(request.getSession()).thenReturn(session);
 
         // when
-        ModelAndView modelAndView = loginController.execute(request, response);
+        ModelAndView modelAndView = loginController.loginRequest(request, response);
 
         // then
         assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
@@ -111,7 +110,7 @@ class LoginControllerTest {
         when(request.getSession()).thenReturn(session);
 
         // when
-        ModelAndView modelAndView = loginController.execute(request, response);
+        ModelAndView modelAndView = loginController.loginRequest(request, response);
 
         // then
         assertThat(modelAndView.getViewName()).isEqualTo("redirect:/401.jsp");

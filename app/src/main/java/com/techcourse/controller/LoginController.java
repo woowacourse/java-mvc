@@ -21,7 +21,7 @@ public class LoginController {
     private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
     private static final String ERROR_401_VIEW = "redirect:/401.jsp";
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView view(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
@@ -32,7 +32,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView loginRequest(HttpServletRequest req, HttpServletResponse res) {
         ModelAndView modelAndView;
         if (UserSession.isLoggedIn(req.getSession())) {
             modelAndView = new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
