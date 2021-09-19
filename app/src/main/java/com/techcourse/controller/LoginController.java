@@ -17,8 +17,18 @@ public class LoginController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView loginPage(HttpServletRequest req, HttpServletResponse res) {
+        return UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    LOG.info("logged in {}", user.getAccount());
+                    return new ModelAndView("redirect:/index.jsp");
+                })
+                .orElse(new ModelAndView("/login.jsp"));
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView("redirect:/index.jsp");
         }
