@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Arrays;
 
 public class HandlerExecution {
 
@@ -29,11 +29,10 @@ public class HandlerExecution {
         try {
             final Class<?>[] parameterTypes = method.getParameterTypes();
             final Object[] argument = new Object[parameterTypes.length];
-            final List<Object> params = List.of(parameters);
 
             for (int idx = 0; idx < parameterTypes.length; idx++) {
                 final int finalIdx = idx;
-                params.stream()
+                Arrays.stream(parameters)
                         .filter(it -> isAssignableFrom(parameterTypes[finalIdx], it))
                         .findAny()
                         .ifPresent(it -> argument[finalIdx] = it);
