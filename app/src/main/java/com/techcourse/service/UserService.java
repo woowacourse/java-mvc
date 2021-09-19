@@ -6,13 +6,17 @@ import com.techcourse.domain.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Service;
 
 @Service
 public class UserService {
 
+    @Autowired
+    private InMemoryUserRepository inMemoryUserRepository;
+
     public User findById(String account) {
-        return InMemoryUserRepository.findByAccount(account)
+        return inMemoryUserRepository.findByAccount(account)
             .orElseThrow();
     }
 
@@ -27,6 +31,6 @@ public class UserService {
     }
 
     public void save(User user) {
-        InMemoryUserRepository.save(user);
+        inMemoryUserRepository.save(user);
     }
 }

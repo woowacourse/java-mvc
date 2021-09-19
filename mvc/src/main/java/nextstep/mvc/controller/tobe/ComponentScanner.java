@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.Repository;
 import nextstep.web.annotation.Service;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class ComponentScanner {
     public void findComponent() {
         Set<Class<?>> components = reflections.getTypesAnnotatedWith(Controller.class);
         components.addAll(reflections.getTypesAnnotatedWith(Service.class));
+        components.addAll(reflections.getTypesAnnotatedWith(Repository.class));
         instantiateComponent(components);
     }
 

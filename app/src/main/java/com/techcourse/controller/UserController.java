@@ -1,11 +1,11 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -16,6 +16,10 @@ import org.slf4j.LoggerFactory;
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    private static final String MUNGTO = "mungto";
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
@@ -24,15 +28,15 @@ public class UserController {
         LOG.info("user id : {}", account);
 
         ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", new User(0L, account, "password", "mungto@gmail.com"));
+        modelAndView.addObject("user", userService.findById(account));
         return modelAndView;
     }
 
     @RequestMapping(value = "/api/multiUser", method = RequestMethod.GET)
     public ModelAndView multiUser(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("mungto", new User(0L, "mungto", "password", "mungto@gmail.com"));
-        modelAndView.addObject("gugu", InMemoryUserRepository.findByAccount("gugu").orElseThrow());
+        modelAndView.addObject(MUNGTO, userService.findById(MUNGTO));
+        modelAndView.addObject("gugu", userService.findById("gugu"));
         return modelAndView;
     }
 }
