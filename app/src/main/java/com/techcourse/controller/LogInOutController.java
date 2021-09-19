@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -19,7 +20,8 @@ public class LogInOutController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogInOutController.class);
 
-    private final UserService userService = new UserService();
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView getLoginPage(HttpServletRequest request, HttpServletResponse response) {

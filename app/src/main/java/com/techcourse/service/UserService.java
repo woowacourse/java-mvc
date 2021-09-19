@@ -1,12 +1,14 @@
 package com.techcourse.service;
 
 import com.techcourse.Pages;
-import com.techcourse.domain.UserSession;
 import com.techcourse.domain.User;
+import com.techcourse.domain.UserSession;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import nextstep.web.annotation.Service;
 
+@Service
 public class UserService {
 
     public User findById(String account) {
@@ -24,4 +26,7 @@ public class UserService {
         return Pages.UNAUTHORIZED;
     }
 
+    public void save(User user) {
+        InMemoryUserRepository.save(user);
+    }
 }
