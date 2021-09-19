@@ -13,7 +13,7 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static nextstep.mvc.view.JspView.*;
+import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
 
 @Controller
 public class LoginController {

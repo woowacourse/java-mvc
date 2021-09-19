@@ -10,7 +10,7 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
-import static nextstep.mvc.view.JspView.*;
+import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
 
 @Controller
 public class RegisterController {

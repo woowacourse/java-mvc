@@ -31,6 +31,6 @@ public class HandlerMappings {
                 .filter(Objects::nonNull)
                 .findAny()
                 .orElseThrow(HandlerNotFoundException::new)
-        ;
+                ;
     }
 }
