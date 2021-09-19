@@ -21,12 +21,12 @@ public class JsonView implements View {
     ) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final PrintWriter writer = response.getWriter();
+
+        Object value = model;
         if (model.size() == 1) {
-            final Object value = model.values().toArray()[0];
-            writer.print(value);
-            return;
+            value = model.values().toArray()[0];
         }
-        final String jsonValues = OBJECT_MAPPER.writeValueAsString(model);
+        final String jsonValues = OBJECT_MAPPER.writeValueAsString(value);
         writer.print(jsonValues);
     }
 }
