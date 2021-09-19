@@ -17,7 +17,7 @@ public class JsonView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -31,9 +31,9 @@ public class JsonView implements View {
     private Object parseJsonData(Map<String, ?> model) {
         try {
             if (model.size() == 1) {
-                return objectMapper.writeValueAsString(model.values().toArray()[0]);
+                return OBJECT_MAPPER.writeValueAsString(model.values().toArray()[0]);
             }
-            return objectMapper.writeValueAsString(model);
+            return OBJECT_MAPPER.writeValueAsString(model);
         } catch (JsonProcessingException e) {
             log.error("응답을 Json 형식으로 변환하는 도중 예외가 발생했습니다.");
             throw new ResponseParseJsonException("응답을 Json 형식으로 변환하는 도중 예외가 발생했습니다.", e);
