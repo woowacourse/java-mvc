@@ -28,7 +28,7 @@ public class RegisterController {
         try {
             InMemoryUserRepository.save(user);
         } catch (DuplicatedUserException e) {
-            res.setStatus(409);
+            res.setStatus(HttpServletResponse.SC_CONFLICT);
             return new ModelAndView(new JspView("/409.jsp"));
         }
         return new ModelAndView(new JspView("redirect:/index.jsp"));
