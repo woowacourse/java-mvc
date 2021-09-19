@@ -6,10 +6,11 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryUserRepository {
 
-    private static long INDEX = 1;
+    private static AtomicLong INDEX = new AtomicLong(1);
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 
     static {
@@ -26,7 +27,7 @@ public class InMemoryUserRepository {
         try {
             Field id = user.getClass().getDeclaredField("id");
             id.setAccessible(true);
-            id.setLong(user, ++INDEX);
+            id.setLong(user, INDEX.incrementAndGet());
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
