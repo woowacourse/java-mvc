@@ -59,8 +59,8 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         try {
-            view = resolveViewName(modelAndView.getViewName());
-            Objects.requireNonNull(view).render(modelAndView.getModel(), request, response);
+            view = Objects.requireNonNull(resolveViewName(modelAndView.getViewName()));
+            view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             handleException(e);
         }
