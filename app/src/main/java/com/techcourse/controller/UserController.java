@@ -12,6 +12,8 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 @Controller
 public class UserController {
 
@@ -27,5 +29,15 @@ public class UserController {
                 .orElseThrow();
         modelAndView.addObject("user", user);
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView mav = new ModelAndView(new JsonView());
+
+        for (Map.Entry<String, User> keyAndValue : InMemoryUserRepository.findAll().entrySet()) {
+            mav.addObject(keyAndValue.getKey(), keyAndValue.getValue());
+        }
+        return mav;
     }
 }
