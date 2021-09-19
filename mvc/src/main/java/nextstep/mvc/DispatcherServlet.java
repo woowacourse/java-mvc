@@ -41,11 +41,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
-        Object findHandler = handlerMapping.getHandler(request);
-        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(findHandler);
+        Object handler = handlerMapping.getHandler(request);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         try {
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, findHandler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {

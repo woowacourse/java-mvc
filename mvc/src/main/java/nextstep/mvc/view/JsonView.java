@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.exception.NotSupportedMethod;
+import nextstep.mvc.exception.ResponseParseJsonException;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class JsonView implements View {
             return objectMapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
             log.error("응답을 Json 형식으로 변환하는 도중 예외가 발생했습니다.");
-            throw new RuntimeException("응답을 Json 형식으로 변환하는 도중 예외가 발생했습니다.", e);
+            throw new ResponseParseJsonException("응답을 Json 형식으로 변환하는 도중 예외가 발생했습니다.", e);
         }
     }
 

@@ -30,8 +30,8 @@ public class ControllerScanner {
         Map<Class<?>, Object> controllers = new HashMap<>();
         try {
             for (Class<?> clazz : classes) {
-                Object newInstance = clazz.getDeclaredConstructor().newInstance();
-                controllers.put(clazz, newInstance);
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+                controllers.put(clazz, instance);
             }
             return controllers;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {

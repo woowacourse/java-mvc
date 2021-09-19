@@ -36,12 +36,13 @@ class InMemoryUserRepositoryTest {
     @Test
     void saveDuplicatedAccount() {
         // given
-        User newUser1 = new User(1L, "charlie", "1234", "test@test.com");
-        User newUser2 = new User(2L, "charlie", "1234", "test@test.com");
-        InMemoryUserRepository.save(newUser1);
+        User newUser = new User(1L, "charlie", "1234", "test@test.com");
+        InMemoryUserRepository.save(newUser);
+
+        User duplicatedAccountUser = new User(2L, "charlie", "1234", "test@test.com");
 
         // when then
-        assertThatThrownBy(() -> InMemoryUserRepository.save(newUser2))
+        assertThatThrownBy(() -> InMemoryUserRepository.save(duplicatedAccountUser))
                 .isInstanceOf(DuplicatedUserException.class);
     }
 
@@ -54,10 +55,10 @@ class InMemoryUserRepositoryTest {
         InMemoryUserRepository.save(newUser);
 
         // when
-        User findUser = InMemoryUserRepository.findByAccount(account).get();
+        User savedUser = InMemoryUserRepository.findByAccount(account).get();
 
         // then
-        assertThat(findUser.getAccount()).isEqualTo(account);
+        assertThat(savedUser.getAccount()).isEqualTo(account);
     }
 
     @DisplayName("존재하지 않는 유저를 조회하려고 한다.")
@@ -67,9 +68,9 @@ class InMemoryUserRepositoryTest {
         String nonExistAccount = "dsfkmasklfmsklfe";
 
         // when
-        Optional<User> byAccount = InMemoryUserRepository.findByAccount(nonExistAccount);
+        Optional<User> optionalUser = InMemoryUserRepository.findByAccount(nonExistAccount);
 
         // then
-        assertThat(byAccount).isEmpty();
+        assertThat(optionalUser).isEmpty();
     }
 }

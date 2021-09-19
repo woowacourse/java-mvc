@@ -1,7 +1,5 @@
 package com.techcourse.domain;
 
-import java.util.Objects;
-
 public class User {
 
     private final long id;
