@@ -122,7 +122,7 @@ class LoginControllerTest {
     void logout() {
         // given
         when(request.getRequestURI()).thenReturn("/logout");
-        when(request.getMethod()).thenReturn(RequestMethod.POST.name());
+        when(request.getMethod()).thenReturn(RequestMethod.GET.name());
         when(request.getSession()).thenReturn(session);
         doNothing().when(session).removeAttribute(anyString());
 
@@ -130,6 +130,6 @@ class LoginControllerTest {
         ModelAndView modelAndView = loginController.logout(request, response);
 
         // then
-        assertThat(modelAndView.getViewName()).isEqualTo("redirect:/");
+        assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
     }
 }

@@ -29,7 +29,7 @@ public class RegisterController {
             InMemoryUserRepository.save(user);
         } catch (DuplicatedUserException e) {
             res.setStatus(409);
-            return new ModelAndView(new JspView("409.jsp"));
+            return new ModelAndView(new JspView("/409.jsp"));
         }
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }

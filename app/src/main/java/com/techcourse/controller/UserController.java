@@ -29,7 +29,7 @@ public class UserController {
         Optional<User> optionalUser = InMemoryUserRepository.findByAccount(account);
         if (optionalUser.isEmpty()) {
             response.setStatus(404);
-            return new ModelAndView(new JspView("404.jsp"));
+            return new ModelAndView(new JspView("/404.jsp"));
         }
         User user = optionalUser.get();
         modelAndView.addObject("user", user);
