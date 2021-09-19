@@ -20,11 +20,11 @@ public class InMemoryUserRepository {
     }
 
     public static void save(User user) {
-        User recreateUser = recreateWithId(user);
-        database.put(recreateUser.getAccount(), recreateUser);
+        User userWithId = toUserWithId(user);
+        database.put(userWithId.getAccount(), userWithId);
     }
 
-    private static User recreateWithId(User user) {
+    private static User toUserWithId(User user) {
         if (isMaximum()) {
             throw new OutOfUserIdException();
         }
