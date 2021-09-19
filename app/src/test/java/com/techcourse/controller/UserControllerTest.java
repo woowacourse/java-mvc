@@ -68,6 +68,6 @@ class UserControllerTest {
         ModelAndView modelAndView = userController.show(request, response);
 
         // then
-        assertThat(modelAndView.getViewName()).isEqualTo("404.jsp");
+        assertThat(modelAndView.getViewName()).isEqualTo("/404.jsp");
     }
 }

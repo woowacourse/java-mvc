@@ -62,7 +62,7 @@ class RegisterControllerTest {
         ModelAndView modelAndView = registerController.register(request, response);
 
         // then
-        assertThat(modelAndView.getViewName()).isEqualTo("409.jsp");
+        assertThat(modelAndView.getViewName()).isEqualTo("/409.jsp");
     }
 
     @Test
