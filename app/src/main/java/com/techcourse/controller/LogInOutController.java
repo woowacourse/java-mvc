@@ -1,7 +1,8 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.Pages;
+import com.techcourse.domain.UserSession;
+import com.techcourse.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,33 +18,27 @@ import org.slf4j.LoggerFactory;
 public class LogInOutController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogInOutController.class);
-    private static final String REDIRECT_INDEX = "redirect:/index.jsp";
-    private static final String REDIRECT_401 = "redirect:/401.jsp";
+
+    private final UserService userService = new UserService();
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView getLoginPage(HttpServletRequest request, HttpServletResponse response) {
         String viewName = UserSession.getUserFrom(request.getSession())
             .map(user -> {
                 LOG.info("logged in {}", user.getAccount());
-                return REDIRECT_INDEX;
+                return Pages.INDEX.redirectPageName();
             })
-            .orElse("/login.jsp");
+            .orElse(Pages.LOGIN.getPageName());
         return new ModelAndView(new JspView(viewName));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(REDIRECT_INDEX));
+            return new ModelAndView(new JspView(Pages.INDEX.redirectPageName()));
         }
-
-        String viewName = InMemoryUserRepository.findByAccount(request.getParameter("account"))
-            .map(user -> {
-                LOG.info("User : {}", user);
-                return checkedLogin(request, user);
-            })
-            .orElse(REDIRECT_401);
-        return new ModelAndView(new JspView(viewName));
+        Pages pages = userService.checkedLogin(request);
+        return new ModelAndView(new JspView(pages.redirectPageName()));
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -52,15 +47,4 @@ public class LogInOutController {
         session.removeAttribute(UserSession.SESSION_KEY);
         return new ModelAndView(new JspView("redirect:/"));
     }
-
-    private String checkedLogin(HttpServletRequest request, User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
-            final HttpSession session = request.getSession();
-            session.setAttribute(UserSession.SESSION_KEY, user);
-            return REDIRECT_INDEX;
-        }
-        return REDIRECT_401;
-    }
-
-
 }

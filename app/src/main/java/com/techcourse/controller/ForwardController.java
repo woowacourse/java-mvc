@@ -1,5 +1,6 @@
 package com.techcourse.controller;
 
+import com.techcourse.Pages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JspView;
@@ -13,6 +14,6 @@ public class ForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView getIndexPage(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView(new JspView(Pages.INDEX.getPageName()));
     }
 }

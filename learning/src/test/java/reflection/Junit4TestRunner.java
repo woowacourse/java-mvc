@@ -14,7 +14,6 @@ class Junit4TestRunner {
     void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
 
-        // TODO Junit4Test 에서 @MyTest 애노테이션이 있는 메소드 실행
         Junit4Test instance = clazz.getDeclaredConstructor().newInstance();
 
         Method[] declaredMethods = clazz.getDeclaredMethods();

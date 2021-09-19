@@ -14,7 +14,6 @@ class Junit3TestRunner {
     void run() throws Exception {
 
         Class<Junit3Test> clazz = Junit3Test.class;
-        // TODO Junit3Test 에서 test 로 시작하는 메소드 실행
 
         Junit3Test instance = clazz.getDeclaredConstructor().newInstance();
         Method[] declaredMethods = clazz.getDeclaredMethods();
