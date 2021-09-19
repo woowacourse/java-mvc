@@ -1,9 +1,9 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.register;
 
 import java.util.ArrayList;
 import java.util.List;
-import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.exception.BadRequestException;
+import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.exception.BadRequestException;
 
 public class HandlerAdapterRegistry {
 

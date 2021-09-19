@@ -1,11 +1,11 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.register;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.exception.BadRequestException;
+import nextstep.mvc.handler.HandlerMapping;
+import nextstep.mvc.exception.BadRequestException;
 
 public class HandlerMappingRegistry {
 

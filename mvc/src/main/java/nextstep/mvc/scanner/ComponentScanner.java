@@ -1,9 +1,9 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.scanner;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.controller.exception.InternalServerException;
+import nextstep.mvc.exception.InternalServerException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.Repository;
 import nextstep.web.annotation.Service;

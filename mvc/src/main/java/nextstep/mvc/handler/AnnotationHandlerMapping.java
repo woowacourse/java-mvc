@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.exception.InternalServerException;
+import nextstep.mvc.scanner.ComponentScanner;
+import nextstep.mvc.exception.InternalServerException;
 import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;

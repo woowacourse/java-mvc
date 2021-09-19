@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.exception;
+package nextstep.mvc.exception;
 
 import nextstep.mvc.Pages;
 
