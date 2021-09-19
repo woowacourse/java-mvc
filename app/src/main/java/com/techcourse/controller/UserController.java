@@ -3,7 +3,6 @@ package com.techcourse.controller;
 import com.techcourse.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Controller;
@@ -27,16 +26,16 @@ public class UserController {
 
         LOG.info("user id : {}", account);
 
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("user", userService.findById(account));
         return modelAndView;
     }
 
     @RequestMapping(value = "/api/multiUser", method = RequestMethod.GET)
     public ModelAndView multiUser(HttpServletRequest request, HttpServletResponse response) {
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject(MUNGTO, userService.findById(MUNGTO));
-        modelAndView.addObject("gugu", userService.findById("gugu"));
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject(MUNGTO, userService.findById(MUNGTO))
+            .addObject("gugu", userService.findById("gugu"));
         return modelAndView;
     }
 }

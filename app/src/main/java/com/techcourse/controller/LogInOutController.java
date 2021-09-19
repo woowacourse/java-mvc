@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.Pages;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Controller;
@@ -31,22 +30,22 @@ public class LogInOutController {
                 return Pages.INDEX.redirectPageName();
             })
             .orElse(Pages.LOGIN.getPageName());
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(viewName);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(Pages.INDEX.redirectPageName()));
+            return new ModelAndView(Pages.INDEX.redirectPageName());
         }
         Pages pages = userService.checkedLogin(request);
-        return new ModelAndView(new JspView(pages.redirectPageName()));
+        return new ModelAndView(pages.redirectPageName());
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
         final HttpSession session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView(Pages.INDEX.redirectPageName()));
+        return new ModelAndView(Pages.INDEX.redirectPageName());
     }
 }

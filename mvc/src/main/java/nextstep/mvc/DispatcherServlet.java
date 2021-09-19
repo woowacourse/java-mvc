@@ -9,9 +9,9 @@ import nextstep.mvc.exception.AbstractCustomException;
 import nextstep.mvc.handler.HandlerMapping;
 import nextstep.mvc.register.HandlerAdapterRegistry;
 import nextstep.mvc.register.HandlerMappingRegistry;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
+import nextstep.mvc.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +22,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final ViewResolver viewResolver = new ViewResolver();
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
@@ -40,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         ModelAndView modelAndView;
         try {
             modelAndView = getModelAndView(request, response);
-            View view = modelAndView.getView();
+            View view = viewResolver.resolverViewName(modelAndView.getViewName());
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             LOG.error("Exception : {}", e.getMessage(), e);
@@ -55,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handle);
             return handlerAdapter.handle(request, response, handle);
         } catch (AbstractCustomException e) {
-            return new ModelAndView(new JspView(e.getPages().redirectPageName()));
+            return new ModelAndView(e.getPages().redirectPageName());
         }
     }
 

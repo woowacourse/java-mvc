@@ -1,7 +1,7 @@
 package nextstep.mvc;
 
 public enum Pages {
-    REDIRECT("redirect:"),
+
     LOGIN("/login.jsp"),
     REGISTER("/register.jsp"),
     INDEX("/index.jsp"),
@@ -20,6 +20,6 @@ public enum Pages {
     }
 
     public String redirectPageName() {
-        return REDIRECT.getPageName() + this.getPageName();
+        return "redirect:" + this.getPageName();
     }
 }

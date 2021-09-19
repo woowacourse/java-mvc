@@ -7,12 +7,8 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Map;
 import nextstep.web.support.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JsonView implements View {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JsonView.class);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -22,7 +18,7 @@ public class JsonView implements View {
 
         PrintWriter writer = response.getWriter();
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        if (model.entrySet().size() == 1) {
+        if (model.size() == 1) {
             Collection<?> values = model.values();
             Object o = values.toArray()[0];
             writer.print(OBJECT_MAPPER.writeValueAsString(o));

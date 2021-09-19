@@ -6,7 +6,6 @@ import com.techcourse.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.Pages;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Autowired;
 import nextstep.web.annotation.Controller;
@@ -28,14 +27,14 @@ public class RegisterController {
 
         userService.save(user);
 
-        return new ModelAndView(new JspView(Pages.INDEX.redirectPageName()));
+        return new ModelAndView(Pages.INDEX.redirectPageName());
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView getRegisterPage(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(Pages.INDEX.redirectPageName()));
+            return new ModelAndView(Pages.INDEX.redirectPageName());
         }
-        return new ModelAndView(new JspView(Pages.REGISTER.getPageName()));
+        return new ModelAndView(Pages.REGISTER.getPageName());
     }
 }
