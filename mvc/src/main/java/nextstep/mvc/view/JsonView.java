@@ -26,7 +26,7 @@ public class JsonView implements View {
                 return;
             }
 
-            writer.write(objectMapper.writeValueAsString(model));
+            writer.write(asJson(model));
         } catch (IOException e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new IllegalArgumentException();

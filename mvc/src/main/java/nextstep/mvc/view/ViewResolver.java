@@ -18,7 +18,7 @@ public class ViewResolver {
         view.render(modelAndView.getModel(), request, response);
     }
 
-    public static void resolveJsp(String viewName, HttpServletRequest request, HttpServletResponse response) {
+    public static void resolve(String viewName, HttpServletRequest request, HttpServletResponse response) {
         try {
             JspView jspView = new JspView(viewName);
             jspView.render(Collections.emptyMap(), request, response);
