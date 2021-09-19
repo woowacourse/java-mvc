@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +41,7 @@ class AnnotationHandlerAdapterTest {
         @Test
         void supportsFalse() {
             // given
-            Object handler = mock(Controller.class);
+            Object handler = mock(Object.class);
 
             // when, then
             assertThat(annotationHandlerAdapter.isCompatible(handler)).isFalse();
@@ -80,7 +79,7 @@ class AnnotationHandlerAdapterTest {
         @Test
         void handleException() {
             // given
-            Controller handler = mock(Controller.class);
+            Object handler = mock(Object.class);
 
             // when, then
             assertThatThrownBy(() -> annotationHandlerAdapter.handle(request, response, handler))

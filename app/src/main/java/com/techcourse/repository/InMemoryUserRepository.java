@@ -21,7 +21,7 @@ public class InMemoryUserRepository {
     private final AtomicLong autoIncrementId;
 
     public InMemoryUserRepository() {
-        this(new HashMap<>(), new AtomicLong(1));
+        this(new ConcurrentHashMap<>(), new AtomicLong(1));
     }
 
     public InMemoryUserRepository(Map<String, User> database, AtomicLong autoIncrementId) {

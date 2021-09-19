@@ -27,4 +27,8 @@ public class ModelAndView {
     public Object getObject(String attributeName) {
         return model.get(attributeName);
     }
+
+    public String getViewName() {
+        return view.getViewName();
+    }
 }

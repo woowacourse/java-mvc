@@ -1,16 +1,22 @@
 package com.techcourse.controller;
 
 import com.techcourse.controller.request.LoginRequest;
+import com.techcourse.domain.User;
 import com.techcourse.exception.UnauthorizedException;
 import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+@Controller
+public class LoginController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
@@ -20,10 +26,21 @@ public class LoginController implements Controller {
         this.loginService = loginService;
     }
 
-    @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return "redirect:/index.jsp";
+            User user = UserSession.getUser(request.getSession());
+            LOG.debug("logged in {}", user.getAccount());
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
+        }
+
+        return new ModelAndView(new JspView("/login.jsp"));
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
         try {
@@ -32,11 +49,11 @@ public class LoginController implements Controller {
 
             LOG.debug("Login Success!!");
 
-            return "redirect:/index.jsp";
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         } catch (UnauthorizedException e) {
             LOG.debug("Login Failed...");
 
-            return "redirect:/401.jsp";
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
     }
 
@@ -48,5 +65,13 @@ public class LoginController implements Controller {
         LOG.debug("Login Request => account: {}", account);
 
         return new LoginRequest(account, password, httpSession);
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
+        final HttpSession session = request.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }

@@ -8,6 +8,7 @@ import com.techcourse.exception.DuplicateAccountException;
 import com.techcourse.exception.UnauthorizedException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,7 @@ class InMemoryUserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        Map<String, User> database = new HashMap<>();
+        Map<String, User> database = new ConcurrentHashMap<>();
         userRepository = new InMemoryUserRepository(database, new AtomicLong(1));
     }
 
