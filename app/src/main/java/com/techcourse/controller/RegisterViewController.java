@@ -8,7 +8,7 @@ import nextstep.web.support.RequestMethod;
 public class RegisterViewController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public String execute() {
+    public String registerView() {
         return "/register.jsp";
     }
 }

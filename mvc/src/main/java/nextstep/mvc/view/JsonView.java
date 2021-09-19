@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    public static final int FIRST_INDEX = 0;
+    private static final int FIRST_INDEX = 0;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final int SINGLE_MODEL_VALUE_SIZE = 1;
 

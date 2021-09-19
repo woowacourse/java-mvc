@@ -11,7 +11,7 @@ import nextstep.web.support.RequestMethod;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String execute(HttpServletRequest req) {
+    public String register(HttpServletRequest req) {
         final User user = new User(
             req.getParameter("account"),
             req.getParameter("password"),

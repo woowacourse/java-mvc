@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryUserRepository {
 
-
     private static final Map<Long, User> database = new ConcurrentHashMap<>();
     private static final Map<Account, Long> indexTable = new ConcurrentHashMap<>();
     private static final AtomicLong id = new AtomicLong(0);
