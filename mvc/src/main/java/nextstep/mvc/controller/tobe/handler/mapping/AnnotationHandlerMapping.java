@@ -16,25 +16,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    private final HandlerScanner handlerScanner;
 
     public AnnotationHandlerMapping(Object... basePackages) {
-        this(basePackages, new HashMap<>(), new HandlerScanner());
+        this(basePackages, new HashMap<>());
     }
 
     private AnnotationHandlerMapping(
         Object[] basePackages,
-        Map<HandlerKey, HandlerExecution> handlerExecutions,
-        HandlerScanner handlerScanner
+        Map<HandlerKey, HandlerExecution> handlerExecutions
     ) {
         this.basePackages = basePackages;
         this.handlerExecutions = handlerExecutions;
-        this.handlerScanner = handlerScanner;
     }
 
     public void initialize() {
         LOG.info("Initialize AnnotationHandlerMapping!");
 
+        HandlerScanner handlerScanner = new HandlerScanner();
         handlerScanner.scan(basePackages);
 
         Map<Class<?>, Object> handlers = handlerScanner.getHandlers();
