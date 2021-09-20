@@ -6,8 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import nextstep.mvc.controller.adapter.HandlerAdapter;
+import nextstep.mvc.controller.handler.HandlerMapping;
+import nextstep.mvc.controller.handler.HandlerMappings;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -18,17 +19,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappings handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        handlerMappings = new ArrayList<>();
+        handlerMappings = new HandlerMappings();
         handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappings.initialize();
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
@@ -44,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
         LOGGER.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = getHandlerMapping(request);
+            Object handler = handlerMappings.getHandlerMapping(request);
             for (HandlerAdapter handlerAdapter : handlerAdapters) {
                 if (handlerAdapter.supports(handler)) {
                     viewRender(request, response, handler, handlerAdapter);
@@ -63,13 +64,5 @@ public class DispatcherServlet extends HttpServlet {
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
         View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
-    }
-
-    private Object getHandlerMapping(final HttpServletRequest request) {
-        return handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElseThrow();
     }
 }

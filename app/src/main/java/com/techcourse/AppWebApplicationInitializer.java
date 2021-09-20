@@ -3,7 +3,7 @@ package com.techcourse;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.controller.handler.HandlerMapping;
 import nextstep.mvc.controller.adapter.HandlerAdapter;
 import nextstep.mvc.controller.adapter.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
