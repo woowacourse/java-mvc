@@ -11,10 +11,12 @@ public class DummyWriter extends PrintWriter {
         super(out);
     }
 
+    @Override
     public void print(String data) {
         this.data = data;
     }
 
+    @Override
     public void flush() {
         return;
     }
