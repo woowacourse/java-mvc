@@ -38,9 +38,12 @@ public class HandlerExecution {
                         .ifPresent(it -> argument[finalIdx] = it);
             }
             return method.invoke(handler, argument);
+        } catch (InvocationTargetException e) {
+            log.info("메소드 실행을 실패했습니다. 이유: {}", e.getTargetException().getMessage());
+            throw new HandlerAdapterException("메소드 실행을 실패했습니다. 이유: " + e.getTargetException().getMessage());
         } catch (Exception e) {
-            log.info("핸들러 실행을 실패했습니다. 이유: {}", ((InvocationTargetException) e).getTargetException().getMessage());
-            throw new HandlerAdapterException("핸들러 실행을 실패했습니다. 이유: " + ((InvocationTargetException) e).getTargetException().getMessage());
+            log.info("핸들러 실행을 실패했습니다. 이유: {}", e.getMessage());
+            throw new HandlerAdapterException("핸들러 실행을 실패했습니다. 이유: " + e.getMessage());
         }
     }
 
