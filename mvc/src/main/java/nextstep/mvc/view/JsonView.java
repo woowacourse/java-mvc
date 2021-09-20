@@ -9,7 +9,7 @@ import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
 
-    ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
