@@ -6,16 +6,20 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
     private final Map<String, Object> model;
+    private Object view;
 
-    public ModelAndView(String viewPath) {
-        this(new JspView(viewPath));
+    public ModelAndView() {
+        this(null);
     }
 
-    public ModelAndView(View view) {
+    public ModelAndView(Object view) {
+        this(view, new HashMap<>());
+    }
+
+    public ModelAndView(Object view, Map<String, Object> model) {
         this.view = view;
-        this.model = new HashMap<>();
+        this.model = model;
     }
 
     public ModelAndView addObject(String attributeName, Object attributeValue) {
@@ -31,7 +35,21 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
+    public String getViewName() {
+        if (this.view instanceof String) {
+            return (String) this.view;
+        }
+        return null;
+    }
+
     public View getView() {
-        return view;
+        if (this.view instanceof View) {
+            return (View) this.view;
+        }
+        return null;
+    }
+
+    public void changeViewName(String viewNAme) {
+        this.view = viewNAme;
     }
 }

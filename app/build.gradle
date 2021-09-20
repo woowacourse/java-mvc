@@ -39,10 +39,9 @@ dependencies {
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.0.10'
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.0.10'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     testImplementation 'org.mockito:mockito-core:3.12.3'
     testImplementation 'org.assertj:assertj-core:3.20.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 tasks.named('test') {
@@ -61,8 +60,23 @@ sonarqube {
 }
 
 jacocoTestReport {
+    dependsOn test // 리포트가 만들어지기 전 테스트 실행되어야 한다.
     reports {
+        html.enabled(true)
         xml.enabled(true)
         xml.destination(new File("jacoco/jacoco.xml"))
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification { // 코드 커버리지 측정항목 시행
+    violationRules { // 위반 규칙
+        rule {
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.75
+            }
+        }
     }
 }
