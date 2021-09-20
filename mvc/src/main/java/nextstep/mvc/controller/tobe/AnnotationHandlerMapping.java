@@ -49,6 +49,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        handlerExecutions.forEach((key, value) -> log.info("Path: {}, Controller: {}, Method: {}", key.getUrl(), value.getHandler(), key.getRequestMethod()));
     }
 
     @Override

@@ -34,4 +34,12 @@ public class HandlerKey {
     public int hashCode() {
         return Objects.hash(url, requestMethod);
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public Object getRequestMethod() {
+        return requestMethod.toString();
+    }
 }
