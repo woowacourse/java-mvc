@@ -22,7 +22,9 @@ public class InMemoryUserRepository {
     }
 
     static {
-        final User user = new User(ID_COUNTER.incrementAndGet(), new Account("gugu"), "password",
+        final User user = new User(
+            "gugu",
+            "password",
             "hkkang@woowahan.com");
         save(user);
     }
@@ -32,8 +34,8 @@ public class InMemoryUserRepository {
             throw new UserRuntimeException("존재하는 계정명 입니다.");
         }
 
-        log.info(user.toString());
         final User identifiedUser = user.newInstanceWithId(ID_COUNTER.incrementAndGet());
+        log.info(identifiedUser.toString());
         DATABASE.put(identifiedUser.id(), identifiedUser);
         INDEX_TABLE.put(identifiedUser.account(), identifiedUser.id());
     }
