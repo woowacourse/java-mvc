@@ -53,4 +53,13 @@ public class User {
         return Objects.hash(id);
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+            "id=" + id +
+            ", account=" + account +
+            ", password='" + password + '\'' +
+            ", email='" + email + '\'' +
+            '}';
+    }
 }
