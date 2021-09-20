@@ -10,12 +10,10 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
+import static com.techcourse.controller.ResourceConst.*;
+
 @Controller
 public class RegisterController {
-
-    private static final String REGISTER_JSP = "/register.jsp";
-    private static final String REDIRECT_PREFIX = "redirect:";
-    private static final String INDEX_JSP = "/index.jsp";
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {

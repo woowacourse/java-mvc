@@ -13,14 +13,12 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.techcourse.controller.ResourceConst.*;
+
 @Controller
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-    private static final String REDIRECT_PREFIX = "redirect:";
-    private static final String INDEX_JSP = "/index.jsp";
-    private static final String UNAUTHORIZED_ERROR = "/401.jsp";
-    private static final String LOGIN_JSP = "/login.jsp";
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView get(HttpServletRequest req, HttpServletResponse res) {

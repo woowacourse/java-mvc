@@ -9,10 +9,10 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
+import static com.techcourse.controller.ResourceConst.REDIRECT_PREFIX;
+
 @Controller
 public class LogoutController {
-
-    private static final String REDIRECT_PREFIX = "redirect:";
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {

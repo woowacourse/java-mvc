@@ -10,12 +10,13 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.techcourse.controller.ResourceConst.GET_TEST_JSP;
+import static com.techcourse.controller.ResourceConst.POST_TEST_JSP;
+
 @Controller
 public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
-    private static final String GET_TEST_JSP = "/get-test.jsp";
-    private static final String POST_TEST_JSP = "/post-test.jsp";
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
