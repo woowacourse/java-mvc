@@ -2,16 +2,20 @@ package nextstep.mvc.view;
 
 public class ModelAndView {
 
-    private final String viewName;
+    private final ViewName viewName;
     private final Model model;
 
-    public ModelAndView(Model model, String viewName) {
+    public ModelAndView(Model model, ViewName viewName) {
         this.model = model;
         this.viewName = viewName;
     }
 
     public ModelAndView(String viewName) {
-        this(new Model(), viewName);
+        this(new Model(), ViewName.of(viewName));
+    }
+
+    public ModelAndView() {
+        this(new Model(), ViewName.EMPTY);
     }
 
     public void addObject(String attributeName, Object attributeValue) {
@@ -26,7 +30,7 @@ public class ModelAndView {
         return model;
     }
 
-    public String getViewName() {
+    public ViewName getViewName() {
         return viewName;
     }
 }

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-    public static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
 
@@ -20,7 +19,7 @@ public class JspView implements View {
     }
 
     public static boolean isJspFile(String fileName) {
-        return FileNameHandlerUtils.isExtension(fileName, "jsp") || fileName.startsWith(REDIRECT_PREFIX);
+        return FileNameHandlerUtils.isExtension(fileName, "jsp");
     }
 
     @Override
@@ -31,11 +30,6 @@ public class JspView implements View {
             log.debug("attribute name : {}, value : {}", key, model.getAttribute(key));
             request.setAttribute(key, model.getAttribute(key));
         });
-
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
 
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);

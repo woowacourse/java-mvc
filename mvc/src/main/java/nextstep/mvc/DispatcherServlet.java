@@ -10,7 +10,7 @@ import nextstep.mvc.handler.tobe.HandlerMapping;
 import nextstep.mvc.handler.tobe.HandlerMappings;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
-import nextstep.mvc.view.resolver.ViewResolver;
+import nextstep.mvc.view.resolver.ViewResolvers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +21,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
-    private final ViewResolver viewResolver;
+    private final ViewResolvers viewResolvers;
     private final ExceptionHandlerExecutor exceptionHandlerExecutor;
 
     public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters,
-            ViewResolver viewResolver, ExceptionHandlerExecutor exceptionHandlerExecutor) {
+                             ViewResolvers viewResolvers, ExceptionHandlerExecutor exceptionHandlerExecutor) {
         this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
-        this.viewResolver = viewResolver;
+        this.viewResolvers = viewResolvers;
         this.exceptionHandlerExecutor = exceptionHandlerExecutor;
     }
 
@@ -47,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView modelAndView = processRequest(request, response);
-            View view = viewResolver.resolve(modelAndView.getViewName());
+            View view = viewResolvers.resolve(modelAndView.getViewName());
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

@@ -29,7 +29,11 @@ public class Model {
         return attributes.keySet();
     }
 
-    public Map<String, Object> asMap(){
+    public Map<String, Object> asMap() {
         return Collections.unmodifiableMap(attributes);
+    }
+
+    public int size() {
+        return attributes.size();
     }
 }

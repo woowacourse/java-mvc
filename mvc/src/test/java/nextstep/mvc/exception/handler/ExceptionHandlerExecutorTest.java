@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import nextstep.mvc.exception.UnHandledRequestException;
 import nextstep.mvc.handler.exception.ExceptionHandlerExecutor;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.ViewName;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ class ExceptionHandlerExecutorTest {
         ExceptionHandlerExecutor handlerExecutor = new ExceptionHandlerExecutor("samples");
         ModelAndView modelAndView = handlerExecutor.execute(new UnHandledRequestException());
 
-        assertThat(modelAndView.getViewName()).isEqualTo("404.html");
+        assertThat(modelAndView.getViewName()).isEqualTo(ViewName.of("404.html"));
     }
 
     @Disabled
