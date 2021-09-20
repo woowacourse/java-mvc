@@ -13,7 +13,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         HandlerExecution handlerExecution = (HandlerExecution) handler;
         return handlerExecution.handle(request, response);
     }

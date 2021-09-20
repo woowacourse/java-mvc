@@ -3,7 +3,7 @@
 <html lang="en">
     <head>
         <%@ include file="include/header.jspf" %>
-        <title>401 Error - SB Admin</title>
+        <title>409 Error - SB Admin</title>
     </head>
     <body>
         <div id="layoutError">
@@ -13,9 +13,9 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-6">
                                 <div class="text-center mt-4">
-                                    <h1 class="display-1">401</h1>
-                                    <p class="lead">Unauthorized</p>
-                                    <p>Access to this resource is denied.</p>
+                                    <h1 class="display-1">409</h1>
+                                    <p class="lead">Conflict</p>
+                                    <p>this resource is conflicted</p>
                                     <a href="/index.jsp">
                                         <i class="fas fa-arrow-left me-1"></i>
                                         Return to Dashboard

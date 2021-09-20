@@ -11,7 +11,7 @@ public class HandlerKey {
     private final String url;
     private final RequestMethod requestMethod;
 
-    public HandlerKey(String url, RequestMethod requestMethod) {
+    private HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
     }
