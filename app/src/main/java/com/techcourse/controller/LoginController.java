@@ -5,8 +5,6 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -24,30 +22,30 @@ public class LoginController {
     private static final String REDIRECT_401_JSP = "redirect:/401.jsp";
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
+    public String execute(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+            return REDIRECT_INDEX_JSP;
         }
-        return new ModelAndView(new JspView(LOGIN_JSP));
+        return LOGIN_JSP;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
+    public String loginView(HttpServletRequest req, HttpServletResponse res) {
         return InMemoryUserRepository.findByAccount(req.getParameter(ACCOUNT))
             .map(user -> {
                 log.info("User : {}", user);
                 return login(req, user);
             })
-            .orElse(new ModelAndView(new JspView(REDIRECT_INDEX_JSP)));
+            .orElse(REDIRECT_INDEX_JSP);
     }
 
-    private ModelAndView login(HttpServletRequest request, User user) {
+    private String login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter(PASSWORD))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+            return REDIRECT_INDEX_JSP;
         } else {
-            return new ModelAndView(new JspView(REDIRECT_401_JSP));
+            return REDIRECT_401_JSP;
         }
     }
 }
