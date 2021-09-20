@@ -9,24 +9,25 @@ import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.JspPage;
 import nextstep.web.support.RequestMethod;
 
 @Controller
 public class RegisterController {
-    
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
+        return new ModelAndView(new JspView(JspPage.REGISTER.value()));
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
         User user = new User(2,
             req.getParameter("account"),
             req.getParameter("password"),
-            req.getParameter("email"));
+            req.getParameter("email")
+        );
         InMemoryUserRepository.save(user);
-
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
-    }
-
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(new JspView(String.format("redirect:%s", JspPage.INDEX.value())));
     }
 }

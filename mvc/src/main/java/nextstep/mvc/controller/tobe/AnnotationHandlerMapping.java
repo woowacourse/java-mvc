@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.controller.handler.HandlerMapping;
 import nextstep.mvc.controller.ControllerScanner;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
