@@ -4,7 +4,7 @@
 
 - [x] DispatcherServlet가 아닌 뷰에서 JSP 반환하도록 한다 - 이전 미션에서 완료
 - [x] JSON 뷰를 추가한다
-- [ ] 레거시 MVC를 제거한다
+- [x] 레거시 MVC를 제거한다
 - [x] UserController가 잘 작동되는지 확인한다
 
 - [x] `ReflectionTest`의 테스트를 통과시킨다

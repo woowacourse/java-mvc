@@ -13,29 +13,29 @@ public class HandlerMappings {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerMappings.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> mappings;
 
     public HandlerMappings() {
-        this.handlerMappings = new ArrayList<>();
+        this.mappings = new ArrayList<>();
     }
 
     public void init() {
         log.info("initializing handler mappings");
         addDefaultHandlerMappings();
-        handlerMappings.forEach(HandlerMapping::initialize);
+        mappings.forEach(HandlerMapping::initialize);
     }
 
     private void addDefaultHandlerMappings() {
         log.info("Adding default handler mappings");
-        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
+        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse", "nextstep.mvc.handler"));
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        mappings.add(handlerMapping);
     }
 
     public Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
+        return mappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()

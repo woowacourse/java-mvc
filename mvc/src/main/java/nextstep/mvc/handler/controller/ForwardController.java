@@ -2,19 +2,17 @@ package nextstep.mvc.handler.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-import java.util.Objects;
+@Controller
+public class ForwardController {
 
-public class ForwardController implements Controller {
-
-    private final String path;
-
-    public ForwardController(String path) {
-        this.path = Objects.requireNonNull(path);
-    }
-
-    @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        return path;
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView defaultIndex(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
