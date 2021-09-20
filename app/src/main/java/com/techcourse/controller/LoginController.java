@@ -11,6 +11,7 @@ import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.JspPage;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,19 +23,17 @@ public class LoginController {
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView view(HttpServletRequest req, HttpServletResponse res) {
-        return UserSession.getUserFrom(req.getSession())
-            .map(user -> {
-                LOGGER.info("logged in {}", user.getAccount());
-                View view = new JspView("redirect:/index.jsp");
-                return new ModelAndView(view);
-            })
-            .orElse(new ModelAndView(new JspView("/login.jsp")));
+        if (UserSession.isLoggedIn(req.getSession())) {
+            View view = new JspView(JspPage.INDEX.value());
+            return new ModelAndView(view);
+        }
+        return new ModelAndView(new JspView(JspPage.LOGIN.value()));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            View view = new JspView("redirect:/index.jsp");
+            View view = new JspView(String.format("redirect:%s", JspPage.INDEX.value()));
             return new ModelAndView(view);
         }
 
@@ -44,7 +43,7 @@ public class LoginController {
                 return new ModelAndView(loginCheck(req, user));
             })
             .orElse(new ModelAndView(
-                new JspView("redirect:/401.jsp")
+                new JspView(String.format("redirect:%s", JspPage.UNAUTHORIZED.value()))
             ));
     }
 
@@ -52,9 +51,9 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new JspView("redirect:/index.jsp");
+            return new JspView(String.format("redirect:%s", JspPage.INDEX.value()));
         } else {
-            return new JspView("redirect:/401.jsp");
+            return new JspView(String.format("redirect:%s", JspPage.UNAUTHORIZED.value()));
         }
     }
 }

@@ -9,6 +9,7 @@ import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.JspPage;
 import nextstep.web.support.RequestMethod;
 
 @Controller
@@ -22,12 +23,11 @@ public class RegisterController {
             req.getParameter("email")
         );
         InMemoryUserRepository.save(user);
-
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(new JspView(String.format("redirect:%s", JspPage.INDEX.value())));
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(new JspView(JspPage.REGISTER.value()));
     }
 }
