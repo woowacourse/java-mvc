@@ -19,6 +19,6 @@ public class HandlerAdapters {
         return handlerAdapters.stream()
             .filter(handlerAdapter -> handlerAdapter.supports(handler))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException("맞는 핸들러가 없습니다."));
     }
 }
