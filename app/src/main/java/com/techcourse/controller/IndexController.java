@@ -5,10 +5,10 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class RegisterViewController {
+public class IndexController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public String registerView() {
-        return "/register.jsp";
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String goHome() {
+        return "/index.jsp";
     }
 }

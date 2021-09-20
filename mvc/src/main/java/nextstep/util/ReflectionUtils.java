@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReflectionUtils {
+
     private static final Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
 
     public static Set<Class<?>> scanClassByAnnotationWith(List<String> basePackagePaths,
@@ -28,11 +29,13 @@ public class ReflectionUtils {
     }
 
     public static Set<Method> scanAllMethodByAnnotationWith(Class<?> objType,
-                                                             Class<? extends Annotation> annotationClass) {
+                                                            Class<? extends Annotation> annotationClass) {
         Method[] declaredMethods = objType.getDeclaredMethods();
         return Arrays.stream(declaredMethods)
             .filter(declaredMethod -> declaredMethod.isAnnotationPresent(annotationClass))
-            .peek(declaredMethod -> log.info("어노테이션 명 : {}, 메소드 명 : {}", annotationClass.getSimpleName(), declaredMethod.getName()))
+            .peek(declaredMethod -> log
+                .info("어노테이션 명 : {}, 메소드 명 : {}", annotationClass.getSimpleName(),
+                    declaredMethod.getName()))
             .collect(toSet());
     }
 }

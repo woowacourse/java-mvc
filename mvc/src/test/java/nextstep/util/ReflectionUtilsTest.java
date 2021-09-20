@@ -21,7 +21,7 @@ class ReflectionUtilsTest {
         Set<Class<?>> samples1 = ReflectionUtils
             .scanClassByAnnotationWith(List.of("samples1"), Controller.class);
         Set<Class<?>> samples1And2 = ReflectionUtils
-            .scanClassByAnnotationWith(List.of("samples1","samples2"), Controller.class);
+            .scanClassByAnnotationWith(List.of("samples1", "samples2"), Controller.class);
         //when
         //then
         assertThat(samples1).hasSize(2);

@@ -30,9 +30,9 @@ public class JwpApplication {
 
     private static int defaultPortIfNull(String[] args) {
         return Stream.of(args)
-                .findFirst()
-                .map(Integer::parseInt)
-                .orElse(DEFAULT_PORT);
+            .findFirst()
+            .map(Integer::parseInt)
+            .orElse(DEFAULT_PORT);
     }
 
     private static Context addWebapp(Tomcat tomcat) {

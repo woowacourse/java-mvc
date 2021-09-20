@@ -4,11 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.List;
-import nextstep.mvc.controller.asis.ControllerHandlerAdapter;
-import nextstep.mvc.controller.tobe.HandlerExecutionAdapter;
-import nextstep.mvc.controller.tobe.ParameterResolverExecutor;
+import nextstep.mvc.controller.HandlerExecutionAdapter;
+import nextstep.mvc.controller.HandlerExecutionAdapter.Builder;
 import nextstep.mvc.handler.HandlerAdapter;
 import nextstep.mvc.handler.HandlerAdapters;
 import nextstep.mvc.handler.HandlerMapping;
@@ -23,28 +20,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
-    private final HandlerAdapters handlerAdapters;
-
-    {
-        ParameterResolverExecutor defaultParameterResolverExecutor = new ParameterResolverExecutor(
-            Collections.emptyList());
-        this.handlerAdapters = new HandlerAdapters(List.of(
-            new ControllerHandlerAdapter(),
-            new HandlerExecutionAdapter(defaultParameterResolverExecutor)
-        ));
-    }
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();
     }
 
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
+    }
+
     @Override
     public void init() {
+        setDefaultHandlerAdapters();
         handlerMappings.initializeAll();
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+    private void setDefaultHandlerAdapters() {
+        HandlerExecutionAdapter defaultHandlerExecutionAdapter = new Builder().setDefault().build();
+        this.handlerAdapters = new HandlerAdapters(defaultHandlerExecutionAdapter);
     }
 
     @Override

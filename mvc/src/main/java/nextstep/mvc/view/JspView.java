@@ -20,7 +20,7 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(Map<String, ?> model,
+    public void render(Map<String, Object> model,
                        HttpServletRequest request,
                        HttpServletResponse response
     ) throws Exception {
