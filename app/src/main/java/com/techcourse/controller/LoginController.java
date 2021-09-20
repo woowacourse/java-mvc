@@ -33,7 +33,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            View view = new JspView(String.format("redirect:%s", JspPage.INDEX.value()));
+            View view = new JspView(JspPage.INDEX.redirect());
             return new ModelAndView(view);
         }
 
@@ -43,7 +43,7 @@ public class LoginController {
                 return new ModelAndView(loginCheck(req, user));
             })
             .orElse(new ModelAndView(
-                new JspView(String.format("redirect:%s", JspPage.UNAUTHORIZED.value()))
+                new JspView(JspPage.UNAUTHORIZED.redirect())
             ));
     }
 
@@ -51,9 +51,9 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new JspView(String.format("redirect:%s", JspPage.INDEX.value()));
+            return new JspView(JspPage.INDEX.redirect());
         } else {
-            return new JspView(String.format("redirect:%s", JspPage.UNAUTHORIZED.value()));
+            return new JspView(JspPage.UNAUTHORIZED.redirect());
         }
     }
 }

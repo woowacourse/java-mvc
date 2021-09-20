@@ -17,4 +17,8 @@ public enum JspPage {
     public String value() {
         return page;
     }
+
+    public String redirect() {
+        return String.format("redirect:%s", page);
+    }
 }
