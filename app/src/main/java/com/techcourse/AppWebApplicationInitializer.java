@@ -2,9 +2,8 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
 import nextstep.mvc.handleradapter.AnnotationHandlerAdapter;
-import nextstep.mvc.handleradapter.ManualHandlerAdapter;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.servlet.DispatcherServlet;
 import nextstep.mvc.servlet.HandlerAdapterRegistry;
 import nextstep.mvc.servlet.HandlerMappingRegistry;
@@ -21,10 +20,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet(
             new HandlerMappingRegistry(), new HandlerAdapterRegistry());
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE));
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
 
         final ServletRegistration.Dynamic dispatcher = servletContext
             .addServlet("dispatcher", dispatcherServlet);

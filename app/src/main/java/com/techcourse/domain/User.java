@@ -2,10 +2,10 @@ package com.techcourse.domain;
 
 public class User {
 
-    private final Long id;
     private final String account;
     private final String password;
     private final String email;
+    private Long id;
 
     public User(Long id, String account, String password, String email) {
         this.id = id;
@@ -20,6 +20,14 @@ public class User {
 
     public boolean checkPassword(String password) {
         return this.password.equals(password);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getAccount() {
@@ -37,10 +45,10 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", email='" + email + '\'' +
+            ", password='" + password + '\'' +
+            '}';
     }
 }

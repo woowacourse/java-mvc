@@ -1,29 +1,41 @@
 package com.techcourse.repository;
 
+import com.techcourse.AppWebApplicationInitializer;
 import com.techcourse.domain.User;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InMemoryUserRepository {
 
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepository.class);
+    private static final AtomicLong id = new AtomicLong(1L);
     private static final Map<String, User> database = new ConcurrentHashMap<>();
-    private static Long id = 1L;
 
     static {
-        final User user = new User(id, "gugu", "password", "hkkang@woowahan.com");
-        database.put(user.getAccount(), user);
+        final User user = new User("gugu", "password", "hkkang@woowahan.com");
+        save(user);
+    }
+
+    private InMemoryUserRepository() {
     }
 
     public static void save(User user) {
-        User saveUser = new User(++id, user.getAccount(), user.getPassword(), user.getEmail());
-        database.put(user.getAccount(), saveUser);
+        user.setId(id.getAndIncrement());
+        log.info("save user! - id : {}, account: {}", user.getId(), user.getAccount());
+        database.put(user.getAccount(), user);
     }
 
     public static Optional<User> findByAccount(String account) {
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {}
+    public static List<User> findAll() {
+        return new ArrayList<>(database.values());
+    }
 }
