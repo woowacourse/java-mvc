@@ -15,9 +15,6 @@
 ## 기능 요구 사항
 
 - [x] AnnotationHandlerMapping 구현
-- [ ] AnnotationHandlerMapping 리팩토링
-  - [ ] RequestMapping이 클래스 단위로 있는경우
-  - [ ] 클래스, 메서드 둘 다 있는 경우
 
 - [x] 기존의 컨트롤러를 annotation 기반으로 변경하더라도 정상 작동
   - [x] DispatcherServlet이 ModelAndView를 처리할 수 있도록 기능 추가

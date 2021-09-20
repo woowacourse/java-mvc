@@ -1,7 +1,7 @@
 package nextstep.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.handler.HandlerNotFoundException;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

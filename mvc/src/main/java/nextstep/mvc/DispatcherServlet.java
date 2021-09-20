@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapters;
-import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.mvc.mapping.HandlerMappings;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -46,9 +45,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", exception.getMessage(), exception);
             throw new ServletException(exception.getMessage());
         }
-    }
-
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        this.handlerMappings.addHandlerMapping(handlerMapping);
     }
 }

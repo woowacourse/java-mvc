@@ -1,7 +1,7 @@
 package nextstep.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.handler.annotation.ControllerCreationException;
+import nextstep.mvc.exception.MvcException;
 import nextstep.mvc.handler.annotation.HandlerExecution;
 import nextstep.mvc.handler.annotation.HandlerKey;
 import nextstep.web.annotation.Controller;
@@ -67,9 +67,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             return controllerClass.getConstructor().newInstance();
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException exception) {
-            String controllerName = controllerClass.getSimpleName();
-            log.error("exception while making controller instance of {}", controllerName);
-            throw new ControllerCreationException(controllerName);
+            throw new MvcException(
+                    String.format("Error while creating instance of controller %s for handler mapping process", controllerClass.getSimpleName()),
+                    exception
+            );
         }
     }
 
