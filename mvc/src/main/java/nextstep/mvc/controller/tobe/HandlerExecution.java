@@ -24,4 +24,10 @@ public class HandlerExecution {
         }
         return new ModelAndView(new JspView((String) invoke));
     }
+
+    public Object getHandler() {
+        return instance;
+    }
+
+
 }
