@@ -14,7 +14,19 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType("application/json");
 
-        final String jsonBody = objectMapper.writeValueAsString(model);
+        final Object modelObject = modelToObject(model);
+
+        final String jsonBody = objectMapper.writeValueAsString(modelObject);
         response.getWriter().append(jsonBody);
+    }
+
+    private Object modelToObject(Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().stream()
+                    .findFirst()
+                    .orElseThrow();
+        }
+
+        return model;
     }
 }
