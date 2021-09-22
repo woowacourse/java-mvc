@@ -10,7 +10,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class NewRegisterController {
+public class RegisterController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView viewRegister(HttpServletRequest req, HttpServletResponse res) {

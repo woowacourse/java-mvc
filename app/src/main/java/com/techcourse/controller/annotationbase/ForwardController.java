@@ -8,7 +8,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class NewForwardController {
+public class ForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView indexPage(HttpServletRequest req, HttpServletResponse res) {
