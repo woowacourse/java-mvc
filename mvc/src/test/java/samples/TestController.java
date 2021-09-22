@@ -34,6 +34,24 @@ public class TestController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/response-modelAndView", method = RequestMethod.GET)
+    public ModelAndView responseModelAndView() {
+        log.info("test controller response ModelAndView");
+        return new ModelAndView("test.jsp");
+    }
+
+    @RequestMapping(value = "/response-string", method = RequestMethod.GET)
+    public String responseString() {
+        log.info("test controller response string");
+        return "test.jsp";
+    }
+
+    @RequestMapping(value = "/response-object", method = RequestMethod.GET)
+    public Object responseObject() {
+        log.info("test controller response string");
+        return new SampleComponent1();
+    }
+
     @ExceptionHandler(value = UnHandledRequestException.class)
     public ModelAndView notFoundException(Exception e) {
         return new ModelAndView("404.html");

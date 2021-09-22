@@ -2,13 +2,15 @@ package nextstep.mvc.handler.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import nextstep.mvc.exception.MvcComponentException;
 import nextstep.mvc.handler.param.ArgumentResolver;
+import nextstep.mvc.support.BeanNameParserUtils;
 import nextstep.mvc.support.annotation.RequestMappingAnnotationUtils;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.support.RequestMethod;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
@@ -29,12 +31,30 @@ public class HandlerExecution {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Throwable {
         try {
             Method handler = findRequestHandler(request);
-            Object[] arguments = ArgumentResolver.resolveRequestParam(controller, handler, request, response);
-
-            return (ModelAndView) handler.invoke(controller, arguments);
+            return invoke(request, response, handler);
         } catch (InvocationTargetException invocationTargetException) {
             throw invocationTargetException.getCause();
         }
+    }
+
+    private ModelAndView invoke(HttpServletRequest request, HttpServletResponse response, Method handler) throws IllegalAccessException, InvocationTargetException {
+        Object[] arguments = ArgumentResolver.resolveRequestParam(controller, handler, request, response);
+        return resultMapping(handler.invoke(controller, arguments));
+    }
+
+    private ModelAndView resultMapping(Object result) {
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+
+        if (result instanceof String) {
+            String viewName = (String) result;
+            return new ModelAndView(viewName);
+        }
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject(BeanNameParserUtils.toLowerFirstChar(result.getClass().getSimpleName()), result);
+        return modelAndView;
     }
 
     private Method findRequestHandler(HttpServletRequest request) {
