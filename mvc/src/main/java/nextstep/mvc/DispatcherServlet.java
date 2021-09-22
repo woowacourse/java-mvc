@@ -1,8 +1,5 @@
 package nextstep.mvc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,11 +14,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -34,23 +31,20 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.add(handlerAdapter);
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        try {
-            final Object handler = handlerMappingRegistry.getHandler(request);
+        final Object handler = handlerMappingRegistry.getHandler(request);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
-            for (HandlerAdapter handlerAdapter : handlerAdapters) {
-                if (handlerAdapter.supports(handler)) {
-                    ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-                    modelAndView.render(request, response);
-                }
-            }
-        } catch (Throwable e) {
+        try {
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.render(request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
