@@ -39,7 +39,7 @@ class HandlerExecutionTest {
         assertThat(result.getViewName().value()).isEqualTo("test.jsp");
     }
 
-    @DisplayName("처리 결과가 그 외 일반 객체인 경우, ModelAndView의 Model에 담아 리턴한다")
+    @DisplayName("처리 결과가 그 외 일반 객체인 경우, ModelAndView에 <key:ObjectBeanName, value:Object>을 담아 리턴한다")
     @Test
     void responseWithObject() throws Throwable {
         createMockRequest("/response-object", RequestMethod.GET);
