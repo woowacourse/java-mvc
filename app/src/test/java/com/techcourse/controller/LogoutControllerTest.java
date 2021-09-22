@@ -6,14 +6,16 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import jakarta.servlet.http.HttpSession;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
+import nextstep.mvc.controller.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHomeControllerTest {
+class LogoutControllerTest {
+
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
@@ -23,17 +25,19 @@ class AnnotationHomeControllerTest {
     }
 
     @Test
-    void getHomePage() throws Exception {
+    void logout() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
 
-        when(request.getRequestURI()).thenReturn("/");
+        when(request.getRequestURI()).thenReturn("/logout");
         when(request.getMethod()).thenReturn("GET");
+        when(request.getSession()).thenReturn(session);
 
         final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         JspView view = (JspView) modelAndView.getView();
-        assertThat(view.getViewName()).isEqualTo("/index.jsp");
+        assertThat(view.getViewName()).isEqualTo("redirect:/");
     }
 }

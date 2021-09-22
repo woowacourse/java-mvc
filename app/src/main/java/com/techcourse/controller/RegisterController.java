@@ -4,17 +4,31 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final User user = new User(2,
+    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public Object show(HttpServletRequest req, HttpServletResponse res) {
+        return "/register.jsp";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public Object register(HttpServletRequest req, HttpServletResponse res) {
+        final User user = new User(
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
+
+        log.info("register {}", user);
 
         return "redirect:/index.jsp";
     }

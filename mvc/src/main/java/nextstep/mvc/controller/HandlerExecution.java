@@ -1,8 +1,9 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
@@ -16,6 +17,11 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(handler, request, response);
+        Object result = method.invoke(handler, request, response);
+
+        if (result instanceof String) {
+            return new ModelAndView(new JspView((String) result));
+        }
+        return (ModelAndView) result;
     }
 }

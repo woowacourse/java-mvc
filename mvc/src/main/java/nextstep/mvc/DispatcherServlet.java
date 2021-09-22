@@ -29,12 +29,12 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+    public void addHandlerMapping(HandlerMapping... handlerMappings) {
+        this.handlerMappings.addAll(List.of(handlerMappings));
     }
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public void addHandlerAdapter(HandlerAdapter... handlerAdapters) {
+        this.handlerAdapters.addAll(List.of(handlerAdapters));
     }
 
     @Override
@@ -62,6 +62,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler)).findAny().orElseThrow();
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow();
     }
 }
