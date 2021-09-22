@@ -14,12 +14,31 @@ public class User {
         this.email = email;
     }
 
+    public User(String account, String password, String email) {
+        this.id = 0;
+        this.account = account;
+        this.password = password;
+        this.email = email;
+    }
+
     public boolean checkPassword(String password) {
         return this.password.equals(password);
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getAccount() {
         return account;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

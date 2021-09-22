@@ -4,18 +4,30 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class RegisterController implements Controller {
+import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final User user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
+@Controller
+public class RegisterController {
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
+        final User user = new User(
+                request.getParameter("account"),
+                request.getParameter("password"),
+                request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return "redirect:/index.jsp";
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + "/index.jsp"));
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView registerView(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 }
