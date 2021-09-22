@@ -10,12 +10,14 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
+import static com.techcourse.controller.ResourceConst.*;
+
 @Controller
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register"));
+        return new ModelAndView(new JspView(REGISTER_JSP));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -25,6 +27,6 @@ public class RegisterController {
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
-        return new ModelAndView(new JspView("redirect:index.jsp"));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + INDEX_JSP));
     }
 }

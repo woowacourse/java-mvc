@@ -2,10 +2,9 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +17,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
@@ -32,13 +31,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void loadHandlerExecutions() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            Method[] methods = controller.getDeclaredMethods();
-            for (Method method : methods) {
-                putHandlerExecution(controller, method);
-            }
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+
+        for (Class<?> controller : controllers.keySet()) {
+            Set<Method> methods = ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
+            requestMapping(controller, methods);
+        }
+    }
+
+    private void requestMapping(Class<?> controller, Set<Method> methods) {
+        for (Method method : methods) {
+            putHandlerExecution(controller, method);
         }
     }
 

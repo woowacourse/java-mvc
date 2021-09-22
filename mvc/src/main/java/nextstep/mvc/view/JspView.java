@@ -18,7 +18,6 @@ public class JspView implements View {
 
     public JspView(String viewName) {
         this.viewName = viewName;
-
     }
 
     @Override
