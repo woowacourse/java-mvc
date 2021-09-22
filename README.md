@@ -2,6 +2,10 @@
 
 ## todo
 
+- [ ] ViewResolver를 만들었다고?
+- [ ] MvcException 이름이 적절한가? + Adapter 관련 exception은 왜 MvcException을 상속하지 않는가?
+- [ ] HandlerMappings 의 필드 이름을 mappings로 수정한 이유가 무엇인가 - 답변
+
 - [x] DispatcherServlet가 아닌 뷰에서 JSP 반환하도록 한다 - 이전 미션에서 완료
 - [x] JSON 뷰를 추가한다
 - [x] 레거시 MVC를 제거한다
