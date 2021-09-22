@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.HandlerAdapters;
 import nextstep.mvc.controller.tobe.HandlerMappings;
+import nextstep.mvc.exception.CannotFindHandlerException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,8 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
+        } catch (CannotFindHandlerException e) {
+            response.setStatus(404);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
