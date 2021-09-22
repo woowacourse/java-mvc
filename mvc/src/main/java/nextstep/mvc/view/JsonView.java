@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.Map;
 import nextstep.web.support.MediaType;
 
@@ -17,7 +18,9 @@ public class JsonView implements View {
             throws Exception {
         String responseBody = getResponseBody(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.getWriter().write(responseBody);
+        PrintWriter writer = response.getWriter();
+        writer.write(responseBody);
+        writer.flush();
     }
 
     private String getResponseBody(Map<String, ?> model) throws JsonProcessingException {
