@@ -24,7 +24,7 @@ public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest req, HttpServletResponse res) {
-        final User user = new User(2,
+        final User user = new User(
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
