@@ -21,9 +21,8 @@ public class ControllerScanner {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         log.info("Controller Names: {}", controllers);
-        Map<Class<?>, Object> classObjectMap = instantiateControllers(controllers);
-        log.info("Controllers: {}", classObjectMap);
-        return classObjectMap;
+
+        return instantiateControllers(controllers);
     }
 
     private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {

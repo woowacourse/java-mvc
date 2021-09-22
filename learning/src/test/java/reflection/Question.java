@@ -85,8 +85,11 @@ public class Question {
             return false;
         }
         Question question = (Question) o;
-        return questionId == question.questionId && countOfComment == question.countOfComment && Objects.equals(writer,
-                question.writer) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents)
+        return questionId == question.questionId
+                && countOfComment == question.countOfComment
+                && Objects.equals(writer, question.writer)
+                && Objects.equals(title, question.title)
+                && Objects.equals(contents, question.contents)
                 && Objects.equals(createdDate, question.createdDate);
     }
 
