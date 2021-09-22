@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
-
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
@@ -57,7 +56,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             handlerExecutions.put(handlerKey, new HandlerExecution(object, method));
         }
     }
-
 
     public Object getHandler(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
