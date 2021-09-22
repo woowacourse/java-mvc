@@ -33,10 +33,14 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
+        log.info("invoke handlerMapping add!");
         handlerMappings.add(handlerMapping);
+        handlerAdapters.add(new AnnotationAdapter());
+        handlerAdapters.add(new ManualAdapter());
     }
 
     public void addAdapterMapping(HandlerAdapter handlerAdapter) {
+        log.info("invoke handlerAdapter add!");
         handlerAdapters.add(handlerAdapter);
     }
 
@@ -48,6 +52,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = getHandler(request);
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            log.info("get handler adapter Success. type:{}", handlerAdapter.toString());
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
