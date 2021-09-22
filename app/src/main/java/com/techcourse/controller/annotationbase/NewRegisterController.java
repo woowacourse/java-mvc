@@ -1,4 +1,4 @@
-package com.techcourse.controller.annotation_base;
+package com.techcourse.controller.annotationbase;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
