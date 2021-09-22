@@ -18,7 +18,7 @@ public class DummyController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ModelAndView base(HttpServletRequest request, HttpServletResponse response) {
-        log.debug("path : /test");
+        log.info("path : /test");
         final ModelAndView modelAndView = new ModelAndView(new JspView("/test.jsp"));
         modelAndView.addObject("unknown", "test");
 

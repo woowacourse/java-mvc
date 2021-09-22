@@ -4,7 +4,6 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.AnnotationAdapter;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.ManualAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
@@ -17,10 +16,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
         dispatcherServlet.addAdapterMapping(new AnnotationAdapter());
-        dispatcherServlet.addAdapterMapping(new ManualAdapter());
         final ServletRegistration.Dynamic dispatcher = servletContext
             .addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
