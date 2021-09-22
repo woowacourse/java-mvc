@@ -15,11 +15,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Assembler {
+public class ComponentAssembler {
 
     private final Map<Class<?>, Object> container = new HashMap<>();
 
-    public void componentScan(String basePath) {
+    public void scan(String basePath) {
         handlerMappings(basePath);
         handlerAdaptors();
         viewResolvers();

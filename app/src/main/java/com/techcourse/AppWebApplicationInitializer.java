@@ -5,7 +5,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import java.util.List;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.assembler.Assembler;
+import nextstep.mvc.assembler.ComponentAssembler;
 import nextstep.web.WebApplicationInitializer;
 import nextstep.web.filter.AnnotationFilterMapping;
 import nextstep.web.filter.FilterChain;
@@ -15,10 +15,10 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private static final String[] FILTER_BASE_PACKAGE_PATHS = new String[]{"com/techcourse/support/web/filter"};
 
-    private static final Assembler assembler = new Assembler();
+    private static final ComponentAssembler COMPONENT_ASSEMBLER = new ComponentAssembler();
 
     public AppWebApplicationInitializer() {
-        assembler.componentScan("com/techcourse");
+        COMPONENT_ASSEMBLER.scan("com/techcourse");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         final List<FilterChain> filters = findFilters();
         addFilters(servletContext, filters);
 
-        final DispatcherServlet dispatcherServlet = (DispatcherServlet) assembler
+        final DispatcherServlet dispatcherServlet = (DispatcherServlet) COMPONENT_ASSEMBLER
                 .getBeanByType(DispatcherServlet.class);
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
