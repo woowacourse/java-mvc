@@ -1,14 +1,11 @@
 package nextstep.mvc.assembler;
 
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.adaptor.ControllerAdapter;
 import nextstep.mvc.adaptor.HandlerAdapters;
 import nextstep.mvc.adaptor.HandlerExecutionAdapter;
 import nextstep.mvc.handler.exception.ExceptionHandlerExecutor;
-import nextstep.mvc.handler.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.handler.tobe.HandlerMappings;
-import nextstep.mvc.view.View;
-import nextstep.mvc.view.ViewName;
+import nextstep.mvc.handler.mapping.AnnotationHandlerMapping;
+import nextstep.mvc.handler.mapping.HandlerMappings;
 import nextstep.mvc.view.resolver.JsonViewResolver;
 import nextstep.mvc.view.resolver.JspViewResolver;
 import nextstep.mvc.view.resolver.RedirectionViewResolver;
@@ -44,12 +41,9 @@ public class Assembler {
 
     private void handlerAdaptors() {
         HandlerExecutionAdapter handlerExecutionAdapter = new HandlerExecutionAdapter();
-        ControllerAdapter controllerAdapter = new ControllerAdapter();
-        HandlerAdapters handlerAdapters = new HandlerAdapters(
-                Arrays.asList(handlerExecutionAdapter, controllerAdapter));
+        HandlerAdapters handlerAdapters = new HandlerAdapters(Arrays.asList(handlerExecutionAdapter));
 
         container.put(HandlerExecutionAdapter.class, handlerExecutionAdapter);
-        container.put(ControllerAdapter.class, controllerAdapter);
         container.put(HandlerAdapters.class, handlerAdapters);
     }
 

@@ -24,8 +24,6 @@ public class JspView implements View {
 
     @Override
     public void render(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setContentType(MediaType.TEXT_HTML_UTF8_VALUE);
-
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.getAttribute(key));
             request.setAttribute(key, model.getAttribute(key));

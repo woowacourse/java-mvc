@@ -1,4 +1,4 @@
-package nextstep.mvc.handler.tobe;
+package nextstep.mvc.handler.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
