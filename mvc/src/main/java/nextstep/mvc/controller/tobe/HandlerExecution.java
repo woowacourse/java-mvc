@@ -4,21 +4,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
+    private final Method method;
+    private final Object declaredObject;
 
-    private final Method handler;
-    private final Object instance;
-
-    public HandlerExecution(Method handler, Object instance) {
-        this.handler = handler;
-        this.instance = instance;
+    public HandlerExecution(Method method, Object declaredObject) {
+        this.method = method;
+        this.declaredObject = declaredObject;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        handler.setAccessible(true);
-        return (ModelAndView) handler.invoke(instance, request, response);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
+        return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 }

@@ -5,7 +5,6 @@ import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,18 +39,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerHandlerMapping() throws Exception {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllers = ControllerScanner.scanClassByAnnotation(basePackage, Controller.class);
         for (Class<?> controller : controllers) {
             registerRequestMappingMethods(controller);
         }
     }
 
     private void registerRequestMappingMethods(Class<?> controller) throws Exception {
-        for (Method handler : controller.getMethods()) {
-            if (!handler.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
+        Set<Method> methods = ControllerScanner.scanMethodByClass(controller, RequestMapping.class);
+        for (Method handler : methods) {
             registerRequestMappingMethod(controller, handler);
         }
     }
