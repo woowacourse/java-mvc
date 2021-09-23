@@ -28,27 +28,40 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        try {
+            log.info("Initialized AnnotationHandlerMapping!");
+            registerHandlerMapping();
+
+            handlerExecutions.keySet()
+                    .forEach(handlerKey -> log.debug("등록된 handler: {}", handlerKey));
+        } catch (Exception e) {
+            log.error("Failed AnnotationHandlerMapping Error MSG= {}", e.getMessage());
+        }
+    }
+
+    private void registerHandlerMapping() throws Exception {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
-            for (Method handler : controller.getMethods()) {
-                if (!handler.isAnnotationPresent(RequestMapping.class)) {
-                    continue;
-                }
-                registerRequestMappingMethods(controller, handler);
-            }
+            registerRequestMappingMethods(controller);
         }
-
-        handlerExecutions.keySet()
-                .forEach(handlerKey -> log.debug("등록된 handler: {}", handlerKey));
     }
 
-    private void registerRequestMappingMethods(Class<?> controller, Method handler) {
+    private void registerRequestMappingMethods(Class<?> controller) throws Exception {
+        for (Method handler : controller.getMethods()) {
+            if (!handler.isAnnotationPresent(RequestMapping.class)) {
+                continue;
+            }
+            registerRequestMappingMethod(controller, handler);
+        }
+    }
+
+    private void registerRequestMappingMethod(Class<?> controller, Method handler) throws Exception {
         RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(handler, controller);
+            Object instance = controller.getDeclaredConstructor().newInstance();
+            HandlerExecution handlerExecution = new HandlerExecution(handler, instance);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }

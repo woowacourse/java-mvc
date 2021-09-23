@@ -10,15 +10,14 @@ public class HandlerExecution {
 
 
     private final Method handler;
-    private final Class<?> controller;
+    private final Object instance;
 
-    public HandlerExecution(Method handler, Class<?> controller) {
+    public HandlerExecution(Method handler, Object instance) {
         this.handler = handler;
-        this.controller = controller;
+        this.instance = instance;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object instance = controller.getDeclaredConstructor().newInstance();
         handler.setAccessible(true);
         return (ModelAndView) handler.invoke(instance, request, response);
     }
