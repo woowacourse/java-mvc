@@ -10,19 +10,21 @@ import org.slf4j.LoggerFactory;
 public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
+    public static final String INDEX_PAGE_PATH = "/";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     private static final String SUFFIX = ".jsp";
 
     private final String viewName;
 
     public JspView(String viewName) {
-        this.viewName = getAppropriateViewName(viewName);
+        this.viewName = viewName;
     }
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (viewName.startsWith(REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            String redirectPath = viewName.substring(REDIRECT_PREFIX.length());
+            response.sendRedirect(getAppropriateViewName(redirectPath));
             return;
         }
 
@@ -31,12 +33,12 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(getAppropriateViewName(viewName));
         requestDispatcher.forward(request, response);
     }
 
     private String getAppropriateViewName(String viewName) {
-        if (viewName.endsWith(SUFFIX)) {
+        if (viewName.endsWith(SUFFIX) || viewName.equals(INDEX_PAGE_PATH)) {
             return viewName;
         }
         return viewName + SUFFIX;
