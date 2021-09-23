@@ -2,7 +2,6 @@ package nextstep.mvc.controller.tobe;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,22 +38,26 @@ public class ControllerScanner {
 
             final Method[] methods = singleClass.getMethods();
             for (Method method : methods) {
-                processWithMethodOnController(handlerExecutions, instance, controllerURLValue, method);
+                processWithMethodOnController(handlerExecutions, instance, controllerURLValue,
+                    method);
             }
         } catch (Exception e) {
             log.error("스캐닝 도중 오류가 생겼습니다.");
         }
     }
 
-    private void processWithMethodOnController(Map<HandlerKey, HandlerExecution> handlerExecutions, Object instance,
+    private void processWithMethodOnController(Map<HandlerKey, HandlerExecution> handlerExecutions,
+        Object instance,
         String controllerURLValue, Method method) {
         final Annotation[] annotations = method.getDeclaredAnnotations();
         for (Annotation annotation : annotations) {
-            processWithAnnotation(handlerExecutions, instance, controllerURLValue, method, annotation);
+            processWithAnnotation(handlerExecutions, instance, controllerURLValue, method,
+                annotation);
         }
     }
 
-    private void processWithAnnotation(Map<HandlerKey, HandlerExecution> handlerExecutions, Object instance,
+    private void processWithAnnotation(Map<HandlerKey, HandlerExecution> handlerExecutions,
+        Object instance,
         String controllerURLValue, Method method, Annotation annotation) {
         if (annotation instanceof RequestMapping) {
             final RequestMapping requestMapping = (RequestMapping) annotation;
@@ -65,7 +68,8 @@ public class ControllerScanner {
         }
     }
 
-    private void insertHandlerExecutionOnMap(Map<HandlerKey, HandlerExecution> handlerExecutions, Object instance,
+    private void insertHandlerExecutionOnMap(Map<HandlerKey, HandlerExecution> handlerExecutions,
+        Object instance,
         String controllerURLValue, Method method, String subURLValue, RequestMethod[] subMethods) {
         for (RequestMethod requestMethod : subMethods) {
             final HandlerKey handlerKey = new HandlerKey(

@@ -7,3 +7,7 @@
 - [x] Annotation Based MVC Framework 테스트 통과
 - [x] JspView 구현 
 - [x] Legacy MVC와 Annotation Based MVC 통합
+
+# Step3
+- [x] JsonView 구현하기
+- [x] Legacy MVC 제거하기

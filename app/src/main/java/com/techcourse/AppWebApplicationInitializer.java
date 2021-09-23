@@ -4,9 +4,8 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import java.util.ArrayList;
 import nextstep.mvc.handleradapter.AnnotaionHandlerAdapter;
-import nextstep.mvc.handlermapping.AnnotationHandlerMapping;
 import nextstep.mvc.handleradapter.HandlerAdapterRegistry;
-import nextstep.mvc.handleradapter.ManualHandlerAdapter;
+import nextstep.mvc.handlermapping.AnnotationHandlerMapping;
 import nextstep.mvc.handlermapping.HandlerMappingRegistry;
 import nextstep.mvc.servlet.DispatcherServlet;
 import nextstep.web.WebApplicationInitializer;
@@ -20,9 +19,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = generateDispatchServletWithRegistry();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotaionHandlerAdapter());
 
         final ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher",

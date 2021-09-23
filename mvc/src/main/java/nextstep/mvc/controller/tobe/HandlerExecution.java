@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
@@ -16,6 +17,10 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(object, request, response);
+        Object methodReturnType = method.invoke(object, request, response);
+        if (methodReturnType instanceof String) {
+            return new ModelAndView(new JspView((String) methodReturnType));
+        }
+        return (ModelAndView) methodReturnType;
     }
 }
