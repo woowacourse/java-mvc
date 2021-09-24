@@ -18,6 +18,10 @@ public class ModelAndView {
         this.model.putAll(model);
     }
 
+    public ModelAndView(JsonView jsonView) {
+        viewName = null;
+    }
+
     public ModelAndView addObject(String attributeName, Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
