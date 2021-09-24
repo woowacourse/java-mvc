@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
+    public static final String JSP_POSTFIX = ".jsp";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     public JspView(String viewName) {
@@ -27,7 +28,7 @@ public class JspView implements View {
 
         modelToRequestAttribute(modelAndView.getModel(), request);
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName +JSP_POSTFIX);
         requestDispatcher.forward(request, response);
     }
 
