@@ -11,17 +11,17 @@ import nextstep.web.support.RequestMethod;
 public class BasicErrorController {
 
     @RequestMapping(value = "/401", method = RequestMethod.GET)
-    public ModelAndView getUnauthorizedView(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView findUnauthorizedView(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView("/401");
     }
 
     @RequestMapping(value = "/404", method = RequestMethod.GET)
-    public ModelAndView getNotFoundView(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView findNotFoundView(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView("/404");
     }
 
     @RequestMapping(value = "/500", method = RequestMethod.GET)
-    public ModelAndView getInternalServerErrorView(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView findInternalServerErrorView(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView("/500");
     }
 
