@@ -1,5 +1,9 @@
 package reflection;
 
+import annotation.Controller;
+import annotation.Repository;
+import annotation.Service;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -13,6 +17,15 @@ class ReflectionsTest {
     void showAnnotationClass() throws Exception {
         Reflections reflections = new Reflections("examples");
 
-        // TODO 클래스 레벨에 @Controller, @Service, @Repository 애노테이션이 설정되어 모든 클래스 찾아 로그로 출력한다.
+        final Set<Class<?>> controllerClass = reflections
+                .getTypesAnnotatedWith(Controller.class);
+        log.debug("@Controller: {}", controllerClass.toString());
+
+        final Set<Class<?>> serviceClass = reflections.getTypesAnnotatedWith(Service.class);
+        log.debug("@Service: {}", serviceClass.toString());
+
+        final Set<Class<?>> repositoryClass = reflections
+                .getTypesAnnotatedWith(Repository.class);
+        log.debug("@Repository: {}", repositoryClass.toString());
     }
 }
