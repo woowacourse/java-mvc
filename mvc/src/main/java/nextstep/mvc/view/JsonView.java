@@ -20,7 +20,6 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
         writer.write(responseBody);
-        writer.flush();
     }
 
     private String getResponseBody(Map<String, ?> model) throws JsonProcessingException {
