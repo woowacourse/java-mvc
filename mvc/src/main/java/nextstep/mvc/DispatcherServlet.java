@@ -35,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters.add(new AnnotationAdapter());
     }
 
-    public void addAdapterMapping(HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         log.info("invoke handlerAdapter add!");
         handlerAdapters.add(handlerAdapter);
     }
