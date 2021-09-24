@@ -1,6 +1,8 @@
 package nextstep.mvc.controller.tobe;
 
+import com.google.common.base.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +30,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-
+        Predicate<AnnotatedElement> requestMappingAnnotationElements = ReflectionUtils.withAnnotation(
+                RequestMapping.class);
         for (Object controllerInstance : controllers.values()) {
-            Set<Method> methods = ReflectionUtils
-                    .getAllMethods(controllerInstance.getClass(), ReflectionUtils.withAnnotation(RequestMapping.class));
+            Set<Method> methods = ReflectionUtils.getAllMethods(controllerInstance.getClass(),
+                    requestMappingAnnotationElements);
             pushHandlerExecutions(controllerInstance, methods);
         }
     }
