@@ -5,8 +5,6 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -19,19 +17,17 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
+    public String login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return "redirect:/index.jsp";
         }
 
-        String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
-
-        return new ModelAndView(new JspView(viewName));
     }
 
     private String login(HttpServletRequest request, User user) {
@@ -45,14 +41,12 @@ public class LoginController {
     }
 
     @RequestMapping("/login/view")
-    public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
-        String viewName = UserSession.getUserFrom(req.getSession())
+    public String loginView(HttpServletRequest req, HttpServletResponse res) {
+        return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";
                 })
                 .orElse("/login.jsp");
-
-        return new ModelAndView(new JspView(viewName));
     }
 }
