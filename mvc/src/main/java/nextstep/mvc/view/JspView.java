@@ -13,6 +13,7 @@ public class JspView implements View {
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     public static final String REDIRECT_PREFIX = "redirect:";
+    public static final JspView DEFAULT_VIEW = new JspView(REDIRECT_PREFIX + "/index.jsp");
 
     private final String viewName;
 

@@ -2,7 +2,6 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -10,12 +9,10 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class LogoutController {
+public class ForwardController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final HttpSession session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView(JspView.DEFAULT_VIEW);
     }
 }
