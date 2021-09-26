@@ -20,16 +20,16 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView getPage(HttpServletRequest req, HttpServletResponse res) {
+    public String getPage(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(redirectToIndex())
-                .orElse(new ModelAndView("/login.jsp"));
+                .orElse("/login.jsp");
     }
 
-    public Function<User, ModelAndView> redirectToIndex() {
+    public Function<User, String> redirectToIndex() {
         return user -> {
             log.info("logged in {}", user.getAccount());
-            return new ModelAndView("redirect:/index.jsp");
+            return "redirect:/index.jsp";
         };
     }
 

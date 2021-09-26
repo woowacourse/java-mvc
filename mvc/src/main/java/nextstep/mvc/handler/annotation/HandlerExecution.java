@@ -18,6 +18,10 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
-        return (ModelAndView) method.invoke(instance, request, response);
+        Object result = method.invoke(instance, request, response);
+        if (result instanceof String) {
+            return new ModelAndView((String) result);
+        }
+        return (ModelAndView) result;
     }
 }
