@@ -4,22 +4,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
+    private final Method method;
+    private final Object declaredObject;
 
-    private final Method handler;
-    private final Class<?> controller;
-
-    public HandlerExecution(Method handler, Class<?> controller) {
-        this.handler = handler;
-        this.controller = controller;
+    public HandlerExecution(Method method, Object declaredObject) {
+        this.method = method;
+        this.declaredObject = declaredObject;
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object instance = controller.getDeclaredConstructor().newInstance();
-        handler.setAccessible(true);
-        return (ModelAndView) handler.invoke(instance, request, response);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
+        return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 }
