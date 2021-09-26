@@ -9,6 +9,7 @@ import nextstep.mvc.adapter.HandlerAdapters;
 import nextstep.mvc.mapping.HandlerMappings;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
+import nextstep.mvc.view.ViewResolvers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,16 +20,19 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
+    private final ViewResolvers viewResolvers;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();
         this.handlerAdapters = new HandlerAdapters();
+        this.viewResolvers = new ViewResolvers();
     }
 
     @Override
     public void init() {
         handlerMappings.init();
         handlerAdapters.init();
+        viewResolvers.init();
     }
 
     @Override
@@ -48,6 +52,9 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private View instantiateView(ModelAndView modelAndView) {
-        return modelAndView.getView();
+        if (modelAndView.containsView()) {
+            return modelAndView.getView();
+        }
+        return viewResolvers.resolve(modelAndView.getViewName());
     }
 }
