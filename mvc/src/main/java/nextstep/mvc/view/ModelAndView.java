@@ -26,15 +26,15 @@ public class ModelAndView {
         return model.get(attributeName);
     }
 
+    public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        view.render(model, request, response);
+    }
+
     public Map<String, Object> getModel() {
         return Collections.unmodifiableMap(model);
     }
 
     public View getView() {
         return view;
-    }
-
-    public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
     }
 }
