@@ -1,6 +1,5 @@
-package com.techcourse.controller.annotaion;
+package com.techcourse.controller;
 
-import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +18,7 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView findLoginPage(HttpServletRequest request, HttpServletResponse response) {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {

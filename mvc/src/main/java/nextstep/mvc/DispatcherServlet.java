@@ -4,6 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.controller.adapter.HandlerAdapter;
+import nextstep.mvc.controller.mapping.HandlerMapping;
 import nextstep.mvc.exception.NotExistException;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -34,11 +36,11 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping...handlerMappings) {
+    public void addHandlerMapping(HandlerMapping... handlerMappings) {
         this.handlerMappings.addAll(Arrays.asList(handlerMappings));
     }
 
-    public void addHandlerAdapter(HandlerAdapter...handlerAdapter) {
+    public void addHandlerAdapter(HandlerAdapter... handlerAdapter) {
         this.handlerAdapters.addAll(Arrays.asList(handlerAdapter));
     }
 
@@ -67,14 +69,14 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
+                .findAny()
                 .orElseThrow(NotExistException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
+                .findAny()
                 .orElseThrow(NotExistException::new);
     }
 }
