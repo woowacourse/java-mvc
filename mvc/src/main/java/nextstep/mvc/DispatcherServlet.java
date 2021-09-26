@@ -48,8 +48,6 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(request, response, modelAndView);
-        } catch (HandlerException e) {
-            // todo 스태틱 파일 찾기
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
