@@ -5,7 +5,6 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -24,22 +23,20 @@ public class LoginController {
     public ModelAndView getPage(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(redirectToIndex())
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse(new ModelAndView("/login.jsp"));
     }
 
     public Function<User, ModelAndView> redirectToIndex() {
         return user -> {
             log.info("logged in {}", user.getAccount());
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView("redirect:/index.jsp");
         };
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(
-                    new JspView("redirect:index.jsp")
-            );
+            return new ModelAndView("redirect:index.jsp");
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -47,28 +44,22 @@ public class LoginController {
                     log.info("User : {}", user);
                     return checkPassword(req, user);
                 })
-                .orElse(new ModelAndView(
-                        new JspView("redirect:401.jsp")
-                ));
+                .orElse(new ModelAndView("redirect:401.jsp"));
     }
 
     private ModelAndView checkPassword(HttpServletRequest request, User user) {
         if (!user.checkPassword(request.getParameter("password"))) {
-            return new ModelAndView(
-                    new JspView("redirect:401.jsp")
-            );
+            return new ModelAndView("redirect:401.jsp");
         }
         final HttpSession session = request.getSession();
         session.setAttribute(UserSession.SESSION_KEY, user);
-        return new ModelAndView(
-                new JspView("redirect:index.jsp")
-        );
+        return new ModelAndView("redirect:index.jsp");
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
         final HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView("redirect:/");
     }
 }
