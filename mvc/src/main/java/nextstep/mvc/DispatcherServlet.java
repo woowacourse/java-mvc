@@ -32,7 +32,6 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappings.init();
         handlerAdapters.init();
-        viewResolvers.init();
     }
 
     @Override
@@ -56,5 +55,13 @@ public class DispatcherServlet extends HttpServlet {
             return modelAndView.getView();
         }
         return viewResolvers.resolve(modelAndView.getViewName());
+    }
+
+    public HandlerMappings getHandlerMappings() {
+        return handlerMappings;
+    }
+
+    public ViewResolvers getViewResolvers() {
+        return viewResolvers;
     }
 }

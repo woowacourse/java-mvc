@@ -27,7 +27,7 @@ public class HandlerMappings {
 
     private void addDefaultHandlerMappings() {
         log.info("Adding default handler mappings");
-        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse", "nextstep.mvc.handler"));
+        addHandlerMapping(new AnnotationHandlerMapping("nextstep.mvc.handler"));
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
