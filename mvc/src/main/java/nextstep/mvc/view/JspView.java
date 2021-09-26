@@ -1,11 +1,13 @@
 package nextstep.mvc.view;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class JspView implements View {
@@ -27,12 +29,18 @@ public class JspView implements View {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
+        addModelToRequest(model, request);
+        forwardToJsp(request, response);
+    }
 
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
+    private void addModelToRequest(Map<String, ?> model, HttpServletRequest request) {
+        model.forEach((key, value) -> {
+            log.debug("attribute name : {}, value : {}", key, value);
+            request.setAttribute(key, value);
         });
+    }
 
+    private void forwardToJsp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String fullViewName = fullNameOf(viewName);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(fullViewName);
         requestDispatcher.forward(request, response);
@@ -42,6 +50,6 @@ public class JspView implements View {
         if (viewName.endsWith(JSP_SUFFIX)) {
             return viewName;
         }
-        return viewName + ".jsp";
+        return viewName + JSP_SUFFIX;
     }
 }
