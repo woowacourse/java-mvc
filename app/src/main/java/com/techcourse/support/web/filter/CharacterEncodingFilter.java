@@ -11,7 +11,7 @@ public class CharacterEncodingFilter implements Filter {
     private static final String DEFAULT_ENCODING = "UTF-8";
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) throws ServletException { // todo: CharacterEncodingFilter 이 부분을 수정해야할 것 같은데...?
     }
 
     @Override
