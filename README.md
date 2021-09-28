@@ -48,8 +48,8 @@ public class UserController {
 - [x] LoginDto에 HttpRequest 의존도 제거
   - [x] RegisterDto에서도 의존도 제거 
 - [x] AnnotationHandlerMapping#methodsAnnotatedWithRequestMapping 뎁스 줄이기
-- [ ] JsonView 라이브러리 prettyPrint 제공 제거
-- [ ] JsonView#33 if문 변수 추출 및 else 제거
+- [x] JsonView 라이브러리 prettyPrint 제공 제거
+- [x] JsonView#33 if문 변수 추출 및 else 제거
 - [x] ModelAndView else 제거
 - [x] ModelAndView List<Object> 제거
 - [x] ViewName 파일 경로 제거 기능 수정
