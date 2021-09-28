@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.ViewName;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -20,6 +19,6 @@ public class HomeController {
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
 
-        return new ModelAndView(new JspView(ViewName.INDEX));
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

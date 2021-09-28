@@ -12,9 +12,9 @@ public class JspView implements View {
     public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
-    private final ViewName viewName;
+    private final String viewName;
 
-    public JspView(ViewName viewName) {
+    public JspView(String viewName) {
         this.viewName = viewName;
     }
 
@@ -31,12 +31,12 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName.url());
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
 
     @Override
     public String viewName() {
-        return viewName.url();
+        return viewName;
     }
 }

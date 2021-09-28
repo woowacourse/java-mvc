@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.ViewName;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -32,18 +31,19 @@ public class LoginController {
         log.info("Method: POST, Request URI: {}", request.getRequestURI());
 
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
+            return new ModelAndView(new JspView("redirect:/"));
         }
 
         try {
-            User user = loginService.login(LoginDto.of(request));
+            User user = loginService.login(LoginDto.of(request.getParameter("account"),
+                                                       request.getParameter("password")));
 
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
 
-            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         } catch (AuthException e) {
-            return new ModelAndView(new JspView(ViewName.REDIRECT_UNAUTHORIZED));
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
     }
 
@@ -52,9 +52,9 @@ public class LoginController {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
 
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
-        return new ModelAndView(new JspView(ViewName.LOGIN));
+        return new ModelAndView(new JspView("/login.jsp"));
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -63,6 +63,6 @@ public class LoginController {
 
         final HttpSession session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView(ViewName.REDIRECT_HOME));
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }

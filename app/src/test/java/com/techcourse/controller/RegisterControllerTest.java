@@ -28,7 +28,7 @@ class RegisterControllerTest extends ControllerTest {
         final ModelAndView modelAndView = registerController.save(request, response);
 
         // then
-        assertThat(modelAndView.view().viewName()).isEqualTo("redirect:/index.jsp");
+        assertThat(modelAndView.view().viewName()).isEqualTo("redirect:/");
     }
 
     @DisplayName("회원 가입을 한다. - 실패, 중복된 account")

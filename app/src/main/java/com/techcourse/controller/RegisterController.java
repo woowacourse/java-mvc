@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.ViewName;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -32,14 +31,16 @@ public class RegisterController {
         log.info("Method: POST, Request URI: {}", request.getRequestURI());
 
         try {
-            final User user = registerService.join(RegisterDto.of(request));
+            final User user = registerService.join(RegisterDto.of(request.getParameter("account"),
+                                                                  request.getParameter("password"),
+                                                                  request.getParameter("email")));
             final HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
         } catch (BadRequestException e) {
-            return new ModelAndView(new JspView(ViewName.BAD_REQUEST));
+            return new ModelAndView(new JspView("/400.jsp"));
         }
 
-        return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
+        return new ModelAndView(new JspView("redirect:/"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -47,9 +48,9 @@ public class RegisterController {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
 
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView(ViewName.REDIRECT_INDEX));
+            return new ModelAndView(new JspView("redirect:/"));
         }
 
-        return new ModelAndView(new JspView(ViewName.REGISTER));
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 }
