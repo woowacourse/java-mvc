@@ -4,10 +4,10 @@ import java.util.Objects;
 
 public class User {
 
-    private long id;
     private final String account;
     private final String password;
     private final String email;
+    private long id;
 
     public User(String account, String password, String email) {
         this(0, account, password, email);
@@ -28,16 +28,16 @@ public class User {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getAccount() {
         return account;
     }
 
     public String getEmail() {
         return email;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     @Override
