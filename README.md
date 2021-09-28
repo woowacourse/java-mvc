@@ -47,7 +47,7 @@ public class UserController {
 - [x] ViewName을 라이브러리에서 제공하는게 적절할까?
 - [x] LoginDto에 HttpRequest 의존도 제거
   - [x] RegisterDto에서도 의존도 제거 
-- [ ] AnnotationHandlerMapping#methodsAnnotatedWithRequestMapping 뎁스 줄이기
+- [x] AnnotationHandlerMapping#methodsAnnotatedWithRequestMapping 뎁스 줄이기
 - [ ] JsonView 라이브러리 prettyPrint 제공 제거
 - [ ] JsonView#33 if문 변수 추출 및 else 제거
 - [x] ModelAndView else 제거
