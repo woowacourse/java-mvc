@@ -42,3 +42,13 @@ public class UserController {
 
 ### 추가
 - [x] DTO로 service에 넘기도록 한번 감싸기
+
+### 구구 리뷰 반영
+- [ ] ViewName을 라이브러리에서 제공하는게 적절할까?
+- [ ] LoginDto에 HttpRequest 의존도 제거
+- [ ] AnnotationHandlerMapping#methodsAnnotatedWithRequestMapping 뎁스 줄이기
+- [ ] JsonView 라이브러리 prettyPrint 제공 제거
+- [ ] JsonView#33 if문 변수 추출 및 else 제거
+- [x] ModelAndView else 제거
+- [x] ModelAndView List<Object> 제거
+- [ ] ViewName 파일 경로 제거 기능 수정

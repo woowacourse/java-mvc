@@ -34,20 +34,5 @@ public class UserController {
         modelAndView.addObject("user", user);
         return modelAndView;
     }
-
-    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response) {
-        log.info("Method: GET, Request URI: {}", request.getRequestURI());
-
-        final List<User> users = userService.findByAccounts(
-            request.getParameterValues("account")
-        );
-
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        for (User user : users) {
-            modelAndView.addObject("users", user);
-        }
-        return modelAndView;
-    }
 }
 

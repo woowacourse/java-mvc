@@ -27,24 +27,4 @@ class UserControllerTest extends ControllerTest {
         assertThat(modelAndView.view()).isInstanceOf(JsonView.class);
         assertThat(modelAndView.model()).containsKey("user");
     }
-
-    @DisplayName("여러명의 유저를 요청하고 json으로 응답한다.")
-    @Test
-    void showAll() {
-        // given
-        UserController userController = new UserController();
-
-        // when
-        when(request.getRequestURI()).thenReturn("/api/user");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getParameterValues("account")).thenReturn(
-            new String[]{"joanne", "gugu"}
-        );
-
-        final ModelAndView modelAndView = userController.showAll(request, response);
-
-        // then
-        assertThat(modelAndView.view()).isInstanceOf(JsonView.class);
-        assertThat(modelAndView.model()).containsKey("users");
-    }
 }
