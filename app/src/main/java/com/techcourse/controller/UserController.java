@@ -1,5 +1,6 @@
 package com.techcourse.controller;
 
+import com.techcourse.controller.dto.UserDto;
 import com.techcourse.domain.User;
 import com.techcourse.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class UserController {
         final User user = userService.findByAccount(request.getParameter("account"));
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", UserDto.from(user));
         return modelAndView;
     }
 }

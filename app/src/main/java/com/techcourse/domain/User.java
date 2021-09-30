@@ -24,12 +24,12 @@ public class User {
         return this.password.equals(password);
     }
 
-    public long getId() {
-        return id;
-    }
-
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getAccount() {
