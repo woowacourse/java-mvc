@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.view();
             view.render(modelAndView.model(), request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("{} : {}", e.getClass(), e.getMessage());
             throw new ServletException(e.getMessage());
         }

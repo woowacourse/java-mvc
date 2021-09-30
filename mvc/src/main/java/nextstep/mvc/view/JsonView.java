@@ -1,34 +1,39 @@
 package nextstep.mvc.view;
 
-import jakarta.servlet.RequestDispatcher;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.PrintWriter;
 import java.util.Map;
+import nextstep.web.support.MediaType;
 
-public class JsonView extends AbstractView {
+public class JsonView implements View {
 
-    public static final String REDIRECT_PREFIX = "redirect:";
-    private static final Logger log = LoggerFactory.getLogger(JsonView.class);
+    private static final ObjectWriter objectWriter = new ObjectMapper().writer();
 
-    public JsonView(String viewName) {
-        super(viewName);
+    public JsonView() {
     }
 
     @Override
-    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JsonView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JsonView.REDIRECT_PREFIX.length()));
+    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+        throws Exception {
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+
+        final PrintWriter out = response.getWriter();
+        String json;
+        if (model.size() == 1) {
+            json = objectWriter.writeValueAsString(model.values().toArray()[0]);
+            out.print(json);
+            return;
         }
 
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
+        json = objectWriter.writeValueAsString(model);
+        out.print(json);
+    }
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    @Override
+    public String viewName() {
+        return null;
     }
 }
