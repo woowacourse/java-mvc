@@ -27,7 +27,7 @@ class LoginControllerTest extends ControllerTest {
         final ModelAndView modelAndView = loginController.login(request, response);
 
         // then
-        assertThat(modelAndView.view().viewName()).isEqualTo("redirect:/index.jsp");
+        assertThat(modelAndView.view().viewName()).isEqualTo("redirect:/");
     }
 
     @DisplayName("login을 한다. - 실패, 존재하지 않는 유저")

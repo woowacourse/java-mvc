@@ -41,7 +41,7 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
 
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/"));
         } catch (AuthException e) {
             return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
@@ -52,7 +52,7 @@ public class LoginController {
         log.info("Method: GET, Request URI: {}", request.getRequestURI());
 
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/"));
         }
         return new ModelAndView(new JspView("/login.jsp"));
     }
