@@ -3,6 +3,7 @@ package com.techcourse.controller.dto;
 import com.techcourse.domain.User;
 
 public class UserDto {
+
     private final long id;
     private final String account;
     private final String email;

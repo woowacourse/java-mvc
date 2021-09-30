@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 @Controller
 public class HelloController {
+
     private static final Logger log = LoggerFactory.getLogger(HelloController.class);
 
     @RequestMapping(value = "/api/hello", method = RequestMethod.GET)
