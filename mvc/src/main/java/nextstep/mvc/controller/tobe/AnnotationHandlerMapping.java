@@ -27,21 +27,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            final Method[] methods = controller.getDeclaredMethods();
-            initHandlerExecutionsFromMethods(methods);
+        for (Object obj : basePackage) {
+            ControllerScanner controllerScanner = new ControllerScanner(obj);
+            final Map<Class<?>, Object> controllers = controllerScanner.getController();
+            controllers.forEach((controller, instance) -> {
+                final Method[] methods = controller.getDeclaredMethods();
+                initHandlerExecutions(methods, instance);
+            });
         }
     }
 
-    private void initHandlerExecutionsFromMethods(Method[] methods) {
+    private void initHandlerExecutions(Method[] methods, Object instance) {
         for (Method method : methods) {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
             final HandlerKey handlerKey = getHandlerKey(method);
-            handlerExecutions.put(handlerKey, new HandlerExecution());
+            final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
