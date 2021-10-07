@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,17 +30,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             ControllerScanner controllerScanner = new ControllerScanner(obj);
             final Map<Class<?>, Object> controllers = controllerScanner.getController();
             controllers.forEach((controller, instance) -> {
-                final Method[] methods = controller.getDeclaredMethods();
+                final Set<Method> methods = getMethodsAnnotated(controller);
                 initHandlerExecutions(methods, instance);
             });
         }
     }
 
-    private void initHandlerExecutions(Method[] methods, Object instance) {
+    private Set<Method> getMethodsAnnotated(Class<?> controller) {
+        return ReflectionUtils.getAllMethods(
+                controller,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
+    }
+
+    private void initHandlerExecutions(Set<Method> methods, Object instance) {
         for (Method method : methods) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
             final HandlerKey handlerKey = getHandlerKey(method);
             final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
             handlerExecutions.put(handlerKey, handlerExecution);
