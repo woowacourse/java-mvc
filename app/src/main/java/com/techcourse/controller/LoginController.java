@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
@@ -18,17 +20,18 @@ public class LoginController implements Controller {
 
     @Override
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
+        return new ModelAndView(new JspView(viewName));
     }
 
     private String login(HttpServletRequest request, User user) {
