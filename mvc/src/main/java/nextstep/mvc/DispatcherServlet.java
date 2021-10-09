@@ -45,16 +45,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final HandlerExecution handler = (HandlerExecution) handlerMappings.stream()
-                    .map(handlerMapping -> handlerMapping.getHandler(request))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow();
+            final HandlerExecution handler = getHandler(request);
 
-            final HandlerAdapter handlerAdapter = handlerAdapters.stream()
-                    .filter(adapter -> adapter.supports(handler))
-                    .findFirst()
-                    .orElseThrow();
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
 
             final ModelAndView modelAndView = (ModelAndView) handlerAdapter
                     .handle(request, response, handler);
@@ -64,5 +57,20 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerExecution getHandler(HttpServletRequest request) {
+        return (HandlerExecution) handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private HandlerAdapter getHandlerAdapter(HandlerExecution handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findFirst()
+                .orElseThrow();
     }
 }
