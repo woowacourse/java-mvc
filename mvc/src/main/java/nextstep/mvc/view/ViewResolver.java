@@ -1,8 +1,6 @@
 package nextstep.mvc.view;
 
-import java.util.Locale;
-
-public interface ViewResolver{
+public interface ViewResolver {
 
     boolean supports(Class<?> returnType);
 
