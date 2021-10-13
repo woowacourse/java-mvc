@@ -28,9 +28,10 @@ public class ControllerScanner {
                 .getTypesAnnotatedWith(Controller.class);
         for (Class<?> annotatedController : annotatedControllers) {
             try {
-                controllers
-                        .put(annotatedController,
-                                annotatedController.getConstructor().newInstance());
+                controllers.put(
+                        annotatedController,
+                        annotatedController.getConstructor().newInstance()
+                );
             } catch (Exception e) {
                 log.debug("Error: {}", e.getMessage(), e);
             }

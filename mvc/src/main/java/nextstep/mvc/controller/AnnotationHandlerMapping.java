@@ -3,10 +3,12 @@ package nextstep.mvc.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -50,13 +52,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private List<HandlerKey> getHandlerKey(Method method) {
-        List<HandlerKey> handlerKeys = new ArrayList<>();
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        final RequestMethod[] methods = requestMapping.method();
-        for (RequestMethod requestMethod : methods) {
-            handlerKeys.add(new HandlerKey(requestMapping.value(), requestMethod));
-        }
-        return handlerKeys;
+        return Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(HttpServletRequest request) {

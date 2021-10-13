@@ -1,7 +1,5 @@
 package nextstep.mvc.view;
 
-import java.util.Locale;
-
 public class JspViewResolver implements ViewResolver {
 
     @Override
