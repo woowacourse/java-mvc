@@ -1,25 +1,25 @@
-package nextstep.jwp;
+package support;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
-public class MockSocket extends Socket {
+public class StubSocket extends Socket {
 
     private final String request;
-    private final List<Byte> bytes = new ArrayList<>();
+    private final ByteArrayOutputStream outputStream;
 
-    public MockSocket(String request) {
+    public StubSocket(final String request) {
         this.request = request;
+        this.outputStream = new ByteArrayOutputStream();
     }
 
-    public MockSocket() {
+    public StubSocket() {
         this("GET / HTTP/1.1\r\nHost: localhost:8080\r\n\r\n");
     }
 
@@ -32,7 +32,7 @@ public class MockSocket extends Socket {
     }
 
     public int getPort() {
-        return 0;
+        return 8080;
     }
 
     public InputStream getInputStream() {
@@ -43,26 +43,12 @@ public class MockSocket extends Socket {
         return new OutputStream() {
             @Override
             public void write(int b) {
-                bytes.add((byte) b);
+                outputStream.write(b);
             }
         };
     }
 
     public String output() {
-        byte[] converted = toByteArray(bytes);
-        return new String(converted, StandardCharsets.UTF_8);
-    }
-
-    private byte[] toByteArray(List<Byte> bytes) {
-        byte[] byteArray = new byte[bytes.size()];
-        int index = 0;
-        for (byte b : bytes) {
-            byteArray[index++] = b;
-        }
-        return byteArray;
-    }
-
-    public String getRequest() {
-        return request;
+        return outputStream.toString(StandardCharsets.UTF_8);
     }
 }

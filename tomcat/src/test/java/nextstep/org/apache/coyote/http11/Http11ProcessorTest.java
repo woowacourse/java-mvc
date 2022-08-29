@@ -1,5 +1,7 @@
-package nextstep.jwp;
+package nextstep.org.apache.coyote.http11;
 
+import support.StubSocket;
+import org.apache.coyote.http11.Http11Processor;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -9,24 +11,25 @@ import java.nio.file.Files;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RequestHandlerTest {
+class Http11ProcessorTest {
 
     @Test
-    void run() {
+    void process() {
         // given
-        final MockSocket socket = new MockSocket();
-        final RequestHandler requestHandler = new RequestHandler(socket);
+        final var socket = new StubSocket();
+        final var processor = new Http11Processor(socket);
 
         // when
-        requestHandler.run();
+        processor.process(socket);
 
         // then
-        String expected = String.join("\r\n",
+        var expected = String.join("\r\n",
                 "HTTP/1.1 200 OK ",
                 "Content-Type: text/html;charset=utf-8 ",
                 "Content-Length: 12 ",
                 "",
                 "Hello world!");
+
         assertThat(socket.output()).isEqualTo(expected);
     }
 
@@ -40,19 +43,20 @@ class RequestHandlerTest {
                 "",
                 "");
 
-        final MockSocket socket = new MockSocket(httpRequest);
-        final RequestHandler requestHandler = new RequestHandler(socket);
+        final var socket = new StubSocket(httpRequest);
+        final Http11Processor processor = new Http11Processor(socket);
 
         // when
-        requestHandler.run();
+        processor.process(socket);
 
         // then
         final URL resource = getClass().getClassLoader().getResource("static/index.html");
-        String expected = "HTTP/1.1 200 OK \r\n" +
+        var expected = "HTTP/1.1 200 OK \r\n" +
                 "Content-Type: text/html;charset=utf-8 \r\n" +
                 "Content-Length: 5564 \r\n" +
                 "\r\n"+
                 new String(Files.readAllBytes(new File(resource.getFile()).toPath()));
+
         assertThat(socket.output()).isEqualTo(expected);
     }
 }
