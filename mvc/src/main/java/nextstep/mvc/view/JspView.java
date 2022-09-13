@@ -13,11 +13,11 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
-    public JspView(String viewName) {
+    public JspView(final String viewName) {
     }
 
     @Override
-    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         // todo
 
         model.keySet().forEach(key -> {

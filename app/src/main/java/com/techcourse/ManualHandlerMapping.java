@@ -27,7 +27,8 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
-        controllers.keySet().forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+        controllers.keySet()
+                .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
     @Override

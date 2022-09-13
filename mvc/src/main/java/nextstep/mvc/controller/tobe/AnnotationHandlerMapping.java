@@ -15,7 +15,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(Object... basePackage) {
+    public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
@@ -24,7 +24,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         return null;
     }
 }

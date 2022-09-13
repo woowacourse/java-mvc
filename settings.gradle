@@ -1,5 +1,4 @@
-rootProject.name = 'building-tomcat-spring'
+rootProject.name = 'jwp-dashboard-mvc'
 
 include 'mvc'
 include 'app'
-include 'learning'
