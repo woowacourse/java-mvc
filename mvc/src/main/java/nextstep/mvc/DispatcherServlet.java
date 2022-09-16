@@ -26,11 +26,13 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        log.info("Initialize DispatcherServlet!");
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+        log.info("Add HandlerMapping: {}",  handlerMapping);
     }
 
     @Override
