@@ -53,7 +53,6 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .map(HandlerExecution.class::cast)
                 .findFirst()
                 .orElseThrow();
     }
