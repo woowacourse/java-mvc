@@ -29,26 +29,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        for (final var basePackage : this.basePackage) {
-            final var reflections = new Reflections(basePackage);
-            for (final var clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
-                addController(clazz);
-            }
-        }
+        Arrays.stream(this.basePackage)
+                .map(Reflections::new)
+                .map(it->it.getTypesAnnotatedWith(Controller.class))
+                .flatMap(Collection::stream)
+                .forEach(this::mapController);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addController(Class<?> clazz) {
+    private void mapController(Class<?> clazz) {
         try {
             final var controller = clazz.getDeclaredConstructor().newInstance();
             Arrays.stream(clazz.getMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> addHandler(controller, method));
+                    .forEach(method -> mapHandler(controller, method));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
         }
     }
 
-    private void addHandler(Object controller, Method method) {
+    private void mapHandler(Object controller, Method method) {
         final var requestMapping = method.getAnnotation(RequestMapping.class);
         for (final var httpMethod : requestMapping.method()) {
             final var key = new HandlerKey(requestMapping.value(), httpMethod);
