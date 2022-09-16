@@ -12,9 +12,13 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
+        // DispatcherServlet 생성
         final var dispatcherServlet = new DispatcherServlet();
+        // DispatcherServlet에 HandlerMapping 등록
+        // AnnotationHandlerMapping도 넣어줘야한다.
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
 
+        // ServletContext에 DispatcherServlet 등록
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");

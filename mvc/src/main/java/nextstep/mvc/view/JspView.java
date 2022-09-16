@@ -26,5 +26,6 @@ public class JspView implements View {
         });
 
         // todo
+        // response에 view를 셋팅한다.
     }
 }

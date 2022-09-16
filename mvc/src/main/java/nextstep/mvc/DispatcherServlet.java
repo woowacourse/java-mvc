@@ -51,9 +51,9 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .map(Controller.class::cast)
+                .map(Controller.class::cast) // HandlerExecution이 어떻게 Controller로 캐스팅 될까?
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(); // request를 처리할 수 있는 handler가 없으면 예외를 던진다.
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
