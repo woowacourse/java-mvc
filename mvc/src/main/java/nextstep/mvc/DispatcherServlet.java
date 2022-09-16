@@ -4,7 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = getController(request);
-            final var viewName = controller.execute(request, response);
+            final var handler = getHandler(request);
+            final var viewName = (String) handler.handle(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -49,11 +49,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Controller getController(final HttpServletRequest request) {
+    private HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .map(Controller.class::cast)
+                .map(HandlerExecution.class::cast)
                 .findFirst()
                 .orElseThrow();
     }

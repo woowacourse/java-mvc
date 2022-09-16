@@ -2,9 +2,11 @@ package com.techcourse;
 
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +34,22 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        if (!controllers.containsKey(requestURI)) {
+            return null;
+        }
+        final var controller = controllers.get(requestURI);
+        return new HandlerExecution(controller, getExecute(controller));
+    }
+
+    private Method getExecute(Controller controller) {
+        try {
+            final var clazz = controller.getClass();
+            return clazz.getMethod("execute");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException();
+        }
     }
 }
