@@ -31,6 +31,8 @@ class AnnotationHandlerMappingTest {
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
+        System.out.println(modelAndView);
+
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
