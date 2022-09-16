@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,18 +44,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Object eachPackage : basePackage) {
             Reflections reflections = new Reflections(eachPackage);
             Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-            findHandlerFromClass(classes);
+            findMethodFromClass(classes);
         }
     }
 
-    private void findHandlerFromClass(Set<Class<?>> classes) {
+    private void findMethodFromClass(Set<Class<?>> classes) {
         for (Class<?> clazz : classes) {
             Method[] methods = clazz.getMethods();
-            findHandlerFromMethod(methods);
+            findRequestMappingFromMethod(methods);
         }
     }
 
-    private Method findHandlerFromMethod(Method[] methods) {
+    private Method findRequestMappingFromMethod(Method[] methods) {
         for (Method method: methods) {
             addRequestMapping(method);
         }
