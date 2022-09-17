@@ -88,6 +88,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return createHandlerKeys(url, requestMethods);
     }
 
+    private List<HandlerKey> createHandlerKeys(String url, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .collect(Collectors.toList());
+    }
+
     private Object createHandler(Class<?> controllerType) {
         try {
             return controllerType.getConstructor().newInstance();
@@ -97,12 +103,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             log.warn(controllerType + " 객체를 생성할 수 없습니다.");
             throw new RuntimeException(e);
         }
-    }
-
-    private List<HandlerKey> createHandlerKeys(String url, RequestMethod[] requestMethods) {
-        return Arrays.stream(requestMethods)
-                .map(requestMethod -> new HandlerKey(url, requestMethod))
-                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
