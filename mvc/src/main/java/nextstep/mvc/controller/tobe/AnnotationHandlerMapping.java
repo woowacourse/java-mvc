@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -43,25 +42,31 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void findRequestMapping(Class<?> controller) {
         for (Method method : controller.getDeclaredMethods()) {
-            addHandlerExecution(controller, method);
+            Object handler = createHandlerInstance(controller);
+            addHandlerExecution(handler, method);
         }
     }
 
-    private void addHandlerExecution(Class<?> controller, Method declaredMethod) {
+    private Object createHandlerInstance(Class<?> controller) {
+        try {
+            return controller.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void addHandlerExecution(Object handler, Method declaredMethod) {
         if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
             handlerExecutions.put(
                 new HandlerKey(requestMapping.value(), requestMapping.method()[0]),
-                HandlerExecution.of(controller, declaredMethod)
+                new HandlerExecution(handler, declaredMethod)
             );
         }
     }
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(
-            request.getRequestURI(),
-            RequestMethod.valueOf(request.getMethod())
-        ));
+        return handlerExecutions.get(HandlerKey.from(request));
     }
 }

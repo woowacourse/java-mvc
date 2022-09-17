@@ -1,6 +1,5 @@
 package nextstep.mvc.controller.tobe;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,20 +8,15 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
-    private HandlerExecution() {
+    private final Object handler;
+    private final Method method;
+
+    public HandlerExecution(Object handler, Method method) {
+        this.handler = handler;
+        this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return null;
-    }
-
-    public static HandlerExecution of(Class<?> handler, Method method) {
-        return new HandlerExecution() {
-            @Override
-            public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-                Constructor<?> constructor = handler.getConstructor();
-                return (ModelAndView)method.invoke(constructor.newInstance(), request, response);
-            }
-        };
+        return (ModelAndView)method.invoke(handler, request, response);
     }
 }
