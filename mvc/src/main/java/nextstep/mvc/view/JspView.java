@@ -31,6 +31,8 @@ public class JspView implements View {
         // todo
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        if (requestDispatcher != null) {
+            requestDispatcher.forward(request, response);
+        }
     }
 }
