@@ -56,7 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final List<HandlerKey> handlerKeys = mapToHandlerKeys(requestMapping);
         final HandlerExecution handlerExecution = new HandlerExecution(method);
 
-        for (HandlerKey handlerKey : handlerKeys) {
+        for (final var handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
