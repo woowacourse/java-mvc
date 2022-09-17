@@ -21,7 +21,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
+//        controllers.put("/login/view", new LoginViewController());  해당 요청은 annotation 기반으로 처리
         controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());

@@ -56,7 +56,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void extractedAnnotation(final Class<?> clazz, final Method declaredMethod) {
         RequestMapping requestMapping = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
-        initHandlerExecution(clazz, declaredMethod, requestMapping);
+        if (requestMapping != null) {
+            initHandlerExecution(clazz, declaredMethod, requestMapping);
+        }
     }
 
     private void initHandlerExecution(final Class<?> clazz,
