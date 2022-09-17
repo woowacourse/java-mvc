@@ -1,6 +1,8 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,27 +43,49 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(packageName);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : classes) {
-            setHandlerExecutions(clazz);
+            extractMethods(clazz);
         }
     }
 
-    private void setHandlerExecutions(final Class<?> clazz) {
+    private void extractMethods(final Class<?> clazz) {
         Method[] declaredMethods = clazz.getDeclaredMethods();
         for (Method declaredMethod : declaredMethods) {
-            addHandlerExecution(declaredMethod.getDeclaredAnnotation(RequestMapping.class));
+            extractedAnnotation(clazz, declaredMethod);
         }
     }
 
-    private void addHandlerExecution(final RequestMapping requestMapping) {
+    private void extractedAnnotation(final Class<?> clazz, final Method declaredMethod) {
+        RequestMapping requestMapping = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
+        initHandlerExecution(clazz, declaredMethod, requestMapping);
+    }
+
+    private void initHandlerExecution(final Class<?> clazz,
+                                      final Method declaredMethod,
+                                      final RequestMapping requestMapping) {
         String uri = requestMapping.value();
         RequestMethod[] method = requestMapping.method();
         validateRequestMethod(method);
-        handlerExecutions.put(new HandlerKey(uri, method[0]), new HandlerExecution());
+        addHandlerExecutions(clazz, declaredMethod, uri, method[0]);
+    }
+
+    private void addHandlerExecutions(final Class<?> clazz,
+                                      final Method declaredMethod,
+                                      final String uri,
+                                      final RequestMethod method) {
+        try {
+            Constructor<?> constructor = clazz.getConstructor();
+            HandlerExecution handlerExecution = new HandlerExecution(constructor.newInstance(), declaredMethod);
+            handlerExecutions.put(new HandlerKey(uri, method), handlerExecution);
+        } catch (InstantiationException | IllegalAccessException
+                 | InvocationTargetException | NoSuchMethodException e) {
+            log.error("fail initialize!");
+            throw new RuntimeException(e);
+        }
     }
 
     private static void validateRequestMethod(final RequestMethod[] method) {
         if (method.length == EMPTY) {
-            log.info("fail initialize because method not registered");
+            log.error("fail initialize because method not registered");
             throw new IllegalArgumentException("요청 메서드가 존재하지 않습니다.");
         }
     }
