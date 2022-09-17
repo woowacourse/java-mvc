@@ -33,7 +33,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
 
         flatAllMethodsFromControllers()
-                .forEach(this::appendToExecutions);
+                .forEach(this::appendExecutionPerMethod);
     }
 
     private List<Method> flatAllMethodsFromControllers() {
@@ -46,16 +46,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private void appendToExecutions(final Method method) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
-            return;
+    private void appendExecutionPerMethod(final Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+
+            final HandlerExecution handlerExecution = new HandlerExecution(method);
+            appendExecutionPerRequests(requestMapping, handlerExecution);
         }
+    }
 
-        final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-
+    private void appendExecutionPerRequests(final RequestMapping requestMapping, final HandlerExecution handlerExecution) {
         final List<HandlerKey> handlerKeys = mapToHandlerKeys(requestMapping);
-        final HandlerExecution handlerExecution = new HandlerExecution(method);
-
         for (final var handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
