@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -16,9 +17,10 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var controller = emptyConstructor(method).newInstance();
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+            throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
+        final var controller = emptyConstructor(method).newInstance();
         return (ModelAndView) method.invoke(controller, request, response);
     }
 
