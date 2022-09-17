@@ -29,6 +29,7 @@ class ControllerHandlerAdapterTest {
         Controller controller = (req, res) -> null;
 
         boolean actual = sut.supports(controller);
+
         assertThat(actual).isTrue();
     }
 
@@ -56,13 +57,6 @@ class ControllerHandlerAdapterTest {
 
         assertThat(actual.getView()).isInstanceOf(JspView.class);
         assertThat(((JspView)actual.getView()).getViewName()).isEqualTo("/test.jsp");
-    }
-
-    @Test
-    void name() {
-        String str = "/test/samples";
-        int i = str.lastIndexOf("samples");
-        System.out.println("i = " + i);
     }
 
     @Test
