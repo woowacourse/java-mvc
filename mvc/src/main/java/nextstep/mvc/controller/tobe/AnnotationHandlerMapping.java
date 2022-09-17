@@ -29,10 +29,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         for (Object packageName : basePackage) {
             extractClass(packageName);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("Path : {}", handlerKey));
     }
 
     private void extractClass(final Object packageName) {
