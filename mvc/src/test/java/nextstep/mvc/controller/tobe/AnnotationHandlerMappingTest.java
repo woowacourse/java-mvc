@@ -48,4 +48,14 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    void AnnotationHandlerAdapter_는_HandlerExecution_핸들러를_반환한다() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
+    }
 }
