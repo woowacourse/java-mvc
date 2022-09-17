@@ -1,5 +1,6 @@
 package nextstep.mvc.view;
 
+import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -21,9 +22,10 @@ class ModelAndViewTest {
 
         Map<String, Object> model = modelAndView.getModel();
 
-        assertThat(model.get("id")).isEqualTo("1");
-        assertThat(model.get("name")).isEqualTo("hoho");
-        assertThat(model.get("age")).isEqualTo("22");
+        assertThat(model).contains(
+                entry("id", "1"),
+                entry("name", "hoho"),
+                entry("age", "22"));
     }
 
     @Test
