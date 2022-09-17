@@ -42,7 +42,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 Object controller = clazz.getDeclaredConstructor().newInstance();
                 extractMethodInClass(clazz, controller);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
+                log.info("error:{}, message:{}", e, e.getMessage());
             }
         }
     }

@@ -6,10 +6,13 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerMappingTest {
+class AnnotationHandlerAdapterTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
@@ -19,8 +22,19 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("handlerExecution타입이면 true를 반환한다.")
     @Test
-    void get() throws Exception {
+    void supports() {
+        final var handlerAdapter = new AnnotationHandlerAdapter();
+        HandlerExecution handlerExecution = mock(HandlerExecution.class);
+
+        assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
+    }
+
+    @DisplayName("Annotation이 붙은 컨트롤러는 handle을 수행하고 ModelAndView를 반환한다.")
+    @Test
+    void handle() {
+        HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -29,22 +43,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
