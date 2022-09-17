@@ -48,18 +48,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void initHandlerExecutions(final Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
-        for (Method declaredMethod : methods) {
-            if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping requestMapping = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
-                initHandlerExecutions(clazz, declaredMethod, requestMapping);
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+                initHandlerExecutions(clazz, method, requestMapping);
             }
         }
     }
 
     private void initHandlerExecutions(final Class<?> clazz, final Method declaredMethod, final RequestMapping requestMapping) {
         String uri = requestMapping.value();
-        RequestMethod[] method = requestMapping.method();
-        for (RequestMethod requestMethod : method) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
             HandlerExecution handlerExecution = instantiateHandlerExecution(clazz, declaredMethod);
             handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution);
         }
