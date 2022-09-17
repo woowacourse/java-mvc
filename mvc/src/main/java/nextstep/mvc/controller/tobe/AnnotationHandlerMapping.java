@@ -49,9 +49,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void extractMethods(final Class<?> clazz) {
         Method[] declaredMethods = clazz.getDeclaredMethods();
         for (Method declaredMethod : declaredMethods) {
-            if (Modifier.isPublic(declaredMethod.getModifiers())) {
-                extractedAnnotation(clazz, declaredMethod);
-            }
+            extractedAnnotation(clazz, declaredMethod);
         }
     }
 

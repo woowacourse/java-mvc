@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             extractHandlerAdapter(request, response);
@@ -49,9 +51,10 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void extractHandlerAdapter(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void extractHandlerAdapter(final HttpServletRequest request,
+                                       final HttpServletResponse response) throws Exception {
+        Object handler = getHandler(request);
         for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            Object handler = getHandler(request);
             execute(request, response, handlerAdapter, handler);
         }
     }
@@ -61,18 +64,24 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> {
+                    log.info("not found handler : {}", request.getRequestURI());
+                    return new NotFoundException();
+                });
     }
 
-    private void execute(final HttpServletRequest request, final HttpServletResponse response,
-                           final HandlerAdapter handlerAdapter, final Object handler) throws Exception {
+    private void execute(final HttpServletRequest request,
+                         final HttpServletResponse response,
+                         final HandlerAdapter handlerAdapter,
+                         final Object handler) throws Exception {
         if (handlerAdapter.supports(handler)) {
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(request, response, modelAndView);
         }
     }
 
-    private void render(final HttpServletRequest request, final HttpServletResponse response,
+    private void render(final HttpServletRequest request,
+                        final HttpServletResponse response,
                         final ModelAndView modelAndView) {
         try {
             modelAndView.render(request, response);
