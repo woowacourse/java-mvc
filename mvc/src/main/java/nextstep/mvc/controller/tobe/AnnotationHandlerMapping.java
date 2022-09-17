@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
@@ -41,18 +42,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Method method : methods) {
             Class<?> declaringClass = method.getDeclaringClass();
             try {
-                Constructor<?> constructor = declaringClass.getConstructor();
-                Object instance = constructor.newInstance();
+                Object instance = declaringClass.getConstructor().newInstance();
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-                HandlerExecution handlerExecution = new HandlerExecution(instance, method);
-                handlerExecutions.put(handlerKey, handlerExecution);
+                handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                      IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     @Override

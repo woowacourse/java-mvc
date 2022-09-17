@@ -44,14 +44,25 @@ class ControllerHandlerAdapterTest {
     @Test
     @DisplayName("JspView를 View로 갖는 ModelAndView 객체를 리턴한다")
     void returnModelAndViewInstanceHavingJspView() throws Exception {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         Controller controller = (req, res) -> "/test.jsp";
 
+        when(request.getAttributeNames()).thenReturn(Collections.emptyEnumeration());
+
+        // when
         ModelAndView actual = sut.handle(request, response, controller);
 
         assertThat(actual.getView()).isInstanceOf(JspView.class);
         assertThat(((JspView)actual.getView()).getViewName()).isEqualTo("/test.jsp");
+    }
+
+    @Test
+    void name() {
+        String str = "/test/samples";
+        int i = str.lastIndexOf("samples");
+        System.out.println("i = " + i);
     }
 
     @Test
