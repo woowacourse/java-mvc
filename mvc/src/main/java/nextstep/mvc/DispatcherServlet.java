@@ -56,6 +56,14 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    private Object getHandler(final HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow();
+    }
+
     private void execute(final HttpServletRequest request, final HttpServletResponse response,
                            final HandlerAdapter handlerAdapter, final Object handler) throws Exception {
         if (handlerAdapter.supports(handler)) {
@@ -72,13 +80,5 @@ public class DispatcherServlet extends HttpServlet {
             log.info("fail render");
             throw new IllegalArgumentException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
     }
 }
