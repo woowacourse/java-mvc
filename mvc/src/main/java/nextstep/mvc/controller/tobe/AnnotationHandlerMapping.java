@@ -69,7 +69,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                       final RequestMapping requestMapping) {
         String uri = requestMapping.value();
         RequestMethod[] method = requestMapping.method();
-        validateRequestMethod(method);
         addHandlerExecutions(clazz, declaredMethod, uri, method[0]);
     }
 
@@ -85,13 +84,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                  | InvocationTargetException | NoSuchMethodException e) {
             log.error("fail initialize!");
             throw new RuntimeException(e);
-        }
-    }
-
-    private static void validateRequestMethod(final RequestMethod[] method) {
-        if (method.length == EMPTY) {
-            log.error("fail initialize because method not registered");
-            throw new IllegalArgumentException("요청 메서드가 존재하지 않습니다.");
         }
     }
 
