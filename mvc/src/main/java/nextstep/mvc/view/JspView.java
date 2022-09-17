@@ -43,13 +43,26 @@ public class JspView implements View {
 
     private void moveTo(final String viewName, final HttpServletRequest request,
                         final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            final var location = viewName.substring(JspView.REDIRECT_PREFIX.length());
-            response.sendRedirect(location);
+        if (isRedirect(viewName)) {
+            redirect(viewName, response);
             return;
         }
+        forward(viewName, request, response);
+    }
 
+    private boolean isRedirect(final String viewName) {
+        return viewName.startsWith(JspView.REDIRECT_PREFIX);
+    }
+
+    private void redirect(final String viewName, final HttpServletResponse response) throws Exception {
+        final var location = viewName.substring(JspView.REDIRECT_PREFIX.length());
+        response.sendRedirect(location);
+    }
+
+    private void forward(final String viewName, final HttpServletRequest request,
+                         final HttpServletResponse response) throws Exception {
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
+
 }
