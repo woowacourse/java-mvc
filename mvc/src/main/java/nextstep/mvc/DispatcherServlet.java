@@ -44,8 +44,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = getHandler(request);
             final var handlerAdapter = getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            move(modelAndView, request, response);
+            final var modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -65,12 +65,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow();
-    }
-
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request,
-                      final HttpServletResponse response) throws Exception {
-        final var model = modelAndView.getModel();
-        final var view = modelAndView.getView();
-        view.render(model, request, response);
     }
 }
