@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -65,7 +64,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                       final RequestMapping requestMapping) {
         String uri = requestMapping.value();
         RequestMethod[] method = requestMapping.method();
-        addHandlerExecutions(clazz, declaredMethod, uri, method[0]);
+        for (RequestMethod requestMethod : method) {
+            addHandlerExecutions(clazz, declaredMethod, uri, requestMethod);
+        }
     }
 
     private void addHandlerExecutions(final Class<?> clazz,
