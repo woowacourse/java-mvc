@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = List.of(new HandlerControllerAdapter(), new HandlerExecutionAdapter());
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -34,6 +33,11 @@ public class DispatcherServlet extends HttpServlet {
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
         log.info("Add HandlerMapping: {}", handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+        log.info("Add HandlerAdapter: {}", handlerAdapter);
     }
 
     @Override
