@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +51,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void extractMethods(final Class<?> clazz) {
         Method[] declaredMethods = clazz.getDeclaredMethods();
         for (Method declaredMethod : declaredMethods) {
-            extractedAnnotation(clazz, declaredMethod);
+            if (Modifier.isPublic(declaredMethod.getModifiers())) {
+                extractedAnnotation(clazz, declaredMethod);
+            }
         }
     }
 
