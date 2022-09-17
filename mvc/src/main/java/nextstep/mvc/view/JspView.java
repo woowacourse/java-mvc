@@ -1,11 +1,13 @@
 package nextstep.mvc.view;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -42,7 +44,7 @@ public class JspView implements View {
     }
 
     private void moveTo(final String viewName, final HttpServletRequest request,
-                        final HttpServletResponse response) throws Exception {
+                        final HttpServletResponse response) throws IOException, ServletException {
         if (isRedirect(viewName)) {
             redirect(viewName, response);
             return;
@@ -54,13 +56,13 @@ public class JspView implements View {
         return viewName.startsWith(JspView.REDIRECT_PREFIX);
     }
 
-    private void redirect(final String viewName, final HttpServletResponse response) throws Exception {
+    private void redirect(final String viewName, final HttpServletResponse response) throws IOException {
         final var location = viewName.substring(JspView.REDIRECT_PREFIX.length());
         response.sendRedirect(location);
     }
 
     private void forward(final String viewName, final HttpServletRequest request,
-                         final HttpServletResponse response) throws Exception {
+                         final HttpServletResponse response) throws ServletException, IOException {
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
