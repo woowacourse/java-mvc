@@ -44,16 +44,19 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
         try {
-            final var handler = getHandler(request);
-            final var handlerAdapter = getHandlerAdapter(handler);
-            final var modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.render(request, response);
+            doService(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final var handler = getHandler(request);
+        final var handlerAdapter = getHandlerAdapter(handler);
+        final var modelAndView = handlerAdapter.handle(request, response, handler);
+        modelAndView.render(request, response);
     }
 
     private Object getHandler(final HttpServletRequest request) {
