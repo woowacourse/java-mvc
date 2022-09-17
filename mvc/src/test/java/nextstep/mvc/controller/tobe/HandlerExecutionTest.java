@@ -22,7 +22,7 @@ class HandlerExecutionTest {
                 "findUserId", HttpServletRequest.class, HttpServletResponse.class
         );
 
-        final HandlerExecution handlerExecution = new HandlerExecution(TestController.class, executionMethod);
+        final HandlerExecution handlerExecution = new HandlerExecution(new TestController(), executionMethod);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);

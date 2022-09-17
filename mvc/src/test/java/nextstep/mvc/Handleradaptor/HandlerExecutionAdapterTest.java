@@ -53,7 +53,7 @@ class HandlerExecutionAdapterTest {
         // given
         final Method executionMethod = TestController.class.getDeclaredMethod("findUserId", HttpServletRequest.class,
                 HttpServletResponse.class);
-        final HandlerExecution handlerExecution = new HandlerExecution(TestController.class, executionMethod);
+        final HandlerExecution handlerExecution = new HandlerExecution(new TestController(), executionMethod);
 
         final HandlerAdapter handlerAdapter = new HandlerExecutionAdapter();
 

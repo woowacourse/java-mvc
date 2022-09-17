@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,25 +33,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         for (Object basePackage : basePackages) {
             Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+            Set<Class<?>> handlerTypes = reflections.getTypesAnnotatedWith(Controller.class);
 
-            addHandlerExecutions(controllerTypes);
+            addHandlerExecutions(handlerTypes);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecutions(Set<Class<?>> controllerTypes) {
-        for (Class<?> controllerType : controllerTypes) {
-            addHandlerExecution(controllerType);
+    private void addHandlerExecutions(Set<Class<?>> handlerTypes) {
+        for (Class<?> handlerType : handlerTypes) {
+            addHandlerExecution(handlerType);
         }
     }
 
-    private void addHandlerExecution(Class<?> controllerType) {
-        List<Method> requestMappingMethods = findRequestMappingMethods(controllerType);
+    private void addHandlerExecution(Class<?> handlerType) {
+        List<Method> requestMappingMethods = findRequestMappingMethods(handlerType);
 
         for (Method method : requestMappingMethods) {
             List<HandlerKey> handlerKeys = createHandlerKeys(method);
-            handlerKeys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(controllerType, method)));
+            final Object handler = createHandler(handlerType);
+            handlerKeys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(handler, method)));
         }
     }
 
@@ -86,6 +88,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return createHandlerKeys(url, requestMethods);
     }
 
+    private Object createHandler(Class<?> controllerType) {
+        try {
+            return controllerType.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+
+            log.warn(controllerType + " 객체를 생성할 수 없습니다.");
+            throw new RuntimeException(e);
+        }
+    }
+
     private List<HandlerKey> createHandlerKeys(String url, RequestMethod[] requestMethods) {
         return Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
@@ -96,7 +109,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 
-        RequestMethod requestMethod = RequestMethod.of(method);
+        RequestMethod requestMethod = RequestMethod.valueOf(method);
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
         return handlerExecutions.get(handlerKey);
