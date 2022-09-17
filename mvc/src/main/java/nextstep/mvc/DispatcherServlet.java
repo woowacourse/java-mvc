@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -44,17 +45,21 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handler = getHandler(request);
-            final var handlerAdapter = getHandlerAdapter(handler);
-            final var modelAndView = handlerAdapter.handle(request, response, handler);
+            final var modelAndView = handle(request, response);
+            final var view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
 
-            final var jspView = modelAndView.getView();
-            jspView.render(modelAndView.getModel(), request, response);
-
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final var handler = getHandler(request);
+        final var handlerAdapter = getHandlerAdapter(handler);
+
+        return handlerAdapter.handle(request, response, handler);
     }
 
     private Object getHandler(final HttpServletRequest request) {
