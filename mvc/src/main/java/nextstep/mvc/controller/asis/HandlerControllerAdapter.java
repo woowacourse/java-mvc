@@ -22,7 +22,7 @@ public class HandlerControllerAdapter implements HandlerAdapter {
     }
 
     private ModelAndView toModelAndView(String viewName) {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+        if (viewName.startsWith(RedirectView.REDIRECT_PREFIX)) {
             return new ModelAndView(new RedirectView(viewName));
         }
         return new ModelAndView(new JspView(viewName));

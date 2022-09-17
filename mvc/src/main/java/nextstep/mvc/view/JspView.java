@@ -11,8 +11,6 @@ public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
-    public static final String REDIRECT_PREFIX = "redirect:";
-
     private final String viewName;
 
     public JspView(final String viewName) {
@@ -20,16 +18,12 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
-
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        for (final var key : model.keySet()) {
             request.setAttribute(key, model.get(key));
-        });
-
-        // todo
-
+            log.debug("attribute name : {}, value : {}", key, model.get(key));
+        }
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         if (requestDispatcher != null) {
             requestDispatcher.forward(request, response);
