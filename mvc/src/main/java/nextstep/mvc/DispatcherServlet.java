@@ -61,7 +61,7 @@ public class DispatcherServlet extends HttpServlet {
             modelAndView = toModelAndView(viewName);
         }
         if (handler instanceof HandlerExecution) {
-            modelAndView = (ModelAndView) ((HandlerExecution) handler).handle(request, response);
+            modelAndView = ((HandlerExecution) handler).handle(request, response);
         }
         return modelAndView;
     }
