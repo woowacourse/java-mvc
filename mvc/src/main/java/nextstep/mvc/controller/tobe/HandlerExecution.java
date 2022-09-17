@@ -31,7 +31,7 @@ public class HandlerExecution {
         return constructors.stream()
                 .filter(this::hasNoParameters)
                 .findAny()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(NoSuchMethodError::new);
     }
 
     private boolean hasNoParameters(final Constructor<?> constructor) {
