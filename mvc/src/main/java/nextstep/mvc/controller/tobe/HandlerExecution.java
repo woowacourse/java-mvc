@@ -17,14 +17,14 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object controller = emptyConstructor(method).newInstance();
+        final var controller = emptyConstructor(method).newInstance();
 
         return (ModelAndView) method.invoke(controller, request, response);
     }
 
     private Constructor<?> emptyConstructor(final Method method) {
-        final Class<?> declaringClass = method.getDeclaringClass();
-        final List<Constructor<?>> constructors = List.of(declaringClass.getConstructors());
+        final var declaringClass = method.getDeclaringClass();
+        final var constructors = List.of(declaringClass.getConstructors());
 
         return constructors.stream()
                 .filter(this::hasNoParameters)
