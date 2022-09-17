@@ -13,7 +13,7 @@ class RequestMethodTest {
         String method = "GET";
 
         // when
-        RequestMethod requestMethod = RequestMethod.of(method);
+        RequestMethod requestMethod = RequestMethod.valueOf(method);
 
         // then
         assertThat(requestMethod).isEqualTo(RequestMethod.GET);
@@ -25,7 +25,7 @@ class RequestMethodTest {
         String invalidMethod = "GOT";
 
         // when & then
-        assertThatThrownBy(() -> RequestMethod.of(invalidMethod))
-                .isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> RequestMethod.valueOf(invalidMethod))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
