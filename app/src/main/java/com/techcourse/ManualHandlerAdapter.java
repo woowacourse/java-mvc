@@ -17,9 +17,10 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler) throws Exception {
-        final var controller = castFrom(handler);
+        final Controller controller = castFrom(handler);
         final String viewName = controller.execute(request, response);
-        return new ModelAndView(new JspView(viewName));
+        final JspView jspView = new JspView(viewName);
+        return new ModelAndView(jspView);
     }
 
     private Controller castFrom(final Object handler) {
