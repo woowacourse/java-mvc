@@ -8,7 +8,7 @@ import nextstep.mvc.view.ModelAndView;
 public class HandlerExecutionAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-        return handler.getClass().isAssignableFrom(HandlerExecution.class);
+        return handler instanceof HandlerExecution;
     }
 
     @Override
