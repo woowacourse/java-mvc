@@ -1,7 +1,9 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +24,28 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
+        if (isRedirect(response)) {
+            return;
+        }
+        forward(model, request, response);
+    }
+
+    private boolean isRedirect(final HttpServletResponse response) throws IOException {
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            log.info("redirect view {}", viewName);
+            return true;
+        }
+        return false;
+    }
+
+    private void forward(final Map<String, ?> model,
+                         final HttpServletRequest request,
+                         final HttpServletResponse response) throws ServletException, IOException {
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
         setAttributes(model, request);
-        render(viewName, request, response);
+        requestDispatcher.forward(request, response);
+        log.info("render view {}", viewName);
     }
 
     private void setAttributes(final Map<String, ?> model, final HttpServletRequest request) {
@@ -32,18 +54,5 @@ public class JspView implements View {
                     log.debug("attribute name : {}, value : {}", key, model.get(key));
                     request.setAttribute(key, model.get(key));
                 });
-    }
-
-    private void render(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            log.info("redirect view {}", viewName);
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-        log.info("render view {}", viewName);
     }
 }
