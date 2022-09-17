@@ -44,18 +44,27 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            extractHandlerAdapter(request, response);
+            execute(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void extractHandlerAdapter(final HttpServletRequest request,
-                                       final HttpServletResponse response) throws Exception {
+    private void execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object handler = getHandler(request);
         for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            execute(request, response, handlerAdapter, handler);
+            handle(request, response, handler, handlerAdapter);
+        }
+    }
+
+    private void handle(final HttpServletRequest request,
+                        final HttpServletResponse response,
+                        final Object handler,
+                        final HandlerAdapter handlerAdapter) throws Exception {
+        if (handlerAdapter.supports(handler)) {
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            render(request, response, modelAndView);
         }
     }
 
@@ -68,16 +77,6 @@ public class DispatcherServlet extends HttpServlet {
                     log.info("not found handler : {}", request.getRequestURI());
                     return new NotFoundException();
                 });
-    }
-
-    private void execute(final HttpServletRequest request,
-                         final HttpServletResponse response,
-                         final HandlerAdapter handlerAdapter,
-                         final Object handler) throws Exception {
-        if (handlerAdapter.supports(handler)) {
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            render(request, response, modelAndView);
-        }
     }
 
     private void render(final HttpServletRequest request,

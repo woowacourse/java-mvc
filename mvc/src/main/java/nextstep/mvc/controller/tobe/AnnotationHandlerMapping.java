@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
@@ -29,59 +30,56 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        for (Object packageName : basePackage) {
-            extractClass(packageName);
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
-        handlerExecutions.keySet()
-                .forEach(handlerKey -> log.info("Path : {}", handlerKey));
-    }
-
-    private void extractClass(final Object packageName) {
-        Reflections reflections = new Reflections(packageName);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> classes = getControllerClasses();
         for (Class<?> clazz : classes) {
-            extractMethods(clazz);
+            initHandlerExecutions(clazz);
+        }
+        log();
+    }
+
+    private Set<Class<?>> getControllerClasses() {
+        Set<Class<?>> classes = new HashSet<>();
+        for (Object packageName : basePackage) {
+            Reflections reflections = new Reflections(packageName);
+            classes.addAll(reflections.getTypesAnnotatedWith(Controller.class));
+        }
+        return classes;
+    }
+
+    private void initHandlerExecutions(final Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method declaredMethod : methods) {
+            if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
+                RequestMapping requestMapping = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
+                initHandlerExecutions(clazz, declaredMethod, requestMapping);
+            }
         }
     }
 
-    private void extractMethods(final Class<?> clazz) {
-        Method[] declaredMethods = clazz.getDeclaredMethods();
-        for (Method declaredMethod : declaredMethods) {
-            extractedAnnotation(clazz, declaredMethod);
-        }
-    }
-
-    private void extractedAnnotation(final Class<?> clazz, final Method declaredMethod) {
-        if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping requestMapping = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
-            initHandlerExecution(clazz, declaredMethod, requestMapping);
-        }
-    }
-
-    private void initHandlerExecution(final Class<?> clazz,
-                                      final Method declaredMethod,
-                                      final RequestMapping requestMapping) {
+    private void initHandlerExecutions(final Class<?> clazz, final Method declaredMethod, final RequestMapping requestMapping) {
         String uri = requestMapping.value();
         RequestMethod[] method = requestMapping.method();
         for (RequestMethod requestMethod : method) {
-            addHandlerExecutions(clazz, declaredMethod, uri, requestMethod);
+            HandlerExecution handlerExecution = instantiateHandlerExecution(clazz, declaredMethod);
+            handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution);
         }
     }
 
-    private void addHandlerExecutions(final Class<?> clazz,
-                                      final Method declaredMethod,
-                                      final String uri,
-                                      final RequestMethod method) {
+    private HandlerExecution instantiateHandlerExecution(final Class<?> clazz, final Method method) {
         try {
             Constructor<?> constructor = clazz.getConstructor();
-            HandlerExecution handlerExecution = new HandlerExecution(constructor.newInstance(), declaredMethod);
-            handlerExecutions.put(new HandlerKey(uri, method), handlerExecution);
+            return new HandlerExecution(constructor.newInstance(), method);
         } catch (InstantiationException | IllegalAccessException
                  | InvocationTargetException | NoSuchMethodException e) {
             log.error("fail initialize!");
             throw new RuntimeException(e);
         }
+    }
+
+    private void log() {
+        log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("Path : {}", handlerKey));
     }
 
     public Object getHandler(final HttpServletRequest request) {
