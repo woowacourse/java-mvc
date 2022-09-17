@@ -75,7 +75,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private boolean hasRequestMappingAnnotation(Method method) {
-        return method.getAnnotation(RequestMapping.class) != null;
+        return method.isAnnotationPresent(RequestMapping.class);
     }
 
     private List<HandlerKey> createHandlerKeys(Method method) {
