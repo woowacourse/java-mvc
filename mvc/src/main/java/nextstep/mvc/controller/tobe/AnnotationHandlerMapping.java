@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final int EMPTY = 0;
-
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
@@ -58,8 +56,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void extractedAnnotation(final Class<?> clazz, final Method declaredMethod) {
-        RequestMapping requestMapping = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
-        if (requestMapping != null) {
+        if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping requestMapping = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
             initHandlerExecution(clazz, declaredMethod, requestMapping);
         }
     }
