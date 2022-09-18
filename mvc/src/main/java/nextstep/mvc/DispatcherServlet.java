@@ -4,9 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -22,9 +18,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -36,17 +34,22 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             final Object handler = getHandler(request);
-            Optional<ModelAndView> modelAndView = getModelAndView(request, response, handler);
-            if (modelAndView.isPresent()) {
-                modelAndView.get().move(request, response);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            if (modelAndView != null) {
+                modelAndView.move(request, response);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
@@ -60,14 +63,10 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private Optional<ModelAndView> getModelAndView(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
-        if (handler instanceof Controller) {
-            final String viewName = ((Controller) handler).execute(request, response);
-            return Optional.of(new ModelAndView(new JspView(viewName)));
-        }
-        if (handler instanceof HandlerExecution) {
-            return Optional.of(((HandlerExecution) handler).handle(request, response));
-        }
-        return Optional.empty();
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(it -> it.supports(handler))
+                .findFirst()
+                .orElseThrow();
     }
 }
