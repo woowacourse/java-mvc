@@ -29,34 +29,34 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        for (Object eachPackage : basePackage) {
-            Reflections reflections = new Reflections(eachPackage);
+        for (final Object eachPackage : basePackage) {
+            final Reflections reflections = new Reflections(eachPackage);
             addHandlerExecutions(reflections);
         }
     }
 
-    private void addHandlerExecutions(Reflections reflections) {
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : classes) {
-            Method[] methods = clazz.getDeclaredMethods();
+    private void addHandlerExecutions(final Reflections reflections) {
+        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        for (final Class<?> clazz : classes) {
+            final Method[] methods = clazz.getDeclaredMethods();
             checkRequestMappingMethod(methods);
         }
     }
 
-    private void checkRequestMappingMethod(Method[] methods) {
-        for (Method method : methods) {
+    private void checkRequestMappingMethod(final Method[] methods) {
+        for (final Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 putHandlerExecution(method);
             }
         }
     }
 
-    private void putHandlerExecution(Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        RequestMethod[] applyingMethods = requestMapping.method();
-        for (RequestMethod applyingMethod : applyingMethods) {
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), applyingMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(method);
+    private void putHandlerExecution(final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final RequestMethod[] applyingMethods = requestMapping.method();
+        for (final RequestMethod applyingMethod : applyingMethods) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), applyingMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
