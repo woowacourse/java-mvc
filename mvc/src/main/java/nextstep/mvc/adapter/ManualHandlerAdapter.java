@@ -21,7 +21,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
         String viewName = controller.execute(request, response);
         move(viewName, request, response);
 
-        return new ModelAndView(new JspView(viewName));
+        return null;
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
