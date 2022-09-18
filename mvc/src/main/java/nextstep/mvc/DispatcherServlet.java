@@ -31,12 +31,14 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+    public void addHandlerMapping(final HandlerMapping... handlerMappings) {
+        final var otherHandlerMappings = List.of(handlerMappings);
+        this.handlerMappings.addAll(otherHandlerMappings);
     }
 
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public void addHandlerAdapter(final HandlerAdapter... handlerAdapters) {
+        final var otherHandlerMappings = List.of(handlerAdapters);
+        this.handlerAdapters.addAll(otherHandlerMappings);
     }
 
     @Override
