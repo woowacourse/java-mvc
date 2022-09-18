@@ -12,7 +12,7 @@ import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.TestAnnotationController;
 
 class AnnotationHandlerAdapterTest {
 
@@ -21,7 +21,7 @@ class AnnotationHandlerAdapterTest {
     void handlerAdapterSupportsHandlerExecute() throws NoSuchMethodException {
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        final Method method = TestController.class.getDeclaredMethod("findUserId",
+        Method method = TestAnnotationController.class.getDeclaredMethod("findUserId",
                 HttpServletRequest.class,
                 HttpServletResponse.class);
 
@@ -39,7 +39,7 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
+        AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
 
         //when & then
