@@ -25,6 +25,7 @@ public class JspView implements View {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+
         request.getRequestDispatcher(viewName).forward(request, response);
     }
 }
