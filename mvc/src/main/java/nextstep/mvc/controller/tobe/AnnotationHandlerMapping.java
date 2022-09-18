@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.controller.tobe.exception.ControllerNotFoundException;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +73,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
 
         if (handlerExecution == null) {
-            throw new IllegalArgumentException("컨트롤러를 찾을 수 없습니다.");
-            // TODO: 적절한 예외로 변경
+            throw new ControllerNotFoundException();
         }
 
         return handlerExecution;

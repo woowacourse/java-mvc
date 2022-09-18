@@ -2,11 +2,11 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import nextstep.mvc.controller.tobe.exception.MethodInvokeException;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -41,9 +41,8 @@ public class ControllerMethod {
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             return (ModelAndView) method.invoke(instance, request, response);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException();
-            // TODO: 적절한 예외로 변경
+        } catch (ReflectiveOperationException e) {
+            throw new MethodInvokeException();
         }
     }
 

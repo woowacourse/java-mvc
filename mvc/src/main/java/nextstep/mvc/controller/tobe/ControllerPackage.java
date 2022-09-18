@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import nextstep.mvc.controller.tobe.exception.ClassCreationException;
+import nextstep.mvc.controller.tobe.exception.NoSuchPackageException;
 
 /**
  * Controller 패키지를 추상화합니다.
@@ -30,8 +32,7 @@ public class ControllerPackage {
         String[] fqcns = packageDirectoryFile.list();
 
         if (fqcns == null) {
-            throw new IllegalArgumentException("클래스를 찾을 수 없습니다.");
-            // TODO: 적절한 예외로 변경
+            throw new ClassCreationException();
         }
 
         return Arrays.stream(fqcns)
@@ -50,8 +51,7 @@ public class ControllerPackage {
                 .getResource(packageDirectoryPath);
 
         if (packageUrl == null) {
-            throw new IllegalArgumentException("패키지를 찾을 수 없습니다.");
-            // TODO: 적절한 예외로 변경
+            throw new NoSuchPackageException();
         }
 
         return new File(packageUrl.getFile());

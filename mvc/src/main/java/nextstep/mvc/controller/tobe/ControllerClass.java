@@ -1,10 +1,11 @@
 package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
+import nextstep.mvc.controller.tobe.exception.ClassCreationException;
+import nextstep.mvc.controller.tobe.exception.ClassInstantiateException;
 import nextstep.web.annotation.Controller;
 
 /**
@@ -31,8 +32,7 @@ public class ControllerClass {
         try {
             return Class.forName(name);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("경로에 해당하는 클래스를 찾을 수 없습니다.");
-            // TODO: 적절한 예외로 변경
+            throw new ClassCreationException();
         }
     }
 
@@ -44,10 +44,8 @@ public class ControllerClass {
         try {
             Constructor<?> constructor = clazz.getConstructor();
             return constructor.newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                 InvocationTargetException e) {
-            throw new IllegalArgumentException();
-            // TODO: 적절한 예외로 변경
+        } catch (ReflectiveOperationException e) {
+            throw new ClassInstantiateException();
         }
     }
 
