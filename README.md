@@ -14,3 +14,5 @@
 ### 작업 목록
 
 - [x] AnnotationHandlerMappingTest를 성공시킨다.
+- [ ] AnnotationHandlerMapping도 돌아가도록 수정한다.
+  - [ ] AnnotationHandlerMapping을 이용하여 `login/view` 페이지를 띄운다.
