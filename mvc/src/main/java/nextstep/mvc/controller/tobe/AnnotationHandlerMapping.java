@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.HandlerInstanceCreateException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -48,6 +49,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final List<Method> declaredMethods = Arrays.stream(controller.getDeclaredMethods())
                 .filter(it -> isAnnotatedWith(it, RequestMapping.class))
                 .collect(Collectors.toList());
+
         final Object handler = createInstance(controller);
 
         for (final Method declaredMethod : declaredMethods) {
@@ -77,8 +79,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException |
                 InvocationTargetException | NoSuchMethodException e) {
-            log.error("add execution exception : {}", e.getMessage(), e);
-            throw new RuntimeException();
+            throw new HandlerInstanceCreateException();
         }
     }
 }
