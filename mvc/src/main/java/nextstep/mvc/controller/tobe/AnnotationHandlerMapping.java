@@ -1,15 +1,12 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.util.PackageUtil;
-import nextstep.web.annotation.Controller;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +25,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         List<String> packageNames = getPackageNames();
-        List<Class<?>> controllerClasses = getControllerClasses(packageNames);
 
-        for (Class<?> controller : controllerClasses) {
-            for (Method method : controller.getDeclaredMethods()) {
-                addHandlerExecutions(controller, method);
-            }
+        List<ControllerPackage> controllerPackages = ControllerPackage.from(packageNames);
+        List<ControllerClass> controllerClasses = getControllerClasses(controllerPackages);
+        List<ControllerMethod> controllerMethodsOfClasses = getControllerMethods(controllerClasses);
+
+        for (ControllerMethod controllerMethod : controllerMethodsOfClasses) {
+            addHandlerExecutions(controllerMethod);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
@@ -45,26 +43,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private List<Class<?>> getControllerClasses(final List<String> packageNames) {
-        return packageNames.stream()
-                .flatMap(it -> PackageUtil.getClassNamesInPackage(it).stream())
-                .map(this::getClassByName)
-                .filter(it -> it.getAnnotation(Controller.class) != null)
+    private List<ControllerClass> getControllerClasses(final List<ControllerPackage> controllerPackages) {
+        return controllerPackages.stream()
+                .flatMap(it -> ControllerClass.from(it).stream())
                 .collect(Collectors.toList());
     }
 
-    private Class<?> getClassByName(final String fqcn) {
-        try {
-            return Class.forName(fqcn);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("경로에 해당하는 클래스를 찾을 수 없습니다.");
-            // TODO: 적절한 예외로 변경
-        }
+    private List<ControllerMethod> getControllerMethods(final List<ControllerClass> controllerClasses) {
+        return controllerClasses.stream()
+                .flatMap(it -> ControllerMethod.from(it).stream())
+                .collect(Collectors.toList());
     }
 
-    private void addHandlerExecutions(final Class<?> controller, final Method method) {
-        List<HandlerKey> handlerKeys = HandlerKey.from(method);
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+    private void addHandlerExecutions(final ControllerMethod controllerMethod) {
+        List<HandlerKey> handlerKeys = HandlerKey.from(controllerMethod);
+        HandlerExecution handlerExecution = new HandlerExecution(controllerMethod);
 
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
