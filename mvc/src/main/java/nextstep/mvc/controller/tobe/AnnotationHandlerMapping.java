@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.tobe.exception.ControllerNotFoundException;
-import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         List<String> packageNames = getPackageNames();
 
         List<ControllerPackage> controllerPackages = ControllerPackage.from(packageNames);
-        List<ControllerClass> controllerClasses = getControllerClasses(controllerPackages);
-        List<ControllerMethod> controllerMethodsOfClasses = getControllerMethods(controllerClasses);
+        List<ControllerClass> controllerClassesOfPackages = getControllerClasses(controllerPackages);
+        List<ControllerMethod> controllerMethodsOfClasses = getControllerMethods(controllerClassesOfPackages);
 
         for (ControllerMethod controllerMethod : controllerMethodsOfClasses) {
             addHandlerExecutions(controllerMethod);
@@ -66,10 +65,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String requestUrl = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
-        HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
+        HandlerKey handlerKey = new HandlerKey(request);
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
 
         if (handlerExecution == null) {

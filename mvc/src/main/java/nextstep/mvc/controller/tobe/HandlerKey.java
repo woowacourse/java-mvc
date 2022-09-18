@@ -1,5 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +12,14 @@ public class HandlerKey {
     private final RequestMethod requestMethod;
 
     public HandlerKey(final String url, final RequestMethod requestMethod) {
+        this.url = url;
+        this.requestMethod = requestMethod;
+    }
+
+    public HandlerKey(final HttpServletRequest request) {
+        String url = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
         this.url = url;
         this.requestMethod = requestMethod;
     }
