@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.controller.exception.NotFoundHandlerException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -21,7 +22,8 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private static final Class<RequestMapping> REQUEST_MAPPING_ANNOTATION = RequestMapping.class;
+    private static final Class<RequestMapping> REQUEST_MAPPING_ANNOTATION_CLASS = RequestMapping.class;
+    private static final Class<Controller> CONTROLLER_ANNOTATION_CLASS = Controller.class;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -32,48 +34,40 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CONTROLLER_ANNOTATION_CLASS);
 
         for (Class<?> clazz : classes) {
             Object instance = getInstance(clazz);
             final List<Method> methods = getRequestMappingMethods(clazz);
-            putHandlerExecutionByMethods(instance, methods);
+            methods.forEach(method -> putHandlerExecutionByRequestMapping(instance, method));
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private Object getInstance(final Class<?> clazz) {
         try {
             final Constructor<?> constructor = clazz.getConstructor();
             return constructor.newInstance();
-        } catch (NoSuchMethodException
-                | InstantiationException
-                | IllegalAccessException
-                | InvocationTargetException exception) {
+        } catch (NoSuchMethodException exception) {
             log.error(exception.getMessage());
-            throw new RuntimeException("");
+            throw new IllegalArgumentException("생성자를 가져올 수 없습니다. " + clazz.getName());
+        } catch (InstantiationException
+                | IllegalAccessException
+                | InvocationTargetException exception){
+            log.error(exception.getMessage());
+            throw new IllegalArgumentException("인스턴스화할 수 없습니다. " + clazz.getName());
         }
     }
 
     private List<Method> getRequestMappingMethods(final Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_ANNOTATION))
+                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_ANNOTATION_CLASS))
                 .collect(Collectors.toList());
     }
 
-    private void putHandlerExecutionByMethods(final Object instance, final List<Method> methods) {
-        for (Method method : methods) {
-            putHandlerExecutionByAnnotation(instance, method);
-        }
-    }
-
-    private void putHandlerExecutionByAnnotation(final Object instance, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(REQUEST_MAPPING_ANNOTATION);
-        putHandlerExecutionByHttpMethods(instance, method, requestMapping);
-    }
-
-    private void putHandlerExecutionByHttpMethods(final Object instance, final Method method, final RequestMapping requestMapping) {
+    private void putHandlerExecutionByRequestMapping(final Object instance, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(REQUEST_MAPPING_ANNOTATION_CLASS);
         for (RequestMethod requestMethod : requestMapping.method()) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
@@ -85,7 +79,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
         final RequestMethod requestMethod = RequestMethod.valueOf(method);
+        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+        if (handlerExecutions.containsKey(handlerKey)) {
+            return handlerExecutions.get(handlerKey);
+        }
+
+        throw new NotFoundHandlerException(requestURI, method);
     }
 }

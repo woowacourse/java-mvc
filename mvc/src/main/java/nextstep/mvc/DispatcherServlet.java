@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.view.ModelAndView;
@@ -44,14 +45,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-
-            final HandlerAdapter handlerAdapter = handlerAdapters.stream()
-                    .filter(it -> it.supports(handler))
-                    .findFirst()
-                    .orElseThrow(() -> new NotFoundHandlerAdapterException("핸들러 어댑터를 찾을 수 없습니다."));
-
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -64,6 +59,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("핸들러를 찾을 수 없습니다."));
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(it -> it.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundHandlerAdapterException("핸들러 어댑터를 찾을 수 없습니다."));
     }
 }
