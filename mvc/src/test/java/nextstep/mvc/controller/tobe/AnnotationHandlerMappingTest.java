@@ -3,7 +3,8 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -19,14 +20,15 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
-    @Test
-    void get() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PATCH", "PUT", "DELETE"})
+    void 모든_HttpMethod에_대해_요청을_처리한다(final String httpMethod) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/test");
+        when(request.getMethod()).thenReturn(httpMethod);
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
@@ -34,18 +36,4 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    @Test
-    void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
 }
