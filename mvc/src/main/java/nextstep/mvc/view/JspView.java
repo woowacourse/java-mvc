@@ -1,8 +1,10 @@
 package nextstep.mvc.view;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import nextstep.mvc.view.exception.NotFoundViewException;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
+        if (isRedirect()) {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
@@ -31,6 +33,15 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
+        forwardToResource(request, response);
+    }
+
+    private boolean isRedirect() {
+        return viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    private void forwardToResource(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
             requestDispatcher.forward(request, response);
