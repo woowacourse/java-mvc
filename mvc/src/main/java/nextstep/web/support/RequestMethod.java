@@ -9,6 +9,6 @@ public enum RequestMethod {
         return Arrays.stream(values())
                 .filter(it -> it.name().equalsIgnoreCase(methodName))
                 .findAny()
-                .orElseThrow();     // Todo: 예외처리
+                .orElseThrow(IllegalArgumentException::new);
     }
 }

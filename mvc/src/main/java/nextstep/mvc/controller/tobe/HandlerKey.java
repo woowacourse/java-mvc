@@ -19,6 +19,14 @@ public class HandlerKey {
         return new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public String getRequestMethod() {
+        return requestMethod.name();
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +

@@ -35,6 +35,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Class<?> controllerClass : controllerClasses) {
             putToHandlerExecutions(controllerClass);
         }
+
+        handlerExecutions.forEach(
+                (handlerKey, handlerExecution) ->
+                        log.info("Path : " + handlerKey.getRequestMethod() + " " + handlerKey.getUrl() +
+                                "Controller : " + handlerExecution.getController().getClass()));
     }
 
     private Set<Class<?>> getControllerClasses() {
