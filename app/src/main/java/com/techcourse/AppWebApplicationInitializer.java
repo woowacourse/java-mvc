@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration.Dynamic;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
@@ -14,17 +15,26 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        addHandlerMappings(dispatcherServlet);
+        addHandlerAdapters(dispatcherServlet);
+        initDispatcher(servletContext, dispatcherServlet);
+        log.info("Start AppWebApplication Initializer");
+    }
+
+    private void addHandlerMappings(final DispatcherServlet dispatcherServlet) {
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+    }
 
+    private void addHandlerAdapters(final DispatcherServlet dispatcherServlet) {
         dispatcherServlet.addHandlerAdapters(new AnnotationHandlerAdapter());
         dispatcherServlet.addHandlerAdapters(new ManualHandlerAdapter());
+    }
 
-        final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
+    private void initDispatcher(final ServletContext servletContext, final DispatcherServlet dispatcherServlet) {
+        Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
-
-        log.info("Start AppWebApplication Initializer");
     }
 }
