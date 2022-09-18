@@ -44,27 +44,13 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            execute(request, response);
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(request, response, handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            render(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
-        }
-    }
-
-    private void execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Object handler = getHandler(request);
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            handle(request, response, handler, handlerAdapter);
-        }
-    }
-
-    private void handle(final HttpServletRequest request,
-                        final HttpServletResponse response,
-                        final Object handler,
-                        final HandlerAdapter handlerAdapter) throws Exception {
-        if (handlerAdapter.supports(handler)) {
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            render(request, response, modelAndView);
         }
     }
 
@@ -76,6 +62,16 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> {
                     log.info("not found handler : {}", request.getRequestURI());
                     return new NotFoundException();
+                });
+    }
+
+    private HandlerAdapter getHandlerAdapter(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> {
+                    log.info("not found handlerAdapter by {}", handler);
+                    throw new RuntimeException("handlerAdapter 가 존재하지 않습니다.");
                 });
     }
 
