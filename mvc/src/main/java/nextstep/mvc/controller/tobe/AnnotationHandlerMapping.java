@@ -34,7 +34,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Class<?> clazz : classes) {
             initHandlerExecutions(clazz);
         }
-        log();
+        logInitializedRequestPath();
     }
 
     private Set<Class<?>> getControllerClasses() {
@@ -76,7 +76,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void log() {
+    private void logInitializedRequestPath() {
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet()
                 .forEach(handlerKey -> log.info("Path : {}", handlerKey));
