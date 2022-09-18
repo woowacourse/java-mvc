@@ -8,9 +8,11 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
+    private final Class<?> controller;
     private final Method method;
 
-    public HandlerExecution(Method method) {
+    public HandlerExecution(Class<?> controller, Method method) {
+        this.controller = controller;
         this.method = method;
     }
 
