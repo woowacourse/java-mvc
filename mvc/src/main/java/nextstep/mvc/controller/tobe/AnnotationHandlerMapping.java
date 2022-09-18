@@ -25,7 +25,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    // TODO: 구현 필요
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
@@ -36,6 +35,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
                     String url = method.getAnnotation(RequestMapping.class).value();
                     RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method()[0];
+                    log.info("Path : " + url + ", HTTP Method : " + requestMethod + ", Controller :" + clazz.getName());
                     HandlerKey handlerKey = new HandlerKey(url, requestMethod);
                     HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
                     handlerExecutions.put(handlerKey, handlerExecution);
