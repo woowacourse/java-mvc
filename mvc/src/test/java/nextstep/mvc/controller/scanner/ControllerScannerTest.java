@@ -25,8 +25,7 @@ class ControllerScannerTest {
             .collect(Collectors.toList());
 
         assertAll(
-            () -> assertThat(classNames).hasSize(1),
-            () -> assertThat(classNames).containsExactly("AnnotationController")
+            () -> assertThat(classNames).contains("AnnotationController")
         );
     }
 
