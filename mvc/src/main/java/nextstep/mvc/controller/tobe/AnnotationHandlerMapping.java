@@ -33,7 +33,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Class<?> controller : controllers) {
             initHandlerExecutions(controller);
         }
-        log.info("Initialized AnnotationHandlerMapping!");
+        log.info("Initialized Annotation Handler Mapping!");
+        controllers
+                .forEach(controller -> log.info("Controller : {}", controller.getCanonicalName()));
     }
 
     private void initHandlerExecutions(final Class<?> controller) {
