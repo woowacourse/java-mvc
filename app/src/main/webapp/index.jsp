@@ -26,6 +26,9 @@
             </div>
             <% } else { %>
             <div class="navbar-nav d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
+                <a class="nav-link" href="/register/view" role="button"><i class="fas fa-user fa-fw"></i>&nbsp;회원가입</a>
+            </div>
+            <div class="navbar-nav d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
                 <a class="nav-link" href="/login/view" role="button"><i class="fas fa-user fa-fw"></i>&nbsp;로그인</a>
             </div>
             <% } %>

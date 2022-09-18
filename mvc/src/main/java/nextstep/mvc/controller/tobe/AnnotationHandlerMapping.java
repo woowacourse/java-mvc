@@ -37,34 +37,45 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (String path : basePackage) {
             final Reflections reflections = new Reflections(path);
             final Set<Class<?>> classesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-
-            // Controller Annotation이 붙은 클래스들
-            for (Class<?> clazz : classesAnnotatedWith) {
-                Object controller;
-                try {
-                    controller = clazz.getDeclaredConstructor().newInstance();
-                } catch (InstantiationException | IllegalAccessException |
-                    InvocationTargetException | NoSuchMethodException e) {
-                    throw new IllegalArgumentException("");
-                }
-
-                final Method[] methods = clazz.getMethods();
-
-                // 클래스내 메서드들
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                        final String requestPath = requestMapping.value();
-                        final RequestMethod[] requestMethods = requestMapping.method();
-                        for (RequestMethod requestMethod : requestMethods) {
-                            final HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
-                            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
-                        }
-                    }
-                }
-            }
+            registerAnnotatedHandlers(classesAnnotatedWith);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerAnnotatedHandlers(final Set<Class<?>> classesAnnotatedWith) {
+        for (Class<?> clazz : classesAnnotatedWith) {
+            registerHandler(clazz);
+        }
+    }
+
+    private void registerHandler(final Class<?> clazz) {
+        final Object controller = instantiateController(clazz);
+
+        for (Method method : clazz.getMethods()) {
+            registerExecutions(controller, method);
+        }
+    }
+
+    private Object instantiateController(final Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+            InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalArgumentException("Controller scan failed");
+        }
+    }
+
+    private void registerExecutions(final Object controller, final Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final String requestUri = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
