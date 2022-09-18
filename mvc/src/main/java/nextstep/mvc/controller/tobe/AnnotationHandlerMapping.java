@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,8 +42,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Class<?> aClass : classesWithController) {
             final List<Method> methodsWithRequestMapping = extractMethodsWithRequestMapping(aClass);
-            final List<RequestMapping> requestMappings = toRequestMapping(methodsWithRequestMapping);
-            initializeHandlerExecutions(requestMappings);
+            for (Method method : methodsWithRequestMapping) {
+                final Object handler = toInstance(aClass);
+                initializeHandlerExecutions(handler, method);
+            }
         }
     }
 
@@ -57,20 +60,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private List<RequestMapping> toRequestMapping(final List<Method> methods) {
-        return methods.stream()
-                .map(method -> method.getAnnotation(RequestMapping.class))
-                .collect(Collectors.toUnmodifiableList());
+    private Object toInstance(final Class<?> aClass) {
+        try {
+            return aClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            return new RuntimeException("해당하는 클래스 정보로 인스턴스를 생성할 수 없습니다.");
+        }
     }
 
-    private void initializeHandlerExecutions(final List<RequestMapping> requestMappings) {
-        for (RequestMapping requestMapping : requestMappings) {
-            final String value = requestMapping.value();
-            final RequestMethod[] requestMethods = requestMapping.method();
-            for (RequestMethod requestMethod : requestMethods) {
-                final HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                handlerExecutions.put(handlerKey, new HandlerExecution());
-            }
+    private void initializeHandlerExecutions(final Object handler, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final String value = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
         }
     }
 
