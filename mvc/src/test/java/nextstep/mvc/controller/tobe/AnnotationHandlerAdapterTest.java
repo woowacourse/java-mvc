@@ -12,13 +12,22 @@ import org.junit.jupiter.api.Test;
 class AnnotationHandlerAdapterTest {
 
     @Test
-    void supports() {
+    void supportsIsTrue() {
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         boolean result = annotationHandlerAdapter.supports(annotationHandlerMapping);
 
         assertThat(result).isTrue();
+    }
+
+    @Test
+    void supportsIsFalse() {
+        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+
+        boolean result = annotationHandlerAdapter.supports(null);
+
+        assertThat(result).isFalse();
     }
 
     @Test
