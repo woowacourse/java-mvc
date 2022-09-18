@@ -1,7 +1,9 @@
 package nextstep.mvc;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -11,7 +13,6 @@ import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import samples.TestController;
 
 class DispatcherServletTest {
