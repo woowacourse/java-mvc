@@ -27,25 +27,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         for (Object packageName : basePackage) {
-            List<String> classFqcns = PackageUtil.getClassNamesInPackage((String) packageName);
-            addHandlerExecutions(classFqcns);
+            addHandlerExecutionInPackage((String) packageName);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecutions(final List<String> classFqcns) {
+    private void addHandlerExecutionInPackage(final String packageName) {
+        List<String> classFqcns = PackageUtil.getClassNamesInPackage(packageName);
         List<Class<?>> controllerClasses = getControllerClasses(classFqcns);
-
-        for (Class<?> clazz : controllerClasses) {
-            for (Method method : clazz.getDeclaredMethods()) {
-                List<HandlerKey> handlerKeys = HandlerKey.from(method);
-                HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
-
-                for (HandlerKey handlerKey : handlerKeys) {
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-            }
+        for (Class<?> controllerClass : controllerClasses) {
+            addHandlerExecutionsInClass(controllerClass);
         }
     }
 
@@ -62,6 +54,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("경로에 해당하는 클래스를 찾을 수 없습니다.");
             // TODO: 적절한 예외로 변경
+        }
+    }
+
+    private void addHandlerExecutionsInClass(final Class<?> clazz) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            addHandlerExecutionsInMethod(clazz, method);
+        }
+    }
+
+    private void addHandlerExecutionsInMethod(final Class<?> clazz, final Method method) {
+        List<HandlerKey> handlerKeys = HandlerKey.from(method);
+        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
