@@ -45,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             Object handler = getHandler(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(request, response, handler);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(request, response, modelAndView);
         } catch (Throwable e) {
@@ -65,7 +65,7 @@ public class DispatcherServlet extends HttpServlet {
                 });
     }
 
-    private HandlerAdapter getHandlerAdapter(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
