@@ -10,13 +10,10 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -30,44 +27,55 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        extractRequestMappings(classes).forEach(this::addHandler);
-
+        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (final Class<?> controller : controllers) {
+            addRequestMappingMethod(controller);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+        log.info("request handler [{}]", handlerKey);
         if (!handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalArgumentException(String.format("요청한 핸들러가 존재하지 않습니다. [%s]", handlerKey));
         }
-        return handlerExecutions.get(handlerKey);
+        final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        log.info("search handler [{}]", handlerExecution);
+        return handlerExecution;
     }
 
-    private List<RequestMapping> extractRequestMappings(final Set<Class<?>> classes) {
-        final List<RequestMapping> requestMappings = new ArrayList<>();
-        for (final Class<?> clazz : classes) {
-            requestMappings.addAll(getRequestMappings(clazz));
+    private void addRequestMappingMethod(final Class<?> controller) {
+        final Method[] methods = controller.getMethods();
+        for (final Method method : methods) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
+                continue;
+            }
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecution(controller, requestMapping, method);
         }
-        return requestMappings;
     }
 
-    private List<RequestMapping> getRequestMappings(final Class<?> clazz) {
-        return Arrays.stream(clazz.getMethods())
-            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-            .map(method -> method.getAnnotation(RequestMapping.class))
-            .collect(Collectors.toList());
-    }
-
-    private void addHandler(final RequestMapping requestMapping) {
-        for (final RequestMethod method : requestMapping.method()) {
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), method);
+    private void addHandlerExecution(final Class<?> controller, final RequestMapping requestMapping, final Method method) {
+        for (final RequestMethod requestMethod : requestMapping.method()) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             if (handlerExecutions.containsKey(handlerKey)) {
                 throw new IllegalArgumentException(String.format("중복적으로 매핑되었습니다. [%s]", handlerKey));
             }
-            handlerExecutions.put(handlerKey, new HandlerExecution());
+            handlerExecutions.put(handlerKey, getHandlerExecution(controller, method));
+        }
+    }
+
+    private HandlerExecution getHandlerExecution(final Class<?> controller, final Method method) {
+        try {
+            final Object newInstance = controller.getConstructor().newInstance();
+            return new HandlerExecution(newInstance, method);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(String.format("기본 생성자가 존재하지 않습니다. [%s]", controller));
         }
     }
 }
