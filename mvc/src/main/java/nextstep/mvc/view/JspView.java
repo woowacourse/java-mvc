@@ -13,7 +13,7 @@ public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
-    public static final String REDIRECT_PREFIX = "redirect:";
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
 
@@ -41,11 +41,11 @@ public class JspView implements View {
     }
 
     private boolean isRedirect() {
-        return viewName.startsWith(JspView.REDIRECT_PREFIX);
+        return viewName.startsWith(REDIRECT_PREFIX);
     }
 
     private void redirect(final HttpServletResponse response) throws IOException {
-        response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
     }
 
     private void forward(final HttpServletRequest request, final HttpServletResponse response)
