@@ -1,6 +1,7 @@
 package nextstep.mvc.view;
 
 import static nextstep.mvc.view.JspView.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import nextstep.mvc.view.exception.NotFoundViewException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -40,5 +42,16 @@ class JspViewTest {
         view.render(Collections.emptyMap(), request, response);
 
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @DisplayName("forward 하는데 해당하는 viewName이 없는 경우 NotFoundViewException 발생")
+    @Test
+    void render_NotFoundViewException() {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final View view = new JspView("/");
+
+        assertThatThrownBy(() -> view.render(Collections.emptyMap(), request, response))
+                .isInstanceOf(NotFoundViewException.class);
     }
 }
