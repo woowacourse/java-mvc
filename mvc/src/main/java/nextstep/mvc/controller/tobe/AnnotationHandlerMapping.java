@@ -3,7 +3,6 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,48 +31,44 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         for (Object basePackage : basePackages) {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> handlerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+            Set<Class<?>> controllerClasses = getControllerClasses(basePackage);
 
-            addHandlerExecutions(handlerTypes);
+            addHandlerExecutions(controllerClasses);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecutions(Set<Class<?>> handlerTypes) {
-        for (Class<?> handlerType : handlerTypes) {
-            addHandlerExecution(handlerType);
+    private Set<Class<?>> getControllerClasses(Object basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private void addHandlerExecutions(Set<Class<?>> controllerClasses) {
+        for (Class<?> controllerClass : controllerClasses) {
+            addHandlerExecution(controllerClass);
         }
     }
 
-    private void addHandlerExecution(Class<?> handlerType) {
-        List<Method> requestMappingMethods = findRequestMappingMethods(handlerType);
+    private void addHandlerExecution(Class<?> controllerClass) {
+        List<Method> requestMappingMethods = findRequestMappingMethods(controllerClass);
 
         for (Method method : requestMappingMethods) {
             List<HandlerKey> handlerKeys = createHandlerKeys(method);
-            final Object handler = createHandler(handlerType);
-            handlerKeys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(handler, method)));
+            final Object controller = createController(controllerClass);
+            handlerKeys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(controller, method)));
         }
     }
 
-    private List<Method> findRequestMappingMethods(Class<?> controllerType) {
-        Method[] methods = controllerType.getDeclaredMethods();
+    private List<Method> findRequestMappingMethods(Class<?> controllerClass) {
+        Method[] methods = controllerClass.getDeclaredMethods();
 
         return findRequestMappingMethods(methods);
     }
 
     private List<Method> findRequestMappingMethods(Method[] methods) {
-        List<Method> requestMappingMethods = new ArrayList<>();
-        for (Method method : methods) {
-            addIfRequestMappingMethod(requestMappingMethods, method);
-        }
-        return requestMappingMethods;
-    }
-
-    private void addIfRequestMappingMethod(List<Method> requestMappingMethods, Method method) {
-        if (hasRequestMappingAnnotation(method)) {
-            requestMappingMethods.add(method);
-        }
+        return Arrays.stream(methods)
+                .filter(this::hasRequestMappingAnnotation)
+                .collect(Collectors.toList());
     }
 
     private boolean hasRequestMappingAnnotation(Method method) {
@@ -94,13 +89,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private Object createHandler(Class<?> controllerType) {
+    private Object createController(Class<?> controllerClass) {
         try {
-            return controllerType.getConstructor().newInstance();
+            return controllerClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
 
-            log.warn(controllerType + " 객체를 생성할 수 없습니다.");
+            log.warn(controllerClass + " 객체를 생성할 수 없습니다.");
             throw new RuntimeException(e);
         }
     }
