@@ -33,13 +33,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Class<?>> controllerClasses = getControllerClasses();
 
         for (Class<?> controllerClass : controllerClasses) {
-            putToHandlerExecutions(controllerClass);
+            initializeHandlerExecutions(controllerClass);
         }
 
-        handlerExecutions.forEach(
-                (handlerKey, handlerExecution) ->
-                        log.info("Path : " + handlerKey.getRequestMethod() + " " + handlerKey.getUrl() +
-                                "Controller : " + handlerExecution.getController().getClass()));
+        logPathAndController();
     }
 
     private Set<Class<?>> getControllerClasses() {
@@ -51,19 +48,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return controllerClasses;
     }
 
-    private void putToHandlerExecutions(Class<?> controllerClass) {
+    private void initializeHandlerExecutions(Class<?> controllerClass) {
         final Object controller = newInstanceOf(controllerClass);
         final Method[] declaredMethods = controllerClass.getDeclaredMethods();
         for (Method controllerMethod : declaredMethods) {
             final HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
 
-            final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
-            final String url = requestMapping.value();
-            final RequestMethod[] requestMethods = requestMapping.method();
-            for (RequestMethod requestMethod : requestMethods) {
-                final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                handlerExecutions.put(handlerKey, handlerExecution);
-            }
+            putToHandlerExecutions(controllerMethod, handlerExecution);
+        }
+    }
+
+    private void putToHandlerExecutions(Method controllerMethod, HandlerExecution handlerExecution) {
+        final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+        final String url = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
@@ -75,6 +76,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             log.error("no such constructor of Class");
             throw new RuntimeException();
         }
+    }
+
+    private void logPathAndController() {
+        handlerExecutions.forEach(
+                (handlerKey, handlerExecution) ->
+                        log.info("Path : " + handlerKey.getRequestMethod() + " " + handlerKey.getUrl() +
+                                "Controller : " + handlerExecution.getController().getClass()));
     }
 
     @Override
