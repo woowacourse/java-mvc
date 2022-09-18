@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
+import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -43,14 +44,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Class<?> declaringClass = method.getDeclaringClass();
             try {
                 Object instance = declaringClass.getConstructor().newInstance();
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+                HandlerKey handlerKey = createHandlerKey(method);
                 handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                      IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private HandlerKey createHandlerKey(Method method) {
+        // 하나의 메서드만 지원 가능하다
+        final int HTTP_METHOD_INDEX = 0;
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        return new HandlerKey(requestMapping.value(), requestMapping.method()[HTTP_METHOD_INDEX]);
     }
 
     @Override

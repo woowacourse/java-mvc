@@ -47,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            var handler = getHandler(request);
+            Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
@@ -62,24 +62,14 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("No matched handler for request : " + request.getRequestURI()));
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(it -> it.supports(handler))
                 .findFirst()
-                .orElseThrow();
-    }
-
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+                .orElseThrow(() -> new RuntimeException("No matched handlerAdapter for handler : " + handler));
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
@@ -87,7 +77,6 @@ public class DispatcherServlet extends HttpServlet {
         try {
             view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
-            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }

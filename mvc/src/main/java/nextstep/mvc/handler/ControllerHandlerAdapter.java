@@ -16,16 +16,17 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
-        Controller controller = (Controller) handler;
-        String viewName = controller.execute(request, response);
-
+        String viewName = ((Controller) handler).execute(request, response);
         ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+        addAttribute(request, modelAndView);
+        return modelAndView;
+    }
+
+    private void addAttribute(HttpServletRequest request, ModelAndView modelAndView) {
         Enumeration<String> attributeNames = request.getAttributeNames();
         while (attributeNames.hasMoreElements()) {
             String attrName = attributeNames.nextElement();
             modelAndView.addObject(attrName, request.getAttribute(attrName));
         }
-        return modelAndView;
     }
 }
