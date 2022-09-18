@@ -22,7 +22,7 @@ public class ModelAndView {
         return this;
     }
 
-    public void move(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void render(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         view.render(model, request, response);
     }
 
