@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +18,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -33,14 +34,19 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = getController(request);
-            final var modelAndView = controller.handle(request, response);
+            Object handler = getController(request);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final var modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
             Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
@@ -50,11 +56,17 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerExecution getController(final HttpServletRequest request) {
+    private Object getController(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .map(HandlerExecution.class::cast)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow();
     }
