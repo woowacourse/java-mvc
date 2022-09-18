@@ -62,17 +62,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private List<Method> findRequestMappingMethods(Class<?> controllerClass) {
         Method[] methods = controllerClass.getDeclaredMethods();
 
-        return findRequestMappingMethods(methods);
-    }
-
-    private List<Method> findRequestMappingMethods(Method[] methods) {
         return Arrays.stream(methods)
-                .filter(this::hasRequestMappingAnnotation)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
-    }
-
-    private boolean hasRequestMappingAnnotation(Method method) {
-        return method.isAnnotationPresent(RequestMapping.class);
     }
 
     private List<HandlerKey> createHandlerKeys(Method method) {
