@@ -2,6 +2,7 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,10 +47,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             final Constructor<?> constructor = clazz.getConstructor();
             return constructor.newInstance();
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        } catch (NoSuchMethodException
+                | InstantiationException
+                | IllegalAccessException
+                | InvocationTargetException exception) {
+            log.error(exception.getMessage());
+            throw new RuntimeException("");
         }
-        return null;
     }
 
     private List<Method> getRequestMappingMethods(final Class<?> clazz) {
