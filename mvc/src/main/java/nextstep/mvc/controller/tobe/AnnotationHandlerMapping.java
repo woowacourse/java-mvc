@@ -1,13 +1,11 @@
 package nextstep.mvc.controller.tobe;
 
-import static org.reflections.scanners.Scanners.TypesAnnotated;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -29,29 +27,31 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.get(TypesAnnotated.with(Controller.class).asClass());
+        for (Class<?> aClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+            addHandlerExecutions(aClass);
+        }
+        log.info("Initialized AnnotationHandlerMapping!");
+    }
 
-        for (Class<?> aClass : classes) {
-            Method[] methods = aClass.getMethods();
-            for (Method method : methods) {
-                RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                if (annotation != null) {
-                    String value = annotation.value();
-                    RequestMethod[] method1 = annotation.method();
-                    for (RequestMethod requestMethod : method1) {
-                        try{
-                            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                            Constructor<?> constructor = aClass.getConstructor();
-                            HandlerExecution handlerExecution = new HandlerExecution(constructor.newInstance(), method);
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
-                        catch (Exception exception) {
-                            throw new IllegalArgumentException("reflection 중 문제가 발생했습니다.");
-                        }
-                    }
-                }
+    private void addHandlerExecutions(final Class<?> aClass) {
+        for (Method method : aClass.getMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                addHandlerExecution(aClass, method);
+            }
+        }
+    }
+
+    private void addHandlerExecution(final Class<?> aClass, final Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        for (RequestMethod requestMethod : annotation.method()) {
+            try {
+                Constructor<?> constructor = aClass.getConstructor();
+                HandlerExecution handlerExecution = new HandlerExecution(constructor.newInstance(), method);
+                handlerExecutions.put(new HandlerKey(annotation.value(), requestMethod), handlerExecution);
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException exception) {
+                log.warn(exception.getMessage());
             }
         }
     }
