@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.common.exception.ErrorType;
-import nextstep.mvc.common.exception.FailedControllerMappingException;
+import nextstep.mvc.common.exception.FailedHandlerMappingException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -34,33 +34,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .map(Reflections::new)
                 .map(reflections -> reflections.getTypesAnnotatedWith(Controller.class))
                 .flatMap(Collection::stream)
-                .forEach(this::addHandlerExecution);
+                .forEach(this::mapHandlerExecutions);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecution(final Class<?> clazz) {
+    private void mapHandlerExecutions(final Class<?> clazz) {
         try {
-            Object controller = clazz.getDeclaredConstructor().newInstance();
+            Object handler = clazz.getDeclaredConstructor().newInstance();
             Arrays.stream(clazz.getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> add(controller, method));
+                    .forEach(method -> addHandlerExecution(handler, method));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new FailedControllerMappingException(ErrorType.FAIL_CONTROLLER_MAPPING);
+            throw new FailedHandlerMappingException(ErrorType.FAIL_HANDLER_MAPPING);
         }
     }
 
-    private void add(final Object controller, final Method method) {
+    private void addHandlerExecution(final Object handler, final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
             handlerExecutions.put(key, handlerExecution);
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.find(request.getMethod());
         HandlerKey key = new HandlerKey(requestURI, requestMethod);
