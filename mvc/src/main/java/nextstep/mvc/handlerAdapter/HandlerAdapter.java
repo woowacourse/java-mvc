@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handlerAdapter;
 
 import nextstep.mvc.view.ModelAndView;
 
