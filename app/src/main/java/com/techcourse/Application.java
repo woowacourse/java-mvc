@@ -22,7 +22,6 @@ public class Application {
         final var docBase = new File("app/src/main/webapp/").getAbsolutePath();
         tomcat.addWebapp("", docBase);
         log.info("configuring app with basedir: {}", docBase);
-
         tomcat.start();
         tomcat.getServer().await();
     }
