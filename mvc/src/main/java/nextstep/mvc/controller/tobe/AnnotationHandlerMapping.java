@@ -46,7 +46,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
                 try {
                     handlerExecutions.put(
-                            new HandlerKey(url, requestMethods[0]), new HandlerExecution(controller.getConstructor().newInstance(), method)
+                            new HandlerKey(url, requestMethods[0]),
+                            new HandlerExecution(controller.getConstructor().newInstance(), method)
                     );
                 } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
