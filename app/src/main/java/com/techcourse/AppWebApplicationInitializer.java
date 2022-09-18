@@ -15,7 +15,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = initDispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet();
+        addHandlers(dispatcherServlet);
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
@@ -24,15 +25,18 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         log.info("Start AppWebApplication Initializer");
     }
 
-    private DispatcherServlet initDispatcherServlet() {
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        final var annotationHandlerMapping = new AnnotationHandlerMapping();
-        final var manualHandlerAdapter = new ManualHandlerAdapter();
-        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
+    private void addHandlers(final DispatcherServlet dispatcherServlet) {
+        addManualHandler(dispatcherServlet);
+        addAnnotationHandler(dispatcherServlet);
+    }
 
-        final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(manualHandlerMapping, annotationHandlerMapping);
-        dispatcherServlet.addHandlerAdapter(manualHandlerAdapter, annotationHandlerAdapter);
-        return dispatcherServlet;
+    private void addManualHandler(final DispatcherServlet dispatcherServlet) {
+        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
+    }
+
+    private void addAnnotationHandler(final DispatcherServlet dispatcherServlet) {
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 }
