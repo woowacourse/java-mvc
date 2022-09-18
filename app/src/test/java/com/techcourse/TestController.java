@@ -1,4 +1,4 @@
-package samples;
+package com.techcourse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

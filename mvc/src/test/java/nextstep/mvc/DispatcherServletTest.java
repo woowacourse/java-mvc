@@ -7,9 +7,11 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.TestAnnotationController;
 
 class DispatcherServletTest {
 
@@ -20,10 +22,8 @@ class DispatcherServletTest {
         //given
         var request = mock(HttpServletRequest.class);
         var response = mock(HttpServletResponse.class);
-
         var handlerMapping = mock(HandlerMapping.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
@@ -39,19 +39,20 @@ class DispatcherServletTest {
 
     @DisplayName("handler adapter가 존재하지 않는 경우 예외가 발생한다.")
     @Test
-    void dispatcherServletExceptionIfNotExistHandlerAdapter() {
+    void dispatcherServletExceptionIfNotExistHandlerAdapter() throws NoSuchMethodException {
         //given
         var request = mock(HttpServletRequest.class);
         var response = mock(HttpServletResponse.class);
-
         var handlerMapping = mock(HandlerMapping.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
         //when
-        when(handlerMapping.getHandler(request)).thenReturn(new TestController());
+        Method method = TestAnnotationController.class.getDeclaredMethod("findUserId",
+                HttpServletRequest.class,
+                HttpServletResponse.class);
+        when(handlerMapping.getHandler(request)).thenReturn(new HandlerExecution("/get-test", method));
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(handlerMapping);
 

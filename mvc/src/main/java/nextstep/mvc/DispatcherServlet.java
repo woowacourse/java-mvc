@@ -57,16 +57,15 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Controller getController(final HttpServletRequest request) throws ServletException {
+    private Object getController(final HttpServletRequest request) throws ServletException {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .map(Controller.class::cast)
-                .findFirst()
+                .findAny()
                 .orElseThrow(() -> new ServletException("처리할 수 있는 handler를 찾지 못했습니다."));
     }
 
-    private HandlerAdapter getAdapter(final Controller controller) throws ServletException {
+    private HandlerAdapter getAdapter(final Object controller) throws ServletException {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(controller))
                 .findAny()
