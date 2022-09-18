@@ -13,7 +13,7 @@ import nextstep.mvc.controller.asis.ForwardController;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.TestAnnotationController;
 
 class AnnotationHandlerAdapterTest {
 
@@ -44,9 +44,9 @@ class AnnotationHandlerAdapterTest {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
         given(request.getAttribute("id")).willReturn("gugu");
-        final Method method = TestController.class
+        final Method method = TestAnnotationController.class
                 .getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
-        final HandlerExecution handlerExecution = new HandlerExecution(method, new TestController());
+        final HandlerExecution handlerExecution = new HandlerExecution(method, new TestAnnotationController());
 
         // when
         final ModelAndView expect = adapter.handle(request, response, handlerExecution);
