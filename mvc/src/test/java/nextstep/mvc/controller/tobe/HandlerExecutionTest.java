@@ -29,8 +29,8 @@ class HandlerExecutionTest {
     @Test
     @DisplayName("handler가 주어지면 올바르게 handle한 결과를 반환한다.")
     void handle() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("kth990303");
 
