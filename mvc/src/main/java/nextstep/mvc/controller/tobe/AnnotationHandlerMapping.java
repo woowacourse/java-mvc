@@ -2,6 +2,7 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,29 +27,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        for (Object packageName : basePackage) {
-            addHandlerExecutionInPackage((String) packageName);
+        List<String> packageNames = getPackageNames();
+        List<Class<?>> controllerClasses = getControllerClasses(packageNames);
+
+        for (Class<?> controller : controllerClasses) {
+            for (Method method : controller.getDeclaredMethods()) {
+                addHandlerExecutions(controller, method);
+            }
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecutionInPackage(final String packageName) {
-        List<String> classFqcns = PackageUtil.getClassNamesInPackage(packageName);
-        List<Class<?>> controllerClasses = getControllerClasses(classFqcns);
-        for (Class<?> controllerClass : controllerClasses) {
-            addHandlerExecutionsInClass(controllerClass);
-        }
+    private List<String> getPackageNames() {
+        return Arrays.stream(basePackage)
+                .map(Object::toString)
+                .collect(Collectors.toList());
     }
 
-    private List<Class<?>> getControllerClasses(final List<String> classFqcns) {
-        return classFqcns.stream()
-                .map(this::getClassByFqcn)
+    private List<Class<?>> getControllerClasses(final List<String> packageNames) {
+        return packageNames.stream()
+                .flatMap(it -> PackageUtil.getClassNamesInPackage(it).stream())
+                .map(this::getClassByName)
                 .filter(it -> it.getAnnotation(Controller.class) != null)
                 .collect(Collectors.toList());
     }
 
-    private Class<?> getClassByFqcn(final String fqcn) {
+    private Class<?> getClassByName(final String fqcn) {
         try {
             return Class.forName(fqcn);
         } catch (ClassNotFoundException e) {
@@ -57,15 +62,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void addHandlerExecutionsInClass(final Class<?> clazz) {
-        for (Method method : clazz.getDeclaredMethods()) {
-            addHandlerExecutionsInMethod(clazz, method);
-        }
-    }
-
-    private void addHandlerExecutionsInMethod(final Class<?> clazz, final Method method) {
+    private void addHandlerExecutions(final Class<?> controller, final Method method) {
         List<HandlerKey> handlerKeys = HandlerKey.from(method);
-        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);

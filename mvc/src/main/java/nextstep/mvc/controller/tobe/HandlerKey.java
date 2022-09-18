@@ -1,10 +1,9 @@
 package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
@@ -20,11 +19,17 @@ public class HandlerKey {
 
     public static List<HandlerKey> from(final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String url = requestMapping.value();
 
-        return Arrays.stream(requestMapping.method())
-                .map(it -> new HandlerKey(url, it))
-                .collect(Collectors.toList());
+        String url = requestMapping.value();
+        RequestMethod[] methods = requestMapping.method();
+
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        for (RequestMethod requestMethod : methods) {
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerKeys.add(handlerKey);
+        }
+
+        return handlerKeys;
     }
 
     @Override
