@@ -20,15 +20,15 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void 매핑된_HandlerExecution을_반환한다() {
+    void 매핑된_핸들러를_반환한다() {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        Object handler = handlerMapping.getHandler(request);
 
-        assertThat(handlerExecution).isNotNull();
+        assertThat(handler).isExactlyInstanceOf(HandlerExecution.class);
     }
 
     @Test
