@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.adapter.ControllerAdapter;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
@@ -25,9 +26,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -39,27 +42,21 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         final Object handler = getHandler(request);
-        if (handler instanceof HandlerExecution) {
-            try {
-                ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                View view = modelAndView.getView();
-                view.render(modelAndView.getModel(), request, response);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (handler instanceof Controller) {
-            try {
-                final var viewName = ((Controller)handler).execute(request, response);
-                move(viewName, request, response);
-            } catch (Throwable e) {
-                log.error("Exception : {}", e.getMessage(), e);
-                throw new ServletException(e.getMessage());
-            }
+        final HandlerAdapter handlerAdapter = getHandlerAdapters(handler);
+        try {
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -71,13 +68,10 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private HandlerAdapter getHandlerAdapters(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow();
     }
 }

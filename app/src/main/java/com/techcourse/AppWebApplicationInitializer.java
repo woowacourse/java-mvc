@@ -2,6 +2,8 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.adapter.ControllerAdapter;
+import nextstep.mvc.adapter.HandlerExecutionAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
@@ -16,6 +18,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         final var dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
+        dispatcherServlet.addHandlerAdapter(new ControllerAdapter());
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionAdapter());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
