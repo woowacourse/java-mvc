@@ -9,7 +9,7 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
-        return handler instanceof AnnotationHandlerMapping;
+        return handler instanceof HandlerExecution;
     }
 
     @Override

@@ -43,9 +43,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handlerMapping = getHandlerMapping(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handlerMapping);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerMapping);
+            final var handler = getHandler(request);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandlerMapping(final HttpServletRequest request) {
+    private Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)

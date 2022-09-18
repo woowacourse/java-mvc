@@ -13,10 +13,10 @@ class AnnotationHandlerAdapterTest {
 
     @Test
     void supportsIsTrue() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        HandlerExecution handler = mock(HandlerExecution.class);
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        boolean result = annotationHandlerAdapter.supports(annotationHandlerMapping);
+        boolean result = annotationHandlerAdapter.supports(handler);
 
         assertThat(result).isTrue();
     }
