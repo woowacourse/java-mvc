@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.handlerMapping.AnnotationHandlerMapping;
 
 class AnnotationHandlerMappingTest {
 
