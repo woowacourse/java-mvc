@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
@@ -20,6 +21,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("GET 요청을 핸들링할 수 있다.")
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -35,6 +37,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("POST 요청을 핸들링할 수 있다.")
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
