@@ -28,24 +28,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        final var reflections = new Reflections(basePackage);
+        final var methods = findAllControllerMethods(reflections);
+        collectMethodsToHandlerExecutions(methods);
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        List<Method> methods = reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .map(Class::getDeclaredMethods)
-                .flatMap(Stream::of)
-                .collect(Collectors.toList());
+    }
+
+    private void collectMethodsToHandlerExecutions(final List<Method> methods) {
         for (Method method : methods) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+            final var requestMapping = method.getAnnotation(RequestMapping.class);
+            final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+
             handlerExecutions.put(handlerKey, new HandlerExecution(method));
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        String requestMethod = request.getMethod();
-        String uri = request.getRequestURI();
+    private List<Method> findAllControllerMethods(final Reflections reflections) {
+        return reflections.getTypesAnnotatedWith(Controller.class).stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Stream::of)
+                .collect(Collectors.toList());
+    }
 
-        HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.from(requestMethod));
+    public Object getHandler(final HttpServletRequest request) {
+        final var uri = request.getRequestURI();
+        final var method = request.getMethod();
+        HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.from(method));
+
         return handlerExecutions.get(handlerKey);
     }
 }
