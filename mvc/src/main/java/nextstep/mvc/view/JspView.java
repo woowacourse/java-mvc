@@ -24,19 +24,20 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        if (isRedirect(response)) {
+        if (isRedirect()) {
+            redirect(response);
             return;
         }
         forward(model, request, response);
     }
 
-    private boolean isRedirect(final HttpServletResponse response) throws IOException {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            log.info("redirect view {}", viewName);
-            return true;
-        }
-        return false;
+    private boolean isRedirect() {
+        return viewName.startsWith(JspView.REDIRECT_PREFIX);
+    }
+
+    private void redirect(final HttpServletResponse response) throws IOException {
+        response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        log.info("redirect view {}", viewName);
     }
 
     private void forward(final Map<String, ?> model,
