@@ -38,7 +38,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final String requestURI = request.getRequestURI();
+        final String method = request.getMethod();
+
+        return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
     }
 
     private void addAllHandlerExecutions(final Class<?> controller) {
