@@ -31,6 +31,9 @@ public class JspView implements View {
         }
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
+        if (requestDispatcher == null) {
+            throw new IllegalArgumentException("RequestDispatcher를 반환할 수 없습니다.");
+        }
         requestDispatcher.forward(request, response);
     }
 }
