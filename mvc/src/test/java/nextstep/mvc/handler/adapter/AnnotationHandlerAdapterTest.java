@@ -1,4 +1,4 @@
-package com.techcourse;
+package nextstep.mvc.handler.adapter;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,22 +12,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
-import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.handler.HandlerExecution;
+import nextstep.mvc.handler.adapter.AnnotationHandlerAdapter;
 
-class ManualHandlerAdapterTest {
+class AnnotationHandlerAdapterTest {
 
-	@DisplayName("ManualHandlerAdapter가 지원하는 handler인지 확인한다.")
+	@DisplayName("AnnotationHandlerAdapter가 지원하는 handler인지 확인한다.")
 	@Test
 	void supports_true() {
 		// given
-		Object controller = mock(Controller.class);
-		HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+		Object handlerExecution = mock(HandlerExecution.class);
+		HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
 
 		// when
-		boolean result = handlerAdapter.supports(controller);
+		boolean result = handlerAdapter.supports(handlerExecution);
 
 		// then
 		assertThat(result).isTrue();
@@ -37,36 +37,36 @@ class ManualHandlerAdapterTest {
 	@Test
 	void supports_false() {
 		// given
-		Object handlerExecution = mock(HandlerExecution.class);
-		HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+		Object controller = mock(Controller.class);
+		HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
 
 		// when
-		boolean result = handlerAdapter.supports(handlerExecution);
+		boolean result = handlerAdapter.supports(controller);
 
 		// then
 		assertThat(result).isFalse();
 	}
 
-	@DisplayName("controller를 처리한다.")
+	@DisplayName("handlerException을 처리한다.")
 	@Test
 	void handle() throws Exception {
 		// given
-		Controller controller = mock(Controller.class);
+		HandlerExecution handlerExecution = mock(HandlerExecution.class);
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
 
-		BDDMockito.given(controller.execute(request, response))
-			.willReturn("viewName");
+		BDDMockito.given(handlerExecution.handle(request, response))
+			.willReturn(new ModelAndView(new JspView("viewName")));
 
 		// when
-		HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
-		ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
+		HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+		ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
 		// then
 		assertAll(
 			() -> assertThat(modelAndView.getView()).isInstanceOf(JspView.class),
 			() -> assertThat(((JspView)modelAndView.getView()).getViewName()).isEqualTo("viewName"),
-			() -> verify(controller).execute(request, response)
+			() -> verify(handlerExecution).handle(request, response)
 		);
 
 	}

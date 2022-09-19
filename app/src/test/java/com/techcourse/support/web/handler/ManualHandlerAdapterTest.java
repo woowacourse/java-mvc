@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package com.techcourse.support.web.handler;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,20 +12,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.handler.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
-class AnnotationHandlerAdapterTest {
+class ManualHandlerAdapterTest {
 
-	@DisplayName("AnnotationHandlerAdapter가 지원하는 handler인지 확인한다.")
+	@DisplayName("ManualHandlerAdapter가 지원하는 handler인지 확인한다.")
 	@Test
 	void supports_true() {
 		// given
-		Object handlerExecution = mock(HandlerExecution.class);
-		HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+		Object controller = mock(Controller.class);
+		HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
 
 		// when
-		boolean result = handlerAdapter.supports(handlerExecution);
+		boolean result = handlerAdapter.supports(controller);
 
 		// then
 		assertThat(result).isTrue();
@@ -35,36 +36,36 @@ class AnnotationHandlerAdapterTest {
 	@Test
 	void supports_false() {
 		// given
-		Object controller = mock(Controller.class);
-		HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+		Object handlerExecution = mock(HandlerExecution.class);
+		HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
 
 		// when
-		boolean result = handlerAdapter.supports(controller);
+		boolean result = handlerAdapter.supports(handlerExecution);
 
 		// then
 		assertThat(result).isFalse();
 	}
 
-	@DisplayName("handlerException을 처리한다.")
+	@DisplayName("controller를 처리한다.")
 	@Test
 	void handle() throws Exception {
 		// given
-		HandlerExecution handlerExecution = mock(HandlerExecution.class);
+		Controller controller = mock(Controller.class);
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
 
-		BDDMockito.given(handlerExecution.handle(request, response))
-			.willReturn(new ModelAndView(new JspView("viewName")));
+		BDDMockito.given(controller.execute(request, response))
+			.willReturn("viewName");
 
 		// when
-		HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
-		ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerExecution);
+		HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+		ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
 
 		// then
 		assertAll(
 			() -> assertThat(modelAndView.getView()).isInstanceOf(JspView.class),
 			() -> assertThat(((JspView)modelAndView.getView()).getViewName()).isEqualTo("viewName"),
-			() -> verify(handlerExecution).handle(request, response)
+			() -> verify(controller).execute(request, response)
 		);
 
 	}

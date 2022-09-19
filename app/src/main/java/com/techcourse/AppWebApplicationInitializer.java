@@ -2,11 +2,14 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.handler.adapter.AnnotationHandlerAdapter;
+import nextstep.mvc.handler.mapping.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.techcourse.support.web.handler.ManualHandlerAdapter;
+import com.techcourse.support.web.handler.ManualHandlerMapping;
 
 public class AppWebApplicationInitializer implements WebApplicationInitializer {
 

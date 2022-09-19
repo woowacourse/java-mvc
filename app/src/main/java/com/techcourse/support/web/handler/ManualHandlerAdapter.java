@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.support.web.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
