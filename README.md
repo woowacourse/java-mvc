@@ -17,4 +17,9 @@
   - [X] request를 확인해 HandlerKey를 만든다.
   - [X] HandlerKey로 HanderExecution을 찾고 리턴한다.
 
-  
+#### DispatcherServlet에서 ManualHandlerMapping, AnnotationHandlerMapping 모두 지원
+- [X] AppWebApplicationInitializer에서 DispatcherServlet에 AnnotationHandlerMapping을 추가해준다.
+- [X] DispatcherServlet의 service()에서 HandlerAdapter 인터페이스를 이용하도록 한다. 
+  - [X] ManualHandlerAdapter를 구현한다.
+  - [X] AnnotationHandlerMapping를 구현한다.
+  - [X] 뷰에 대한 처리를 JspView로 이동시킨다.
