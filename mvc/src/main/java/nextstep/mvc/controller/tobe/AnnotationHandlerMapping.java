@@ -17,16 +17,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        scanController(new Reflections(basePackage));
+        scanController(new Reflections(basePackages));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
