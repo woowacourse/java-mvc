@@ -28,6 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Class<?> controller : getControllerClasses()) {
             List<Method> methods = getRequestMappingMethods(controller);
@@ -57,6 +58,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
