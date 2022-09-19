@@ -42,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = getController(request);
             final var modelAndView = getModelAndView(controller, request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
