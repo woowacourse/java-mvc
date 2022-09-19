@@ -1,4 +1,4 @@
-package nextstep.mvc.handlermapping;
+package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

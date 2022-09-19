@@ -1,4 +1,4 @@
-package nextstep.mvc.handlermapping;
+package nextstep.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.Test;
 import samples.TestController;

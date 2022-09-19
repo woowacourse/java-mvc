@@ -1,4 +1,4 @@
-package nextstep.mvc.handleradaptor;
+package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.ForwardController;
-import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.assertj.core.api.AssertionsForClassTypes;

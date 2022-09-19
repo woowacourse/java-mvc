@@ -1,4 +1,4 @@
-package nextstep.mvc.handlermapping;
+package nextstep.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 
