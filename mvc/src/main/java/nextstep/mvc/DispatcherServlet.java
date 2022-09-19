@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -42,17 +43,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-
-            if (handler instanceof HandlerExecution) {
-                final ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                final View view = modelAndView.getView();
-                view.render(modelAndView.getModel(), request, response);
-
-                return;
-            }
-
-            final String viewName = ((Controller) handler).execute(request, response);
-            move(viewName, request, response);
+            final ModelAndView modelAndView = handle(request, response, handler);
+            render(request, response, modelAndView);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -64,17 +56,25 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(NotFoundHandlerException::new);
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
+                                final Object handler) throws Exception {
+        if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        final String viewName = ((Controller) handler).execute(request, response);
+        final View view = new JspView(viewName);
+        return new ModelAndView(view);
+    }
+
+    private void render(final HttpServletRequest request, final HttpServletResponse response,
+                        final ModelAndView modelAndView) throws Exception {
+        Objects.requireNonNull(modelAndView);
+
+        final View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
