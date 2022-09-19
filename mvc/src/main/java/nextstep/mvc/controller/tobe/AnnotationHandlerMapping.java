@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.NoDefaultConstructorException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -50,8 +51,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             final Constructor<?> constructor = clazz.getConstructor();
             return constructor.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (final Exception e) {
+            throw new NoDefaultConstructorException();
         }
     }
 
