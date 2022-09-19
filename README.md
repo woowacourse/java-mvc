@@ -8,4 +8,4 @@
   - [x] 어노테이션 기반으로 HTTP 메서드와 URL에 따라 컨트롤러를 매핑해줄 수 있다.
 - [x] DispatcherServlet에서 HandlerMapping 인터페이스를 활용하여 AnnotationHandlerMapping과 ManualHandlerMapping 둘다 처리할 수 있다.
   - [x] DispatcherServlet에서 instanceof 를 이용하여 두 가지 HandlerMapping 을 처리해준다.
-
+- [x] JspView 를 이용해서 redirect 혹은 forward 를 해줄 수 있다.

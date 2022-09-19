@@ -1,7 +1,5 @@
 package nextstep.mvc;
 
-import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +11,7 @@ import java.util.Objects;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.controller.tobe.exception.NotSupportHandler;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -39,7 +38,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         final var handler = getHandler(request);
 
@@ -63,7 +63,8 @@ public class DispatcherServlet extends HttpServlet {
                                      final Controller handler) throws ServletException {
         try {
             String viewName = handler.execute(request, response);
-            move(viewName, request, response);
+            final ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+            renderView(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -71,25 +72,20 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private static void handleAnnotationHandler(final HttpServletRequest request, final HttpServletResponse response,
-                                  final HandlerExecution handler) {
+                                                final HandlerExecution handler) {
         try {
             ModelAndView modelAndView = handler.handle(request, response);
-            final Map<String, Object> model = modelAndView.getModel();
-            final View view = modelAndView.getView();
-            view.render(model, request, response);
+            renderView(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private static void renderView(final ModelAndView modelAndView, final HttpServletRequest request,
+                                   final HttpServletResponse response) throws Exception {
+        final Map<String, Object> model = modelAndView.getModel();
+        final View view = modelAndView.getView();
+        view.render(model, request, response);
     }
 }
