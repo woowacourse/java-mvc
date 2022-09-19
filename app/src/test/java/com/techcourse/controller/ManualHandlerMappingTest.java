@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -53,6 +54,15 @@ class ManualHandlerMappingTest {
 		repository.close();
 	}
 
+	@DisplayName("기본 요청시 index.jsp 반환")
+	@Test
+	void default_url() throws Exception {
+		GET_요청("/");
+
+		assertThat(핸들링_후_반환값()).isEqualTo("/index.jsp");
+	}
+
+	@DisplayName("세션 있을 경우 자동 로그인")
 	@Test
 	void login_get_with_session() throws Exception {
 		세션_있음(new User(1L, "her0807", "password", "her0807@naver.com"));
@@ -62,6 +72,7 @@ class ManualHandlerMappingTest {
 		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/index.jsp");
 	}
 
+	@DisplayName("세션 없을 경우 로그인 페이지 로딩")
 	@Test
 	void login_get() throws Exception {
 		세션없음();
@@ -71,6 +82,7 @@ class ManualHandlerMappingTest {
 		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/login.jsp");
 	}
 
+	@DisplayName("로그인 성공시 index.jsp 반환")
 	@Test
 	void login_post() throws Exception {
 		세션없음();
@@ -81,6 +93,7 @@ class ManualHandlerMappingTest {
 		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/index.jsp");
 	}
 
+	@DisplayName("로그인 실패시 401.jsp 반환")
 	@Test
 	void login_post_false() throws Exception {
 		세션없음();
@@ -92,6 +105,7 @@ class ManualHandlerMappingTest {
 		assertThat(modelAndView).isEqualTo("redirect:/401.jsp");
 	}
 
+	@DisplayName("로그아웃 시 redirect")
 	@Test
 	void logout() throws Exception {
 		세션없음();
@@ -101,6 +115,7 @@ class ManualHandlerMappingTest {
 		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/");
 	}
 
+	@DisplayName("회원가입 GET 요청시 register.jsp 반환")
 	@Test
 	void register() throws Exception {
 		세션없음();
@@ -110,6 +125,7 @@ class ManualHandlerMappingTest {
 		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/register.jsp");
 	}
 
+	@DisplayName("회원가입 POST 요청시 index.jsp 반환")
 	@Test
 	void register_post() throws Exception {
 		세션없음();
