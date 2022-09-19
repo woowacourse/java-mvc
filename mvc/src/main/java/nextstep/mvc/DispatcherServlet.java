@@ -19,11 +19,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdaptor> handlerAdaptors;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdaptors = new ArrayList<>();
     }
 
     @Override
@@ -35,8 +35,8 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public void addHandlerAdaptor(final HandlerAdaptor handlerAdaptor) {
+        handlerAdaptors.add(handlerAdaptor);
     }
 
     @Override
@@ -45,8 +45,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             final Object handler = getHandler(request);
-            final HandlerAdapter adapter = getHandlerAdaptor(handler);
-            final ModelAndView modelAndView = adapter.handle(request, response, handler);
+            final HandlerAdaptor adaptor = getHandlerAdaptor(handler);
+            final ModelAndView modelAndView = adaptor.handle(request, response, handler);
 
             modelAndView.render(request, response);
         } catch (Throwable e) {
@@ -55,11 +55,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter getHandlerAdaptor(final Object handler) {
-        return handlerAdapters.stream()
-            .filter(handlerAdapter -> handlerAdapter.supports(handler))
+    private HandlerAdaptor getHandlerAdaptor(final Object handler) {
+        return handlerAdaptors.stream()
+            .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Couldn't find adapter for handler"));
+            .orElseThrow(() -> new IllegalArgumentException("Couldn't find adaptor for handler"));
     }
 
     private Object getHandler(final HttpServletRequest request) {

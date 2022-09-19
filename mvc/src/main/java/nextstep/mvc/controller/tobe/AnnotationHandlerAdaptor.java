@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.HandlerAdaptor;
 import nextstep.mvc.view.ModelAndView;
 
-public class AnnotationHandlerAdaptor implements HandlerAdapter {
+public class AnnotationHandlerAdaptor implements HandlerAdaptor {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerAdaptor.class);
 
