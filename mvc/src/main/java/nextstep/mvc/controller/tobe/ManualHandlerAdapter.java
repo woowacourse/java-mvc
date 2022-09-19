@@ -10,9 +10,9 @@ import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleHandlerAdapter implements HandlerAdapter {
+public class ManualHandlerAdapter implements HandlerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(SimpleHandlerAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(ManualHandlerAdapter.class);
 
     @Override
     public boolean supports(final Object handler) {

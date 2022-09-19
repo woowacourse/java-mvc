@@ -11,9 +11,9 @@ import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class SimpleHandlerAdapterTest {
+class ManualHandlerAdapterTest {
 
-    private SimpleHandlerAdapter simpleHandlerAdapter = new SimpleHandlerAdapter();
+    private ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
     @Nested
     class supports_메서드는 {
@@ -25,7 +25,7 @@ class SimpleHandlerAdapterTest {
             void false를_반환한다() {
                 final HandlerExecution handler = mock(HandlerExecution.class);
 
-                assertThat(simpleHandlerAdapter.supports(handler)).isFalse();
+                assertThat(manualHandlerAdapter.supports(handler)).isFalse();
             }
         }
 
@@ -36,7 +36,7 @@ class SimpleHandlerAdapterTest {
             void true를_반환한다() {
                 final Controller handler = mock(Controller.class);
 
-                assertThat(simpleHandlerAdapter.supports(handler)).isTrue();
+                assertThat(manualHandlerAdapter.supports(handler)).isTrue();
             }
         }
     }
@@ -55,7 +55,7 @@ class SimpleHandlerAdapterTest {
 
                 when(handler.execute(request, response)).thenReturn("/index.jsp");
 
-                final ModelAndView actual = simpleHandlerAdapter.handle(request, response, handler);
+                final ModelAndView actual = manualHandlerAdapter.handle(request, response, handler);
 
                 assertThat(actual.getView()).isNotNull();
             }
