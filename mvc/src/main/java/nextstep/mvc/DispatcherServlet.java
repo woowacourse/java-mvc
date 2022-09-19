@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,7 +62,8 @@ public class DispatcherServlet extends HttpServlet {
                                      final Controller handler) throws ServletException {
         try {
             final String viewName = handler.execute(request, response);
-            move(viewName, request, response);
+            final ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+            renderView(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -74,23 +74,17 @@ public class DispatcherServlet extends HttpServlet {
                                          final HandlerExecution handler) {
         try {
             final ModelAndView modelAndView = handler.handle(request, response);
-            final View view = modelAndView.getView();
-            final Map<String, Object> model = modelAndView.getModel();
-            view.render(model, request, response);
+            renderView(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request,
-                      final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private static void renderView(final ModelAndView modelAndView, final HttpServletRequest request,
+                                   final HttpServletResponse response) throws Exception {
+        final Map<String, Object> model = modelAndView.getModel();
+        final View view = modelAndView.getView();
+        view.render(model, request, response);
     }
 }
