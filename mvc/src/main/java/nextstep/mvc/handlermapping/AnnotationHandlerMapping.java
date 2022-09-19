@@ -31,16 +31,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        for (Object basePackage : basePackages) {
-            Set<Class<?>> controllerClasses = getControllerClasses(basePackage);
+        Set<Class<?>> controllerClasses = getControllerClasses(basePackages);
+        addHandlerExecutions(controllerClasses);
 
-            addHandlerExecutions(controllerClasses);
-        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> getControllerClasses(Object basePackage) {
-        Reflections reflections = new Reflections(basePackage);
+    private Set<Class<?>> getControllerClasses(Object[] basePackages) {
+        Reflections reflections = new Reflections(basePackages);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
