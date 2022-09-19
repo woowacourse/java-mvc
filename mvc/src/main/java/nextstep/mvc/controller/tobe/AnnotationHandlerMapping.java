@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
@@ -30,17 +29,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        for (Class<?> controller : getControllerClasses()) {
-            List<Method> methods = getRequestMappingMethods(controller);
-            methods.forEach(it -> setUpHandlerExecutions(controller, it));
+        for (Object base : basePackage) {
+            initializeEachBase(base);
         }
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> getControllerClasses() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
+    private void initializeEachBase(Object base) {
+        Reflections reflections = new Reflections(base);
+        for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
+            List<Method> methods = getRequestMappingMethods(controller);
+            methods.forEach(it -> setUpHandlerExecutions(controller, it));
+        }
     }
 
     private List<Method> getRequestMappingMethods(Class<?> controller) {
@@ -55,6 +55,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution value = new HandlerExecution(controller, method);
             handlerExecutions.put(key, value);
+            log.info("Path : {} , Method : {}", requestMapping.value(), requestMethod);
         }
     }
 
