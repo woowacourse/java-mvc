@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
@@ -30,7 +31,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controllerClass : controllers) {
-            initHandlerExecutions(getInstance(controllerClass), controllerClass.getDeclaredMethods());
+            initHandlerExecutions(getInstance(controllerClass), controllerClass.getMethods());
         }
     }
 
@@ -42,6 +43,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void putHandlerKeyByHandlerExecutor(Object controllerInstance, Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return;
+        }
         String value = requestMapping.value();
         for (RequestMethod requestMethod : requestMapping.method()) {
             handlerExecutions.put(new HandlerKey(value, requestMethod),

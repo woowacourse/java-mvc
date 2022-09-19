@@ -4,6 +4,7 @@
 
 - [X] AnnotationHandlerMappingTest가 정상 동작한다.
 - [X] DispatcherServlet에서 HandlerMapping 인터페이스를 활용하여 AnnotationHandlerMapping과 ManualHandlerMapping 둘다 처리할 수 있다.
+- [X] HTTP 메서드와 URL를 매핑 조건을 어노테이션으로 컨트롤러에 적용할 수 있다.
 
 ### 구현한 기능
 - `AnnotationHandlerMapping`에서 `Map<HandlerKey, HandlerExecution>` 를 초기화한다.
