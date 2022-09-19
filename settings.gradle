@@ -2,3 +2,5 @@ rootProject.name = 'jwp-dashboard-mvc'
 
 include 'mvc'
 include 'app'
+include 'test'
+

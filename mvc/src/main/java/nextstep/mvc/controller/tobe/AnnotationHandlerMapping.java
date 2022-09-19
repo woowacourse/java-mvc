@@ -57,15 +57,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 		}
 	}
 
+	private Optional<RequestMapping> findByRequestMapping(Method method) {
+		return Optional.ofNullable(method.getAnnotation(RequestMapping.class));
+	}
+
 	private void setHandlerExecutions(Class controller, Method method, RequestMapping requestMappingValue) {
 		for (RequestMethod requestMethod : requestMappingValue.method()) {
 			final HandlerKey handlerKey = new HandlerKey(requestMappingValue.value(), requestMethod);
 			handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
 		}
-	}
-
-	private Optional<RequestMapping> findByRequestMapping(Method method) {
-		return Optional.ofNullable(method.getAnnotation(RequestMapping.class));
 	}
 
 	public Object getHandler(final HttpServletRequest request) {
