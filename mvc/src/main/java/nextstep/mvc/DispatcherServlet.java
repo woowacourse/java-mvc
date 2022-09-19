@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import nextstep.mvc.exception.HandlerAdapterException;
+import nextstep.mvc.exception.HandlerMappingException;
+import nextstep.mvc.exception.ViewException;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -40,7 +43,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -54,19 +58,19 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter getMappedHandlerAdapter(Object mappedHandler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(mappedHandler))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("A matching handler adapter is not found."));
-    }
-
     private Object getMappedHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("A matching handler is not found."));
+                .orElseThrow(() -> new HandlerMappingException("A matching handler is not found."));
+    }
+
+    private HandlerAdapter getMappedHandlerAdapter(final Object mappedHandler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(mappedHandler))
+                .findFirst()
+                .orElseThrow(() -> new HandlerAdapterException("A matching handler adapter is not found."));
     }
 
     private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
@@ -74,8 +78,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             return mappedHandlerAdapter.handle(request, response, mappedHandler);
         } catch (final Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new IllegalArgumentException("Failed to handle a request.");
+            throw new HandlerAdapterException("Failed to handle a request.", e);
         }
     }
 
@@ -86,7 +89,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             view.render(model, request, response);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Filed to render a view.");
+            throw new ViewException("Filed to render a view.", e);
         }
     }
 }
