@@ -16,7 +16,7 @@ public class LogoutController {
 
     private static final Logger log = LoggerFactory.getLogger(LogoutController.class);
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         log.info("annotation based handler");
         final var session = request.getSession();
