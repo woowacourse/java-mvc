@@ -1,10 +1,10 @@
 # @MVC 구현하기
 
-## 1단계 요구사항 도출
+## 1단계 요구사항 도출 ☺️
 
-- [ ] AnnotationHandlerMappingTest 를 통과 시킨다.
-    - [ ] AnnotationHandlerMapping 의 initialize 를 Controller 클래스의 @RequestMapping 이 있는 메서드 경로를 셋팅한다.
-    - [ ] getHandler 에서 HandlerExecution 을 꺼내준다.
+- [x] AnnotationHandlerMappingTest 를 통과 시킨다.
+    - [x] AnnotationHandlerMapping 의 initialize 를 Controller 클래스의 @RequestMapping 이 있는 메서드 경로를 세팅한다.
+    - [x] getHandler 에서 HandlerExecution 을 꺼내준다.
 
 - [ ] app -> manualHandlerMapping, AnnotationHandlerMapping 을 둘 다 사용할 수 있게 구현을 변경한다.
     - [ ] AppWebApplicationInitializer 에서 Handler 들을 등록시킨다.
