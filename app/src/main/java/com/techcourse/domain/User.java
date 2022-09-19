@@ -2,12 +2,16 @@ package com.techcourse.domain;
 
 public class User {
 
-    private final long id;
+    private final Long id;
     private final String account;
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
+    public User(String account, String password, String email) {
+        this(null, account, password, email);
+    }
+
+    public User(final Long id, final String account, final String password, final String email) {
         this.id = id;
         this.account = account;
         this.password = password;
@@ -22,13 +26,21 @@ public class User {
         return account;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", email='" + email + '\'' +
+            ", password='" + password + '\'' +
+            '}';
     }
 }
