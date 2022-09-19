@@ -8,12 +8,12 @@ import nextstep.mvc.view.ModelAndView;
 public class AnnotationHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-        return false;
+        return handler instanceof HandlerExecution;
     }
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        return null;
+        return ((HandlerExecution) handler).handle(request, response);
     }
 }
