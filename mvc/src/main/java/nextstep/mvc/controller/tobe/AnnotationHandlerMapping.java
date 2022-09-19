@@ -36,38 +36,38 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         for (Object targetPackage : basePackage) {
             final Reflections reflections = new Reflections(targetPackage);
-            final Set<Class<?>> classes = new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
-            addHandlerExecution(classes);
+            final Set<Class<?>> handlerClasses = new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
+            addHandlerExecution(handlerClasses);
         }
     }
 
-    private void addHandlerExecution(Set<Class<?>> classes) {
-        for (Class<?> clazz : classes) {
-            final List<Method> methods = getMethods(clazz);
-            generateHandlerExecutions(methods, clazz);
+    private void addHandlerExecution(Set<Class<?>> handlerClasses) {
+        for (Class<?> handlerClass : handlerClasses) {
+            final List<Method> requestMappedMethods = getMethods(handlerClass);
+            generateHandlerExecutions(requestMappedMethods, handlerClass);
         }
     }
 
-    private List<Method> getMethods(Class<?> clazz) {
-        final Method[] methods = clazz.getDeclaredMethods();
-        return Arrays.stream(methods)
+    private List<Method> getMethods(Class<?> handlerClass) {
+        final Method[] requestMappedMethods = handlerClass.getDeclaredMethods();
+        return Arrays.stream(requestMappedMethods)
                 .filter(method -> method.getDeclaredAnnotation(RequestMapping.class) != null)
                 .collect(Collectors.toList());
     }
 
-    private void generateHandlerExecutions(final List<Method> methods, final Class<?> clazz) {
-        for (Method method : methods) {
+    private void generateHandlerExecutions(final List<Method> requestMappedMethods, final Class<?> handlerClass) {
+        for (Method method : requestMappedMethods) {
             final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-            final Object handler = getHandlerInstance(clazz);
+            final Object handler = getHandlerInstance(handlerClass);
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
             final HandlerExecution handlerExecution = new HandlerExecution(method, handler);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    private Object getHandlerInstance(Class<?> clazz) {
+    private Object getHandlerInstance(Class<?> handlerClass) {
         try {
-            Constructor<?> constructor = clazz.getConstructor();
+            Constructor<?> constructor = handlerClass.getConstructor();
             return constructor.newInstance();
         } catch (NoSuchMethodException
                 | InvocationTargetException
