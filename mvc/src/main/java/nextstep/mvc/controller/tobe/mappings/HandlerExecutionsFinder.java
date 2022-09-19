@@ -1,5 +1,7 @@
 package nextstep.mvc.controller.tobe.mappings;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -9,11 +11,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import org.reflections.Reflections;
 
 public class HandlerExecutionsFinder {
+
+    private static final int PARAMETER_MIN_LENGTH = 2;
 
     public Map<HandlerKey, HandlerExecution> findHandlerExecutions(String basePackage) {
         Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
@@ -56,6 +61,7 @@ public class HandlerExecutionsFinder {
                                                                               Object instance) {
         return map.entrySet()
                 .stream()
+                .filter(entry -> isSupportable(entry.getKey()))
                 .map(entry -> mapToHandlerExecutionsPerMapping(entry, instance))
                 .flatMap(partialMap -> partialMap.entrySet().stream())
                 .collect(Collectors.toMap(
@@ -71,5 +77,19 @@ public class HandlerExecutionsFinder {
                         method -> new HandlerKey(entry.getValue().value(), method),
                         method -> new HandlerExecution(instance, entry.getKey())
                 ));
+    }
+
+    private boolean isSupportable(Method method) {
+        return isReturnTypeSupportable(method) && isParameterTypesSupportable(method.getParameterTypes());
+    }
+
+    private boolean isReturnTypeSupportable(Method method) {
+        return method.getReturnType() == ModelAndView.class;
+    }
+
+    private boolean isParameterTypesSupportable(Class<?>[] parameterTypes) {
+        return parameterTypes.length >= PARAMETER_MIN_LENGTH &&
+                parameterTypes[0] == HttpServletRequest.class &&
+                parameterTypes[1] == HttpServletResponse.class;
     }
 }
