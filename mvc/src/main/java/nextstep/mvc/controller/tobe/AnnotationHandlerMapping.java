@@ -31,15 +31,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         final var classes = new HashSet<Class<?>>(reflections.getTypesAnnotatedWith(Controller.class));
 
-        for (Class<?> controller : classes) {
-            initialize(controller);
+        for (Class<?> clazz : classes) {
+            initialize(clazz);
         }
     }
 
-    private void initialize(final Class<?> aClass) {
+    private void initialize(final Class<?> clazz) {
         try {
-            Object controller = aClass.getConstructor().newInstance();
-            Arrays.stream(aClass.getDeclaredMethods())
+            Object controller = clazz.getConstructor().newInstance();
+            Arrays.stream(clazz.getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .forEach(method -> makeHandlerExecutions(controller, method));
         } catch (Exception e) {
