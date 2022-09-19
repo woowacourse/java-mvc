@@ -27,6 +27,17 @@ class ManualHandlerMappingTest {
 	private ManualHandlerMapping handlerMapping;
 	private static MockedStatic<InMemoryUserRepository> repository;
 
+	/**
+	 * HttpServletRequest 와  HttpServletResponse 에 대해서 데이터 세팅을 위해서 mocking 처리
+	 */
+	private HttpServletRequest request = mock(HttpServletRequest.class);
+	private HttpServletResponse response = mock(HttpServletResponse.class);
+	private HttpSession session = mock(HttpSession.class);
+
+
+	/**
+	 * InMemoryUserRepository 는 static 이라서 데이터가 공유되므로 mockStatic 을 사용해야 mocking 이 가능함.
+	 */
 	@BeforeAll
 	static void setStatic() {
 		repository = mockStatic(InMemoryUserRepository.class);
@@ -45,77 +56,80 @@ class ManualHandlerMappingTest {
 
 	@Test
 	void login_get_with_session() throws Exception {
-		final var request = mock(HttpServletRequest.class);
-		final var response = mock(HttpServletResponse.class);
-		final var session = mock(HttpSession.class);
+		세션_있음(new User(1L, "her0807", "password", "her0807@naver.com"));
 
-		when(request.getSession()).thenReturn(session);
-		when(session.getAttribute("user")).thenReturn(new User(1L, "her0807", "password", "her0807@naver.com"));
-		when(request.getRequestURI()).thenReturn("/login");
-		when(request.getMethod()).thenReturn("GET");
+		GET_요청("/login");
 
-		final var controller = (Controller)handlerMapping.getHandler(request);
-		final var modelAndView = controller.execute(request, response);
-
-		assertThat(modelAndView).isEqualTo("redirect:/index.jsp");
+		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/index.jsp");
 	}
 
 	@Test
 	void login_get() throws Exception {
-		final var request = mock(HttpServletRequest.class);
-		final var response = mock(HttpServletResponse.class);
-		final var session = mock(HttpSession.class);
+		세션없음();
 
-		when(request.getSession()).thenReturn(session);
-		when(session.getAttribute("user")).thenReturn(null);
-		when(request.getRequestURI()).thenReturn("/login");
-		when(request.getMethod()).thenReturn("GET");
+		GET_요청("/login");
 
-		final var controller = (Controller)handlerMapping.getHandler(request);
-		final var modelAndView = controller.execute(request, response);
-
-		assertThat(modelAndView).isEqualTo("redirect:/login.jsp");
+		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/login.jsp");
 	}
 
 	@Test
 	void login_post() throws Exception {
-		final var request = mock(HttpServletRequest.class);
-		final var response = mock(HttpServletResponse.class);
-		final var session = mock(HttpSession.class);
+		세션없음();
+		로그인_요청_데이터("password");
 
-		when(request.getSession()).thenReturn(session);
-		when(session.getAttribute("user")).thenReturn(null);
-		when(request.getParameter("account")).thenReturn("her0807");
-		when(InMemoryUserRepository.findByAccount("her0807")).thenReturn(
-			Optional.of(new User(1L, "her0807", "password", "her0807@naver.com")));
-		when(request.getParameter("password")).thenReturn("password");
+		POST_요청("/login");
 
-		when(request.getRequestURI()).thenReturn("/login");
-		when(request.getMethod()).thenReturn("POST");
-
-		final var controller = (Controller)handlerMapping.getHandler(request);
-		final var modelAndView = controller.execute(request, response);
-		assertThat(modelAndView).isEqualTo("redirect:/index.jsp");
+		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/index.jsp");
 	}
 
 	@Test
 	void login_post_false() throws Exception {
-		final var request = mock(HttpServletRequest.class);
-		final var response = mock(HttpServletResponse.class);
-		final var session = mock(HttpSession.class);
+		세션없음();
+		로그인_요청_데이터("different_password");
 
+		POST_요청("/login");
+
+		final String modelAndView = 핸들링_후_반환값();
+		assertThat(modelAndView).isEqualTo("redirect:/401.jsp");
+	}
+
+	@Test
+	void logout() throws Exception {
+		세션없음();
+
+		GET_요청("/logout");
+
+		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/");
+	}
+
+	private void 세션_있음(User value) {
 		when(request.getSession()).thenReturn(session);
-		when(session.getAttribute("user")).thenReturn(null);
+		when(session.getAttribute("user")).thenReturn(value);
+	}
+
+	private void 세션없음() {
+		세션_있음(null);
+	}
+
+	private void 로그인_요청_데이터(String password) {
 		when(request.getParameter("account")).thenReturn("her0807");
 		when(InMemoryUserRepository.findByAccount("her0807")).thenReturn(
 			Optional.of(new User(1L, "her0807", "password", "her0807@naver.com")));
-		when(request.getParameter("password")).thenReturn("different_password");
+		when(request.getParameter("password")).thenReturn(password);
+	}
 
-		when(request.getRequestURI()).thenReturn("/login");
+	private void GET_요청(String url) {
+		when(request.getRequestURI()).thenReturn(url);
+		when(request.getMethod()).thenReturn("GET");
+	}
+
+	private void POST_요청(String url) {
+		when(request.getRequestURI()).thenReturn(url);
 		when(request.getMethod()).thenReturn("POST");
+	}
 
+	private String 핸들링_후_반환값() throws Exception {
 		final var controller = (Controller)handlerMapping.getHandler(request);
-		final var modelAndView = controller.execute(request, response);
-		assertThat(modelAndView).isEqualTo("redirect:/401.jsp");
+		return controller.execute(request, response);
 	}
 }
