@@ -74,6 +74,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
+            log.info("Controller registered by annotation. name: {}, method: {}, uri: {}, method: {}",
+                controller.getClass().getSimpleName(), method.getName(), requestUri, requestMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
     }

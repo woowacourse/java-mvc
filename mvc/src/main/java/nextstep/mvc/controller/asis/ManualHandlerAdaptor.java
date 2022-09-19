@@ -18,8 +18,6 @@ public class ManualHandlerAdaptor implements HandlerAdapter {
         final Object handler) {
         final Controller controller = (Controller)handler;
         final String viewName = controller.execute(request, response);
-        final ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
-        modelAndView.addObject("viewName", viewName);
-        return modelAndView;
+        return new ModelAndView(new JspView(viewName));
     }
 }

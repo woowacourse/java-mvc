@@ -1,5 +1,8 @@
 package nextstep.mvc.controller.tobe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
@@ -7,14 +10,17 @@ import nextstep.mvc.view.ModelAndView;
 
 public class AnnotationHandlerAdaptor implements HandlerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerAdaptor.class);
+
     @Override
     public boolean supports(final Object handler) {
-        return false;
+        return handler instanceof HandlerExecution;
     }
 
     @Override
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
         final Object handler) {
-        return null;
+        final HandlerExecution execution = (HandlerExecution)handler;
+        return execution.handle(request, response);
     }
 }

@@ -11,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -48,8 +47,8 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = getHandler(request);
             final HandlerAdapter adapter = getHandlerAdaptor(handler);
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
-            final String viewName = (String)modelAndView.getObject("viewName");
-            move(viewName, request, response);
+
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -69,16 +68,5 @@ public class DispatcherServlet extends HttpServlet {
             .filter(Objects::nonNull)
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Couldn't find a handler"));
-    }
-
-    private void move(final String viewName, final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
