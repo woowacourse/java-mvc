@@ -21,11 +21,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
@@ -41,7 +41,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Class<?>> getClassesWithControllerAnnotation() {
-        final Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackages);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final Constructor<?> constructor = getConstructor(controllerClass);
         final Object instance = getNewInstance(constructor);
         for (final Method method : controllerClass.getMethods()) {
-            addHandlerExecutionIfRequestMappingAnnotation(instance, method);
+            addHandlerExecutionsIfRequestMappingAnnotation(instance, method);
         }
     }
 
@@ -69,13 +69,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void addHandlerExecutionIfRequestMappingAnnotation(final Object instance, final Method method) {
+    private void addHandlerExecutionsIfRequestMappingAnnotation(final Object instance, final Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
-            addHandlers(instance, method);
+            addHandlerExecutions(instance, method);
         }
     }
 
-    private void addHandlers(final Object instance, final Method method) {
+    private void addHandlerExecutions(final Object instance, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String url = requestMapping.value();
         for (final RequestMethod requestMethod : requestMapping.method()) {

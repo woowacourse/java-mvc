@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.exception.HandlerMappingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("mapping에서 get 요청에 매핑되는 handler를 찾아 반환한다.")
     @Test
     void get() {
         // given
@@ -39,6 +41,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("mapping에서 post 요청에 매핑되는 handler를 찾아 반환한다.")
     @Test
     void post() {
         // given
@@ -62,7 +65,6 @@ class AnnotationHandlerMappingTest {
     void throwExceptionWhenHandlerIsNotFound() {
         // given
         final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
@@ -70,7 +72,6 @@ class AnnotationHandlerMappingTest {
 
         // when & then
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("A matching handler is not found.");
+                .isInstanceOf(HandlerMappingException.class);
     }
 }
