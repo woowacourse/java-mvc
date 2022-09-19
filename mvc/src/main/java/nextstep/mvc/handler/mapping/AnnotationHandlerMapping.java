@@ -44,31 +44,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void findRequestMapping(Class<?> controller) {
         for (Method method : controller.getDeclaredMethods()) {
-            Object handler = createHandlerInstance(controller);
-            addHandlerExecution(handler, method);
+            addHandlerExecution(method);
         }
     }
 
-    private Object createHandlerInstance(Class<?> controller) {
-        try {
-            return controller.getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void addHandlerExecution(Object handler, Method declaredMethod) {
+    private void addHandlerExecution(Method declaredMethod) {
         if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
             handlerExecutions.put(
-                new HandlerKey(requestMapping.value(), requestMapping.method()[0]),
-                new HandlerExecution(handler, declaredMethod)
+                HandlerKey.fromAnnotation(requestMapping),
+                new HandlerExecution(declaredMethod)
             );
         }
     }
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(HandlerKey.from(request));
+        return handlerExecutions.get(HandlerKey.fromRequest(request));
     }
 }
