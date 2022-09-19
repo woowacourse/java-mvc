@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
 
+@nextstep.web.annotation.Controller
 public class RegisterViewController implements Controller {
 
     @Override

@@ -34,7 +34,6 @@ class ManualHandlerMappingTest {
 	private HttpServletResponse response = mock(HttpServletResponse.class);
 	private HttpSession session = mock(HttpSession.class);
 
-
 	/**
 	 * InMemoryUserRepository 는 static 이라서 데이터가 공유되므로 mockStatic 을 사용해야 mocking 이 가능함.
 	 */
@@ -102,6 +101,24 @@ class ManualHandlerMappingTest {
 		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/");
 	}
 
+	@Test
+	void register() throws Exception {
+		세션없음();
+
+		GET_요청("/register");
+
+		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/register.jsp");
+	}
+
+	@Test
+	void register_post() throws Exception {
+		세션없음();
+		회원가입_요청_데이터("her0807", "password","her0807@naver.com");
+		POST_요청("/register");
+
+		assertThat(핸들링_후_반환값()).isEqualTo("redirect:/index.jsp");
+	}
+
 	private void 세션_있음(User value) {
 		when(request.getSession()).thenReturn(session);
 		when(session.getAttribute("user")).thenReturn(value);
@@ -116,6 +133,12 @@ class ManualHandlerMappingTest {
 		when(InMemoryUserRepository.findByAccount("her0807")).thenReturn(
 			Optional.of(new User(1L, "her0807", "password", "her0807@naver.com")));
 		when(request.getParameter("password")).thenReturn(password);
+	}
+
+	private void 회원가입_요청_데이터(String account,String password, String email ) {
+		when(request.getParameter("account")).thenReturn(account);
+		when(request.getParameter("password")).thenReturn(password);
+		when(request.getParameter("email")).thenReturn(email);
 	}
 
 	private void GET_요청(String url) {
