@@ -1,4 +1,4 @@
-package nextstep.mvc.Handleradaptor;
+package nextstep.mvc.handleradaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
