@@ -41,7 +41,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private List<Method> findMethodsWithRequestMappingAnnotation(final Set<Class<?>> classes) {
         return classes.stream()
                 .map(Class::getDeclaredMethods)
-                .flatMap(methods -> Arrays.stream(methods))
+                .flatMap(Arrays::stream)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -62,7 +62,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
 }
