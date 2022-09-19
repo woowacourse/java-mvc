@@ -17,29 +17,19 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final HandlerMappingRegistry handlerMappingRegistry = getHandlerMappingRegistry();
-        final HandlerAdapterRegistry handlerAdapterRegistry = getHandlerAdapterRegistry();
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
         final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
+        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdaptor());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
-    }
-
-    private HandlerMappingRegistry getHandlerMappingRegistry() {
-        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        return handlerMappingRegistry;
-    }
-
-    private HandlerAdapterRegistry getHandlerAdapterRegistry() {
-        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdaptor());
-        return handlerAdapterRegistry;
     }
 }

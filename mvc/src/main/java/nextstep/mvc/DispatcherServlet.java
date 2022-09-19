@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handleradaptor.HandlerAdapter;
 import nextstep.mvc.handleradaptor.HandlerAdapterRegistry;
+import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.handlermapping.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -25,6 +26,14 @@ public class DispatcherServlet extends HttpServlet {
         this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    }
+
     @Override
     public void init() {
         handlerMappingRegistry.initialize();
@@ -40,10 +49,15 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
 
-            modelAndView.render(request, response);
+            render(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void render(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView)
+            throws Exception {
+        modelAndView.render(request, response);
     }
 }
