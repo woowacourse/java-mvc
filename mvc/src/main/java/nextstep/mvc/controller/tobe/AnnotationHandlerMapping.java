@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import nextstep.mvc.HandlerMapping;
@@ -30,10 +29,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Arrays.stream(basePackage)
-                .map(Reflections::new)
-                .map(reflections -> reflections.getTypesAnnotatedWith(Controller.class))
-                .flatMap(Collection::stream)
+        Reflections reflections = new Reflections(basePackage);
+        reflections.getTypesAnnotatedWith(Controller.class)
                 .forEach(this::mapHandlerExecutions);
 
         log.info("Initialized AnnotationHandlerMapping!");
