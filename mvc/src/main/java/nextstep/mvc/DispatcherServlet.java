@@ -39,8 +39,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = getController(request);
-            final var viewName = controller.execute(request, response);
+            Controller controller = getController(request);
+            String viewName = controller.execute(request, response);
             ModelAndView mav = new ModelAndView(new JspView(viewName));
             View view = mav.getView();
             view.render(mav.getModel(), request, response);
