@@ -2,8 +2,11 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
@@ -24,12 +27,13 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
-    public static List<HandlerKey> from(final ControllerMethod controllerMethod) {
-        String url = controllerMethod.getUrl();
-        List<RequestMethod> methods = controllerMethod.getRequestMethods();
+    public static List<HandlerKey> from(final RequestMapping requestMapping) {
+        String url = requestMapping.value();
+        List<RequestMethod> requestMethods = Arrays.stream(requestMapping.method())
+                .collect(Collectors.toList());
 
         List<HandlerKey> handlerKeys = new ArrayList<>();
-        for (RequestMethod requestMethod : methods) {
+        for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             handlerKeys.add(handlerKey);
         }

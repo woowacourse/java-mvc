@@ -1,13 +1,19 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.tobe.exception.ControllerNotFoundException;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,40 +30,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        List<String> packageNames = getPackageNames();
+        Set<Class<?>> controllerClasses = extractClasses();
+        List<Method> methods = extractMethods(controllerClasses);
 
-        List<ControllerPackage> controllerPackages = ControllerPackage.from(packageNames);
-        List<ControllerClass> controllerClassesOfPackages = getControllerClasses(controllerPackages);
-        List<ControllerMethod> controllerMethodsOfClasses = getControllerMethods(controllerClassesOfPackages);
-
-        for (ControllerMethod controllerMethod : controllerMethodsOfClasses) {
-            addHandlerExecutions(controllerMethod);
+        for (Method method : methods) {
+            addHandlerExecutions(method);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private List<String> getPackageNames() {
-        return Arrays.stream(basePackage)
-                .map(Object::toString)
+    private Set<Class<?>> extractClasses() {
+        Reflections classReflections = new Reflections(basePackage, Scanners.TypesAnnotated);
+        return classReflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private List<Method> extractMethods(final Set<Class<?>> controllers) {
+        return controllers.stream()
+                .flatMap(it -> Arrays.stream(it.getMethods()))
+                .filter(it -> it.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
     }
 
-    private List<ControllerClass> getControllerClasses(final List<ControllerPackage> controllerPackages) {
-        return controllerPackages.stream()
-                .flatMap(it -> ControllerClass.from(it).stream())
-                .collect(Collectors.toList());
-    }
-
-    private List<ControllerMethod> getControllerMethods(final List<ControllerClass> controllerClasses) {
-        return controllerClasses.stream()
-                .flatMap(it -> ControllerMethod.from(it).stream())
-                .collect(Collectors.toList());
-    }
-
-    private void addHandlerExecutions(final ControllerMethod controllerMethod) {
-        List<HandlerKey> handlerKeys = HandlerKey.from(controllerMethod);
-        HandlerExecution handlerExecution = new HandlerExecution(controllerMethod);
+    private void addHandlerExecutions(final Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        List<HandlerKey> handlerKeys = HandlerKey.from(requestMapping);
+        HandlerExecution handlerExecution = new HandlerExecution(method);
 
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
