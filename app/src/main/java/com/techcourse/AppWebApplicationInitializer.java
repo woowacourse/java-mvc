@@ -2,6 +2,7 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.handleradaptor.HandlerAdapterRegistry;
 import nextstep.mvc.handleradaptor.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.handleradaptor.ManualHandlerAdaptor;
 import nextstep.mvc.handlermapping.AnnotationHandlerMapping;
@@ -16,19 +17,29 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        final HandlerMappingRegistry handlerMappingRegistry = getHandlerMappingRegistry();
+        final HandlerAdapterRegistry handlerAdapterRegistry = getHandlerAdapterRegistry();
 
-        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry);
-
-        dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdaptor());
+        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private HandlerMappingRegistry getHandlerMappingRegistry() {
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        return handlerMappingRegistry;
+    }
+
+    private HandlerAdapterRegistry getHandlerAdapterRegistry() {
+        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdaptor());
+        return handlerAdapterRegistry;
     }
 }
