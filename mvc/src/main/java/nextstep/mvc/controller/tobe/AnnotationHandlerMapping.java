@@ -29,11 +29,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        for (Object basePackage : basePackages) {
-            Reflections reflections = new Reflections(basePackage);
-            final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            initializeHandlers(controllerClasses);
-        }
+        Reflections reflections = new Reflections(basePackages);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        initializeHandlers(controllerClasses);
     }
 
     private void initializeHandlers(final Set<Class<?>> controllerClasses) {
@@ -71,6 +69,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+
         validateHandlerExistence(handlerKey);
 
         return handlerExecutions.get(handlerKey);

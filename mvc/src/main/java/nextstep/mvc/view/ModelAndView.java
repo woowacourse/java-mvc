@@ -6,17 +6,16 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
+    private final String viewPath;
     private final Map<String, Object> model;
 
-    public ModelAndView(final View view) {
-        this.view = view;
+    public ModelAndView(final String viewPath) {
+        this.viewPath = viewPath;
         this.model = new HashMap<>();
     }
 
-    public ModelAndView addObject(final String attributeName, final Object attributeValue) {
+    public void addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
-        return this;
     }
 
     public Object getObject(final String attributeName) {
@@ -27,7 +26,7 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
-    public View getView() {
-        return view;
+    public String getViewPath() {
+        return viewPath;
     }
 }
