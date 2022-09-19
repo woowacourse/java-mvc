@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -29,25 +31,40 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Arrays.stream(this.basePackage)
-                .map(Reflections::new)
-                .map(it->it.getTypesAnnotatedWith(Controller.class))
-                .flatMap(Collection::stream)
-                .forEach(this::mapController);
+        for (final var clazz : scanControllerClasses()) {
+            mapController(clazz);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private List<Class<?>> scanControllerClasses() {
+        return Arrays.stream(this.basePackage)
+                .map(Reflections::new)
+                .map(it -> it.getTypesAnnotatedWith(Controller.class))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
     private void mapController(Class<?> clazz) {
+        final var controller = initializeController(clazz);
+        for (final var method : clazz.getMethods()) {
+            mapHandler(controller, method);
+        }
+    }
+
+    private Object initializeController(Class<?> clazz) {
         try {
-            final var controller = clazz.getDeclaredConstructor().newInstance();
-            Arrays.stream(clazz.getMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> mapHandler(controller, method));
+            final var constructor = clazz.getDeclaredConstructor();
+            return constructor.newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+            throw new IllegalArgumentException("존재할 수 없는 경우");
         }
     }
 
     private void mapHandler(Object controller, Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
         final var requestMapping = method.getAnnotation(RequestMapping.class);
         for (final var httpMethod : requestMapping.method()) {
             final var key = new HandlerKey(requestMapping.value(), httpMethod);
