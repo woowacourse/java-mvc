@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +18,10 @@ public class AnnotationHandlerAdapterTest {
         final var handlerAdapter = mock(AnnotationHandlerAdapter.class);
         final HandlerExecution handler = mock(HandlerExecution.class);
         when(handlerAdapter.supports(handler)).thenReturn(true);
+
         final boolean actual = handlerAdapter.supports(handler);
 
+        verify(handlerAdapter, times(1)).supports(handler);
         assertThat(actual).isTrue();
     }
 
@@ -28,22 +29,38 @@ public class AnnotationHandlerAdapterTest {
     void support_notHandler() {
         final var handlerAdapter = mock(AnnotationHandlerAdapter.class);
         when(handlerAdapter.supports("not-handler")).thenReturn(false);
+
         final boolean actual = handlerAdapter.supports("not-handler");
 
+        verify(handlerAdapter, times(1)).supports("not-handler");
         assertThat(actual).isFalse();
     }
 
     @Test
-    void handle() throws Exception {
+    void handle_verifyInvocations() throws Exception {
         final var handlerAdapter = mock(AnnotationHandlerAdapter.class);
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var handler = mock(HandlerExecution.class);
 
-        when(handlerAdapter.handle(request, response, handler)).thenReturn(new ModelAndView(mock(JspView.class)));
-        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        handlerAdapter.handle(request, response, handler);
 
         verify(handlerAdapter, times(1)).handle(request, response, handler);
-        assertThat(modelAndView.getView()).isInstanceOf(JspView.class);
+    }
+
+    @Test
+    void handle_verifyResult() throws Exception {
+        final AnnotationHandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+        final AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping.initialize();
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+        ModelAndView result = handlerAdapter.handle(request, response, handlerMapping.getHandler(request));
+
+        assertThat(result.getObject("id")).isEqualTo("gugu");
     }
 }
