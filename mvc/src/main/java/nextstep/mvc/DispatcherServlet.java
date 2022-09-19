@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -57,13 +60,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(HandlerNotFoundException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 }
