@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,28 +29,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
 
-        final var classes = new HashSet<Class<?>>();
-        classes.addAll(reflections.getTypesAnnotatedWith(Controller.class));
+        final var classes = new HashSet<Class<?>>(reflections.getTypesAnnotatedWith(Controller.class));
 
-        for (Class<?> aClass : classes) {
-            try {
-                Object controller = aClass.getConstructor().newInstance();
-                Arrays.stream(aClass.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                        .forEach(method -> {
-                            log.info(method.getName());
-                            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                            HandlerKey key = new HandlerKey(annotation.value(), annotation.method()[0]);
-                            log.info(key.toString());
-                            HandlerExecution value = new HandlerExecution(method, controller);
-                            handlerExecutions.put(key, value);
-                        });
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        for (Class<?> controller : classes) {
+            initialize(controller);
         }
+    }
 
-        log.info("Initialized AnnotationHandlerMapping!");
+    private void initialize(final Class<?> aClass) {
+        try {
+            Object controller = aClass.getConstructor().newInstance();
+            Arrays.stream(aClass.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> makeHandlerExecutions(controller, method));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void makeHandlerExecutions(final Object controller, final Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        HandlerKey key = new HandlerKey(annotation.value(), annotation.method()[0]);
+        HandlerExecution value = new HandlerExecution(method, controller);
+        handlerExecutions.put(key, value);
     }
 
     public Object getHandler(final HttpServletRequest request) {
