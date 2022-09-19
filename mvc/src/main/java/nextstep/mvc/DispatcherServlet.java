@@ -2,6 +2,7 @@ package nextstep.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -67,13 +68,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
     }
 }
