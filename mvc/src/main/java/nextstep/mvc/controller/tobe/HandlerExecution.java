@@ -2,11 +2,20 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.ModelAndView;
+import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return null;
+    private final Object controller;
+    private final Method method;
+
+    public HandlerExecution(Object controller, Method method) {
+        this.controller = controller;
+        this.method = method;
+    }
+
+
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return method.invoke(controller, request, response);
     }
 }
