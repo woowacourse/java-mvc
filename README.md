@@ -15,4 +15,5 @@
 
 - [x] AnnotationHandlerMappingTest를 성공시킨다.
 - [ ] AnnotationHandlerMapping도 돌아가도록 수정한다.
-  - [ ] AnnotationHandlerMapping을 이용하여 `login/view` 페이지를 띄운다.
+  - [x] AnnotationHandlerMapping을 이용하여 `login/view` 페이지를 띄운다.
+  - [ ] AnnotationHandlerMapping을 이용하여 모든 페이지가 띄워지도록 한다.
