@@ -42,11 +42,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = getController(request);
             if (controller instanceof Controller) {
-                System.out.println("controller@@@@@@@");
                 final var viewName = ((Controller)controller).execute(request, response);
                 move(viewName, request, response);
             } else {
-                System.out.println("handlerExecutor@@@@@@");
                 ModelAndView modelAndView = ((HandlerExecution) controller).handle(request, response);
                 modelAndView.getView().render(modelAndView.getModel(), request, response);
             }
