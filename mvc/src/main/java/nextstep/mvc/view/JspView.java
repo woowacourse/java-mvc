@@ -1,7 +1,9 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +26,19 @@ public class JspView implements View {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
+        addAttributes(model, request);
+        forward(request, response);
+    }
 
+    private void addAttributes(final Map<String, ?> model, final HttpServletRequest request) {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+    }
 
+    private void forward(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
