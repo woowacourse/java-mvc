@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("어노테이션 기반의 핸들러를 통해 GET Method 요청을 처리할 수 있다.")
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -35,6 +37,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("어노테이션 기반의 핸들러를 통해 POST Method 요청을 처리할 수 있다.")
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
