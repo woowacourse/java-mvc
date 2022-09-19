@@ -20,10 +20,6 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
     }
 
     private HandlerExecution castFrom(final Object handler) {
-        if (!supports(handler)) {
-            throw new ClassCastException();
-        }
         return (HandlerExecution) handler;
     }
-
 }

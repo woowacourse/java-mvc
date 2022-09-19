@@ -24,9 +24,6 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     }
 
     private Controller castFrom(final Object handler) {
-        if (!supports(handler)) {
-            throw new ClassCastException();
-        }
         return (Controller) handler;
     }
 }
