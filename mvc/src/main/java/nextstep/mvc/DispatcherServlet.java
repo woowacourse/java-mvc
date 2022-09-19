@@ -48,7 +48,7 @@ public class DispatcherServlet extends HttpServlet {
             final var handler = getHandler(request);
             final var adapter = getAdapter(handler);
             final var modelAndView = adapter.handle(request, response, handler);
-            move(modelAndView, request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -70,15 +70,8 @@ public class DispatcherServlet extends HttpServlet {
             .orElseThrow();
     }
 
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         JspView view = (JspView)modelAndView.getView();
-        String viewName = view.getViewName();
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        view.render(modelAndView.getModel(), request, response);
     }
 }
