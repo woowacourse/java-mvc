@@ -1,13 +1,14 @@
 package nextstep.mvc.controller.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
 
@@ -19,6 +20,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET 메소드 요청에 대해서 어노테이션 기반의 핸들러를 찾을 수 있다.")
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -34,6 +36,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("POST 메소드 요청에 대해서 어노테이션 기반의 핸들러를 찾을 수 있다.")
     @Test
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
