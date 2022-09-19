@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class TestController {
+public class TestController implements nextstep.mvc.controller.asis.Controller {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
@@ -29,5 +29,10 @@ public class TestController {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
+    }
+
+    @Override
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
+        return "redirect:/index.jsp";
     }
 }
