@@ -29,11 +29,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Object packageName : basePackage) {
-            Reflections reflections = new Reflections(packageName);
-            Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            mapHandlers(controllerClasses);
-        }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        mapHandlers(controllerClasses);
     }
 
     private void mapHandlers(final Set<Class<?>> controllerClasses) {
@@ -61,7 +59,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void mapRequestMethod(final Class<?> clazz, final Method method, final String url,
-                           final RequestMethod requestMethod) {
+                                  final RequestMethod requestMethod) {
         HandlerKey handlerKey = new HandlerKey(url, requestMethod);
         try {
             Constructor<?> constructor = clazz.getDeclaredConstructor();
