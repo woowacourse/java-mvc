@@ -12,6 +12,7 @@ import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.controller.tobe.HandlerKey;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void addHandlerExecutions(Object controller) {
-        List<Method> requestMappingMethods = findRequestMappingMethods(controller);
+        Set<Method> requestMappingMethods = findRequestMappingMethods(controller);
 
         for (Method method : requestMappingMethods) {
             Set<HandlerKey> handlerKeys = createHandlerKeys(method);
@@ -49,12 +50,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private List<Method> findRequestMappingMethods(Object controller) {
-        Method[] methods = controller.getClass().getDeclaredMethods();
-
-        return Arrays.stream(methods)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
+    private Set<Method> findRequestMappingMethods(Object controller) {
+        return ReflectionUtils.getAllMethods(controller.getClass(),
+                ReflectionUtils.withAnnotation(RequestMapping.class));
     }
 
     private Set<HandlerKey> createHandlerKeys(Method method) {
