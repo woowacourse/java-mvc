@@ -1,11 +1,11 @@
 package com.techcourse;
 
-import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
-import jakarta.servlet.http.HttpServlet;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,9 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
         String packageName = getClass().getPackage().getName();
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(packageName));
+
+        dispatcherServlet.addHandlerAdapters(new ManualHandlerAdapter());
+        dispatcherServlet.addHandlerAdapters(new AnnotationHandlerAdapter());
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
