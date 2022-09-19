@@ -53,7 +53,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         List<Method> requestMappingMethods = findRequestMappingMethods(controllerClass);
 
         for (Method method : requestMappingMethods) {
-            List<HandlerKey> handlerKeys = createHandlerKeys(method);
+            Set<HandlerKey> handlerKeys = createHandlerKeys(method);
             final Object controller = createController(controllerClass);
             handlerKeys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(controller, method)));
         }
@@ -67,18 +67,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private List<HandlerKey> createHandlerKeys(Method method) {
+    private Set<HandlerKey> createHandlerKeys(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
 
-        return createHandlerKeys(url, requestMethods);
-    }
-
-    private List<HandlerKey> createHandlerKeys(String url, RequestMethod[] requestMethods) {
         return Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private Object createController(Class<?> controllerClass) {
