@@ -30,10 +30,10 @@ class HandlerExecutionTest {
         when(request.getAttribute("id")).thenReturn("gugu");
 
         // when
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        final ModelAndView result = (ModelAndView) handlerExecution.handle(request, response);
 
         // then
-        assertThat(modelAndView).extracting("view", "model")
+        assertThat(result).extracting("view", "model")
                 .containsExactly(new JspView(""), Map.of("id", "gugu"));
     }
 }
