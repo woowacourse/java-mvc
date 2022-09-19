@@ -8,6 +8,7 @@ import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,18 +24,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
-
-    /*
-            Class<Junit4Test> clazz = Junit4Test.class;
-
-        Junit4Test instance = clazz.getConstructor()
-                .newInstance();
-
-        Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(MyTest.class))
-                .forEach(method -> invoke(instance, method));
-     */
-
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
@@ -63,6 +52,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String uri = request.getRequestURI();
+        RequestMethod method = RequestMethod.valueOf(request.getMethod());
+
+        HandlerKey key = new HandlerKey(uri, method);
+
+        return handlerExecutions.get(key);
     }
 }
