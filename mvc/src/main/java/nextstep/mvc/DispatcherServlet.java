@@ -11,7 +11,6 @@ import nextstep.mvc.common.exception.ErrorType;
 import nextstep.mvc.common.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.common.exception.NotFoundHandlerMappingException;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +49,7 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
