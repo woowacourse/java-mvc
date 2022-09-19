@@ -15,9 +15,9 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class LoginController {
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) {
-        LogUtil.requestInfo("/login/view", RequestMethod.GET);
+        LogUtil.requestInfo("/login", RequestMethod.GET);
         return UserSession.getUserFrom(request.getSession())
             .map(user -> {
                 LogUtil.info("logged in {}", user.getAccount());
