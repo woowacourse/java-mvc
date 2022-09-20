@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -62,6 +63,6 @@ class ManualHandlerAdapterTest {
         final ModelAndView result = manualHandlerAdapter.handle(request, response, controller);
 
         // then
-        assertThat(result.getViewPath()).isEqualTo("/index.html");
+        assertThat(result.getView()).isInstanceOf(JspView.class);
     }
 }
