@@ -15,7 +15,6 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        // TODO: 2022/09/17 test package 전체를 읽어서 등록하는 문제 해결
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
