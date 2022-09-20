@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerAdapterTest {
 
+    final HttpServletRequest request = mock(HttpServletRequest.class);
+    final HttpServletResponse response = mock(HttpServletResponse.class);
+
     @Test
     void supportsIsTrue() {
         HandlerExecution handler = mock(HandlerExecution.class);
@@ -35,8 +38,6 @@ class AnnotationHandlerAdapterTest {
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
         annotationHandlerMapping.initialize();
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");

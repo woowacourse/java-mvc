@@ -13,6 +13,9 @@ class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
+    final HttpServletRequest request = mock(HttpServletRequest.class);
+    final HttpServletResponse response = mock(HttpServletResponse.class);
+
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
@@ -21,9 +24,6 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
@@ -36,9 +36,6 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
