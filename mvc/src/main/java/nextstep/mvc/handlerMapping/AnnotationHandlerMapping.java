@@ -32,18 +32,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> annotatedController = reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> annotatedControllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Class<?> handler : annotatedController) {
-            Set<Method> annotatedMethods = Arrays.stream(handler.getMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toSet());
+        for (Class<?> handler : annotatedControllers) {
+            final Set<Method> annotatedMethods = getAnnotatedMethods(handler);
             try {
                 setHandlerExecutions(handler, annotatedMethods);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private Set<Method> getAnnotatedMethods(final Class<?> handler) {
+        return Arrays.stream(handler.getMethods())
+            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     private void setHandlerExecutions(final Class<?> handler, final Set<Method> annotatedMethods) throws Exception {
@@ -58,8 +62,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String uri = requestMapping.value();
 
         for (RequestMethod requestMethod : requestMapping.method()) {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
 
             handlerExecutions.put(handlerKey, handlerExecution);
         }
