@@ -55,9 +55,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Map<HandlerKey, HandlerExecution> createControllerExecutions(final Class<?> clazz) throws Exception {
-        final var instance = clazz.getDeclaredConstructor();
+        final var constructor = clazz.getDeclaredConstructor();
+        final var instance = constructor.newInstance();
         final Method[] methods = clazz.getDeclaredMethods();
-        
+
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
         for (Method method : methods) {
             handlerExecutions.putAll(createMethodHandlers(instance, method));
@@ -65,7 +66,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions;
     }
 
-    private Map<HandlerKey, HandlerExecution> createMethodHandlers(final Constructor<?> instance, final Method method) {
+    private Map<HandlerKey, HandlerExecution> createMethodHandlers(final Object instance, final Method method) {
         final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = requestMapping.method();
 
