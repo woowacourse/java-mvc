@@ -53,11 +53,11 @@ public class JspView implements View {
     }
 
     private boolean isRedirect(final String viewName) {
-        return viewName.startsWith(JspView.REDIRECT_PREFIX);
+        return viewName.startsWith(REDIRECT_PREFIX);
     }
 
     private void redirect(final String viewName, final HttpServletResponse response) throws IOException {
-        final var location = viewName.substring(JspView.REDIRECT_PREFIX.length());
+        final var location = viewName.substring(REDIRECT_PREFIX.length());
         response.sendRedirect(location);
     }
 
