@@ -29,25 +29,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackage);
         HashSet<Class<?>> classes = new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
 
         for (Class<?> clazz : classes) {
             try {
-                Object instance = clazz.getDeclaredConstructor().newInstance();
-                List<Method> methods = Stream.of(clazz.getDeclaredMethods())
+                final List<Method> methods = Stream.of(clazz.getDeclaredMethods())
                         .filter(x -> x.isAnnotationPresent(RequestMapping.class))
                         .collect(Collectors.toList());
-
-                for (Method method : methods) {
-                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    String url = annotation.value();
-                    RequestMethod requestMethod = annotation.method()[0];
-                    HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                    HandlerExecution handlerExecution = new HandlerExecution(instance, method);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-
+                initHandlerExecution(clazz, methods);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -55,10 +45,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void initHandlerExecution(Class<?> clazz, List<Method> methods) throws Exception {
+        final Object instance = clazz.getDeclaredConstructor().newInstance();
+        for (Method method : methods) {
+            final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            final String url = annotation.value();
+            final RequestMethod requestMethod = annotation.method()[0];
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        RequestMethod method = RequestMethod.find(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestURI, method);
+        final String requestURI = request.getRequestURI();
+        final RequestMethod method = RequestMethod.find(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(requestURI, method);
         return handlerExecutions.get(handlerKey);
     }
 }
