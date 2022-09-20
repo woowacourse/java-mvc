@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,21 +40,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        try {
-
-            final var handler = getHandler(request);
-            final var handlerAdapter = getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
+        final var handler = getHandler(request);
+        final var handlerAdapter = getHandlerAdapter(handler);
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        modelAndView.render(request, response);
     }
 
     private Object getHandler(final HttpServletRequest request) {

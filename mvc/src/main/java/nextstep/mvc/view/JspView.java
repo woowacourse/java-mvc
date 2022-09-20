@@ -22,7 +22,8 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        if (isRedirect(response)) {
+        if (isRedirect()) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
         settingRequest(model, request);
@@ -37,11 +38,7 @@ public class JspView implements View {
         });
     }
 
-    private boolean isRedirect(HttpServletResponse response) throws IOException {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return true;
-        }
-        return false;
+    private boolean isRedirect() {
+        return viewName.startsWith(JspView.REDIRECT_PREFIX);
     }
 }
