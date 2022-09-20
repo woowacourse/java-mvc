@@ -1,6 +1,5 @@
 package nextstep.mvc.view;
 
-import static nextstep.mvc.view.JspView.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.HashMap;
@@ -18,7 +17,7 @@ class JspViewTest {
     @DisplayName("REDIRECT_PREFIX 값이 앞에 붙어있다면 redirect한다.")
     void redirect() throws Exception {
         String viewName = "test.jsp";
-        JspView jspView = new JspView(REDIRECT_PREFIX + viewName);
+        JspView jspView = new JspView("redirect:" + viewName);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
