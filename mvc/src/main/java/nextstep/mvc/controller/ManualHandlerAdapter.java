@@ -5,10 +5,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.ViewFactory;
 
 public class ManualHandlerAdapter implements HandlerAdapter {
+
+    private final ViewFactory viewFactory;
+
+    public ManualHandlerAdapter() {
+        this.viewFactory = new ViewFactory();
+    }
 
     @Override
     public boolean supports(final Object handler) {
@@ -20,7 +26,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
                                final Object handler)
             throws Exception {
         String executedResponse = ((Controller) handler).execute(request, response);
-        ModelAndView modelAndView = new ModelAndView(new JspView(executedResponse));
+        ModelAndView modelAndView = new ModelAndView(viewFactory.createView(executedResponse));
         addAttribute(request, modelAndView);
         return modelAndView;
     }
