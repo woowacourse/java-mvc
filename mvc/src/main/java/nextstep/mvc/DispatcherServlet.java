@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private View getView(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (handler == Controller.class){
+        if (handler instanceof Controller){
             final Controller controller = (Controller) handler;
             final String viewName = controller.execute(request, response);
             return new JspView(viewName);
