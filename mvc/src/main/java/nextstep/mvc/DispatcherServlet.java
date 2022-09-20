@@ -56,7 +56,8 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("해당 요청을 처리할 수 없습니다.[%s]", request.toString())));
     }
 
     private ModelAndView getModelAndView(final Object handler, final HttpServletRequest request,
