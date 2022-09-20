@@ -66,18 +66,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
 
-        validateHandlerExistence(handlerKey);
-
         return handlerExecutions.get(handlerKey);
-    }
-
-    private void validateHandlerExistence(final HandlerKey handlerKey) {
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("Handler not found");
-        }
     }
 }
