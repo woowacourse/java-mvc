@@ -1,7 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -33,35 +32,37 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         for (Class<?> aClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            List<Method> methods = getRequestMappingMethods(aClass);
-            methods.forEach((method) -> addHandlerExecutions(aClass, method));
+            Object handler = createHandler(aClass);
+            addHandlerExecutions(handler);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private static List<Method> getRequestMappingMethods(final Class<?> aClass) {
-        return Arrays.stream(aClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_CLASS))
-                .collect(Collectors.toList());
-    }
-
-    private void addHandlerExecutions(final Class<?> aClass, final Method method) {
-        RequestMapping annotation = method.getAnnotation(REQUEST_MAPPING_CLASS);
-        for (RequestMethod requestMethod : annotation.method()) {
-            addHandlerExecution(aClass, method, annotation, requestMethod);
-        }
-    }
-
-    private void addHandlerExecution(final Class<?> aClass, final Method method, final RequestMapping annotation,
-                           final RequestMethod requestMethod) {
+    private static Object createHandler(final Class<?> aClass) {
         try {
-            Constructor<?> constructor = aClass.getConstructor();
-            HandlerExecution handlerExecution = new HandlerExecution(constructor.newInstance(), method);
-            handlerExecutions.put(new HandlerKey(annotation.value(), requestMethod), handlerExecution);
+            return aClass.getConstructor()
+                    .newInstance();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException exception) {
             log.warn(exception.getMessage());
             throw new IllegalStateException();
+        }
+    }
+
+    private void addHandlerExecutions(final Object handler) {
+        Class<?> aClass = handler.getClass();
+        List<Method> methods = Arrays.stream(aClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_CLASS))
+                .collect(Collectors.toList());
+        methods.forEach(method -> addHandlerExecution(handler, method));
+    }
+
+    private void addHandlerExecution(final Object handler, final Method method) {
+        HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+        RequestMapping requestMapping = method.getAnnotation(REQUEST_MAPPING_CLASS);
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
