@@ -13,6 +13,10 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
+    public RequestMethod getRequestMethod() {
+        return requestMethod;
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +

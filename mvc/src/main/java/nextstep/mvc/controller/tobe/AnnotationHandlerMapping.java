@@ -3,9 +3,12 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -36,25 +39,30 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void initializeHandlers(final Set<Class<?>> controllerClasses) {
         for (Class<?> controllerClass : controllerClasses) {
-            final Method[] methods = controllerClass.getMethods();
-            addHandlerExecutionsFromMethods(controllerClass, methods);
+            final List<Method> methods = getRequestMappingMethods(controllerClass);
+            addHandlerByRequestMapping(controllerClass, methods);
         }
     }
 
-    private void addHandlerExecutionsFromMethods(final Class<?> controllerClass, final Method[] methods) {
+    private List<Method> getRequestMappingMethods(final Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+    }
+
+    private void addHandlerByRequestMapping(final Class<?> controllerClass, final List<Method> methods) {
         for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                addHandlerExecution(controllerClass, method);
-            }
+            final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+            final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping.value(), requestMapping.method());
+            final Object controller = createControllerInstance(controllerClass);
+            addHandlerExecutions(handlerKeys, controller, method);
         }
     }
 
-    private void addHandlerExecution(final Class<?> controllerClass, final Method method) {
-        final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-        final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-        final HandlerExecution handlerExecution = new HandlerExecution(createControllerInstance(controllerClass),
-                method);
-        handlerExecutions.put(handlerKey, handlerExecution);
+    private List<HandlerKey> getHandlerKeys(final String requestValue, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(requestValue, requestMethod))
+                .collect(Collectors.toList());
     }
 
     private Object createControllerInstance(final Class<?> controllerClass) {
@@ -63,6 +71,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException exception) {
             throw new IllegalStateException("Fail to create handler instance");
+        }
+    }
+
+    private void addHandlerExecutions(final List<HandlerKey> handlerKeys, final Object controller,
+                                      final Method method) {
+        for (HandlerKey handlerKey : handlerKeys) {
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
