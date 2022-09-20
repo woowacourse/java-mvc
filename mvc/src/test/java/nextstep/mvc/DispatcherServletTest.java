@@ -1,9 +1,10 @@
 package nextstep.mvc;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.exception.FailMapHandler;
+import nextstep.mvc.handlerAdaptor.AnnotationHandlerAdapter;
+import nextstep.mvc.handlerMapping.AnnotationHandlerMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ class DispatcherServletTest {
     void setUp() {
         dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
         dispatcherServlet.init();
     }
 
@@ -48,6 +50,6 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-                .isInstanceOf(FailMapHandler.class);
+                .isInstanceOf(ServletException.class);
     }
 }
