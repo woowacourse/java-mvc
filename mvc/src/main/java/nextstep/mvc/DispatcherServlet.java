@@ -7,10 +7,10 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.exception.ServletException;
 import nextstep.mvc.handlerAdapter.HandlerAdapter;
 import nextstep.mvc.handlerMapping.HandlerMapping;
 import nextstep.mvc.view.ModelAndView;
@@ -63,13 +63,13 @@ public class DispatcherServlet extends HttpServlet {
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("handler를 찾을 수 없습니다."));
+            .orElseThrow(() -> new ServletException("handler를 찾을 수 없습니다."));
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
             .filter(handlerAdapter -> handlerAdapter.supports(handler))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Handler Adapter를 찾을 수 없습니다."));
+            .orElseThrow(() -> new ServletException("Handler Adapter를 찾을 수 없습니다."));
     }
 }
