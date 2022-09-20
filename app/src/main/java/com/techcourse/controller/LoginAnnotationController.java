@@ -1,7 +1,9 @@
 package com.techcourse.controller;
 
+import com.techcourse.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -16,11 +18,11 @@ public class LoginAnnotationController {
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView loginPage(final HttpServletRequest req, final HttpServletResponse res) {
-        return UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
-                })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+        Optional<User> userFrom = UserSession.getUserFrom(req.getSession());
+        if (userFrom.isPresent()) {
+            log.info("logged in {}", userFrom.get().getAccount());
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
+        }
+        return new ModelAndView(new JspView("/login.jsp"));
     }
 }
