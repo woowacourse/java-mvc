@@ -16,11 +16,11 @@ import samples.TestAnnotationController;
 
 class AnnotationHandlerAdapterTest {
 
+    private final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+
     @DisplayName("AnnotationHandlerAdapter가 HandlerExecution을 지원하는지 확인한다.")
     @Test
     void handlerAdapterSupportsHandlerExecute() throws NoSuchMethodException {
-        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-
         Method method = TestAnnotationController.class.getDeclaredMethod("findUserId",
                 HttpServletRequest.class,
                 HttpServletResponse.class);
@@ -44,7 +44,6 @@ class AnnotationHandlerAdapterTest {
 
         //when & then
         var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
         assertThat(annotationHandlerAdapter.handle(request, response, handlerExecution))
                 .isInstanceOf(ModelAndView.class);
     }

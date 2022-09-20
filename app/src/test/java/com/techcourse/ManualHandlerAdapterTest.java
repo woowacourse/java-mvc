@@ -13,12 +13,13 @@ import org.junit.jupiter.api.Test;
 
 class ManualHandlerAdapterTest {
 
+    private final TestController testController = new TestController();
+    private final ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+
     @DisplayName("ManualHandlerAdapter가 Controller를 지원하는지 확인한다.")
     @Test
     void ManualHandlerAdapterSupportsController() {
-        ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
-
-        assertThat(manualHandlerAdapter.supports(new TestController())).isTrue();
+        assertThat(manualHandlerAdapter.supports(testController)).isTrue();
     }
 
     @DisplayName("ManualHandlerAdapter가 Controller를 실행한다.")
@@ -32,12 +33,10 @@ class ManualHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/hello");
         when(request.getMethod()).thenReturn("GET");
 
-        ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
-
         //when & then
-        assertThat(manualHandlerAdapter.handle(request, response, new TestController()))
+        assertThat(manualHandlerAdapter.handle(request, response, testController))
                 .isInstanceOf(ModelAndView.class);
-        assertThat(manualHandlerAdapter.handle(request, response, new TestController())
+        assertThat(manualHandlerAdapter.handle(request, response, testController)
                 .getView()).isInstanceOf(JspView.class);
     }
 }
