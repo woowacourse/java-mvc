@@ -8,6 +8,7 @@ import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         initializeHandlerExecutions();
     }
 
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
+    }
+
     private void initializeHandlerExecutions() {
         Reflections reflections = new Reflections(basePackage);
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
@@ -40,12 +47,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Method[] methods = clazz.getDeclaredMethods();
             addHandlerExecutions(clazz, methods);
         });
-    }
-
-    @Override
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
     }
 
     private void addHandlerExecutions(Class<?> clazz, Method[] methods) {

@@ -3,17 +3,16 @@ package nextstep.mvc.handler;
 import static org.assertj.core.api.Assertions.*;
 
 import nextstep.mvc.controller.tobe.HandlerExecution;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerAdapterTest {
+class HandlerExecutionHandlerAdapterTest {
 
-    AnnotationHandlerAdapter sut;
+    HandlerExecutionHandlerAdapter sut;
 
     @BeforeEach
     void setUp() {
-        sut = new AnnotationHandlerAdapter();
+        sut = new HandlerExecutionHandlerAdapter();
     }
 
     @Test
