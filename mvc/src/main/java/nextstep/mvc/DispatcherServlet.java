@@ -1,21 +1,19 @@
 package nextstep.mvc;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handler.adapter.HandlerAdapter;
 import nextstep.mvc.handler.mapping.HandlerMapping;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -51,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
             final var handler = getHandler(request);
             final var adapter = getAdapter(handler);
             final var modelAndView = adapter.handle(request, response, handler);
-            render(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -71,10 +69,5 @@ public class DispatcherServlet extends HttpServlet {
             .filter(adapter -> adapter.supports(handler))
             .findFirst()
             .orElseThrow(() -> new NoSuchElementException("해당 핸들러를 실행시킬 수 있는 어댑터가 없습니다."));
-    }
-
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        JspView view = (JspView)modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
     }
 }
