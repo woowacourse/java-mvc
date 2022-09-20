@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             return controller.getConstructor().newInstance();
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("Exception : {}", e.getMessage(), e);
             throw new NoDefaultConstructorException();
         }
     }
