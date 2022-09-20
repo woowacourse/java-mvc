@@ -22,11 +22,11 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        addModelToRequest(model, request);
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             redirectRender(response);
             return;
         }
+        addModelToRequest(model, request);
         final RequestDispatcher dispatcher = request.getRequestDispatcher(viewName);
         dispatcher.forward(request, response);
     }
