@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
@@ -62,14 +63,14 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("매핑되는 핸들러가 없습니다."));
     }
 
     private HandlerAdapter getAdapter(Object handler) {
         return handlerAdapters.stream()
             .filter(adapter -> adapter.supports(handler))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new NoSuchElementException("해당 핸들러를 실행시킬 수 있는 어댑터가 없습니다."));
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
