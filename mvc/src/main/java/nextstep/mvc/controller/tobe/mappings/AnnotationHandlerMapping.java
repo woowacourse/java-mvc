@@ -31,12 +31,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        RequestMethod requestMethod = Arrays.stream(RequestMethod.values())
-                .filter(method -> method.name().equalsIgnoreCase(request.getMethod()))
-                .findAny()
-                .orElseThrow();
+        RequestMethod requestMethod = findRequestMethod(request);
         String requestURI = request.getRequestURI();
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
+    }
+
+    private static RequestMethod findRequestMethod(HttpServletRequest request) {
+        return Arrays.stream(RequestMethod.values())
+                .filter(method -> method.name().equalsIgnoreCase(request.getMethod()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Request Method " + request.getMethod() + "is Invalid "
+                ));
     }
 }

@@ -87,6 +87,6 @@ public class DispatcherServlet extends HttpServlet {
         return viewResolvers.stream()
                 .filter(resolver -> resolver.supports(viewName))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Failed to find viewResolver : " + viewName));
     }
 }
