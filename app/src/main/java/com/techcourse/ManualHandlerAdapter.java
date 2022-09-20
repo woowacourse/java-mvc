@@ -6,7 +6,7 @@ import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.ModelAndView;
 
-public class ManualHandlerAdaptor implements HandlerAdapter {
+public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {

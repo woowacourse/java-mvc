@@ -35,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    public void addHandlerAdaptor(final HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
     }
 
@@ -46,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object controller = getController(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdaptor(controller);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(controller);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
             move(modelAndView, request, response);
         } catch (Throwable e) {
@@ -55,13 +55,13 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter getHandlerAdaptor(final Object controller) {
+    private HandlerAdapter getHandlerAdapter(final Object controller) {
         for (HandlerAdapter handlerAdapter : handlerAdapters) {
             if (handlerAdapter.supports(controller)) {
                 return handlerAdapter;
             }
         }
-        throw new IllegalArgumentException("HandlerAdaptor not found");
+        throw new IllegalArgumentException("HandlerAdapter not found");
     }
 
     private Controller getController(final HttpServletRequest request) {
