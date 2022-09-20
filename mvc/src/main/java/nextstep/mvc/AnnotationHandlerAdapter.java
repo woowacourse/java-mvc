@@ -12,7 +12,7 @@ public class AnnotationHandlerAdapter implements HandlerAdapter{
 
     @Override
     public boolean supports(final Object handler) {
-        return handler.getClass().getAnnotation(Controller.class) == null;
+        return handler instanceof HandlerExecution;
     }
 
     @Override

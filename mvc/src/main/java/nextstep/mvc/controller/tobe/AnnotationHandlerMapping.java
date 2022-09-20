@@ -49,15 +49,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+        return handlerExecutions.get(handlerKey);
+    }
+
     private List<Class<?>> getControllerAnnotationClasses() {
         return reflections.getTypesAnnotatedWith(Controller.class)
                 .stream()
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
-        return handlerExecutions.get(handlerKey);
     }
 }

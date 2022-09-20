@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration.Dynamic;
 import nextstep.context.PeanutContainer;
 import nextstep.mvc.AnnotationHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
@@ -18,16 +19,20 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(final ServletContext servletContext) {
         PeanutContainer.INSTANCE.init("com.techcourse.controller");
 
+        final DispatcherServlet dispatcherServlet = initDispatcherServlet();
+        final Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
+        dispatcher.setLoadOnStartup(1);
+        dispatcher.addMapping("/");
+
+        log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet initDispatcherServlet() {
         final var dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
         dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
-
-        final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
-        dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/");
-
-        log.info("Start AppWebApplication Initializer");
+        return dispatcherServlet;
     }
 }
