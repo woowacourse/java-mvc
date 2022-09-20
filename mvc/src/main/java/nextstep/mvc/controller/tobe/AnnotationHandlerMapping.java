@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.InstanceInitializationException;
 import nextstep.mvc.exception.RequestMappingNotAnnotatedException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -58,7 +59,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return controller.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new InstanceInitializationException();
         }
     }
 
