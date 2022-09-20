@@ -20,7 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdaptor> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
@@ -36,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    public void addHandlerAdapters(final HandlerAdapter handlerAdapter) {
+    public void addHandlerAdaptors(final HandlerAdaptor handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
     }
 
@@ -47,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandlerOf(request);
-            HandlerAdapter handlerAdapter = handlerAdapters.stream()
+            HandlerAdaptor handlerAdapter = handlerAdapters.stream()
                 .filter(it -> it.supports(handler))
                 .findFirst()
                 .orElseThrow();

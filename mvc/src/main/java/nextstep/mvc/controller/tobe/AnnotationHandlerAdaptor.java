@@ -2,10 +2,10 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.HandlerAdaptor;
 import nextstep.mvc.view.ModelAndView;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter {
+public class AnnotationHandlerAdaptor implements HandlerAdaptor {
 
     @Override
     public boolean supports(Object handler) {
