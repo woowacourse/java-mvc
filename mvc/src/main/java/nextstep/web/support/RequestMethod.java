@@ -10,8 +10,4 @@ public enum RequestMethod {
     OPTIONS,
     TRACE,
     ;
-
-    public static RequestMethod from(final String method) {
-        return valueOf(method.toUpperCase());
-    }
 }
