@@ -2,6 +2,7 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -17,6 +18,6 @@ public class AnnotationController {
     @RequestMapping(value = "/annotation", method = RequestMethod.GET)
     public ModelAndView testConnection(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("annotation controller get method");
-        return null;
+        return new ModelAndView(new JspView("index.jsp"));
     }
 }

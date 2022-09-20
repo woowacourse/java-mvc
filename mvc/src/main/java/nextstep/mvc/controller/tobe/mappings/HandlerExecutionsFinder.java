@@ -15,8 +15,12 @@ import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HandlerExecutionsFinder {
+
+    private static final Logger log = LoggerFactory.getLogger(HandlerExecutionsFinder.class);
 
     private static final int PARAMETER_MIN_LENGTH = 2;
 
@@ -73,6 +77,8 @@ public class HandlerExecutionsFinder {
     private Map<HandlerKey, HandlerExecution> mapToHandlerExecutionsPerMapping(Entry<Method, RequestMapping> entry,
                                                                                Object instance) {
         return Arrays.stream(entry.getValue().method())
+                .peek(method -> log.info("Found annotated handler " + entry.getValue().value() +
+                        " " + Arrays.toString(entry.getValue().method())))
                 .collect(Collectors.toMap(
                         method -> new HandlerKey(entry.getValue().value(), method),
                         method -> new HandlerExecution(instance, entry.getKey())

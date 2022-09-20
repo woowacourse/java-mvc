@@ -29,7 +29,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
         dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
 

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,22 +59,28 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    private Object findHandler(final HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Failed to find handler : " + request.getRequestURI() + " " + request.getMethod()));
+    }
+
     private HandlerAdapter findAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findAny()
-                .orElseThrow();
-    }
-
-    private Object findHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Failed to find adapter : " + handler.getClass()));
     }
 
     private void resolve(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
-        modelAndView.render(request, response);
+        try {
+            modelAndView.render(request, response);
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Unexpected exception occured while rendering", e);
+        }
     }
 
     private ViewResolver findViewResolver(String viewName) {
