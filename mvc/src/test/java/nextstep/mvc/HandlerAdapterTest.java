@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 
 import nextstep.mvc.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.adapter.ControllerHandlerAdapter;
+import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
