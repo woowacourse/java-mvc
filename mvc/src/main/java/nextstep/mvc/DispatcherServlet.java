@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
@@ -46,6 +47,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = getHandler(request);
             final ModelAndView modelAndView = getModelAndView(handler, request, response);
+            final Map<String, Object> model = modelAndView.getModel();
+            modelAndView.getView().render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
