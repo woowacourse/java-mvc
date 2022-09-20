@@ -41,11 +41,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void findHandlerFromPackage() {
-        for (Object eachPackage : basePackage) {
-            Reflections reflections = new Reflections(eachPackage);
-            Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-            findMethodFromClass(classes);
-        }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        findMethodFromClass(classes);
     }
 
     private void findMethodFromClass(Set<Class<?>> classes) {
@@ -55,11 +53,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Method findRequestMappingFromMethod(Method[] methods) {
+    private void findRequestMappingFromMethod(Method[] methods) {
         for (Method method: methods) {
             addRequestMapping(method);
         }
-        return null;
     }
 
     private void addRequestMapping(Method method) {

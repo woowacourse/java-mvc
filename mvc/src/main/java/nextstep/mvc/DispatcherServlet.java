@@ -62,13 +62,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("매핑되는 핸들러가 존재하지 않습니다."));
     }
 
     private HandlerAdapter getHandlerAdapters(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("지원하는 어댑터가 존재하지 않습니다."));
     }
 }
