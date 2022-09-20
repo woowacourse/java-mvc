@@ -19,14 +19,14 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
             throws InvocationTargetException, InstantiationException, IllegalAccessException {
 
-        final var controller = emptyConstructor(method).newInstance();
+        final Class<?> clazz = method.getDeclaringClass();
+        final Object controller = emptyConstructorOf(clazz).newInstance();
         return (ModelAndView) method.invoke(controller, request, response);
     }
 
-    private Constructor<?> emptyConstructor(final Method method) {
+    private Constructor<?> emptyConstructorOf(final Class<?> clazz) {
         try {
-            final var declaringClass = method.getDeclaringClass();
-            return declaringClass.getConstructor();
+            return clazz.getConstructor();
         } catch (NoSuchMethodException e) {
             throw new NoSuchMethodError("빈 생성자를 조회할 수 없습니다.");
         }
