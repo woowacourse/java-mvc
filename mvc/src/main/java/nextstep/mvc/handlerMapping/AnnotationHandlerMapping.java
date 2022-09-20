@@ -2,9 +2,12 @@ package nextstep.mvc.handlerMapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -35,7 +38,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class controller : controllers) {
-            addToHandlerExecutions(controller);
+            addAllToHandlerExecutions(controller);
         }
     }
 
@@ -44,20 +47,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(key);
     }
 
-    private void addToHandlerExecutions(final Class controller) {
+    private void addAllToHandlerExecutions(final Class controller) {
         for (Method method : controller.getMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-
-                HandlerKey key = new HandlerKey(annotation.value(), annotation.method()[0]);
-                HandlerExecution execution = new HandlerExecution(generateInstance(controller), method);
-
-                handlerExecutions.put(key, execution);
+                addToHandlerExecutions(controller, method);
             }
         }
     }
 
-    private Object generateInstance(Class controller) {
+    private void addToHandlerExecutions(final Class controller, Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+
+        final List<HandlerKey> keys = Arrays.stream(annotation.method())
+            .map(it -> new HandlerKey(annotation.value(), it))
+            .collect(Collectors.toUnmodifiableList());
+
+        final HandlerExecution execution = new HandlerExecution(generateInstance(controller), method);
+
+        for (final HandlerKey key : keys) {
+            handlerExecutions.put(key, execution);
+        }
+    }
+
+    private Object generateInstance(final Class controller) {
         try {
             return controller.getConstructor().newInstance();
         } catch (NoSuchMethodException |
