@@ -43,12 +43,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Map<HandlerKey, HandlerExecution> initExecutions() throws Exception {
-        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-        for (Object basePackage : basePackages) {
-            Set<Class<?>> classes = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
-            handlerExecutions.putAll(createClassExecutions(classes));
-        }
-        return handlerExecutions;
+        Set<Class<?>> typesAnnotatedWith = new Reflections(basePackages).getTypesAnnotatedWith(Controller.class);
+        return createClassExecutions(typesAnnotatedWith);
     }
 
     private Map<HandlerKey, HandlerExecution> createClassExecutions(final Set<Class<?>> classes) throws Exception {
