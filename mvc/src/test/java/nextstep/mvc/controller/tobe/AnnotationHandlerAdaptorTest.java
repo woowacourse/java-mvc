@@ -58,7 +58,7 @@ class AnnotationHandlerAdaptorTest {
 
         // when
         final ModelAndView modelAndView = adaptor.handle(request, response, handler);
-        final String id = (String)modelAndView.getObject("id");
+        final String id = (String)modelAndView.getAttribute("id");
 
         // then
         assertThat(id).isEqualTo("gugu");

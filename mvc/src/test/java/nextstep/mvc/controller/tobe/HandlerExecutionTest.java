@@ -32,8 +32,8 @@ class HandlerExecutionTest {
 
         // when
         final ModelAndView modelAndView = execution.handle(request, response);
-        final String id = (String)modelAndView.getObject("id");
-        final Object expectedNull = modelAndView.getObject("invalidAttribute");
+        final String id = (String)modelAndView.getAttribute("id");
+        final Object expectedNull = modelAndView.getAttribute("invalidAttribute");
 
         // then
         assertAll(
