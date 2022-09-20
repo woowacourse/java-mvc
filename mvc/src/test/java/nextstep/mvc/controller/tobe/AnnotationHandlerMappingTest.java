@@ -24,14 +24,14 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getAttribute("id")).thenReturn("getGugu");
+        when(request.getRequestURI()).thenReturn("/test");
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject("id")).isEqualTo("getGugu");
     }
 
     @Test
@@ -39,13 +39,13 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getAttribute("id")).thenReturn("postGugu");
+        when(request.getRequestURI()).thenReturn("/test");
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject("id")).isEqualTo("postGugu");
     }
 }

@@ -15,7 +15,7 @@ public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
-    @RequestMapping(value = "/get-test", method = RequestMethod.GET)
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
         final var modelAndView = new ModelAndView(new JspView(""));
@@ -23,7 +23,7 @@ public class TestController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/post-test", method = RequestMethod.POST)
+    @RequestMapping(value = "/test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
