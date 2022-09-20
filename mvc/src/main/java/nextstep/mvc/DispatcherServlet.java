@@ -35,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    public void addHandlerAdapters(HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapters(final HandlerAdapter handlerAdapter) {
         this.handlerAdapters.add(handlerAdapter);
     }
 
@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter getHandlerAdapter(Object controller) {
+    private HandlerAdapter getHandlerAdapter(final Object controller) {
         for (HandlerAdapter ha : handlerAdapters) {
             if (ha.supports(controller)) {
                 return ha;

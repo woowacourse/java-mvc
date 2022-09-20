@@ -42,7 +42,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(requestURI, requestMethod);
     }
 
-    private void putControllerToHandlerExecutions(Class<?> controller) {
+    private void putControllerToHandlerExecutions(final Class<?> controller) {
         Method[] controllerMethods = controller.getDeclaredMethods();
         Object instance = getInstance(controller);
         for (Method method : controllerMethods) {
@@ -51,18 +51,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Object getInstance(Class<?> controller) {
-        Object o;
+    private Object getInstance(final Class<?> controller) {
         try {
-            o = controller.getConstructor().newInstance();
+            return controller.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        return o;
     }
 
-    private void putHandlerKeyAndExecution(Object instance, Method method, RequestMapping requestMapping) {
+    private void putHandlerKeyAndExecution(final Object instance, final Method method, final RequestMapping requestMapping) {
         RequestUrl requestUrl = new RequestUrl(requestMapping.value());
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {

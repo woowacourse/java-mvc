@@ -4,7 +4,7 @@ public class RequestUrl {
 
     private final String value;
 
-    public RequestUrl(String value) {
+    public RequestUrl(final String value) {
         this.value = value;
     }
 
