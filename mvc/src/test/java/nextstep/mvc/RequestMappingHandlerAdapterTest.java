@@ -13,8 +13,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class RequestMappingHandlerAdapterTest {
 
-    @MethodSource("methodSource")
-    @ParameterizedTest(name = " : {0}")
+    @MethodSource("support_methodSource")
+    @ParameterizedTest(name = "{0}")
     void requestMappingHandlerAdapter_supports_handlerExecution_type(String description, Object handler,
                                                                      boolean expected) {
         // given
@@ -27,7 +27,7 @@ class RequestMappingHandlerAdapterTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> methodSource() {
+    private static Stream<Arguments> support_methodSource() {
         return Stream.of(
                 Arguments.of(
                         "RequestMappingHandlerAdapter는 HandlerExecution을 support한다",
