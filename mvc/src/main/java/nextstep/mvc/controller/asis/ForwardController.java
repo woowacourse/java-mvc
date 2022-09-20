@@ -2,9 +2,11 @@ package nextstep.mvc.controller.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
+@nextstep.web.annotation.Controller
 public class ForwardController implements Controller {
 
     private final String path;
@@ -13,7 +15,7 @@ public class ForwardController implements Controller {
         this.path = Objects.requireNonNull(path);
     }
 
-    @Override
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String execute(final HttpServletRequest request, final HttpServletResponse response) {
         return path;
     }

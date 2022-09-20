@@ -1,21 +1,30 @@
 package com.techcourse.controller;
 
+import static nextstep.web.support.RequestMethod.GET;
+import static nextstep.web.support.RequestMethod.POST;
+
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.web.annotation.RequestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@nextstep.web.annotation.Controller
 public class LoginController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @Override
+    @RequestMapping(value = "/login", method = {GET, POST})
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
+        }
+
+        if (req.getMethod().equals(GET.name())) {
+            return "redirect:/login.jsp";
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
