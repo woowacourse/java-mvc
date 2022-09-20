@@ -3,6 +3,7 @@ package nextstep.mvc.handler.mapping;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -29,37 +30,28 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        scanBasePackages();
+        scanHandlersInBasePackages();
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void scanBasePackages() {
+    private void scanHandlersInBasePackages() {
         Reflections reflections = new Reflections(basePackages);
-        for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
-            findRequestMapping(controller);
+        reflections.getTypesAnnotatedWith(Controller.class)
+            .forEach(this::scanRequestMappings);
+    }
+
+    private void scanRequestMappings(Class<?> controller) {
+        for (Method method : controller.getMethods()) {
+            HandlerExecution execution = new HandlerExecution(method);
+            Optional.ofNullable(method.getAnnotation(RequestMapping.class))
+                .ifPresent(requestMapping -> addHandlerExecution(requestMapping, execution));
         }
     }
 
-    private void findRequestMapping(Class<?> controller) {
-        for (Method method : controller.getDeclaredMethods()) {
-            addHandlerExecution(method);
-        }
-    }
-
-    private void addHandlerExecution(Method declaredMethod) {
-        if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
-            HandlerExecution execution = new HandlerExecution(declaredMethod);
-            addHandlerExecutionEachMethod(requestMapping, execution);
-        }
-    }
-
-    private void addHandlerExecutionEachMethod(RequestMapping requestMapping, HandlerExecution execution) {
+    private void addHandlerExecution(RequestMapping requestMapping, HandlerExecution execution) {
+        String url = requestMapping.value();
         for (RequestMethod method : requestMapping.method()) {
-            handlerExecutions.put(
-                new HandlerKey(requestMapping.value(), method),
-                execution
-            );
+            handlerExecutions.put(new HandlerKey(url, method), execution);
         }
     }
 
