@@ -9,23 +9,18 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Object[] basePackages;
+    private final Reflections reflections;
 
     public ControllerScanner(Object... basePackages) {
-        this.basePackages = basePackages;
+        reflections = new Reflections(basePackages);
     }
 
     public List<Object> getControllers() {
-        Set<Class<?>> controllerClasses = getControllerClasses(basePackages);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         return controllerClasses.stream()
                 .map(this::createController)
                 .collect(Collectors.toList());
-    }
-
-    private Set<Class<?>> getControllerClasses(Object[] basePackages) {
-        Reflections reflections = new Reflections(basePackages);
-        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private Object createController(Class<?> controllerClass) {
