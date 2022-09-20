@@ -20,6 +20,18 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void 요청에_매핑된_핸들러를_반환한다() {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final Object handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isExactlyInstanceOf(HandlerExecution.class);
+    }
+
+    @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
