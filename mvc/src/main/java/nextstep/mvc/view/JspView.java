@@ -17,9 +17,6 @@ public class JspView implements View {
     private final String viewName;
 
     public JspView(final String viewName) {
-        if (viewName == null) {
-            throw new NullPointerException("viewName is null. 이동할 URL을 입력하세요.");
-        }
         this.viewName = viewName;
     }
 
