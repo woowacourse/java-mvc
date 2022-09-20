@@ -9,23 +9,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 
-class ControllerHandlerAdapterTest {
+class ManualHandlerAdapterTest {
 
     @Test
     void supportsIsTrue() {
         Controller controller = mock(Controller.class);
-        ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
+        ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-        boolean result = controllerHandlerAdapter.supports(controller);
+        boolean result = manualHandlerAdapter.supports(controller);
 
         assertThat(result).isTrue();
     }
 
     @Test
     void supportsIsFalse() {
-        ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
+        ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-        boolean result = controllerHandlerAdapter.supports(null);
+        boolean result = manualHandlerAdapter.supports(null);
 
         assertThat(result).isFalse();
     }
@@ -33,14 +33,14 @@ class ControllerHandlerAdapterTest {
     @Test
     void handle() throws Exception {
         Controller controller = mock(Controller.class);
-        ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
+        ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
-        controllerHandlerAdapter.handle(request, response, controller);
+        manualHandlerAdapter.handle(request, response, controller);
 
         verify(controller).execute(request, response);
     }
