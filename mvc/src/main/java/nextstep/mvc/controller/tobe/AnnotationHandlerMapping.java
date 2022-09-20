@@ -33,10 +33,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Object base : basePackage) {
-            Reflections reflections = new Reflections(base.toString());
-            addHandlerExecutions(reflections.getTypesAnnotatedWith(Controller.class));
-        }
+        Reflections reflections = new Reflections(basePackage);
+        addHandlerExecutions(reflections.getTypesAnnotatedWith(Controller.class));
     }
 
     private void addHandlerExecutions(final Set<Class<?>> handlers) {
