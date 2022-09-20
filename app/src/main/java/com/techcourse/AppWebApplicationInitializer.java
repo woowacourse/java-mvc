@@ -18,6 +18,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
         dispatcherServlet.addHandlerAdapter(new HandlerExecutionAdapter());
+        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
