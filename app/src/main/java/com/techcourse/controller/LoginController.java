@@ -4,6 +4,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import nextstep.mvc.controller.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,12 @@ public class LoginController implements Controller {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final var account = req.getParameter("account");
+        if (Objects.isNull(account)) {
+            return "redirect:/401.jsp";
+        }
+
+        return InMemoryUserRepository.findByAccount(account)
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
