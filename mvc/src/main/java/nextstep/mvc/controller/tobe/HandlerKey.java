@@ -1,8 +1,8 @@
 package nextstep.mvc.controller.tobe;
 
-import nextstep.web.support.RequestMethod;
-
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
 
@@ -14,18 +14,18 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
-    @Override
-    public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
+    public static HandlerKey from(final HttpServletRequest request) {
+        return new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerKey)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HandlerKey)) {
+            return false;
+        }
         HandlerKey that = (HandlerKey) o;
         return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
     }
@@ -33,5 +33,11 @@ public class HandlerKey {
     @Override
     public int hashCode() {
         return Objects.hash(url, requestMethod);
+    }
+
+    @Override
+    public String toString() {
+        return "Url : '" + url + '\'' +
+                ", Method : " + requestMethod;
     }
 }
