@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,15 +46,15 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handler = getHandler(request);
-            if (Objects.isNull(handler)) {
+            final Object handler = getHandler(request);
+            if (handler == null) {
                 noHandlerFound(request, response);
                 return;
             }
 
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            final ModelAndView mv = handlerAdapter.handle(request, response, handler);
-            mv.render(request, response);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.render(request, response);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -75,8 +76,9 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new ServletException("No adapter for handler [" + handler + "]"));
     }
 
-    private void noHandlerFound(final HttpServletRequest request, final HttpServletResponse response) {
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    private void noHandlerFound(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
         throw new NoHandlerFoundException(request.getMethod(), request.getRequestURI());
     }
 }
