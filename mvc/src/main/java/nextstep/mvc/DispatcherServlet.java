@@ -7,9 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.RequestMappingHandlerAdapter;
-import nextstep.mvc.controller.tobe.SimpleHandlerAdapter;
+import java.util.Optional;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -31,12 +29,14 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         initHandlerMapping();
-        initHandlerAdapter();
-        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     @Override
@@ -45,12 +45,15 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            if (modelAndView != null) {
-                render(modelAndView, request, response);
+            final Optional<Object> handler = getHandler(request);
+            if (handler.isEmpty()) {
+                response.setStatus(404);
+                return;
             }
+
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler.get());
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -58,20 +61,14 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMapping() {
-        handlerMappings.add(new AnnotationHandlerMapping());
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    private void initHandlerAdapter() {
-        handlerAdapters.add(new SimpleHandlerAdapter());
-        handlerAdapters.add(new RequestMappingHandlerAdapter());
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
+    private Optional<Object> getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 Handler가 존재하지 않습니다."));
+                .findFirst();
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
