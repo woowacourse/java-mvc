@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Class<RequestMapping> REQUEST_MAPPING_CLASS = RequestMapping.class;
-//    private static final String PREFIX = "nextstep.mvc.controller";
     private static final Class<Controller> CONTROLLER_CLASS = Controller.class;
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -38,7 +37,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         findControllers().stream()
                 .map(this::findMappingMethods)
                 .forEach(methods -> methods.forEach(this::saveMethodMapping));
-        System.out.println("handlerExecutions = " + handlerExecutions);
     }
 
     private void saveMethodMapping(Method method) {
@@ -46,7 +44,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod requestMethod : annotation.method()) {
             String requestURL = annotation.value();
             HandlerKey handlerKey = new HandlerKey(requestURL, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            HandlerExecution handlerExecution = new HandlerExecution(method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("Path : {}, Method : {}.{}()", requestURL, method.getDeclaringClass(), method.getName());
         }
     }
 
