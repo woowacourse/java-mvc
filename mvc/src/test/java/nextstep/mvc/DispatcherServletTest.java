@@ -84,7 +84,8 @@ class DispatcherServletTest {
             return this;
         }
 
-        public MockHttpRequestBuilder mockRequestDispatcher(final RequestDispatcher requestDispatcher, final String requestDispatcherPath) {
+        public MockHttpRequestBuilder mockRequestDispatcher(final RequestDispatcher requestDispatcher,
+                                                            final String requestDispatcherPath) {
             this.requestDispatcher = requestDispatcher;
             this.requestDispatcherPath = requestDispatcherPath;
             return this;
