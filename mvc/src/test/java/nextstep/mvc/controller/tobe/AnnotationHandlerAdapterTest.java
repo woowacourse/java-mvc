@@ -12,12 +12,14 @@ import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.tobe.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestAnnotationController;
 
 class AnnotationHandlerAdapterTest {
     private final HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
 
+    @DisplayName("매핑될 핸들러를 어노테이션 핸들러가 지원하는지 확인한다.")
     @Test
     void supports() throws NoSuchMethodException {
         final Method executionMethod = TestAnnotationController.class.getDeclaredMethod(
@@ -27,6 +29,7 @@ class AnnotationHandlerAdapterTest {
         assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
     }
 
+    @DisplayName("어노테이션 핸들러가 요청에 대한 ModelAndView 를 반환한다.")
     @Test
     void handle() throws Exception {
         final HttpServletRequest request = spy(HttpServletRequest.class);

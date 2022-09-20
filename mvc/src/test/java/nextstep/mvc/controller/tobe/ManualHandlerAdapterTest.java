@@ -12,17 +12,20 @@ import nextstep.mvc.controller.asis.ForwardController;
 import nextstep.mvc.controller.tobe.adapter.ManualHandlerAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class ManualHandlerAdapterTest {
     private final HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
 
+    @DisplayName("매핑될 핸들러를 메뉴얼 핸들러가 지원하는지 확인한다.")
     @Test
     void supports() {
         final Controller controller = new ForwardController("");
         assertThat(handlerAdapter.supports(controller)).isTrue();
     }
 
+    @DisplayName("메뉴얼 핸들러가 요청에 대한 ModelAndView 를 반환한다.")
     @Test
     void handle() throws Exception {
         //given

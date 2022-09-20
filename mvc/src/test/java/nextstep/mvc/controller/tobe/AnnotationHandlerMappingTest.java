@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestAnnotationController;
 
@@ -23,6 +24,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET 요청에 대해 핸들러 매핑이 잘 작동해 ModelAndView를 반환한다.")
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -38,6 +40,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("POST 요청에 대해 핸들러 매핑이 잘 작동해 ModelAndView를 반환한다.")
     @Test
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -53,18 +56,21 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("컨트롤러 어노테이션이 붙은 모든 클래스들을 반환한다.")
     @Test
     void findControllers() {
         List<Class<?>> controllers = handlerMapping.findControllers();
         assertThat(controllers).hasSize(1);
     }
 
+    @DisplayName("특정 컨트롤러의 RequestMapping 어노테이션이 붙은 모든 메소드들을 반환한다.")
     @Test
     void findMethods() {
         List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
         assertThat(methods).hasSize(2);
     }
 
+    @DisplayName("특정 매핑된 메소드의 주소값이 파라미터 URL과 같은지 확인한다.")
     @Test
     void sameRequestURL() {
         //given
@@ -82,6 +88,7 @@ class AnnotationHandlerMappingTest {
         assertThat(sameRequestURL2).isFalse();
     }
 
+    @DisplayName("매핑된 메소드의 요청 메소드에 파라미터 메소드가 포함되는지 확인한다.")
     @Test
     void anyMatchRequestMethod() {
         //given
