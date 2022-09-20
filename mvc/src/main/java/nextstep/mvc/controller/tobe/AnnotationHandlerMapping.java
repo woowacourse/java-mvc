@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,7 +43,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Arrays.stream(requestMapping.method())
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
                 .collect(Collectors.toUnmodifiableList())
-                .forEach(it -> handlerExecutions.put(it, new HandlerExecution(method)));
+                .forEach(it -> handlerExecutions.put(it, new HandlerExecution(findController(method), method)));
+    }
+
+    private Object findController(final Method method) {
+        try {
+            return method.getDeclaringClass()
+                    .getConstructor()
+                    .newInstance();
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException();
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {

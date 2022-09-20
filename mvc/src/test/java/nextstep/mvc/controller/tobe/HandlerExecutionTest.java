@@ -19,11 +19,12 @@ class HandlerExecutionTest {
     private HandlerExecution handlerExecution;
 
     @BeforeEach
-    void setUp() throws NoSuchMethodException {
+    void setUp() throws Exception {
         final Method executionMethod = TestController.class.getDeclaredMethod(
                 "findUserId", HttpServletRequest.class, HttpServletResponse.class
         );
-        handlerExecution = new HandlerExecution(executionMethod);
+        final Object controller = executionMethod.getDeclaringClass().getConstructor().newInstance();
+        handlerExecution = new HandlerExecution(controller, executionMethod);
     }
 
     @Test
