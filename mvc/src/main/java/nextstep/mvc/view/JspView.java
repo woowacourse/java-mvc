@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JspView implements View {
 
-    public static final String REDIRECT_PREFIX = "redirect:";
+    private static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     private final String viewName;

@@ -47,8 +47,8 @@ class AnnotationHandlerAdaptorTest {
         // given
         final HandlerAdaptor adaptor = new AnnotationHandlerAdaptor();
         final Object controller = new TestController();
-        final Method method = controller.getClass().getDeclaredMethods()[0];
-        final HandlerExecution handler = new HandlerExecution(controller, method);
+        final Method firstMethod = controller.getClass().getDeclaredMethods()[0];
+        final HandlerExecution handler = new HandlerExecution(controller, firstMethod);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);

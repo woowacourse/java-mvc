@@ -55,18 +55,18 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdaptor getHandlerAdaptor(final Object handler) {
-        return handlerAdaptors.stream()
-            .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Couldn't find adaptor for handler"));
-    }
-
     private Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Couldn't find a handler"));
+    }
+
+    private HandlerAdaptor getHandlerAdaptor(final Object handler) {
+        return handlerAdaptors.stream()
+            .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Couldn't find adaptor for handler"));
     }
 }
