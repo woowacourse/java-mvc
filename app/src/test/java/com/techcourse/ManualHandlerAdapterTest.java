@@ -50,7 +50,7 @@ class ManualHandlerAdapterTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("handle 메소드는 입력 받은 컨트롤러의 execute 메소드를 실행하고 결과를 ModelAndView 객체로 반환한다.")
     void handle() throws Exception {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
