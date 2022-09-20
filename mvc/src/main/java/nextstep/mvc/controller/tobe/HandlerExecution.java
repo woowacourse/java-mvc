@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
@@ -22,11 +21,8 @@ public class HandlerExecution {
 
     private Object findController()
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return Arrays.stream(method.getDeclaringClass()
-                        .getConstructors())
-                .filter(it -> it.getParameterCount() == 0)
-                .findFirst()
-                .orElseThrow(() -> new NoSuchMethodException("기본 생성자가 존재하지 않습니다."))
+        return method.getDeclaringClass()
+                .getConstructor()
                 .newInstance();
     }
 }
