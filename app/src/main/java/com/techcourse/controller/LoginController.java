@@ -13,7 +13,7 @@ public class LoginController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
@@ -26,9 +26,9 @@ public class LoginController implements Controller {
                 .orElse("redirect:/401.jsp");
     }
 
-    private String login(final HttpServletRequest request, final User user) {
+    private String login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
-            final var session = request.getSession();
+            var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return "redirect:/index.jsp";
         } else {

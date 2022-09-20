@@ -11,7 +11,7 @@ public class LoginViewController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());

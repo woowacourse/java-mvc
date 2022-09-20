@@ -31,16 +31,16 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+    protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
@@ -62,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 
-    private Object getHandler(final HttpServletRequest request) {
+    private Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
