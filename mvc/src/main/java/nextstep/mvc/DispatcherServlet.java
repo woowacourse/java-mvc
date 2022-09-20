@@ -36,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
     }
 
@@ -46,11 +46,8 @@ public class DispatcherServlet extends HttpServlet {
         final Object handler = getHandler(request);
         final HandlerAdapter handlerAdapter = getHandlerAdapters(handler);
         try {
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            if (modelAndView == null) {
-                return;
-            }
-            View view = modelAndView.getView();
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);

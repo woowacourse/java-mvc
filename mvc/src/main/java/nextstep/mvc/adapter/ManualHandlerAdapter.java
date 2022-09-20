@@ -17,20 +17,8 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        Controller controller = (Controller) handler;
-        String viewName = controller.execute(request, response);
-        move(viewName, request, response);
-
-        return null;
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        final Controller controller = (Controller) handler;
+        final String viewName = controller.execute(request, response);
+        return new ModelAndView(new JspView(viewName));
     }
 }

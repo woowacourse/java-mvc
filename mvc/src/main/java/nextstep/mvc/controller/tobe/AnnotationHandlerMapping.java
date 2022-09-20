@@ -34,37 +34,37 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String requestUrl = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
+        final String requestUrl = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
 
     private void findHandlerFromPackage() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         findMethodFromClass(classes);
     }
 
     private void findMethodFromClass(Set<Class<?>> classes) {
-        for (Class<?> clazz : classes) {
-            Method[] methods = clazz.getMethods();
+        for (final Class<?> clazz : classes) {
+            final Method[] methods = clazz.getMethods();
             findRequestMappingFromMethod(methods);
         }
     }
 
     private void findRequestMappingFromMethod(Method[] methods) {
-        for (Method method: methods) {
+        for (final Method method: methods) {
             addRequestMapping(method);
         }
     }
 
     private void addRequestMapping(Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             for (RequestMethod requestMethod : requestMapping.method()) {
-                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                HandlerExecution execution = new HandlerExecution(method);
+                final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                final HandlerExecution execution = new HandlerExecution(method);
                 handlerExecutions.put(handlerKey, execution);
             }
         }
