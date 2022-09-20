@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.asis;
 
 import com.techcourse.domain.User;
 import jakarta.servlet.http.HttpSession;
