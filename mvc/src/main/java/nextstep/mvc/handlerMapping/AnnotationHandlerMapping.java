@@ -55,14 +55,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void addToHandlerExecutions(final Class controller, Method method) {
+    private void addToHandlerExecutions(final Class controller, final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
-        final List<HandlerKey> keys = Arrays.stream(annotation.method())
+        List<HandlerKey> keys = Arrays.stream(annotation.method())
             .map(it -> new HandlerKey(annotation.value(), it))
             .collect(Collectors.toUnmodifiableList());
 
-        final HandlerExecution execution = new HandlerExecution(generateInstance(controller), method);
+        HandlerExecution execution = new HandlerExecution(generateInstance(controller), method);
 
         for (final HandlerKey key : keys) {
             handlerExecutions.put(key, execution);

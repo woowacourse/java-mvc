@@ -66,7 +66,7 @@ public class DispatcherServlet extends HttpServlet {
             .orElseThrow();
     }
 
-    private HandlerAdapter getHandlerAdapter(Object handler) {
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
             .filter(adapter -> adapter.supports(handler))
             .findFirst()

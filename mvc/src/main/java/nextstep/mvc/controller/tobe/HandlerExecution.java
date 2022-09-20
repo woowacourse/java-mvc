@@ -12,7 +12,7 @@ public class HandlerExecution {
     private final Object instance;
     private final Method method;
 
-    public HandlerExecution(Object instance, Method method) {
+    public HandlerExecution(final Object instance, final Method method) {
         this.instance = instance;
         this.method = method;
     }
