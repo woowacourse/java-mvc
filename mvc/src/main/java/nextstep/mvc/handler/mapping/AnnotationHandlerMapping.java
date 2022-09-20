@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.handler.HandlerExecution;
 import nextstep.mvc.handler.HandlerKey;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -29,14 +29,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        for (Object basePackage : basePackages){
-            initializeHandlerExecution(basePackage);
-        }
+        scanBasePackages();
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void initializeHandlerExecution(Object basePackage) {
-        Reflections reflections = new Reflections(basePackage);
+    private void scanBasePackages() {
+        Reflections reflections = new Reflections(basePackages);
         for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             findRequestMapping(controller);
         }
@@ -51,9 +49,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerExecution(Method declaredMethod) {
         if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
+            HandlerExecution execution = new HandlerExecution(declaredMethod);
+            addHandlerExecutionEachMethod(requestMapping, execution);
+        }
+    }
+
+    private void addHandlerExecutionEachMethod(RequestMapping requestMapping, HandlerExecution execution) {
+        for (RequestMethod method : requestMapping.method()) {
             handlerExecutions.put(
-                HandlerKey.fromAnnotation(requestMapping),
-                new HandlerExecution(declaredMethod)
+                new HandlerKey(requestMapping.value(), method),
+                execution
             );
         }
     }

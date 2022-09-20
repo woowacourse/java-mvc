@@ -1,23 +1,18 @@
 package nextstep.mvc.handler;
 
-import jakarta.servlet.http.HttpServletRequest;
-import nextstep.web.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
-
 import java.util.Objects;
+
+import jakarta.servlet.http.HttpServletRequest;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
 
     private final String url;
     private final RequestMethod requestMethod;
 
-    private HandlerKey(final String url, final RequestMethod requestMethod) {
+    public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
-    }
-
-    public static HandlerKey fromAnnotation(RequestMapping requestMapping) {
-        return new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
     }
 
     public static HandlerKey fromRequest(HttpServletRequest request) {

@@ -10,7 +10,7 @@ import org.mockito.BDDMockito;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.handler.adapter.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.handler.HandlerExecution;
 import nextstep.mvc.view.JspView;
