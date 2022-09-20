@@ -9,9 +9,9 @@ import nextstep.mvc.controller.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+public class LoginV1Controller implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginV1Controller.class);
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
