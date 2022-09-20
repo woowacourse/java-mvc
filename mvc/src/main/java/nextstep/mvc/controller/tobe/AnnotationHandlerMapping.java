@@ -4,8 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.RequestMappingNotAnnotatedException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -46,7 +48,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Method[] controllerMethods = controller.getDeclaredMethods();
         Object instance = getInstance(controller);
         for (Method method : controllerMethods) {
-            RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+            RequestMapping requestMapping = getRequestMappingAnnotation(method);
             putHandlerKeyAndExecution(instance, method, requestMapping);
         }
     }
@@ -65,6 +67,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
             handlerExecutions.put(requestUrl, requestMethod, instance, method);
+        }
+    }
+
+    private RequestMapping getRequestMappingAnnotation(final Method method) {
+        try {
+            return Objects.requireNonNull(method.getDeclaredAnnotation(RequestMapping.class));
+        } catch (NullPointerException e) {
+            throw new RequestMappingNotAnnotatedException();
         }
     }
 }
