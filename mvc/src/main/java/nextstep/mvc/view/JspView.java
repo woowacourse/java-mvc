@@ -21,7 +21,7 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo: what is this point...
+        // todo: what the this point...
 
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
@@ -35,5 +35,9 @@ public class JspView implements View {
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }

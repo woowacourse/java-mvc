@@ -2,19 +2,18 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import nextstep.mvc.HandlerMapping;
 import nextstep.context.PeanutContainer;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -32,26 +31,28 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-
-        final List<Class<?>> handlers = reflections.getTypesAnnotatedWith(Controller.class)
-                .stream()
-                .collect(Collectors.toUnmodifiableList());
+        final List<Class<?>> handlers = getControllerAnnotationClasses();
 
         for (final Class<?> handlerClass : handlers) {
             for (final Method handlerMethod : handlerClass.getDeclaredMethods()) {
+                final Object handler = PeanutContainer.INSTANCE.getPeanut(handlerClass);
                 final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
                 if (requestMapping != null) {
                     final String url = requestMapping.value();
-                    final RequestMethod[] requestMethods = requestMapping.method();
-                    for (final RequestMethod requestMethod : requestMethods) {
-                        final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                        final Object handler = PeanutContainer.INSTANCE.getPeanut(handlerClass);
-                        final HandlerExecution handlerExecution = new HandlerExecution(handler, handlerMethod);
-                        handlerExecutions.put(handlerKey, handlerExecution);
+                    for (final RequestMethod requestMethod : requestMapping.method()) {
+                        handlerExecutions.put(
+                                new HandlerKey(url, requestMethod),
+                                new HandlerExecution(handler, handlerMethod));
                     }
                 }
             }
         }
+    }
+
+    private List<Class<?>> getControllerAnnotationClasses() {
+        return reflections.getTypesAnnotatedWith(Controller.class)
+                .stream()
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
