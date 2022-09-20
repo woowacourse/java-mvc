@@ -4,17 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-<<<<<<< HEAD
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
-=======
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.view.JspView;
->>>>>>> 71b065c (feat: AppWebApplicationInitializer에 애노테이션 기반 HandlerMapping 객체를 추가하는 로직 생성)
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,30 +52,9 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-<<<<<<< HEAD
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
                         final HttpServletResponse response) throws Exception {
         View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
-=======
-    private Controller getController(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .map(Controller.class::cast)
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
->>>>>>> 71b065c (feat: AppWebApplicationInitializer에 애노테이션 기반 HandlerMapping 객체를 추가하는 로직 생성)
     }
 }
