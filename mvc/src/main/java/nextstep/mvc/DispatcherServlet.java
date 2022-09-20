@@ -52,14 +52,14 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void doProcess(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object handler = getHandlerMapping(request);
+        final Object handler = getHandler(request);
         final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
         modelAndView.render(request, response);
     }
 
-    private Object getHandlerMapping(final HttpServletRequest request) {
+    private Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
