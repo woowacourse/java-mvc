@@ -14,9 +14,10 @@ class ControllerScanner {
 
     public ControllerScanner(Reflections reflections) {
         this.reflections = reflections;
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
             try {

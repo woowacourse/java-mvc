@@ -15,7 +15,6 @@ class ControllerScannerTest {
     void getControllers() {
         Reflections reflections = new Reflections("samples");
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
-        controllerScanner.initialize();
 
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
