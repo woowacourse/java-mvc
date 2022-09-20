@@ -65,10 +65,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private boolean isHandleableMethodParameters(final Method method) {
-        final List<Class<?>> currentMethodParameters = List.of(method.getParameterTypes());
+        final List<Class<?>> handlerParameters = List.of(method.getParameterTypes());
         final List<Class<?>> handleableMethodParameters = List.of(HttpServletRequest.class, HttpServletResponse.class);
 
-        return currentMethodParameters.equals(handleableMethodParameters);
+        return handlerParameters.equals(handleableMethodParameters);
     }
 
     private void putHandlersByEachMethod(final Method method, final Object controller) {
@@ -80,7 +80,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private List<HandlerKey> findHandlerKeys(Method handlerMethod) {
+    private List<HandlerKey> findHandlerKeys(final Method handlerMethod) {
         final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
         final String url = requestMapping.value();
 
