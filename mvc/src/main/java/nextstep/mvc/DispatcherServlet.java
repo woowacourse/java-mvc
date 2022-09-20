@@ -74,10 +74,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private void render(final HandlerExecution handler,
                         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var result = handler.handle(request, response);
-        final var view = result.getView();
-        final var model = result.getModel();
+        final var modelAndView = handler.handle(request, response);
 
-        view.render(model, request, response);
+        modelAndView.render(request, response);
     }
 }
