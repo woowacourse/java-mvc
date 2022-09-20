@@ -1,11 +1,12 @@
 package com.techcourse;
 
-import java.io.File;
-import java.util.stream.Stream;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.stream.Stream;
 
 public class Application {
 
@@ -13,12 +14,12 @@ public class Application {
 
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         final int port = defaultPortIfNull(args);
 
-        var tomcat = new Tomcat();
+        final var tomcat = new Tomcat();
         tomcat.setConnector(createConnector(port));
-        var docBase = new File("app/src/main/webapp/").getAbsolutePath();
+        final var docBase = new File("app/src/main/webapp/").getAbsolutePath();
         tomcat.addWebapp("", docBase);
         log.info("configuring app with basedir: {}", docBase);
 
@@ -26,14 +27,14 @@ public class Application {
         tomcat.getServer().await();
     }
 
-    private static Connector createConnector(int port) {
-        var connector = new Connector();
+    private static Connector createConnector(final int port) {
+        final var connector = new Connector();
         connector.setPort(port);
         connector.setProperty("bindOnInit", "false");
         return connector;
     }
 
-    private static int defaultPortIfNull(String[] args) {
+    private static int defaultPortIfNull(final String[] args) {
         return Stream.of(args)
                 .findFirst()
                 .map(Integer::parseInt)
