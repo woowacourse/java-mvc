@@ -39,8 +39,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void addHandlerExecutions(final Set<Class<?>> handlers) {
         for (Class<?> handler : handlers) {
-            Object executableObject = createNewInstance(handler);
-            initRequestMethods(handler, executableObject);
+            initRequestMethods(handler);
+        }
+    }
+
+    private void initRequestMethods(final Class<?> handler) {
+        Object executableObject = createNewInstance(handler);
+        Set<Method> methods = ReflectionUtils.getMethods(handler,
+                method -> method.isAnnotationPresent(RequestMapping.class));
+
+        for (Method method : methods) {
+            registerHandlerExecution(executableObject, method);
         }
     }
 
@@ -51,15 +60,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             log.error("Initialization failed", e);
             throw new IllegalStateException();
-        }
-    }
-
-    private void initRequestMethods(final Class<?> handler, final Object executableObject) {
-        Set<Method> methods = ReflectionUtils.getMethods(handler,
-                method -> method.isAnnotationPresent(RequestMapping.class));
-
-        for (Method method : methods) {
-            registerHandlerExecution(executableObject, method);
         }
     }
 
