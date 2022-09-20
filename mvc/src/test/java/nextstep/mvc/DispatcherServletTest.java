@@ -15,7 +15,6 @@ import samples.TestAnnotationController;
 
 class DispatcherServletTest {
 
-
     @DisplayName("handler가 존재하지 않는 경우 예외가 발생한다.")
     @Test
     void dispatcherServletExceptionIfNotExistHandler() {
