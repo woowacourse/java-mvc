@@ -1,7 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,10 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,32 +18,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     public static final Class<RequestMapping> REQUEST_MAPPING_CLASS = RequestMapping.class;
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        for (Class<?> aClass : reflections.getTypesAnnotatedWith(Controller.class)) {
-            Object handler = createHandler(aClass);
-            addHandlerExecutions(handler);
+        for (Object controller : controllerScanner.getControllers()) {
+            addHandlerExecutions(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private static Object createHandler(final Class<?> aClass) {
-        try {
-            return aClass.getConstructor()
-                    .newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException exception) {
-            log.warn(exception.getMessage());
-            throw new IllegalStateException();
-        }
     }
 
     private void addHandlerExecutions(final Object handler) {
