@@ -21,9 +21,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -35,13 +37,18 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handler = findHandler(request);
-            ModelAndView modelAndView = findRenderView(request, response, handler);
+            final Object handler = findHandler(request);
+            final HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -49,24 +56,17 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private ModelAndView findRenderView(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
-            throws Exception {
-        if (HandlerExecution.class.isAssignableFrom(handler.getClass())) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-        if (Controller.class.isAssignableFrom(handler.getClass())) {
-            String viewName = ((Controller) handler).execute(request, response);
-            final JspView jspView = new JspView(viewName);
-            return new ModelAndView(jspView);
-        }
-
-        throw new IllegalStateException("해당 handler는 지원하지 않습니다.");
-    }
-
     private Object findHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private HandlerAdapter findHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow();
     }
