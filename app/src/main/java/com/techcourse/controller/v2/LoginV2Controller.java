@@ -6,8 +6,12 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,39 +20,41 @@ public class LoginV2Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginV2Controller.class);
 
-    /**
-     *         controllers.put("/login/view", new LoginViewController());
-     *         controllers.put("/logout", new LogoutController());
-     */
-    @RequestMapping(value = "/v2/login/view")
-    public String loginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return UserSession.getUserFrom(req.getSession())
+    @RequestMapping(value = "/v2/login/view", method = RequestMethod.GET)
+    public ModelAndView loginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        final String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";
                 })
                 .orElse("/login.jsp");
+        return new ModelAndView(new JspView(viewName));
     }
 
-    @RequestMapping(value = "/v2/login")
-    public String login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/v2/login", method = RequestMethod.GET)
+    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
+        String viewName = findByAccount(req);
+        return new ModelAndView(new JspView(viewName));
+    }
+
+    @RequestMapping(value = "/v2/logout", method = RequestMethod.GET)
+    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        final var session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        return new ModelAndView(new JspView("redirect:/"));
+    }
+
+    private String findByAccount(final HttpServletRequest req) {
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
-    }
-
-    @RequestMapping(value = "/v2/logout")
-    public String logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return "redirect:/";
     }
 
     private String login(final HttpServletRequest request, final User user) {
