@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,6 +59,19 @@ class DispatcherServletTest {
 
         // then
         verify(request.getRequestDispatcher("/post.jsp")).forward(request, response);
+    }
+
+    @Test
+    void getHandlerException() {
+        HttpServletRequest request = MockHttpRequestBuilder.builder()
+                .mockRequestURI("/not-found")
+                .mockMethod("POST")
+                .build();
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(ServletException.class)
+                .hasMessage("요청을 처리할 수 없습니다.");
+
     }
 
     private static class MockHttpRequestBuilder {
