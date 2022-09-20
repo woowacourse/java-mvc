@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final int FIRST_INDEX = 0;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -37,7 +38,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void collectMethodsToHandlerExecutions(final List<Method> methods) {
         for (Method method : methods) {
             final var requestMapping = method.getAnnotation(RequestMapping.class);
-            final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+            final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[FIRST_INDEX]);
 
             handlerExecutions.put(handlerKey, new HandlerExecution(method));
         }
@@ -53,7 +54,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         final var uri = request.getRequestURI();
         final var method = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.from(method));
+        HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.valueOf(method));
 
         return handlerExecutions.get(handlerKey);
     }
