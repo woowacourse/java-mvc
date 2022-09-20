@@ -1,15 +1,14 @@
 package nextstep.mvc.controller.tobe;
 
-import nextstep.web.support.RequestMethod;
-
 import java.util.Objects;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
 
     private final String url;
     private final RequestMethod requestMethod;
 
-    public HandlerKey(final String url, final RequestMethod requestMethod) {
+    public HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
     }
