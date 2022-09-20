@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public interface View {
-    void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response);
 
     String getName();
 }
