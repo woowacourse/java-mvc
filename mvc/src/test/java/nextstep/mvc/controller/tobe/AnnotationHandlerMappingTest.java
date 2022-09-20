@@ -11,6 +11,7 @@ import java.util.List;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import samples.TestAnnotationController;
 
 class AnnotationHandlerMappingTest {
 
@@ -18,7 +19,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.controller");
+        handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
 
@@ -55,21 +56,19 @@ class AnnotationHandlerMappingTest {
     @Test
     void findControllers() {
         List<Class<?>> controllers = handlerMapping.findControllers();
-        System.out.println("controllers = " + controllers);
         assertThat(controllers).hasSize(1);
     }
 
     @Test
     void findMethods() {
-        List<Method> methods = handlerMapping.findMappingMethods(TestController.class);
-        System.out.println("methods = " + methods);
+        List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
         assertThat(methods).hasSize(2);
     }
 
     @Test
     void sameRequestURL() {
         //given
-        List<Method> methods = handlerMapping.findMappingMethods(TestController.class);
+        List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
         Method findUserId = methods.get(0);
         Method save = methods.get(1);
         assertThat(findUserId.getName()).isEqualTo("findUserId");
@@ -86,7 +85,7 @@ class AnnotationHandlerMappingTest {
     @Test
     void anyMatchRequestMethod() {
         //given
-        List<Method> methods = handlerMapping.findMappingMethods(TestController.class);
+        List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
         Method findUserId = methods.get(0);
         assertThat(findUserId.getName()).isEqualTo("findUserId");
 

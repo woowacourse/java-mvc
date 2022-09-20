@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.asis.ForwardController;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +18,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -42,24 +45,19 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             Object handler = findHandler(request);
-            Class<?> handlerClass = handler.getClass();
-            if (handlerClass.equals(ForwardController.class)) {
-                final Controller controller = (Controller) handler;
-                final var viewName = controller.execute(request, response);
-                move(viewName, request, response);
-                return;
-            }
-            if (handlerClass.equals(HandlerExecution.class)) {
-                final HandlerExecution handlerExecution = (HandlerExecution) handler;
-                final ModelAndView modelAndView = handlerExecution.handle(request, response);
-                move(modelAndView, request, response);
-                return;
-            }
-            throw new NoSuchElementException("일치하는 핸들러가 없습니다.");
+            ModelAndView modelAndView = findAdapter(handler).handle(request, response, handler);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerAdapter findAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("일치하는 어댑터가 없습니다."));
     }
 
     private Object findHandler(HttpServletRequest request) {
@@ -73,16 +71,5 @@ public class DispatcherServlet extends HttpServlet {
     private void move(final ModelAndView modelAndView, final HttpServletRequest request,
                       final HttpServletResponse response) throws Exception {
         modelAndView.getView().render(modelAndView.getModel(), request, response);
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
