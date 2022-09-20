@@ -1,6 +1,10 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.v1.LoginController;
+import com.techcourse.controller.v1.LoginViewController;
+import com.techcourse.controller.v1.LogoutController;
+import com.techcourse.controller.v1.RegisterController;
+import com.techcourse.controller.v1.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
