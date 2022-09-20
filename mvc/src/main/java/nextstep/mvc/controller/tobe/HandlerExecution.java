@@ -6,15 +6,23 @@ import java.lang.reflect.Method;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
-    private final Class<?> handlerClass;
+    private final Object controller;
     private final Method handlerMethod;
 
-    public HandlerExecution(final Class<?> handlerClass, final Method handlerMethod) {
-        this.handlerClass = handlerClass;
+    public HandlerExecution(final Object controller, final Method handlerMethod) {
+        this.controller = controller;
         this.handlerMethod = handlerMethod;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) handlerMethod.invoke(handlerClass.newInstance(), request, response);
+        return (ModelAndView) handlerMethod.invoke(controller, request, response);
+    }
+
+    @Override
+    public String toString() {
+        return "HandlerExecution{" +
+                "controller=" + controller.getClass().getSimpleName() +
+                ", handlerMethod=" + handlerMethod.getName() +
+                '}';
     }
 }

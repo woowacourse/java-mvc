@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.NoDefaultConstructorException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -49,17 +50,28 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     .filter(it -> it.isAnnotationPresent(RequestMapping.class))
                     .collect(Collectors.toList());
 
-            mapMethodsForHandlerExecution(methods, controller);
+            final Object controllerInstance = getControllerInstance(controller);
+            mapMethodsForHandlerExecution(methods, controllerInstance);
         }
     }
 
-    private void mapMethodsForHandlerExecution(final List<Method> methods, final Class<?> controller) {
+    private Object getControllerInstance(final Class<?> controller) throws NoDefaultConstructorException {
+        try {
+            return controller.getConstructor().newInstance();
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new NoDefaultConstructorException();
+        }
+    }
+
+    private void mapMethodsForHandlerExecution(final List<Method> methods, final Object controller) {
         for (final Method method : methods) {
             final RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
             final String path = requestMappingAnnotation.value();
-            final RequestMethod[] requestMethods = requestMappingAnnotation.method();
 
-            addHandlerExecutionsByPath(path, requestMethods, new HandlerExecution(controller, method));
+            final RequestMethod[] requestMethods = requestMappingAnnotation.method();
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            addHandlerExecutionsByPath(path, requestMethods, handlerExecution);
         }
     }
 
