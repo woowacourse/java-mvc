@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.ViewResolver;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +20,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final List<ViewResolver> viewResolvers;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
+        this.viewResolvers = new ArrayList<>();
     }
 
     @Override
@@ -39,6 +41,10 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters.add(handlerAdapter);
     }
 
+    public void addViewResolvers(ViewResolver viewResolver) {
+        this.viewResolvers.add(viewResolver);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
@@ -47,8 +53,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = findHandler(request);
             final HandlerAdapter adapter = findAdapter(handler);
-            ModelAndView handle = adapter.handle(request, response, handler);
-            // todo : handle model and view
+            ModelAndView modelAndView = adapter.handle(request, response, handler);
+            resolve(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -69,14 +75,14 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private void resolve(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
+        modelAndView.render(request, response);
+    }
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private ViewResolver findViewResolver(String viewName) {
+        return viewResolvers.stream()
+                .filter(resolver -> resolver.supports(viewName))
+                .findAny()
+                .orElseThrow();
     }
 }
