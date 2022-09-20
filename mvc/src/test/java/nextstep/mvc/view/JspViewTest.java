@@ -19,8 +19,8 @@ class JspViewTest {
     @DisplayName("redirect를 할 수 있다.")
     @Test
     void redirect() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
@@ -33,9 +33,9 @@ class JspViewTest {
     @DisplayName("requestDispatcher를 이용해 forward 해줄 수 있다.")
     @Test
     void forward() throws ServletException, IOException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
 
         when(request.getRequestDispatcher("/index.jsp"))
                 .thenReturn(requestDispatcher);
