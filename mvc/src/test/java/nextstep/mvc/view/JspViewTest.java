@@ -37,7 +37,6 @@ class JspViewTest {
         View view = new JspView("redirect:hello");
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
-        doNothing().when(response).sendRedirect(any());
         when(request.getRequestDispatcher(any())).thenReturn(mock(RequestDispatcher.class));
 
         // when
