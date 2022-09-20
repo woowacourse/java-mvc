@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.exception.NoHandlerAdapterFoundException;
+import nextstep.mvc.exception.NoHandlerFoundException;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -44,9 +45,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object controller = getController(request);
-            HandlerAdapter ha = getHandlerAdapter(controller);
-            ModelAndView mav = ha.handle(request, response, controller);
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView mav = handlerAdapter.handle(request, response, handler);
             View view = mav.getView();
             view.render(mav.getModel(), request, response);
         } catch (Throwable e) {
@@ -55,20 +56,18 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter getHandlerAdapter(final Object controller) {
-        for (HandlerAdapter ha : handlerAdapters) {
-            if (ha.supports(controller)) {
-                return ha;
-            }
-        }
-        throw new NoHandlerAdapterFoundException();
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(NoHandlerAdapterFoundException::new);
     }
 
-    private Object getController(final HttpServletRequest request) {
+    private Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(NoHandlerFoundException::new);
     }
 }
