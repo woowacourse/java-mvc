@@ -1,9 +1,14 @@
 package nextstep.mvc.controller.tobe;
 
+import static java.util.stream.Collectors.toList;
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
@@ -18,7 +23,6 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private static final int METHOD_INDEX = 0;
 
     private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -55,21 +59,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void putSupportedMethodInHandlerExecution(final Method[] methods) {
         for (Method method : methods) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            putHandlerExecution(method, requestMapping);
-        }
-    }
-
-    private void putHandlerExecution(final Method method, final RequestMapping requestMapping) {
-        if (requestMapping != null) {
-            final HandlerKey handlerKey = getHandlerKey(requestMapping);
             final Object handler = getHandler(method);
-            handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
+            putHandlerExecution(method, requestMapping, handler);
         }
-    }
-
-    private static HandlerKey getHandlerKey(final RequestMapping requestMapping) {
-        return new HandlerKey(requestMapping.value(),
-                RequestMethod.valueOf(requestMapping.method()[METHOD_INDEX].name()));
     }
 
     private static Object getHandler(final Method method) {
@@ -79,5 +71,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                  NoSuchMethodException e) {
             throw new NotSupportHandler();
         }
+    }
+
+    private void putHandlerExecution(final Method method, final RequestMapping requestMapping, final Object handler) {
+        final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping);
+        for (HandlerKey handlerKey : handlerKeys) {
+            log.info("HandlerKey : {}", handlerKey);
+            handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
+        }
+    }
+
+    private static List<HandlerKey> getHandlerKeys(final RequestMapping requestMapping) {
+        if (requestMapping != null) {
+            return Arrays.stream(requestMapping.method())
+                    .map(method -> new HandlerKey(requestMapping.value(), method))
+                    .collect(toList());
+        }
+        return new ArrayList<>();
     }
 }
