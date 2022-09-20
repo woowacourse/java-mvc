@@ -75,7 +75,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request,
                       final HttpServletResponse response) throws Exception {
-        final JspView jspView = new JspView(modelAndView.getViewPath());
-        jspView.render(modelAndView.getModel(), request, response);
+        modelAndView.render(request, response);
     }
 }
