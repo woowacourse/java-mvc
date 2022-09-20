@@ -1,15 +1,14 @@
 package nextstep.mvc.controller.tobe.adapters;
 
-import static nextstep.fixtures.HttpServletFixtures.*;
-import static org.assertj.core.api.Assertions.*;
+import static nextstep.fixtures.HttpServletFixtures.createRequest;
+import static nextstep.fixtures.HttpServletFixtures.createResponse;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import nextstep.fixtures.HttpServletFixtures;
 import nextstep.mvc.controller.tobe.mappings.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
