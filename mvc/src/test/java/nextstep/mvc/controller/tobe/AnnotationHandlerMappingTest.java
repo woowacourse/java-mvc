@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +20,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET /get-test 요청에 대한 핸들러가 요청을 처리한다.")
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -34,6 +36,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("POST /post-test 요청에 대한 핸들러가 요청을 처리한다.")
     @Test
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
