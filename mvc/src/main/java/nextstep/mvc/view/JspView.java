@@ -24,12 +24,16 @@ public class JspView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
+        if (isRedirect()) {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
 
         renderModelAndView(model, request, response);
+    }
+
+    private boolean isRedirect() {
+        return viewName.startsWith(REDIRECT_PREFIX);
     }
 
     private void renderModelAndView(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
