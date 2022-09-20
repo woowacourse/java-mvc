@@ -40,11 +40,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void initializeHandlerExecutions()
             throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-        for (Object basePackage : basePackage) {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            initializeHandlerExecutions(controllers);
-        }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        initializeHandlerExecutions(controllers);
     }
 
     private void initializeHandlerExecutions(Set<Class<?>> controllers)
