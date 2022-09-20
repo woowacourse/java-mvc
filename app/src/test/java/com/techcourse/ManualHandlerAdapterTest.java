@@ -42,10 +42,10 @@ class ManualHandlerAdapterTest {
             final HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
             // when
-            final boolean expected = manualHandlerAdapter.supports(handlerExecution);
+            final boolean canSupport = manualHandlerAdapter.supports(handlerExecution);
 
             // then
-            assertThat(expected).isFalse();
+            assertThat(canSupport).isFalse();
         }
     }
 
