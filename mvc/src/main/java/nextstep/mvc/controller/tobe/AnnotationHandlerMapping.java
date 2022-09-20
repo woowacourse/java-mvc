@@ -34,25 +34,31 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void initHandlerExecutionsFrom(final Class<?> handlerClassFile) {
+        Object handler = ControllerScanner.newInstance(handlerClassFile);
         List<Method> annotatedMethods = ControllerScanner.findAnnotatedMethod(handlerClassFile);
+
         for (Method method : annotatedMethods) {
-            insertHandlerExecutionFrom(handlerClassFile, method);
+            insertHandlerExecutionFrom(handler, method);
         }
     }
 
-    private void insertHandlerExecutionFrom(final Class<?> handlerClassFile, final Method method) {
+    private void insertHandlerExecutionFrom(final Object handler, final Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         String url = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(handlerClassFile, method);
+            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
             this.handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String url = request.getRequestURI();
+        RequestMethod method = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(url, method);
+
+        return handlerExecutions.get(handlerKey);
     }
 }
