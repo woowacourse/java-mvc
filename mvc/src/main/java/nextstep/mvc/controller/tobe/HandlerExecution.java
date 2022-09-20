@@ -3,7 +3,6 @@ package nextstep.mvc.controller.tobe;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,16 +24,11 @@ public class HandlerExecution {
     }
 
     private Constructor<?> emptyConstructor(final Method method) {
-        final var declaringClass = method.getDeclaringClass();
-        final var constructors = List.of(declaringClass.getConstructors());
-
-        return constructors.stream()
-                .filter(this::hasNoParameters)
-                .findAny()
-                .orElseThrow(NoSuchMethodError::new);
-    }
-
-    private boolean hasNoParameters(final Constructor<?> constructor) {
-        return constructor.getParameterCount() == 0;
+        try {
+            final var declaringClass = method.getDeclaringClass();
+            return declaringClass.getConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new NoSuchMethodError("빈 생성자를 조회할 수 없습니다.");
+        }
     }
 }
