@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -37,21 +38,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void scanHandlersInBasePackages() {
         Reflections reflections = new Reflections(basePackages);
         reflections.getTypesAnnotatedWith(Controller.class)
-            .forEach(this::scanRequestMappings);
+            .forEach(this::scanHandlersInController);
     }
 
-    private void scanRequestMappings(Class<?> controller) {
+    private void scanHandlersInController(Class<?> controller) {
         for (Method method : controller.getMethods()) {
-            HandlerExecution execution = new HandlerExecution(method);
             Optional.ofNullable(method.getAnnotation(RequestMapping.class))
-                .ifPresent(requestMapping -> addHandlerExecution(requestMapping, execution));
+                .ifPresent(registerHandler(method));
         }
+    }
+
+    private Consumer<RequestMapping> registerHandler(Method method) {
+        return requestMapping -> addHandlerExecution(requestMapping, new HandlerExecution(method));
     }
 
     private void addHandlerExecution(RequestMapping requestMapping, HandlerExecution execution) {
         String url = requestMapping.value();
-        for (RequestMethod method : requestMapping.method()) {
-            handlerExecutions.put(new HandlerKey(url, method), execution);
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            handlerExecutions.put(new HandlerKey(url, requestMethod), execution);
         }
     }
 
