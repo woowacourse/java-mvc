@@ -32,28 +32,28 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (var basePackage : basePackages) {
             Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-            extractClass(classes);
+            setHandlerExecution(classes);
         }
     }
 
-    private void extractClass(Set<Class<?>> classes) {
+    private void setHandlerExecution(Set<Class<?>> classes) {
         for (var clazz : classes) {
             try {
                 Object controller = clazz.getDeclaredConstructor().newInstance();
-                extractMethodInClass(clazz, controller);
+                setMethodInClass(clazz, controller);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 log.info("error:{}, message:{}", e, e.getMessage());
             }
         }
     }
 
-    private void extractMethodInClass(Class<?> clazz, Object controller) {
+    private void setMethodInClass(Class<?> clazz, Object controller) {
         for (var method : clazz.getMethods()) {
-            extractTargetInMethod(controller, method);
+            setTargetIfAnnotationPresent(controller, method);
         }
     }
 
-    private void extractTargetInMethod(Object controller, Method method) {
+    private void setTargetIfAnnotationPresent(Object controller, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             saveHandlerExecution(controller, method);
         }
