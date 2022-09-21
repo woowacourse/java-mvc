@@ -29,18 +29,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        for (Object base : basePackage) {
-            initializeEachBase(base);
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private void initializeEachBase(Object base) {
-        Reflections reflections = new Reflections(base);
+        Reflections reflections = new Reflections(basePackage);
         for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             List<Method> methods = getRequestMappingMethods(controller);
             methods.forEach(this::setUpHandlerExecutions);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private List<Method> getRequestMappingMethods(Class<?> controller) {
