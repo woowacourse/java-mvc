@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(base);
         for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             List<Method> methods = getRequestMappingMethods(controller);
-            methods.forEach(it -> setUpHandlerExecutions(controller, it));
+            methods.forEach(this::setUpHandlerExecutions);
         }
     }
 
@@ -49,11 +49,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private void setUpHandlerExecutions(Class<?> controller, Method method) {
+    private void setUpHandlerExecutions(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution value = new HandlerExecution(controller, method);
+            HandlerExecution value = new HandlerExecution(method);
             handlerExecutions.put(key, value);
             log.info("Path : {} , Method : {}", requestMapping.value(), requestMethod);
         }
