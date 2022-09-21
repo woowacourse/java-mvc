@@ -1,20 +1,18 @@
 package nextstep.mvc.handlerMapping;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.mvc.controller.ControllerScanner;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.controller.tobe.HandlerKey;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
@@ -22,32 +20,34 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> annotatedControllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> annotatedControllers = controllerScanner.getAnnotatedControllers();
 
-        for (Class<?> handler : annotatedControllers) {
-            final Set<Method> annotatedMethods = getAnnotatedMethods(handler);
+        for (Class<?> controller : annotatedControllers) {
+            Set<Method> annotatedMethods = ReflectionUtils.getAllMethods(controller,
+                ReflectionUtils.withAnnotation(RequestMapping.class));
             try {
-                setHandlerExecutions(handler, annotatedMethods);
+                setHandlerExecutions(controller, annotatedMethods);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private Set<Method> getAnnotatedMethods(final Class<?> handler) {
-        return Arrays.stream(handler.getMethods())
-            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-            .collect(Collectors.toUnmodifiableSet());
+    public Object getHandler(final HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.from(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+
+        return handlerExecutions.get(handlerKey);
     }
 
     private void setHandlerExecutions(final Class<?> handler, final Set<Method> annotatedMethods) throws Exception {
@@ -67,13 +67,5 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
             handlerExecutions.put(handlerKey, handlerExecution);
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
-        final RequestMethod requestMethod = RequestMethod.from(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-
-        return handlerExecutions.get(handlerKey);
     }
 }
