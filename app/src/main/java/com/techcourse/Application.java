@@ -17,9 +17,9 @@ public class Application {
     public static void main(final String[] args) throws Exception {
         final int port = defaultPortIfNull(args);
 
-        final var tomcat = new Tomcat();
+        Tomcat tomcat = new Tomcat();
         tomcat.setConnector(createConnector(port));
-        final var docBase = new File("app/src/main/webapp/").getAbsolutePath();
+        String docBase = new File("app/src/main/webapp/").getAbsolutePath();
         tomcat.addWebapp("", docBase);
         log.info("configuring app with basedir: {}", docBase);
 
@@ -28,7 +28,7 @@ public class Application {
     }
 
     private static Connector createConnector(final int port) {
-        final var connector = new Connector();
+        Connector connector = new Connector();
         connector.setPort(port);
         connector.setProperty("bindOnInit", "false");
         return connector;

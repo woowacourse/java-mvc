@@ -1,7 +1,11 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
+import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +16,16 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        DispatcherServlet dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
 
-        final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
+        String packageName = getClass().getPackage().getName();
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(packageName));
+
+        dispatcherServlet.addHandlerAdapters(new ManualHandlerAdapter());
+        dispatcherServlet.addHandlerAdapters(new AnnotationHandlerAdapter());
+
+        ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 
