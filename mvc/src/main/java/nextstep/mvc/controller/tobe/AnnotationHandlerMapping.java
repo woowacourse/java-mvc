@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +34,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Class<?> controllers : findControllers()) {
-            findMappingMethods(controllers)
-                    .forEach(this::saveMethodMapping);
+        for (Class<?> controllerClass : findControllers()) {
+            Object handler = getInstance(controllerClass);
+            findMappingMethods(controllerClass)
+                    .forEach(method -> saveMethodMapping(handler, method));
         }
     }
 
@@ -51,14 +53,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private void saveMethodMapping(Method method) {
+    private void saveMethodMapping(Object handler, Method method) {
         RequestMapping annotation = method.getAnnotation(REQUEST_MAPPING_CLASS);
         for (RequestMethod requestMethod : annotation.method()) {
             String requestURL = annotation.value();
             HandlerKey handlerKey = new HandlerKey(requestURL, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(method);
+            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
             handlerExecutions.put(handlerKey, handlerExecution);
             log.info("Path : {}, Method : {}.{}()", requestURL, method.getDeclaringClass(), method.getName());
+        }
+    }
+
+    private Object getInstance(Class<?> aClass) {
+        try {
+            return aClass.getDeclaredConstructor().newInstance();
+        } catch (NoSuchMethodException | SecurityException | InstantiationException |
+                IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("인스턴스를 찾을 수 없습니다.");
         }
     }
 

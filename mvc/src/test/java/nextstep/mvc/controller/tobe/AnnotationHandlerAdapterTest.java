@@ -18,14 +18,14 @@ import samples.TestAnnotationController;
 
 class AnnotationHandlerAdapterTest {
     private final HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+    private final Fixtures fixtures = new Fixtures();
 
     @DisplayName("매핑될 핸들러를 어노테이션 핸들러가 지원하는지 확인한다.")
     @Test
-    void supports() throws NoSuchMethodException {
-        final Method executionMethod = TestAnnotationController.class.getDeclaredMethod(
-                "findUserId", HttpServletRequest.class, HttpServletResponse.class
-        );
-        HandlerExecution handlerExecution = new HandlerExecution(executionMethod);
+    void supports() {
+        TestAnnotationController handler = new TestAnnotationController();
+        HandlerExecution handlerExecution = new HandlerExecution(handler,
+                fixtures.getHandlerMethod(handler, "findUserId"));
         assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
     }
 
@@ -39,11 +39,8 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final Method executionMethod = TestAnnotationController.class.getDeclaredMethod(
-                "findUserId", HttpServletRequest.class, HttpServletResponse.class
-        );
-
-        HandlerExecution handlerExecution = new HandlerExecution(executionMethod);
+        Method findUserId = fixtures.getHandlerMethod(new TestAnnotationController(), "findUserId");
+        HandlerExecution handlerExecution = new HandlerExecution(fixtures.getInstance(findUserId), findUserId);
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
         JspView jspView = (JspView) modelAndView.getView();
