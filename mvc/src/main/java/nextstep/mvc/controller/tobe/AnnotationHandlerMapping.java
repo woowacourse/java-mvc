@@ -2,8 +2,10 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,12 +53,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerExecutions(final Map<Class<?>, Object> controllers,
                                       final Method method,
                                       final RequestMapping requestMapping) {
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-            Class<?> declaringClass = requestMethod.getDeclaringClass();
-            HandlerExecution handlerExecution = new HandlerExecution(controllers.get(declaringClass), method);
-            handlerExecutions.put(key, handlerExecution);
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
+        for (HandlerKey handlerKey : handlerKeys) {
+            Class<?> clazz = method.getDeclaringClass();
+            HandlerExecution handlerExecution = new HandlerExecution(controllers.get(clazz), method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
+    }
+
+    private List<HandlerKey> mapHandlerKeys(final String value, final RequestMethod[] methods) {
+        return Arrays.stream(methods)
+                .map(method -> new HandlerKey(value, method))
+                .collect(Collectors.toList());
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
