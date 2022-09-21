@@ -66,8 +66,7 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         final String viewName = ((Controller) handler).execute(request, response);
-        final View view = new JspView(viewName);
-        return new ModelAndView(view);
+        return new ModelAndView(new JspView(viewName));
     }
 
     private void render(final HttpServletRequest request, final HttpServletResponse response,
