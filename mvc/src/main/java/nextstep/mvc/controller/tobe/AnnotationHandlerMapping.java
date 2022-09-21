@@ -56,24 +56,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Object newInstanceOf(Class<?> controllerClass) {
+    private Object newInstanceOf(Class<?> handlerClass) {
         try {
-            final Constructor<?> constructor = controllerClass.getConstructor();
+            final Constructor<?> constructor = handlerClass.getConstructor();
             return constructor.newInstance();
         } catch (Exception e) {
             throw new NoConstructorException();
         }
     }
 
-    private List<Method> extractValidHandler(Class<?> controllerClass) {
-        final Method[] declaredMethods = controllerClass.getDeclaredMethods();
+    private List<Method> extractValidHandler(Class<?> handlerClass) {
+        final Method[] declaredMethods = handlerClass.getDeclaredMethods();
         return Arrays.stream(declaredMethods)
                 .filter(this::isValidRequestMapping)
                 .collect(Collectors.toList());
     }
 
-    private boolean isValidRequestMapping(Method controllerMethod) {
-        final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+    private boolean isValidRequestMapping(Method handlerMethod) {
+        final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
         if (requestMapping == null) {
             return false;
         }
@@ -85,8 +85,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return requestMapping.method().length > 0;
     }
 
-    private void putToHandlerExecutions(Method controllerMethod, HandlerExecution handlerExecution) {
-        final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+    private void putToHandlerExecutions(Method handlerMethod, HandlerExecution handlerExecution) {
+        final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
 
         final String url = requestMapping.value();
         final RequestMethod[] requestMethods = requestMapping.method();
