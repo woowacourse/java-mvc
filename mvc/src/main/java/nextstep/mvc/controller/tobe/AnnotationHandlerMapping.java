@@ -43,11 +43,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void scanRequestMapping(Class<?> controllerClass) {
         try {
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
-            Arrays.stream(controllerClass.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> putHandlerExecutions(controller, method));
+            for (Method method : controllerClass.getDeclaredMethods()) {
+                isRequestMappingAnnotation(controller, method);
+            }
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.fillInStackTrace();
+        }
+    }
+
+    private void isRequestMappingAnnotation(Object controllerClass, Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            putHandlerExecutions(controllerClass, method);
         }
     }
 
