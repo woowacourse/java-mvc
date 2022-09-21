@@ -11,7 +11,7 @@ class HandlerExecutionsFinderTest {
     @Test
     void findHandlerExecutionsByAnnotation() {
         // given
-        HandlerExecutionsFinder finder = new HandlerExecutionsFinder();
+        HandlerExecutionsFinder finder = new HandlerExecutionsFinder(new ControllerScanner());
         // when
         Map<HandlerKey, HandlerExecution> executions = finder.findHandlerExecutions("samples");
         // then

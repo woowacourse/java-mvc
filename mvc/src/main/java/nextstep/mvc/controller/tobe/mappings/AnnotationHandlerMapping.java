@@ -23,7 +23,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        HandlerExecutionsFinder finder = new HandlerExecutionsFinder();
+        HandlerExecutionsFinder finder = new HandlerExecutionsFinder(new ControllerScanner());
         for (String basePackage : basePackages) {
             handlerExecutions.putAll(finder.findHandlerExecutions(basePackage));
         }

@@ -12,33 +12,42 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HandlerExecutionsFinder {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerExecutionsFinder.class);
-
     private static final int PARAMETER_MIN_LENGTH = 2;
+
+    private final ControllerScanner scanner;
+
+    public HandlerExecutionsFinder(ControllerScanner scanner) {
+        this.scanner = scanner;
+    }
 
     public Map<HandlerKey, HandlerExecution> findHandlerExecutions(String basePackage) {
         Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
-        Set<Class<?>> classes = findControllerClass(basePackage);
+        Set<Class<?>> classes = scanner.findClasses(basePackage);
 
         for (Class<?> clazz : classes) {
-            Map<Method, RequestMapping> map = findRequestMappingAnnotatedMethods(clazz);
             Object instance = createInstance(clazz);
+            Map<Method, RequestMapping> map = findRequestMappingAnnotatedMethods(clazz);
             executions.putAll(mapToHandlerExecutionsPerMethod(map, instance));
         }
         return executions;
     }
 
-    private Set<Class<?>> findControllerClass(String basePackage) {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
+    private Object createInstance(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException |
+                 IllegalAccessException |
+                 InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new IllegalArgumentException("인스턴스 생성 시 오류가 발생했습니다", e);
+        }
     }
 
     private Map<Method, RequestMapping> findRequestMappingAnnotatedMethods(Class<?> clazz) {
@@ -48,17 +57,6 @@ public class HandlerExecutionsFinder {
                         Function.identity(),
                         method -> method.getDeclaredAnnotation(RequestMapping.class)
                 ));
-    }
-
-    private static Object createInstance(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException |
-                 IllegalAccessException |
-                 InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new IllegalArgumentException("인스턴스 생성 시 오류가 발생했습니다", e);
-        }
     }
 
     private Map<HandlerKey, HandlerExecution> mapToHandlerExecutionsPerMethod(Map<Method, RequestMapping> map,
