@@ -6,48 +6,38 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.stream.Stream;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class ManualHandlerAdapterTest {
 
     final ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-    @Nested
-    @DisplayName("supports 메소드는")
-    class Supports {
+    @ParameterizedTest
+    @MethodSource("supportsData")
+    @DisplayName("supports 메소드는 Controller 인터페이스 기반의 객체를 받으면 True를, 그 이외의 객체를 받으면 False를 반환한다.")
+    void supports_handlerExecution(Object handler, boolean canSupport) {
+        // when
+        final boolean result = manualHandlerAdapter.supports(handler);
 
-        @Test
-        @DisplayName("Controller 인터페이스 기반의 객체를 받으면 True를 반환한다.")
-        void supports_controller() {
-            // given
-            final Controller controller = mock(Controller.class);
+        // then
+        assertThat(result).isEqualTo(canSupport);
+    }
 
-            // when
-            final boolean expected = manualHandlerAdapter.supports(controller);
-
-            // then
-            assertThat(expected).isTrue();
-        }
-
-        @Test
-        @DisplayName("Controller 인터페이스 기반이 아닌 객체를 받으면 False를 반환한다.")
-        void supports_notController() {
-            // given
-            final HandlerExecution handlerExecution = mock(HandlerExecution.class);
-
-            // when
-            final boolean canSupport = manualHandlerAdapter.supports(handlerExecution);
-
-            // then
-            assertThat(canSupport).isFalse();
-        }
+    public static Stream<Arguments> supportsData() {
+        return Stream.of(
+                Arguments.of(mock(Controller.class), true),
+                Arguments.of(mock(HandlerExecution.class), false)
+        );
     }
 
     @Test

@@ -1,53 +1,41 @@
 package nextstep.mvc.controller.tobe;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.stream.Stream;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class HandlerExecutionHandlerAdapterTest {
 
     private final HandlerExecutionHandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
-    @Nested
-    @DisplayName("supports 메소드는")
-    class Supports {
+    @ParameterizedTest
+    @MethodSource("supportsData")
+    @DisplayName("supports 메소드는 HandlerExecution 객체를 받으면 True를, 그 이외의 객체를 받으면 False를 반환한다.")
+    void supports_handlerExecution(Object handler, boolean canSupport) {
+        // when
+        final boolean result = handlerAdapter.supports(handler);
 
-        @Test
-        @DisplayName("HandlerExecution 객체를 받으면 True를 반환한다.")
-        void supports_handlerExecution() {
-            // given
-            final HandlerExecution handlerExecution = mock(HandlerExecution.class);
+        // then
+        assertThat(result).isEqualTo(canSupport);
+    }
 
-            // when
-            final boolean canSupport = handlerAdapter.supports(handlerExecution);
-
-            // then
-            assertThat(canSupport).isTrue();
-        }
-
-        @Test
-        @DisplayName("HandlerExecution 이외의 객체를 받으면 False를 반환한다.")
-        void supports_notHandlerExecution() {
-            // given
-            final Controller controller = mock(Controller.class);
-
-            // when
-            final boolean canSupport = handlerAdapter.supports(controller);
-
-            // then
-            assertThat(canSupport).isFalse();
-        }
+    public static Stream<Arguments> supportsData() {
+        return Stream.of(
+                Arguments.of(mock(HandlerExecution.class), true),
+                Arguments.of(mock(Controller.class), false)
+        );
     }
 
     @Test
