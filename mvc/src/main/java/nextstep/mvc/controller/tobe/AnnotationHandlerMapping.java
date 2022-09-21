@@ -1,5 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.exception.ControllerCreateException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -51,8 +53,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
 
             List<HandlerKey> handlerKeys = createHandlerKeys(requestMapping);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+            Object controllerInstance = createInstance(controller);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
             putHandlerExecutionOfHandlerKeys(handlerKeys, handlerExecution);
+        }
+    }
+
+    private static Object createInstance(Class<?> controller) {
+        try {
+            return controller.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new ControllerCreateException();
         }
     }
 
