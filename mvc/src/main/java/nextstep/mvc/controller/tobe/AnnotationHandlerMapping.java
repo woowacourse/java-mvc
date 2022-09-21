@@ -11,9 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -30,7 +33,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
 
         log.info("Initialized AnnotationHandlerMapping!");
-        findHandlerFromPackage();
+        Set<Class<?>> handlers = findHandlerFromPackage();
+        handlers.stream()
+                .map(this::findMethodFromHandler)
+                .flatMap(List::stream)
+                .filter(this::hasRequestMapping)
+                .forEach(this::addHandlerExecution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -40,26 +48,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void findHandlerFromPackage() {
+    private Set<Class<?>> findHandlerFromPackage() {
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        findMethodFromClass(classes);
+        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    private void findMethodFromClass(Set<Class<?>> classes) {
-        for (final Class<?> clazz : classes) {
-            final Method[] methods = clazz.getMethods();
-            findRequestMappingFromMethod(methods);
-        }
+    private List<Method> findMethodFromHandler(Class<?> handlerClass) {
+        return Arrays.stream(handlerClass.getMethods())
+                .collect(Collectors.toList());
     }
 
-    private void findRequestMappingFromMethod(Method[] methods) {
-        for (final Method method: methods) {
-            addRequestMapping(method);
-        }
+    private boolean hasRequestMapping(Method method) {
+        return method.isAnnotationPresent(RequestMapping.class);
     }
 
-    private void addRequestMapping(Method method) {
+    private void addHandlerExecution(Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             for (RequestMethod requestMethod : requestMapping.method()) {
