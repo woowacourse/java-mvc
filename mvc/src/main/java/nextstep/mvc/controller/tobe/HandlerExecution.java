@@ -14,7 +14,7 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object instance = method.getDeclaringClass().getConstructors()[0].newInstance();
+        final Object instance = method.getDeclaringClass().getConstructor().newInstance();
 
         return (ModelAndView) method.invoke(instance, request, response);
     }
