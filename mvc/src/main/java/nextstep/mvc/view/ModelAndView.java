@@ -17,6 +17,14 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
+    public void render(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            view.render(model, request, response);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("view render failed");
+        }
+    }
+
     public ModelAndView addAttribute(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
@@ -32,13 +40,5 @@ public class ModelAndView {
 
     public View getView() {
         return view;
-    }
-
-    public void render(final HttpServletRequest request, final HttpServletResponse response) {
-        try {
-            view.render(model, request, response);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("view render failed");
-        }
     }
 }
