@@ -15,12 +15,7 @@ public class RegisterController implements Controller {
         if (absenceEssential(req)) {
             return "redirect:/register.jsp";
         }
-
-        final var user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
-        InMemoryUserRepository.save(user);
+        registerUser(req);
 
         return "redirect:/index.jsp";
     }
@@ -32,5 +27,15 @@ public class RegisterController implements Controller {
 
         return Stream.of(account, password, email)
                 .anyMatch(Objects::isNull);
+    }
+
+    private static void registerUser(final HttpServletRequest req) {
+        final var user = new User(
+                req.getParameter("account"),
+                req.getParameter("password"),
+                req.getParameter("email")
+        );
+
+        InMemoryUserRepository.save(user);
     }
 }
