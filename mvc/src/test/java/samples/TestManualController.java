@@ -1,14 +1,15 @@
-package nextstep.mvc.controller.asis;
+package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import nextstep.mvc.controller.asis.Controller;
 
-public class ForwardController implements Controller {
+public class TestManualController implements Controller {
 
     private final String path;
 
-    public ForwardController(final String path) {
+    public TestManualController(final String path) {
         this.path = Objects.requireNonNull(path);
     }
 

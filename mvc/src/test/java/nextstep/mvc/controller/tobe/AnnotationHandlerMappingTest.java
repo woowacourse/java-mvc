@@ -1,13 +1,17 @@
 package nextstep.mvc.controller.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import samples.TestAnnotationController;
 
 class AnnotationHandlerMappingTest {
 
@@ -19,6 +23,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET 요청에 대해 핸들러 매핑이 잘 작동해 ModelAndView를 반환한다.")
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -34,6 +39,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("POST 요청에 대해 핸들러 매핑이 잘 작동해 ModelAndView를 반환한다.")
     @Test
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -47,5 +53,19 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("컨트롤러 어노테이션이 붙은 모든 클래스들을 반환한다.")
+    @Test
+    void findControllers() {
+        List<Class<?>> controllers = handlerMapping.findControllers();
+        assertThat(controllers).hasSize(1);
+    }
+
+    @DisplayName("특정 컨트롤러의 RequestMapping 어노테이션이 붙은 모든 메소드들을 반환한다.")
+    @Test
+    void findMethods() {
+        List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
+        assertThat(methods).hasSize(2);
     }
 }
