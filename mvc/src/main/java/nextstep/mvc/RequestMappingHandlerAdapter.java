@@ -16,8 +16,6 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler) throws Exception {
         final var handlerExecution = (HandlerExecution) handler;
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        return modelAndView;
+        return handlerExecution.handle(request, response);
     }
 }
