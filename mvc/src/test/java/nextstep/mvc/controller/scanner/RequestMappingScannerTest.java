@@ -18,19 +18,7 @@ import org.junit.jupiter.api.Test;
 class RequestMappingScannerTest {
 
     @Test
-    @DisplayName("BasePackage를 기준으로 @RequestMapping이 사용된 모든 메서드를 찾는다.")
-    void findAllMethodsOfAnnotationRequestMapping() {
-        // given & when
-        Set<?> methods = RequestMappingScanner
-            .getInstance()
-            .getAllAnnotations(AnnotationController.class);
-
-        // then
-        assertThat(methods).hasSize(2);
-    }
-
-    @Test
-    @DisplayName("URL과 HttpMethod를 가지는 HandlerKey로 변환을 할 수 있다.")
+    @DisplayName("@RequestMapping이 선언된 메서드의 URL과 HttpMethod를 HandlerKey로 변환을 할 수 있다.")
     void convertObjectToHavingURLAndHttpMethod() {
         // given
         RequestMappingScanner requestMappingScanner = RequestMappingScanner.getInstance();
