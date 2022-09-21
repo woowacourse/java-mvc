@@ -31,12 +31,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
 
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
-    }
-
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     @Override
@@ -53,19 +53,19 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter findAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("일치하는 어댑터가 없습니다."));
-    }
-
     private Object findHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow();
+    }
+
+    private HandlerAdapter findAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("일치하는 어댑터가 없습니다."));
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request,

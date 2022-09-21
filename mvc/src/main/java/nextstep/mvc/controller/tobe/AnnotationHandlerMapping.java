@@ -38,6 +38,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .forEach(methods -> methods.forEach(this::saveMethodMapping));
     }
 
+    public List<Class<?>> findControllers() {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(CONTROLLER_CLASS);
+        return new ArrayList<>(controllers);
+    }
+
+    public List<Method> findMappingMethods(Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_CLASS))
+                .collect(Collectors.toList());
+    }
+
     private void saveMethodMapping(Method method) {
         RequestMapping annotation = method.getAnnotation(REQUEST_MAPPING_CLASS);
         for (RequestMethod requestMethod : annotation.method()) {
@@ -53,17 +65,5 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String requestURI = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(requestURI, method));
-    }
-
-    public List<Class<?>> findControllers() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(CONTROLLER_CLASS);
-        return new ArrayList<>(controllers);
-    }
-
-    public List<Method> findMappingMethods(Class<?> controllerClass) {
-        return Arrays.stream(controllerClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_CLASS))
-                .collect(Collectors.toList());
     }
 }
