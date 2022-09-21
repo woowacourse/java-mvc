@@ -2,6 +2,7 @@ package nextstep.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,10 +47,12 @@ class DispatcherServletTest {
         HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-        assertThat(modelAndView.getModel()).hasSize(1);
-        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-                .isInstanceOf(ServletException.class)
-                .hasMessage("JSP not found.");
+        assertAll(() -> {
+            assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+            assertThat(modelAndView.getModel()).hasSize(1);
+            assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                    .isInstanceOf(ServletException.class)
+                    .hasMessage("JSP not found.");
+        });
     }
 }

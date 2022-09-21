@@ -28,6 +28,7 @@ class HandlerExecutionTest {
         HandlerExecution handlerExecution = new HandlerExecution(testController, method);
 
         ModelAndView modelAndView = handlerExecution.handle(request, response);
+
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 }
