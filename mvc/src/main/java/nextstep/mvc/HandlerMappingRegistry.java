@@ -16,12 +16,12 @@ class HandlerMappingRegistry {
     }
 
     void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
 
     Optional<Object> getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
-            .peek(HandlerMapping::initialize)
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst();
