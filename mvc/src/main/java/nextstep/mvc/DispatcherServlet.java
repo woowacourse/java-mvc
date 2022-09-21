@@ -11,6 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.view.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -65,13 +67,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(HandlerNotFoundException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 }
