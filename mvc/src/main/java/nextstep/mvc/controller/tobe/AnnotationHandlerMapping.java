@@ -5,7 +5,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -49,9 +51,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void makeHandlerExecutions(final Object controller, final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        HandlerKey key = new HandlerKey(annotation.value(), annotation.method()[0]);
+        List<HandlerKey> keys = getHandlerKeys(annotation.value(), annotation.method());
         HandlerExecution value = new HandlerExecution(method, controller);
-        handlerExecutions.put(key, value);
+
+        for (HandlerKey key : keys) {
+            handlerExecutions.put(key, value);
+        }
+    }
+
+    private List<HandlerKey> getHandlerKeys(final String requestUrl, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(requestUrl, requestMethod))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
