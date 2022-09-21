@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
@@ -40,12 +39,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Class<?>> getControllerClasses() {
-        final Set<Class<?>> controllerClasses = new HashSet<>();
-        for (Object basePackage : basePackages) {
-            final Reflections reflections = new Reflections(basePackage);
-            controllerClasses.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-        }
-        return controllerClasses;
+        final Reflections reflections = new Reflections(basePackages);
+        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private void initializeHandlerExecutions(Class<?> controllerClass) {
