@@ -21,8 +21,8 @@ public class JspView implements View {
     }
 
     public static JspView from(final String location) {
-        if (location.startsWith(JspView.REDIRECT_PREFIX)) {
-            String viewName = location.substring(JspView.REDIRECT_PREFIX.length());
+        if (location.startsWith(REDIRECT_PREFIX)) {
+            String viewName = location.substring(REDIRECT_PREFIX.length());
             return new JspView(viewName);
         }
         return new JspView(location);
