@@ -63,13 +63,13 @@ public class DispatcherServlet extends HttpServlet {
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new RuntimeException("해당 요청을 처리할 수 있는 핸들러를 찾지 못했습니다."));
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
             .filter(adapter -> adapter.supports(handler))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new RuntimeException("해당 핸들러를 처리할 수 있는 핸들러 어댑터를 찾지 못했습니다."));
     }
 }
