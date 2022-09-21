@@ -30,8 +30,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> classes = getControllers();
 
         for (Class<?> clazz : classes) {
             addHandlerExecutions(clazz);
@@ -41,14 +40,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         handlerExecutions.forEach((key, value) -> log.info("{}, {}", key, value));
     }
 
+    private Set<Class<?>> getControllers() {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
     private void addHandlerExecutions(final Class<?> clazz) {
         Object controller = instantiate(clazz);
         List<Method> handlerMethods = getHandlerMethods(clazz);
 
         for (Method handlerMethod : handlerMethods) {
-            HandlerKey handlerKey = HandlerKey.from(handlerMethod);
+            List<HandlerKey> handlerKeys = HandlerKey.from(handlerMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
         }
     }
 
