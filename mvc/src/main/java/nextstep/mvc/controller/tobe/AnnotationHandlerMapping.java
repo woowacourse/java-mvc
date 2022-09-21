@@ -1,7 +1,16 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Set;
+
 import nextstep.mvc.HandlerMapping;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
+
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +30,51 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        final Reflections reflections = new Reflections(this.basePackage);
+        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        registerHandlers(controllers);
+    }
+
+    private void registerHandlers(final Set<Class<?>> controllers) {
+        for (Class<?> controller : controllers) {
+            registerHandler(controller);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void registerHandler(final Class<?> controller) {
+        for (Method method : controller.getMethods()) {
+            initHandlerExecutions(controller, method);
+        }
+    }
+
+    private void initHandlerExecutions(final Class<?> controller, final Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            initHandlerExecution(requestMapping, requestMethod, controller, method);
+        }
+    }
+
+    private void initHandlerExecution(final RequestMapping requestMapping, final RequestMethod requestMethod,
+                                      final Class<?> controller, final Method method) {
+        try {
+            handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod),
+                    new HandlerExecution(controller.getDeclaredConstructor().newInstance(), method));
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final String uri = request.getRequestURI();
+        final String method = request.getMethod();
+
+        return handlerExecutions.get(new HandlerKey(uri, RequestMethod.find(method)));
     }
 }
