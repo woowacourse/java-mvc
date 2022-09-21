@@ -1,16 +1,25 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import nextstep.mvc.HandlerMapping;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final int FIRST_INDEX = 0;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -21,10 +30,40 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        final var reflections = new Reflections(basePackage);
+        final var methods = findAllControllerMethods(reflections);
+        collectMethodsToHandlerExecutions(methods);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void collectMethodsToHandlerExecutions(final List<Method> methods) {
+        for (Method method : methods) {
+            final var requestMapping = method.getAnnotation(RequestMapping.class);
+            final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[FIRST_INDEX]);
+
+            try {
+                final var controller = method.getDeclaringClass()
+                        .getDeclaredConstructor()
+                        .newInstance();
+                handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException();
+            }
+        }
+    }
+
+    private List<Method> findAllControllerMethods(final Reflections reflections) {
+        return reflections.getTypesAnnotatedWith(Controller.class).stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Stream::of)
+                .collect(Collectors.toList());
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final var uri = request.getRequestURI();
+        final var method = request.getMethod();
+        HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.valueOf(method));
+
+        return handlerExecutions.get(handlerKey);
     }
 }
