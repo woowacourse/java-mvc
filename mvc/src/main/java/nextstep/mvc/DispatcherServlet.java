@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import nextstep.mvc.registry.HandlerAdapterRegistry;
 import nextstep.mvc.registry.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -18,12 +18,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final List<ViewResolver> viewResolvers;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         this.viewResolvers = new ArrayList<>();
     }
 
@@ -37,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     public void addViewResolvers(ViewResolver viewResolver) {
@@ -65,10 +65,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdapter findAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(adapter -> adapter.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Failed to find adapter : " + handler.getClass()));
+        return handlerAdapterRegistry.findAdapter(handler);
     }
 
     private void resolve(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
