@@ -15,9 +15,9 @@ class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    HandlerAdapter getHandlerAdaptor(final Object handler) {
+    HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
-            .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
+            .filter(handlerAdapter -> handlerAdapter.supports(handler))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Couldn't find adaptor for handler"));
     }

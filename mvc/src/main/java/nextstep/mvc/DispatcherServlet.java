@@ -3,7 +3,6 @@ package nextstep.mvc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,19 +30,14 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws
-        ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-        try {
-            final Object handler = handlerMappingRegistry.getHandler(request)
-                .orElseThrow(() -> new IllegalArgumentException("handler not found"));
-            final HandlerAdapter adaptor = handlerAdapterRegistry.getHandlerAdaptor(handler);
-            final ModelAndView modelAndView = adaptor.handle(request, response, handler);
-            render(modelAndView, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
+        final Object handler = handlerMappingRegistry.getHandler(request)
+            .orElseThrow(() -> new IllegalArgumentException("handler not found"));
+        final HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
+        final ModelAndView modelAndView = adapter.handle(request, response, handler);
+        render(modelAndView, request, response);
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
