@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.controller.exception.NoConstructorException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -62,8 +63,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final Constructor<?> constructor = controllerClass.getConstructor();
             return constructor.newInstance();
         } catch (Exception e) {
-            log.error("no such constructor of Class");
-            throw new RuntimeException();
+            throw new NoConstructorException();
         }
     }
 
