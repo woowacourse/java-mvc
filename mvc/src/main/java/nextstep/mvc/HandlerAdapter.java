@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 
-public interface HandlerAdaptor {
+public interface HandlerAdapter {
 
     boolean supports(Object handler);
 

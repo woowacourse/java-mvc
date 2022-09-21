@@ -12,8 +12,8 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.AnnotationHandlerAdaptor;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdaptor;
 
 class DispatcherServletTest {
 
@@ -21,9 +21,8 @@ class DispatcherServletTest {
 
     @BeforeAll
     static void setUp() {
-        dispatcherServlet.addHandlerAdaptor(new AnnotationHandlerAdaptor());
+        dispatcherServlet.addHandlerAdaptor(new HandlerExecutionHandlerAdaptor());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
-        dispatcherServlet.init();
     }
 
     @Test
