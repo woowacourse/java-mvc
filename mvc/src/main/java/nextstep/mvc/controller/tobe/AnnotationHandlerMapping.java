@@ -38,8 +38,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Class<?> handlerClass : handlerClasses) {
             initializeHandlerExecutions(handlerClass);
         }
-
-        logPathAndController();
     }
 
     private Set<Class<?>> getHandlerClasses() {
@@ -74,13 +72,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private boolean isValidRequestMapping(Method controllerMethod){
+    private boolean isValidRequestMapping(Method controllerMethod) {
         final RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
         if (requestMapping == null) {
             return false;
         }
 
-        if (requestMapping.value().isEmpty()){
+        if (requestMapping.value().isEmpty()) {
             return false;
         }
 
@@ -96,14 +94,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
+            logPathAndHandler(handlerKey, handlerExecution);
         }
     }
 
-    private void logPathAndController() {
-        handlerExecutions.forEach(
-                (handlerKey, handlerExecution) ->
-                        log.info("Path : " + handlerKey.getRequestMethod() + " " + handlerKey.getUrl() +
-                                ", Controller : " + handlerExecution.getController().getClass()));
+    private void logPathAndHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        log.info("Path : " + handlerKey.getRequestMethod() + " " + handlerKey.getUrl() +
+                ", Controller : " + handlerExecution.getController().getClass());
     }
 
     @Override
