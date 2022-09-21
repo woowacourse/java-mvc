@@ -77,6 +77,14 @@ public class TestController {
 
 <br><br>
 
+## 1차 피드백 체크리스트
+
+- [ ] RegisterController#execute 계속 같은 정보로 사용자가 생성되고 있음
+- [ ] RequestMappingHandlerAdapter#handle 인라인 처리 필요
+- [ ] ControllerMappingHandlerAdapter 네이밍 개선
+
+<br><br>
+
 ## 참고사항
 
 ---
