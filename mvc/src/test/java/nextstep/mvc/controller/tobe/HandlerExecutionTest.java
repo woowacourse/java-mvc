@@ -7,11 +7,12 @@ import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
-import samples.TestController;
+import nextstep.web.annotation.Controller;
 
 class HandlerExecutionTest {
 
@@ -19,9 +20,9 @@ class HandlerExecutionTest {
     @DisplayName("HandlerExecution이 findUserId 메서드를 올바르게 실행시키는지 확인한다.")
     void handle() throws Exception {
         // given
-        Object controller = new TestController();
-        Method method = controller.getClass()
-            .getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+        Reflections reflections = new Reflections("samples");
+        Class<?> controller = reflections.getTypesAnnotatedWith(Controller.class).iterator().next();
+        Method method = controller.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
 
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 

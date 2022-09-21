@@ -1,6 +1,5 @@
 package nextstep.mvc.handlerMapping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,19 +61,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             .map(it -> new HandlerKey(annotation.value(), it))
             .collect(Collectors.toUnmodifiableList());
 
-        HandlerExecution execution = new HandlerExecution(generateInstance(controller), method);
+        HandlerExecution execution = new HandlerExecution(controller, method);
 
         for (final HandlerKey key : keys) {
             handlerExecutions.put(key, execution);
-        }
-    }
-
-    private Object generateInstance(final Class<?> controller) {
-        try {
-            return controller.getConstructor().newInstance();
-        } catch (NoSuchMethodException |
-                 InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException("컨트롤러 생성 과정에서 예외가 발생했습니다.");
         }
     }
 

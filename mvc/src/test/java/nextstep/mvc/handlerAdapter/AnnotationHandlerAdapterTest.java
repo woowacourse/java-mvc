@@ -2,19 +2,31 @@ package nextstep.mvc.handlerAdapter;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.lang.reflect.Method;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.web.annotation.Controller;
 
 class AnnotationHandlerAdapterTest {
 
     @Test
     @DisplayName("Handler Execution의 구현체라면 true를 반환한다.")
-    void supportsWhenTrue() {
+    void supportsWhenTrue() throws NoSuchMethodException {
         AnnotationHandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
-        HandlerExecution HandlerExecution = new HandlerExecution(null, null);
-        assertThat(handlerAdapter.supports(HandlerExecution)).isTrue();
+
+        Reflections reflections = new Reflections("samples");
+        Class<?> controller = reflections.getTypesAnnotatedWith(Controller.class).iterator().next();
+        Method method = controller.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+        assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
     }
 
     @Test
