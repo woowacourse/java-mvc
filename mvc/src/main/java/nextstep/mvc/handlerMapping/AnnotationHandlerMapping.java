@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Class controller : controllers) {
+        for (Class<?> controller : controllers) {
             addAllToHandlerExecutions(controller);
         }
     }
@@ -47,7 +47,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(key);
     }
 
-    private void addAllToHandlerExecutions(final Class controller) {
+    private void addAllToHandlerExecutions(final Class<?> controller) {
         for (Method method : controller.getMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 addToHandlerExecutions(controller, method);
@@ -55,7 +55,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void addToHandlerExecutions(final Class controller, final Method method) {
+    private void addToHandlerExecutions(final Class<?> controller, final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
         List<HandlerKey> keys = Arrays.stream(annotation.method())
@@ -69,7 +69,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Object generateInstance(final Class controller) {
+    private Object generateInstance(final Class<?> controller) {
         try {
             return controller.getConstructor().newInstance();
         } catch (NoSuchMethodException |
