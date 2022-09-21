@@ -16,7 +16,7 @@ class HandlerExecutionTest {
 
     @BeforeEach
     void setUp() throws Exception{
-        Class<?> clazz = Class.forName("samples.TestController");
+        Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         handlerExecution = new HandlerExecution(method);
     }

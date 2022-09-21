@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.TestManualController;
 
 class ManualHandlerAdapterTest {
 
@@ -18,14 +18,14 @@ class ManualHandlerAdapterTest {
     void supports() {
         ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-        boolean supports = manualHandlerAdapter.supports(new TestController());
+        boolean supports = manualHandlerAdapter.supports(new TestManualController());
 
         assertThat(supports).isTrue();
     }
 
     @Test
     void notSupports() throws Exception {
-        Class<?> clazz = Class.forName("samples.TestController");
+        Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
@@ -41,7 +41,7 @@ class ManualHandlerAdapterTest {
 
         ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-        ModelAndView modelAndView = manualHandlerAdapter.handle(request, response, new TestController());
+        ModelAndView modelAndView = manualHandlerAdapter.handle(request, response, new TestManualController());
 
         JspView view = (JspView) modelAndView.getView();
         Field field = view.getClass().getDeclaredField("viewName");

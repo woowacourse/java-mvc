@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class TestController implements nextstep.mvc.controller.asis.Controller {
+public class TestAnnotationController {
 
-    private static final Logger log = LoggerFactory.getLogger(TestController.class);
+    private static final Logger log = LoggerFactory.getLogger(TestAnnotationController.class);
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
@@ -29,10 +29,5 @@ public class TestController implements nextstep.mvc.controller.asis.Controller {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
-    }
-
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
-        return "redirect:/index.jsp";
     }
 }

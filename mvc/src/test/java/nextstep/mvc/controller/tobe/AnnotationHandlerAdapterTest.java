@@ -9,13 +9,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.TestManualController;
 
 class AnnotationHandlerAdapterTest {
 
     @Test
     void supports() throws Exception {
-        Class<?> clazz = Class.forName("samples.TestController");
+        Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
@@ -28,7 +28,7 @@ class AnnotationHandlerAdapterTest {
     void notSupports() {
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        boolean supports = annotationHandlerAdapter.supports(new TestController());
+        boolean supports = annotationHandlerAdapter.supports(new TestManualController());
 
         assertThat(supports).isFalse();
     }
@@ -42,7 +42,7 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Class<?> clazz = Class.forName("samples.TestController");
+        Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
