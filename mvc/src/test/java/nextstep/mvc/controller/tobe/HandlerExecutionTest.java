@@ -21,8 +21,8 @@ class HandlerExecutionTest {
     void handle() {
         // given
         final Object controller = new TestController();
-        final Method method = controller.getClass().getDeclaredMethods()[0];
-        final HandlerExecution execution = new HandlerExecution(controller, method);
+        final Method findUserIdMethod = controller.getClass().getDeclaredMethods()[0];
+        final HandlerExecution execution = new HandlerExecution(controller, findUserIdMethod);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);

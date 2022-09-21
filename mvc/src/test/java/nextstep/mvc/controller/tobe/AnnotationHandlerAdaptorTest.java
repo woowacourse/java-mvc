@@ -23,8 +23,8 @@ class AnnotationHandlerAdaptorTest {
         // given
         final HandlerAdapter adaptor = new HandlerExecutionHandlerAdaptor();
         final Object controller = new TestController();
-        final Method method = controller.getClass().getDeclaredMethods()[0];
-        final HandlerExecution execution = new HandlerExecution(controller, method);
+        final Method findUserIdMethod = controller.getClass().getDeclaredMethods()[0];
+        final HandlerExecution execution = new HandlerExecution(controller, findUserIdMethod);
 
         // when, then
         assertThat(adaptor.supports(execution)).isTrue();
@@ -47,8 +47,8 @@ class AnnotationHandlerAdaptorTest {
         // given
         final HandlerAdapter adaptor = new HandlerExecutionHandlerAdaptor();
         final Object controller = new TestController();
-        final Method firstMethod = controller.getClass().getDeclaredMethods()[0];
-        final HandlerExecution handler = new HandlerExecution(controller, firstMethod);
+        final Method findUserIdMethod = controller.getClass().getDeclaredMethods()[0];
+        final HandlerExecution handler = new HandlerExecution(controller, findUserIdMethod);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
