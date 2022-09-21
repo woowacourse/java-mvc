@@ -1,0 +1,12 @@
+package nextstep.mvc;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.ModelAndView;
+
+public interface HandlerAdaptor {
+
+    boolean supports(Object handler);
+
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler);
+}
