@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.List;
-import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,40 +67,5 @@ class AnnotationHandlerMappingTest {
     void findMethods() {
         List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
         assertThat(methods).hasSize(2);
-    }
-
-    @DisplayName("특정 매핑된 메소드의 주소값이 파라미터 URL과 같은지 확인한다.")
-    @Test
-    void sameRequestURL() {
-        //given
-        List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
-        Method findUserId = methods.get(0);
-        Method save = methods.get(1);
-        assertThat(findUserId.getName()).isEqualTo("findUserId");
-
-        //when
-        boolean sameRequestURL = handlerMapping.sameRequestURL("/get-test", findUserId);
-        boolean sameRequestURL2 = handlerMapping.sameRequestURL("/get-test", save);
-
-        //then
-        assertThat(sameRequestURL).isTrue();
-        assertThat(sameRequestURL2).isFalse();
-    }
-
-    @DisplayName("매핑된 메소드의 요청 메소드에 파라미터 메소드가 포함되는지 확인한다.")
-    @Test
-    void anyMatchRequestMethod() {
-        //given
-        List<Method> methods = handlerMapping.findMappingMethods(TestAnnotationController.class);
-        Method findUserId = methods.get(0);
-        assertThat(findUserId.getName()).isEqualTo("findUserId");
-
-        //when
-        boolean anyMatchRequestMethod = handlerMapping.anyMatchRequestMethod(RequestMethod.GET, findUserId);
-        boolean anyMatchRequestMethod2 = handlerMapping.anyMatchRequestMethod(RequestMethod.POST, findUserId);
-
-        //then
-        assertThat(anyMatchRequestMethod).isTrue();
-        assertThat(anyMatchRequestMethod2).isFalse();
     }
 }

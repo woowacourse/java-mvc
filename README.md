@@ -16,7 +16,7 @@ MVC 프레임워크로 개선해보자.
 
 - 아래와 같은 컨트롤러를 지원하는 프레임워크를 구현한다.
 
-### @MVC Freamwork
+### @MVC Framework
 
 - 어노테이션 기반의 MVC 프레임워크를 구현한다.
 
@@ -28,3 +28,13 @@ MVC 프레임워크로 개선해보자.
 
 - [x] AnnotationHandlerMappingTest 가 정상 동작한다.
 - [x] DispatcherServlet 에서 HandlerMapping 인터페이스를 활용하여 AnnotationHandlerMapping 과 ManualHandlerMapping 둘다 처리할 수 있다.
+
+## 피드백
+
+### step1 피드백
+
+- [x] optimize imports 세팅
+- [x] 깨지는 테스트 수정 -> 테스트에서만 사용되는 메소드 제거
+- [ ] 메소드 순서 변경
+- [ ] stream forEach 변경
+- [ ] 주요 인스턴스 상수화

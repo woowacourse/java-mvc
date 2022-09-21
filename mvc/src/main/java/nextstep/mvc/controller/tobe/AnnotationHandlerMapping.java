@@ -55,15 +55,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(new HandlerKey(requestURI, method));
     }
 
-    public boolean sameRequestURL(String requestURL, Method classMethod) {
-        return classMethod.getAnnotation(REQUEST_MAPPING_CLASS).value().equals(requestURL);
-    }
-
-    public boolean anyMatchRequestMethod(RequestMethod requestMethod, Method classMethod) {
-        return Arrays.stream(classMethod.getAnnotation(REQUEST_MAPPING_CLASS).method())
-                .anyMatch(httpMethod -> httpMethod == requestMethod);
-    }
-
     public List<Class<?>> findControllers() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(CONTROLLER_CLASS);
