@@ -1,8 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
+import static org.reflections.ReflectionUtils.*;
+
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,40 +25,49 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final HandlerKey ROOT_HANDLER_KEY = new HandlerKey("/", RequestMethod.GET);
 
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    private final ControllerScanner controllerScanner;
+    private final Object[] basePackage;
 
-    public AnnotationHandlerMapping(final String... basePackage) {
+    public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
-        this.controllerScanner = new ControllerScanner(basePackage);
     }
 
     public void initialize() {
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        for (final Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
-            registerHandler(entry.getKey(), entry.getValue());
+        final Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        final Set<Class<?>> classes = controllers.keySet();
+        for (final Method method : getRequestMappingMethods(classes)) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandler(final Class<?> clazz, final Object controller) {
-        for (Method method : clazz.getMethods()) {
-            registerExecutions(controller, method);
+    private void addHandlerExecutions(final Map<Class<?>, Object> controllers, final Method method,
+        final RequestMapping requestMapping) {
+
+        final String requestUri = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        final Object controller = controllers.get(method.getDeclaringClass());
+
+        for (final HandlerKey handlerKey : mapHandlerKeys(requestUri, requestMethods)) {
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+            log.info("Controller method registered. class: {}, uri: {}, method: {}",
+                controller.getClass().getName(), requestUri, method.getName());
         }
     }
 
-    private void registerExecutions(final Object controller, final Method method) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
-            return;
+    private List<HandlerKey> mapHandlerKeys(final String requestUri, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+            .map(requestMethod -> new HandlerKey(requestUri, requestMethod))
+            .collect(Collectors.toList());
+    }
+
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> classes) {
+        Set<Method> methods = new HashSet<>();
+        for (final Class<?> clazz : classes) {
+            methods.addAll(getAllMethods(clazz, withAnnotation(RequestMapping.class)));
         }
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        final String requestUri = requestMapping.value();
-        final RequestMethod[] requestMethods = requestMapping.method();
-        for (RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-            log.info("Controller registered by annotation. name: {}, method: {}, uri: {}, method: {}",
-                controller.getClass().getSimpleName(), method.getName(), requestUri, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
-        }
+        return methods;
     }
 
     @Override
