@@ -45,15 +45,15 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            extractHandlerAdapter(request, response);
+            executeHandler(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void extractHandlerAdapter(final HttpServletRequest request,
-                                       final HttpServletResponse response) throws Exception {
+    private void executeHandler(final HttpServletRequest request,
+                                final HttpServletResponse response) throws Exception {
         for (HandlerAdapter handlerAdapter : handlerAdapters) {
             Object handler = getHandler(request);
             execute(request, response, handlerAdapter, handler);
