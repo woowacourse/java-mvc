@@ -21,8 +21,7 @@ public class AnnotationController {
 
     @RequestMapping(value = "/@mvc", method = RequestMethod.GET)
     public ModelAndView index(final HttpServletRequest request, final HttpServletResponse response) {
-        final var modelAndView = new ModelAndView(new JspView("/index.jsp"));
-        return modelAndView;
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 
     @RequestMapping(value = "/@mvc/login", method = RequestMethod.GET)
@@ -83,16 +82,10 @@ public class AnnotationController {
 
     @RequestMapping(value = "/@mvc/register", method = RequestMethod.GET)
     public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
-
         if (absenceEssential(request)) {
             return new ModelAndView(new JspView("redirect:/register.jsp"));
         }
-
-        final var user = new User(2,
-                request.getParameter("account"),
-                request.getParameter("password"),
-                request.getParameter("email"));
-        InMemoryUserRepository.save(user);
+        registerUser(request);
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
@@ -104,5 +97,15 @@ public class AnnotationController {
 
         return Stream.of(account, password, email)
                 .anyMatch(Objects::isNull);
+    }
+
+    private void registerUser(final HttpServletRequest request) {
+        final var user = new User(
+                request.getParameter("account"),
+                request.getParameter("password"),
+                request.getParameter("email")
+        );
+
+        InMemoryUserRepository.save(user);
     }
 }
