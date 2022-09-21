@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import static java.util.stream.Collectors.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private Map<HandlerKey, HandlerExecution> toHandlerExecutions(final Class<?> controllerClazz) {
         return Arrays.stream(controllerClazz.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(toMap(this::toHandlerKey, method -> new HandlerExecution(controllerClazz, method)));
+                .collect(toMap(this::toHandlerKey, HandlerExecution::new));
     }
 
     private HandlerKey toHandlerKey(final Method method) {

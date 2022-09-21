@@ -30,7 +30,7 @@ class AnnotationHandlerAdapterTest {
         Class<?> controllerClazz = mockAnnotationController.getClass();
         Method method = controllerClazz.getMethod("mock", HttpServletRequest.class, HttpServletResponse.class);
 
-        HandlerExecution handlerExecution = new HandlerExecution(controllerClazz, method);
+        HandlerExecution handlerExecution = new HandlerExecution(method);
 
         // when
         boolean actual = handlerAdapter.supports(handlerExecution);
@@ -60,7 +60,7 @@ class AnnotationHandlerAdapterTest {
         Class<?> controllerClazz = mockAnnotationController.getClass();
         Method method = controllerClazz.getMethod("mock", HttpServletRequest.class, HttpServletResponse.class);
 
-        HandlerExecution handlerExecution = new HandlerExecution(controllerClazz, method);
+        HandlerExecution handlerExecution = new HandlerExecution(method);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
