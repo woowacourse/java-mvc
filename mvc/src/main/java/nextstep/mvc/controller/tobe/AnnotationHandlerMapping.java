@@ -31,20 +31,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Object selectedPackage : basePackage) {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            addHandlerExecutions(controllers);
-        }
-    }
-
-    private void addHandlerExecutions(Set<Class<?>> controllers) {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : controllers) {
             Object controller = getControllerInstance(clazz);
             List<Method> controllerMethods = getMethods(clazz);
             generateExecution(controller, controllerMethods);
         }
-
     }
 
     private Object getControllerInstance(Class<?> clazz) {
@@ -67,8 +60,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void generateExecution(Object controller, List<Method> controllerMethods) {
         for (Method method : controllerMethods) {
-            String url = method.getAnnotation(RequestMapping.class).value();
-            RequestMethod requestMethod = method.getAnnotation(RequestMapping.class).method()[0];
+            addHandlerExecution(controller, method);
+        }
+    }
+
+    private void addHandlerExecution(Object controller, Method method) {
+        String url = method.getAnnotation(RequestMapping.class).value();
+        RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
+        for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
