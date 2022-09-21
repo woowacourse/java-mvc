@@ -9,5 +9,5 @@
 - [ ] AnnotationHandlerAdapter
   - [ ] handle 메서드 테스트
 - [x] RequestMapping에 HttpMethod가 배열로 들어갈 경우 구현
-- [ ] when() mockito 메서드 
-  - [ ] when이 아닌 given
+- [x] when() mockito 메서드 
+  - [x] when이 아닌 given

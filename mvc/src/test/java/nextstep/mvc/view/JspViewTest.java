@@ -22,9 +22,9 @@ public class JspViewTest {
         String viewName = "/";
         JspView jspView = new JspView(viewName);
         Map<String, Object> model = new HashMap<>();
+        when(request.getRequestDispatcher(viewName)).thenReturn(requestDispatcher);
 
         // when
-        when(request.getRequestDispatcher(viewName)).thenReturn(requestDispatcher);
         jspView.render(model, request, response);
 
         // then
@@ -60,13 +60,13 @@ public class JspViewTest {
         Map<String, Object> model = new HashMap<>();
         model.put("id", "gugu");
         model.put("pw", "password");
+        when(request.getRequestDispatcher(viewName)).thenReturn(requestDispatcher);
 
         // when
-        when(request.getRequestDispatcher(viewName)).thenReturn(requestDispatcher);
         jspView.render(model, request, response);
 
         // then
-        for(String key : model.keySet()){
+        for (String key : model.keySet()) {
             verify(request).setAttribute(key, model.get(key));
         }
         verify(requestDispatcher).forward(request, response);
