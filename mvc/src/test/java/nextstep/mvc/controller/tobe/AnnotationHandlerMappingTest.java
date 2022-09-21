@@ -20,6 +20,18 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void getHandler() {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        Object handler = handlerMapping.getHandler(request);
+
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
+    }
+
+    @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
