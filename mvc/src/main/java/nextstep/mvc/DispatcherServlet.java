@@ -58,7 +58,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 없습니다."));
     }
 
     private HandlerAdapter getAdapter(final Object handler) {
