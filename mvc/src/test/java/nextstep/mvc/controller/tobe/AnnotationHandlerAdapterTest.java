@@ -16,23 +16,23 @@ import org.junit.jupiter.api.Test;
 public class AnnotationHandlerAdapterTest {
 
     @Test
-    @DisplayName("Handler의 반환타입이 HandlerExecution이면 ManualHandler를 실행한다.")
+    @DisplayName("HandlerAdapter가 ManualHandler이면 False를 반환한다.")
     void typeOfHandlerExecutionIsExecutedManualHandler() {
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
         HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
 
-        assertThat(handlerAdapter.supports(handlerExecution));
+        assertThat(handlerAdapter.supports(handlerExecution)).isFalse();
     }
 
     @Test
-    @DisplayName("Handler의 반환타입이 HandlerExecution이면 AnnotationHandler를 실행한다.")
+    @DisplayName("HandlerAdapter가 AnnotationHandlerAdapter이면 True 반환한다.")
     void typeOfHandlerExecutionIsExecutedAnnotationHandler() {
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
         HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
 
-        assertThat(handlerAdapter.supports(handlerExecution));
+        assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
     }
 
     @Test
