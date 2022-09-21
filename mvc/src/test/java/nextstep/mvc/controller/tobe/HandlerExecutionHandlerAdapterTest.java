@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,6 +53,10 @@ class HandlerExecutionHandlerAdapterTest {
         final ModelAndView result = handlerAdapter.handle(request, response, handlerExecution);
 
         // then
-        assertThat(result.getView()).isInstanceOf(JspView.class);
+        Assertions.assertAll(() -> {
+            assertThat(result.getView()).isInstanceOf(JspView.class);
+            assertThat(result.getView()).extracting("viewPath")
+                    .isEqualTo("/index.html");
+        });
     }
 }

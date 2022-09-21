@@ -12,6 +12,7 @@ import nextstep.mvc.controller.asis.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,6 +55,10 @@ class ManualHandlerAdapterTest {
         final ModelAndView result = manualHandlerAdapter.handle(request, response, controller);
 
         // then
-        assertThat(result.getView()).isInstanceOf(JspView.class);
+        Assertions.assertAll(() -> {
+            assertThat(result.getView()).isInstanceOf(JspView.class);
+            assertThat(result.getView()).extracting("viewPath")
+                    .isEqualTo("/index.html");
+        });
     }
 }
