@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-            final var modelAndView = renderView(handler, request, response);
+            final var modelAndView = executeHandler(handler, request, response);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -56,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new RuntimeException("요청을 처리할 수 없습니다."));
     }
 
-    private ModelAndView renderView(final Object handler, final HttpServletRequest request, final HttpServletResponse response)
+    private ModelAndView executeHandler(final Object handler, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         if (HandlerExecution.class.isAssignableFrom(handler.getClass())) {
             return ((HandlerExecution) handler).handle(request, response);
