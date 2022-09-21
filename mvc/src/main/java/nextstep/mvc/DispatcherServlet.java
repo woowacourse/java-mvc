@@ -2,7 +2,6 @@ package nextstep.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -59,7 +57,7 @@ public class DispatcherServlet extends HttpServlet {
         HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
-        render(request, response, modelAndView);
+        modelAndView.render(request, response);
     }
 
     private Object getHandler(final HttpServletRequest request) {
@@ -75,12 +73,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow();
-    }
-
-    private void render(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView)
-            throws Exception {
-        Map<String, Object> model = modelAndView.getModel();
-        View view = modelAndView.getView();
-        view.render(model, request, response);
     }
 }
