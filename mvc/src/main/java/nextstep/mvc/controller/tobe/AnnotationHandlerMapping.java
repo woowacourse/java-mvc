@@ -33,9 +33,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        findControllers().stream()
-                .map(this::findMappingMethods)
-                .forEach(methods -> methods.forEach(this::saveMethodMapping));
+        for (Class<?> controllers : findControllers()) {
+            findMappingMethods(controllers)
+                    .forEach(this::saveMethodMapping);
+        }
     }
 
     public List<Class<?>> findControllers() {

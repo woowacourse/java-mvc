@@ -36,5 +36,5 @@ MVC 프레임워크로 개선해보자.
 - [x] optimize imports 세팅
 - [x] 깨지는 테스트 수정 -> 테스트에서만 사용되는 메소드 제거
 - [x] 메소드 순서 변경
-- [ ] stream forEach 변경
+- [x] stream forEach 변경
 - [ ] 주요 인스턴스 상수화
