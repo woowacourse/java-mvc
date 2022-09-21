@@ -11,17 +11,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ControllerMappingHandlerAdapterTest {
+class ControllerHandlerAdapterTest {
 
     @MethodSource("methodSource")
     @ParameterizedTest(name = " : {0}")
     void controllerMappingHandlerAdapter_supports_controller_type(String description, Object handler,
                                                                   boolean expected) {
         // given
-        final ControllerMappingHandlerAdapter controllerMappingHandlerAdapter = new ControllerMappingHandlerAdapter();
+        final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
 
         // when
-        final boolean actual = controllerMappingHandlerAdapter.supports(handler);
+        final boolean actual = controllerHandlerAdapter.supports(handler);
 
         // then
         assertThat(actual).isEqualTo(expected);

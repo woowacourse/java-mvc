@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
-import nextstep.mvc.ControllerMappingHandlerAdapter;
+import nextstep.mvc.ControllerHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.RequestMappingHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
@@ -19,7 +19,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(Application.class.getPackageName()));
 
-        dispatcherServlet.addHandlerAdapter(new ControllerMappingHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new RequestMappingHandlerAdapter());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
