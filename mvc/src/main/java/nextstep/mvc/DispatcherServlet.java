@@ -6,9 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import nextstep.mvc.view.View;
+import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +45,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = getController(request);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            final var modelAndView = handlerAdapter.handle(request, response, handler);
-            View view = modelAndView.getView();
-            Map<String, Object> model = modelAndView.getModel();
-            view.render(model, request, response);
+
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
