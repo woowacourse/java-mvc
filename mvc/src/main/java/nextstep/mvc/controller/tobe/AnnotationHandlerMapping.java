@@ -1,15 +1,13 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.common.exception.ErrorType;
-import nextstep.mvc.common.exception.FailedHandlerMappingException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -29,30 +27,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class)
-                .forEach(this::mapHandlerExecutions);
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
+
+        for (Method requestMappingMethod : requestMappingMethods) {
+            addHandlerExecutions(controllers, requestMappingMethod,
+                    requestMappingMethod.getAnnotation(RequestMapping.class));
+        }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void mapHandlerExecutions(final Class<?> clazz) {
-        try {
-            Object handler = clazz.getDeclaredConstructor().newInstance();
-            Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> addHandlerExecution(handler, method));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new FailedHandlerMappingException(ErrorType.FAIL_HANDLER_MAPPING);
-        }
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> classes) {
+        return classes.stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Arrays::stream)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
     }
 
-    private void addHandlerExecution(final Object handler, final Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+    private void addHandlerExecutions(final Map<Class<?>, Object> controllers,
+                                      final Method method,
+                                      final RequestMapping requestMapping) {
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+            Class<?> declaringClass = requestMethod.getDeclaringClass();
+            HandlerExecution handlerExecution = new HandlerExecution(controllers.get(declaringClass), method);
             handlerExecutions.put(key, handlerExecution);
         }
     }
