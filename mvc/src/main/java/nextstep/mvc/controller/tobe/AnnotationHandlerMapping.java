@@ -21,7 +21,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final String[] basePackage;
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final String... basePackage) {
@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         initControllers(controllersAndMethods);
     }
 
-    private Set<Class<?>> getAllControllers(final String... basePackage) {
+    private Set<Class<?>> getAllControllers(final Object... basePackage) {
         return ControllerScanner.getInstance().getAllAnnotations(basePackage);
     }
 
