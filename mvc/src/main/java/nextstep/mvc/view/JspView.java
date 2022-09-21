@@ -12,8 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
-    public static final String REDIRECT_PREFIX = "redirect:";
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
 
@@ -24,8 +23,8 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
 
