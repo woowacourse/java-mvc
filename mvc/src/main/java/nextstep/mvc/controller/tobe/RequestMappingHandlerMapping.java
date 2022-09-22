@@ -1,0 +1,40 @@
+package nextstep.mvc.controller.tobe;
+
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import nextstep.mvc.HandlerMapping;
+import nextstep.web.support.RequestMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class RequestMappingHandlerMapping implements HandlerMapping {
+
+    private static final Logger log = LoggerFactory.getLogger(RequestMappingHandlerMapping.class);
+
+    private final Object[] basePackage;
+    private final Map<HandlerKey, HandlerExecution> handlerMappings;
+
+    public RequestMappingHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
+        this.handlerMappings = new HashMap<>();
+    }
+
+    @Override
+    public void initialize() {
+        handlerMappings.putAll(ControllerScanner.scan(basePackage));
+
+        log.info("Initialized AnnotationHandlerMapping!");
+        handlerMappings.entrySet()
+                .forEach(entry -> log.info("Path : {}, Controller : {}", entry.getKey(), entry.getValue()));
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        final var requestURI = request.getRequestURI();
+        final var requestMethod = RequestMethod.from(request.getMethod());
+        final var handlerKey = new HandlerKey(requestURI, requestMethod);
+
+        return handlerMappings.get(handlerKey);
+    }
+}

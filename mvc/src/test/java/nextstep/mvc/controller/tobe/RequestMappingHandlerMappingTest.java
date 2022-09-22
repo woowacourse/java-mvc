@@ -9,13 +9,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerMappingTest {
+class RequestMappingHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private RequestMappingHandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new RequestMappingHandlerMapping("samples");
         handlerMapping.initialize();
     }
 
