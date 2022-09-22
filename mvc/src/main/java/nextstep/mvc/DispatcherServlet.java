@@ -6,9 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import nextstep.mvc.controller.asis.ControllerHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
+import nextstep.mvc.exception.NotFoundException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,13 +60,19 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new NotFoundException(
+                                "핸들러 없는 요청임 method = " + request.getMethod() + ", uri = " + request.getRequestURI()
+                        )
+                );
     }
 
     private HandlerAdapter findHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new NoSuchElementException("어댑터 없음! handler = " + handler)
+                );
     }
 }
