@@ -4,10 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.controller.tobe.HandlerAdapterRegistry;
 import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -19,11 +18,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappingRegistry();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapters = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -36,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapters.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -67,9 +66,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(it -> it.supports(handler))
-                .findAny()
+        return handlerAdapters.getHandlerAdapter(handler)
                 .orElseThrow(() -> new NoSuchElementException("필요한 HandlerAdapter를 찾을 수 없습니다."));
     }
 }
