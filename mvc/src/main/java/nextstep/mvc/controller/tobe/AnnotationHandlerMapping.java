@@ -2,7 +2,7 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.exception.CreateInstanceException;
+import nextstep.mvc.exception.CreateHandlerInstanceException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -68,7 +68,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return targetClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new CreateInstanceException();
+            throw new CreateHandlerInstanceException();
         }
     }
 
