@@ -1,8 +1,9 @@
 package nextstep.mvc.controller.tobe;
 
-import nextstep.web.support.RequestMethod;
-
+import java.lang.reflect.Method;
 import java.util.Objects;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
 
@@ -12,6 +13,14 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public static HandlerKey from(Method method) {
+        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        final String url = annotation.value();
+        final RequestMethod requestMethod = annotation.method()[0];
+        final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        return handlerKey;
     }
 
     @Override
@@ -24,8 +33,12 @@ public class HandlerKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HandlerKey)) {
+            return false;
+        }
         HandlerKey that = (HandlerKey) o;
         return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
     }
