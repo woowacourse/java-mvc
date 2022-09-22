@@ -26,7 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         for (Object base : basePackage) {
             Set<Class<?>> targetClasses = scanPackage(base);
-            setClassesInformation(targetClasses);
+            addAllHandlerExecutions(targetClasses);
         }
     }
 
@@ -35,7 +35,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    private void setClassesInformation(final Set<Class<?>> targetClasses) {
+    private void addAllHandlerExecutions(final Set<Class<?>> targetClasses) {
         for (Class<?> targetClass : targetClasses) {
             final List<Method> methods = getMethodsAnnotatedWithRequestMapping(targetClass);
             for (Method method : methods) {

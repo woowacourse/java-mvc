@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,5 +41,19 @@ class DispatcherServletTest {
 
         // then
         assertThat(requestDispatcher.isForwardExecuted()).isTrue();
+    }
+
+    @Test
+    void 해당하는_핸들러를_찾지_못하면_예외를_발생한다() {
+        // given
+        final MockRequestDispatcher requestDispatcher = new MockRequestDispatcher();
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/notFound");
+
+        // when, then
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(ServletException.class);
     }
 }
