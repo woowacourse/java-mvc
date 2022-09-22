@@ -41,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handler = getController(request);
+            final var handler = getHandler(request);
             final ModelAndView modelAndView = handle(handler, request, response);
             render(modelAndView, request, response);
         } catch (Throwable e) {
@@ -50,7 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getController(final HttpServletRequest request) {
+    private Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
