@@ -40,10 +40,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final Reflections reflections = new Reflections(packageName);
         final Set<Class<?>> classesWithController = extractClassesWithController(reflections);
 
-        for (Class<?> aClass : classesWithController) {
-            final List<Method> methodsWithRequestMapping = extractMethodsWithRequestMapping(aClass);
+        for (Class<?> clazz : classesWithController) {
+            final List<Method> methodsWithRequestMapping = extractMethodsWithRequestMapping(clazz);
             for (Method method : methodsWithRequestMapping) {
-                final Object handler = createInstance(aClass);
+                final Object handler = createInstance(clazz);
                 initializeHandlerExecutions(handler, method);
             }
         }
@@ -53,16 +53,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    private List<Method> extractMethodsWithRequestMapping(final Class<?> aClass) {
-        final Method[] methods = aClass.getMethods();
+    private List<Method> extractMethodsWithRequestMapping(final Class<?> clazz) {
+        final Method[] methods = clazz.getMethods();
         return Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private Object createInstance(final Class<?> aClass) {
+    private Object createInstance(final Class<?> clazz) {
         try {
-            return aClass.getDeclaredConstructor().newInstance();
+            return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return new RuntimeException("해당하는 클래스 정보로 인스턴스를 생성할 수 없습니다.");
         }
