@@ -18,7 +18,7 @@ public class AnnoLoginController {
     private static final Logger log = LoggerFactory.getLogger(AnnoLoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         log.info("annotation login post method");
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
@@ -33,7 +33,7 @@ public class AnnoLoginController {
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView loginView(HttpServletRequest request, HttpServletResponse response) {
         log.info("annotation loginView get method");
         String viewName = UserSession.getUserFrom(request.getSession())
                 .map(user -> {

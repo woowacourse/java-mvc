@@ -18,7 +18,7 @@ public class AnnoRegisterController {
     private static int AUTO_INCREMENT = 2;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         log.info("annotation register get method");
         final var user = new User(AUTO_INCREMENT,
                 request.getParameter("account"),
@@ -31,7 +31,7 @@ public class AnnoRegisterController {
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView registerView(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView registerView(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 }

@@ -56,7 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         if (!this.handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalArgumentException("request에 대응되는 메소드가 없습니다.");
