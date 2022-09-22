@@ -22,9 +22,11 @@ class HandlerExecutionTest {
         // given
         Reflections reflections = new Reflections("samples");
         Class<?> controller = reflections.getTypesAnnotatedWith(Controller.class).iterator().next();
+
+        Object instance = controller.getConstructor().newInstance();
         Method method = controller.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
 
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        HandlerExecution handlerExecution = new HandlerExecution(instance, method);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
