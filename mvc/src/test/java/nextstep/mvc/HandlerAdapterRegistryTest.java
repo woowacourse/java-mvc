@@ -19,7 +19,7 @@ class HandlerAdapterRegistryTest {
     void getAnnotationHandlerAdapter() {
         // given
         final HandlerAdapterRegistry adapterRegistry = new HandlerAdapterRegistry();
-        final var request = mock(HttpServletRequest.class);
+        final var request = mock(HttpServletRequest.class);        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 

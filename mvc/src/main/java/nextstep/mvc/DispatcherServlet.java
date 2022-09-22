@@ -14,11 +14,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.handlerExecutor = new HandlerExecutor();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -26,7 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdaptor(final HandlerAdapter handlerAdaptor) {
-        handlerAdapterRegistry.addHandlerAdapter(handlerAdaptor);
+        handlerExecutor.addHandlerAdapter(handlerAdaptor);
     }
 
     @Override
@@ -34,9 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         final Object handler = handlerMappingRegistry.getHandler(request)
             .orElseThrow(() -> new IllegalArgumentException("handler not found"));
-        final HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-
-        final ModelAndView modelAndView = adapter.handle(request, response, handler);
+        final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
         render(modelAndView, request, response);
     }
 
