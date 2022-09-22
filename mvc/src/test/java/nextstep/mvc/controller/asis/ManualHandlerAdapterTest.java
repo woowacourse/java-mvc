@@ -1,7 +1,6 @@
 package nextstep.mvc.controller.asis;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,21 +16,30 @@ class ManualHandlerAdapterTest {
     private final ManualHandlerAdapter adapter = new ManualHandlerAdapter();
 
     @Test
-    @DisplayName("어댑터가 Controller를 구현한 핸들러인 경우 지원한다..")
+    @DisplayName("어댑터가 Controller를 구현한 핸들러인 경우 지원한다.")
     void supports() {
         // given
         final HandlerExecution notSupportedHandler = new HandlerExecution(null, null);
         final Controller supportedHandler = new TestManualController();
 
         // when
-        final boolean notSupportExpected = adapter.supports(notSupportedHandler);
         final boolean supportExpected = adapter.supports(supportedHandler);
 
         // then
-        assertAll(
-                () -> assertThat(notSupportExpected).isFalse(),
-                () -> assertThat(supportExpected).isTrue()
-        );
+        assertThat(supportExpected).isTrue();
+    }
+
+    @Test
+    @DisplayName("어댑터가 Controller를 구현한 핸들러가 아닌 경우 지원한다.")
+    void notSupports() {
+        // given
+        final HandlerExecution notSupportedHandler = new HandlerExecution(null, null);
+
+        // when
+        final boolean notSupportExpected = adapter.supports(notSupportedHandler);
+
+        // then
+        assertThat(notSupportExpected).isFalse();
     }
 
     @Test
