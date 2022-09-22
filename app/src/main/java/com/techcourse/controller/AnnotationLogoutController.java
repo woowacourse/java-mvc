@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class AnnoLogoutController {
-    private static final Logger log = LoggerFactory.getLogger(AnnoLoginController.class);
+public class AnnotationLogoutController {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationLoginController.class);
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {

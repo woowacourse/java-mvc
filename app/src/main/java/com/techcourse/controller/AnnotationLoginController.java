@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class AnnoLoginController {
+public class AnnotationLoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnoLoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationLoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {

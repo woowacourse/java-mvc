@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
-public class AnnoRegisterController {
-    private static final Logger log = LoggerFactory.getLogger(AnnoLoginController.class);
+public class AnnotationRegisterController {
+    private static final Logger log = LoggerFactory.getLogger(AnnotationLoginController.class);
     private static final AtomicInteger AUTO_INCREMENT = new AtomicInteger(1);
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
