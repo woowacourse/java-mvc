@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Class<?> aClass : classesWithController) {
             final List<Method> methodsWithRequestMapping = extractMethodsWithRequestMapping(aClass);
             for (Method method : methodsWithRequestMapping) {
-                final Object handler = toInstance(aClass);
+                final Object handler = createInstance(aClass);
                 initializeHandlerExecutions(handler, method);
             }
         }
@@ -60,7 +60,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private Object toInstance(final Class<?> aClass) {
+    private Object createInstance(final Class<?> aClass) {
         try {
             return aClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
