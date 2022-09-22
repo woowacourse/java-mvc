@@ -45,11 +45,10 @@ public class DispatcherServlet extends HttpServlet {
             if (handler instanceof Controller) {
                 final var viewName = ((Controller) handler).execute(request, response);
                 move(viewName, request, response);
+                return;
             }
-            if (handler instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                modelAndView.render(request, response);
-            }
+            ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
+            modelAndView.render(request, response);
 
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

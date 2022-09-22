@@ -3,9 +3,9 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nextstep.mvc.HandlerMapping;
@@ -30,28 +30,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
-        HashSet<Class<?>> classes = new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> clazz : classes) {
-            try {
-                final List<Method> methods = Stream.of(clazz.getDeclaredMethods())
-                        .filter(x -> x.isAnnotationPresent(RequestMapping.class))
-                        .collect(Collectors.toList());
-                initHandlerExecution(clazz, methods);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            scanHandlers(clazz);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void initHandlerExecution(Class<?> clazz, List<Method> methods) throws Exception {
+    private void scanHandlers(Class<?> clazz) {
+        try {
+            final List<Method> methods = Stream.of(clazz.getDeclaredMethods())
+                    .filter(x -> x.isAnnotationPresent(RequestMapping.class))
+                    .collect(Collectors.toList());
+            addHandlerExecutions(clazz, methods);
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+        }
+    }
+
+    private void addHandlerExecutions(Class<?> clazz, List<Method> methods) throws Exception {
         final Object instance = clazz.getDeclaredConstructor().newInstance();
         for (Method method : methods) {
-            final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            final String url = annotation.value();
-            final RequestMethod requestMethod = annotation.method()[0];
-            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            final HandlerKey handlerKey = HandlerKey.from(method);
             final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }

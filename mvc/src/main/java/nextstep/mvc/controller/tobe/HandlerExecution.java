@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import nextstep.mvc.view.ModelAndView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HandlerExecution {
 
@@ -16,8 +14,6 @@ public class HandlerExecution {
         this.instance = instance;
         this.method = method;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return (ModelAndView) method.invoke(instance, request, response);
