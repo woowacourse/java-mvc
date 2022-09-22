@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         log.info("Initialized Handler Mapping!");
         handlerExecutions.keySet()
-                .forEach(key -> log.info("{}, {}", key.toString(), handlerExecutions.get(key).toString()));
+                .forEach(key -> log.info("{}, {}", key, handlerExecutions.get(key)));
     }
 
     private Set<Class<?>> getClassesWithControllerAnnotation() {
