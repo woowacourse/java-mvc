@@ -5,15 +5,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class RequestMethodTest {
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "get"})
     @DisplayName("값으로 RequestMethod를 찾는다.")
-    void from() {
-        final String get = "GET";
-
-        final RequestMethod requestMethod = RequestMethod.from(get);
+    void from(String method) {
+        final RequestMethod requestMethod = RequestMethod.from(method);
 
         assertThat(requestMethod).isEqualTo(RequestMethod.GET);
     }
