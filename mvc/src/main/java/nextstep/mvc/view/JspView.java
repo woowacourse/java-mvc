@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.util.Map;
 
 public class JspView implements View {
-
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String REPLACEMENT = "";
 
     private final String viewName;
 
@@ -37,5 +37,15 @@ public class JspView implements View {
         // todo
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    @Override
+    public boolean isRedirect() {
+        return this.viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    @Override
+    public String getTrimName() {
+        return this.viewName.replace(REDIRECT_PREFIX, REPLACEMENT);
     }
 }

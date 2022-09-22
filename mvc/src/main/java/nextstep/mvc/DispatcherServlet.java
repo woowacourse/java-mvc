@@ -68,7 +68,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void processManual(HttpServletRequest request, HttpServletResponse response, Controller handler) throws ServletException, IOException {
         String viewName = handler.execute(request, response);
-        move(viewName, request, response);
+        move(new JspView(viewName), request, response);
     }
 
     private Object getHandler(HttpServletRequest request) {
@@ -79,12 +79,12 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new IllegalArgumentException("대응되는 handler가 없습니다"));
     }
 
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+    private void move(View view, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (view.isRedirect()) {
+            response.sendRedirect(view.getTrimName());
             return;
         }
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        final var requestDispatcher = request.getRequestDispatcher(view.getTrimName());
         requestDispatcher.forward(request, response);
     }
 }

@@ -10,4 +10,14 @@ public class JsonView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
     }
+
+    @Override
+    public boolean isRedirect() {
+        return false;
+    }
+
+    @Override
+    public String getTrimName() {
+        return null;
+    }
 }

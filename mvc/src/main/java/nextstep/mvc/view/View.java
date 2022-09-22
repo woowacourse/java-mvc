@@ -9,4 +9,8 @@ import java.util.Map;
 
 public interface View {
     void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
+
+    boolean isRedirect();
+
+    String getTrimName();
 }
