@@ -53,18 +53,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void saveHandlerExecutions(final Object controllerInstance, final List<Method> requestMethods) {
         for (Method requestMethod : requestMethods) {
-            final RequestMapping annotation = requestMethod.getAnnotation(RequestMapping.class);
-            final String url = annotation.value();
-            final RequestMethod[] httpMethods = annotation.method();
-            saveHandlerExecution(controllerInstance, requestMethod, url, httpMethods);
+            saveHandlerExecution(controllerInstance, requestMethod);
         }
     }
 
-    private void saveHandlerExecution(final Object controllerInstance, final Method method, final String url,
-                                      final RequestMethod[] httpMethods) {
+    private void saveHandlerExecution(final Object controllerInstance, final Method requestMethod) {
+        final RequestMapping annotation = requestMethod.getAnnotation(RequestMapping.class);
+        final String url = annotation.value();
+        final RequestMethod[] httpMethods = annotation.method();
+
         for (RequestMethod httpMethod : httpMethods) {
             final HandlerKey handlerKey = new HandlerKey(url, httpMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, requestMethod));
         }
     }
 
