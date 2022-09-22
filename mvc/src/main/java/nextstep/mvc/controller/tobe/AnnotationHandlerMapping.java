@@ -34,18 +34,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        ControllerScanner controllerScanner = new ControllerScanner(reflections);
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        final Reflections reflections = new Reflections(basePackage);
+        final ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        Set<Method> mappingMethods = getRequestMappingMethods(controllers.keySet());
+        final Set<Method> mappingMethods = getRequestMappingMethods(controllers.keySet());
         for (Method mappingMethod : mappingMethods) {
             this.handlerExecutions.putAll(getHandlerExecutions(mappingMethod));
         }
     }
 
     private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
-        Set<Method> methods = new HashSet<>();
+        final Set<Method> methods = new HashSet<>();
         for (Class<?> controllerClass : classes) {
             Predicate<Method> annotation = ReflectionUtils.withAnnotation(REQUEST_MAPPING_CLASS);
             Set<Method> allMethods = getAllMethods(controllerClass, annotation);
@@ -84,8 +84,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        RequestMethod method = RequestMethod.valueOf(request.getMethod());
+        final String requestURI = request.getRequestURI();
+        final RequestMethod method = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(requestURI, method));
     }
 }
