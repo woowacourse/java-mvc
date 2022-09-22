@@ -30,16 +30,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> aClass : classes) {
-            Method[] methods = aClass.getDeclaredMethods();
-            putHandlerExecutions(methods);
+            putHandlerExecutions(aClass);
         }
     }
 
-    private void putHandlerExecutions(Method[] methods) {
+    private void putHandlerExecutions(Class<?> aClass) {
+        Method[] methods = aClass.getDeclaredMethods();
         for (Method method : methods) {
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
             HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(aClass, method));
         }
     }
 
