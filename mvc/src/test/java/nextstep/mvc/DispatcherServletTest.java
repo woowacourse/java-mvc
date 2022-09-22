@@ -36,6 +36,7 @@ class DispatcherServletTest {
         given(request.getRequestURI()).willReturn("/get-test");
         given(request.getMethod()).willReturn("GET");
         given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestDispatcher("")).willReturn(mock(RequestDispatcher.class));
         dispatcherServlet = new DispatcherServlet(
                 List.of(new AnnotationHandlerMapping("samples")),
                 List.of(new AnnotationHandlerAdapter())

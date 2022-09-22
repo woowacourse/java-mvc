@@ -2,11 +2,8 @@ package nextstep.mvc.controller.asis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.HandlerExecution;
@@ -43,8 +40,6 @@ class ManualHandlerAdapterTest {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        given(request.getRequestDispatcher("testView")).willReturn(requestDispatcher);
 
         final Controller handler = new TestManualController();
 
@@ -52,9 +47,6 @@ class ManualHandlerAdapterTest {
         final ModelAndView expect = adapter.handle(request, response, handler);
 
         // then
-        assertAll(
-                () -> assertThat(expect.getView()).isNotNull(),
-                () -> verify(request).getRequestDispatcher("testView")
-        );
+        assertThat(expect.getView()).isNotNull();
     }
 }
