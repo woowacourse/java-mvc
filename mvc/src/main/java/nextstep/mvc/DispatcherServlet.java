@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,10 +40,12 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object controller = getController(request);
+            final Object controller = getHandler(request);
             if (controller instanceof Controller) {
                 final String viewName = ((Controller) controller).execute(request, response);
-                move(viewName, request, response);
+                final ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+                modelAndView.render(request, response);
+                return;
             }
             final ModelAndView modelAndView = ((HandlerExecution) controller).handle(request, response);
             modelAndView.render(request, response);
@@ -55,22 +56,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getController(final HttpServletRequest request) {
+    private Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow();
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
