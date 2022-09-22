@@ -46,8 +46,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private List<Method> getMethodsAnnotatedWithRequestMapping(Class<?> targetClass) {
         final Method[] declaredMethods = targetClass.getDeclaredMethods();
         return Arrays.stream(declaredMethods)
-                .filter(method -> method.getDeclaredAnnotation(RequestMapping.class) != null)
+                .filter(this::isAnnotatedWithRequestMapping)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isAnnotatedWithRequestMapping(final Method method) {
+        return method.getDeclaredAnnotation(RequestMapping.class) != null;
     }
 
     private void putHandlerExecutions(final Class<?> targetClass, final Method method, final RequestMapping annotation) {
