@@ -47,7 +47,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void addAllHandlerExecutions(final Class<?> controller) {
         final List<Method> declaredMethods = Arrays.stream(controller.getDeclaredMethods())
-                .filter(it -> isAnnotatedWith(it, RequestMapping.class))
+                .filter(it -> it.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
 
         final Object handler = createInstance(controller);
@@ -56,11 +56,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
             addHandlerExecution(annotation, declaredMethod, handler);
         }
-    }
-
-    private boolean isAnnotatedWith(final Method method, final Class<?> annotationClass) {
-        return Arrays.stream(method.getDeclaredAnnotations())
-                .anyMatch(annotation -> annotation.annotationType().equals(annotationClass));
     }
 
     private void addHandlerExecution(final RequestMapping annotation,
