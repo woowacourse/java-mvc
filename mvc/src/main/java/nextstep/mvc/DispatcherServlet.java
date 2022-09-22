@@ -41,15 +41,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-            if (handler instanceof Controller) {
-                final var viewName = ((Controller) handler).execute(request, response);
-                move(viewName, request, response);
-            }
-
-            if (handler instanceof HandlerExecution) {
-                final ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                modelAndView.render(request, response);
-            }
+            final ModelAndView modelAndView = getModelAndView(handler, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -64,14 +57,13 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private ModelAndView getModelAndView(final Object handler, final HttpServletRequest request,
+                                         final HttpServletResponse response) throws Exception {
+        if (handler instanceof Controller) {
+            final var viewName = ((Controller) handler).execute(request, response);
+            return new ModelAndView(new JspView(viewName));
         }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        
+        return ((HandlerExecution) handler).handle(request, response);
     }
 }
