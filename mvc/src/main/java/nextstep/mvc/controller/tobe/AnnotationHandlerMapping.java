@@ -1,12 +1,17 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import nextstep.mvc.HandlerMapping;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -22,9 +27,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClass = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> clazz : controllerClass) {
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method method : methods) {
+                addAllHandlerExecutions(clazz, method);
+            }
+        }
+    }
+
+    private void addAllHandlerExecutions(Class<?> clazz, Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            String url = annotation.value();
+            RequestMethod requestMethod = annotation.method()[0];
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(clazz, method));
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String url = request.getRequestURI();
+        String method = request.getMethod();
+        RequestMethod requestMethod = RequestMethod.valueOf(method);
+        return handlerExecutions.getOrDefault(new HandlerKey(url, requestMethod),
+                handlerExecutions.get(new HandlerKey("/404", RequestMethod.GET)));
     }
 }

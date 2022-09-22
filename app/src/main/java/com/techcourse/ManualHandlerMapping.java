@@ -1,15 +1,16 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -21,9 +22,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
+        // controllers.put("/login/view", new LoginViewController()); // @Controller로 대체
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
+        // controllers.put("/register/view", new RegisterViewController()); // @Controller로 대체
         controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
