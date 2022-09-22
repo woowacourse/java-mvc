@@ -12,6 +12,7 @@ import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void process(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Object handler = getHandler(request);
         if (handler.getClass().getInterfaces().length > 0) {
             processManual(request, response, (Controller) handler);
@@ -58,14 +59,14 @@ public class DispatcherServlet extends HttpServlet {
         processAnnotation(request, response, (HandlerExecution) handler);
     }
 
-    private void processAnnotation(HttpServletRequest request, HttpServletResponse response, HandlerExecution handler) throws Exception {
+    private void processAnnotation(HttpServletRequest request, HttpServletResponse response, HandlerExecution handler) throws ServletException, IOException {
         ModelAndView modelAndView = handler.handle(request, response);
         View view = modelAndView.getView();
         Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
     }
 
-    private void processManual(HttpServletRequest request, HttpServletResponse response, Controller handler) throws Exception {
+    private void processManual(HttpServletRequest request, HttpServletResponse response, Controller handler) throws ServletException, IOException {
         String viewName = handler.execute(request, response);
         move(viewName, request, response);
     }
@@ -75,15 +76,14 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("대응되는 handler가 없습니다"));
     }
 
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
-
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
