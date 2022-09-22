@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -67,7 +68,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private Object createControllerInstance(final Class<?> controllerClass) {
         try {
-            return controllerClass.getDeclaredConstructor().newInstance();
+            final Constructor<?> declaredConstructor = controllerClass.getDeclaredConstructor();
+            declaredConstructor.setAccessible(true);
+            return declaredConstructor.newInstance();
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException exception) {
             throw new IllegalStateException("Fail to create handler instance");
