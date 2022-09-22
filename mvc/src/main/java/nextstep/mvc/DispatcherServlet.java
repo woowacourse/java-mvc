@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
@@ -65,13 +66,13 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("필요한 HandlerMapping을 찾을 수 없습니다."));
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(it -> it.supports(handler))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("필요한 HandlerAdapter를 찾을 수 없습니다."));
     }
 }
