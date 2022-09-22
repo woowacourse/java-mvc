@@ -33,8 +33,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    private void addAllHandlerExecutions(final Set<Class<?>> targetClasses) {
-        for (Class<?> targetClass : targetClasses) {
+    private void addAllHandlerExecutions(final Set<Class<?>> handlerClasses) {
+        for (Class<?> targetClass : handlerClasses) {
             final List<Method> methods = getMethodsAnnotatedWithRequestMapping(targetClass);
             for (Method method : methods) {
                 final RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
@@ -43,8 +43,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private List<Method> getMethodsAnnotatedWithRequestMapping(Class<?> targetClass) {
-        final Method[] declaredMethods = targetClass.getDeclaredMethods();
+    private List<Method> getMethodsAnnotatedWithRequestMapping(Class<?> handlerClass) {
+        final Method[] declaredMethods = handlerClass.getDeclaredMethods();
         return Arrays.stream(declaredMethods)
                 .filter(this::isAnnotatedWithRequestMapping)
                 .collect(Collectors.toList());
@@ -54,18 +54,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return method.getDeclaredAnnotation(RequestMapping.class) != null;
     }
 
-    private void putHandlerExecutions(final Class<?> targetClass, final Method method, final RequestMapping annotation) {
+    private void putHandlerExecutions(final Class<?> handlerClass, final Method method, final RequestMapping annotation) {
         final String url = annotation.value();
         final RequestMethod[] requestMethods = annotation.method();
         for (RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(makeHandler(targetClass), method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(makeHandler(handlerClass), method));
         }
     }
 
-    private Object makeHandler(final Class<?> targetClass) {
+    private Object makeHandler(final Class<?> handlerClass) {
         try {
-            return targetClass.getConstructor().newInstance();
+            return handlerClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new CreateHandlerInstanceException();
