@@ -42,12 +42,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void mapRequestToMethod(final Class<?> aClass) {
         final Method[] methods = aClass.getMethods();
         for (Method method : methods) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            putHandlerExecutions(method, requestMapping);
+            putHandlerExecutions(method);
         }
     }
 
-    private void putHandlerExecutions(final Method method, final RequestMapping requestMapping) {
+    private void putHandlerExecutions(final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping != null) {
             final String url = requestMapping.value();
             final RequestMethod requestMethod = requestMapping.method()[0];
