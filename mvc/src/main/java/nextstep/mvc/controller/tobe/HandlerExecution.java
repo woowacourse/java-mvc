@@ -16,10 +16,6 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
-        return invoke(this.method, request, response);
-    }
-
-    private ModelAndView invoke(Method method, HttpServletRequest request, HttpServletResponse response ) {
         try {
             Class<?> declaringClass = method.getDeclaringClass();
             Object instance = declaringClass.getConstructor().newInstance();
