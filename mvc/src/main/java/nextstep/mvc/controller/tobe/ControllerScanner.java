@@ -16,22 +16,28 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    public static Map<HandlerKey, HandlerExecution> scan(final Object... basePackages) {
-        return new Reflections(basePackages)
+    private final Reflections reflections;
+
+    public ControllerScanner(final Object... basePackages) {
+        this.reflections = new Reflections(basePackages);
+    }
+
+    public Map<HandlerKey, HandlerExecution> scan() {
+        return this.reflections
                 .getTypesAnnotatedWith(Controller.class)
                 .stream()
-                .filter(ControllerScanner::hasMethodAnnotatedRequestMapping)
-                .map(ControllerScanner::newInstance)
-                .flatMap(ControllerScanner::createRequestMappings)
+                .filter(this::hasMethodAnnotatedRequestMapping)
+                .map(this::newInstance)
+                .flatMap(this::createRequestMappings)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
-    private static boolean hasMethodAnnotatedRequestMapping(final Class<?> controller) {
+    private boolean hasMethodAnnotatedRequestMapping(final Class<?> controller) {
         return Arrays.stream(controller.getMethods())
                 .anyMatch(method -> method.isAnnotationPresent(RequestMapping.class));
     }
 
-    private static <T> T newInstance(final Class<T> controller) {
+    private <T> T newInstance(final Class<T> controller) {
         try {
             return controller.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
@@ -40,7 +46,7 @@ public class ControllerScanner {
         }
     }
 
-    private static Stream<Entry<HandlerKey, HandlerExecution>> createRequestMappings(final Object instance) {
+    private Stream<Entry<HandlerKey, HandlerExecution>> createRequestMappings(final Object instance) {
         final var clazz = instance.getClass();
 
         return Arrays.stream(clazz.getMethods())
@@ -48,8 +54,8 @@ public class ControllerScanner {
                 .flatMap((method -> createHandlerEntry(instance, method)));
     }
 
-    private static Stream<Entry<HandlerKey, HandlerExecution>> createHandlerEntry(final Object instance,
-                                                                                  final Method method) {
+    private Stream<Entry<HandlerKey, HandlerExecution>> createHandlerEntry(final Object instance,
+                                                                           final Method method) {
         final var handlerKeys = createHandlerKeys(method);
         final var handlerExecution = new HandlerExecution(method, instance);
 
@@ -57,7 +63,7 @@ public class ControllerScanner {
                 .map(handlerKey -> Map.entry(handlerKey, handlerExecution));
     }
 
-    private static List<HandlerKey> createHandlerKeys(final Method method) {
+    private List<HandlerKey> createHandlerKeys(final Method method) {
         final var requestMapping = method.getAnnotation(RequestMapping.class);
         final var urls = requestMapping.value();
         final var requestMethods = requestMapping.method();
@@ -67,11 +73,8 @@ public class ControllerScanner {
                 .collect(Collectors.toList());
     }
 
-    private static Function<String, Stream<? extends HandlerKey>> combineUrlAndRequestMethods(
+    private Function<String, Stream<? extends HandlerKey>> combineUrlAndRequestMethods(
             final RequestMethod[] requestMethods) {
         return url -> Arrays.stream(requestMethods).map(requestMethod -> new HandlerKey(url, requestMethod));
-    }
-
-    private ControllerScanner() {
     }
 }

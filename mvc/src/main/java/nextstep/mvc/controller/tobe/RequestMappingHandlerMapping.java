@@ -22,7 +22,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        handlerMappings.putAll(ControllerScanner.scan(basePackage));
+        handlerMappings.putAll(new ControllerScanner(basePackage).scan());
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerMappings.entrySet()
