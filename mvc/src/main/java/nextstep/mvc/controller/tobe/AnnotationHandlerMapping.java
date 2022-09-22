@@ -52,7 +52,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private Object getNewInstance(Class<?> aClass) {
         try {
             return aClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
