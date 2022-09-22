@@ -32,6 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object packageName : basePackage) {
             scanController((String) packageName);

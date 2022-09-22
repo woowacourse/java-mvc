@@ -17,7 +17,14 @@ public class JspView implements View {
     private final String viewName;
 
     public JspView(final String viewName) {
-        this.viewName = viewName;
+        this.viewName = extractViewName(viewName);
+    }
+
+    private String extractViewName(final String viewName) {
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            return viewName.substring(JspView.REDIRECT_PREFIX.length());
+        }
+        return viewName;
     }
 
     @Override

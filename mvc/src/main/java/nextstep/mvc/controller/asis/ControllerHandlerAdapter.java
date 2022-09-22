@@ -19,10 +19,6 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
                                final Object handler) throws Exception {
         final Controller controller = (Controller) handler;
         final String viewName = controller.execute(request, response);
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            final String redirectViewName = viewName.substring(JspView.REDIRECT_PREFIX.length());
-            return new ModelAndView(new JspView(redirectViewName));
-        }
         return new ModelAndView(new JspView(viewName));
     }
 }
