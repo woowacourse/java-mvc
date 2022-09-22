@@ -3,17 +3,18 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Class<RequestMapping> REQUEST_MAPPING_CLASS = RequestMapping.class;
-    private static final Class<Controller> CONTROLLER_CLASS = Controller.class;
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
@@ -34,34 +34,44 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Class<?> controllerClass : findControllers()) {
-            Object handler = getInstance(controllerClass);
-            findMappingMethods(controllerClass)
-                    .forEach(method -> saveMethodMapping(handler, method));
-        }
-    }
-
-    public List<Class<?>> findControllers() {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(CONTROLLER_CLASS);
-        return new ArrayList<>(controllers);
-    }
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-    public List<Method> findMappingMethods(Class<?> controllerClass) {
-        return Arrays.stream(controllerClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_CLASS))
-                .collect(Collectors.toList());
-    }
-
-    private void saveMethodMapping(Object handler, Method method) {
-        RequestMapping annotation = method.getAnnotation(REQUEST_MAPPING_CLASS);
-        for (RequestMethod requestMethod : annotation.method()) {
-            String requestURL = annotation.value();
-            HandlerKey handlerKey = new HandlerKey(requestURL, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("Path : {}, Method : {}.{}()", requestURL, method.getDeclaringClass(), method.getName());
+        Set<Method> mappingMethods = getRequestMappingMethods(controllers.keySet());
+        for (Method mappingMethod : mappingMethods) {
+            this.handlerExecutions.putAll(getHandlerExecutions(mappingMethod));
         }
+    }
+
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
+        Set<Method> methods = new HashSet<>();
+        for (Class<?> controllerClass : classes) {
+            Predicate<Method> annotation = ReflectionUtils.withAnnotation(REQUEST_MAPPING_CLASS);
+            Set<Method> allMethods = getAllMethods(controllerClass, annotation);
+            methods.addAll(allMethods);
+        }
+        return methods;
+    }
+
+    @SafeVarargs
+    private Set<Method> getAllMethods(Class<?> controllerClass, Predicate<? super Method>... predicates) {
+        return ReflectionUtils.getAllMethods(controllerClass, predicates);
+    }
+
+    private Map<HandlerKey, HandlerExecution> getHandlerExecutions(Method method) {
+        final HandlerExecution handlerExecution = new HandlerExecution(getInstance(method.getDeclaringClass()), method);
+        final RequestMapping requestMapping = method.getAnnotation(REQUEST_MAPPING_CLASS);
+        log.info("Path : {}, Method : {}", requestMapping.value(), requestMapping.method());
+
+        return mapHandlerKeys(requestMapping.value(), requestMapping.method()).stream()
+                .collect(Collectors.toMap(key -> key, key -> handlerExecution));
+    }
+
+    private List<HandlerKey> mapHandlerKeys(String path, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(status -> new HandlerKey(path, status))
+                .collect(Collectors.toList());
     }
 
     private Object getInstance(Class<?> aClass) {
