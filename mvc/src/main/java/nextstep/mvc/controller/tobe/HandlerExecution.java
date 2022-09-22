@@ -7,8 +7,8 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
-    private Object handler;
-    private Method method;
+    private final Object handler;
+    private final Method method;
 
     public HandlerExecution(Object handler, Method method) {
         this.handler = handler;
