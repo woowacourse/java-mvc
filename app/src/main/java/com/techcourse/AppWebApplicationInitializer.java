@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.handlerAdapter.AnnotationHandlerAdapter;
-import nextstep.mvc.handlerMapping.AnnotationHandlerMapping;
 import nextstep.mvc.handlerAdapter.ManualHandlerAdapter;
+import nextstep.mvc.handlerMapping.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 
 public class AppWebApplicationInitializer implements WebApplicationInitializer {
