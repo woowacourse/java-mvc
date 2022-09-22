@@ -1,8 +1,13 @@
 package nextstep.mvc.controller.tobe;
 
-import nextstep.web.support.RequestMethod;
-
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
 
@@ -12,6 +17,28 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public HandlerKey(final HttpServletRequest request) {
+        String url = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+        this.url = url;
+        this.requestMethod = requestMethod;
+    }
+
+    public static List<HandlerKey> from(final RequestMapping requestMapping) {
+        String url = requestMapping.value();
+        List<RequestMethod> requestMethods = Arrays.stream(requestMapping.method())
+                .collect(Collectors.toList());
+
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerKeys.add(handlerKey);
+        }
+
+        return handlerKeys;
     }
 
     @Override
@@ -24,8 +51,12 @@ public class HandlerKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HandlerKey)) {
+            return false;
+        }
         HandlerKey that = (HandlerKey) o;
         return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
     }
