@@ -40,29 +40,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void initializeHandlers(final Set<Class<?>> controllerClasses) {
         for (Class<?> controllerClass : controllerClasses) {
-            final List<Method> methods = getRequestMappingMethods(controllerClass);
-            addHandlerByRequestMapping(controllerClass, methods);
+            addHandlersByRequestMapping(controllerClass);
+        }
+    }
+
+    private void addHandlersByRequestMapping(final Class<?> controllerClass) {
+        final List<Method> methods = getRequestMappingMethods(controllerClass);
+        final Object controller = createControllerInstance(controllerClass);
+        for (Method method : methods) {
+            final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+            final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping.value(), requestMapping.method());
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            addHandlerExecutions(handlerKeys, handlerExecution);
         }
     }
 
     private List<Method> getRequestMappingMethods(final Class<?> controllerClass) {
         return Arrays.stream(controllerClass.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
-    }
-
-    private void addHandlerByRequestMapping(final Class<?> controllerClass, final List<Method> methods) {
-        final Object controller = createControllerInstance(controllerClass);
-        for (Method method : methods) {
-            final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-            final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping.value(), requestMapping.method());
-            addHandlerExecutions(handlerKeys, controller, method);
-        }
-    }
-
-    private List<HandlerKey> getHandlerKeys(final String requestValue, final RequestMethod[] requestMethods) {
-        return Arrays.stream(requestMethods)
-                .map(requestMethod -> new HandlerKey(requestValue, requestMethod))
                 .collect(Collectors.toList());
     }
 
@@ -77,9 +72,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void addHandlerExecutions(final List<HandlerKey> handlerKeys, final Object controller,
-                                      final Method method) {
-        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+    private List<HandlerKey> getHandlerKeys(final String requestValue, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(requestValue, requestMethod))
+                .collect(Collectors.toList());
+    }
+
+    private void addHandlerExecutions(final List<HandlerKey> handlerKeys, final HandlerExecution handlerExecution) {
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
