@@ -42,7 +42,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     .forEach(method -> addToHandlerExecutions(instance, method));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            log.warn("Fail to instantiate controller class.");
+            log.warn("Fail to instantiate controller class.", e);
         }
     }
 
