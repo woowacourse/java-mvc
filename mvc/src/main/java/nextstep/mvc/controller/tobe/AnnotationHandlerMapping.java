@@ -46,13 +46,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         controllers.forEach(this::registerMappingHandler);
     }
 
-    private void registerMappingHandler(final Class<?> controller) {
-        final Method[] declaredMethods = controller.getDeclaredMethods();
+    private void registerMappingHandler(final Class<?> controllerClass) {
+        final Method[] declaredMethods = controllerClass.getDeclaredMethods();
         final List<Method> handlers = Arrays.stream(declaredMethods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
-
-        handlers.forEach(handler -> requestMappingHandler(handler, toInstance(controller)));
+        final Object controller = toInstance(controllerClass);
+        handlers.forEach(handler -> requestMappingHandler(handler, controller));
     }
 
     private Object toInstance(final Class<?> controller) {
