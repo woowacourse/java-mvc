@@ -3,6 +3,7 @@ package nextstep.mvc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,10 +48,16 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = getHandler(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            Optional<Object> handler = getHandler(request);
 
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            if (handler.isEmpty()) {
+                response.sendRedirect("404.jsp");
+                return;
+            }
+
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler.get());
+
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -58,12 +65,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(final HttpServletRequest request) {
+    private Optional<Object> getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("해당 요청을 처리할 수 있는 핸들러를 찾지 못했습니다."));
+            .findFirst();
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
