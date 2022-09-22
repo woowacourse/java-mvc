@@ -28,11 +28,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-
-        for (final Object eachPackage : basePackage) {
-            final Reflections reflections = new Reflections(eachPackage);
-            addHandlerExecutions(reflections);
-        }
+        final Reflections reflections = new Reflections(basePackage);
+        addHandlerExecutions(reflections);
     }
 
     private void addHandlerExecutions(final Reflections reflections) {
@@ -62,10 +59,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod()));
         try {
             return handlerExecutions.get(handlerKey);
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             log.error("Handler Not Found", e);
             throw new IllegalStateException();
         }
