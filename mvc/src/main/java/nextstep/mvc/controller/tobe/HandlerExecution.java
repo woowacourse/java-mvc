@@ -18,4 +18,12 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return (ModelAndView) method.invoke(instance, request, response);
     }
+
+    @Override
+    public String toString() {
+        return "HandlerExecution{" +
+                "method=" + method +
+                ", instance=" + instance +
+                '}';
+    }
 }
