@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Object handler = getHandler(request);
-        if (handler.getClass().getInterfaces().length > 0) {
+        if (handler instanceof Controller) {
             processManual(request, response, (Controller) handler);
             return;
         }
