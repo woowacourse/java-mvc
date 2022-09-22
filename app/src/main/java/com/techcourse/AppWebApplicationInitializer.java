@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.ServletContext;
-import nextstep.mvc.handlerAdapter.AnnotationHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.handlerAdapter.ManualHandlerAdapter;
-import nextstep.mvc.handlerMapping.AnnotationHandlerMapping;
+import nextstep.mvc.controller.asis.ControllerHandlerAdapter;
+import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.web.WebApplicationInitializer;
 
 public class AppWebApplicationInitializer implements WebApplicationInitializer {
@@ -21,8 +21,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
 
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

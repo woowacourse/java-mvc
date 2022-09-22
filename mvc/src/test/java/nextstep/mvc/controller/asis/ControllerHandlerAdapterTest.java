@@ -1,4 +1,4 @@
-package nextstep.mvc.handlerAdapter;
+package nextstep.mvc.controller.asis;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,14 +7,13 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
 
-class ManualHandlerAdapterTest {
+class ControllerHandlerAdapterTest {
 
     @Test
     @DisplayName("Controller의 구현체라면 true를 반환한다.")
     void supportsWhenTrue() {
-        ManualHandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+        ControllerHandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
         Controller controller = new ControllerForTest();
         assertThat(handlerAdapter.supports(controller)).isTrue();
     }
@@ -22,7 +21,7 @@ class ManualHandlerAdapterTest {
     @Test
     @DisplayName("Controller의 구현체가 아니라면 false를 반환한다.")
     void supportsWhenFalse() {
-        ManualHandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+        ControllerHandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
         Object object = new Object();
         assertThat(handlerAdapter.supports(object)).isFalse();
     }

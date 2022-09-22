@@ -1,4 +1,4 @@
-package nextstep.mvc.handlerMapping;
+package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -13,8 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.HandlerKey;
+import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
@@ -34,16 +33,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
 
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        Map<Class<?>, Object> controllers = controllerScanner.scan();
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         for (Class<?> controller : controllers.keySet()) {
-            Set<Method> methods = ReflectionUtils.getAllMethods(
-                controller,
-                ReflectionUtils.withAnnotation(RequestMapping.class)
-            );
+            Set<Method> methods = getRequestMappingMethods(controller);
 
             for (Method method : methods) {
-                addToHandlerExecutions(controllers.get(controller), method);
+                addHandlerExecutions(controllers.get(controller), method);
             }
         }
     }
@@ -53,18 +49,27 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(key);
     }
 
-    private void addToHandlerExecutions(final Object controller, final Method method) {
+    private Set<Method> getRequestMappingMethods(Class<?> controller) {
+        return ReflectionUtils.getAllMethods(
+            controller,
+            ReflectionUtils.withAnnotation(RequestMapping.class));
+    }
+
+    private void addHandlerExecutions(final Object controller, final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
-        List<HandlerKey> keys = Arrays.stream(annotation.method())
-            .map(it -> new HandlerKey(annotation.value(), it))
-            .collect(Collectors.toUnmodifiableList());
-
+        List<HandlerKey> keys = mapHandlerKeys(annotation.value(), annotation.method());
         HandlerExecution execution = new HandlerExecution(controller, method);
 
         for (HandlerKey key : keys) {
             handlerExecutions.put(key, execution);
         }
+    }
+
+    private List<HandlerKey> mapHandlerKeys(String uri, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+            .map(requestMethod -> new HandlerKey(uri, requestMethod))
+            .collect(Collectors.toUnmodifiableList());
     }
 
 }
