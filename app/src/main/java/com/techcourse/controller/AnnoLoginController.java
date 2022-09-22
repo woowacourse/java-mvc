@@ -12,15 +12,13 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 @Controller
 public class AnnoLoginController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnoLoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("annotation login post method");
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
@@ -35,7 +33,7 @@ public class AnnoLoginController {
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("annotation loginView get method");
         String viewName = UserSession.getUserFrom(request.getSession())
                 .map(user -> {

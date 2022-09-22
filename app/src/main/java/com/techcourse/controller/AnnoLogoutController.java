@@ -15,7 +15,7 @@ public class AnnoLogoutController {
     private static final Logger log = LoggerFactory.getLogger(AnnoLoginController.class);
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView logout(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("annotation loginOut get method");
         final var session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
