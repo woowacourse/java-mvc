@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Class<?> controller : controllers) {
             List<Method> controllerMethods = Arrays.stream(controller.getDeclaredMethods())
-                    .filter(it -> it.isAnnotationPresent(RequestMapping.class))
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .collect(Collectors.toList());
             addHandlers(controller, controllerMethods);
         }
