@@ -7,8 +7,8 @@
 ---
 
 ![Generic badge](https://img.shields.io/badge/Level4-mvc-green.svg)
-![Generic badge](https://img.shields.io/badge/test-2_passed-blue.svg)
-![Generic badge](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)
+![Generic badge](https://img.shields.io/badge/test-50_passed-blue.svg)
+![Generic badge](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)
 
 > 우아한테크코스 웹 백엔드 4기, @MVC 구현하기 저장소입니다.
 
@@ -67,7 +67,17 @@ public class TestController {
 
 <br><br>
 
-## 체크리스트
+## Step2 체크리스트
+
+---
+
+- [ ] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.
+- [ ] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현했다.
+- [ ] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.
+
+<br><br>
+
+## Step1 체크리스트
 
 ---
 
