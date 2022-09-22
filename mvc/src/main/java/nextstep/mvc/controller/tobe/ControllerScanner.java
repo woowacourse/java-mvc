@@ -1,4 +1,4 @@
-package nextstep.mvc.handlerMapping;
+package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -17,9 +17,12 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-    public Map<Class<?>, Object> scan() {
+    public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        return instantiateControllers(controllers);
+    }
 
+    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
         return controllers.stream()
             .collect(Collectors.toUnmodifiableMap(
                 key -> key,

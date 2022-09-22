@@ -8,17 +8,17 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
-    private final Object instance;
+    private final Object declaredObject;
     private final Method method;
 
-    public HandlerExecution(final Object instance, final Method method) {
-        this.instance = instance;
+    public HandlerExecution(final Object declaredObject, final Method method) {
+        this.declaredObject = declaredObject;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object[] params = {request, response};
-        return (ModelAndView)method.invoke(instance, params);
+        return (ModelAndView)method.invoke(declaredObject, params);
     }
 
 }
