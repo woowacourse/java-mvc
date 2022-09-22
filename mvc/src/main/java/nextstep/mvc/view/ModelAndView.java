@@ -13,7 +13,7 @@ public class ModelAndView {
         this(view, new HashMap<>());
     }
 
-    public ModelAndView(final View view, final Map<String, Object> model) {
+    private ModelAndView(final View view, final Map<String, Object> model) {
         this.view = view;
         this.model = model;
     }
