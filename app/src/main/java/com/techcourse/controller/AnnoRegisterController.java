@@ -12,20 +12,21 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Controller
 public class AnnoRegisterController {
     private static final Logger log = LoggerFactory.getLogger(AnnoLoginController.class);
-    private static int AUTO_INCREMENT = 2;
+    private static final AtomicInteger AUTO_INCREMENT = new AtomicInteger(1);
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         log.info("annotation register get method");
-        final var user = new User(AUTO_INCREMENT,
+        final var user = new User(AUTO_INCREMENT.incrementAndGet(),
                 request.getParameter("account"),
                 request.getParameter("password"),
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
-        AUTO_INCREMENT++;
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
