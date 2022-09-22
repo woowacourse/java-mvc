@@ -1,8 +1,8 @@
-package com.techcourse;
+package com.techcourse.support.web.handler;
 
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
+import nextstep.mvc.handler.mapping.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
 import org.slf4j.Logger;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -32,9 +33,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        return Optional.ofNullable(controllers.get(requestURI));
     }
 }
