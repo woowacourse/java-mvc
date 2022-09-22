@@ -15,18 +15,42 @@ public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
-    @RequestMapping(value = "/get-test", method = RequestMethod.GET)
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = new ModelAndView(new JspView("view"));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
 
-    @RequestMapping(value = "/post-test", method = RequestMethod.POST)
+    @RequestMapping(value = "/test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = new ModelAndView(new JspView("view"));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.PATCH)
+    public ModelAndView update(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller patch method");
+        final var modelAndView = new ModelAndView(new JspView("view"));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.PUT)
+    public ModelAndView put(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller put method");
+        final var modelAndView = new ModelAndView(new JspView("view"));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.DELETE)
+    public ModelAndView delete(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller delete method");
+        final var modelAndView = new ModelAndView(new JspView("view"));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
