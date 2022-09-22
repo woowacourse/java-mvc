@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

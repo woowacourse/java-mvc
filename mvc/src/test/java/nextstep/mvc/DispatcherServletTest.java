@@ -9,7 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import nextstep.mvc.controller.asis.ManualHandlerAdapter;
+import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import org.junit.jupiter.api.BeforeEach;
