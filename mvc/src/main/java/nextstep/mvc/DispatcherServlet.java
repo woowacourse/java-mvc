@@ -72,11 +72,9 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdapter getAdapter(final Object handler) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new HandlerAdapterNotFoundException();
+        return handlerAdapters.stream()
+                .filter(it -> it.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new HandlerAdapterNotFoundException());
     }
 }
