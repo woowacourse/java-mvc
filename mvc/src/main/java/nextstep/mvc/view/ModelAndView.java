@@ -9,6 +9,10 @@ public class ModelAndView {
     private final View view;
     private final Map<String, Object> model;
 
+    public ModelAndView(final String viewName) {
+        this(getView(viewName));
+    }
+
     public ModelAndView(final View view) {
         this.view = view;
         this.model = new HashMap<>();
@@ -17,6 +21,13 @@ public class ModelAndView {
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
+    }
+
+    private static View getView(String viewName) {
+        if (viewName.endsWith(".jsp")) {
+            return new JspView(viewName);
+        }
+        return new JsonView(viewName);
     }
 
     public Object getObject(final String attributeName) {
