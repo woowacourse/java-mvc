@@ -13,12 +13,14 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(AppWebApplicationInitializer.class);
 
+    private static final String BASE_PACKAGE = "com.techcourse";
+
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
 
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE));
 
         dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
