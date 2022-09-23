@@ -13,8 +13,8 @@ public class ControllerScanner {
 
     private final Reflections reflections;
 
-    public ControllerScanner(final Reflections reflections) {
-        this.reflections = reflections;
+    public ControllerScanner(final Object... basePackage) {
+        this.reflections = new Reflections(basePackage);
     }
 
     public Map<Class<?>, Object> getControllers() {
