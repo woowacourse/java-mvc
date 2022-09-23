@@ -73,7 +73,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 | InstantiationException
                 | IllegalAccessException e) {
             log.error(e.getMessage());
-            throw new RuntimeException();
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
