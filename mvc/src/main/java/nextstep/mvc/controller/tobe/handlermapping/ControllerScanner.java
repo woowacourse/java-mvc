@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.tobe.handlermapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;

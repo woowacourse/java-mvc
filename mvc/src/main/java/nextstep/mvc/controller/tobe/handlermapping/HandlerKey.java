@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.tobe.handlermapping;
 
 import nextstep.web.support.RequestMethod;
 
