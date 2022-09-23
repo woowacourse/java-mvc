@@ -8,12 +8,10 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@nextstep.web.annotation.Controller
 public class LoginViewController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
