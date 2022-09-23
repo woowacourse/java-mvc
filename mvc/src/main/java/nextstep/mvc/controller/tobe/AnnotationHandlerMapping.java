@@ -6,14 +6,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.exception.NoDefaultConstructorException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,28 +29,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        final Reflections reflections = new Reflections(basePackages);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         mapControllerForHandlerExecution(controllers);
     }
 
-    private void mapControllerForHandlerExecution(final Set<Class<?>> controllers) {
-        for (final Class<?> controller : controllers) {
-            final List<Method> methods = Arrays.stream(controller.getDeclaredMethods())
+    private void mapControllerForHandlerExecution(final Map<Class<?>, Object> controllers) {
+        for (final Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            final Class<?> controllerClass = controller.getKey();
+            final Object controllerInstance = controller.getValue();
+            final List<Method> methods = Arrays.stream(controllerClass.getDeclaredMethods())
                     .filter(it -> it.isAnnotationPresent(RequestMapping.class))
                     .collect(Collectors.toList());
 
-            final Object controllerInstance = getControllerInstance(controller);
             mapMethodsForHandlerExecution(methods, controllerInstance);
-        }
-    }
-
-    private Object getControllerInstance(final Class<?> controller) throws NoDefaultConstructorException {
-        try {
-            return controller.getConstructor().newInstance();
-        } catch (final Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new NoDefaultConstructorException();
         }
     }
 
