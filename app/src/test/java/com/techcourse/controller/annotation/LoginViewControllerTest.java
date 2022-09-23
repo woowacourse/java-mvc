@@ -3,7 +3,6 @@ package com.techcourse.controller.annotation;
 import static com.techcourse.controller.UserSession.SESSION_KEY;
 import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

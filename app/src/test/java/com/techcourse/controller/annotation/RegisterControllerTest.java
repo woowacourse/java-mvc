@@ -2,13 +2,11 @@ package com.techcourse.controller.annotation;
 
 import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.lang.reflect.Field;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;

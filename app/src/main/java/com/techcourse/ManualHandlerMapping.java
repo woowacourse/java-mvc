@@ -1,19 +1,13 @@
 package com.techcourse;
 
-import com.techcourse.controller.manual.LoginController;
-import com.techcourse.controller.manual.LoginViewController;
-import com.techcourse.controller.manual.LogoutController;
-import com.techcourse.controller.manual.RegisterController;
-import com.techcourse.controller.manual.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
 

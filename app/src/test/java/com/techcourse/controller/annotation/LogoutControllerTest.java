@@ -1,13 +1,10 @@
 package com.techcourse.controller.annotation;
 
-import static com.techcourse.controller.UserSession.SESSION_KEY;
 import static nextstep.mvc.view.JspView.REDIRECT_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.techcourse.controller.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -50,5 +47,4 @@ class LogoutControllerTest {
 
         assertThat(field.get(modelAndView.getView())).isEqualTo(REDIRECT_PREFIX + "/");
     }
-
 }
