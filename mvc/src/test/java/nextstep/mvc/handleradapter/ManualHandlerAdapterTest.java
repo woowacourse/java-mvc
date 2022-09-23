@@ -1,11 +1,13 @@
 package nextstep.mvc.handleradapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.mock;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.Controller;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,13 +25,19 @@ class ManualHandlerAdapterTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
         final ManualHandlerAdapter handlerAdapter = new ManualHandlerAdapter();
-        final Controller handler = new TestManualController();
+        final Controller handler = mock(TestManualController.class);
+
+        final String viewName = "";
+        final ModelAndView expected = new ModelAndView(new JspView(viewName));
+        willReturn(viewName)
+                .given(handler)
+                .execute(request, response);
 
         // when
         final ModelAndView actual = handlerAdapter.handle(request, response, handler);
 
         // then
-        assertThat(actual).isNotNull();
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Nested
