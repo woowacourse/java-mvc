@@ -13,7 +13,7 @@ import samples.TestManualHandlerMapping;
 class HandlerMappingRegistryTest {
 
     @Test
-    @DisplayName("AnnotationHandlerMapping을 등록하고 handler를 꺼내온다.")
+    @DisplayName("HandlerMapping을 등록하고 handler를 꺼내온다.")
     void getHandler() {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
