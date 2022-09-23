@@ -1,9 +1,13 @@
-package nextstep.mvc;
+package nextstep.mvc.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.handeradapter.HandlerAdapter;
+import nextstep.mvc.handeradapter.HandlerAdapterRegistry;
+import nextstep.mvc.handermapping.HandlerMapping;
+import nextstep.mvc.handermapping.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

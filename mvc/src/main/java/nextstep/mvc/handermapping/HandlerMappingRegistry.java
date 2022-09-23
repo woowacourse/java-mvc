@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
