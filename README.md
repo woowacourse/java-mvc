@@ -29,7 +29,7 @@
 
 ### 작업 목록
 
-- [ ] `ControllerScanner` 객체 생성 및 `@Controller`가 붙은 클래스 찾는 책임 부여
+- [x] `ControllerScanner` 객체 생성 및 `@Controller`가 붙은 클래스 찾는 책임 부여
 - [ ] `HandlerAdaptor` 구현
   - 반환값이 다른 핸들러들에 대해서 동일한 인터페이스로 처리가능하도록 변경한다.
   - 힌트를 보지않고 구현한 뒤 힌트를 보고 개선한다.

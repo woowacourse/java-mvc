@@ -20,7 +20,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get_요청을_처리할_수_있다() throws Exception {
+    void get_요청을_처리할_수_있다() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -35,7 +35,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void post_요청을_처리할_수_있다() throws Exception {
+    void post_요청을_처리할_수_있다() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
