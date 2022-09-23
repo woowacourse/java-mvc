@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import nextstep.mvc.controller.tobe.handleradapter.HandlerAdapterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +17,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>());
     }
 
     @Override
@@ -33,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-            final var handlerAdapter = getHandlerAdapter(handler);
+            final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
@@ -56,13 +57,6 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow();
     }
