@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,39 +33,36 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         final ControllerScanner controllerScanner = new ControllerScanner(basePackages);
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        mapControllerForHandlerExecution(controllers);
-    }
 
-    private void mapControllerForHandlerExecution(final Map<Class<?>, Object> controllers) {
         for (final Entry<Class<?>, Object> controller : controllers.entrySet()) {
-            final Class<?> controllerClass = controller.getKey();
-            final Object controllerInstance = controller.getValue();
-            final List<Method> methods = Arrays.stream(controllerClass.getDeclaredMethods())
-                    .filter(it -> it.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
-
-            mapMethodsForHandlerExecution(methods, controllerInstance);
+            addHandlerExecution(controller);
         }
     }
 
-    private void mapMethodsForHandlerExecution(final List<Method> methods, final Object controller) {
+    private void addHandlerExecution(final Entry<Class<?>, Object> controller) {
+        final Class<?> controllerClass = controller.getKey();
+        final Object controllerInstance = controller.getValue();
+        final Set<Method> methods = getRequestMappingMethods(controllerClass);
+
         for (final Method method : methods) {
-            final RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
-            final String path = requestMappingAnnotation.value();
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            final RequestMethod[] requestMethods = requestMapping.method();
+            final Map<HandlerKey, HandlerExecution> handlers = mapHandlerKey(requestMapping.value(), requestMethods)
+                    .stream()
+                    .collect(Collectors.toMap(it -> it, it -> new HandlerExecution(controllerInstance, method)));
 
-            final RequestMethod[] requestMethods = requestMappingAnnotation.method();
-            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            addHandlerExecutionsByPath(path, requestMethods, handlerExecution);
+            handlerExecutions.putAll(handlers);
         }
     }
 
-    private void addHandlerExecutionsByPath(final String path, final RequestMethod[] requestMethods,
-                                            final HandlerExecution handlerExecution) {
-        for (final RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(path, requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("[Add Handler Execution] handlerKey : {}, handlerExecution : {}", handlerKey, handlerExecution);
-        }
+    private Set<Method> getRequestMappingMethods(final Class<?> controller) {
+        return ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
+    }
+
+    private List<HandlerKey> mapHandlerKey(final String uri, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(it -> new HandlerKey(uri, it))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
