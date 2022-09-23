@@ -16,6 +16,28 @@ import org.junit.jupiter.api.Test;
 @DisplayName("AnnotationHandlerAdapter의")
 class AnnotationHandlerAdapterTest {
 
+    @Test
+    @DisplayName("handler 메서드는 HandlerExecution로 요청을 처리하고 ModelAndView를 반환한다.")
+    void handle() throws Exception {
+        // given
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+
+        final AnnotationHandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+        final HandlerExecution handler = mock(HandlerExecution.class);
+
+        final ModelAndView expected = new ModelAndView(new JspView(""));
+        willReturn(expected)
+                .given(handler)
+                .handle(request, response);
+
+        // when
+        final ModelAndView actual = handlerAdapter.handle(request, response, handler);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
+    }
+
     @Nested
     @DisplayName("supports 메서드는")
     class Supports {
@@ -46,28 +68,6 @@ class AnnotationHandlerAdapterTest {
 
             // then
             assertThat(actual).isFalse();
-        }
-
-        @Test
-        @DisplayName("handler 메서드는 HandlerExecution로 요청을 처리하고 ModelAndView를 반환한다.")
-        void handle() throws Exception {
-            // given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-
-            final AnnotationHandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
-            final HandlerExecution handler = mock(HandlerExecution.class);
-
-            final ModelAndView expected = new ModelAndView(new JspView(""));
-            willReturn(expected)
-                    .given(handler)
-                    .handle(request, response);
-
-            // when
-            final ModelAndView actual = handlerAdapter.handle(request, response, handler);
-
-            // then
-            assertThat(actual).isEqualTo(expected);
         }
     }
 }
