@@ -18,6 +18,7 @@ import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.html.HTMLAreaElement;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -34,11 +35,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Object targetPackage : basePackage) {
-            final Reflections reflections = new Reflections(targetPackage);
-            final Set<Class<?>> handlerClasses = new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
-            addHandlerExecution(handlerClasses);
-        }
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> handlerClasses = new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
+        addHandlerExecution(handlerClasses);
     }
 
     private void addHandlerExecution(final Set<Class<?>> handlerClasses) {
