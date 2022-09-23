@@ -1,12 +1,12 @@
-package nextstep.mvc.Handleradaptor;
+package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
-public class HandlerExecutionAdapter implements HandlerAdapter {
+public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
         return handler instanceof HandlerExecution;

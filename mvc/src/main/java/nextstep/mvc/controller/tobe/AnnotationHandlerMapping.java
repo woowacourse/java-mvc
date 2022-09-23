@@ -1,7 +1,6 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,10 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,41 +28,31 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        for (Object basePackage : basePackages) {
-            Set<Class<?>> controllerClasses = getControllerClasses(basePackage);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        final List<Object> controllers = controllerScanner.getControllers();
+        addHandlerExecutions(controllers);
 
-            addHandlerExecutions(controllerClasses);
-        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> getControllerClasses(Object basePackage) {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private void addHandlerExecutions(Set<Class<?>> controllerClasses) {
-        for (Class<?> controllerClass : controllerClasses) {
-            addHandlerExecution(controllerClass);
+    private void addHandlerExecutions(List<Object> controllers) {
+        for (Object controller : controllers) {
+            addHandlerExecutions(controller);
         }
     }
 
-    private void addHandlerExecution(Class<?> controllerClass) {
-        List<Method> requestMappingMethods = findRequestMappingMethods(controllerClass);
+    private void addHandlerExecutions(Object controller) {
+        Set<Method> requestMappingMethods = findRequestMappingMethods(controller);
 
         for (Method method : requestMappingMethods) {
             Set<HandlerKey> handlerKeys = createHandlerKeys(method);
-            final Object controller = createController(controllerClass);
             handlerKeys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(controller, method)));
         }
     }
 
-    private List<Method> findRequestMappingMethods(Class<?> controllerClass) {
-        Method[] methods = controllerClass.getDeclaredMethods();
-
-        return Arrays.stream(methods)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
+    private Set<Method> findRequestMappingMethods(Object controller) {
+        return ReflectionUtils.getAllMethods(controller.getClass(),
+                ReflectionUtils.withAnnotation(RequestMapping.class));
     }
 
     private Set<HandlerKey> createHandlerKeys(Method method) {
@@ -75,17 +63,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .collect(Collectors.toSet());
-    }
-
-    private Object createController(Class<?> controllerClass) {
-        try {
-            return controllerClass.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
-
-            log.warn(controllerClass + " 객체를 생성할 수 없습니다.");
-            throw new RuntimeException(e);
-        }
     }
 
     public Object getHandler(final HttpServletRequest request) {

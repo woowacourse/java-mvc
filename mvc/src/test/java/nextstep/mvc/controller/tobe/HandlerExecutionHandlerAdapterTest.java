@@ -1,4 +1,4 @@
-package nextstep.mvc.Handleradaptor;
+package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -8,15 +8,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.ForwardController;
-import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
-class HandlerExecutionAdapterTest {
+class HandlerExecutionHandlerAdapterTest {
 
     @Test
     void HandlerExecutionAdapter는_HandlerExecution_클래스의_객체를_처리할_수_있다() throws NoSuchMethodException {
@@ -25,7 +25,7 @@ class HandlerExecutionAdapterTest {
                 HttpServletResponse.class);
         final HandlerExecution handlerExecution = new HandlerExecution(TestController.class, executionMethod);
 
-        final HandlerAdapter handlerAdapter = new HandlerExecutionAdapter();
+        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
         // when
         final boolean result = handlerAdapter.supports(handlerExecution);
@@ -39,7 +39,7 @@ class HandlerExecutionAdapterTest {
         // given
         final ForwardController forwardController = new ForwardController("/123.html");
 
-        final HandlerAdapter handlerAdapter = new HandlerExecutionAdapter();
+        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
         // when
         final boolean result = handlerAdapter.supports(forwardController);
@@ -55,7 +55,7 @@ class HandlerExecutionAdapterTest {
                 HttpServletResponse.class);
         final HandlerExecution handlerExecution = new HandlerExecution(new TestController(), executionMethod);
 
-        final HandlerAdapter handlerAdapter = new HandlerExecutionAdapter();
+        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
