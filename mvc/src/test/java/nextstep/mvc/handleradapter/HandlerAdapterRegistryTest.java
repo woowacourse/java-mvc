@@ -1,4 +1,4 @@
-package nextstep.mvc.adapter;
+package nextstep.mvc.handleradapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
