@@ -20,10 +20,10 @@ public class ControllerScanner {
     public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         return controllers.stream()
-                .collect(Collectors.toMap(controller -> controller, this::instantiateControllers));
+                .collect(Collectors.toMap(controller -> controller, this::instantiateController));
     }
 
-    private Object instantiateControllers(final Class<?> clazz) {
+    private Object instantiateController(final Class<?> clazz) {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
