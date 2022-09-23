@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.support.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -69,6 +70,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String method = request.getMethod();
         final RequestMethod requestMethod = RequestMethod.valueOf(method);
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new HandlerNotFoundException();
+        }
         return handlerExecutions.get(handlerKey);
     }
 }
