@@ -32,12 +32,12 @@ public class ResourceFilter implements Filter {
     private RequestDispatcher requestDispatcher;
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         this.requestDispatcher = filterConfig.getServletContext().getNamedDispatcher("default");
     }
 
     @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         final var req = (HttpServletRequest) request;
         final var path = req.getRequestURI().substring(req.getContextPath().length());
@@ -49,7 +49,7 @@ public class ResourceFilter implements Filter {
         }
     }
 
-    private boolean isResourceUrl(final String url) {
+    private boolean isResourceUrl(String url) {
         for (final var prefix : resourcePrefixs) {
             if (url.startsWith(prefix)) {
                 return true;

@@ -10,13 +10,15 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 @Controller
 public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
-    public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         log.info("test controller get method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
@@ -24,7 +26,7 @@ public class TestController {
     }
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
-    public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
