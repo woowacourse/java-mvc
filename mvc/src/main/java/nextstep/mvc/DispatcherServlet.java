@@ -4,9 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.adapter.HandlerAdapterRegistry;
 import nextstep.mvc.handlermapping.HandlerMapping;
 import nextstep.mvc.handlermapping.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
@@ -18,11 +17,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         this.handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
@@ -31,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -45,19 +44,12 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = handlerMappingRegistry.getHandler(request);
-            final HandlerAdapter adapter = getAdaptor(handler);
+            final HandlerAdapter adapter = handlerAdapterRegistry.getAdaptor(handler);
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerAdapter getAdaptor(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(it -> it.supports(handler))
-                .findFirst()
-                .orElseThrow();
     }
 }
