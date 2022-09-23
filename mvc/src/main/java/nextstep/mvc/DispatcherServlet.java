@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import nextstep.mvc.adpater.HandlerAdapter;
 import nextstep.mvc.exception.NoHandlerFoundException;
 import nextstep.mvc.view.ModelAndView;
@@ -19,21 +19,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
@@ -46,12 +46,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
-            if (handler == null) {
+            final Optional<Object> optionalHandler = handlerMappingRegistry.getHandler(request);
+            if (optionalHandler.isEmpty()) {
                 noHandlerFound(request, response);
                 return;
             }
 
+            final Object handler = optionalHandler.get();
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
@@ -61,13 +62,6 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-    }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) throws ServletException {
         return handlerAdapters.stream()
