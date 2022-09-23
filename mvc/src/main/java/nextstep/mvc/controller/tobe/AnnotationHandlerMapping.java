@@ -2,16 +2,14 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,17 +27,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        List<Method> methods = new Reflections(basePackage)
-                .getTypesAnnotatedWith(Controller.class)
-                .stream()
-                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
+        Set<Method> methods = getRequestMappingMethods(controllers.keySet());
         for (Method method : methods) {
             addHandler(method);
         }
+
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> classes) {
+        return classes.stream()
+                .map(clazz -> ReflectionUtils.getAllMethods(clazz,
+                        ReflectionUtils.withAnnotation(RequestMapping.class)))
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 
     private void addHandler(final Method method) {
