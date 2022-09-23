@@ -46,7 +46,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .map(clazz -> ReflectionUtils.getAllMethods(clazz,
                         ReflectionUtils.withAnnotation(RequestMapping.class)))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private void addHandlerExecutions(final Map<Class<?>, Object> controllers,
