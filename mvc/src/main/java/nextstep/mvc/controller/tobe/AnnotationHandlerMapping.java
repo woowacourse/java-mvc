@@ -41,14 +41,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void addHandlerExecution(Set<Class<?>> handlerClasses) {
+    private void addHandlerExecution(final Set<Class<?>> handlerClasses) {
         for (Class<?> handlerClass : handlerClasses) {
             final List<Method> requestMappedMethods = getMethods(handlerClass);
             generateHandlerExecutions(requestMappedMethods, handlerClass);
         }
     }
 
-    private List<Method> getMethods(Class<?> handlerClass) {
+    private List<Method> getMethods(final Class<?> handlerClass) {
         final Method[] requestMappedMethods = handlerClass.getDeclaredMethods();
         return Arrays.stream(requestMappedMethods)
                 .filter(method -> method.getDeclaredAnnotation(RequestMapping.class) != null)
