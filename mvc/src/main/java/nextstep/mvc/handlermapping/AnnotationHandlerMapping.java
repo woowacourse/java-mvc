@@ -6,14 +6,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import nextstep.mvc.controller.HandlerExecution;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.support.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +31,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> controller : controllers) {
 
-            Arrays.stream(controller.getDeclaredMethods())
+        final Map<Class<?>, Object> instanceByClass = ControllerScanner.getControllers(basePackage);
+        for (Entry<Class<?>, Object> entry : instanceByClass.entrySet()) {
+            final Class<?> clazz = entry.getKey();
+            final Object controller = entry.getValue();
+
+            Arrays.stream(clazz.getDeclaredMethods())
                     .filter(this::filterRequestMapping)
                     .map(it -> toHandlerExecutions(controller, it))
                     .forEach(handlerExecutions::putAll);
@@ -48,13 +49,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return requestMapping != null;
     }
 
-    private Map<HandlerKey, HandlerExecution> toHandlerExecutions(final Class<?> controller, final Method method) {
+    private Map<HandlerKey, HandlerExecution> toHandlerExecutions(final Object controller, final Method method) {
         try {
             final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-            final Object controllerInstance = controller.getDeclaredConstructor()
-                    .newInstance();
-
-            final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             return collectHandlerExecutions(requestMapping, handlerExecution);
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
