@@ -14,9 +14,10 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object handler = createHandlerInstance(method.getDeclaringClass());
-        return (ModelAndView)method.invoke(handler, request, response);
+        Object result = method.invoke(handler, request, response);
+        return result;
     }
 
     private Object createHandlerInstance(Class<?> handler) {
