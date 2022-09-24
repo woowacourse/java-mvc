@@ -1,8 +1,8 @@
-package nextstep.mvc;
+package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
