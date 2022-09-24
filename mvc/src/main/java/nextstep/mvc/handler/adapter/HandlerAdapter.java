@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handler.adapter;
 
 import nextstep.mvc.view.ModelAndView;
 
@@ -9,7 +9,4 @@ public interface HandlerAdapter {
     boolean supports(Object handler);
 
     ModelAndView handle(HttpServletRequest request, HttpServletResponse response, final Object handler) throws Exception;
-
-    void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception;
 }

@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handler.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,6 @@ public class HandlerAdapterRegistry {
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
-        System.out.println();
     }
 
     public HandlerAdapter getHandlerAdaptor(Object handler) {

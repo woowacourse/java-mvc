@@ -2,7 +2,7 @@ package com.techcourse.controller.v1;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.handler.asis.Controller;
 
 public class RegisterViewV1Controller implements Controller {
 

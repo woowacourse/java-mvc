@@ -15,12 +15,12 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class RegisterV2Controller {
 
-    @RequestMapping(value = "/register/view", method = GET)
+    @RequestMapping(value = "/v2/register/view", method = GET)
     public ModelAndView registerView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 
-    @RequestMapping(value = "/register", method = GET)
+    @RequestMapping(value = "/v2/register", method = GET)
     public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),

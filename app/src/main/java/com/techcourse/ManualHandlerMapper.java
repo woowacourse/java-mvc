@@ -6,29 +6,29 @@ import com.techcourse.controller.v1.LogoutV1Controller;
 import com.techcourse.controller.v1.RegisterV1Controller;
 import com.techcourse.controller.v1.RegisterViewV1Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.asis.ForwardController;
+import nextstep.mvc.handler.mapper.HandlerMapper;
+import nextstep.mvc.handler.asis.Controller;
+import nextstep.mvc.handler.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping implements HandlerMapping {
+public class ManualHandlerMapper implements HandlerMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapper.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
     @Override
     public void initialize() {
-        controllers.put("/v1", new ForwardController("/index.jsp"));
-        controllers.put("/v1/login", new LoginV1Controller());
-        controllers.put("/v1/login/view", new LoginViewV1Controller());
-        controllers.put("/v1/logout", new LogoutV1Controller());
-        controllers.put("/v1/register/view", new RegisterViewV1Controller());
-        controllers.put("/v1/register", new RegisterV1Controller());
+        controllers.put("/", new ForwardController("/index.jsp"));
+        controllers.put("/login", new LoginV1Controller());
+        controllers.put("/login/view", new LoginViewV1Controller());
+        controllers.put("/logout", new LogoutV1Controller());
+        controllers.put("/register/view", new RegisterViewV1Controller());
+        controllers.put("/register", new RegisterV1Controller());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

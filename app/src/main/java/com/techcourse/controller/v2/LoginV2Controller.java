@@ -20,7 +20,7 @@ public class LoginV2Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginV2Controller.class);
 
-    @RequestMapping(value = "/login/view", method = GET)
+    @RequestMapping(value = "/v2/login/view", method = GET)
     public ModelAndView loginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
@@ -31,7 +31,7 @@ public class LoginV2Controller {
         return new ModelAndView(new JspView(viewName));
     }
 
-    @RequestMapping(value = "/login", method = GET)
+    @RequestMapping(value = "/v2/login", method = GET)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
@@ -41,7 +41,7 @@ public class LoginV2Controller {
         return new ModelAndView(new JspView(viewName));
     }
 
-    @RequestMapping(value = "/logout", method = GET)
+    @RequestMapping(value = "/v2/logout", method = GET)
     public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);

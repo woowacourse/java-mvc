@@ -15,7 +15,7 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class HomeV2Controller {
 
-    @RequestMapping(value = "/", method = GET)
+    @RequestMapping(value = "/v2", method = GET)
     public ModelAndView index(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/index.jsp"));
     }
