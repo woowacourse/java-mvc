@@ -1,31 +1,28 @@
-package com.techcourse;
+package nextstep.mvc.config;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import nextstep.mvc.AnnotationHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AppWebApplicationInitializer implements WebApplicationInitializer {
+public class DefaultAppWebApplicationInitializer implements WebApplicationInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(AppWebApplicationInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultAppWebApplicationInitializer.class);
 
     @Override
-    public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+    public void onStartup(final ServletContext servletContext) throws ServletException {
+        final var dispatcherServlet = DispatcherServlet.getInstance();
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
-
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 
-        log.info("Start AppWebApplication Initializer");
+        log.info("Start DefaultAppWebApplication Initializer");
     }
 }

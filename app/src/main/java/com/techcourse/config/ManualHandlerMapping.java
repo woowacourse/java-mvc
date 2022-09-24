@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.config;
 
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;

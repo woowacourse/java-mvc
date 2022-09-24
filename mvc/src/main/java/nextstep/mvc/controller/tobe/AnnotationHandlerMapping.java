@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.exception.NotFoundHandlerException;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -80,11 +79,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String method = request.getMethod();
         final RequestMethod requestMethod = RequestMethod.valueOf(method);
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-
-        throw new NotFoundHandlerException(requestURI, method);
+        return handlerExecutions.get(handlerKey);
     }
 }

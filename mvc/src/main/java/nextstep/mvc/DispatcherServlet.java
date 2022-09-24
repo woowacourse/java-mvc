@@ -21,9 +21,16 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    private DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
+    }
+
+    public static class DispatcherServletGenerator {
+        private static final DispatcherServlet INSTANCE = new DispatcherServlet();
+    }
+    public static DispatcherServlet getInstance() {
+        return DispatcherServletGenerator.INSTANCE;
     }
 
     @Override
