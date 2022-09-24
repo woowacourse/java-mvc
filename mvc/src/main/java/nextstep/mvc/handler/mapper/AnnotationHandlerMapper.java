@@ -35,14 +35,14 @@ public class AnnotationHandlerMapper implements HandlerMapper {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        final Map<HandlerKey, HandlerExecution> map = new Reflections(basePackages)
+        final Map<HandlerKey, HandlerExecution> handlerExecutions = new Reflections(basePackages)
                 .getTypesAnnotatedWith(Controller.class)
                 .stream()
                 .map(PeanutContainer.INSTANCE::getPeanut)
                 .flatMap(handler -> createHandlerExecutions(handler))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-        handlerExecutions.putAll(map);
+        this.handlerExecutions.putAll(handlerExecutions);
     }
 
     private Stream<? extends Entry<HandlerKey, HandlerExecution>> createHandlerExecutions(final Object handler) {
