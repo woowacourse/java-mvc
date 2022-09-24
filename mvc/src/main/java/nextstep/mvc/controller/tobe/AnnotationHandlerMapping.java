@@ -1,17 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,27 +31,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void initHandlerExecutions() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllerClasses) {
-            scanRequestMapping(controllerClass);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
+            scanRequestMapping(controllerEntry.getValue());
         }
     }
 
-    private void scanRequestMapping(Class<?> controllerClass) {
-        try {
-            Object controller = controllerClass.getDeclaredConstructor().newInstance();
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                isRequestMappingAnnotation(controller, method);
-            }
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.fillInStackTrace();
-        }
-    }
-
-    private void isRequestMappingAnnotation(Object controllerClass, Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            putHandlerExecutions(controllerClass, method);
+    private void scanRequestMapping(Object controller) {
+        Set<Method> methods = ReflectionUtils.getAllMethods((Class<?>) controller,
+                ReflectionUtils.withAnnotation(RequestMapping.class));
+        for (Method method : methods) {
+            putHandlerExecutions(controller, method);
         }
     }
 
