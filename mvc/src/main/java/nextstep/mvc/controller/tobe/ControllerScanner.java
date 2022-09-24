@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import nextstep.mvc.controller.tobe.exception.NotFoundControllerException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
@@ -15,15 +16,22 @@ public class ControllerScanner {
         this.reflections = reflections;
     }
 
-    public Map<Class<?>, Object> getControllers()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Map<Class<?>, Object> getControllers() {
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         final Map<Class<?>, Object> controllers = new HashMap<>();
 
         for (Class<?> controllerClass : controllerClasses) {
-            controllers.put(controllerClass, controllerClass.getDeclaredConstructor().newInstance());
+            controllers.put(controllerClass, createController(controllerClass));
         }
 
         return controllers;
+    }
+
+    private Object createController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new NotFoundControllerException();
+        }
     }
 }

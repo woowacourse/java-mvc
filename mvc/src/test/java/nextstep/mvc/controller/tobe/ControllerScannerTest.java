@@ -2,7 +2,6 @@ package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,7 @@ class ControllerScannerTest {
 
     @DisplayName("@Controller 가 붙은 클래스를 찾을 수 있다.")
     @Test
-    void getControllers()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void getControllers() {
         // given
         final ControllerScanner controllerScanner = new ControllerScanner(new Reflections("samples"));
 
