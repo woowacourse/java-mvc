@@ -16,8 +16,7 @@ public class HandlerExecution {
 
     public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object handler = createHandlerInstance(method.getDeclaringClass());
-        Object result = method.invoke(handler, request, response);
-        return result;
+        return method.invoke(handler, request, response);
     }
 
     private Object createHandlerInstance(Class<?> handler) {
