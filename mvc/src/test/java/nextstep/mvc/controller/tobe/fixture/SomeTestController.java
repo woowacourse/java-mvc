@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.tobe.fixture;
 
 import nextstep.web.annotation.Controller;
 
