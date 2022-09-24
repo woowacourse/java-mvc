@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final var reflections = new Reflections(basePackage);
         final var controllerScanner = new ControllerScanner(reflections);
@@ -53,6 +54,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final var uri = request.getRequestURI();
         final var method = request.getMethod();
