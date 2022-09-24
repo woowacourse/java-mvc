@@ -44,4 +44,6 @@ public class RegisterController {
 - [x] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현했다.
   - [x] HandlerMappingRegistry 에 HandlerMapping 인스턴스를 추가할 수 있다.
   - [x] HandlerMappingRegistry 를 통해서 핸들러를 찾을 수 있다.
-- [ ] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.
+- [x] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.
+  - [x] HandlerAdapterRegistry 에 HandlerAdapter 를 추가할 수 있다.
+  - [x] HandlerAdapterRegistry 를 통해서 요청을 처리 가능한 핸들러를 찾을 수 있다.
