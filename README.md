@@ -24,7 +24,7 @@
 
 - [ ] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾기
 - [x] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리
-- [ ] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리
+- [x] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리
 
 리팩터링
 
