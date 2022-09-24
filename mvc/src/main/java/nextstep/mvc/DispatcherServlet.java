@@ -54,8 +54,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private void executeHandler(final HttpServletRequest request,
                                 final HttpServletResponse response) throws Exception {
-        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(request);
         Object handler = handlerMappingRegistry.getHandler(request);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
         ViewResolver.resolve(request, response, modelAndView);
