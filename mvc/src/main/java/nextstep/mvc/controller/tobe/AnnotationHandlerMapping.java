@@ -5,11 +5,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -18,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -30,27 +28,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> clazz : classes) {
-            scanHandlers(clazz);
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
+        final ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        initHandlerExecutions(controllers);
     }
 
-    private void scanHandlers(Class<?> clazz) {
-        try {
-            final List<Method> methods = Stream.of(clazz.getDeclaredMethods())
-                    .filter(x -> x.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
-            addHandlerExecutions(clazz, methods);
-        } catch (Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
+    private void initHandlerExecutions(Map<Class<?>, Object> controllers) {
+        for (Class<?> controller : controllers.keySet()) {
+            addHandlerExecutions(controllers.get(controller), getRequestMappingMethods(controller));
         }
     }
 
-    private void addHandlerExecutions(Class<?> clazz, List<Method> methods) throws Exception {
-        final Object instance = clazz.getDeclaredConstructor().newInstance();
+    private List<Method> getRequestMappingMethods(Class<?> controller) {
+        return Stream.of(controller.getDeclaredMethods())
+                .filter(x -> x.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+    }
+
+    private void addHandlerExecutions(Object instance, List<Method> methods) {
         for (Method method : methods) {
             final HandlerKey handlerKey = HandlerKey.from(method);
             final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
