@@ -3,15 +3,12 @@ package nextstep.mvc.controller.tobe;
 import static java.util.stream.Collectors.*;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +30,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Set<Class<?>> controllerClasses = controllerScanner.getControllers();
         for (Class<?> controllerClazz : controllerClasses) {
             handlerExecutions.putAll(toHandlerExecutions(controllerClazz));
         }
