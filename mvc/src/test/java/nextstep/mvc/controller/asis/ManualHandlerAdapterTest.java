@@ -1,4 +1,4 @@
-package com.techcourse;
+package nextstep.mvc.controller.asis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
