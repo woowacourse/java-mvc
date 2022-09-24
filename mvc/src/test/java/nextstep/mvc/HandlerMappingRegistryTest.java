@@ -19,8 +19,9 @@ class HandlerMappingRegistryTest {
 	@Test
 	void getHandler() throws NoSuchMethodException {
 		// given
-		HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-		handlerMappingRegistry.add(new AnnotationHandlerMapping("samples"));
+		final var handlerMappingRegistry = HandlerMappingRegistry.builder()
+			.add(new AnnotationHandlerMapping("samples"))
+			.build();
 		handlerMappingRegistry.initialize();
 
 		final var request = mock(HttpServletRequest.class);

@@ -7,8 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.handler.adapter.HandlerAdapter;
-import nextstep.mvc.handler.mapping.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -18,22 +16,14 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+    public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry, HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
     public void init() {
         handlerMappingRegistry.initialize();
-    }
-
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappingRegistry.add(handlerMapping);
-    }
-
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapterRegistry.add(handlerAdapter);
     }
 
     @Override

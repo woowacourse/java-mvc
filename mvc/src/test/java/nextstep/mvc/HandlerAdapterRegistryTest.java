@@ -16,8 +16,9 @@ class HandlerAdapterRegistryTest {
 	@Test
 	void getAdapter() {
 		// given
-		HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-		handlerAdapterRegistry.add(new AnnotationHandlerAdapter());
+		final var handlerAdapterRegistry = HandlerAdapterRegistry.builder()
+			.add(new AnnotationHandlerAdapter())
+			.build();
 		Object handler = mock(HandlerExecution.class);
 
 		// when

@@ -12,12 +12,12 @@ public class HandlerMappingRegistry {
 
 	private final List<HandlerMapping> handlerMappings;
 
-	public HandlerMappingRegistry() {
-		this.handlerMappings = new ArrayList<>();
+	public HandlerMappingRegistry(List<HandlerMapping> handlerMappings) {
+		this.handlerMappings = handlerMappings;
 	}
 
-	public void add(HandlerMapping handlerMapping) {
-		handlerMappings.add(handlerMapping);
+	public static HandlerMappingRegistryBuilder builder() {
+		return new HandlerMappingRegistryBuilder();
 	}
 
 	public void initialize() {
@@ -31,5 +31,19 @@ public class HandlerMappingRegistry {
 			.map(Optional::get)
 			.findFirst()
 			.orElseThrow(() -> new NoSuchElementException("매핑되는 핸들러가 없습니다."));
+	}
+
+	public static class HandlerMappingRegistryBuilder {
+
+		private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+
+		public HandlerMappingRegistryBuilder add(HandlerMapping handlerMapping) {
+			this.handlerMappings.add(handlerMapping);
+			return this;
+		}
+
+		public HandlerMappingRegistry build() {
+			return new HandlerMappingRegistry(handlerMappings);
+		}
 	}
 }
