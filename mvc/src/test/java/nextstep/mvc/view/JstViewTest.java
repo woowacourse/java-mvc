@@ -14,10 +14,10 @@ public class JstViewTest {
 
     @Test
     void redirect_일_경우_sendRedirect_메서드가_호출된다() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        View view = new JspView("redirect:/");
+        final View view = new JspView("redirect:/");
         view.render(Collections.emptyMap(), request, response);
 
         verify(response).sendRedirect("/");
@@ -25,13 +25,13 @@ public class JstViewTest {
 
     @Test
     void forward_일_경우_forward_메서드가_호출된다() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
 
         when(request.getRequestDispatcher("/")).thenReturn(requestDispatcher);
 
-        View view = new JspView("/");
+        final View view = new JspView("/");
         view.render(Collections.emptyMap(), request, response);
 
         verify(requestDispatcher).forward(request, response);

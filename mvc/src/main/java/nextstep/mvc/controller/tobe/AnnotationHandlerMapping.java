@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CONTROLLER_ANNOTATION_CLASS);
 
         for (Class<?> clazz : classes) {
-            Object instance = getInstance(clazz);
+            final Object instance = getInstance(clazz);
             final List<Method> methods = getRequestMappingMethods(clazz);
             methods.forEach(method -> putHandlerExecutionByRequestMapping(instance, method));
         }
