@@ -1,9 +1,5 @@
 package nextstep.mvc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.exception.HandlerAdapterNotFoundException;
-import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.view.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -20,25 +14,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -63,17 +57,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElseThrow(HandlerNotFoundException::new);
+        return handlerMappingRegistry.getHandler(request);
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findAny()
-                .orElseThrow(HandlerAdapterNotFoundException::new);
+        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 }
