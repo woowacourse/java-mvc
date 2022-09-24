@@ -67,11 +67,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        try {
-            return handlerExecutions.get(handlerKey);
-        } catch (NullPointerException e) {
-            log.error("Not Found Exception", e);
-            throw new IllegalStateException();
-        }
+        return handlerExecutions.getOrDefault(handlerKey, null);
     }
 }
