@@ -1,12 +1,12 @@
-package com.techcourse.controller;
+package com.techcourse.controller.v1;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.handler.asis.Controller;
 
-public class RegisterController implements Controller {
+public class RegisterV1Controller implements Controller {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {

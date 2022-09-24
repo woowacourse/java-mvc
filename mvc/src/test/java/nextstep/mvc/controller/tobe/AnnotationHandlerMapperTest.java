@@ -2,6 +2,9 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.context.PeanutContainer;
+import nextstep.mvc.handler.mapper.AnnotationHandlerMapper;
+import nextstep.mvc.handler.tobe.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,13 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AnnotationHandlerMappingTest {
+class AnnotationHandlerMapperTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private AnnotationHandlerMapper handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        PeanutContainer.INSTANCE.init("samples");
+        handlerMapping = new AnnotationHandlerMapper("samples");
         handlerMapping.initialize();
     }
 

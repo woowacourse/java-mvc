@@ -1,16 +1,17 @@
-package com.techcourse.controller;
+package com.techcourse.controller.v1;
 
+import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.handler.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+public class LoginV1Controller implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginV1Controller.class);
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {

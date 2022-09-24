@@ -1,8 +1,8 @@
-package nextstep.mvc;
+package nextstep.mvc.handler.mapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public interface HandlerMapping {
+public interface HandlerMapper {
 
     void initialize();
 
