@@ -25,7 +25,7 @@ class HandlerMappingRegistryTest {
     @Test
     void handlerMapping을_추가한다() {
         // given
-        HandlerMapping handlerMapping = new AnnotationHandlerMapping("tobe");
+        HandlerMapping handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.controller.tobe");
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/mock");
@@ -42,7 +42,7 @@ class HandlerMappingRegistryTest {
     @Test
     void 핸들러가_존재하지_않을_경우_예외를_던진다() {
         // given
-        HandlerMapping handlerMapping = new AnnotationHandlerMapping("tobe");
+        HandlerMapping handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.controller.tobe");
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/mock");
