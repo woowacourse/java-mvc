@@ -41,10 +41,11 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
+        final var handler = handlerMappingRegistry.getHandler(request)
+                .orElseThrow();
+        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
         try {
-            final var handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow();
-            final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {

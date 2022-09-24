@@ -31,7 +31,7 @@ class ManualHandlerAdapterTest {
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-        boolean supports = manualHandlerAdapter.supports(new HandlerExecution(method));
+        boolean supports = manualHandlerAdapter.supports(new HandlerExecution(new TestManualController(), method));
 
         assertThat(supports).isFalse();
     }

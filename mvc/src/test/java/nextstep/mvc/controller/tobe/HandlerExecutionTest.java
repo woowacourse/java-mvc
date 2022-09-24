@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import nextstep.mvc.controller.tobe.handlermapping.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import samples.TestAnnotationController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -19,7 +20,7 @@ class HandlerExecutionTest {
     void setUp() throws Exception{
         Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
-        handlerExecution = new HandlerExecution(method);
+        handlerExecution = new HandlerExecution(new TestAnnotationController(), method);
     }
 
     @Test

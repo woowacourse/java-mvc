@@ -32,7 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         Set<Method> methods = getRequestMappingMethods(controllers.keySet());
         for (Method method : methods) {
-            addHandler(method);
+            addHandler(controllers, method);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
@@ -46,11 +46,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toSet());
     }
 
-    private void addHandler(final Method method) {
+    private void addHandler(final Map<Class<?>, Object> controllers, final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+
+            Object controller = controllers.get(method.getDeclaringClass());
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
