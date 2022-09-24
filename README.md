@@ -41,5 +41,7 @@ public class RegisterController {
 - [x] Adapter 를 구현하여 Adapter의 지원(support) 여부에 따라 요청을 처리한다.
   - [x] DispaterServlet에서는 Adapter를 이용하여 처리하도록 수정한다. 
   - [x] 기존에 DispaterServlet에 있던 renderView() 메소드를 ModelAndView 쪽으로 이동시킨다. 
-- [ ] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현했다.
+- [x] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현했다.
+  - [x] HandlerMappingRegistry 에 HandlerMapping 인스턴스를 추가할 수 있다.
+  - [x] HandlerMappingRegistry 를 통해서 핸들러를 찾을 수 있다.
 - [ ] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.
