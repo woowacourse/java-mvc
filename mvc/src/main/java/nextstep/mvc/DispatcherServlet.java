@@ -1,5 +1,7 @@
 package nextstep.mvc;
 
+import java.util.NoSuchElementException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         final Object handler = handlerMappingRegistry.getHandler(request)
-            .orElseThrow(() -> new IllegalArgumentException("handler not found"));
+            .orElseThrow(() -> new NoSuchElementException("handler not found"));
         final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
         render(modelAndView, request, response);
     }

@@ -3,6 +3,8 @@ package nextstep.mvc;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +25,8 @@ class HandlerMappingRegistryTest {
         when(request.getMethod()).thenReturn("GET");
 
         // when
-        final Object handler = handlerMappingRegistry.getHandler(request).orElseThrow();
+        final Object handler = handlerMappingRegistry.getHandler(request)
+            .orElseThrow(() -> new NoSuchElementException("handler not found"));
 
         // then
         assertThat(handler.getClass().getSimpleName()).isEqualTo("HandlerExecution");
