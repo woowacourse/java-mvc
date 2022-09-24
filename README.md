@@ -23,7 +23,11 @@
 구현 기능 목록
 
 - [ ] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾기
-- [ ] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리
+- [x] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리
 - [ ] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리
+
+리팩터링
+
+- [ ] manual handler에 대한 sample을 만들어 인터페이스 기반으로도 잘 작동하는지 테스트
 
 </details>
