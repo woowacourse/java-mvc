@@ -36,5 +36,10 @@ public class RegisterController {
 ## 2단계 구현 내용 정리
 
 - [x] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.
+  - [x] 기존에 DispaterServlet에 있던 해당 로직을 ControllerScanner로 위임한다.
+  - [x] ControllerScanner는 Controller 어노테이션이 붙은 클래스를 찾고, 해당 인스턴스를 생성해 반환한다.
+- [x] Adapter 를 구현하여 Adapter의 지원(support) 여부에 따라 요청을 처리한다.
+  - [x] DispaterServlet에서는 Adapter를 이용하여 처리하도록 수정한다. 
+  - [x] 기존에 DispaterServlet에 있던 renderView() 메소드를 ModelAndView 쪽으로 이동시킨다. 
 - [ ] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현했다.
 - [ ] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.controller.tobe.exception.NotSupportHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,8 +25,10 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         final HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
         dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
+        dispatcherServlet.addHandlerAdapter(handlerExecutionHandlerAdapter);
         dispatcherServlet.init();
     }
 
