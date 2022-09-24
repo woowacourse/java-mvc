@@ -7,7 +7,7 @@ public enum ErrorType {
     NOT_SUPPORTED_HANDLER("지원하지 않는 핸들러입니다."),
     NOT_FOUND_HANDLER_ADAPTER("핸들러 어뎁터를 찾을 수 없습니다."),
     NOT_FOUND_HANDLER_MAPPING("핸들러 매핑을 찾을 수 없습니다."),
-    ;
+    FAIL_INSTANTIATE_CONTROLLER("컨트롤러 객체를 인스턴스화하지 못했습니다.");
 
     private final String message;
 

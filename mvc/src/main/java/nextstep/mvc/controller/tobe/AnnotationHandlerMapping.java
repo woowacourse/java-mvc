@@ -1,18 +1,18 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.common.exception.ErrorType;
-import nextstep.mvc.common.exception.FailedHandlerMappingException;
-import nextstep.web.annotation.Controller;
+import java.util.Set;
+import java.util.stream.Collectors;
+import nextstep.mvc.handermapping.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,32 +29,41 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class)
-                .forEach(this::mapHandlerExecutions);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
+
+        for (Method requestMappingMethod : requestMappingMethods) {
+            addHandlerExecutions(controllers, requestMappingMethod,
+                    requestMappingMethod.getAnnotation(RequestMapping.class));
+        }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void mapHandlerExecutions(final Class<?> clazz) {
-        try {
-            Object handler = clazz.getDeclaredConstructor().newInstance();
-            Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> addHandlerExecution(handler, method));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new FailedHandlerMappingException(ErrorType.FAIL_HANDLER_MAPPING);
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> classes) {
+        return classes.stream()
+                .map(clazz -> ReflectionUtils.getAllMethods(clazz,
+                        ReflectionUtils.withAnnotation(RequestMapping.class)))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private void addHandlerExecutions(final Map<Class<?>, Object> controllers,
+                                      final Method method,
+                                      final RequestMapping requestMapping) {
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
+        for (HandlerKey handlerKey : handlerKeys) {
+            Class<?> clazz = method.getDeclaringClass();
+            HandlerExecution handlerExecution = new HandlerExecution(controllers.get(clazz), method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    private void addHandlerExecution(final Object handler, final Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
-            handlerExecutions.put(key, handlerExecution);
-        }
+    private List<HandlerKey> mapHandlerKeys(final String value, final RequestMethod[] methods) {
+        return Arrays.stream(methods)
+                .map(method -> new HandlerKey(value, method))
+                .collect(Collectors.toList());
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
