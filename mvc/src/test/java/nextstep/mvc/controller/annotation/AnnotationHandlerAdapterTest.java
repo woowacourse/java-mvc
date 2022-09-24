@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.AnnotationHandlerAdapter;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;

@@ -4,7 +4,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.simple.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

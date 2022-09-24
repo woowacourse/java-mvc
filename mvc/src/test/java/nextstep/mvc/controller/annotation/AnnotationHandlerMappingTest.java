@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

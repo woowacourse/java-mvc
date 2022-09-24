@@ -2,9 +2,9 @@ package nextstep.mvc.config;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
-import nextstep.mvc.AnnotationHandlerAdapter;
+import nextstep.mvc.controller.annotation.AnnotationHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.annotation.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
