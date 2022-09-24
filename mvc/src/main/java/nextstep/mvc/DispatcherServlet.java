@@ -7,10 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.exception.NotFoundHandlerException;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -22,9 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -36,6 +36,10 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
@@ -43,12 +47,20 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-            final ModelAndView modelAndView = handle(request, response, handler);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(request, response, modelAndView);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(it -> it.supports(handler))
+                .findFirst()
+                .orElseThrow(NotFoundHandlerAdapterException::new);
     }
 
     private Object getHandler(final HttpServletRequest request) {
@@ -57,16 +69,6 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(NotFoundHandlerException::new);
-    }
-
-    private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
-                                final Object handler) throws Exception {
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-
-        final String viewName = ((Controller) handler).execute(request, response);
-        return new ModelAndView(new JspView(viewName));
     }
 
     private void render(final HttpServletRequest request, final HttpServletResponse response,
