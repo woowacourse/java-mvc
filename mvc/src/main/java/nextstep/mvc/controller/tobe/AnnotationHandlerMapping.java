@@ -1,19 +1,19 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.exception.InstanceInitializationException;
 import nextstep.mvc.exception.RequestMappingNotAnnotatedException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import nextstep.web.support.RequestUrl;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
+import org.reflections.util.ReflectionUtilsPredicates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +30,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> annotatedControllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : annotatedControllers) {
-            putControllerToHandlerExecutions(controller);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            putControllerToHandlerExecutions(controller.getKey(), controller.getValue());
         }
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -45,21 +44,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(requestURI, requestMethod);
     }
 
-    private void putControllerToHandlerExecutions(final Class<?> controller) {
-        Method[] controllerMethods = controller.getDeclaredMethods();
-        Object instance = getInstance(controller);
+    private void putControllerToHandlerExecutions(final Class<?> controller, final Object instance) {
+        Set<Method> controllerMethods = ReflectionUtils.getAllMethods(controller, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
         for (Method method : controllerMethods) {
             RequestMapping requestMapping = getRequestMappingAnnotation(method);
             putHandlerKeyAndExecution(instance, method, requestMapping);
-        }
-    }
-
-    private Object getInstance(final Class<?> controller) {
-        try {
-            return controller.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new InstanceInitializationException();
         }
     }
 
