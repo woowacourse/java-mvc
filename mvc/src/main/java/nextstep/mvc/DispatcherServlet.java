@@ -49,18 +49,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void executeRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object handler = getHandler(request);
-        HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+        Object handler = handlerMappingRegistry.getHandler(request);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
         modelAndView.render(request, response);
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappingRegistry.getHandler(request);
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 }
