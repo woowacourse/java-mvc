@@ -5,11 +5,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -30,20 +27,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Set<Class<?>> classes = getControllerClasses();
-        for (Class<?> clazz : classes) {
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Class<?> clazz : controllers.keySet()) {
             initHandlerExecutions(clazz);
         }
         logInitializedRequestPath();
-    }
-
-    private Set<Class<?>> getControllerClasses() {
-        Set<Class<?>> classes = new HashSet<>();
-        for (Object packageName : basePackage) {
-            Reflections reflections = new Reflections(packageName);
-            classes.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-        }
-        return classes;
     }
 
     private void initHandlerExecutions(final Class<?> clazz) {
@@ -56,7 +45,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void initHandlerExecutions(final Class<?> clazz, final Method declaredMethod, final RequestMapping requestMapping) {
+    private void initHandlerExecutions(final Class<?> clazz, final Method declaredMethod,
+                                       final RequestMapping requestMapping) {
         String uri = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
