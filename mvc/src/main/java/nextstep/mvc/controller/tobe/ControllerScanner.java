@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> getControllers() {
-        return this.controllers;
+        return Collections.unmodifiableMap(this.controllers);
 
     }
 
@@ -31,7 +32,6 @@ public class ControllerScanner {
         return map;
     }
 
-
     private Object getInstance(final Class<?> controller) {
         try {
             return controller.getConstructor().newInstance();
@@ -40,6 +40,4 @@ public class ControllerScanner {
             throw new InstanceInitializationException();
         }
     }
-
-
 }

@@ -11,7 +11,6 @@ public class HandlerAdapterRegistry {
         this.handlerAdapters = handlerAdapters;
     }
 
-
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         this.handlerAdapters.add(handlerAdapter);
     }
@@ -22,5 +21,4 @@ public class HandlerAdapterRegistry {
                 .findFirst()
                 .orElseThrow(NoHandlerAdapterFoundException::new);
     }
-
 }
