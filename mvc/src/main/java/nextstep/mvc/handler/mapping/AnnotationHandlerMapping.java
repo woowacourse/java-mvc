@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
-import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +34,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void scanControllers() {
-        for (Class<?> clazz : ControllerScanner.getControllers(basePackages)) {
-            Predicate<Method> handlerPredicate = ReflectionUtils.withAnnotation(RequestMapping.class);
-            parseHandlerInfo(ReflectionUtils.getAllMethods(clazz, handlerPredicate));
-        }
+        ControllerScanner.getControllers(basePackages)
+            .forEach(clazz -> parseHandlerInfo(RequestMappingScanner.getHandler(clazz)));
     }
 
     private void parseHandlerInfo(Set<Method> handlers) {
