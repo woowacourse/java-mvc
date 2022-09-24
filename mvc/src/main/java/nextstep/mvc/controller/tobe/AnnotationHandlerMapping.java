@@ -36,9 +36,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final ControllerScanner scanner = new ControllerScanner(basePackage);
         final Map<Class<?>, Object> controllerClasses = scanner.getControllers();
 
-        for (final Entry<Class<?>, Object> entry : controllerClasses.entrySet()) {
-            final Set<Method> methods = getMethods(entry.getKey());
-            addHandlerExecutions(entry.getValue(), methods);
+        for (final Entry<Class<?>, Object> controller : controllerClasses.entrySet()) {
+            final Class<?> controllerClass = controller.getKey();
+            final Object controllerInstance = controller.getValue();
+
+            final Set<Method> methods = getMethods(controllerClass);
+            addHandlerExecutions(controllerInstance, methods);
         }
     }
 
