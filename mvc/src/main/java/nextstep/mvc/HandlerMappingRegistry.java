@@ -14,7 +14,7 @@ public class HandlerMappingRegistry {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void add(final HandlerMapping handlerMapping) {
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 

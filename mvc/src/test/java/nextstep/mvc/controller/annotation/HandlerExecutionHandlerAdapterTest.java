@@ -11,20 +11,20 @@ import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 
-public class AnnotationHandlerAdapterTest {
+public class HandlerExecutionHandlerAdapterTest {
 
     @Test
     void 핸들러의_반환타입이_HandlerExecution_인_경우_AnnotationHandlerAdapter_가_실행된다() {
         final HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
-        final HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
         assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
     }
 
     @Test
     void AnnotationHandlerAdapter_는_실행할_메서드의_ModelAndView_를_반환한다() throws Exception {
-        final HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
         final HandlerExecution handlerExecution = mock(HandlerExecution.class);

@@ -2,7 +2,7 @@ package nextstep.mvc.config;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
-import nextstep.mvc.controller.annotation.AnnotationHandlerAdapter;
+import nextstep.mvc.controller.annotation.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.controller.annotation.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
@@ -17,7 +17,7 @@ public class DefaultAppWebApplicationInitializer implements WebApplicationInitia
     public void onStartup(final ServletContext servletContext) throws ServletException {
         final var dispatcherServlet = DispatcherServlet.getInstance();
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);

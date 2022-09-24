@@ -32,11 +32,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappingRegistry.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapterRegistry.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
             final var handler = getHandler(request);
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.render(request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -60,5 +60,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapterRegistry.getHandlerAdapter(handler);
+    }
+
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        modelAndView.render(request, response);
     }
 }
