@@ -1,6 +1,5 @@
 package nextstep.mvc.controller.tobe;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +16,7 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> getControllers() {
-       return instantiateControllers(reflections.getTypesAnnotatedWith(Controller.class));
+        return instantiateControllers(reflections.getTypesAnnotatedWith(Controller.class));
     }
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> clz) {

@@ -1,17 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.ReflectionUtils;
@@ -33,48 +31,36 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        addHandlerExecutions(reflections.getTypesAnnotatedWith(Controller.class));
-    }
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
 
-    private void addHandlerExecutions(final Set<Class<?>> handlers) {
-        for (Class<?> handler : handlers) {
-            initRequestMethods(handler);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Set<Method> requestMappingMethods = getRequestMappingMethods(entry.getKey());
+            addHandlerExecutions(entry.getValue(), requestMappingMethods);
         }
     }
 
-    private void initRequestMethods(final Class<?> handler) {
-        Object executableObject = createNewInstance(handler);
-        Set<Method> methods = ReflectionUtils.getMethods(handler,
-                method -> method.isAnnotationPresent(RequestMapping.class));
+    private Set<Method> getRequestMappingMethods(final Class<?> handler) {
+        return ReflectionUtils.getAllMethods(handler, ReflectionUtils.withAnnotation(RequestMapping.class));
+    }
 
-        for (Method method : methods) {
-            registerHandlerExecution(executableObject, method);
+    private void addHandlerExecutions(final Object instance, final Set<Method> requestMappingMethods) {
+        for (Method requestMappingMethod : requestMappingMethods) {
+            RequestMapping requestMapping = requestMappingMethod.getAnnotation(RequestMapping.class);
+            addHandlerExecution(instance, requestMappingMethod, requestMapping);
         }
     }
 
-    private Object createNewInstance(final Class<?> handler) {
-        try {
-            Constructor<?> constructor = handler.getDeclaredConstructor();
-            return constructor.newInstance();
-        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            log.error("Initialization failed", e);
-            throw new IllegalStateException();
-        }
-    }
-
-    private void registerHandlerExecution(final Object executableObject, final Method method) {
-        HandlerMethod handlerMethod = new HandlerMethod(executableObject, method);
-        List<HandlerKey> handlerKeys = createHandlerKeys(method);
+    private void addHandlerExecution(final Object instance, final Method method, final RequestMapping requestMapping) {
+        HandlerMethod handlerMethod = new HandlerMethod(instance, method);
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, new HandlerExecution(handlerMethod));
         }
     }
 
-    private List<HandlerKey> createHandlerKeys(final Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String path = requestMapping.value();
-        return Arrays.stream(requestMapping.method())
+    private List<HandlerKey> mapHandlerKeys(final String path, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(path, requestMethod))
                 .collect(Collectors.toList());
     }
