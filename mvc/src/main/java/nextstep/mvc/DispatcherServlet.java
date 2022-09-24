@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import java.util.Optional;
+import nextstep.mvc.controller.HandlerMappingRegistry;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
@@ -13,28 +15,24 @@ import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.add(handlerMapping);
     }
 
     @Override
@@ -42,7 +40,12 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getController(request);
+            final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+            if (handler.isEmpty()) {
+                response.setStatus(404);
+                return;
+            }
+
             View view = getView(handler, request, response);
             view.render(Collections.emptyMap(), request, response);
         } catch (Throwable e) {
@@ -60,13 +63,5 @@ public class DispatcherServlet extends HttpServlet {
         final HandlerExecution execution = (HandlerExecution) handler;
         final ModelAndView modelAndView = execution.handle(request, response);
         return modelAndView.getView();
-    }
-
-    private Object getController(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElseThrow();
     }
 }
