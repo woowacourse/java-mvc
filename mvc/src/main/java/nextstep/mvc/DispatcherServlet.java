@@ -5,8 +5,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
-import nextstep.mvc.controller.tobe.HandlerAdapterRegistry;
-import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;

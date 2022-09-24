@@ -1,10 +1,11 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.tobe.HandlerExecutionAdapter;
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,13 +21,13 @@ class HandlerAdapterRegistryTest {
             final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
             final HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
-            handlerAdapterRegistry.register(new AnnotationHandlerAdapter());
+            handlerAdapterRegistry.register(new HandlerExecutionAdapter());
 
             // when
             final HandlerAdapter adapter = handlerAdapterRegistry.getAdapter(handlerExecution);
 
             // then
-            assertThat(adapter).isInstanceOf(AnnotationHandlerAdapter.class);
+            assertThat(adapter).isInstanceOf(HandlerExecutionAdapter.class);
         }
 
         @Test
