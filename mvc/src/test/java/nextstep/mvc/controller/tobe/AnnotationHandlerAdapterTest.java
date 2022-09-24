@@ -12,16 +12,16 @@ import org.junit.jupiter.api.Test;
 class AnnotationHandlerAdapterTest {
 
     private AnnotationHandlerMapping handlerMapping;
-    private AnnotationHandlerAdapter annotationHandlerAdapter;
+    private HandlerExecutionHandlerAdapter annotationHandlerAdapter;
 
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        annotationHandlerAdapter = new HandlerExecutionHandlerAdapter();
         handlerMapping.initialize();
     }
 
-    @DisplayName("AnnotationHandlerAdapter 에 인스턴스 값을 확인한다.")
+    @DisplayName("HandlerExecutionHandlerAdapter 에 인스턴스 값을 확인한다.")
     @Test
     void supports() {
         final var request = mock(HttpServletRequest.class);

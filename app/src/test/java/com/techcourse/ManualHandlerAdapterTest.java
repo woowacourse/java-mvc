@@ -17,9 +17,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class ManualHandlerAdapterTest {
 
-    private ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+    private ControllerHandlerAdapter manualHandlerAdapter = new ControllerHandlerAdapter();
 
-    @DisplayName("ManualHandlerAdapter 에 인스턴스 값을 확인한다.")
+    @DisplayName("ControllerHandlerAdapter 에 인스턴스 값을 확인한다.")
     @ParameterizedTest(name = "{index} {1} ")
     @MethodSource("controllerArguments")
     void supports(Controller controller, String message) {

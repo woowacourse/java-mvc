@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private static final int METHOD_INDEX = 0;
 
     private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;

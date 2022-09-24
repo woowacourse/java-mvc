@@ -17,5 +17,5 @@
         - [x] ControllerScanner 클래스를 생성한다.
         - [x] 리플랙션으로 @Controller 가 선언된 객체들을 찾는다.
         - [x] 각 클래스별 인스턴스를 만들어서 가지고 있는다.
-- [ ] HandlerMappingRegistry class 에서 HandlerMapping 을 처리하도록 구현했다.
-- [ ] HandlerAdapterRegistry class 에서 HandlerAdapter 를 처리하도록 구현했다. 
+- [x] HandlerMappingRegistry class 에서 HandlerMapping 을 처리하도록 구현했다.
+- [x] HandlerAdapterRegistry class 에서 HandlerAdapter 를 처리하도록 구현했다. 
