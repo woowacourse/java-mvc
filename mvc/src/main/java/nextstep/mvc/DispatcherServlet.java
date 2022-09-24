@@ -1,11 +1,5 @@
 package nextstep.mvc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +16,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -39,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.add(handlerAdapter);
     }
 
     @Override
@@ -48,19 +42,12 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = handlerMappingRegistry.getHandler(request);
-            final var adapter = getAdapter(handler);
+            final var adapter = handlerAdapterRegistry.getAdapter(handler);
             final var modelAndView = adapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerAdapter getAdapter(Object handler) {
-        return handlerAdapters.stream()
-            .filter(adapter -> adapter.supports(handler))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("해당 핸들러를 실행시킬 수 있는 어댑터가 없습니다."));
     }
 }
