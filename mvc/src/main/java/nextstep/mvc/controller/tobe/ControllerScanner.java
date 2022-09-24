@@ -3,7 +3,6 @@ package nextstep.mvc.controller.tobe;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.util.ReflectionUtils;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
@@ -23,8 +22,13 @@ public class ControllerScanner {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         Map<Class<?>, Object> controllers = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
-            controllers.put(controllerClass, ReflectionUtils.createNewInstance(controllerClass));
+            controllers.put(controllerClass, newInstance(controllerClass));
         }
         return controllers;
+    }
+
+    private Object newInstance(final Class<?> clazz) throws Exception {
+        return clazz.getDeclaredConstructor()
+                .newInstance();
     }
 }
