@@ -15,7 +15,7 @@ import nextstep.mvc.controller.asis.ForwardController;
 import nextstep.mvc.view.ModelAndView;
 import samples.TestController;
 
-class AnnotationHandlerAdaptorTest {
+class HandlerExecutionHandlerAdaptorTest {
 
     @Test
     @DisplayName("Adaptor가 지원하는 Handler인지 검증한다(true).")

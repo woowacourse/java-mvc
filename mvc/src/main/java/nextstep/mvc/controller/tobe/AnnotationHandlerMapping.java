@@ -32,6 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
         final Set<Class<?>> classes = controllers.keySet();
