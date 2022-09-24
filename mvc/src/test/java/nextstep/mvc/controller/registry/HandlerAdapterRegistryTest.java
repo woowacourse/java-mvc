@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.asis.ManualHandlerAdapter;
+import nextstep.mvc.controller.asis.ControllerHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
@@ -20,10 +20,10 @@ class HandlerAdapterRegistryTest {
     void initializedHandlerAdapters()
         throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         // given
-        ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+        ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(manualHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
         handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
 
         //when
