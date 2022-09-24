@@ -1,15 +1,12 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -31,32 +28,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final var reflections = new Reflections(basePackage);
-        final var methods = findAllControllerMethods(reflections);
-        collectMethodsToHandlerExecutions(methods);
+        final var controllerScanner = new ControllerScanner(reflections);
+
+        final var methods = getMethods(controllerScanner.getControllers());
+        addHandlerExecutions(methods);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void collectMethodsToHandlerExecutions(final List<Method> methods) {
-        for (Method method : methods) {
-            final var requestMapping = method.getAnnotation(RequestMapping.class);
-            final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[FIRST_INDEX]);
-
-            try {
-                final var controller = method.getDeclaringClass()
-                        .getDeclaredConstructor()
-                        .newInstance();
-                handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new RuntimeException();
-            }
-        }
+    private Map<Object, Method[]> getMethods(final Map<Class<?>, Object> controllers) {
+        return controllers.entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Entry::getKey,
+                        entry -> entry.getKey().getDeclaredMethods()));
     }
 
-    private List<Method> findAllControllerMethods(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .map(Class::getDeclaredMethods)
-                .flatMap(Stream::of)
-                .collect(Collectors.toList());
+    private void addHandlerExecutions(final Map<Object, Method[]> methods) {
+        for (Entry<Object, Method[]> controllerInstanceAndMethods : methods.entrySet()) {
+            for (Method method : controllerInstanceAndMethods.getValue()) {
+                final var requestMapping = method.getAnnotation(RequestMapping.class);
+                final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[FIRST_INDEX]);
+                handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstanceAndMethods.getKey(), method));
+            }
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
