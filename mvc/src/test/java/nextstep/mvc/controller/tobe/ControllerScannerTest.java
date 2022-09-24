@@ -3,8 +3,8 @@ package nextstep.mvc.controller.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
-import nextstep.mvc.controller.tobe.fixture.OtherTestController;
-import nextstep.mvc.controller.tobe.fixture.SomeTestController;
+import nextstep.mvc.controller.tobe.fixture.AnnotationController;
+import nextstep.mvc.controller.tobe.fixture.OtherAnnotationController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
@@ -19,6 +19,6 @@ class ControllerScannerTest {
 
         Map<Class<?>, Object> result = controllerScanner.getControllers();
 
-        assertThat(result).containsKeys(SomeTestController.class, OtherTestController.class);
+        assertThat(result).containsKeys(AnnotationController.class, OtherAnnotationController.class);
     }
 }
