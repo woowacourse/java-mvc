@@ -13,6 +13,6 @@
   - 반환된 view를 forward()하거나 sendRedirect()합니다. 
 
 ### 2단계
-- [ ] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.
-- [ ] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현
-- [ ] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현
+- [X] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.
+- [X] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리
+- [X] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리

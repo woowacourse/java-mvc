@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         for (Class<?> controller : controllerScanner.getAnnotationController()) {
@@ -63,6 +64,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String uri = request.getRequestURI();
         final String method = request.getMethod();
