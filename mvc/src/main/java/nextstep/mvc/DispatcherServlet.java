@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +72,6 @@ public class DispatcherServlet extends HttpServlet {
         return handlerAdapters.stream()
                 .filter(it -> it.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundHandlerAdapterException("핸들러 어댑터를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("핸들러 어댑터를 찾을 수 없습니다."));
     }
 }
