@@ -2,10 +2,11 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -37,11 +38,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Map<Object, Method[]> getMethods(final Map<Class<?>, Object> controllers) {
-        return controllers.entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Entry::getKey,
-                        entry -> entry.getKey().getDeclaredMethods()));
+        final var instanceAndMethods = new HashMap<Object, Method[]>();
+
+        for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            final var instance = entry.getValue();
+            final var publicMethods = Arrays
+                    .stream(entry.getKey().getDeclaredMethods())
+                    .filter(it -> Modifier.isPublic(it.getModifiers()))
+                    .toArray(Method[]::new);
+            instanceAndMethods.put(instance, publicMethods);
+        }
+        return instanceAndMethods;
     }
 
     private void addHandlerExecutions(final Map<Object, Method[]> methods) {
