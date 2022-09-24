@@ -4,9 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import nextstep.mvc.controller.tobe.exception.NotSupportHandler;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +14,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapters = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -34,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapters.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -43,8 +40,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         final Object handler = handlerMappingRegistry.getHandler(request);
-        final HandlerAdapter adapter = getAdapter(handler);
+        final HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
 
+        handleRequest(request, response, handler, adapter);
+    }
+
+    private static void handleRequest(final HttpServletRequest request, final HttpServletResponse response,
+                                  final Object handler, final HandlerAdapter adapter) throws ServletException {
         try {
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.renderView(request, response);
@@ -52,12 +54,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerAdapter getAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findAny()
-                .orElseThrow(NotSupportHandler::new);
     }
 }
