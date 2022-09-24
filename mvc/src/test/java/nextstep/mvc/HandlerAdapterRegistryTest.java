@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.adapter.HandlerAdapterRegistry;
+import nextstep.mvc.adapter.ManualMappingHandlerAdapter;
+import nextstep.mvc.adapter.RequestMappingHandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.Test;
