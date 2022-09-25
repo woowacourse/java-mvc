@@ -14,9 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerAdapterTest {
+class HandlerExecutionHandlerAdapterTest {
 
-    private HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+    private HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
     private HandlerMappingRegister register = new HandlerMappingRegister();
 
     @BeforeEach

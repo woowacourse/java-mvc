@@ -10,7 +10,7 @@ import common.FakeManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
-import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
+import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ class HandlerAdapterRegisterTest {
         register.addHandlerMapping(new FakeManualHandlerMapping());
         register.init();
 
-        adapterRegister.addHandlerAdapter(new AnnotationHandlerAdapter());
+        adapterRegister.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
         adapterRegister.addHandlerAdapter(new FakeManualHandlerAdapter());
     }
 
