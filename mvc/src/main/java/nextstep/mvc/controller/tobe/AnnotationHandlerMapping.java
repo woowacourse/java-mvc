@@ -41,6 +41,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    private List<Method> getRequestMappingMethods(final Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+    }
+
     private void addHandlersByControllerMethods(final List<Method> methods, final Object controller) {
         for (Method method : methods) {
             final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
@@ -48,12 +54,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             addHandlerExecutions(handlerKeys, handlerExecution);
         }
-    }
-
-    private List<Method> getRequestMappingMethods(final Class<?> controllerClass) {
-        return Arrays.stream(controllerClass.getMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
     }
 
     private List<HandlerKey> getHandlerKeys(final String requestValue, final RequestMethod[] requestMethods) {
