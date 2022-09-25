@@ -1,16 +1,14 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,35 +26,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-
-        for (var basePackage : basePackages) {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-            setHandlerExecution(classes);
+        ControllerScanner controllerScanner = ControllerScanner.from(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (var entry : controllers.entrySet()) {
+            Set<Method> methods = ReflectionUtils.getAllMethods(entry.getKey(),
+                    ReflectionUtils.withAnnotation(RequestMapping.class));
+            setRequestMappingMethod(entry.getValue(), methods);
         }
     }
 
-    private void setHandlerExecution(Set<Class<?>> classes) {
-        for (var clazz : classes) {
-            try {
-                Object controller = clazz.getDeclaredConstructor().newInstance();
-                setMethodInClass(clazz, controller);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                log.info("error:{}, message:{}", e, e.getMessage());
-            }
-        }
-    }
-
-    private void setMethodInClass(Class<?> clazz, Object controller) {
-        for (var method : clazz.getMethods()) {
-            setTargetIfAnnotationPresent(controller, method);
-        }
-    }
-
-    private void setTargetIfAnnotationPresent(Object controller, Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            saveHandlerExecution(controller, method);
-        }
+    private void setRequestMappingMethod(Object controller, Set<Method> methods) {
+        methods.stream()
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> saveHandlerExecution(controller, method));
     }
 
     private void saveHandlerExecution(Object controller, Method method) {
