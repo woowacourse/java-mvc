@@ -2,6 +2,7 @@ package nextstep.mvc.registry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,18 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void set() {
         handlerMappingRegistry = new HandlerMappingRegistry();
+    }
+
+
+    @Test
+    @DisplayName("핸들러 레지스트리를 초기화한다.")
+    void init() {
+        final AnnotationHandlerMapping handlerMapping = mock(AnnotationHandlerMapping.class);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+
+        handlerMappingRegistry.init();
+
+        verify(handlerMapping).initialize();
     }
 
     @Test
