@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerAdapterTest {
+class HandlerExecutionHandlerAdapterTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
@@ -30,7 +30,7 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        final var annotationHandlerAdapter = new HandlerExecutionHandlerAdapter();
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
         // when
@@ -44,7 +44,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     void supports_false() {
         // given
-        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        final var annotationHandlerAdapter = new HandlerExecutionHandlerAdapter();
         final var forwardController = new ForwardController("");
 
         // when
@@ -58,7 +58,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     void handle_get() {
         // given
-        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        final var annotationHandlerAdapter = new HandlerExecutionHandlerAdapter();
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -80,7 +80,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     void handle_post() {
         // given
-        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        final var annotationHandlerAdapter = new HandlerExecutionHandlerAdapter();
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
