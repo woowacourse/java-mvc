@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.tobe.handleradapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -7,8 +7,10 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import nextstep.mvc.controller.tobe.handlermapping.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
+import samples.TestAnnotationController;
 import samples.TestManualController;
 
 class AnnotationHandlerAdapterTest {
@@ -17,9 +19,10 @@ class AnnotationHandlerAdapterTest {
     void supports() throws Exception {
         Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+        HandlerExecution handler = new HandlerExecution(new TestAnnotationController(), method);
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        boolean supports = annotationHandlerAdapter.supports(new HandlerExecution(method));
+        boolean supports = annotationHandlerAdapter.supports(handler);
 
         assertThat(supports).isTrue();
     }
@@ -44,9 +47,10 @@ class AnnotationHandlerAdapterTest {
 
         Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+        HandlerExecution handler = new HandlerExecution(new TestAnnotationController(), method);
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        ModelAndView modelAndView = annotationHandlerAdapter.handle(request, response, new HandlerExecution(method));
+        ModelAndView modelAndView = annotationHandlerAdapter.handle(request, response, handler);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }

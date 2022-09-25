@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.asis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import nextstep.mvc.controller.tobe.handlermapping.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class ManualHandlerAdapterTest {
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-        boolean supports = manualHandlerAdapter.supports(new HandlerExecution(method));
+        boolean supports = manualHandlerAdapter.supports(new HandlerExecution(new TestManualController(), method));
 
         assertThat(supports).isFalse();
     }

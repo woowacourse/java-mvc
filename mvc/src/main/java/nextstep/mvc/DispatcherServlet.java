@@ -5,8 +5,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.NoSuchElementException;
+import nextstep.mvc.controller.tobe.handleradapter.HandlerAdapterRegistry;
+import nextstep.mvc.controller.tobe.handlermapping.HandlerMappingRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,25 +16,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry(new ArrayList<>());
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>());
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -41,29 +42,16 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
+        final var handler = handlerMappingRegistry.getHandler(request)
+                .orElseThrow(() -> new NoSuchElementException("적절한 컨트롤러가 존재하지 않습니다."));
+        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
         try {
-            final var handler = getHandler(request);
-            final var handlerAdapter = getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow();
     }
 }

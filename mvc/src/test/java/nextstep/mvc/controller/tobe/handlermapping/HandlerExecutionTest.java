@@ -1,24 +1,25 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.tobe.handlermapping;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import samples.TestAnnotationController;
 
 class HandlerExecutionTest {
 
     private HandlerExecution handlerExecution;
 
     @BeforeEach
-    void setUp() throws Exception{
+    void setUp() throws Exception {
         Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Method method = clazz.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
-        handlerExecution = new HandlerExecution(method);
+        handlerExecution = new HandlerExecution(new TestAnnotationController(), method);
     }
 
     @Test
