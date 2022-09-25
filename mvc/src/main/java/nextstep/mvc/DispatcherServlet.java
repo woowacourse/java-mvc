@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import nextstep.mvc.exception.HandlerAdapterNotFoundException;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.registry.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -55,7 +56,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
-        return handlerMappingRegistry.getHandler(request);
+        return handlerMappingRegistry.getHandler(request)
+                .orElseThrow(HandlerNotFoundException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
