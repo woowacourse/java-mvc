@@ -3,7 +3,7 @@ package nextstep.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-import nextstep.mvc.controller.asis.Controller;
+import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
@@ -17,10 +17,10 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Controller getHandler(final HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(it -> it.getHandler(request))
-                .map(Controller.class::cast)
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("요청을 처리할 핸들러를 찾을 수 없습니다."));
     }
