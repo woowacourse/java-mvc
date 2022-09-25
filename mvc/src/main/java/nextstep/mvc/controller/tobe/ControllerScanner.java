@@ -4,19 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private Object[] targetPackage;
+    private Reflection reflection;
 
     public ControllerScanner(final Object... targetPackage) {
-        this.targetPackage = targetPackage;
+        reflection = new ReflectionsLibrary(targetPackage);
     }
 
     public Map<Class<?>, Object> scanController() {
-        Reflections reflections = new Reflections(targetPackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(nextstep.web.annotation.Controller.class);
+        Set<Class<?>> controllerClasses = reflection.getTypesAnnotatedWith(nextstep.web.annotation.Controller.class);
         return instantiateControllers(controllerClasses);
     }
 
