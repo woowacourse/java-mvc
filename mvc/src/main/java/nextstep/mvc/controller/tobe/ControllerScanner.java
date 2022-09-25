@@ -21,7 +21,7 @@ public class ControllerScanner {
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> clz) {
         return clz.stream()
-                .collect(Collectors.toMap(clas -> clas, this::createNewInstance));
+                .collect(Collectors.toUnmodifiableMap(clas -> clas, this::createNewInstance));
     }
 
     private Object createNewInstance(final Class<?> clas) {
