@@ -23,7 +23,6 @@ public class LoginController {
     private static final String LOGIN_REQUEST_PARAMETER_ACCOUNT_KEY = "account";
     private static final String LOGIN_REQUEST_PARAMETER_PASSWORD_KEY = "password";
 
-
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
