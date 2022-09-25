@@ -60,14 +60,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String path = annotation.value();
         RequestMethod[] httpMethods = annotation.method();
         for (RequestMethod httpMethod : httpMethods) {
-            try {
-                Class<?> clazz = method.getDeclaringClass();
-                handlerExecutions.put(new HandlerKey(path, httpMethod),
-                        new HandlerExecution(clazz.getConstructor().newInstance(), method));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
+            putHandlerKeyAndHandlerExecution(method, path, httpMethod);
+        }
+    }
+
+    private void putHandlerKeyAndHandlerExecution(Method method, String path, RequestMethod httpMethod) {
+        try {
+            Class<?> clazz = method.getDeclaringClass();
+            handlerExecutions.put(new HandlerKey(path, httpMethod),
+                    new HandlerExecution(clazz.getConstructor().newInstance(), method));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 
