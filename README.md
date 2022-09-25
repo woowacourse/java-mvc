@@ -28,7 +28,7 @@
 ### 2단계 - 점진적인 리팩터링
 - [X] Controller 스캔에 대한 책임을 ControllerScanner로 이동시킨다.
 - [X] HandlerMappingRegistry에서 HandlerMapping을 처리하도록 한다.
-- [ ] HandlerAdapterRegistry에서 HandlerAdapter를 처리하다록 한다.
+- [X] HandlerAdapterRegistry에서 HandlerAdapter를 처리하다록 한다.
 
 #### AnnotationHandlerMapping.initialize()의 역할
 - @Controller가 붙은 클래스들을 찾아온다.

@@ -4,10 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import nextstep.mvc.controller.tobe.HandlerAdapterRegistry;
 import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import nextstep.mvc.exception.HandlerAdapterException;
 import nextstep.mvc.exception.HandlerMappingException;
@@ -23,16 +22,16 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this(new HandlerMappingRegistry(), new ArrayList<>());
+        this(new HandlerMappingRegistry(), new HandlerAdapterRegistry());
     }
 
     private DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
-                              final List<HandlerAdapter> handlerAdapters) {
+                              final HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
-        this.handlerAdapters = handlerAdapters;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -54,9 +53,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object mappedHandler = getHandler(request);
-            final HandlerAdapter mappedHandlerAdapter = getMappedHandlerAdapter(mappedHandler);
-            final ModelAndView modelAndView = handle(request, response, mappedHandler, mappedHandlerAdapter);
+            final Object handler = getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handle(request, response, handler, handlerAdapter);
             render(modelAndView, request, response);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -72,17 +71,10 @@ public class DispatcherServlet extends HttpServlet {
         throw new HandlerMappingException("A matching handler is not found.");
     }
 
-    private HandlerAdapter getMappedHandlerAdapter(final Object mappedHandler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(mappedHandler))
-                .findFirst()
-                .orElseThrow(() -> new HandlerAdapterException("A matching handler adapter is not found."));
-    }
-
     private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
-                                final Object mappedHandler, final HandlerAdapter mappedHandlerAdapter) {
+                                final Object handler, final HandlerAdapter handlerAdapter) {
         try {
-            return mappedHandlerAdapter.handle(request, response, mappedHandler);
+            return handlerAdapter.handle(request, response, handler);
         } catch (final Exception e) {
             throw new HandlerAdapterException("Failed to handle a request.", e);
         }
