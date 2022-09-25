@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.tobe.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -23,10 +23,10 @@ public class HandlerMappingRegistry {
     }
 
     public Optional<Object> getHandler(HttpServletRequest request) {
-        Optional<Object> handler = Optional.empty();
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            handler = Optional.ofNullable(handlerMapping.getHandler(request));
-        }
-        return handler;
+        return Optional.of(handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
+                .findFirst()
+                .orElseThrow()
+                .getHandler(request));
     }
 }

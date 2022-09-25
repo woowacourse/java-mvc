@@ -9,17 +9,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.tobe.handleradapter.AnnotationHandlerAdapter;
+import nextstep.mvc.controller.tobe.handleradapter.ControllerHandlerAdapter;
+import nextstep.mvc.controller.tobe.handleradapter.HandlerAdapterRegistry;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
-public class HandlerAdapterTest {
+public class HandlerAdapterRegistryTest {
+
+    private HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+
+    @BeforeEach
+    void setUp() {
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+    }
 
     @DisplayName("컨트롤러 핸들러를 실행시킬 수 있다.")
     @Test
-    void executeController() throws Exception {
+    void getHandlerAdapter_controller() throws Exception {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -28,7 +40,7 @@ public class HandlerAdapterTest {
         when(request.getAttribute("name")).thenReturn("tonic");
 
         // when
-        ModelAndView actual = HandlerAdapter.handle(request, response, controller);
+        ModelAndView actual = handlerAdapterRegistry.handle(request, response, controller);
 
         // then
         Field field = JspView.class
@@ -38,9 +50,9 @@ public class HandlerAdapterTest {
         assertThat(viewName).isEqualTo("tonic");
     }
 
-    @DisplayName("HandlerExecution 핸들러를 실행시킬 수 있다.")
+    @DisplayName("HandlerExecution에 맞는 HandlerAdapter를 반환한다.")
     @Test
-    void handleHandlerExecution() throws Exception {
+    void getHandlerAdapter_annotation() throws Exception {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -50,8 +62,7 @@ public class HandlerAdapterTest {
         when(request.getAttribute("id")).thenReturn("tonic");
 
         // when
-        ModelAndView actual = HandlerAdapter.handle(request, response, handlerExecution);
-
+        ModelAndView actual = handlerAdapterRegistry.handle(request, response, handlerExecution);
         // then
         assertThat(actual.getObject("id")).isEqualTo("tonic");
     }

@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
+import nextstep.mvc.controller.tobe.handlermapping.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.handlermapping.HandlerMappingRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
