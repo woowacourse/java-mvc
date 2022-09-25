@@ -4,10 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
+import nextstep.mvc.controller.registry.HandlerAdapterRegistry;
+import nextstep.mvc.controller.registry.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.ViewResolver;
 import org.slf4j.Logger;
@@ -18,25 +17,26 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
+                             final HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addAdapterMapping(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -54,27 +54,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private void executeHandler(final HttpServletRequest request,
                                 final HttpServletResponse response) throws Exception {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            Object handler = getHandler(request);
-            execute(request, response, handlerAdapter, handler);
-        }
-    }
+        Object handler = handlerMappingRegistry.getHandler(request);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
-    private void execute(final HttpServletRequest request,
-                         final HttpServletResponse response,
-                         final HandlerAdapter handlerAdapter,
-                         final Object handler) throws Exception {
-        if (handlerAdapter.supports(handler)) {
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            ViewResolver.resolve(request, response, modelAndView);
-        }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .findAny()
-            .orElseThrow();
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        ViewResolver.resolve(request, response, modelAndView);
     }
 }

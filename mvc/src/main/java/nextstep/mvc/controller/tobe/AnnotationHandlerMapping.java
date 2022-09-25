@@ -1,18 +1,22 @@
 package nextstep.mvc.controller.tobe;
 
 import static java.util.stream.Collectors.toMap;
+import static org.reflections.ReflectionUtils.getAllMethods;
+import static org.reflections.util.ReflectionUtilsPredicates.withAnnotation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.scanner.ControllerScanner;
-import nextstep.mvc.controller.scanner.RequestMappingScanner;
+import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,77 +35,49 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> controllers = getAllControllers(basePackage);
-        Map<Class<?>, Set<Method>> controllersAndMethods = controllers.stream()
-            .collect(toMap(Function.identity(), this::convertObjectToMethods));
+        Set<Class<?>> mappedControllers = ControllerScanner.getInstance()
+            .getAllAnnotations(basePackage);
+        Map<Class<?>, Object> controllers = mappedControllers.stream()
+            .collect(toMap(Function.identity(), this::getInitializedController));
 
-        initControllers(controllersAndMethods);
+        extractHandlerExecutions(controllers);
     }
 
-    private Set<Class<?>> getAllControllers(final Object... basePackage) {
-        return ControllerScanner.getInstance().getAllAnnotations(basePackage);
-    }
-
-    private Set<Method> convertObjectToMethods(final Class<?> controller) {
-        return RequestMappingScanner.getInstance().getAllAnnotations(controller);
-    }
-
-    private void initControllers(final Map<Class<?>, Set<Method>> controllersAndMethods) {
-        for (Entry<Class<?>, Set<Method>> classAndMethods : controllersAndMethods.entrySet()) {
-            Class<?> controller = classAndMethods.getKey();
-            Set<Method> methods = classAndMethods.getValue();
-
-            Object initializedController = getInitializedController(controller);
-            Map<Method, Set<HandlerKey>> initializedMethods = convertObjectToMethodAndHandlerKeys(
-                methods);
-
-            addHandlerExecutions(initializedController, initializedMethods);
-        }
-    }
-
-    private Object getInitializedController(final Class<?> controller) {
+    private Object getInitializedController(final Class<?> mappedController) {
         try {
-            return controller.getConstructor().newInstance();
+            return mappedController.getConstructor().newInstance();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    private Map<Method, Set<HandlerKey>> convertObjectToMethodAndHandlerKeys(
-        final Set<Method> methods) {
-        return methods.stream()
-            .collect(toMap(Function.identity(), this::convertObjectToHandlerKeys));
-    }
+    private void extractHandlerExecutions(final Map<Class<?>, Object> controllers) {
+        for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            Set<Method> mappedMethods = getAllMethods(
+                controller.getKey(), withAnnotation(RequestMapping.class));
+            Map<Method, Set<HandlerKey>> methods = mappedMethods.stream()
+                .collect(toMap(Function.identity(), this::getInitializedHandlerKeys));
 
-    private Set<HandlerKey> convertObjectToHandlerKeys(final Method methods) {
-        return RequestMappingScanner.getInstance().extractHandlerKeys(methods);
-    }
-
-    private void addHandlerExecutions(final Object initializedController,
-                                      final Map<Method, Set<HandlerKey>> initializedMethods) {
-        for (Method method : initializedMethods.keySet()) {
-            handlerExecutions.putAll(
-                extractHandlerKeyAndHandlerExecutions(
-                    initializedController,
-                    initializedMethods,
-                    method
-                )
-            );
+            addHandlerExecution(controller.getValue(), methods);
         }
     }
 
-    private Map<? extends HandlerKey, ? extends HandlerExecution> extractHandlerKeyAndHandlerExecutions(
-        final Object initializedController,
-        final Map<Method, Set<HandlerKey>> initializedMethods,
-        final Method method) {
+    private Set<HandlerKey> getInitializedHandlerKeys(final Method mappedMethod) {
+        RequestMapping requestMapping = mappedMethod.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
 
-        Set<HandlerKey> handlerKeys = initializedMethods.get(method);
+        return Arrays.stream(requestMapping.method())
+            .map(method -> new HandlerKey(url, method))
+            .collect(Collectors.toSet());
+    }
 
-        return handlerKeys.stream()
-            .collect(toMap(
-                    Function.identity(),
-                    e -> new HandlerExecution(initializedController, method)));
+    private void addHandlerExecution(final Object controller,
+                                     final Map<Method, Set<HandlerKey>> methods) {
+        methods.forEach((key, value) -> {
+            for (HandlerKey handlerKey : value) {
+                handlerExecutions.put(handlerKey, new HandlerExecution(controller, key));
+            }
+        });
     }
 
     @Override
