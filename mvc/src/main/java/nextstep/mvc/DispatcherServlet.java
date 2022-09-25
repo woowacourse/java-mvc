@@ -4,34 +4,34 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
         log.info("Initialize DispatcherServlet!");
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.init();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
         log.info("Add HandlerMapping: {}", handlerMapping);
     }
 
@@ -53,24 +53,16 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final var handler = getHandler(request);
+        final var handler = handlerMappingRegistry.getHandler(request);
         final var handlerAdapter = getHandlerAdapter(handler);
         final var modelAndView = handlerAdapter.handle(request, response, handler);
         modelAndView.render(request, response);
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 요청입니다."));
     }
 }
