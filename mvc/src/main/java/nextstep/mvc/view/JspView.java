@@ -26,8 +26,8 @@ public class JspView implements View {
         final HttpServletResponse response) throws IOException, ServletException {
         setAttributes(model, request);
 
-        if (isJspRequest()) {
-            response.sendRedirect(getExtensionRemovedViewName());
+        if (isRedirect()) {
+            response.sendRedirect(removeRedirectPrefix());
             return;
         }
 
@@ -42,11 +42,11 @@ public class JspView implements View {
         });
     }
 
-    private boolean isJspRequest() {
+    private boolean isRedirect() {
         return viewName.startsWith(JspView.REDIRECT_PREFIX);
     }
 
-    private String getExtensionRemovedViewName() {
+    private String removeRedirectPrefix() {
         return viewName.substring(JspView.REDIRECT_PREFIX.length());
     }
 }

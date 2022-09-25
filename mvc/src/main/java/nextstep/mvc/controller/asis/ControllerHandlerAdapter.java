@@ -2,11 +2,11 @@ package nextstep.mvc.controller.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdaptor;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
-public class ManualHandlerAdaptor implements HandlerAdaptor {
+public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {

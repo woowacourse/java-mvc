@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdaptor;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
 
-public class AnnotationHandlerAdaptor implements HandlerAdaptor {
+public class HandlerExecutionHandlerAdaptor implements HandlerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerAdaptor.class);
+    private static final Logger log = LoggerFactory.getLogger(HandlerExecutionHandlerAdaptor.class);
 
     @Override
     public boolean supports(final Object handler) {

@@ -1,21 +1,21 @@
 package nextstep.mvc.controller.tobe;
 
-import java.lang.reflect.InvocationTargetException;
+import static org.reflections.ReflectionUtils.*;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
@@ -24,60 +24,51 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final HandlerKey ROOT_HANDLER_KEY = new HandlerKey("/", RequestMethod.GET);
 
-    private final List<String> basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Object[] basePackage;
 
-    public AnnotationHandlerMapping(final String... basePackage) {
-        this.basePackage = Arrays.stream(basePackage)
-            .collect(Collectors.toUnmodifiableList());
+    public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        for (String path : basePackage) {
-            final Reflections reflections = new Reflections(path);
-            final Set<Class<?>> classesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-            registerAnnotatedHandlers(classesAnnotatedWith);
+        final Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        final Set<Class<?>> classes = controllers.keySet();
+        for (final Method method : getRequestMappingMethods(classes)) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerAnnotatedHandlers(final Set<Class<?>> classesAnnotatedWith) {
-        for (Class<?> clazz : classesAnnotatedWith) {
-            registerHandler(clazz);
-        }
-    }
+    private void addHandlerExecutions(final Map<Class<?>, Object> controllers, final Method method,
+        final RequestMapping requestMapping) {
 
-    private void registerHandler(final Class<?> clazz) {
-        final Object controller = instantiateController(clazz);
-
-        for (Method method : clazz.getMethods()) {
-            registerExecutions(controller, method);
-        }
-    }
-
-    private Object instantiateController(final Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-            InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalArgumentException("Controller scan failed");
-        }
-    }
-
-    private void registerExecutions(final Object controller, final Method method) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
-            return;
-        }
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String requestUri = requestMapping.value();
         final RequestMethod[] requestMethods = requestMapping.method();
-        for (RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-            log.info("Controller registered by annotation. name: {}, method: {}, uri: {}, method: {}",
-                controller.getClass().getSimpleName(), method.getName(), requestUri, requestMethod);
+        final Object controller = controllers.get(method.getDeclaringClass());
+
+        for (final HandlerKey handlerKey : mapHandlerKeys(requestUri, requestMethods)) {
             handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+            log.info("Controller method registered. class: {}, uri: {}, method: {}",
+                controller.getClass().getName(), requestUri, method.getName());
         }
+    }
+
+    private List<HandlerKey> mapHandlerKeys(final String requestUri, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+            .map(requestMethod -> new HandlerKey(requestUri, requestMethod))
+            .collect(Collectors.toList());
+    }
+
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> classes) {
+        Set<Method> methods = new HashSet<>();
+        for (final Class<?> clazz : classes) {
+            methods.addAll(getAllMethods(clazz, withAnnotation(RequestMapping.class)));
+        }
+        return methods;
     }
 
     @Override

@@ -1,13 +1,10 @@
 package nextstep.mvc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,55 +15,32 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdaptor> handlerAdaptors;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdaptors = new ArrayList<>();
-    }
-
-    @Override
-    public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerExecutor = new HandlerExecutor();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    public void addHandlerAdaptor(final HandlerAdaptor handlerAdaptor) {
-        handlerAdaptors.add(handlerAdaptor);
+    public void addHandlerAdaptor(final HandlerAdapter handlerAdaptor) {
+        handlerExecutor.addHandlerAdapter(handlerAdaptor);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws
-        ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-        try {
-            final Object handler = getHandler(request);
-            final HandlerAdaptor adaptor = getHandlerAdaptor(handler);
-            final ModelAndView modelAndView = adaptor.handle(request, response, handler);
-
-            modelAndView.render(request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
+        final Object handler = handlerMappingRegistry.getHandler(request)
+            .orElseThrow(() -> new NoSuchElementException("handler not found"));
+        final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
+        render(modelAndView, request, response);
     }
 
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Couldn't find a handler"));
-    }
-
-    private HandlerAdaptor getHandlerAdaptor(final Object handler) {
-        return handlerAdaptors.stream()
-            .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Couldn't find adaptor for handler"));
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
+        modelAndView.render(request, response);
     }
 }

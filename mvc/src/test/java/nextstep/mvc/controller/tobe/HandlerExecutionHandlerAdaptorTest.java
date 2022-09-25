@@ -10,21 +10,21 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdaptor;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.ForwardController;
 import nextstep.mvc.view.ModelAndView;
 import samples.TestController;
 
-class AnnotationHandlerAdaptorTest {
+class HandlerExecutionHandlerAdaptorTest {
 
     @Test
     @DisplayName("Adaptor가 지원하는 Handler인지 검증한다(true).")
     void supports_true() {
         // given
-        final HandlerAdaptor adaptor = new AnnotationHandlerAdaptor();
+        final HandlerAdapter adaptor = new HandlerExecutionHandlerAdaptor();
         final Object controller = new TestController();
-        final Method method = controller.getClass().getDeclaredMethods()[0];
-        final HandlerExecution execution = new HandlerExecution(controller, method);
+        final Method findUserIdMethod = controller.getClass().getDeclaredMethods()[0];
+        final HandlerExecution execution = new HandlerExecution(controller, findUserIdMethod);
 
         // when, then
         assertThat(adaptor.supports(execution)).isTrue();
@@ -34,7 +34,7 @@ class AnnotationHandlerAdaptorTest {
     @DisplayName("Adaptor가 지원하는 Handler인지 검증한다(false).")
     void supports_false() {
         // given
-        final HandlerAdaptor adaptor = new AnnotationHandlerAdaptor();
+        final HandlerAdapter adaptor = new HandlerExecutionHandlerAdaptor();
         final Object controller = new ForwardController("path");
 
         // when, then
@@ -45,10 +45,10 @@ class AnnotationHandlerAdaptorTest {
     @DisplayName("Adaptor의 handle을 검증한다.")
     void handle() {
         // given
-        final HandlerAdaptor adaptor = new AnnotationHandlerAdaptor();
+        final HandlerAdapter adaptor = new HandlerExecutionHandlerAdaptor();
         final Object controller = new TestController();
-        final Method firstMethod = controller.getClass().getDeclaredMethods()[0];
-        final HandlerExecution handler = new HandlerExecution(controller, firstMethod);
+        final Method findUserIdMethod = controller.getClass().getDeclaredMethods()[0];
+        final HandlerExecution handler = new HandlerExecution(controller, findUserIdMethod);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);

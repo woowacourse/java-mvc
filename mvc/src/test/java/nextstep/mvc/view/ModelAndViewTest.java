@@ -3,6 +3,8 @@ package nextstep.mvc.view;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -44,5 +46,23 @@ class ModelAndViewTest {
 
         // then
         verify(request, times(1)).getRequestDispatcher(viewName);
+    }
+
+    @Test
+    @DisplayName("render를 호출했을 때 redirect 경로이면 response의 rediect를 호출한다.")
+    void render_Jsp() throws IOException {
+        // given
+        final String viewName = "redirect:test.jsp";
+        final ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        doNothing().when(response).sendRedirect("test.jsp");
+
+        // when
+        modelAndView.render(request, response);
+
+        // then
+        verify(response, times(1)).sendRedirect("test.jsp");
     }
 }
