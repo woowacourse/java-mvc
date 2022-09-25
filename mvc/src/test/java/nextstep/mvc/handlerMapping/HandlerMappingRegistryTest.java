@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.web.annotation.Controller;
+import samples.TestHandlerMapping;
 
 class HandlerMappingRegistryTest {
 
@@ -17,7 +17,7 @@ class HandlerMappingRegistryTest {
     void getHandler() {
         // given
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new HandlerForTest());
+        handlerMappingRegistry.addHandlerMapping(new TestHandlerMapping());
         handlerMappingRegistry.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -29,7 +29,7 @@ class HandlerMappingRegistryTest {
         // then
         assertAll(
             () -> assertThat(handler).isNotEmpty(),
-            () -> assertThat(handler.get()).isInstanceOf(ControllerForTest.class)
+            () -> assertThat(handler.get()).isInstanceOf(TestHandlerMapping.class)
         );
     }
 
@@ -37,7 +37,7 @@ class HandlerMappingRegistryTest {
     void cantGetHandler() {
         // given
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new HandlerForTest());
+        handlerMappingRegistry.addHandlerMapping(new TestHandlerMapping());
         handlerMappingRegistry.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -48,24 +48,5 @@ class HandlerMappingRegistryTest {
 
         // then
         assertThat(handler).isEmpty();
-    }
-
-    class HandlerForTest implements HandlerMapping {
-        @Override
-        public void initialize() {
-
-        }
-
-        @Override
-        public Object getHandler(HttpServletRequest request) {
-            if (request.getRequestURI().equals("/test")) {
-                return new ControllerForTest();
-            }
-            return null;
-        }
-    }
-
-    @Controller
-    class ControllerForTest {
     }
 }

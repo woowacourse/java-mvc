@@ -19,7 +19,6 @@ class ControllerScannerTest {
 
         assertThat(controllers.get(TestController.class))
             .isInstanceOf(TestController.class);
-
     }
 
 }
