@@ -2,14 +2,16 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,29 +27,42 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClass = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : controllerClass) {
-            Method[] methods = clazz.getDeclaredMethods();
-            for (Method method : methods) {
-                addAllHandlerExecutions(clazz, method);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Class<?> clazz : controllers.keySet()) {
+            Set<Method> methods = getRequestMappingMethod(clazz);
+            addAllHandlerExecutions(clazz, methods);
+        }
+    }
+
+    private Set<Method> getRequestMappingMethod(Class<?> clazz) {
+        return ReflectionUtils.getAllMethods(clazz,
+                ReflectionUtils.withAnnotation(RequestMapping.class));
+    }
+
+    private void addAllHandlerExecutions(Class<?> clazz, Set<Method> methods) {
+        for (Method method : methods) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            String url = annotation.value();
+            RequestMethod[] requestMethods = annotation.method();
+            List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
+            for (HandlerKey handlerKey : handlerKeys) {
+                handlerExecutions.put(handlerKey, new HandlerExecution(clazz, method));
             }
         }
     }
 
-    private void addAllHandlerExecutions(Class<?> clazz, Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            String url = annotation.value();
-            RequestMethod requestMethod = annotation.method()[0];
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(clazz, method));
-        }
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .collect(Collectors.toUnmodifiableList());
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         String method = request.getMethod();
