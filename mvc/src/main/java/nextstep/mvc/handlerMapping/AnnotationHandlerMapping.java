@@ -1,9 +1,12 @@
 package nextstep.mvc.handlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
@@ -29,15 +32,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Set<Class<?>> annotatedControllers = controllerScanner.getAnnotatedControllers();
+        Map<Class<?>, Object> controllers = controllerScanner.getAnnotatedControllers();
 
-        for (Class<?> controller : annotatedControllers) {
-            Set<Method> annotatedMethods = ReflectionUtils.getAllMethods(controller,
+        for (Map.Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            Set<Method> methods = ReflectionUtils.getAllMethods(controller.getKey(),
                 ReflectionUtils.withAnnotation(RequestMapping.class));
-            try {
-                setHandlerExecutions(controller, annotatedMethods);
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            for (Method method : methods) {
+                putHandlerExecution(controller.getValue(), method);
             }
         }
     }
@@ -50,22 +52,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void setHandlerExecutions(final Class<?> handler, final Set<Method> annotatedMethods) throws Exception {
-        final Object instance = handler.getDeclaredConstructor().newInstance();
-        for (Method method : annotatedMethods) {
-            putHandlerExecution(instance, method);
+    private void putHandlerExecution(final Object instance, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+        final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping);
+        final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    private void putHandlerExecution(final Object instance, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        final String uri = requestMapping.value();
-
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
-
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
+    private List<HandlerKey> getHandlerKeys(RequestMapping requestMapping) {
+        return Arrays.stream(requestMapping.method())
+            .map(it -> new HandlerKey(requestMapping.value(), it))
+            .collect(Collectors.toUnmodifiableList());
     }
 }

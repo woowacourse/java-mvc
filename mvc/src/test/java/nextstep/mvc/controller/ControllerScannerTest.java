@@ -2,7 +2,7 @@ package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ class ControllerScannerTest {
     void getAnnotatedControllers() {
         ControllerScanner controllerScanner = new ControllerScanner("samples");
 
-        Set<Class<?>> annotatedControllers = controllerScanner.getAnnotatedControllers();
+        Map<Class<?>, Object> annotatedControllers = controllerScanner.getAnnotatedControllers();
 
         assertThat(annotatedControllers.size()).isEqualTo(1);
     }
