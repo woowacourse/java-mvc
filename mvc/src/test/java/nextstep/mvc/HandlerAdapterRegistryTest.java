@@ -29,7 +29,6 @@ class HandlerAdapterRegistryTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
         final AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
         final Object handler = handlerMapping.getHandler(request);
