@@ -5,7 +5,6 @@ import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
-import com.techcourse.controller.ResourceRequestController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +19,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
-
-    private static final Controller resourceRequestController = new ResourceRequestController();
 
     @Override
     public void initialize() {
@@ -38,13 +35,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        final Controller controller = controllers.get(requestURI);
-        if (controller == null) {
-            return resourceRequestController;
-        }
-        return controller;
+        return controllers.get(requestURI);
     }
 }
