@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
@@ -61,6 +62,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         String method = request.getMethod();
