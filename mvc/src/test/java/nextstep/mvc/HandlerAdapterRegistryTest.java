@@ -35,6 +35,5 @@ class HandlerAdapterRegistryTest {
 
         // then
         assertThat(handlerAdapter).isInstanceOf(AnnotationHandlerAdapter.class);
-
     }
 }
