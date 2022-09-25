@@ -16,7 +16,6 @@ class HandlerMappingRegistryTest {
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        System.out.println(getClass().getPackage());
         AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("nextstep.mvc");
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
         handlerMappingRegistry.init();
