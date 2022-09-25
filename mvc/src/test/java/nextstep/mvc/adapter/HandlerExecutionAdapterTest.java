@@ -2,7 +2,6 @@ package nextstep.mvc.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +43,7 @@ class HandlerExecutionAdapterTest {
                 .thenReturn(new ModelAndView(new JspView("")));
 
         handlerExecutionAdapter.handle(request, response, handlerExecution);
-        verify(handlerExecution, times(1))
+        verify(handlerExecution)
                 .handle(request, response);
     }
 }
