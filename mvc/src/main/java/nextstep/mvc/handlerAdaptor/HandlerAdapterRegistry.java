@@ -1,8 +1,9 @@
 package nextstep.mvc.handlerAdaptor;
 
+import nextstep.mvc.exception.FailMapHandler;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HandlerAdapterRegistry {
 
@@ -20,9 +21,10 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public Optional<HandlerAdapter> getHandlerAdapter(final Object handler) {
+    public HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(FailMapHandler::new);
     }
 }
