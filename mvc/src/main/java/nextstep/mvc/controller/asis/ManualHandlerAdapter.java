@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe.handleradapter;
+package nextstep.mvc.controller.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
