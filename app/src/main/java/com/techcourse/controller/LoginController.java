@@ -10,8 +10,7 @@ import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@nextstep.web.annotation.Controller
-public class LoginController implements Controller {
+public class LoginController implements Controller{
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
@@ -29,7 +28,6 @@ public class LoginController implements Controller {
                 .orElse("redirect:/401.jsp");
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
     private String login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
