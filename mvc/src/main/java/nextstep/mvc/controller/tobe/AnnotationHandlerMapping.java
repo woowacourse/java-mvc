@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,27 +42,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Map<HandlerKey, HandlerExecution> initExecutions() throws Exception {
-        Set<Class<?>> typesAnnotatedWith = new Reflections(basePackages).getTypesAnnotatedWith(Controller.class);
-        return createClassExecutions(typesAnnotatedWith);
-    }
-
-    private Map<HandlerKey, HandlerExecution> createClassExecutions(final Set<Class<?>> classes) throws Exception {
+        ControllerScanner controllerScanner = ControllerScanner.from(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-        for (Class<?> controller : classes) {
-            handlerExecutions.putAll(createControllerExecutions(controller));
+        for (Class<?> controller : controllers.keySet()) {
+            addRequestMappingMethod(handlerExecutions, controller, controllers.get(controller));
         }
         return handlerExecutions;
     }
 
-    private Map<HandlerKey, HandlerExecution> createControllerExecutions(final Class<?> controller) throws Exception {
-        var instance = controller.getDeclaredConstructor()
-                .newInstance();
-        Method[] methods = controller.getDeclaredMethods();
-        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-        for (Method method : methods) {
+    private void addRequestMappingMethod(final Map<HandlerKey, HandlerExecution> handlerExecutions,
+                                         final Class<?> controller, final Object instance) {
+        Set<Method> allMethods = getRequestMappingMethods(controller);
+        for (Method method : allMethods) {
             handlerExecutions.putAll(createMethodHandlers(instance, method));
         }
-        return handlerExecutions;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Method> getRequestMappingMethods(final Class<?> controller) {
+        return ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
     }
 
     private Map<HandlerKey, HandlerExecution> createMethodHandlers(final Object instance, final Method method) {

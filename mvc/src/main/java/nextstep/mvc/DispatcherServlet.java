@@ -4,12 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +13,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = HandlerMappingRegistry.empty();
+        this.handlerAdapterRegistry = HandlerAdapterRegistry.empty();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
+    }
+
+    public void addAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     @Override
@@ -49,24 +49,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
+        return handlerMappingRegistry.getHandler(request)
                 .orElseThrow(() -> new RuntimeException("요청을 처리할 수 없습니다."));
     }
 
     private ModelAndView executeHandler(final Object handler, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        if (HandlerExecution.class.isAssignableFrom(handler.getClass())) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-        if (Controller.class.isAssignableFrom(handler.getClass())) {
-            String viewName = ((Controller) handler).execute(request, response);
-            JspView jspView = new JspView(viewName);
-            return new ModelAndView(jspView);
-        }
-
-        throw new IllegalStateException("지원하는 handler가 존재하지 않습니다.");
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        return handlerAdapter.handle(request, response, handler);
     }
 }
