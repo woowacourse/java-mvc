@@ -18,6 +18,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
+    private HandlerExecutor handlerExecutor;
+
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
@@ -26,6 +28,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingRegistry.initialize();
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -44,8 +47,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(() -> new IllegalArgumentException("요청하신 핸들러가 존재하지 않습니다."));
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
