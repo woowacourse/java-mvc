@@ -1,13 +1,12 @@
 package nextstep.mvc.handlerMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.mvc.controller.tobe.ControllerScanner;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.controller.tobe.HandlerKey;
 import nextstep.mvc.exception.FailMapHandler;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,26 +15,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.reflections.scanners.Scanners.TypesAnnotated;
-
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = ControllerScanner.from(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> classes = reflections.get(TypesAnnotated.with(Controller.class).asClass());
-        for (Class<?> aClass : classes) {
-            mapRequestToMethod(aClass);
+        final Set<Class<?>> annotationControllers = controllerScanner.getControllers();
+        for (Class<?> annotationController : annotationControllers) {
+            mapRequestToMethod(annotationController);
         }
     }
 
@@ -52,9 +47,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final String url = requestMapping.value();
             final RequestMethod requestMethod = requestMapping.method()[0];
             final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            final Object handler = mapHandler(method);
+            final Object controller = mapHandler(method);
 
-            handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
     }
 
