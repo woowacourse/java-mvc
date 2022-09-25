@@ -12,7 +12,7 @@ public class HandlerExecution {
     private final Object controller;
     private final Method handle;
 
-    public HandlerExecution(Object controller, Method handle) {
+    public HandlerExecution(final Object controller, final Method handle) {
         this.controller = controller;
         this.handle = handle;
     }

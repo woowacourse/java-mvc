@@ -25,9 +25,9 @@ class HandlerAdapterRegistryTest {
     @Test
     @DisplayName("핸들러 어댑터를 등록한다.")
     void addHandlerAdapter() {
-        HandlerExecution handlerExecution = mock(HandlerExecution.class);
+        final HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
-        HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
+        final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
 
         assertThat(handlerAdapterRegistry.getHandlerAdapter(handlerExecution))
@@ -37,7 +37,7 @@ class HandlerAdapterRegistryTest {
     @Test
     @DisplayName("찾을 수 없는 핸들러 어뎁터라면 예외를 반환한다.")
     void addHandlerAdapter_notFound() {
-        HandlerExecution handlerExecution = mock(HandlerExecution.class);
+        final HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
         assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(handlerExecution))
                         .isInstanceOf(NotFoundHandlerAdapter.class);

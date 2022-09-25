@@ -33,14 +33,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void mappingMethod(Class<?> clazz, Object controller) {
+    private void mappingMethod(final Class<?> clazz, final Object controller) {
         final Method[] methods = clazz.getDeclaredMethods();
         Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(m -> mappingHandlerExecution(controller, m));
     }
 
-    private void mappingHandlerExecution(Object controller, Method method) {
+    private void mappingHandlerExecution(final Object controller, final Method method) {
         final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : annotation.method()) {
             handlerExecutions.put(
