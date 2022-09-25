@@ -23,7 +23,8 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final Object handler = handlerMappingRegistry.getHandler(request);
+        final Object handler = handlerMappingRegistry.getHandler(request)
+                .orElseThrow();
         assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 }
