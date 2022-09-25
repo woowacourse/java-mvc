@@ -1,8 +1,8 @@
 package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
@@ -15,9 +15,11 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> getControllers() {
-        return reflections.getTypesAnnotatedWith(Controller.class)
-                .stream()
-                .collect(Collectors.toMap(it -> it, this::instantiateController));
+        final Map<Class<?>, Object> controllers = new HashMap<>();
+        for (final var clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
+            controllers.put(clazz, instantiateController(clazz));
+        }
+        return controllers;
     }
 
     private Object instantiateController(Class<?> clazz) {
