@@ -9,7 +9,7 @@ public class ControllerScannerTest {
 
     @Test
     void findAllControllers() {
-        Map<Class<?>, Object> allControllers = ControllerScanner.findAllControllers();
+        Map<Class<?>, Object> allControllers = ControllerScanner.findAllControllers("samples");
 
         assertThat(allControllers.size()).isEqualTo(1);
     }

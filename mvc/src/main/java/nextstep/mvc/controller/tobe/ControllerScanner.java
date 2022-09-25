@@ -9,9 +9,8 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private static final Reflections reflections = new Reflections("samples");
-
-    public static Map<Class<?>, Object> findAllControllers() {
+    public static Map<Class<?>, Object> findAllControllers(String path) {
+        Reflections reflections = new Reflections(path);
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Controller.class);
 
         Map<Class<?>, Object> map = new HashMap<>();
