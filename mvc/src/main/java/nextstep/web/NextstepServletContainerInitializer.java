@@ -12,15 +12,15 @@ import java.util.Set;
 public class NextstepServletContainerInitializer implements ServletContainerInitializer {
 
     @Override
-    public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
+    public void onStartup(final Set<Class<?>> webAppInitializerClasses, final ServletContext servletContext)
             throws ServletException {
         final List<WebApplicationInitializer> initializers = new LinkedList<>();
 
         if (webAppInitializerClasses != null) {
-            for (Class<?> waiClass : webAppInitializerClasses) {
+            for (final Class<?> waiClass : webAppInitializerClasses) {
                 try {
                     initializers.add((WebApplicationInitializer) waiClass.getDeclaredConstructor().newInstance());
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     throw new ServletException("Failed to instantiate WebApplicationInitializer class", e);
                 }
             }
@@ -31,7 +31,7 @@ public class NextstepServletContainerInitializer implements ServletContainerInit
             return;
         }
 
-        for (WebApplicationInitializer initializer : initializers) {
+        for (final WebApplicationInitializer initializer : initializers) {
             initializer.onStartup(servletContext);
         }
     }

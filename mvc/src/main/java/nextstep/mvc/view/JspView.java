@@ -1,7 +1,10 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +24,33 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        if (isRedirect()) {
+            doRedirect(response);
             return;
         }
 
+        addAttributesByModel(model, request);
+        doForward(request, response);
+    }
+
+    private boolean isRedirect() {
+        return viewName.startsWith(JspView.REDIRECT_PREFIX);
+    }
+
+    private void doRedirect(final HttpServletResponse response) throws IOException {
+        response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+    }
+
+    private static void addAttributesByModel(final Map<String, ?> model, final HttpServletRequest request) {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
+    private void doForward(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
 }
