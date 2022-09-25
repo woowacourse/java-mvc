@@ -57,7 +57,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping, String url) {
+    private List<HandlerKey> createHandlerKeys(final RequestMapping requestMapping, final String url) {
         return Arrays.stream(requestMapping.method())
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .collect(toList());
