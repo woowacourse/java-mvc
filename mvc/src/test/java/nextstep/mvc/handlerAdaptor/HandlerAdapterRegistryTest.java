@@ -31,7 +31,8 @@ class HandlerAdapterRegistryTest {
 
         // then
         final Object handler = handlerMapping.getHandler(request);
-        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler)
+                .orElseThrow();
         final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
         assertThat(modelAndView.getObject("id")).isEqualTo("zero");
     }

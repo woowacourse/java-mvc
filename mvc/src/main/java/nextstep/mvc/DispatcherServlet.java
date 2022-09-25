@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.exception.FailMapHandler;
 import nextstep.mvc.handlerAdaptor.HandlerAdapter;
 import nextstep.mvc.handlerAdaptor.HandlerAdapterRegistry;
 import nextstep.mvc.handlerMapping.HandlerMapping;
@@ -55,10 +56,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
-        return handlerMappingRegistry.getHandler(request);
+        return handlerMappingRegistry.getHandler(request)
+                .orElseThrow(FailMapHandler::new);
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapterRegistry.getHandlerAdapter(handler);
+        return handlerAdapterRegistry.getHandlerAdapter(handler)
+                .orElseThrow(FailMapHandler::new);
     }
 }
