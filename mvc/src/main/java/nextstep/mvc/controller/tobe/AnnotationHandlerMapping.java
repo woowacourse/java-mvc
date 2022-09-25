@@ -6,13 +6,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +26,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllers) {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        for (Class<?> controllerClass : controllerScanner.getControllers()) {
             initHandlerExecutions(controllerClass);
         }
         log.info("Initialized Annotation Handler Mapping!");
@@ -67,9 +63,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.valueOf(method));
-        return handlerExecutions.get(handlerKey);
+        return handlerExecutions.get(HandlerKey.from(request));
     }
 }
