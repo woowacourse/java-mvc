@@ -14,6 +14,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
+import org.reflections.util.ReflectionUtilsPredicates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Method> getRequestMappingMethods(final Class<?> handler) {
-        return ReflectionUtils.getAllMethods(handler, ReflectionUtils.withAnnotation(RequestMapping.class));
+        return ReflectionUtils.getAllMethods(handler, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
     }
 
     private void addHandlerExecutions(final Object instance, final Set<Method> requestMappingMethods) {
