@@ -17,7 +17,10 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final String viewName = (String) method.invoke(handler, request, response);
-        return new ModelAndView(new JspView(viewName));
+        final Object view = method.invoke(handler, request, response);
+        if (view instanceof String) {
+            return new ModelAndView(new JspView((String) view));
+        }
+        return (ModelAndView) view;
     }
 }
