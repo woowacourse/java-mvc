@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import nextstep.mvc.adapter.HandlerAdapter;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.adapter.HandlerAdapterRegistry;
+import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -20,25 +21,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.init();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.add(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -47,22 +48,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final Object handler = handlerMappingRegistry.getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             renderView(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
     }
 
     private void renderView(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
@@ -72,13 +65,6 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private HandlerAdapter getHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("적절한 핸들러 어댑터가 없습니다"));
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
