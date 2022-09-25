@@ -42,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Optional<Object> handler = handlerMappingRegistry.getHandler(request);
             if (handler.isEmpty()) {
-                response.setStatus(404);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
