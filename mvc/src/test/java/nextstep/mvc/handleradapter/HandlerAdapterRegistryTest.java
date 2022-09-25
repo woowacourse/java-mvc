@@ -1,20 +1,19 @@
 package nextstep.mvc.handleradapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import fixture.RequestFixture;
+import fixture.ResponseFixture;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handlermapping.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.web.support.RequestMethod;
 import samples.TestInterfaceController;
 
 class HandlerAdapterRegistryTest {
@@ -25,10 +24,8 @@ class HandlerAdapterRegistryTest {
         final HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
         registry.add(new AnnotationHandlerAdapter());
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn(String.valueOf(RequestMethod.GET));
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = RequestFixture.getRequest();
+        final HttpServletResponse response = ResponseFixture.response();
 
         final ModelAndView modelAndView = registry.getModelAndView(getHandlerExecution(), request, response);
 
@@ -55,8 +52,8 @@ class HandlerAdapterRegistryTest {
         final HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
         registry.add(new ManualHandlerAdapter());
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = RequestFixture.getRequest();
+        final HttpServletResponse response = ResponseFixture.response();
 
         final ModelAndView modelAndView = registry.getModelAndView(new TestInterfaceController(), request, response);
 

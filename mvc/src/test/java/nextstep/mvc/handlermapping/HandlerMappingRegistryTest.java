@@ -1,14 +1,12 @@
 package nextstep.mvc.handlermapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import fixture.RequestFixture;
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.web.support.RequestMethod;
 
 class HandlerMappingRegistryTest {
 
@@ -19,9 +17,7 @@ class HandlerMappingRegistryTest {
         registry.add(new AnnotationHandlerMapping("samples"));
         registry.init();
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn(String.valueOf(RequestMethod.GET));
+        final HttpServletRequest request = RequestFixture.getRequest();
 
         assertThat(registry.getHandler(request)).isInstanceOf(HandlerExecution.class);
     }
