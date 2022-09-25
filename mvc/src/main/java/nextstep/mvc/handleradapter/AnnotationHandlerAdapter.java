@@ -4,13 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handlermapping.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.web.annotation.Controller;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
-        return handler.getClass().isAnnotationPresent(Controller.class);
+        return handler instanceof HandlerExecution;
     }
 
     @Override

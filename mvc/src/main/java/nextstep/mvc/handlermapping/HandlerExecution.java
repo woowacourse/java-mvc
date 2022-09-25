@@ -16,8 +16,8 @@ public class HandlerExecution {
     private final Object clazz;
     private final Method method;
 
-    public HandlerExecution(final Object clazz, final Method method) {
-        this.clazz = clazz;
+    public HandlerExecution(final Object controller, final Method method) {
+        this.clazz = controller;
         this.method = method;
     }
 

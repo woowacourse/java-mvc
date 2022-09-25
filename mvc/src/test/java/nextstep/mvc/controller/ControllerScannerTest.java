@@ -8,7 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import samples.TestController;
+import samples.TestAnnotationController;
 
 class ControllerScannerTest {
 
@@ -18,8 +18,8 @@ class ControllerScannerTest {
         final Map<Class<?>, Object> controllers = ControllerScanner.getControllers("samples");
 
         assertAll(
-            () -> assertThat(controllers).containsOnlyKeys(TestController.class),
-            () -> assertThat(controllers.get(TestController.class)).isInstanceOf(TestController.class)
+            () -> assertThat(controllers).containsOnlyKeys(TestAnnotationController.class),
+            () -> assertThat(controllers.get(TestAnnotationController.class)).isInstanceOf(TestAnnotationController.class)
         );
     }
 }

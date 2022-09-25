@@ -13,14 +13,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handlermapping.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
-import samples.TestController;
+import samples.TestAnnotationController;
 
 class HandlerExecutionTest {
 
     @DisplayName("객체에 정의된 메서드 실행")
     @Test
     void handle() throws Exception {
-        final Object object = TestController.class.getConstructor().newInstance();
+        final Object object = TestAnnotationController.class.getConstructor().newInstance();
         final Method method = object.getClass().getMethods()[0];
         final HandlerExecution handlerExecution = new HandlerExecution(object, method);
 
