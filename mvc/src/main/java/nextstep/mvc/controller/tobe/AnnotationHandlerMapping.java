@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.exception.HandlerMappingException;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
@@ -62,14 +61,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = HandlerKey.from(request);
-        final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        checkNullOfHandler(handlerExecution);
-        return handlerExecution;
-    }
-
-    private void checkNullOfHandler(final HandlerExecution handlerExecution) {
-        if (handlerExecution == null) {
-            throw new HandlerMappingException("A matching handler is not found.");
-        }
+        return handlerExecutions.get(handlerKey);
     }
 }

@@ -1,13 +1,11 @@
 package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.exception.HandlerMappingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,9 +58,9 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    @DisplayName("request에 매핑되는 handler가 없는 경우 예외를 던진다.")
+    @DisplayName("request에 매핑되는 handler가 없는 경우 null을 반환한다.")
     @Test
-    void throwExceptionWhenHandlerIsNotFound() {
+    void returnNullWhenHandlerIsNotFound() {
         // given
         final var request = mock(HttpServletRequest.class);
 
@@ -70,8 +68,10 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("POST");
 
-        // when & then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(HandlerMappingException.class);
+        // when
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handlerExecution).isNull();
     }
 }
