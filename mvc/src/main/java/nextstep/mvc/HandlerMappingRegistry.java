@@ -3,6 +3,7 @@ package nextstep.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class HandlerMappingRegistry {
 
@@ -20,7 +21,7 @@ public class HandlerMappingRegistry {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("적절한 Mapper가 없습니다."));
     }
 
     public void initialize() {

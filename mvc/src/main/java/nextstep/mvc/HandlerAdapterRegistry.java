@@ -2,6 +2,7 @@ package nextstep.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class HandlerAdapterRegistry {
 
@@ -19,6 +20,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("적절한 Adapter가 없습니다."));
     }
 }
