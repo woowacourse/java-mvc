@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Set;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
@@ -64,7 +63,7 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = getHandler(request);
             final HandlerAdapter handlerAdapter = getAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            render(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -84,11 +83,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findAny()
                 .orElseThrow(IllegalArgumentException::new);
-    }
-
-    private void render(final ModelAndView modelAndView,
-                        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
     }
 }
