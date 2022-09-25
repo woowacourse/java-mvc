@@ -3,7 +3,7 @@ package nextstep.mvc;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HandlerAdapterRegister {
+public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 

@@ -16,10 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerAdapterRegisterTest {
+class HandlerAdapterRegistryTest {
 
-    private HandlerMappingRegister register = new HandlerMappingRegister();
-    private HandlerAdapterRegister adapterRegister = new HandlerAdapterRegister();
+    private HandlerMappingRegistry register = new HandlerMappingRegistry();
+    private HandlerAdapterRegistry adapterRegister = new HandlerAdapterRegistry();
 
     @BeforeEach
     void setUp() {

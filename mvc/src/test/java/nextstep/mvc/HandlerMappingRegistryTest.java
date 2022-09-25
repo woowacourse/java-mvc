@@ -16,9 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerMappingRegisterTest {
+class HandlerMappingRegistryTest {
 
-    private HandlerMappingRegister register = new HandlerMappingRegister();
+    private HandlerMappingRegistry register = new HandlerMappingRegistry();
 
     @BeforeEach
     void setUp() {

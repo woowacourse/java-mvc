@@ -14,25 +14,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappingRegister handlerMappingRegister;
-    private final HandlerAdapterRegister handlerAdapterRegister;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappingRegister = new HandlerMappingRegister();
-        this.handlerAdapterRegister = new HandlerAdapterRegister();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappingRegister.init();
+        handlerMappingRegistry.init();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappingRegister.addHandlerMapping(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapterRegister.addHandlerAdapter(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = handlerMappingRegister.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapterRegister.getHandlerAdapter(handler);
+            Object handler = handlerMappingRegistry.getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);

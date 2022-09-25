@@ -8,7 +8,7 @@ import common.FakeManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.HandlerMappingRegister;
+import nextstep.mvc.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 class HandlerExecutionHandlerAdapterTest {
 
     private HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
-    private HandlerMappingRegister register = new HandlerMappingRegister();
+    private HandlerMappingRegistry register = new HandlerMappingRegistry();
 
     @BeforeEach
     void setUp() {
