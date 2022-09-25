@@ -9,7 +9,7 @@ public class TestHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof TestHandlerMapping;
+        return handler instanceof TestController;
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
+import samples.TestController;
 import samples.TestHandlerMapping;
 
 class HandlerMappingRegistryTest {
@@ -29,7 +30,7 @@ class HandlerMappingRegistryTest {
         // then
         assertAll(
             () -> assertThat(handler).isNotEmpty(),
-            () -> assertThat(handler.get()).isInstanceOf(TestHandlerMapping.class)
+            () -> assertThat(handler.get()).isInstanceOf(TestController.class)
         );
     }
 
@@ -37,7 +38,6 @@ class HandlerMappingRegistryTest {
     void cantGetHandler() {
         // given
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new TestHandlerMapping());
         handlerMappingRegistry.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
