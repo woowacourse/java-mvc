@@ -1,5 +1,6 @@
 package nextstep.mvc;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +9,7 @@ public class HandlerAdapterRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public void add(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
