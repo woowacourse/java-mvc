@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
-import nextstep.mvc.controller.asis.ControllerScanner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
@@ -16,7 +15,7 @@ class ControllerScannerTest {
     @Test
     void Controller_애노테이션을_가진_객체의_Class파일을_읽어온다() {
         Object[] basePackage = {"samples"};
-        Set<Class<?>> annotatedControllers = ControllerScanner.findAnnotatedController(basePackage);
+        Set<Class<?>> annotatedControllers = ControllerScanner.getControllers(basePackage);
 
         assertThat(annotatedControllers).hasSize(1);
     }
@@ -25,7 +24,7 @@ class ControllerScannerTest {
     @Test
     void RequestMapping_애노테이션을_가진_객체의_Method를_읽어온다() {
         Class<?> clazz = TestController.class;
-        List<Method> annotatedMethods = ControllerScanner.findAnnotatedMethod(clazz);
+        List<Method> annotatedMethods = ControllerScanner.getMethods(clazz);
 
         assertThat(annotatedMethods).hasSize(2);
     }

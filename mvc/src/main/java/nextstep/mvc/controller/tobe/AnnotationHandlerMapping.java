@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.asis.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Set<Class<?>> annotatedHandlers = ControllerScanner.findAnnotatedController(basePackage);
+        Set<Class<?>> annotatedHandlers = ControllerScanner.getControllers(basePackage);
         for (Class<?> handler : annotatedHandlers) {
             initHandlerExecutionsFrom(handler);
         }
@@ -35,8 +34,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void initHandlerExecutionsFrom(final Class<?> handlerClassFile) {
-        Object handler = ControllerScanner.newInstance(handlerClassFile);
-        List<Method> annotatedMethods = ControllerScanner.findAnnotatedMethod(handlerClassFile);
+        Object handler = ControllerScanner.instantiateControllers(handlerClassFile);
+        List<Method> annotatedMethods = ControllerScanner.getMethods(handlerClassFile);
 
         for (Method method : annotatedMethods) {
             insertHandlerExecutionFrom(handler, method);

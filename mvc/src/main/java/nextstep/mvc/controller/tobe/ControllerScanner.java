@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.asis;
+package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,18 +13,18 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    public static Set<Class<?>> findAnnotatedController(final Object[] basePackage) {
+    public static Set<Class<?>> getControllers(final Object[] basePackage) {
         Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    public static List<Method> findAnnotatedMethod(final Class<?> handlerClassFile) {
+    public static List<Method> getMethods(final Class<?> handlerClassFile) {
         return Arrays.stream(handlerClassFile.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
     }
 
-    public static Object newInstance(final Class<?> handlerClassFile) {
+    public static Object instantiateControllers(final Class<?> handlerClassFile) {
         try {
             return handlerClassFile
                     .getDeclaredConstructor()
