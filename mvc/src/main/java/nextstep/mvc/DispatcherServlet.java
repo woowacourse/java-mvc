@@ -20,9 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -33,32 +35,22 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+        final Object controller = handlerMappingRegistry.getHandler(request).orElseThrow();
+        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
 
         try {
-            final Object controller = handlerMappingRegistry.getHandler(request).orElseThrow();
-            if (controller instanceof Controller) {
-                final var viewName = ((Controller)controller).execute(request, response);
-                move(viewName, request, response);
-            } else {
-                ModelAndView modelAndView = ((HandlerExecution) controller).handle(request, response);
-                modelAndView.getView().render(modelAndView.getModel(), request, response);
-            }
-        } catch (Throwable e) {
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
