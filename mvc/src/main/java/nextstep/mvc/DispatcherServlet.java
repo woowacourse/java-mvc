@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
-import nextstep.mvc.controller.HandlerExecutor;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -44,7 +43,6 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-
             if (handler.isEmpty()) {
                 response.setStatus(404);
                 return;

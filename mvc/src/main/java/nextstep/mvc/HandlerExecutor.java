@@ -1,9 +1,7 @@
-package nextstep.mvc.controller;
+package nextstep.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.HandlerAdapterRegistry;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecutor {
