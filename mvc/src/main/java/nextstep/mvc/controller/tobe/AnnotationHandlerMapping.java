@@ -1,20 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.exception.NoConstructorException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,35 +28,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> handlerClasses = getHandlerClasses();
+        final Map<Class<?>, Object> handlers = ControllerScanner.scan(basePackages);
 
-        for (Class<?> handlerClass : handlerClasses) {
-            initializeHandlerExecutions(handlerClass);
+        for (Class<?> handlerClass : handlers.keySet()) {
+            initializeHandlerExecutions(handlerClass, handlers.get(handlerClass));
         }
     }
 
-    private Set<Class<?>> getHandlerClasses() {
-        final Reflections reflections = new Reflections(basePackages);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
 
-    private void initializeHandlerExecutions(Class<?> controllerClass) {
-        final Object controller = newInstanceOf(controllerClass);
-        final List<Method> handlerMethods = extractValidHandler(controllerClass);
+    private void initializeHandlerExecutions(Class<?> handlerClass, Object handler) {
+        final List<Method> handlerMethods = extractValidHandler(handlerClass);
 
         for (Method handlerMethod : handlerMethods) {
-            final HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(handler, handlerMethod);
 
             putToHandlerExecutions(handlerMethod, handlerExecution);
-        }
-    }
-
-    private Object newInstanceOf(Class<?> handlerClass) {
-        try {
-            final Constructor<?> constructor = handlerClass.getConstructor();
-            return constructor.newInstance();
-        } catch (Exception e) {
-            throw new NoConstructorException();
         }
     }
 
