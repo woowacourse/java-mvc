@@ -14,7 +14,7 @@ class ControllerScannerTest {
     void redirect() {
         final ControllerScanner controllerScanner = ControllerScanner.from("samples");
 
-        final Set<Class<?>> annotationControllers = controllerScanner.getControllers();
+        Set<Class<?>> annotationControllers = controllerScanner.getControllers();
 
         assertThat(annotationControllers).hasSize(1);
     }

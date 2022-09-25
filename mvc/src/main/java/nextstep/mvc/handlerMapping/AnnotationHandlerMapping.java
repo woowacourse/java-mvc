@@ -11,13 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -49,18 +45,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping != null) {
             final String url = requestMapping.value();
-            final List<HandlerKey> handlerKeys = createHandlerKeys(requestMapping, url);
-            for (HandlerKey handlerKey : handlerKeys) {
-                final Object controller = mapHandler(method);
-                handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
-            }
-        }
-    }
+            final RequestMethod requestMethod = requestMapping.method()[0];
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            final Object controller = mapHandler(method);
 
-    private List<HandlerKey> createHandlerKeys(final RequestMapping requestMapping, final String url) {
-        return Arrays.stream(requestMapping.method())
-                .map(requestMethod -> new HandlerKey(url, requestMethod))
-                .collect(toList());
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+        }
     }
 
     private Object mapHandler(final Method method) {
