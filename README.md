@@ -26,6 +26,10 @@
   - [X] 뷰에 대한 처리를 JspView로 이동시킨다. 
 
 ### 2단계 - 점진적인 리팩터링
-- [ ] Controller 스캔에 대한 책임을 ControllerScanner로 이동시킨다. 
+- [X] Controller 스캔에 대한 책임을 ControllerScanner로 이동시킨다.
 - [ ] HandlerMappingRegistry에서 HandlerMapping을 처리하도록 한다.
 - [ ] HandlerAdapterRegistry에서 HandlerAdapter를 처리하다록 한다.
+
+#### AnnotationHandlerMapping.initialize()의 역할
+- @Controller가 붙은 클래스들을 찾아온다.
+- 클래스들에서 @RequestMapping이 붙은 메서드들을 찾아와 HandlerKey와 HandlerExecution을 만든다.

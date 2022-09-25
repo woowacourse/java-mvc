@@ -9,17 +9,17 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
-    private final Object instance;
+    private final Object declaredObject;
     private final Method method;
 
-    public HandlerExecution(final Object instance, final Method method) {
-        this.instance = instance;
+    public HandlerExecution(final Object declaredObject, final Method method) {
+        this.declaredObject = declaredObject;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            return (ModelAndView) method.invoke(instance, request, response);
+            return (ModelAndView) method.invoke(declaredObject, request, response);
         } catch (final InvocationTargetException | IllegalAccessException e) {
             throw new ReflectionException("Failed to invoke the underlying method.", e);
         }
@@ -27,7 +27,7 @@ public class HandlerExecution {
 
     @Override
     public String toString() {
-        return "Instance : " + instance.getClass() +
+        return "Instance : " + declaredObject.getClass() +
                 ", Method : " + method.getName();
     }
 }
