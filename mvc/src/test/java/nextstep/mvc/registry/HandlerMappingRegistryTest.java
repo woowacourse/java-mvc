@@ -16,7 +16,7 @@ class HandlerMappingRegistryTest {
     private HandlerMappingRegistry handlerMappingRegistry;
 
     @BeforeEach
-    void set(){
+    void set() {
         handlerMappingRegistry = new HandlerMappingRegistry();
     }
 

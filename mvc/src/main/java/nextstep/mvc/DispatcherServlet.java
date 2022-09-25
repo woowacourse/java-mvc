@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
 import nextstep.mvc.controller.asis.ControllerHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.registry.HandlerAdapterRegistry;
@@ -36,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    public void addHandlerAdapter(){
+    public void addHandlerAdapter() {
         handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }

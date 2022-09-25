@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;

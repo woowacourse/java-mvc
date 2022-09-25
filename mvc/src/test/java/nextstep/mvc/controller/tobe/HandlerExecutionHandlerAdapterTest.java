@@ -26,7 +26,7 @@ class HandlerExecutionHandlerAdapterTest {
         when(handlerExecution.handle(
                 any(HttpServletRequest.class),
                 any(HttpServletResponse.class)
-                )).thenReturn(modelAndView);
+        )).thenReturn(modelAndView);
 
         final ModelAndView actual = handlerAdapter.handle(
                 httpServletRequest,

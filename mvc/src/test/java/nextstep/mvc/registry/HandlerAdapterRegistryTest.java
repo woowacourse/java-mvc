@@ -2,7 +2,6 @@ package nextstep.mvc.registry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import nextstep.mvc.HandlerAdapter;
@@ -18,7 +17,7 @@ class HandlerAdapterRegistryTest {
     private HandlerAdapterRegistry handlerAdapterRegistry;
 
     @BeforeEach
-    void set(){
+    void set() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
@@ -40,7 +39,7 @@ class HandlerAdapterRegistryTest {
         final HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
         assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(handlerExecution))
-                        .isInstanceOf(NotFoundHandlerAdapter.class);
+                .isInstanceOf(NotFoundHandlerAdapter.class);
     }
 
 }

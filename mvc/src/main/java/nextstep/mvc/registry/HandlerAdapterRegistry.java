@@ -13,7 +13,7 @@ public class HandlerAdapterRegistry {
         this.handlerAdapters = new ArrayList<>();
     }
 
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter){
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
     }
 

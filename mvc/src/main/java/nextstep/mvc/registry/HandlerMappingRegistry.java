@@ -9,7 +9,7 @@ import nextstep.mvc.HandlerMapping;
 
 public class HandlerMappingRegistry {
 
-   private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappingRegistry() {
         this.handlerMappings = new ArrayList<>();
