@@ -16,6 +16,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
@@ -25,6 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingRegistry.init();
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -45,17 +47,13 @@ public class DispatcherServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
+            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
             render(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 
     private void render(final HttpServletRequest request,
