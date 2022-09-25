@@ -13,11 +13,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class JspViewTest {
 
     @Test
+    @DisplayName("view의 렌더링을 수행한다")
     void render() {
         // given
         View view = new JspView("hello");
@@ -32,6 +34,7 @@ class JspViewTest {
     }
 
     @Test
+    @DisplayName("view의 렌더링 결과로 redirect를 수행한다.")
     void redirect() throws IOException {
         // given
         View view = new JspView("redirect:hello");

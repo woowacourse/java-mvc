@@ -16,8 +16,14 @@ public class AnnotationController {
     private static final Logger log = LoggerFactory.getLogger(AnnotationController.class);
 
     @RequestMapping(value = "/annotation", method = RequestMethod.GET)
-    public ModelAndView testConnection(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("annotation controller get method");
+    public ModelAndView getByAnnotation(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("annotation handler get method");
         return new ModelAndView(new JspView("index.jsp"));
+    }
+
+    @RequestMapping(value = "/annotation-redirect", method = RequestMethod.GET)
+    public ModelAndView redirectByAnnotation(HttpServletRequest request, HttpServletResponse response) {
+        log.info("annotation-redirect handler get method");
+        return new ModelAndView(new JspView("redirect:401.jsp"));
     }
 }
