@@ -27,7 +27,7 @@ public class HandlerExecution {
 
     private void validateObjectHasMethod(final Object declaredObject, final Method method) {
         if (doesNotContainGivenMethod(declaredObject, method)) {
-            throw new IllegalArgumentException("주어진 객체느 해당 메서드를 지니지 않고 있습니다.");
+            throw new IllegalArgumentException("주어진 객체는 해당 메서드를 지니지 않고 있습니다.");
         }
     }
     
