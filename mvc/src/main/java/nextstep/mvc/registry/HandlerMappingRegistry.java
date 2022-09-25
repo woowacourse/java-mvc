@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.mvc.mapping.HandlerMapping;
 
 public class HandlerMappingRegistry {
 
