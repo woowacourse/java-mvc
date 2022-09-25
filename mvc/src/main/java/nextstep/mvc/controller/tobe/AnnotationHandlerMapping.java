@@ -4,12 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,19 +25,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> aClass : classes) {
-            putHandlerExecutions(aClass);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.instantiateControllers();
+        for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            putHandlerExecutions(controller.getKey(), controller.getValue());
         }
     }
 
-    private void putHandlerExecutions(Class<?> aClass) {
+    private void putHandlerExecutions(Class<?> aClass, Object declaredObject) {
         Method[] methods = aClass.getDeclaredMethods();
         for (Method method : methods) {
-            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
-            handlerExecutions.put(handlerKey, new HandlerExecution(aClass, method));
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+            handlerExecutions.put(handlerKey, new HandlerExecution(declaredObject, method));
         }
     }
 
