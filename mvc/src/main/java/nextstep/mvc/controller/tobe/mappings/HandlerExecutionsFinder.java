@@ -2,13 +2,11 @@ package nextstep.mvc.controller.tobe.mappings;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import nextstep.mvc.view.ModelAndView;
@@ -29,25 +27,13 @@ public class HandlerExecutionsFinder {
 
     public Map<HandlerKey, HandlerExecution> findHandlerExecutions(String basePackage) {
         Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
-        Set<Class<?>> classes = scanner.findClasses(basePackage);
+        Map<Class<?>, Object> instanceByClasses = scanner.createInstanceByClasses(basePackage);
 
-        for (Class<?> clazz : classes) {
-            Object instance = createInstance(clazz);
-            Map<Method, RequestMapping> map = findRequestMappingAnnotatedMethods(clazz);
-            executions.putAll(mapToHandlerExecutionsPerMethod(map, instance));
+        for (Entry<Class<?>, Object> entry : instanceByClasses.entrySet()) {
+            Map<Method, RequestMapping> map = findRequestMappingAnnotatedMethods(entry.getKey());
+            executions.putAll(mapToHandlerExecutionsPerMethod(map, entry.getValue()));
         }
         return executions;
-    }
-
-    private Object createInstance(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException |
-                 IllegalAccessException |
-                 InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new IllegalArgumentException("인스턴스 생성 시 오류가 발생했습니다", e);
-        }
     }
 
     private Map<Method, RequestMapping> findRequestMappingAnnotatedMethods(Class<?> clazz) {
