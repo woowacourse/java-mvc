@@ -1,8 +1,8 @@
 package nextstep.mvc.controller.tobe;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,25 +10,32 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
+    private final Object declaredObject;
     private final Method method;
 
-    public HandlerExecution(final Method method) {
+    public HandlerExecution(final Object declaredObject, final Method method) {
+        validateObjectHasMethod(declaredObject, method);
+        this.declaredObject = declaredObject;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-            throws InvocationTargetException, InstantiationException, IllegalAccessException {
+            throws InvocationTargetException, IllegalAccessException {
 
-        final Class<?> clazz = method.getDeclaringClass();
-        final Object controller = emptyConstructorOf(clazz).newInstance();
-        return (ModelAndView) method.invoke(controller, request, response);
+        return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 
-    private Constructor<?> emptyConstructorOf(final Class<?> clazz) {
-        try {
-            return clazz.getConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new NoSuchMethodError("빈 생성자를 조회할 수 없습니다.");
+    private void validateObjectHasMethod(final Object declaredObject, final Method method) {
+        if (doesNotContainGivenMethod(declaredObject, method)) {
+            throw new IllegalArgumentException("주어진 객체느 해당 메서드를 지니지 않고 있습니다.");
         }
+    }
+    
+    private boolean doesNotContainGivenMethod(final Object declaredObject, final Method method) {
+        final var clazz = declaredObject.getClass();
+        final var methods = clazz.getMethods();
+
+        return Stream.of(methods)
+                .noneMatch(method::equals);
     }
 }
