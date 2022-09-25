@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class DispatcherServletTest {
 
     @Test
-    void 처리할_수_있는_핸들러가_없으면_예외를_반환한다() {
+    void 처리할_수_있는_핸들러가_없으면_ServletException을_반환한다() {
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -26,7 +26,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void 처리할_수_없는_HandlerAdapter가_없으면_예외를_반환한다() {
+    void 처리할_수_없는_HandlerAdapter가_없으면_ServletException을_반환한다() {
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
