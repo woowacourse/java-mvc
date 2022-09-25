@@ -4,8 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +14,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -33,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = handlerMappingRegistry.getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
             render(modelAndView, request, response);
@@ -51,15 +49,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object controller) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(controller)) {
-                return handlerAdapter;
-            }
-        }
-        throw new IllegalArgumentException("HandlerAdapter not found");
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
