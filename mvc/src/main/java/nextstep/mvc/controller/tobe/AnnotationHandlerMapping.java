@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
@@ -54,11 +55,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(url, method);
 
-        return handlerExecutions.get(handlerKey);
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 }

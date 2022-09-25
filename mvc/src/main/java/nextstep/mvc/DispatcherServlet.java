@@ -4,6 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
+import nextstep.mvc.controller.HandlerExecutor;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -15,11 +17,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.handlerExecutor = new HandlerExecutor();
     }
 
     @Override
@@ -32,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+        handlerExecutor.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -41,10 +43,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = handlerMappingRegistry.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
 
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            if (handler.isEmpty()) {
+                response.setStatus(404);
+                return;
+            }
+
+            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
