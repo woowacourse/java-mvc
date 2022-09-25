@@ -20,11 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.add(handlerAdapter);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final var handler = getHandler(request);
-        final var handlerAdapter = getHandlerAdapter(handler);
+        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         return handlerAdapter.handle(request, response, handler);
     }
@@ -69,12 +69,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findAny()
                 .orElseThrow(() -> new NoSuchElementException("해당하는 HandlerMapping을 찾을 수 없습니다."));
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new NoSuchElementException("해당하는 HandlerAdapter를 찾을 수 없습니다."));
     }
 }
