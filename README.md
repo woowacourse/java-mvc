@@ -7,7 +7,7 @@
 ---
 
 ![Generic badge](https://img.shields.io/badge/Level4-mvc-green.svg)
-![Generic badge](https://img.shields.io/badge/test-50_passed-blue.svg)
+![Generic badge](https://img.shields.io/badge/test-57_passed-blue.svg)
 ![Generic badge](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)
 
 > 우아한테크코스 웹 백엔드 4기, @MVC 구현하기 저장소입니다.
@@ -74,6 +74,15 @@ public class TestController {
 - [x] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.
 - [x] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현했다.
 - [x] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.
+
+<br><br>
+
+## 1차 피드백 체크리스트
+
+- [x] Map.entrySet().forEach()를 Map.forEach로 개선
+    - StreamAPI를 사용하지 않고 단순 순회, log 작업만 수행하기에 entrySet()으로 스트림화 할 필요가 없었음
+- [x] ControllerScanner의 중복 filtering 관련
+    - 컨트롤러 필터링과 메서드 필터링으로 목적이 다름, 재차 필터링 없을 시 equals,hashCode 등도 전달됨
 
 <br><br>
 
