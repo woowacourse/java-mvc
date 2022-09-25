@@ -20,7 +20,7 @@ public class TestController {
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
         final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
+        modelAndView.addAttribute("id", request.getAttribute("id"));
         return modelAndView;
     }
 
@@ -28,7 +28,7 @@ public class TestController {
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
+        modelAndView.addAttribute("id", request.getAttribute("id"));
         return modelAndView;
     }
 }

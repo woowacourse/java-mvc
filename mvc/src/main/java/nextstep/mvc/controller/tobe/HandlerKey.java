@@ -4,12 +4,12 @@ import java.util.Objects;
 
 import nextstep.web.support.RequestMethod;
 
-public class HandlerKey {
+class HandlerKey {
 
     private final String url;
     private final RequestMethod requestMethod;
 
-    public HandlerKey(final String url, final RequestMethod requestMethod) {
+    HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
     }
