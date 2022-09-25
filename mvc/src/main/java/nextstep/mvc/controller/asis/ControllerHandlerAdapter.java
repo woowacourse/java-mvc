@@ -15,6 +15,7 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        return new ModelAndView(new JspView(((Controller) handler).execute(request, response)));
+        String viewName = ((Controller) handler).execute(request, response);
+        return new ModelAndView(new JspView(viewName));
     }
 }
