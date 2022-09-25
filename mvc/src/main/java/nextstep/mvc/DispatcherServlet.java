@@ -1,9 +1,5 @@
 package nextstep.mvc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,25 +15,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdaptor> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappings;
+    private final HandlerAdaptorRegistry handlerAdaptors;
 
-    public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
-    }
-
-    @Override
-    public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+    public DispatcherServlet(HandlerMappingRegistry handlerMappings, HandlerAdaptorRegistry handlerAdaptors) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdaptors = handlerAdaptors;
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappings.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdaptors(final HandlerAdaptor handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdaptors.addHandlerAdaptor(handlerAdapter);
     }
 
     @Override
@@ -46,29 +37,19 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = getHandlerOf(request);
-            HandlerAdaptor handlerAdapter = handlerAdapters.stream()
-                .filter(it -> it.supports(handler))
-                .findFirst()
-                .orElseThrow();
-
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-
-            View view = modelAndView.getView();
-
-            view.render(modelAndView.getModel(), request, response);
-
-        } catch (Throwable e) {
+            process(request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object getHandlerOf(final HttpServletRequest request) {
-        return handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElseThrow();
+    private void process(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        Object handler = handlerMappings.getHandler(request);
+        HandlerAdaptor handlerAdapter = handlerAdaptors.getHandlerAdaptor(handler);
+
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
