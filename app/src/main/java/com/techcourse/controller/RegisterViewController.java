@@ -2,12 +2,19 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class RegisterViewController implements Controller {
+@Controller
+public class RegisterViewController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "/register.jsp";
+    private static final String REGISTER_JSP_VIEW_NAME = "/register.jsp";
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView registerView(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(REGISTER_JSP_VIEW_NAME));
     }
 }
