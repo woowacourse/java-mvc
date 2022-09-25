@@ -6,6 +6,7 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,21 +25,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-
         log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> handlers = findHandlerFromPackage();
-        handlers.stream()
-                .map(this::findMethodFromHandler)
-                .flatMap(List::stream)
-                .filter(this::hasRequestMapping)
-                .forEach(this::addHandlerExecution);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Class<?> clazz : controllers.keySet()) {
+            final Set<Method> methods = getRequestMappingMethods(clazz);
+            methods.forEach(method -> addHandlerExecution(method, controllers.get(clazz)));
+        }
+    }
+
+    private Set<Method> getRequestMappingMethods(Class<?> clazz) {
+        return ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class));
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -48,25 +53,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private Set<Class<?>> findHandlerFromPackage() {
-        final Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private List<Method> findMethodFromHandler(Class<?> handlerClass) {
-        return Arrays.stream(handlerClass.getMethods())
-                .collect(Collectors.toList());
-    }
-
-    private boolean hasRequestMapping(Method method) {
-        return method.isAnnotationPresent(RequestMapping.class);
-    }
-
-    private void addHandlerExecution(Method method) {
+    private void addHandlerExecution(Method method, Object instance) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : requestMapping.method()) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            final HandlerExecution execution = new HandlerExecution(method);
+            final HandlerExecution execution = new HandlerExecution(method, instance);
             handlerExecutions.put(handlerKey, execution);
         }
     }
