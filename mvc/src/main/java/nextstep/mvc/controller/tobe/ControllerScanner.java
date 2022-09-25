@@ -13,7 +13,6 @@ public class ControllerScanner {
 
     public static Map<Class<?>, Object> findAllControllers() {
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Controller.class);
-        annotated.forEach(System.out::println);
 
         Map<Class<?>, Object> map = new HashMap<>();
         try {
