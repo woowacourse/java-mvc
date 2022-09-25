@@ -37,7 +37,7 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
+        Object handler = register.getHandler(request).get();
 
         assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
@@ -51,7 +51,7 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
+        Object handler = register.getHandler(request).get();
 
         assertThat(handler).isInstanceOf(Controller.class);
     }
@@ -65,7 +65,7 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("notvalide");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThatThrownBy(() -> register.getHandler(request))
+        assertThatThrownBy(() -> register.getHandler(request).get())
                 .isInstanceOf(NoSuchElementException.class);
     }
 }
