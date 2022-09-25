@@ -45,6 +45,7 @@ public class DispatcherServlet extends HttpServlet {
             final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
             if (handler.isEmpty()) {
                 response.setStatus(404);
+                response.sendRedirect("/404.jsp");
                 return;
             }
 
