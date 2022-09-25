@@ -9,22 +9,25 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Set<Class<?>> controllers;
+    private final Reflections reflections;
 
     public ControllerScanner(Object... basePackage) {
-        Reflections reflections = new Reflections(basePackage);
-        this.controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        this.reflections = new Reflections(basePackage);
     }
 
-    Map<Class<?>, Object> instantiateControllers() {
-        final Map<Class<?>, Object> controllers = new HashMap<>();
-        for (Class<?> controller : this.controllers) {
-            putControllerInstance(controllers, controller);
+    Set<Class<?>> getControllers() {
+        return this.reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
+        final Map<Class<?>, Object> controllerInstances = new HashMap<>();
+        for (Class<?> controller : controllers) {
+            addControllerInstance(controllerInstances, controller);
         }
-        return controllers;
+        return controllerInstances;
     }
 
-    private void putControllerInstance(Map<Class<?>, Object> controllers, Class<?> controller) {
+    private void addControllerInstance(Map<Class<?>, Object> controllers, Class<?> controller) {
         try {
             Constructor<?> constructor = controller.getConstructor();
             controllers.put(controller, constructor.newInstance());
