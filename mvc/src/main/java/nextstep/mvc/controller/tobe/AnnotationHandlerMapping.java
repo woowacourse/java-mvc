@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
@@ -26,12 +27,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        controllerScanner.getControllers()
-                .stream()
-                .map(Class::getMethods)
-                .flatMap(Arrays::stream)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> addHandler(controllerScanner.instantiate(method), method));
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (final Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            final Class<?> aClass = entry.getKey();
+            final Object controller = entry.getValue();
+            Arrays.stream(aClass.getMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> addHandler(controller, method));
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
