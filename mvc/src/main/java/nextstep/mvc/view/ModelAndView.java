@@ -1,15 +1,20 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 public class ModelAndView {
+    @Override
+    public int hashCode() {
+        return Objects.hash(view, model);
+    }
 
     private final View view;
+
     private final Map<String, Object> model;
 
     public ModelAndView(final View view) {
@@ -36,5 +41,17 @@ public class ModelAndView {
 
     public View getView() {
         return view;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final ModelAndView that = (ModelAndView) o;
+        return Objects.equals(view, that.view) && Objects.equals(model, that.model);
     }
 }
