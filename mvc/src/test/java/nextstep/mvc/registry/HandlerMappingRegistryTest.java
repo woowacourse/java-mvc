@@ -19,8 +19,8 @@ class HandlerMappingRegistryTest {
 
         System.out.println(getClass().getPackage());
         AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("nextstep.mvc");
-        handlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
+        handlerMappingRegistry.init();
 
         when(request.getRequestURI()).thenReturn("/dummy");
         when(request.getMethod()).thenReturn("GET");
