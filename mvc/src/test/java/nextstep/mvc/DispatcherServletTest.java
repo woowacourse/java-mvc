@@ -30,14 +30,4 @@ class DispatcherServletTest {
         verify(response).sendRedirect("/404.jsp");
     }
 
-    @Test
-    void render() {
-        // given
-        DispatcherServlet dispatcher = new DispatcherServlet();
-
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getRequestURI()).thenReturn("/login/view");
-
-    }
 }
