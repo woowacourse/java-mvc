@@ -1,25 +1,21 @@
 package learning;
 
-import java.lang.reflect.Method;
 import java.util.Set;
-import nextstep.web.annotation.RequestMapping;
+import nextstep.web.annotation.Controller;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ConfigurationBuilder;
 
 class ReflectionsTest {
 
     @Test
     void readClasses() {
-        ConfigurationBuilder config = new ConfigurationBuilder()
-                .forPackage("samples")
-                .setScanners(Scanners.values());
-        Reflections reflections = new Reflections(config);
+        Reflections reflections = new Reflections("samples");
 
-        Set<Method> methodsAnnotatedWith = reflections.getMethodsAnnotatedWith(RequestMapping.class);
-        for (Method method : methodsAnnotatedWith) {
-            System.out.println("method = " + method);
+        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
+        int size = typesAnnotatedWith.size();
+        System.out.println("size = " + size);
+        for (Class<?> aClass : typesAnnotatedWith) {
+            System.out.println("aClass = " + aClass);
         }
     }
 }
