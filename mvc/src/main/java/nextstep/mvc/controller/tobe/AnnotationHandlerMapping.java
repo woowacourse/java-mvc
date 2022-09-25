@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
@@ -31,24 +32,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : controllers) {
-            Object controller = getControllerInstance(clazz);
-            List<Method> controllerMethods = getMethods(clazz);
-            generateExecution(controller, controllerMethods);
-        }
-    }
-
-    private Object getControllerInstance(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (NoSuchMethodException |
-                 InvocationTargetException |
-                 InstantiationException |
-                 IllegalAccessException exception) {
-            log.error(exception.getMessage());
-            throw new RuntimeException();
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            final Class<?> clazz = controller.getKey();
+            final Object instance = controller.getValue();
+            final List<Method> controllerMethods = getMethods(clazz);
+            generateExecution(instance, controllerMethods);
         }
     }
 
