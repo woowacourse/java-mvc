@@ -25,8 +25,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         handlerMappings.putAll(new ControllerScanner(basePackage).scan());
 
         log.info("Initialized AnnotationHandlerMapping!");
-        handlerMappings.entrySet()
-                .forEach(entry -> log.info("Path : {}, Controller : {}", entry.getKey(), entry.getValue()));
+        handlerMappings.forEach((key, value) -> log.info("Path : {}, Controller : {}", key, value));
     }
 
     @Override
