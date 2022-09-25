@@ -40,7 +40,7 @@ class HandlerAdapterRegistryTest {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
+        Object handler = register.getHandler(request).get();
         HandlerAdapter handlerAdapter = adapterRegister.getHandlerAdapter(handler);
 
         assertThat(handlerAdapter).isNotNull();
@@ -56,7 +56,7 @@ class HandlerAdapterRegistryTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
+        Object handler = register.getHandler(request).get();
         HandlerAdapter handlerAdapter = adapterRegister.getHandlerAdapter(handler);
 
         assertThat(handlerAdapter).isNotNull();
@@ -71,7 +71,7 @@ class HandlerAdapterRegistryTest {
         when(request.getRequestURI()).thenReturn("notvalide");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThatThrownBy(() -> register.getHandler(request))
+        assertThatThrownBy(() -> register.getHandler(request).get())
                 .isInstanceOf(NoSuchElementException.class);
     }
 }
