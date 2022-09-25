@@ -29,7 +29,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        final ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
         initializeHandlerExecutions(controllerScanner);
         logSavedController();
