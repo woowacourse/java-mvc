@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handlerAdapter;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.handlerMapping.HandlerMapping;
 import nextstep.mvc.view.ModelAndView;
 
 class HandlerAdapterRegistryTest {

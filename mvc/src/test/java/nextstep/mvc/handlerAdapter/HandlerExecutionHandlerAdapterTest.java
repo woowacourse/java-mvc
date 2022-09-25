@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.handlerAdapter;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,8 +10,7 @@ import org.reflections.Reflections;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.HandlerExecution;
 import nextstep.web.annotation.Controller;
 
 class HandlerExecutionHandlerAdapterTest {

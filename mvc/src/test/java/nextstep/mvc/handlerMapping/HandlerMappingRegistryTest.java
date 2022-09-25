@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handlerMapping;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,8 +9,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.web.annotation.Controller;
 
 class HandlerMappingRegistryTest {
 
@@ -66,10 +65,7 @@ class HandlerMappingRegistryTest {
         }
     }
 
-    class ControllerForTest implements Controller {
-        @Override
-        public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-            return null;
-        }
+    @Controller
+    class ControllerForTest {
     }
 }
