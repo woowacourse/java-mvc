@@ -1,20 +1,20 @@
-package nextstep.mvc.controller;
+package nextstep.mvc.handleradapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.controller.Controller;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.web.annotation.Controller;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter {
+public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
-        return handler.getClass().isAnnotationPresent(Controller.class);
+        return handler instanceof Controller;
     }
 
     @Override
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
-        return ((HandlerExecution) handler).handle(request, response);
+        final String viewName = ((Controller) handler).execute(request, response);
+        return new ModelAndView(viewName);
     }
 }

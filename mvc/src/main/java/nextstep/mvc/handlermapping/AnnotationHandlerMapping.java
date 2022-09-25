@@ -1,7 +1,6 @@
-package nextstep.mvc.controller;
+package nextstep.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
