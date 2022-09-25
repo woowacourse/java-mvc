@@ -4,16 +4,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.exception.FailMapHandler;
 import nextstep.mvc.handlerAdaptor.HandlerAdapter;
+import nextstep.mvc.handlerAdaptor.HandlerAdapterRegistry;
 import nextstep.mvc.handlerMapping.HandlerMapping;
 import nextstep.mvc.handlerMapping.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,12 +18,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
 
     public DispatcherServlet() {
-        this.handlerMappingRegistry = HandlerMappingRegistry.from();
-        this.handlerAdapters = new ArrayList<>();
+        handlerMappingRegistry = HandlerMappingRegistry.from();
+        handlerAdapterRegistry = HandlerAdapterRegistry.from();
     }
 
     @Override
@@ -39,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -62,9 +59,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow(FailMapHandler::new);
+        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 }
