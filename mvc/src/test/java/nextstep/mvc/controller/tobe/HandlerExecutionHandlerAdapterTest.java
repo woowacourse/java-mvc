@@ -12,11 +12,11 @@ import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerAdapterTest {
+class HandlerExecutionHandlerAdapterTest {
 
     @Test
     void HandlerAdapter가_처리할_수_있는_핸들러이면_true를_반환한다() {
-        HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+        HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
         Object handlerExecution = mock(HandlerExecution.class);
 
         boolean actual = handlerAdapter.supports(handlerExecution);
@@ -26,7 +26,7 @@ class AnnotationHandlerAdapterTest {
 
     @Test
     void HandlerAdapter가_처리할_수_없는_핸들러면_false를_반환한다() {
-        HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+        HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
         Object notHandlerExecution = mock(Controller.class);
 
         boolean actual = handlerAdapter.supports(notHandlerExecution);
@@ -41,7 +41,7 @@ class AnnotationHandlerAdapterTest {
         HandlerExecution handler = mock(HandlerExecution.class);
 
         ModelAndView modelAndView = new ModelAndView(new JspView(""));
-        HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
+        HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
         when(handler.handle(request, response)).thenReturn(modelAndView);
 
