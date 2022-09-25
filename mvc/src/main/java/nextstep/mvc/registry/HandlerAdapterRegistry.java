@@ -2,6 +2,7 @@ package nextstep.mvc.registry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import nextstep.mvc.adapter.HandlerAdapter;
 
@@ -21,6 +22,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("지원하는 어댑터가 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("지원하는 어댑터가 존재하지 않습니다."));
     }
 }
