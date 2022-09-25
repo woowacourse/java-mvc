@@ -5,9 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,25 +14,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMapping;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        this.handlerMapping = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
-    }
-
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        this.handlerMapping.add(handlerMapping);
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        this.handlerAdapters.add(handlerAdapter);
+        this.handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        this.handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        handlerMapping.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
         super.init(config);
     }
 
@@ -49,18 +46,11 @@ public class DispatcherServlet extends HttpServlet {
         modelAndView.render(request, response);
     }
 
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMapping.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("알맞은 핸들러가 없습니다.: " + request));
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("알맞은 핸들러 어댑터를 찾지 못했습니다.: " + handler));
+    private Object getHandler(final HttpServletRequest request) {
+        return handlerMappingRegistry.getHandler(request);
     }
 }
