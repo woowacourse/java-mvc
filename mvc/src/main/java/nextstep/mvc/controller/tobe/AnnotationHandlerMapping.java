@@ -74,7 +74,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
         final var url = request.getRequestURI();
-        final var requestMethod = RequestMethod.valueOf(request.getMethod());
+        final var requestMethod = RequestMethod.find(request.getMethod());
         final var key = new HandlerKey(url, requestMethod);
         return handlerExecutions.get(key);
     }
