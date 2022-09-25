@@ -1,7 +1,9 @@
-package nextstep.mvc;
+package nextstep.mvc.controller.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import nextstep.mvc.controller.adapter.ControllerHandlerAdapter;
+import nextstep.mvc.controller.adapter.HandlerAdapter;
 import nextstep.mvc.controller.asis.ForwardController;
 import org.junit.jupiter.api.Test;
 
