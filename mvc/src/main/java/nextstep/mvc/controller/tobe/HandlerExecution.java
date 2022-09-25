@@ -14,7 +14,7 @@ public class HandlerExecution {
     private final Method method;
 
     public HandlerExecution(final Object declaredObject, final Method method) {
-        validateObjectHasMethod(declaredObject, method);
+        validateObjectHasGivenMethod(declaredObject, method);
         this.declaredObject = declaredObject;
         this.method = method;
     }
@@ -25,7 +25,7 @@ public class HandlerExecution {
         return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 
-    private void validateObjectHasMethod(final Object declaredObject, final Method method) {
+    private void validateObjectHasGivenMethod(final Object declaredObject, final Method method) {
         if (doesNotContainGivenMethod(declaredObject, method)) {
             throw new IllegalArgumentException("주어진 객체는 해당 메서드를 지니지 않고 있습니다.");
         }
