@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import nextstep.mvc.controller.tobe.handleradapter.HandlerAdapterRegistry;
 import nextstep.mvc.controller.tobe.handlermapping.HandlerMappingRegistry;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         final var handler = handlerMappingRegistry.getHandler(request)
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("적절한 컨트롤러가 존재하지 않습니다."));
         final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         try {

@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe.handleradapter;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import nextstep.mvc.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
@@ -19,6 +20,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("적절한 어답터가 존재하지 않습니다."));
     }
 }

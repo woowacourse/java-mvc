@@ -36,7 +36,7 @@ public class ControllerScanner {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new IllegalArgumentException("컨트롤러를 생성할 수 없스비다.");
+            throw new IllegalArgumentException("컨트롤러를 생성할 수 없습니다.");
         }
     }
 }
