@@ -7,9 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.mapping.HandlerMapping;
+import nextstep.mvc.mapping.HandlerMappingRepository;
 import nextstep.mvc.view.ModelAndView;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
@@ -21,17 +22,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRepository handlerMappingRepository;
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRepository = new HandlerMappingRepository();
         this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRepository.init();
         final Reflections adapterReflections = new Reflections("nextstep.mvc.adapter", Scanners.SubTypes);
         final Set<Class<? extends HandlerAdapter>> adapterTypes = adapterReflections.getSubTypesOf(
                 HandlerAdapter.class);
@@ -41,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRepository.add(handlerMapping);
     }
 
     private void addAdapterInstances(final Class<? extends HandlerAdapter> adapterType) {
@@ -60,7 +61,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
+            final Object handler = handlerMappingRepository.getHandler(request);
             final HandlerAdapter handlerAdapter = getAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
@@ -68,14 +69,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
     }
 
     private HandlerAdapter getAdapter(final Object handler) {

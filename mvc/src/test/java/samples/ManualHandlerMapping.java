@@ -3,8 +3,8 @@ package samples;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.mapping.HandlerMapping;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
