@@ -1,18 +1,17 @@
 package nextstep.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.controller.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -28,11 +27,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> controller : controllers) {
-            addRequestMappingMethod(controller);
-        }
+        ControllerScanner.getControllers(basePackage)
+            .forEach(this::addHandlerExecutions);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -48,33 +44,29 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecution;
     }
 
-    private void addRequestMappingMethod(final Class<?> controller) {
-        final Method[] methods = controller.getMethods();
-        for (final Method method : methods) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            addHandlerExecution(controller, requestMapping, method);
-        }
+    private void addHandlerExecutions(final Class<?> clazz, final Object controller) {
+        final Method[] methods = clazz.getMethods();
+        Arrays.stream(methods)
+            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+            .forEach(method -> addHandlerExecution(controller, method));
     }
 
-    private void addHandlerExecution(final Class<?> controller, final RequestMapping requestMapping, final Method method) {
-        for (final RequestMethod requestMethod : requestMapping.method()) {
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            if (handlerExecutions.containsKey(handlerKey)) {
-                throw new IllegalArgumentException(String.format("중복적으로 매핑되었습니다. [%s]", handlerKey));
-            }
-            handlerExecutions.put(handlerKey, getHandlerExecution(controller, method));
-        }
+    private void addHandlerExecution(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final RequestMethod[] requestMethods = requestMapping.method();
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+        Arrays.stream(requestMethods)
+            .forEach(requestMethod -> {
+                final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                putHandlerExecution(handlerExecution, handlerKey);
+            });
     }
 
-    private HandlerExecution getHandlerExecution(final Class<?> controller, final Method method) {
-        try {
-            final Object newInstance = controller.getConstructor().newInstance();
-            return new HandlerExecution(newInstance, method);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(String.format("기본 생성자가 존재하지 않습니다. [%s]", controller));
+    private void putHandlerExecution(final HandlerExecution handlerExecution, final HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException(String.format("중복적으로 매핑되었습니다. [%s]", handlerKey));
         }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 }
