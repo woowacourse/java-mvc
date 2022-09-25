@@ -22,14 +22,11 @@ import java.util.stream.Collectors;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
     private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.controllerScanner = new ControllerScanner(basePackage);
-        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
