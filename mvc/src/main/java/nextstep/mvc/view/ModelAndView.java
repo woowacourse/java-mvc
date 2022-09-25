@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ModelAndView {
 
@@ -26,5 +27,22 @@ public class ModelAndView {
 
     public Object getObject(final String attributeName) {
         return model.get(attributeName);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final ModelAndView that = (ModelAndView) o;
+        return Objects.equals(view, that.view) && Objects.equals(model, that.model);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(view, model);
     }
 }
