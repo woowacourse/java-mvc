@@ -10,7 +10,7 @@ import nextstep.mvc.controller.asis.ForwardController;
 
 public class FakeManualHandlerMapping implements HandlerMapping {
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final Map<String, Controller> controllers = new HashMap<>();
 
     @Override
     public void initialize() {
@@ -18,7 +18,7 @@ public class FakeManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Optional<Object> getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         return Optional.ofNullable(controllers.get(requestURI));
     }
