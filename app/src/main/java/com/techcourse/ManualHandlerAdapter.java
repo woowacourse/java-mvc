@@ -3,7 +3,7 @@ package com.techcourse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.Controller;
 import nextstep.mvc.view.ModelAndView;
 
 public class ManualHandlerAdapter implements HandlerAdapter {
