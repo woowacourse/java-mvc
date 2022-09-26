@@ -20,8 +20,8 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
-        final String account = request.getParameter("account");
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+        final String account = req.getParameter("account");
         if (account == null) {
             return new ModelAndView(new JspView("/404.jsp"));
         }

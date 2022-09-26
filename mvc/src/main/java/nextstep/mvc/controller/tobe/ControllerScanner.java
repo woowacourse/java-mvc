@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.asis;
+package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
