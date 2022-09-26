@@ -24,12 +24,10 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private void addHandlerMappings(final DispatcherServlet dispatcherServlet) {
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
     }
 
     private void addHandlerAdapters(final DispatcherServlet dispatcherServlet) {
         dispatcherServlet.addHandlerAdapters(new HandlerExecutionHandlerAdapter());
-        dispatcherServlet.addHandlerAdapters(new ControllerHandlerAdapter());
     }
 
     private void initDispatcher(final ServletContext servletContext, final DispatcherServlet dispatcherServlet) {
