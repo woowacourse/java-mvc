@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handlermapping.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
-import samples.TestInterfaceController;
 
 class HandlerAdapterRegistryTest {
 
@@ -44,21 +43,5 @@ class HandlerAdapterRegistryTest {
         } catch (Exception e) {
             throw new IllegalArgumentException();
         }
-    }
-
-    @DisplayName("controller interface 기반 ModelAndView 조회")
-    @Test
-    void getModelAndViewAboutInterface() {
-        final HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
-        registry.add(new ManualHandlerAdapter());
-
-        final HttpServletRequest request = RequestFixture.getRequest();
-        final HttpServletResponse response = ResponseFixture.response();
-
-        final ModelAndView modelAndView = registry.getModelAndView(new TestInterfaceController(), request, response);
-
-        assertThat(modelAndView.getView())
-            .usingRecursiveComparison()
-            .isEqualTo(new JspView("/test-path.jsp"));
     }
 }
