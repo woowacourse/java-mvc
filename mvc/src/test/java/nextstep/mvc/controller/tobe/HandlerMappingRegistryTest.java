@@ -43,8 +43,8 @@ class HandlerMappingRegistryTest {
             given(httpServletRequest.getAttribute("id")).willReturn(value);
 
             // when
-            final Object handler = handlerMappingRegistry.findHandler(httpServletRequest);
-            final ModelAndView modelAndView = ((HandlerExecution) handler).handle(httpServletRequest, null);
+            final HandlerExecution handler = (HandlerExecution) handlerMappingRegistry.findHandler(httpServletRequest);
+            final ModelAndView modelAndView = (ModelAndView) handler.handle(httpServletRequest, null);
             final View view = modelAndView.getView();
             final String viewName = CustomReflectionUtils.readFieldValue(view, "viewName");
             final String id = (String) modelAndView.getModel().get("id");
