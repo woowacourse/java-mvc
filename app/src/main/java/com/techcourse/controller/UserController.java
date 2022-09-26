@@ -1,6 +1,5 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,10 +22,15 @@ public class UserController {
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
-
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", findUser(account));
         return modelAndView;
+    }
+
+    private Object findUser(String account) {
+        final var user = InMemoryUserRepository.findByAccount(account);
+        if (user.isEmpty()) {
+            return "존재하지 않는 사용자입니다.";
+        }
+        return user.get();
     }
 }
