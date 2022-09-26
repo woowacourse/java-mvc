@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import samples.TestObject;
@@ -39,11 +40,13 @@ class JsonViewTest {
         final var response = mock(HttpServletResponse.class);
         final var writer = mock(PrintWriter.class);
 
+        LinkedHashMap<String, Object> model = new LinkedHashMap<>();
+        model.put("테스트1", new TestObject("테스트 객체", "테스트"));
+        model.put("테스트2", new TestObject("테스트 객체2", "테스트테스트"));
+
         // when
         when(response.getWriter()).thenReturn(writer);
-
-        view.render(Map.of("테스트1", new TestObject("테스트 객체", "테스트"),
-                "테스트2", new TestObject("테스트 객체2", "테스트테스트")), request, response);
+        view.render(model, request, response);
 
         // then
         verify(writer)

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
-import nextstep.mvc.controller.asis.ControllerHandlerAdaptor;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import org.junit.jupiter.api.Test;
@@ -19,9 +18,7 @@ class HandlerAdapterRegistryTest {
         // given
         final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
-        final ControllerHandlerAdaptor controllerHandlerAdaptor = new ControllerHandlerAdaptor();
         handlerAdapterRegistry.addHandlerAdapter(handlerExecutionHandlerAdapter);
-        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdaptor);
 
         final HandlerExecution handlerExecution = new HandlerExecution(
                 TestController.class.getConstructor().newInstance(),
