@@ -36,7 +36,7 @@ interface 기반의 컨트롤러와 annotation 기반의 컨트롤러가 공존�
 - [X] Jsp 반환을 JspView에서 처리한다.
 
 #### JsonView 구현
-- [ ] model의 객체를 json으로 변환하여 response body로 응답한다.
+- [X] model의 객체를 json으로 변환하여 response body로 응답한다.
 
 ### Legacy MVC 제거
 - [ ] app module의 모든 controller를 annotation 기반으로 변경한다.
