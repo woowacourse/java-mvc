@@ -4,14 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.support.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,25 +28,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
-            List<Method> methods = getRequestMappingMethods(controller);
-            methods.forEach(this::setUpHandlerExecutions);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Class<?> controller : controllers.keySet()) {
+            Set<Method> methods = getRequestMappingMethods(controller);
+            addHandlerExecutions(methods, controllers.get(controller));
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private List<Method> getRequestMappingMethods(Class<?> controller) {
+    private Set<Method> getRequestMappingMethods(Class<?> controller) {
         return Arrays.stream(controller.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    private void setUpHandlerExecutions(Method method) {
+    private void addHandlerExecutions(Set<Method> methods, Object instance) {
+        for (Method method : methods) {
+            setUpHandlerExecutions(method, instance);
+        }
+    }
+
+    private void setUpHandlerExecutions(Method method, Object instance) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution value = new HandlerExecution(method);
+            HandlerExecution value = new HandlerExecution(method, instance);
             handlerExecutions.put(key, value);
             log.info("Path : {} , Method : {}", requestMapping.value(), requestMethod);
         }
