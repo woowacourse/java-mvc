@@ -11,3 +11,8 @@
 - [x] HandlerMappingRegistry 클래스에서 HandlerMapping 을 처리
 - [x] HandlerAdapterRegistry 클래스에서 HandlerAdapter 를 처리
 - [x] 요청받은 페이지가 없으면 404를 응답하도록 구현
+
+### 3단계 기능 구현 목록
+- [x] JsonView 클래스 구현
+- [x] UserController 가 json 형태로 응답을 반환한다.
+- [ ] 기존 레거시 MVC를 제거하고 어노테이션 기반 MVC 로 변경한다.
