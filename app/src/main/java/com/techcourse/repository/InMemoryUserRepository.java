@@ -24,4 +24,8 @@ public class InMemoryUserRepository {
 
     private InMemoryUserRepository() {
     }
+
+    public static int size() {
+        return database.size();
+    }
 }
