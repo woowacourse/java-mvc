@@ -13,8 +13,8 @@ class ForwardControllerTest {
     @DisplayName("기본경로를_반환한다")
     @Test
     void 기본경로를_반환한다() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        var request = mock(HttpServletRequest.class);
+        var response = mock(HttpServletResponse.class);
 
         String baseUrl = "/";
         ForwardController forward = new ForwardController(baseUrl);

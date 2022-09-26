@@ -35,7 +35,7 @@ public class LoginController {
 
     private String login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
-            final var session = request.getSession();
+            var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return "redirect:/index.jsp";
         } else {

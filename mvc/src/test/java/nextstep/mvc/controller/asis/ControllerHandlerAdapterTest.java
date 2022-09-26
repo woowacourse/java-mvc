@@ -11,7 +11,6 @@ import java.util.Optional;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.HandlerMappingRegistry;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,8 +31,8 @@ class ControllerHandlerAdapterTest {
     @DisplayName("인터페이스를 기반으로 하는 hadler이면 true를 반환한다.")
     @Test
     void 인터페이스를_기반으로_하는_handler이면_true를_반환한다() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        var request = mock(HttpServletRequest.class);
+        var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
@@ -47,8 +46,8 @@ class ControllerHandlerAdapterTest {
     @DisplayName("인터페이스를 기반으로 하는 hadler가 아니면 false를 반환한다.")
     @Test
     void 인터페이스를_기반으로_하는_handler가_아니면_flase를_반환한다() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        var request = mock(HttpServletRequest.class);
+        var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
@@ -63,8 +62,8 @@ class ControllerHandlerAdapterTest {
     @DisplayName("handle 처리를 한 결과를 반환한다.")
     @Test
     void handle_처리를_한_결과를_반환한다() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        var request = mock(HttpServletRequest.class);
+        var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");

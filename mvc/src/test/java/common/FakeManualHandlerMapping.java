@@ -19,7 +19,7 @@ public class FakeManualHandlerMapping implements HandlerMapping {
 
     @Override
     public Optional<Object> getHandler(final HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         return Optional.ofNullable(controllers.get(requestURI));
     }
 }

@@ -1,10 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +27,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public Optional<Object> getHandler(HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
         return Optional.ofNullable(controllers.get(requestURI));
     }
