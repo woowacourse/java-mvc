@@ -3,6 +3,7 @@ package nextstep.mvc.controller.registry;
 import java.util.ArrayList;
 import java.util.List;
 import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.controller.tobe.exception.NotFoundHandlerException;
 
 public class HandlerAdapterRegistry {
 
@@ -20,7 +21,7 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
             .filter(it -> it.supports(object))
             .findAny()
-            .orElseThrow();
+            .orElseThrow(NotFoundHandlerException::new);
     }
 }
 
