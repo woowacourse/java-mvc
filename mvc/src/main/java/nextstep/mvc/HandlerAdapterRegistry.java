@@ -18,7 +18,7 @@ public class HandlerAdapterRegistry {
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
+                .findAny()
                 .orElseThrow();
     }
 }
