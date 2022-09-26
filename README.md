@@ -41,6 +41,6 @@
 2. JsonView 클래스를 구현한다.
 3. Legacy MVC 제거하기
 
-- [ ] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
+- [x] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
 - [ ] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
 
