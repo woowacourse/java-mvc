@@ -9,12 +9,15 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Map<Class<?>, Object> controllers;
+    private final Reflections reflections;
 
     public ControllerScanner(final Object... basePackage) {
-        Reflections reflections = new Reflections(basePackage);
+        this.reflections = new Reflections(basePackage);
+    }
+
+    public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        controllers = instantiateControllers(controllerClasses);
+        return instantiateControllers(controllerClasses);
     }
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> classes) {
@@ -33,9 +36,5 @@ public class ControllerScanner {
                  InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public Map<Class<?>, Object> getControllers() {
-        return controllers;
     }
 }
