@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.ManualHandlerMapping;
+import samples.TestManualHandlerMapping;
 
 class DispatcherServletTest {
 
@@ -39,7 +39,7 @@ class DispatcherServletTest {
     @Test
     void service_interfaceHandler() {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new TestManualHandlerMapping());
         dispatcherServlet.init();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);

@@ -6,7 +6,7 @@ import java.util.Map;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.mapping.HandlerMapping;
 
-public class ManualHandlerMapping implements HandlerMapping {
+public class TestManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
