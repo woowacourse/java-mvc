@@ -1,18 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import org.reflections.Reflections;
+import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,41 +27,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Set<Class<?>> classes = getControllers();
+        ControllerScanner controllerScanner = ControllerScanner.from(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Class<?> clazz : classes) {
-            addHandlerExecutions(clazz);
+        for (Class<?> clazz : controllers.keySet()) {
+            addHandlerExecutions(clazz, controllers.get(clazz));
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.forEach((key, value) -> log.info("{}, {}", key, value));
     }
 
-    private Set<Class<?>> getControllers() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private void addHandlerExecutions(final Class<?> clazz) {
-        Object controller = instantiate(clazz);
+    private void addHandlerExecutions(final Class<?> clazz, final Object controller) {
         List<Method> handlerMethods = getHandlerMethods(clazz);
 
         for (Method handlerMethod : handlerMethods) {
-            List<HandlerKey> handlerKeys = HandlerKey.from(handlerMethod);
+            List<HandlerKey> handlerKeys = mapHandlerKeys(handlerMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
             handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
-        }
-    }
-
-    private Object instantiate(final Class<?> clazz) {
-        try {
-            return clazz.getConstructor()
-                    .newInstance();
-        } catch (InstantiationException |
-                 IllegalAccessException |
-                 InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException("Controller instantiation failed.", e);
         }
     }
 
@@ -72,6 +52,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Method[] declaredMethods = clazz.getDeclaredMethods();
         return Stream.of(declaredMethods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+    }
+
+    private List<HandlerKey> mapHandlerKeys(final Method handlerMethod) {
+        RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
+        String requestURI = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+        return Stream.of(requestMethods)
+                .map(requestMethod -> new HandlerKey(requestURI, requestMethod))
                 .collect(Collectors.toList());
     }
 
