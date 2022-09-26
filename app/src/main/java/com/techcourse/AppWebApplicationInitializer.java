@@ -5,6 +5,8 @@ import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.controller.asis.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.HandlerAdapterRegistry;
+import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet(new HandlerMappingRegistry(), new HandlerAdapterRegistry());
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
