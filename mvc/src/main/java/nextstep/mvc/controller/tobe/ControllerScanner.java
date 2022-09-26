@@ -21,7 +21,6 @@ public class ControllerScanner {
 
     public Map<Class<?>, Object> getControllers() {
         return Collections.unmodifiableMap(this.controllers);
-
     }
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> annotatedControllers) {

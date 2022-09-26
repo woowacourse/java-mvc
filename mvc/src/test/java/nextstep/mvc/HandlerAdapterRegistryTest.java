@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import nextstep.mvc.exception.NoHandlerAdapterFoundException;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +15,7 @@ class HandlerAdapterRegistryTest {
 
 
     @Test
-    void HandlerAdapterRegistry를_생성하면_handler를_등록한다() throws NoSuchMethodException {
+    void HandlerAdapterRegistry를_생성하면_handler를_등록한다() {
         // given
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
                 List.of(new AnnotationHandlerAdapter()));
@@ -30,7 +29,7 @@ class HandlerAdapterRegistryTest {
     }
 
     @Test
-    void HandlerAdapterRegistry에_handler를_추가할_수_있다() throws NoSuchMethodException {
+    void HandlerAdapterRegistry에_handler를_추가할_수_있다() {
         // given
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>());
         Object handler = mock(HandlerExecution.class);
