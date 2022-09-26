@@ -21,7 +21,7 @@ public class HandlerMappingRegistry {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Optional::isPresent)
-                .findFirst()
+                .findAny()
                 .orElseThrow();
     }
 }
