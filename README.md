@@ -59,12 +59,13 @@ DispatcherServlet이 아닌 뷰에서 JSP를 반환하도록 수정하자.
 
 - [x] JspView 클래스를 구현한다.
   - DispatcherServlet 클래스의 service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮겨보자.
-- [ ] JsonView 클래스를 구현한다.
+- [x] JsonView 클래스를 구현한다.
   - HTTP Request Body로 JSON 타입의 데이터를 받았을 때 어떻게 자바에서 처리할지 고민해보고 JsonView 클래스를 구현해보자.
+  - [x] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON 으로 변환해서 반환한다.
 - [ ] Legacy MVC 제거하기
   - app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
   - 그리고 asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링하자.
-- [ ] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
+- [x] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
 - [ ] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
 
 ```java
