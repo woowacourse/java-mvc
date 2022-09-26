@@ -24,7 +24,7 @@ public class UserController {
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
 
         modelAndView.addObject("user", user);
         return modelAndView;
