@@ -1,5 +1,6 @@
 package nextstep.mvc.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 public class JsonView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
@@ -23,9 +25,14 @@ public class JsonView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String result = objectMapper.writeValueAsString(model);
         PrintWriter writer = response.getWriter();
-        writer.write(result);
+        writer.write(toJson(model));
+    }
+
+    private String toJson(Map<String, ?> model) throws JsonProcessingException {
+        if (model.size() == 1) {
+            return objectMapper.writeValueAsString(model.values());
+        }
+        return objectMapper.writeValueAsString(model);
     }
 }
