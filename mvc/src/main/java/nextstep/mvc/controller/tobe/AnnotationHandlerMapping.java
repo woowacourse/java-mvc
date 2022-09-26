@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,13 +44,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
-        final Set<Method> methods = new HashSet<>();
-        for (Class<?> controllerClass : classes) {
-            Predicate<Method> annotation = ReflectionUtils.withAnnotation(REQUEST_MAPPING_CLASS);
-            Set<Method> allMethods = getAllMethods(controllerClass, annotation);
-            methods.addAll(allMethods);
-        }
-        return methods;
+        return classes.stream()
+                .flatMap(clazz -> getAllMethods(clazz, ReflectionUtils.withAnnotation(REQUEST_MAPPING_CLASS)).stream())
+                .collect(Collectors.toSet());
     }
 
     @SafeVarargs

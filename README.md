@@ -48,3 +48,9 @@ public class RegisterController {
 ## 피드백
 
 ### step2 피드백
+
+- [x] 일부 `for` 문 `stream`으로 변경
+- [ ] `keySet()` 대신 맵을 잘 활용할 수 있는 방법 고민하기
+- [ ] `adapter`, `handerMapping` 예외처리 기준 정하기
+- [ ] `Serializeable` 적용 해제
+- [ ] `DispatcherServlet` 테스트 만들기
