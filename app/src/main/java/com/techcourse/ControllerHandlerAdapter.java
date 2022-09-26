@@ -7,7 +7,7 @@ import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
-public class ManualHandlerAdapter implements HandlerAdapter {
+public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
         return handler instanceof Controller;
@@ -16,8 +16,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
             Exception {
-        final Controller controller = (Controller) handler;
-        final String viewName = controller.execute(request, response);
-        return new ModelAndView(new JspView(viewName));
+        final String forwardView = ((Controller) handler).execute(request, response);
+        return new ModelAndView(new JspView(forwardView));
     }
 }
