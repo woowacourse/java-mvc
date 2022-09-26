@@ -15,7 +15,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public Object handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String viewName = ((Controller) handler).execute(request, response);
         return new ModelAndView(new JspView(viewName));

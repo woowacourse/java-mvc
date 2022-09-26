@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import nextstep.mvc.controller.tobe.adapters.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.mappings.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.resolvers.DefaultResolver;
+import nextstep.mvc.controller.tobe.resolvers.JspResolver;
 import org.junit.jupiter.api.Test;
 
 class DispatcherServletTest {
@@ -22,6 +24,9 @@ class DispatcherServletTest {
         DispatcherServlet servlet = new DispatcherServlet();
         servlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         servlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        servlet.addModelAndViewResolver(new DefaultResolver());
+        servlet.addModelAndViewResolver(new JspResolver());
+
         servlet.init();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);

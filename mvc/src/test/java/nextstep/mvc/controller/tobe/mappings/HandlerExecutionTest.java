@@ -25,9 +25,9 @@ class HandlerExecutionTest {
 
         // when
         HandlerExecution execution = new HandlerExecution(controller, method);
-        ModelAndView modelAndView = execution.handle(request, response);
+        Object result = execution.handle(request, response);
 
         // then
-        assertThat(modelAndView).isNotNull();
+        assertThat(result).isNotNull();
     }
 }

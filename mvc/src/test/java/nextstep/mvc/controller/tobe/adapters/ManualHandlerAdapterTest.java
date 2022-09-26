@@ -27,8 +27,8 @@ class ManualHandlerAdapterTest {
         ManualController controller = new ManualController();
         ManualHandlerAdapter adapter = new ManualHandlerAdapter();
         // when
-        ModelAndView modelAndView = adapter.handle(createRequest(), createResponse(), controller);
+        Object result = adapter.handle(createRequest(), createResponse(), controller);
         // then
-        assertThat(modelAndView).isNotNull();
+        assertThat(result).isNotNull();
     }
 }

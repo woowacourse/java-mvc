@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.tobe.mappings.HandlerExecution;
-import nextstep.mvc.view.ModelAndView;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
     @Override
@@ -13,7 +12,7 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public Object handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         return ((HandlerExecution) handler).handle(request, response);
     }

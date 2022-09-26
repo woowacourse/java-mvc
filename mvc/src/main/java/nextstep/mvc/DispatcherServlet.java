@@ -4,10 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import nextstep.mvc.registry.HandlerAdapterRegistry;
 import nextstep.mvc.registry.HandlerMappingRegistry;
+import nextstep.mvc.registry.ModelAndViewResolverRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +18,13 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
-    private final List<ViewResolver> viewResolvers;
+    private final ModelAndViewResolverRegistry modelAndViewResolverRegistry;
+
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
-        this.viewResolvers = new ArrayList<>();
+        this.modelAndViewResolverRegistry = new ModelAndViewResolverRegistry();
     }
 
     @Override
@@ -40,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
-    public void addViewResolvers(ViewResolver viewResolver) {
-        this.viewResolvers.add(viewResolver);
+    public void addModelAndViewResolver(ModelAndViewResolver modelAndViewResolver) {
+        modelAndViewResolverRegistry.addModelAndViewResolver(modelAndViewResolver);
     }
 
     @Override
@@ -50,14 +50,19 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = findHandler(request);
-            final HandlerAdapter adapter = findAdapter(handler);
-            ModelAndView modelAndView = adapter.handle(request, response, handler);
-            resolve(modelAndView, request, response);
+            Object handleResult = handleRequest(request, response);
+            render(request, response, handleResult);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object handler = findHandler(request);
+        HandlerAdapter adapter = findAdapter(handler);
+
+        return adapter.handle(request, response, handler);
     }
 
     private Object findHandler(final HttpServletRequest request) {
@@ -68,18 +73,22 @@ public class DispatcherServlet extends HttpServlet {
         return handlerAdapterRegistry.findAdapter(handler);
     }
 
-    private void resolve(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
+    private void render(HttpServletRequest request, HttpServletResponse response, Object handleResult) {
+        ModelAndViewResolver resolver = findModelAndViewResolver(handleResult);
+        ModelAndView modelAndView = resolver.resolve(handleResult);
+
+        render(modelAndView, request, response);
+    }
+
+    private ModelAndViewResolver findModelAndViewResolver(Object handleResult) {
+        return modelAndViewResolverRegistry.findModelAndViewResolver(handleResult);
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
         try {
             modelAndView.render(request, response);
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("Unexpected exception occured while rendering", e);
         }
-    }
-
-    private ViewResolver findViewResolver(String viewName) {
-        return viewResolvers.stream()
-                .filter(resolver -> resolver.supports(viewName))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Failed to find viewResolver : " + viewName));
     }
 }

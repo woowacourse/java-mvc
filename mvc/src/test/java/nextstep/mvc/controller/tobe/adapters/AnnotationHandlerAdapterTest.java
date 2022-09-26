@@ -42,9 +42,9 @@ class AnnotationHandlerAdapterTest {
         // given
 
         // when
-        ModelAndView modelAndView = adapter.handle(createRequest(), createResponse(), execution);
+        Object result = adapter.handle(createRequest(), createResponse(), execution);
 
         // then
-        assertThat(modelAndView).isNotNull();
+        assertThat(result).isNotNull();
     }
 }

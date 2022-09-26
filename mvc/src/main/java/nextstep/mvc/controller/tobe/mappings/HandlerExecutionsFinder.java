@@ -70,11 +70,7 @@ public class HandlerExecutionsFinder {
     }
 
     private boolean isSupportable(Method method) {
-        return isReturnTypeSupportable(method) && isParameterTypesSupportable(method.getParameterTypes());
-    }
-
-    private boolean isReturnTypeSupportable(Method method) {
-        return method.getReturnType() == ModelAndView.class;
+        return isParameterTypesSupportable(method.getParameterTypes());
     }
 
     private boolean isParameterTypesSupportable(Class<?>[] parameterTypes) {
