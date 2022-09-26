@@ -20,10 +20,9 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
-                             final HandlerAdapterRegistry handlerAdapterRegistry) {
-        this.handlerMappingRegistry = handlerMappingRegistry;
-        this.handlerAdapterRegistry = handlerAdapterRegistry;
+    public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override

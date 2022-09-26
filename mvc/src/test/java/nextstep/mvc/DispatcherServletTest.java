@@ -10,8 +10,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import nextstep.mvc.controller.registry.HandlerAdapterRegistry;
-import nextstep.mvc.controller.registry.HandlerMappingRegistry;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import org.junit.jupiter.api.DisplayName;
@@ -23,9 +21,7 @@ class DispatcherServletTest {
     @DisplayName("DispatcherServlet은 각 Registry를 주입받고, service 메서드를 통해 로직을 실행한다.")
     void service() throws ServletException, IOException {
         // given
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        DispatcherServlet servlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
+        DispatcherServlet servlet = new DispatcherServlet();
         servlet.addAdapterMapping(new AnnotationHandlerAdapter());
         servlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         servlet.init();
