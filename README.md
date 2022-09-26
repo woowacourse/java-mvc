@@ -49,8 +49,15 @@ public class RegisterController {
 
 ### step2 피드백
 
+- 고민하게 되는 지점...
+- [ ] 현재 최대한 클래스 다이어그램에 따라 구현했다. private methods 역시 기존 명세를 따랐다. 
+  - 그런데 내부 구현인 private까지 기존 명세를 따르지 않아도 되지 않냐는 말을 듣고 고민이 많아졌다.
+  - 어디까지 명세를 따르는 게 좋을지 궁금해진다.
+  - 예를 들어 annotationHandlerMapping 의 경우, getRequestMappingMethods 가 상당히 애매하다. class set 을 받기 때문이다. 
+  - 개별 클래스별 메소드들을 추출하는 메소드를 구현할 시, scanner map 을 더 잘 활용할 수 있다. -> private method 까진 따라가지 않기로 했다. 
+
 - [x] 일부 `for` 문 `stream`으로 변경
-- [ ] `keySet()` 대신 맵을 잘 활용할 수 있는 방법 고민하기
+- [x] `keySet()` 대신 맵을 잘 활용할 수 있는 방법 고민하기
 - [ ] `adapter`, `handerMapping` 예외처리 기준 정하기
 - [ ] `Serializeable` 적용 해제
 - [ ] `DispatcherServlet` 테스트 만들기
