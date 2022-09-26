@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +14,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
-    private final List<HandlerAdapter> adapters = List.of(
-            new ControllerHandlerAdapter(),
-            new AnnotationHandlerAdapter()
-    );
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -31,6 +28,10 @@ public class DispatcherServlet extends HttpServlet {
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -50,16 +51,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private ModelAndView getModelAndView(final Object handler, final HttpServletRequest request,
                                          final HttpServletResponse response) throws Exception {
-        final HandlerAdapter adapter = getAdapter(handler);
+        final HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         return adapter.handle(request, response, handler);
-    }
-
-    private HandlerAdapter getAdapter(final Object handler) {
-        return adapters.stream()
-                .filter(adapter -> adapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() ->
-                        new IllegalArgumentException(handler.getClass().getName() + "는 처리할 수 없는 컨트롤러 타입 입니다.")
-                );
     }
 }
