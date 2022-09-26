@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -21,7 +20,7 @@ public class DispatcherServletTest {
     void doService() throws ServletException {
 
         // given
-        DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(new HandlerMappingRegistry(), new HandlerAdaptorRegistry());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         dispatcherServlet.addHandlerAdaptors(new AnnotationHandlerAdaptor());
         dispatcherServlet.init();

@@ -2,6 +2,9 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.HandlerAdaptorRegistry;
+import nextstep.mvc.HandlerMappingRegistry;
+
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdaptor;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
@@ -14,7 +17,8 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet(new HandlerMappingRegistry(), new HandlerAdaptorRegistry());
+
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
 
