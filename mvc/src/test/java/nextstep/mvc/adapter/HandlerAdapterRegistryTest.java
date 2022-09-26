@@ -6,15 +6,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestImplementController;
 
-class HandlerAdapterRepositoryTest {
+class HandlerAdapterRegistryTest {
 
     @DisplayName("handler에 알맞은 adapter를 찾는다.")
     @Test
     void getAdapter() {
-        final HandlerAdapterRepository handlerAdapterRepository = new HandlerAdapterRepository();
-        handlerAdapterRepository.init();
+        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.init();
 
         final TestImplementController handler = new TestImplementController();
-        assertThat(handlerAdapterRepository.getAdapter(handler)).isInstanceOf(ControllerAdapter.class);
+        assertThat(handlerAdapterRegistry.getAdapter(handler)).isInstanceOf(ControllerAdapter.class);
     }
 }

@@ -7,11 +7,11 @@ import java.util.Set;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
-public class HandlerAdapterRepository {
+public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapterRepository() {
+    public HandlerAdapterRegistry() {
         this.handlerAdapters = new ArrayList<>();
     }
 

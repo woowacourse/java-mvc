@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class HandlerMappingRepository {
+public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRepository() {
+    public HandlerMappingRegistry() {
         this.handlerMappings = new ArrayList<>();
     }
 

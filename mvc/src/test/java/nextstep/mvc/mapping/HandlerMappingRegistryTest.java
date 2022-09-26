@@ -10,19 +10,19 @@ import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerMappingRepositoryTest {
+class HandlerMappingRegistryTest {
 
     @DisplayName("요청에 따라 알맞은 handler를 찾는다.")
     @Test
     void getHandler() {
-        final HandlerMappingRepository handlerMappingRepository = new HandlerMappingRepository();
-        handlerMappingRepository.add(new AnnotationHandlerMapping("samples"));
-        handlerMappingRepository.init();
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.add(new AnnotationHandlerMapping("samples"));
+        handlerMappingRegistry.init();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThat(handlerMappingRepository.getHandler(request)).isInstanceOf(HandlerExecution.class);
+        assertThat(handlerMappingRegistry.getHandler(request)).isInstanceOf(HandlerExecution.class);
     }
 }
