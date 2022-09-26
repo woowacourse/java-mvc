@@ -17,7 +17,7 @@ public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String show(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
@@ -27,7 +27,7 @@ public class AuthController {
                 .orElse("/login.jsp");
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/login", method = RequestMethod.POST)
     public String login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
