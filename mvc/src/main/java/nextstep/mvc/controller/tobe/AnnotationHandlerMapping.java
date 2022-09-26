@@ -6,12 +6,10 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,30 +27,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         try {
-            initializeHandlerExecutions();
+            ControllerScanner controllerScanner = ControllerScanner.from(basePackage);
+            Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+            initializeHandlerExecutions(controllers);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
 
-    private void initializeHandlerExecutions()
-            throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        initializeHandlerExecutions(controllers);
-    }
-
-    private void initializeHandlerExecutions(Set<Class<?>> controllers)
-            throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        for (Class<?> controller : controllers) {
-            Object instance = controller.getDeclaredConstructor()
-                    .newInstance();
-            Arrays.stream(controller.getDeclaredMethods())
+    private void initializeHandlerExecutions(Map<Class<?>, Object> controllers) {
+        for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            Arrays.stream(controller.getKey().getDeclaredMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> insertIntoHandlerExecutions(instance, method));
+                    .forEach(method -> insertIntoHandlerExecutions(controller.getValue(), method));
         }
     }
 
@@ -63,6 +54,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
     }
 
+    @Override
     public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.from(request.getMethod());
