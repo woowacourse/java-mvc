@@ -42,13 +42,13 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-            if (handler.isEmpty()) {
+            Object handler = handlerMappingRegistry.getHandler(request);
+            if (handler == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
+            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
             render(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

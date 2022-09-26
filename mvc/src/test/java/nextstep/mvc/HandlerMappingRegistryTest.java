@@ -21,7 +21,7 @@ class HandlerMappingRegistryTest {
         registry.add(new AnnotationHandlerMapping("samples"));
         registry.init();
 
-        Object handler = registry.getHandler(request).get();
+        Object handler = registry.getHandler(request);
         assertThat(handler).extracting("instance").isInstanceOf(TestController.class);
     }
 
@@ -35,6 +35,6 @@ class HandlerMappingRegistryTest {
         registry.add(new AnnotationHandlerMapping("samples"));
         registry.init();
 
-        assertThat(registry.getHandler(request)).isEmpty();
+        assertThat(registry.getHandler(request)).isNull();
     }
 }

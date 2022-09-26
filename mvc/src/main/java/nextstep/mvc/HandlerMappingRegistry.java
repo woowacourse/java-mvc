@@ -3,8 +3,6 @@ package nextstep.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
@@ -18,10 +16,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst();
+    public Object getHandler(final HttpServletRequest request) {
+        Object handler = null;
+        for (HandlerMapping mapping : handlerMappings) {
+            handler = mapping.getHandler(request);
+        }
+        return handler;
     }
 }
