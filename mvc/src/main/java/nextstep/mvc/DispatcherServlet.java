@@ -16,17 +16,17 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
-    private HandlerExecutor handlerExecutor;
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
     public void init() {
         handlerMappingRegistry.init();
-        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
