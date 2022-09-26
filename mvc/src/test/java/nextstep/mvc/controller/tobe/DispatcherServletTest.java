@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.exception.NotFoundHandlerException;
-import org.assertj.core.api.Assertions;
+import nextstep.mvc.handler.AnnotationHandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,7 @@ public class DispatcherServletTest {
     void setUp() {
         dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
         dispatcherServlet.init();
     }
 
@@ -47,6 +48,6 @@ public class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-            .isInstanceOf(NotFoundHandlerException.class);
+            .isInstanceOf(ServletException.class);
     }
 }
