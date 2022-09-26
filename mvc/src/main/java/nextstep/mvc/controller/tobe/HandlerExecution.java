@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.NullView;
 import nextstep.mvc.view.RedirectView;
 
 public class HandlerExecution {
@@ -25,6 +26,10 @@ public class HandlerExecution {
         }
         if (ModelAndView.class.equals(returnType)) {
             return (ModelAndView) method.invoke(declaredObject, request, response);
+        }
+        if (Void.TYPE.equals(returnType)) {
+            method.invoke(declaredObject, request, response);
+            return new ModelAndView(new NullView());
         }
         throw new IllegalArgumentException("처리될 수 없는 로직입니다.");
     }
