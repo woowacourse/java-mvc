@@ -28,11 +28,6 @@ public class JspView implements View {
 
         model.forEach(request::setAttribute);
 
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
-
         request.getRequestDispatcher(viewName)
                 .forward(request, response);
     }
