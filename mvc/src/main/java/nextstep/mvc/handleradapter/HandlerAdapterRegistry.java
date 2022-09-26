@@ -33,7 +33,7 @@ public class HandlerAdapterRegistry {
         try {
             return handlerAdapter.handle(request, response, handler);
         } catch (Exception e) {
-            throw new IllegalArgumentException(String.format("적절하지 않은 handler 입니다. [%s]", handler));
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 }
