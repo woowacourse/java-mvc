@@ -2,7 +2,6 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -12,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class TestController implements nextstep.mvc.controller.asis.Controller {
+public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
@@ -28,10 +27,5 @@ public class TestController implements nextstep.mvc.controller.asis.Controller {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
-    }
-
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return (String) req.getAttribute("name");
     }
 }

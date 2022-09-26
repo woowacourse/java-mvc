@@ -4,9 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.handleradapter.HandlerAdapter;
-import nextstep.mvc.controller.tobe.handleradapter.HandlerAdapterRegistry;
-import nextstep.mvc.controller.tobe.handlermapping.HandlerMappingRegistry;
+import nextstep.mvc.controller.handleradapter.HandlerAdapter;
+import nextstep.mvc.controller.handleradapter.HandlerAdapterRegistry;
+import nextstep.mvc.controller.handlermapping.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {

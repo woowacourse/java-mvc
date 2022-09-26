@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe.handleradapter;
+package nextstep.mvc.controller.handleradapter;
 
 import java.util.ArrayList;
 import java.util.List;

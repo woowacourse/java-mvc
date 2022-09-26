@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe.handlermapping;
+package nextstep.mvc.controller.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRegistry () {
+    public HandlerMappingRegistry() {
         this.handlerMappings = new ArrayList<>();
     }
 
