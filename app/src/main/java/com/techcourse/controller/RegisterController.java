@@ -6,12 +6,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import java.util.stream.Stream;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
         if (absenceEssential(req)) {
             return "redirect:/register.jsp";
         }
@@ -29,7 +32,7 @@ public class RegisterController implements Controller {
                 .anyMatch(Objects::isNull);
     }
 
-    private static void registerUser(final HttpServletRequest req) {
+    private void registerUser(final HttpServletRequest req) {
         final var user = new User(
                 req.getParameter("account"),
                 req.getParameter("password"),

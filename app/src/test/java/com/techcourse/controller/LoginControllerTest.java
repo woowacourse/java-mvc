@@ -11,14 +11,13 @@ import com.techcourse.support.Fixture;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class LoginControllerTest {
 
-    private final Controller controller = new LoginController();
+    private final LoginController controller = new LoginController();
 
     @DisplayName("/login 요청 시")
     @Nested
@@ -26,7 +25,7 @@ class LoginControllerTest {
 
         @DisplayName("비밀번호가 일치하면 viewName으로 redirect:/index.jsp 가 응답된다")
         @Test
-        void redirect_to_index_when_password_is_correct() throws Exception {
+        void redirect_to_index_when_password_is_correct() {
             // given
             final HttpServletRequest request = mock(HttpServletRequest.class);
             final HttpServletResponse response = mock(HttpServletResponse.class);
@@ -44,7 +43,7 @@ class LoginControllerTest {
 
         @DisplayName("비밀번호가 일치하지 않으면 viewName으로 redirect:/401.jsp 가 응답된다")
         @Test
-        void redirect_to_401_when_password_is_not_correct() throws Exception {
+        void redirect_to_401_when_password_is_not_correct() {
             // given
             final HttpServletRequest request = mock(HttpServletRequest.class);
             final HttpServletResponse response = mock(HttpServletResponse.class);
@@ -62,7 +61,7 @@ class LoginControllerTest {
 
         @DisplayName("이미 로그인되어있다면 getAttribute메서드 호출 없이 viewName으로 redirect:/index.jsp 가 응답된다")
         @Test
-        void redirect_to_index_when_already_logged_in() throws Exception {
+        void redirect_to_index_when_already_logged_in() {
             // given
             final HttpServletRequest request = mock(HttpServletRequest.class);
             final HttpServletResponse response = mock(HttpServletResponse.class);

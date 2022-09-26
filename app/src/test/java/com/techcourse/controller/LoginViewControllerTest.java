@@ -11,14 +11,13 @@ import com.techcourse.support.Fixture;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import nextstep.mvc.controller.asis.Controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class LoginViewControllerTest {
 
-    private final Controller controller = new LoginViewController();
+    private final LoginViewController controller = new LoginViewController();
 
     @DisplayName("/login/view 요청시")
     @Nested
@@ -26,7 +25,7 @@ class LoginViewControllerTest {
 
         @DisplayName("로그인 되어있지 않다면 viewName으로 /login.jsp를 응답한다")
         @Test
-        void loginView_should_return_login_jsp_if_not_logged_in() throws Exception {
+        void loginView_should_return_login_jsp_if_not_logged_in() {
             // given
             final HttpServletRequest request = mock(HttpServletRequest.class);
             final HttpServletResponse response = mock(HttpServletResponse.class);
@@ -43,7 +42,7 @@ class LoginViewControllerTest {
 
         @DisplayName("로그인 되어있다면 viewName으로 redirect:/index.jsp를 응답한다")
         @Test
-        void loginView_should_return_index_jsp_if_logged_in() throws Exception {
+        void loginView_should_return_index_jsp_if_logged_in() {
             // given
             final HttpServletRequest request = mock(HttpServletRequest.class);
             final HttpServletResponse response = mock(HttpServletResponse.class);
