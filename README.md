@@ -16,7 +16,7 @@
 ## 2단계 - 점진적인 리팩터링
 
 ### 요구사항
-- [ ] Legacy MVC, @MVC 통합
+- [x] Legacy MVC, @MVC 통합
 
 ### 체크리스트
 - [x] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.

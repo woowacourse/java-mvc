@@ -1,6 +1,5 @@
 package nextstep.mvc.controller.tobe;
 
-import java.util.Objects;
 import nextstep.web.support.RequestMethod;
 
 public class HandlerKey {
@@ -26,15 +25,19 @@ public class HandlerKey {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof HandlerKey)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         HandlerKey that = (HandlerKey) o;
-        return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
+
+        return url.equals(that.url) && requestMethod == that.requestMethod;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, requestMethod);
+        int result = url.hashCode();
+        result = 31 * result + requestMethod.hashCode();
+        return result;
     }
 }

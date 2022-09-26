@@ -17,6 +17,12 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView registerView(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("RegisterController GET Method");
+        return new ModelAndView(new JspView("/register.jsp"));
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         log.info("RegisterController POST Method");
@@ -27,11 +33,5 @@ public class RegisterController {
         InMemoryUserRepository.save(user);
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
-    }
-
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerView(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("RegisterController GET Method");
-        return new ModelAndView(new JspView("/register"));
     }
 }
