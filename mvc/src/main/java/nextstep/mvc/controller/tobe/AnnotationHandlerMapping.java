@@ -1,9 +1,9 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
@@ -28,40 +28,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        for (Class<?> clazz : controllers.keySet()) {
-            initHandlerExecutions(clazz);
+        List<Object> values = Collections.singletonList(controllers.values());
+        for (Object controller : values) {
+            addHandlerExecutions(controller);
         }
         logInitializedRequestPath();
     }
 
-    private void initHandlerExecutions(final Class<?> clazz) {
-        Method[] methods = clazz.getDeclaredMethods();
+    private void addHandlerExecutions(final Object controller) {
+        Method[] methods = controller.getClass().getDeclaredMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-                initHandlerExecutions(clazz, method, requestMapping);
+                addHandlerExecutions(controller, method, requestMapping);
             }
         }
     }
 
-    private void initHandlerExecutions(final Class<?> clazz, final Method declaredMethod,
-                                       final RequestMapping requestMapping) {
+    private void addHandlerExecutions(final Object controller,
+                                      final Method method,
+                                      final RequestMapping requestMapping) {
         String uri = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
-            HandlerExecution handlerExecution = instantiateHandlerExecution(clazz, declaredMethod);
-            handlerExecutions.add(new HandlerKey(uri, requestMethod), handlerExecution);
-        }
-    }
-
-    private HandlerExecution instantiateHandlerExecution(final Class<?> clazz, final Method method) {
-        try {
-            Constructor<?> constructor = clazz.getConstructor();
-            return new HandlerExecution(constructor.newInstance(), method);
-        } catch (InstantiationException | IllegalAccessException
-                 | InvocationTargetException | NoSuchMethodException e) {
-            log.error("fail initialize!");
-            throw new RuntimeException(e);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            handlerExecutions.add(handlerKey, handlerExecution);
         }
     }
 

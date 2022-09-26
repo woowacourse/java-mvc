@@ -7,8 +7,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControllerScanner {
+
+    private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
     private final Reflections reflections;
 
@@ -18,11 +22,7 @@ public class ControllerScanner {
 
     public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        return getControllers(controllers);
-    }
-
-    private Map<Class<?>, Object> getControllers(final Set<Class<?>> controller) {
-        return controller.stream()
+        return controllers.stream()
                 .collect(Collectors.toMap(Function.identity(), this::instantiate));
     }
 
@@ -33,6 +33,7 @@ public class ControllerScanner {
                  | InstantiationException
                  | InvocationTargetException
                  | IllegalAccessException e) {
+            log.error("fail initialize!");
             throw new IllegalStateException(e);
         }
     }
