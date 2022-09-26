@@ -17,13 +17,11 @@ class HandlerMappingRegistryTest {
         // given
         final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("samples"));
-        handlerMappingRegistry.init();
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/test");
         when(request.getMethod()).thenReturn("GET");
 
         // when
-
         final Optional<Object> wrappedHandler = handlerMappingRegistry.getHandler(request);
 
         // then
