@@ -10,11 +10,7 @@ public class ModelAndView {
     private final Map<String, Object> model;
 
     public ModelAndView(final String viewName) {
-        this(getView(viewName));
-    }
-
-    public ModelAndView(final View view) {
-        this.view = view;
+        this.view = getView(viewName);
         this.model = new HashMap<>();
     }
 
