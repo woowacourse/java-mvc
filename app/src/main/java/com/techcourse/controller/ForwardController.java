@@ -2,20 +2,22 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.Controller;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ForwardController implements Controller {
+@Controller
+public class ForwardController {
 
-    private final String path;
+    private static final Logger log = LoggerFactory.getLogger(ForwardController.class);
 
-    public ForwardController(final String path) {
-        this.path = Objects.requireNonNull(path);
-    }
-
-    @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return path;
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView forward(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("request {} {}", request.getMethod(), request.getRequestURI());
+        return new ModelAndView("/index.jsp");
     }
 }

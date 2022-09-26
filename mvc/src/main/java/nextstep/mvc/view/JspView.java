@@ -44,7 +44,7 @@ public class JspView implements View {
         });
 
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        requestDispatcher.include(request, response);
     }
 
     private void addLocation(final HttpServletResponse response) throws IOException {
