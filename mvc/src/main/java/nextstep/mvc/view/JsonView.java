@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Map;
-import nextstep.mvc.exception.AttributeNotFoundException;
+import nextstep.mvc.exception.EmptyModelException;
 import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
@@ -20,7 +20,7 @@ public class JsonView implements View {
         try {
             Object attributes = getAttributes(model);
             writer.print(objectMapper.writeValueAsString(attributes));
-        } catch (AttributeNotFoundException e) {
+        } catch (EmptyModelException e) {
             writer.print("");
         }
     }
@@ -32,6 +32,6 @@ public class JsonView implements View {
         return model.values()
                 .stream()
                 .findAny()
-                .orElseThrow(AttributeNotFoundException::new);
+                .orElseThrow(EmptyModelException::new);
     }
 }

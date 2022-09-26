@@ -1,8 +1,8 @@
 package nextstep.mvc.exception;
 
-public class AttributeNotFoundException extends RuntimeException {
+public class EmptyModelException extends RuntimeException {
 
-    public AttributeNotFoundException() {
+    public EmptyModelException() {
         super("Model에 attribute 값이 들어있지 않습니다.");
     }
 }
