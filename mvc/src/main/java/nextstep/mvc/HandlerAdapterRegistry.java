@@ -1,11 +1,12 @@
 package nextstep.mvc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class HandlerAdapterRegistry {
 
-    private List<HandlerAdapter> handlerAdapters;
+    private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public HandlerAdapter getAdapter(final Object handler) {
         return handlerAdapters.stream()

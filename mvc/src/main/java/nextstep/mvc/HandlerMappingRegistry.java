@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
-    private ArrayList<HandlerMapping> handlerMappings;
+    private ArrayList<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
