@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collection;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,8 @@ class JacksonTest {
         final ObjectMapper objectMapper = new ObjectMapper();
         final Guardian yaho = new Guardian("yaho", 24);
         final Map<String, ?> model = Map.of("guardian", yaho);
-        final String value = objectMapper.writeValueAsString(model.values());
+        final Collection<?> values = model.values();
+        final String value = objectMapper.writeValueAsString(values.toArray()[0]);
 
         assertAll(
                 () -> assertThat(value.startsWith("{")).isTrue(),

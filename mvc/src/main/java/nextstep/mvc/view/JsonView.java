@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Map;
 import nextstep.web.support.MediaType;
 import org.slf4j.Logger;
@@ -32,7 +33,8 @@ public class JsonView implements View {
 
     private String toJson(final Map<String, ?> model) throws JsonProcessingException {
         if (model.size() == 1) {
-            return objectMapper.writeValueAsString(model.values());
+            final Collection<?> values = model.values();
+            return objectMapper.writeValueAsString(values.toArray()[0]);
         }
         return objectMapper.writeValueAsString(model);
     }
