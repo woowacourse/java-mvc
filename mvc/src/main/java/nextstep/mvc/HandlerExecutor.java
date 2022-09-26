@@ -17,6 +17,4 @@ public class HandlerExecutor {
         final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         return handlerAdapter.handle(request, response, handler);
     }
-
-
 }
