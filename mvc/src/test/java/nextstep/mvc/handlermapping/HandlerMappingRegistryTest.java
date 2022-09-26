@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import fixture.RequestFixture;
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.web.support.RequestMethod;
 
 class HandlerMappingRegistryTest {
 
@@ -27,7 +28,7 @@ class HandlerMappingRegistryTest {
     @Test
     void getHandlerNotExist() {
         final HandlerMappingRegistry registry = new HandlerMappingRegistry();
-        final HttpServletRequest request = RequestFixture.getRequest("/not-exist-path");
+        final HttpServletRequest request = RequestFixture.request("/not-exist-path", RequestMethod.GET);
 
         assertThatThrownBy(() -> registry.getHandler(request))
             .isInstanceOf(IllegalArgumentException.class)
