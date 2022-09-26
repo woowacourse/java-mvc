@@ -20,18 +20,22 @@ public class HandlerKey {
     }
 
     public HandlerKey(final HttpServletRequest request) {
-        String url = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
-        this.url = url;
-        this.requestMethod = requestMethod;
+        this.url = request.getRequestURI();
+        this.requestMethod = RequestMethod.valueOf(request.getMethod());
     }
 
     public static List<HandlerKey> from(final RequestMapping requestMapping) {
         String url = requestMapping.value();
-        List<RequestMethod> requestMethods = Arrays.stream(requestMapping.method())
-                .collect(Collectors.toList());
+        List<RequestMethod> requestMethods = generateRequestMethods(requestMapping);
+        return generateHandlerKeys(url, requestMethods);
+    }
 
+    private static List<RequestMethod> generateRequestMethods(final RequestMapping requestMapping) {
+        return Arrays.stream(requestMapping.method())
+                .collect(Collectors.toList());
+    }
+
+    private static List<HandlerKey> generateHandlerKeys(final String url, final List<RequestMethod> requestMethods) {
         List<HandlerKey> handlerKeys = new ArrayList<>();
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
