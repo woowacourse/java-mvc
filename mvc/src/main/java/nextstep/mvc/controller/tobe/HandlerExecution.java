@@ -18,6 +18,14 @@ public class HandlerExecution {
         this.method = handler;
     }
 
+    public boolean hasReturnTypeOf(Class<?> returnType) {
+        return method.getReturnType().equals(returnType);
+    }
+
+    public Object handle2(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return method.invoke(declaredObject, request, response);
+    }
+
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final var returnType = method.getReturnType();
         if (String.class.equals(returnType)) {
