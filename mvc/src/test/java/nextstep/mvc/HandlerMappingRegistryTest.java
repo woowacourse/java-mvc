@@ -1,11 +1,13 @@
 package nextstep.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
@@ -26,7 +28,7 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
-    void 핸들러가_존재하지_않는경우_Null_을_반환한다() {
+    void 핸들러가_존재하지_않는경우_예외를_발생한다() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/noop");
         when(request.getMethod()).thenReturn("GET");
@@ -35,6 +37,7 @@ class HandlerMappingRegistryTest {
         registry.add(new AnnotationHandlerMapping("samples"));
         registry.init();
 
-        assertThat(registry.getHandler(request)).isNull();
+        assertThatThrownBy(() -> registry.getHandler(request))
+                .isInstanceOf(NotFoundException.class);
     }
 }
