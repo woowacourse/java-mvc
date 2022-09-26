@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import samples.TestAnnotationController;
 
 class ControllerScannerTest {
 
@@ -13,6 +14,6 @@ class ControllerScannerTest {
 
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        assertThat(controllers).hasSize(1);
+        assertThat(controllers.keySet()).containsExactly(TestAnnotationController.class);
     }
 }
