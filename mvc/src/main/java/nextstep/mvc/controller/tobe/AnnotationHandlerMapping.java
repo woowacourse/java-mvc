@@ -1,15 +1,13 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Map.Entry;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -29,36 +27,41 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final var reflections = new Reflections(basePackage);
-        final var methods = findAllControllerMethods(reflections);
-        collectMethodsToHandlerExecutions(methods);
+        final var controllerScanner = new ControllerScanner(reflections);
+
+        final var methods = getMethods(controllerScanner.getControllers());
+        addHandlerExecutions(methods);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void collectMethodsToHandlerExecutions(final List<Method> methods) {
-        for (Method method : methods) {
-            final var requestMapping = method.getAnnotation(RequestMapping.class);
-            final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[FIRST_INDEX]);
+    private Map<Object, Method[]> getMethods(final Map<Class<?>, Object> controllers) {
+        final var instanceAndMethods = new HashMap<Object, Method[]>();
 
-            try {
-                final var controller = method.getDeclaringClass()
-                        .getDeclaredConstructor()
-                        .newInstance();
-                handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new RuntimeException();
+        for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            final var instance = entry.getValue();
+            final var publicMethods = Arrays
+                    .stream(entry.getKey().getDeclaredMethods())
+                    .filter(it -> Modifier.isPublic(it.getModifiers()))
+                    .toArray(Method[]::new);
+            instanceAndMethods.put(instance, publicMethods);
+        }
+        return instanceAndMethods;
+    }
+
+    private void addHandlerExecutions(final Map<Object, Method[]> methods) {
+        for (Entry<Object, Method[]> instanceAndMethods : methods.entrySet()) {
+            for (Method method : instanceAndMethods.getValue()) {
+                final var requestMapping = method.getAnnotation(RequestMapping.class);
+                final var handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[FIRST_INDEX]);
+                handlerExecutions.put(handlerKey, new HandlerExecution(instanceAndMethods.getKey(), method));
             }
         }
     }
 
-    private List<Method> findAllControllerMethods(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .map(Class::getDeclaredMethods)
-                .flatMap(Stream::of)
-                .collect(Collectors.toList());
-    }
-
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final var uri = request.getRequestURI();
         final var method = request.getMethod();
