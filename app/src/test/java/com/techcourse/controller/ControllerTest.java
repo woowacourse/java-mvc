@@ -8,6 +8,7 @@ import com.techcourse.ManualHandlerMapping;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import java.util.Optional;
+import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.test.MockMvc;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ public class ControllerTest {
 
     @Test
     void loginSuccessfully() throws Exception {
-        MockMvc mockMvc = new MockMvc(new ManualHandlerMapping());
+        MockMvc mockMvc = new MockMvc(new AnnotationHandlerMapping("com.techcourse"));
 
         mockMvc.perform(post("/login")
                 .param("account", "gugu")
@@ -34,7 +35,7 @@ public class ControllerTest {
 
     @Test
     void loginFailed() throws Exception {
-        MockMvc mockMvc = new MockMvc(new ManualHandlerMapping());
+        MockMvc mockMvc = new MockMvc(new AnnotationHandlerMapping("com.techcourse"));
 
         mockMvc.perform(post("/login")
                 .param("account", "gugu")
@@ -45,7 +46,7 @@ public class ControllerTest {
 
     @Test
     void loginView() throws Exception {
-        MockMvc mockMvc = new MockMvc(new ManualHandlerMapping());
+        MockMvc mockMvc = new MockMvc(new AnnotationHandlerMapping("com.techcourse"));
 
         mockMvc.perform(get("/login/view"))
                 .forwardTo("/login.jsp");

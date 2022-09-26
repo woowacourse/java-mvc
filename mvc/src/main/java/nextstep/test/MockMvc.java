@@ -10,7 +10,6 @@ import nextstep.mvc.AnnotationHandlerAdapter;
 import nextstep.mvc.ControllerHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 
 public class MockMvc {
 
@@ -22,7 +21,6 @@ public class MockMvc {
         for (HandlerMapping handlerMapping : handlerMappings) {
             dispatcherServlet.addHandlerMapping(handlerMapping);
         }
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
 
         dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
