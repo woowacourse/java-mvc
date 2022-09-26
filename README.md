@@ -16,3 +16,11 @@
 `ManualHandlerMapping`과 `AnnotationHandlerMapping` 둘 다 사용할 수 있어야 한다.
 - [X] `Controller`와 `HandlerExecution` 둘 다를 실행할 수 있다.
 - [X] `ModelAndView`를 적절하게 rendering 할 수 있다.
+
+## [🚀 2단계 - 점진적인 리팩터링](https://techcourse.woowahan.com/s/cCM7rQR9/ls/rn3vGCrZ)
+
+### 기능 요구사항
+interface 기반의 컨트롤러와 annotation 기반의 컨트롤러가 공존하는 상태로 정상 동작하도록 구현한다.
+- [X] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.
+- [X] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현했다.
+- [X] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.

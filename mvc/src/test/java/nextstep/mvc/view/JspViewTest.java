@@ -1,7 +1,6 @@
 package nextstep.mvc.view;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,9 +25,9 @@ class JspViewTest {
 
         jspView.render(Map.of(), request, response);
 
-        verify(request, times(1))
+        verify(request)
                 .getRequestDispatcher("/index.jsp");
-        verify(requestDispatcher, times(1))
+        verify(requestDispatcher)
                 .forward(request, response);
     }
 
@@ -41,7 +40,7 @@ class JspViewTest {
 
         jspView.render(null, request, response);
 
-        verify(response, times(1))
+        verify(response)
                 .sendRedirect("/index.jsp");
     }
 }

@@ -1,15 +1,13 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
+import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -30,14 +28,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        final Set<Class<?>> controllerClasses = getControllerClasses(basePackage);
-        final Map<Class<?>, Set<Method>> handlerMethodsPerController = getMethodsPerController(controllerClasses);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Entry<Class<?>, Set<Method>> handlerMethods : handlerMethodsPerController.entrySet()) {
-            final Class<?> controllerClass = handlerMethods.getKey();
-            final Set<Method> methods = handlerMethods.getValue();
-            Map<Method, Set<HandlerKey>> handlerKeysPerMethod = getHandlerKeysPerMethod(methods);
-            mapHandlerExecutions(controllerClass, handlerKeysPerMethod);
+        for (Entry<Class<?>, Object> controllerObject : controllers.entrySet()) {
+            final Set<Method> methods = getHandlerMethods(controllerObject.getKey());
+            final Map<Method, Set<HandlerKey>> handlerKeysPerMethod = getHandlerKeysPerMethod(methods);
+            mapHandlerExecutions(controllerObject.getValue(), handlerKeysPerMethod);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -47,18 +44,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
     }
 
-    private Set<Class<?>> getControllerClasses(final Object[] basePackage) {
-        final Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private Map<Class<?>, Set<Method>> getMethodsPerController(final Set<Class<?>> controllerClasses) {
-        return controllerClasses.stream()
-                .collect(Collectors.toMap(
-                        clazz -> clazz,
-                        clazz -> new Reflections(clazz, Scanners.MethodsAnnotated)
-                                .getMethodsAnnotatedWith(RequestMapping.class)
-                ));
+    private Set<Method> getHandlerMethods(final Class<?> controllerClass) {
+        return new Reflections(controllerClass, Scanners.MethodsAnnotated)
+                .getMethodsAnnotatedWith(RequestMapping.class);
     }
 
     private Map<Method, Set<HandlerKey>> getHandlerKeysPerMethod(final Set<Method> methods) {
@@ -69,24 +57,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 ));
     }
 
-    private void mapHandlerExecutions(final Class<?> controllerClass,
+    private void mapHandlerExecutions(final Object controller,
                                       final Map<Method, Set<HandlerKey>> handlerKeysPerMethod) {
-        final Object controller = getInstance(controllerClass);
         for (Entry<Method, Set<HandlerKey>> handlerKeys : handlerKeysPerMethod.entrySet()) {
             final Method method = handlerKeys.getKey();
             final Set<HandlerKey> keys = handlerKeys.getValue();
             keys.forEach(
                     handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(controller, method))
             );
-        }
-    }
-
-    private Object getInstance(final Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
         }
     }
 }
