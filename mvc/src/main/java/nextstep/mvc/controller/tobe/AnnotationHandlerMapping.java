@@ -36,8 +36,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void registerHandlerExecutions(Map<Class<?>, Object> controllerClassWithInstance) {
         for (Entry<Class<?>, Object> entry : controllerClassWithInstance.entrySet()) {
             Object instance = entry.getValue();
-            Class<?> aClass = entry.getKey();
-            Set<Method> requestMappingMethods = getRequestMappingMethods(aClass);
+            Class<?> controllerClass = entry.getKey();
+            Set<Method> requestMappingMethods = getRequestMappingMethods(controllerClass);
             addHandlerExecution(instance, requestMappingMethods);
         }
     }
