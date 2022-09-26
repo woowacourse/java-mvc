@@ -1,17 +1,10 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,27 +24,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        for (final var clazz : findControllerClasses()) {
-            initExecutions(clazz);
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private Set<Class<?>> findControllerClasses() {
-        return Arrays.stream(this.basePackages)
-                .map(Reflections::new)
-                .map(it -> it.getTypesAnnotatedWith(Controller.class))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-    }
-
-    private void initExecutions(final Class<?> clazz) {
         try {
-            handlerExecutions.putAll(createControllerExecutions(clazz));
+            handlerExecutions.putAll(initExecutions());
+            log.info("Initialized AnnotationHandlerMapping!");
         } catch (Exception e) {
-            log.error("fail to initialize AnnotationHandlerMapping");
             throw new RuntimeException(e);
         }
+    }
+
+    private Map<HandlerKey, HandlerExecution> initExecutions() throws Exception {
+        ControllerScanner controllerScanner = ControllerScanner.from(basePackages);
+        final Map<Class<?>, Object> controllers = controllerScanner.findControllers();
+        final HashMap<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+        for (Class<?> controller : controllers.keySet()) {
+            handlerExecutions.putAll(createControllerExecutions(controller));
+        }
+        return handlerExecutions;
     }
 
     private Map<HandlerKey, HandlerExecution> createControllerExecutions(final Class<?> clazz) throws Exception {
