@@ -6,8 +6,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecutionAdapter;
 import nextstep.mvc.support.MockRequestDispatcher;
+import nextstep.mvc.view.MockOutputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,7 +30,7 @@ class DispatcherServletTest {
     }
 
     @Test
-    void view가_반환되면_해당_view로_forward한다() throws ServletException {
+    void jspView가_반환되면_해당_view로_forward한다() throws ServletException {
         // given
         final MockRequestDispatcher requestDispatcher = new MockRequestDispatcher();
         final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -41,6 +44,24 @@ class DispatcherServletTest {
 
         // then
         assertThat(requestDispatcher.isForwardExecuted()).isTrue();
+    }
+
+    @Test
+    void jsonView가_반환되면_response_body에_데이터가_포함된다() throws IOException, ServletException {
+        // given
+        final MockOutputStream outputStream = new MockOutputStream();
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/json/test");
+        when(response.getOutputStream()).thenReturn(outputStream);
+        final String expected = "{\"id\":\"json\"}";
+
+        // when
+        dispatcherServlet.service(request, response);
+
+        // then
+        assertThat(outputStream.getValue()).isEqualTo(expected);
     }
 
     @Test
