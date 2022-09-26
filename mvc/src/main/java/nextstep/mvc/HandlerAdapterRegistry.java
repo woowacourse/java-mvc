@@ -1,11 +1,10 @@
 package nextstep.mvc;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class HandlerAdapterRegistry implements Serializable {
+public class HandlerAdapterRegistry {
 
     private static final String NO_ADAPTER_ERROR_MESSAGE = "일치하는 어댑터가 없습니다.";
 
