@@ -4,10 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -18,26 +14,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapters(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -46,34 +41,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handler = getHandler(request);
+            final var handler = handlerMappingRegistry.getHandler(request);
             final var modelAndView = handle(request, response, handler);
-            View view = modelAndView.getView();
+            final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
+                                final Object handler)
             throws Exception {
-        HandlerAdapter adapter = getAdapter(handler);
+        final HandlerAdapter adapter = handlerAdapterRegistry.getAdapter(handler);
         return adapter.handle(request, response, handler);
-    }
-
-    private HandlerAdapter getAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(it -> it.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new HandlerAdapterNotFoundException("사용할 수 있는 adapter가 없습니다."));
     }
 }
