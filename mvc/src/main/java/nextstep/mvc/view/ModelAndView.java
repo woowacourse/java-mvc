@@ -2,11 +2,16 @@ package nextstep.mvc.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModelAndView {
+
+    private static final Logger log = LoggerFactory.getLogger(ModelAndView.class);
 
     private final View view;
     private final Map<String, Object> model;
@@ -22,7 +27,7 @@ public class ModelAndView {
     }
 
     public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
+            view.render(model, request, response);
     }
 
     public Object getObject(final String attributeName) {

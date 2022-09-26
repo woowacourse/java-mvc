@@ -35,7 +35,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void initHandlerExecutions(Map<Class<?>, Object> controllers) {
         for (Class<?> controller : controllers.keySet()) {
-            System.out.println("controller.getName() = " + controller.getName());
             addHandlerExecutions(controllers.get(controller), getRequestMappingMethods(controller));
         }
     }

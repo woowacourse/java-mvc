@@ -4,8 +4,12 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HandlerKey {
+
+    private static final Logger log = LoggerFactory.getLogger(HandlerKey.class);
 
     private final String url;
     private final RequestMethod requestMethod;
@@ -19,6 +23,7 @@ public class HandlerKey {
         final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         final String url = annotation.value();
         final RequestMethod requestMethod = annotation.method()[0];
+        log.info("url : {} , method: {}, requestMethod: {}", url, method.getName(), requestMethod.name());
         return new HandlerKey(url, requestMethod);
     }
 
