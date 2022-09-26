@@ -12,7 +12,6 @@ public class ControllerScanner {
     private final Reflections reflections;
     private final Map<Class<?>, Object> controllers;
 
-
     public ControllerScanner(Reflections reflections) {
         this.reflections = reflections;
         this.controllers = new HashMap<>();
