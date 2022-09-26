@@ -34,11 +34,12 @@
 구현 기능 목록
 
 - [x] JspView 클래스 구현
-- [ ] JsonView 클래스 구현
+- [x] JsonView 클래스 구현
 - [ ] Legacy MVC 제거
 
 리팩터링
 
 - [x] 기존에 주워진 url을 사용하도록 수정(회원가입)
+- [ ] UserController에서 account 정보가 없을 경우 예외 처리
 
 </details>
