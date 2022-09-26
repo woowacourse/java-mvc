@@ -21,11 +21,13 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Object getController(final HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(
+                        () -> new IllegalArgumentException(request.getRequestURI() + "에 맞는 핸들러를 찾을 수 없습니다.")
+                );
     }
 }
