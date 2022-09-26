@@ -20,8 +20,20 @@ public class LoginController {
 
     private static final String REDIRECT_INDEX_JSP_VIEW_NAME = "redirect:/index.jsp";
     private static final String REDIRECT_UNAUTHORIZED_JSP_VIEW_NAME = "redirect:/401.jsp";
+    private static final String LOGIN_JSP_VIEW_NAME = "/login.jsp";
+
     private static final String LOGIN_REQUEST_PARAMETER_ACCOUNT_KEY = "account";
     private static final String LOGIN_REQUEST_PARAMETER_PASSWORD_KEY = "password";
+
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView getLoginView(final HttpServletRequest request, final HttpServletResponse response) {
+        return UserSession.getUserFrom(request.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return new ModelAndView(new JspView(REDIRECT_INDEX_JSP_VIEW_NAME));
+                })
+                .orElse(new ModelAndView(new JspView(LOGIN_JSP_VIEW_NAME)));
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
