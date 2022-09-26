@@ -1,19 +1,26 @@
 package nextstep.mvc;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.mock;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
+import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import samples.TestManualHandlerMapping;
 
 class DispatcherServletTest {
@@ -65,5 +72,29 @@ class DispatcherServletTest {
 
         // then
         verify(request).getRequestDispatcher("testView");
+    }
+
+    @Test
+    @DisplayName("Response Body로 JSON 형식의 데이터를 담아 반환할 수 있다.")
+    void handleJsonView() throws ServletException, IOException {
+        // given
+        given(request.getRequestURI()).willReturn("/api/sample");
+        given(request.getMethod()).willReturn(RequestMethod.GET.name());
+        final PrintWriter writer = mock(PrintWriter.class);
+        given(response.getWriter()).willReturn(writer);
+        willDoNothing().given(writer).write(any(String.class));
+
+        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        dispatcherServlet.init();
+
+        // when
+        dispatcherServlet.service(request, response);
+
+        // then
+        assertAll(
+                () -> verify(writer).write(ArgumentMatchers.contains("sample"))
+        );
     }
 }
