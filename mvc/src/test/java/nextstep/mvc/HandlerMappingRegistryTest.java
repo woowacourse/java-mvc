@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.NoSuchElementException;
+import nextstep.mvc.controller.exception.UnsupportedRequestException;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.web.exception.MethodNotAllowedException;
@@ -42,7 +42,7 @@ class HandlerMappingRegistryTest {
         when(request.getMethod()).thenReturn("GET");
 
         assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(UnsupportedRequestException.class);
     }
 
     @Test
