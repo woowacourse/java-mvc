@@ -21,10 +21,11 @@ class HandlerExecutionTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getAttribute("id")).thenReturn("gugu");
 
-        final Class<? extends TestController> clazz = new TestController().getClass();
+        final TestController testController = new TestController();
+        final Class<? extends TestController> clazz = testController.getClass();
         final Method method = clazz.getDeclaredMethod("findUserId", HttpServletRequest.class,
                 HttpServletResponse.class);
-        execution = new HandlerExecution(method);
+        execution = new HandlerExecution(testController, method);
 
         final ModelAndView modelAndView = execution.handle(request, response);
 

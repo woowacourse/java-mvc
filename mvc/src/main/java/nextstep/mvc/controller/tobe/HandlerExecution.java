@@ -8,20 +8,18 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
+    private final Object controller;
     private final Method method;
 
-    public HandlerExecution(final Method method) {
+    public HandlerExecution(Object controller, Method method) {
+        this.controller = controller;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
-        final Class<?> declaringClass = method.getDeclaringClass();
-        final Object clazz;
         try {
-            clazz = declaringClass.getDeclaredConstructor()
-                    .newInstance();
-            return (ModelAndView) method.invoke(clazz, new Object[]{request, response});
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            return (ModelAndView) method.invoke(controller, new Object[]{request, response});
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
