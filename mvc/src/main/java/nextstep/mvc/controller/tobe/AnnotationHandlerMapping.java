@@ -29,19 +29,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        for (Class<?> controller : controllerScanner.getAnnotationController()) {
-            registerHandler(controller);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+
+        for (Class<?> controller : controllers.keySet()) {
+            registerHandler(controllers, controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandler(final Class<?> controller) {
+    private void registerHandler(final Map<Class<?>, Object> controllers, final Class<?> controller) {
         for (Method method : controller.getMethods()) {
-            initHandlerExecutions(controller, method);
+            initHandlerExecutions(controllers, controller, method);
         }
     }
 
-    private void initHandlerExecutions(final Class<?> controller, final Method method) {
+    private void initHandlerExecutions(final Map<Class<?>, Object> controllers, final Class<?> controller,
+                                       final Method method) {
         if (!method.isAnnotationPresent(RequestMapping.class)) {
             return;
         }
@@ -49,18 +52,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
-            initHandlerExecution(requestMapping, requestMethod, controller, method);
-        }
-    }
-
-    private void initHandlerExecution(final RequestMapping requestMapping, final RequestMethod requestMethod,
-                                      final Class<?> controller, final Method method) {
-        try {
             handlerExecutions.put(new HandlerKey(requestMapping.value(), requestMethod),
-                    new HandlerExecution(controller.getDeclaredConstructor().newInstance(), method));
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                 InvocationTargetException e) {
-            log.error(e.getMessage());
+                    new HandlerExecution(controllers.get(controller), method));
         }
     }
 
