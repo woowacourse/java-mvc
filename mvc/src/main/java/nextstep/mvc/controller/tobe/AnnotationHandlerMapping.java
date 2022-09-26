@@ -3,7 +3,6 @@ package nextstep.mvc.controller.tobe;
 import static java.util.stream.Collectors.toList;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,10 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.tobe.exception.NotSupportHandler;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,43 +36,34 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(
-                new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
     }
 
     private void initHandlerExecution(final Object[] basePackage) {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = getAllControllers(reflections);
+        final ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Class<?> controllerClass : controllers) {
-            final Method[] methods = controllerClass.getDeclaredMethods();
-            putSupportedMethodInHandlerExecution(methods);
+        for (Class<?> controller : controllers.keySet()) {
+            final Set<Method> methods = getAllMethods(controller);
+            putSupportedMethodInHandlerExecution(methods, controllers.get(controller));
         }
     }
 
-    private static Set<Class<?>> getAllControllers(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class);
+    private static Set<Method> getAllMethods(final Class<?> aClass) {
+        return ReflectionUtils.getAllMethods(aClass, ReflectionUtils.withAnnotation(RequestMapping.class));
     }
 
-    private void putSupportedMethodInHandlerExecution(final Method[] methods) {
+    private void putSupportedMethodInHandlerExecution(final Set<Method> methods, final Object handler) {
         for (Method method : methods) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            final Object handler = getHandler(method);
-            putHandlerExecution(method, requestMapping, handler);
+            putHandlerExecution(method, handler);
         }
     }
 
-    private static Object getHandler(final Method method) {
-        try {
-            return method.getDeclaringClass().getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new NotSupportHandler();
-        }
-    }
-
-    private void putHandlerExecution(final Method method, final RequestMapping requestMapping, final Object handler) {
+    private void putHandlerExecution(final Method method, final Object handler) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping);
+
         for (HandlerKey handlerKey : handlerKeys) {
             log.info("HandlerKey : {}", handlerKey);
             handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));

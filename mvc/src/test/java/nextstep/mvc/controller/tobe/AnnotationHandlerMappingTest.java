@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,5 +67,20 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("지원하지 않는 URI 요청에 대해서는 핸들러를 찾을 수 없다.")
+    @Test
+    void invalidRequest() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/invalidURI");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+
+        assertThatThrownBy(() -> handlerExecution.handle(request, response))
+                .isInstanceOf(NullPointerException.class);
     }
 }
