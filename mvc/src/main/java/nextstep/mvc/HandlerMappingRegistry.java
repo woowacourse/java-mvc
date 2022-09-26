@@ -14,8 +14,11 @@ public class HandlerMappingRegistry {
         handlerMappings = new ArrayList<>();
     }
 
+    public void init() {
+        handlerMappings.forEach(handlerMapping -> handlerMapping.initialize());
+    }
+
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
 
