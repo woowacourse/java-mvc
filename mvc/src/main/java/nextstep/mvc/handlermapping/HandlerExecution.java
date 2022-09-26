@@ -13,16 +13,16 @@ public class HandlerExecution {
 
     private final static Logger log = LoggerFactory.getLogger(HandlerExecution.class);
 
-    private final Object clazz;
+    private final Object controller;
     private final Method method;
 
     public HandlerExecution(final Object controller, final Method method) {
-        this.clazz = controller;
+        this.controller = controller;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final ModelAndView modelAndView = (ModelAndView) method.invoke(clazz, request, response);
+        final ModelAndView modelAndView = (ModelAndView) method.invoke(controller, request, response);
         log.info("execute controller method [{}]", method);
         return modelAndView;
     }
@@ -30,7 +30,7 @@ public class HandlerExecution {
     @Override
     public String toString() {
         return "HandlerExecution{" +
-            "clazz=" + clazz +
+            "clazz=" + controller +
             ", method=" + method +
             '}';
     }
