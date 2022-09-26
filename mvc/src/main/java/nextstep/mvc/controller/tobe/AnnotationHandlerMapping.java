@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.tobe.exception.ControllerNotFoundException;
 import nextstep.web.annotation.RequestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,14 +53,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request);
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-
-        if (handlerExecution == null) {
-            throw new ControllerNotFoundException();
-        }
-
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }
