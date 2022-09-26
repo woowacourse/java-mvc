@@ -5,16 +5,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.web.support.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import samples.TestManualHandlerMapping;
+import samples.User;
 
 class DispatcherServletTest {
 
@@ -74,6 +79,44 @@ class DispatcherServletTest {
         verify(request).setAttribute("id", "gugu");
     }
 
+    @Test
+    void getUser() throws ServletException, IOException {
+        final HttpServletRequest request = createMockedRequest("/api/user", "GET");
+        final HttpServletResponse response = createMockedResponse();
+
+        sut.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        verify(response.getWriter()).write(new ObjectMapper().writeValueAsString(new User("verus", 28)));
+    }
+
+    @Test
+    void getUsers() throws ServletException, IOException {
+        final HttpServletRequest request = createMockedRequest("/api/users", "GET");
+        final HttpServletResponse response = createMockedResponse();
+
+        sut.service(request, response);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("user1", new User("verus", 28));
+        model.put("user2", new User("gugu", 30));
+
+        final String body = new ObjectMapper().writeValueAsString(model);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        verify(response.getWriter()).write(body);
+    }
+
+    @Test
+    void emptyBody() throws ServletException, IOException {
+        final HttpServletRequest request = createMockedRequest("/api/empty", "GET");
+        final HttpServletResponse response = createMockedResponse();
+
+        sut.service(request, response);
+
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        verify(response.getWriter()).write("{}");
+    }
+
     private HttpServletRequest createMockedRequest(final String url, final String method) {
         return createMockedRequest(url, method, Map.of());
     }
@@ -95,7 +138,12 @@ class DispatcherServletTest {
         return request;
     }
 
-    private HttpServletResponse createMockedResponse() {
-        return mock(HttpServletResponse.class);
+    private HttpServletResponse createMockedResponse() throws IOException {
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final PrintWriter writer = mock(PrintWriter.class);
+
+        when(response.getWriter()).thenReturn(writer);
+
+        return response;
     }
 }
