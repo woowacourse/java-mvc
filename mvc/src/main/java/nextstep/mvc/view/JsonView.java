@@ -5,9 +5,16 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(model);
+        response.getWriter().print(objectMapper);
     }
 }
