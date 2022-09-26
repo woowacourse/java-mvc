@@ -22,8 +22,8 @@ public class LoginController {
     private static final String REDIRECT_UNAUTHORIZED_JSP_VIEW_NAME = "redirect:/401.jsp";
     private static final String LOGIN_JSP_VIEW_NAME = "/login.jsp";
 
-    private static final String LOGIN_REQUEST_PARAMETER_ACCOUNT_KEY = "account";
-    private static final String LOGIN_REQUEST_PARAMETER_PASSWORD_KEY = "password";
+    private static final String LOGIN_ACCOUNT_KEY = "account";
+    private static final String LOGIN_PASSWORD_KEY = "password";
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView getLoginView(final HttpServletRequest request, final HttpServletResponse response) {
@@ -37,11 +37,11 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
-        if (UserSession.isLoggedIn(request.getSession())) {
+        if (isLoggedIn(request)) {
             return new ModelAndView(new JspView(REDIRECT_INDEX_JSP_VIEW_NAME));
         }
 
-        return InMemoryUserRepository.findByAccount(request.getParameter(LOGIN_REQUEST_PARAMETER_ACCOUNT_KEY))
+        return InMemoryUserRepository.findByAccount(request.getParameter(LOGIN_ACCOUNT_KEY))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(request, user);
@@ -49,13 +49,21 @@ public class LoginController {
                 .orElse(new ModelAndView(new JspView(REDIRECT_UNAUTHORIZED_JSP_VIEW_NAME)));
     }
 
+    private boolean isLoggedIn(final HttpServletRequest request) {
+        return UserSession.isLoggedIn(request.getSession());
+    }
+
     private ModelAndView login(final HttpServletRequest request, final User user) {
-        if (user.checkPassword(request.getParameter(LOGIN_REQUEST_PARAMETER_PASSWORD_KEY))) {
+        String password = request.getParameter(LOGIN_PASSWORD_KEY);
+        if (isCorrectUser(user, password)) {
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return new ModelAndView(new JspView(REDIRECT_INDEX_JSP_VIEW_NAME));
-        } else {
-            return new ModelAndView(new JspView(REDIRECT_UNAUTHORIZED_JSP_VIEW_NAME));
         }
+        return new ModelAndView(new JspView(REDIRECT_UNAUTHORIZED_JSP_VIEW_NAME));
+    }
+
+    private boolean isCorrectUser(final User user, final String password) {
+        return user.checkPassword(password);
     }
 }
