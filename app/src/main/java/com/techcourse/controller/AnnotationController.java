@@ -19,7 +19,7 @@ public class AnnotationController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationController.class);
 
-    @RequestMapping(value = "/@mvc", method = RequestMethod.GET)
+    @RequestMapping(value = {"/@mvc", "/@mvc/"}, method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
