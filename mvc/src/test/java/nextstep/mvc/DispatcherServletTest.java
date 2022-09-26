@@ -25,6 +25,8 @@ class DispatcherServletTest {
         sut = new DispatcherServlet();
         sut.addHandlerMapping(new TestManualHandlerMapping());
         sut.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        sut.addHandlerAdapter(new AnnotationHandlerAdapter());
+        sut.addHandlerAdapter(new ControllerHandlerAdapter());
         sut.init();
     }
 
