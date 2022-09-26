@@ -13,8 +13,6 @@ import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -46,15 +44,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Optional<Object> wrappedHandler = handlerMappingRegistry.getHandler(request);
-            if (wrappedHandler.isEmpty()) {
-                throw new HandlerNotFoundException();
-            }
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(wrappedHandler.get());
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, wrappedHandler.get());
-            if (modelAndView != null) {
-                modelAndView.render(request, response);
-            }
+            final Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(HandlerNotFoundException::new);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.render(request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
