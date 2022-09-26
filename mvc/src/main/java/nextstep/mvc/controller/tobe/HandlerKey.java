@@ -20,11 +20,8 @@ public class HandlerKey {
     }
 
     public HandlerKey(final HttpServletRequest request) {
-        String url = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
-        this.url = url;
-        this.requestMethod = requestMethod;
+        this.url = request.getRequestURI();
+        this.requestMethod = RequestMethod.valueOf(request.getMethod());
     }
 
     public static List<HandlerKey> from(final RequestMapping requestMapping) {
