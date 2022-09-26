@@ -18,9 +18,9 @@ import samples.TestInterfaceController;
 
 class HandlerAdapterRegistryTest {
 
-    @DisplayName("annotation 기반 handler adapter 초기화")
+    @DisplayName("annotation 기반 ModelAndView 조회")
     @Test
-    void annotationInit() {
+    void getModelAndViewAboutAnnotation() {
         final HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
         registry.add(new AnnotationHandlerAdapter());
 
@@ -46,9 +46,9 @@ class HandlerAdapterRegistryTest {
         }
     }
 
-    @DisplayName("controller interface 기반 handler adapter 초기화")
+    @DisplayName("controller interface 기반 ModelAndView 조회")
     @Test
-    void controllerInterfaceInit() {
+    void getModelAndViewAboutInterface() {
         final HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
         registry.add(new ManualHandlerAdapter());
 

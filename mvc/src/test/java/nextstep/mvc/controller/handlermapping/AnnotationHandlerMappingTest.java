@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AnnotationHandlerMappingTest {
 
@@ -44,15 +43,5 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @DisplayName("추가하지 않은 handler 조회 시 예외 발생")
-    @Test
-    void getHandlerNotExist() {
-        final var request = RequestFixture.getRequest("/not-exist-path");
-
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("요청한 핸들러가 존재하지 않습니다.");
     }
 }
