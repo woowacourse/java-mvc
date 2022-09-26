@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.RequestMappingHandlerAdapter;
+import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class DispatcherServletTest {
     void init() {
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         dispatcherServlet.init();
-        dispatcherServlet.addHandlerAdapter(new RequestMappingHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
     @Test
