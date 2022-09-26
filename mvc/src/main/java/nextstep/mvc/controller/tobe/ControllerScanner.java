@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import nextstep.mvc.controller.exception.ControllerInstantiationException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
@@ -32,7 +33,7 @@ public class ControllerScanner {
             Constructor<?> constructor = controller.getConstructor();
             controllers.put(controller, constructor.newInstance());
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new ControllerInstantiationException();
         }
     }
 }
