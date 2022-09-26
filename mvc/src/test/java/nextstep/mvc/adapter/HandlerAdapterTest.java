@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe.adapter;
+package nextstep.mvc.adapter;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapterRegistry;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.mapping.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

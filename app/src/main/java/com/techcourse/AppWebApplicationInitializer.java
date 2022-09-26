@@ -2,10 +2,10 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.adapter.ModelAndViewHandlerAdapter;
-import nextstep.mvc.controller.tobe.adapter.ViewNameHandlerAdapter;
-import nextstep.mvc.controller.tobe.adapter.VoidHandlerAdapter;
+import nextstep.mvc.mapping.AnnotationHandlerMapping;
+import nextstep.mvc.adapter.ModelAndViewHandlerAdapter;
+import nextstep.mvc.adapter.ViewNameHandlerAdapter;
+import nextstep.mvc.adapter.VoidHandlerAdapter;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

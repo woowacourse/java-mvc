@@ -7,11 +7,11 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.adapter.ModelAndViewHandlerAdapter;
-import nextstep.mvc.controller.tobe.adapter.ViewNameHandlerAdapter;
-import nextstep.mvc.controller.tobe.adapter.VoidHandlerAdapter;
+import nextstep.mvc.mapping.AnnotationHandlerMapping;
+import nextstep.mvc.mapping.HandlerExecution;
+import nextstep.mvc.adapter.ModelAndViewHandlerAdapter;
+import nextstep.mvc.adapter.ViewNameHandlerAdapter;
+import nextstep.mvc.adapter.VoidHandlerAdapter;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.NullView;

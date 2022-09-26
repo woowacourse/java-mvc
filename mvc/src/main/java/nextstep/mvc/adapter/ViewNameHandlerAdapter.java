@@ -1,9 +1,9 @@
-package nextstep.mvc.controller.tobe.adapter;
+package nextstep.mvc.adapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.mapping.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.RedirectView;
@@ -12,10 +12,7 @@ public class ViewNameHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).hasReturnTypeOf(String.class);
-        }
-        return false;
+        return ((HandlerExecution) handler).hasReturnTypeOf(String.class);
     }
 
     @Override
