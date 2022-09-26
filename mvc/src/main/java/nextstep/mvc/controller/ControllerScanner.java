@@ -5,10 +5,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nextstep.mvc.support.PackageScanner;
 import nextstep.web.annotation.Controller;
 
 public class ControllerScanner {
@@ -19,8 +19,7 @@ public class ControllerScanner {
     }
 
     public static Map<Class<?>, Object> getControllers(final Object... basePackage) {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> controllers = PackageScanner.readTypesAnnotatedWith(Controller.class, basePackage);
 
         return controllers.stream()
             .collect(Collectors.toMap(
