@@ -1,9 +1,10 @@
 package nextstep.mvc.controller.tobe;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
@@ -21,18 +22,11 @@ public class ControllerScanner {
     }
 
     private Map<Class<?>, Object> getControllers(final Set<Class<?>> controller) {
-        Map<Class<?>, Object> classes = new HashMap<>();
-        for (Class<?> clazz : controller) {
-            instantiateControllers(classes, clazz);
-        }
-        return classes;
+        return controller.stream()
+                .collect(Collectors.toMap(Function.identity(), this::instantiate));
     }
 
-    private void instantiateControllers(final Map<Class<?>, Object> classes, final Class<?> clazz) {
-        classes.put(clazz, instantiate(clazz));
-    }
-
-    private static Object instantiate(final Class<?> clazz) {
+    private Object instantiate(final Class<?> clazz) {
         try {
             return clazz.getConstructor().newInstance();
         } catch (NoSuchMethodException
