@@ -14,7 +14,7 @@ public class ForwardController {
     private static final String INDEX_JSP_VIEW_NAME = "index.jsp";
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView getIndexView(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView getMainView(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView(INDEX_JSP_VIEW_NAME));
     }
 }
