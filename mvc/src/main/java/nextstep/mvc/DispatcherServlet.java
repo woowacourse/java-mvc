@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -14,25 +15,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappingRegister handlerMappingRegister;
-    private final HandlerAdapterRegister handlerAdapterRegister;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
-        this.handlerMappingRegister = new HandlerMappingRegister();
-        this.handlerAdapterRegister = new HandlerAdapterRegister();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerExecutor = new HandlerExecutor();
     }
 
     @Override
     public void init() {
-        handlerMappingRegister.init();
+        handlerMappingRegistry.init();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappingRegister.addHandlerMapping(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapterRegister.addHandlerAdapter(handlerAdapter);
+        handlerExecutor.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -41,10 +42,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = handlerMappingRegister.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapterRegister.getHandlerAdapter(handler);
+            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+            if (handler.isEmpty()) {
+                response.setStatus(404);
+                return;
+            }
 
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

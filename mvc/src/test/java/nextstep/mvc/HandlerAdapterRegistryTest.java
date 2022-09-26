@@ -5,31 +5,50 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import common.FakeManualHandlerAdapter;
 import common.FakeManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerMappingRegisterTest {
+class HandlerAdapterRegistryTest {
 
-    private HandlerMappingRegister register = new HandlerMappingRegister();
+    private HandlerMappingRegistry register = new HandlerMappingRegistry();
+    private HandlerAdapterRegistry adapterRegister = new HandlerAdapterRegistry();
 
     @BeforeEach
     void setUp() {
         register.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         register.addHandlerMapping(new FakeManualHandlerMapping());
         register.init();
+
+        adapterRegister.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        adapterRegister.addHandlerAdapter(new FakeManualHandlerAdapter());
     }
 
-    @DisplayName("어노테이션 기반으로 handler를 찾아온다.")
+    @DisplayName("인터페이스를 기반으로 하는 handler를 가져온다.")
     @Test
-    void 어노테이션_기반으로_handler를_찾아온다() {
+    void 인터페이스를_기반으로_하는_handler를_가져온다() {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getMethod()).thenReturn("GET");
+
+        Object handler = register.getHandler(request).get();
+        HandlerAdapter handlerAdapter = adapterRegister.getHandlerAdapter(handler);
+
+        assertThat(handlerAdapter).isNotNull();
+    }
+
+    @DisplayName("애노테이션을 기반으로 하는 handler를 가져온다.")
+    @Test
+    void 애노테이션을_기반으로_하는_handler를_가져온다() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -37,23 +56,10 @@ class HandlerMappingRegisterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
+        Object handler = register.getHandler(request).get();
+        HandlerAdapter handlerAdapter = adapterRegister.getHandlerAdapter(handler);
 
-        assertThat(handler).isInstanceOf(HandlerExecution.class);
-    }
-
-    @DisplayName("인터페이스 기반으로 handler를 찾아온다.")
-    @Test
-    void 인터페이스_기반으로_handler를_찾아온다() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-
-        Object handler = register.getHandler(request);
-
-        assertThat(handler).isInstanceOf(Controller.class);
+        assertThat(handlerAdapter).isNotNull();
     }
 
     @DisplayName("handler가 존재하지 않으면 예외를 발생한다.")
@@ -65,7 +71,7 @@ class HandlerMappingRegisterTest {
         when(request.getRequestURI()).thenReturn("notvalide");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThatThrownBy(() -> register.getHandler(request))
+        assertThatThrownBy(() -> register.getHandler(request).get())
                 .isInstanceOf(NoSuchElementException.class);
     }
 }

@@ -7,17 +7,18 @@ import static org.mockito.Mockito.when;
 import common.FakeManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.HandlerMappingRegister;
+import nextstep.mvc.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerAdapterTest {
+class HandlerExecutionHandlerAdapterTest {
 
-    private HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
-    private HandlerMappingRegister register = new HandlerMappingRegister();
+    private HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
+    private HandlerMappingRegistry register = new HandlerMappingRegistry();
 
     @BeforeEach
     void setUp() {
@@ -36,8 +37,8 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
-        boolean actual = handlerAdapter.supports(handler);
+        Optional<Object> handler = register.getHandler(request);
+        boolean actual = handlerAdapter.supports(handler.get());
 
         assertThat(actual).isTrue();
     }
@@ -51,8 +52,8 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
-        boolean actual = handlerAdapter.supports(handler);
+        Optional<Object> handler = register.getHandler(request);
+        boolean actual = handlerAdapter.supports(handler.get());
 
         assertThat(actual).isFalse();
     }
@@ -67,8 +68,8 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Object handler = register.getHandler(request);
-        ModelAndView actual = handlerAdapter.handle(request, response, handler);
+        Optional<Object> handler = register.getHandler(request);
+        ModelAndView actual = handlerAdapter.handle(request, response, handler.get());
 
         assertThat(actual.getView()).isNotNull();
         assertThat(actual.getObject("id")).isEqualTo("gugu");
