@@ -10,15 +10,15 @@ import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerControllerAdapterTest {
+class ControllerHandlerAdapterTest {
 
     @Test
     @DisplayName("HandlerControllerAdapter에서 지원하는 경우 handler일 경우 true")
     void isTrueSupports() {
-        final HandlerControllerAdapter handlerControllerAdapter = new HandlerControllerAdapter();
+        final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
         final Controller forwardController = new ForwardController("/");
 
-        final boolean actual = handlerControllerAdapter.supports(forwardController);
+        final boolean actual = controllerHandlerAdapter.supports(forwardController);
 
         assertThat(actual).isTrue();
     }
@@ -26,7 +26,7 @@ class HandlerControllerAdapterTest {
     @Test
     @DisplayName("HandlerControllerAdapter에서 지원하지 않는 경우 handler일 경우 false")
     void isFalseSupports() {
-        final HandlerControllerAdapter handlerControllerAdapter = new HandlerControllerAdapter();
+        final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
         annotationHandlerMapping.initialize();
@@ -35,7 +35,7 @@ class HandlerControllerAdapterTest {
         when(request.getMethod()).thenReturn("GET");
 
         final HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(request);
-        final boolean actual = handlerControllerAdapter.supports(handlerExecution);
+        final boolean actual = controllerHandlerAdapter.supports(handlerExecution);
 
         assertThat(actual).isFalse();
     }
