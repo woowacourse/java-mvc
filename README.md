@@ -60,4 +60,4 @@ public class RegisterController {
 - [x] `keySet()` 대신 맵을 잘 활용할 수 있는 방법 고민하기
 - [x] `adapter`, `handerMapping` 예외처리 기준 정하기
 - [x] `Serializeable` 적용 해제
-- [ ] `DispatcherServlet` 테스트 만들기
+- [x] `DispatcherServlet` 테스트 만들기
