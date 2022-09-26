@@ -1,5 +1,8 @@
 package nextstep.mvc;
 
+import static nextstep.test.MockRequestBuilder.get;
+import static nextstep.test.MockRequestBuilder.post;
+
 import java.util.HashMap;
 import java.util.Map;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
@@ -23,31 +26,31 @@ class DispatcherServletTest {
 
     @Test
     void forwardIndexView() throws Exception {
-        mockMvc.perform("/index", "GET")
+        mockMvc.perform(get("/index"))
                 .forwardTo("/index.jsp");
     }
 
     @Test
     void redirectIndexView() throws Exception {
-        mockMvc.perform("/redirect-index", "GET")
+        mockMvc.perform(get("/redirect-index"))
                 .redirectTo("/index.jsp");
     }
 
     @Test
     void getTestViewWithModel() throws Exception {
-        mockMvc.perform("/get-test", "GET", Map.of("id", "gugu"))
+        mockMvc.perform(get("/get-test").attribute("id", "gugu"))
                 .forwardTo("/get-test.jsp", Map.of("id", "gugu"));
     }
 
     @Test
     void postTestViewWithModel() throws Exception {
-        mockMvc.perform("/post-test", "POST", Map.of("id", "gugu"))
+        mockMvc.perform(post("/post-test").attribute("id", "gugu"))
                 .forwardTo("/post-test.jsp", Map.of("id", "gugu"));
     }
 
     @Test
     void getUser() throws Exception {
-        mockMvc.perform("/api/user", "GET")
+        mockMvc.perform(get("/api/user"))
                 .jsonBody(new User("verus", 28));
     }
 
@@ -57,13 +60,13 @@ class DispatcherServletTest {
         body.put("user1", new User("verus", 28));
         body.put("user2", new User("gugu", 30));
 
-        mockMvc.perform("/api/users", "GET")
+        mockMvc.perform(get("/api/users"))
                 .jsonBody(body);
     }
 
     @Test
     void emptyBody() throws Exception {
-        mockMvc.perform("/api/empty", "GET")
+        mockMvc.perform(get("/api/empty"))
                 .jsonBody(Map.of());
     }
 }
