@@ -1,16 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,36 +29,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : typesAnnotatedWith) {
-            initializeHandlerByAnnotation(clazz);
+        final ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            initializeHandlerByAnnotation(entry.getKey(), entry.getValue());
         }
     }
 
-    private void initializeHandlerByAnnotation(final Class<?> clazz) {
-        final Object instance = getInstance(clazz);
-        final Method[] declaredMethods = clazz.getDeclaredMethods();
-        for (Method method : declaredMethods) {
+    private void initializeHandlerByAnnotation(final Class<?> clazz, final Object instance) {
+        final Set<Method> allMethods = ReflectionUtils.getAllMethods(clazz,
+                ReflectionUtils.withAnnotation(RequestMapping.class));
+        for (Method method : allMethods) {
             addHandlerByAnnotationInMethod(instance, method);
         }
     }
 
-    private Object getInstance(final Class<?> clazz) {
-        try {
-            final Constructor<?> constructor = clazz.getConstructor();
-            return constructor.newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                 InvocationTargetException exception) {
-            log.info("initialize fail");
-            throw new RuntimeException();
-        }
-    }
-
     private void addHandlerByAnnotationInMethod(final Object instance, final Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            mappingHandler(instance, method, requestMapping);
-        }
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        mappingHandler(instance, method, requestMapping);
     }
 
     private void mappingHandler(final Object instance, final Method method, final RequestMapping requestMapping) {
