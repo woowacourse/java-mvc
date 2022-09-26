@@ -16,9 +16,11 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final String DEFAULT_URL = "/";
+    private static final String DEFAULT_FILE_PATH = "/index.jsp";
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, Handleable> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -26,9 +28,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        initDefaultMapping();
         ControllerScanner.getInstance().scan(basePackage)
                 .forEach(this::addAnnotatedMethodToHandlerExecutions);
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void initDefaultMapping() {
+        handlerExecutions.put(
+                new HandlerKey(DEFAULT_URL, RequestMethod.GET),
+                (req, res) -> DEFAULT_FILE_PATH);
     }
 
     private void addAnnotatedMethodToHandlerExecutions(final Class<?> clazz, final Object instance) {

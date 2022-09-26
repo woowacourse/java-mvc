@@ -22,7 +22,7 @@ class ControllerScannerTest {
 
         // then
         assertAll(
-                () -> assertThat(foundClazz).hasSize(1),
+                () -> assertThat(foundClazz).hasSize(2),
                 () -> assertThat(foundClazz)
                         .extractingByKey(TestAnnotationController.class)
                         .isInstanceOf(TestAnnotationController.class)

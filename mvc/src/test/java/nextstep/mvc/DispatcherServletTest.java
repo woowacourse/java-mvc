@@ -18,12 +18,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestManualHandlerMapping;
 
 class DispatcherServletTest {
 
@@ -55,25 +53,6 @@ class DispatcherServletTest {
 
         // then
         verify(request).getAttribute("id");
-    }
-
-    @Test
-    @DisplayName("매뉴얼 기반 컨트롤러에 해당하는 요청에 응답할 수 있다.")
-    void handleManualControllerRequest() throws ServletException {
-        // given
-        given(request.getRequestURI()).willReturn("/manual-test");
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        given(request.getRequestDispatcher("testView")).willReturn(requestDispatcher);
-        dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new TestManualHandlerMapping());
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
-
-        // when
-        dispatcherServlet.init();
-        dispatcherServlet.service(request, response);
-
-        // then
-        verify(request).getRequestDispatcher("testView");
     }
 
     @Test
