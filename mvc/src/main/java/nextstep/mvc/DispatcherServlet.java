@@ -7,9 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -21,9 +18,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -35,6 +34,10 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
+    }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
@@ -42,7 +45,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-            final ModelAndView modelAndView = handle(handler, request, response);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -58,16 +62,11 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private ModelAndView handle(final Object handler, final HttpServletRequest request,
-                                final HttpServletResponse response)
-            throws Exception {
-        if (handler instanceof Controller) {
-            final Controller controller = (Controller) handler;
-            final String viewName = controller.execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        }
-        final HandlerExecution handlerExecution = (HandlerExecution) handler;
-        return handlerExecution.handle(request, response);
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new RuntimeException("지원하는 핸들러 어댑터가 존재하지 않습니다."));
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
