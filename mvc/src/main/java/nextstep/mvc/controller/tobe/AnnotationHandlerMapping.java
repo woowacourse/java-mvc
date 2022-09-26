@@ -24,7 +24,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
     }
-    
+
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
