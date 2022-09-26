@@ -27,8 +27,9 @@ public class JspView implements View {
             return;
         }
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-
+        if (requestDispatcher != null) {
+            requestDispatcher.forward(request, response);
+        }
         logRender(model, request);
     }
 
