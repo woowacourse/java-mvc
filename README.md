@@ -30,7 +30,7 @@ interface 기반의 컨트롤러와 annotation 기반의 컨트롤러가 공존�
 ### 기능 요구사항
 화면에 대한 책임을 View가 가지게 하고, `JsonView`를 구현하여 REST API를 지원할 수 있도록 한다.
 - [X] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
-- [ ] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
+- [X] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
 
 #### JspView 구현
 - [X] Jsp 반환을 JspView에서 처리한다.
@@ -39,5 +39,5 @@ interface 기반의 컨트롤러와 annotation 기반의 컨트롤러가 공존�
 - [X] model의 객체를 json으로 변환하여 response body로 응답한다.
 
 ### Legacy MVC 제거
-- [ ] app module의 모든 controller를 annotation 기반으로 변경한다.
-- [ ] asis 패키지의 레거시 코드를 삭제해도 정상 동작하도록 리팩터링한다.
+- [X] app module의 모든 controller를 annotation 기반으로 변경한다.
+- [X] asis 패키지의 레거시 코드를 삭제해도 정상 동작하도록 리팩터링한다.

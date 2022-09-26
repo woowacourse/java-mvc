@@ -10,10 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestManualHandlerMapping;
 
 class DispatcherServletTest {
 
@@ -56,25 +55,6 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(response.getWriter())
                 .thenReturn(printWriter);
-
-        assertThatNoException()
-                .isThrownBy(() -> dispatcherServlet.service(request, response));
-    }
-
-    @DisplayName("Interface 기반의 handler를 동작시킬 수 있다.")
-    @Test
-    void service_interfaceHandler() {
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new TestManualHandlerMapping());
-        dispatcherServlet.init();
-
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getRequestDispatcher("/index.jsp"))
-                .thenReturn(requestDispatcher);
 
         assertThatNoException()
                 .isThrownBy(() -> dispatcherServlet.service(request, response));

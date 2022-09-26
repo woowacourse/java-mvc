@@ -1,10 +1,11 @@
 package nextstep.mvc.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
+import nextstep.mvc.controller.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestImplementController;
 
 class HandlerAdapterRegistryTest {
 
@@ -14,7 +15,7 @@ class HandlerAdapterRegistryTest {
         final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.init();
 
-        final TestImplementController handler = new TestImplementController();
-        assertThat(handlerAdapterRegistry.getAdapter(handler)).isInstanceOf(ControllerAdapter.class);
+        final HandlerExecution handler = mock(HandlerExecution.class);
+        assertThat(handlerAdapterRegistry.getAdapter(handler)).isInstanceOf(HandlerExecutionAdapter.class);
     }
 }
