@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.asis.Controller;
 
 public class ManualTestHandlerMapping implements HandlerMapping {
 

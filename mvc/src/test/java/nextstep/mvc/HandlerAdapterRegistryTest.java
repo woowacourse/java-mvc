@@ -7,9 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.stream.Stream;
-import nextstep.mvc.controller.asis.ManualHandlerAdapter;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
+import samples.ManualTestHandlerAdapter;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecutionHandlerAdapter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class HandlerAdapterRegistryTest {
             // given
             final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
             handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-            handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+            handlerAdapterRegistry.addHandlerAdapter(new ManualTestHandlerAdapter());
 
             // when
             final HandlerAdapter result = handlerAdapterRegistry.getHandlerAdapter(handler);
@@ -47,7 +47,7 @@ class HandlerAdapterRegistryTest {
         private Stream<Arguments> getHandlerAdapterData() throws NoSuchMethodException {
             return Stream.of(
                     Arguments.of(getHandlerExecution(), HandlerExecutionHandlerAdapter.class),
-                    Arguments.of(new ManualTestController(), ManualHandlerAdapter.class)
+                    Arguments.of(new ManualTestController(), ManualTestHandlerAdapter.class)
             );
         }
 

@@ -1,10 +1,8 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,10 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.stream.Stream;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.view.JspView;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
