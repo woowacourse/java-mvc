@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HandlerAdapterRegistry {
+
+    private static final Logger log = LoggerFactory.getLogger(HandlerAdapterRegistry.class);
 
     private final List<HandlerAdapter> handlerAdapters;
 
@@ -22,6 +26,7 @@ public class HandlerAdapterRegistry {
         for (Class<? extends HandlerAdapter> adapterType : adapterTypes) {
             addAdapterInstances(adapterType);
         }
+        log.info("Initialized HandlerAdapterRegistry!");
     }
 
     public HandlerAdapter getAdapter(final Object handler) {
@@ -37,6 +42,7 @@ public class HandlerAdapterRegistry {
             handlerAdapters.add(handlerAdapter);
         } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
+            log.error("failed to instantiate handler adapter: {}", e.getMessage());
             throw new IllegalArgumentException(e);
         }
     }
