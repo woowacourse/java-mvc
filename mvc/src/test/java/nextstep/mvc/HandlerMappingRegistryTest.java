@@ -28,6 +28,6 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThat(handlerMappingRegistry.getHandler(request)).isInstanceOf(HandlerExecution.class);
+        assertThat(handlerMappingRegistry.getHandler(request).get()).isInstanceOf(HandlerExecution.class);
     }
 }
