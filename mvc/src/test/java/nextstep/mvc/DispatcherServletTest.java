@@ -21,7 +21,7 @@ class DispatcherServletTest {
     class Service {
 
         @Test
-        @DisplayName("Service 메소드는 요청에 매핑되는 핸들러와 핸들러 어댑터를 찾고, 핸들러를 실행한다.")
+        @DisplayName("요청에 매핑되는 핸들러와 핸들러 어댑터를 찾고, 핸들러를 실행한다.")
         void success() throws Exception {
             final var request = mock(HttpServletRequest.class);
             final var response = mock(HttpServletResponse.class);
@@ -44,7 +44,7 @@ class DispatcherServletTest {
         }
 
         @Test
-        @DisplayName("Service 메소드는 요청에 매핑되는 핸들러가 없다면 response의 Status를 404로 설정하고 메소드 실행을 종료한다.")
+        @DisplayName("요청에 매핑되는 핸들러가 없다면 response의 Status를 404로 설정하고 메소드 실행을 종료한다.")
         void failService_notFoundHandler() throws Exception {
             final var request = mock(HttpServletRequest.class);
             final var response = mock(HttpServletResponse.class);
