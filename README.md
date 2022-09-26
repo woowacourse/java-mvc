@@ -40,6 +40,6 @@
 리팩터링
 
 - [x] 기존에 주워진 url을 사용하도록 수정(회원가입)
-- [ ] UserController에서 account 정보가 없을 경우 예외 처리
+- [x] UserController에서 account 정보가 없을 경우 예외 처리
 
 </details>
