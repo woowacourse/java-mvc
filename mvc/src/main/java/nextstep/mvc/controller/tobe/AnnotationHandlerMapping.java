@@ -1,17 +1,10 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,34 +23,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        for (final var clazz : scanControllerClasses()) {
-            mapController(clazz);
+        final var scanner = new ControllerScanner(this.basePackage);
+        final var controllers = scanner.getControllers();
+        for (final var clazz : controllers.keySet()) {
+            final var controller = controllers.get(clazz);
+            mapHandlers(clazz, controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private List<Class<?>> scanControllerClasses() {
-        return Arrays.stream(this.basePackage)
-                .map(Reflections::new)
-                .map(it -> it.getTypesAnnotatedWith(Controller.class))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
-
-    private void mapController(Class<?> clazz) {
-        final var controller = initializeController(clazz);
+    private void mapHandlers(Class<?> clazz, Object controller) {
         for (final var method : clazz.getMethods()) {
             mapHandler(controller, method);
-        }
-    }
-
-    private Object initializeController(Class<?> clazz) {
-        try {
-            final var constructor = clazz.getDeclaredConstructor();
-            return constructor.newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-            throw new IllegalArgumentException("존재할 수 없는 경우");
         }
     }
 
@@ -72,9 +51,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         final var url = request.getRequestURI();
-        final var requestMethod = RequestMethod.valueOf(request.getMethod());
+        final var requestMethod = RequestMethod.find(request.getMethod());
         final var key = new HandlerKey(url, requestMethod);
         return handlerExecutions.get(key);
     }

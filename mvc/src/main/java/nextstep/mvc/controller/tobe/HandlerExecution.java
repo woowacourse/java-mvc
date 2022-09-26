@@ -3,19 +3,22 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
-    private final Object controller;
-    private final Method handler;
+    private final Object declaredObject;
+    private final Method method;
 
-    public HandlerExecution(Object controller, Method handler) {
-        this.controller = controller;
-        this.handler = handler;
+    public HandlerExecution(Object declaredObject, Method handler) {
+        this.declaredObject = declaredObject;
+        this.method = handler;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) handler.invoke(controller, request, response);
+    public boolean hasReturnTypeOf(Class<?> returnType) {
+        return method.getReturnType().equals(returnType);
+    }
+
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return method.invoke(declaredObject, request, response);
     }
 }
