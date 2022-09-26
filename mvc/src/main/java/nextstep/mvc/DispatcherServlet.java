@@ -4,9 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
@@ -19,19 +16,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.init();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     @Override
@@ -40,21 +37,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = getController(request);
+            final var controller = handlerMappingRegistry.getController(request);
             final var modelAndView = getModelAndView(controller, request, response);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getController(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow();
     }
 
     private ModelAndView getModelAndView(final Object controller, final HttpServletRequest request,
