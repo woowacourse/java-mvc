@@ -20,7 +20,7 @@ public class VoidHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        ((HandlerExecution) handler).handle2(request, response);
+        ((HandlerExecution) handler).handle(request, response);
         return new ModelAndView(new NullView());
     }
 }

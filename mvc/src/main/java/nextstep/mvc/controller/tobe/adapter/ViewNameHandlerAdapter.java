@@ -21,7 +21,7 @@ public class ViewNameHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        final var viewName = (String) ((HandlerExecution) handler).handle2(request, response);
+        final var viewName = (String) ((HandlerExecution) handler).handle(request, response);
         return toModelAndView(viewName);
     }
 
