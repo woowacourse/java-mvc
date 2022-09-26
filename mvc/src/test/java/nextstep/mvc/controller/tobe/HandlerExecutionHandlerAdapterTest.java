@@ -7,10 +7,10 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
 
 class HandlerExecutionHandlerAdapterTest {
 
@@ -32,6 +32,20 @@ class HandlerExecutionHandlerAdapterTest {
         assertThat(result).isTrue();
     }
 
+    @DisplayName("Controller 인터페이스를 구현한 컨트롤러를 지원해줄 수 없다. (support() 결과가 false이다.)")
+    @Test
+    void notSupportControllerInterface() {
+        // given
+        final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
+        final TestController testController = new TestController();
+
+        // when
+        final boolean result = handlerExecutionHandlerAdapter.supports(testController);
+
+        // then
+        assertThat(result).isFalse();
+    }
+
     @DisplayName("HandlerExecution 을 통해서 요청을 처리할 수 있다.")
     @Test
     void handleHandlerExecution() throws Exception {
@@ -49,5 +63,13 @@ class HandlerExecutionHandlerAdapterTest {
 
         final ModelAndView modelAndView = handlerExecutionHandlerAdapter.handle(request, response, handler);
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    class TestController implements Controller {
+
+        @Override
+        public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+            return "/test.jsp";
+        }
     }
 }

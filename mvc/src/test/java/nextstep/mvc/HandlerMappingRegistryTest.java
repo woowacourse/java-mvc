@@ -1,12 +1,12 @@
 package nextstep.mvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +29,25 @@ class HandlerMappingRegistryTest {
 
         // then
         final Object handler = handlerMappingRegistry.getHandler(request).orElseThrow();
-        Assertions.assertThat(handler).isInstanceOf(HandlerExecution.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
+    }
+
+    @DisplayName("핸들러 매핑을 찾을 수 없는 경우 Optional Empty 를 반환한다.")
+    @Test
+    void notFoundHandlerMapping() {
+        /// given
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        annotationHandlerMapping.initialize();
+
+        // when
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        // then
+        assertThat(handlerMappingRegistry.getHandler(request)).isEmpty();
     }
 }

@@ -23,4 +23,17 @@ class ControllerScannerTest {
         assertThat(controllers.keySet()).hasSize(1).contains(TestController.class);
         assertThat(controllers.get(TestController.class)).isInstanceOf(TestController.class);
     }
+
+    @DisplayName("컨트롤러 클래스를 찾지 못하는 경우 해당 클래스로 인스턴스를 생성할 수 없다.")
+    @Test
+    void cannotFindController() {
+        // given
+        final ControllerScanner controllerScanner = new ControllerScanner(new Reflections("invalid"));
+
+        // when
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+
+        // then
+        assertThat(controllers.keySet()).isEmpty();
+    }
 }
