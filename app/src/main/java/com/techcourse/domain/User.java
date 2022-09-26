@@ -7,14 +7,14 @@ public class User {
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
+    public User(final long id, final String account, final String password, final String email) {
         this.id = id;
         this.account = account;
         this.password = password;
         this.email = email;
     }
 
-    public boolean checkPassword(String password) {
+    public boolean checkPassword(final String password) {
         return this.password.equals(password);
     }
 
