@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class LoginController {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView view(final HttpServletRequest request, final HttpServletResponse response) {

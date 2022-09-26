@@ -3,7 +3,7 @@
 
 ## 💻 기능 요구 사항
 
-### 1단계 @MVC 프레임워크 구현하기
+### 1단계 - @MVC 프레임워크 구현하기
 
 > 기존의 MVC 프레임워크를 어노테이션 기반으로 변경한다.  
 > - 개발자가 비지니스 로직 구현에만 집중할 수 있게 된다!
@@ -24,3 +24,12 @@
   - [X] ManualHandlerAdapter를 구현한다.
   - [X] AnnotationHandlerMapping를 구현한다.
   - [X] 뷰에 대한 처리를 JspView로 이동시킨다. 
+
+### 2단계 - 점진적인 리팩터링
+- [X] Controller 스캔에 대한 책임을 ControllerScanner로 이동시킨다.
+- [X] HandlerMappingRegistry에서 HandlerMapping을 처리하도록 한다.
+- [X] HandlerAdapterRegistry에서 HandlerAdapter를 처리하다록 한다.
+
+#### AnnotationHandlerMapping.initialize()의 역할
+- @Controller가 붙은 클래스들을 찾아온다.
+- 클래스들에서 @RequestMapping이 붙은 메서드들을 찾아와 HandlerKey와 HandlerExecution을 만든다.
