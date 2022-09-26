@@ -15,5 +15,6 @@
 
 ## 2단계 요구사항
 - [x] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾아온다.
+- [x] HandlerAdpater를 이용하여 여러 타입의 핸들러를 실행시키게 한다.
 - [x] HandlerMappingRegistry를 이용하여 여러 타입의 핸들러 매핑을 관리한다.
 - [x] HandlerAdapterRegistry 이용하여 여러 타입의 핸들러 어댑터들을 관리한다.
