@@ -13,7 +13,7 @@ public class ControllerScanner {
 
     private final Reflections reflections;
 
-    public ControllerScanner(final Reflections reflections) {
+    private ControllerScanner(final Reflections reflections) {
         this.reflections = reflections;
     }
 
