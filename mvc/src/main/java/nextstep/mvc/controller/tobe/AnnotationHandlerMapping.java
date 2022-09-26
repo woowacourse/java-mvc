@@ -26,8 +26,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        Map<Class<?>, Object> controllers = ControllerScanner.findAllControllers("samples");
+        Map<Class<?>, Object> controllers = ControllerScanner.findAllControllers(basePackage);
 
         Set<Method> methods = getAllMethods(controllers);
 
@@ -37,7 +38,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerExecution handlerExecution = new HandlerExecution(controllers.get(method.getDeclaringClass()),
                     method);
             handlerExecutions.put(handlerKey, handlerExecution);
-
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -51,9 +51,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return methods;
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.find(request.getMethod().toUpperCase(Locale.ROOT));
-        return handlerExecutions.get(new HandlerKey(requestUri, requestMethod));
+        HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
+        log.debug("Request Mapping Uri : {}", requestUri);
+        return handlerExecutions.get(handlerKey);
     }
 }
