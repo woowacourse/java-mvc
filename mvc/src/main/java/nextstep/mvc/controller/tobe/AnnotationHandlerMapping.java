@@ -1,20 +1,17 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,43 +29,50 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
+        ControllerScanner scanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllerClassWithInstance = scanner.getControllers();
+        registerHandlerExecutions(controllerClassWithInstance);
+    }
 
-        for (Class<?> controller : controllers) {
-            List<Method> controllerMethods = Arrays.stream(controller.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
-            addHandlers(controller, controllerMethods);
+    private void registerHandlerExecutions(Map<Class<?>, Object> controllerClassWithInstance) {
+        for (Entry<Class<?>, Object> entry : controllerClassWithInstance.entrySet()) {
+            Object instance = entry.getValue();
+            Class<?> controllerClass = entry.getKey();
+            Set<Method> requestMappingMethods = getRequestMappingMethods(controllerClass);
+            addHandlerExecution(instance, requestMappingMethods);
         }
     }
 
-    private void addHandlers(Class<?> controllerClass, List<Method> controllerMethods) {
-        Object controller = makeInstance(controllerClass);
-        for (Method method : controllerMethods) {
-            addHandler(controller, method);
+    private Set<Method> getRequestMappingMethods(Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
+    private void addHandlerExecution(Object instance, Set<Method> requestMappingMethods) {
+        for (Method method : requestMappingMethods) {
+            List<HandlerKey> handlerKeys = makeHandlerKey(method);
+            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            handlerExecutions.putAll(makeHandlerExecutions(handlerKeys, handlerExecution));
         }
     }
 
-    private Object makeInstance(Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor()
-                    .newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+    private Map<HandlerKey, HandlerExecution> makeHandlerExecutions(List<HandlerKey> handlerKeys,
+                                                                    HandlerExecution handlerExecution) {
+        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
-        throw new IllegalStateException("알수없는 이유로 인스턴스를 생성할 수 없습니다!");
+        return handlerExecutions;
     }
 
-    private void addHandler(Object controller, Method method) {
+    private List<HandlerKey> makeHandlerKey(Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         String uri = requestMapping.value();
         RequestMethod[] httpMethods = requestMapping.method();
-        for (RequestMethod httpMethod : httpMethods) {
-            HandlerKey handlerKey = new HandlerKey(uri, httpMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
+        return Arrays.stream(httpMethods)
+                .map(httpMethod -> new HandlerKey(uri, httpMethod))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
