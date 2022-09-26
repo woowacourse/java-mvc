@@ -2,11 +2,14 @@ package nextstep.mvc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.mock;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +23,6 @@ import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import samples.TestManualHandlerMapping;
 
 class DispatcherServletTest {
@@ -94,7 +96,17 @@ class DispatcherServletTest {
 
         // then
         assertAll(
-                () -> verify(writer).write(ArgumentMatchers.contains("sample"))
+                () -> verify(writer).write(argThat(this::isValidJson))
         );
+    }
+
+    private boolean isValidJson(final String argument) {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            objectMapper.readTree(argument);
+            return true;
+        } catch (JsonProcessingException e) {
+            return false;
+        }
     }
 }
