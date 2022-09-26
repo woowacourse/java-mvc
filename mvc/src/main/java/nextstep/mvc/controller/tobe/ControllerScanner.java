@@ -34,6 +34,7 @@ public class ControllerScanner {
                 controllers.put(controller, controller.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 log.info("controller :{}", controller);
+                throw new RuntimeException("controller를 찾는데 실패했습니다.");
             }
         }
         return controllers;
