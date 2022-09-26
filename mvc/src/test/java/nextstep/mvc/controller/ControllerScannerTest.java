@@ -16,6 +16,6 @@ class ControllerScannerTest {
 
         Map<Class<?>, Object> annotatedControllers = controllerScanner.getAnnotatedControllers();
 
-        assertThat(annotatedControllers.size()).isEqualTo(1);
+        assertThat(annotatedControllers).hasSize(1);
     }
 }

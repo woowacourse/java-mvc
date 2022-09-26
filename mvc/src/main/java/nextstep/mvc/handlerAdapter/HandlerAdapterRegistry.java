@@ -9,7 +9,7 @@ public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public void addHandlerAdapter(HandlerAdapter adapter) {
+    public void addHandlerAdapter(final HandlerAdapter adapter) {
         handlerAdapters.add(adapter);
     }
 
