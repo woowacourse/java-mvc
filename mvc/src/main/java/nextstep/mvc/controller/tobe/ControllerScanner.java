@@ -20,7 +20,7 @@ public class ControllerScanner {
         return INSTANCE;
     }
 
-    public Map<Class<?>, Object> scan(final String basePackage) {
+    public Map<Class<?>, Object> scan(final Object... basePackage) {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         return instantiate(classes);
