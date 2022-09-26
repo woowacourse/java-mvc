@@ -10,7 +10,6 @@ import org.mockito.BDDMockito;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.handler.HandlerExecution;
@@ -31,11 +30,11 @@ class AnnotationHandlerAdapterTest {
 		assertThat(result).isTrue();
 	}
 
-	@DisplayName("AnnotationHandlerAdapter가 지원하지 않는 handler인지 판별한다..")
+	@DisplayName("AnnotationHandlerAdapter가 지원하지 않는 handler인지 판별한다.")
 	@Test
 	void supports_false() {
 		// given
-		Object controller = mock(Controller.class);
+		Object controller = mock(Object.class);
 		HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
 
 		// when
