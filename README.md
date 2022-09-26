@@ -29,7 +29,7 @@ interface 기반의 컨트롤러와 annotation 기반의 컨트롤러가 공존�
 
 ### 기능 요구사항
 화면에 대한 책임을 View가 가지게 하고, `JsonView`를 구현하여 REST API를 지원할 수 있도록 한다.
-- [ ] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
+- [X] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
 - [ ] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
 
 #### JspView 구현
