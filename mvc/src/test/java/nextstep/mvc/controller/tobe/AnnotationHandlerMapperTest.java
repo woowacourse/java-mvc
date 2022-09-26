@@ -2,7 +2,7 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.context.PeanutContainer;
+import nextstep.context.PeanutBox;
 import nextstep.mvc.handler.mapper.AnnotationHandlerMapper;
 import nextstep.mvc.handler.tobe.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ class AnnotationHandlerMapperTest {
 
     @BeforeEach
     void setUp() {
-        PeanutContainer.INSTANCE.init("samples");
+        PeanutBox.INSTANCE.init("samples");
         handlerMapping = new AnnotationHandlerMapper("samples");
         handlerMapping.initialize();
     }

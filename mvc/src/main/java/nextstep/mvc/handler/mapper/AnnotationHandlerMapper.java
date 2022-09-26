@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import nextstep.context.PeanutContainer;
+import nextstep.context.PeanutBox;
 import nextstep.mvc.handler.tobe.HandlerExecution;
 import nextstep.mvc.handler.tobe.HandlerKey;
 import nextstep.web.annotation.Controller;
@@ -39,7 +39,7 @@ public class AnnotationHandlerMapper implements HandlerMapper {
         final Map<HandlerKey, HandlerExecution> handlerExecutions = new Reflections(basePackages)
                 .getTypesAnnotatedWith(Controller.class)
                 .stream()
-                .map(PeanutContainer.INSTANCE::getPeanut)
+                .map(PeanutBox.INSTANCE::getPeanut)
                 .flatMap(this::createHandlerExecutions)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
