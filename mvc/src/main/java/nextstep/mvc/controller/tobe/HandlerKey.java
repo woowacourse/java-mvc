@@ -19,8 +19,7 @@ public class HandlerKey {
         final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         final String url = annotation.value();
         final RequestMethod requestMethod = annotation.method()[0];
-        final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-        return handlerKey;
+        return new HandlerKey(url, requestMethod);
     }
 
     @Override
