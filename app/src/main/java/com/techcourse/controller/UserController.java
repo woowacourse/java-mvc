@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -27,6 +27,7 @@ public class UserController {
                 .orElseThrow();
 
         modelAndView.addObject("user", user);
+        modelAndView.addObject("hangeul", "한글");
         return modelAndView;
     }
 }

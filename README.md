@@ -11,10 +11,10 @@
 
 ### step3
 
-- [ ] JspView 클래스를 구현한다.
+- [x] JspView 클래스를 구현한다.
   - nextstep.jwp.mvc.view 패키지에서 JspView 클래스를 찾을 수 있다.  
     DispatcherServlet 클래스의 service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮겨보자.
-- [ ] JsonView 클래스를 구현한다.
+- [x] JsonView 클래스를 구현한다.
   - nextstep.jwp.mvc.view 패키지에서 JsonView 클래스를 찾을 수 있다.  
     HTTP Request Body로 JSON 타입의 데이터를 받았을 때 어떻게 자바에서 처리할지 고민해보고 JsonView 클래스를 구현해보자.
 - [ ] Legacy MVC 제거하기
