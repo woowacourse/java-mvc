@@ -8,10 +8,9 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.ManualHandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,10 +36,9 @@ class DispatcherServletTest {
         given(request.getMethod()).willReturn("GET");
         given(request.getAttribute("id")).willReturn("gugu");
         given(request.getRequestDispatcher("")).willReturn(mock(RequestDispatcher.class));
-        dispatcherServlet = new DispatcherServlet(
-                List.of(new AnnotationHandlerMapping("samples")),
-                List.of(new AnnotationHandlerAdapter())
-        );
+        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         // when
         dispatcherServlet.init();
@@ -57,9 +55,9 @@ class DispatcherServletTest {
         given(request.getRequestURI()).willReturn("/manual-test");
         final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
         given(request.getRequestDispatcher("testView")).willReturn(requestDispatcher);
-        dispatcherServlet = new DispatcherServlet(
-                List.of(new TestManualHandlerMapping()), List.of(new ManualHandlerAdapter())
-        );
+        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.addHandlerMapping(new TestManualHandlerMapping());
+        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
 
         // when
         dispatcherServlet.init();
