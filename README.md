@@ -25,8 +25,12 @@
 - [x] JspView 구현 (이미 함)
 - [ ] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
     - restController 와 유사하게 바꿔보는 느낌인듯 ?
-        - [ ] user Controller 추가하기
-        - [ ] restController interface 추가
+        - [x] user Controller 추가하기
+        - [x] restController interface 추가
         - [ ] JsonView 구현하기
+            - [ ] JSON으로 응답할 때 ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE으로 반환해야 한다.
+            - [ ] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환한다.
 - [ ] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다. - [ ]app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
     - [ ] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링
+
+/
