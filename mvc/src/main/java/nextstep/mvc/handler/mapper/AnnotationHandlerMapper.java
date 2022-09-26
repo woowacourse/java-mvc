@@ -32,6 +32,7 @@ public class AnnotationHandlerMapper implements HandlerMapper {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
@@ -39,10 +40,17 @@ public class AnnotationHandlerMapper implements HandlerMapper {
                 .getTypesAnnotatedWith(Controller.class)
                 .stream()
                 .map(PeanutContainer.INSTANCE::getPeanut)
-                .flatMap(handler -> createHandlerExecutions(handler))
+                .flatMap(this::createHandlerExecutions)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
         this.handlerExecutions.putAll(handlerExecutions);
+    }
+
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+        return handlerExecutions.get(handlerKey);
     }
 
     private Stream<? extends Entry<HandlerKey, HandlerExecution>> createHandlerExecutions(final Object handler) {
@@ -70,11 +78,5 @@ public class AnnotationHandlerMapper implements HandlerMapper {
         return Arrays.stream(requestMapping.method())
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    public HandlerExecution getHandler(final HttpServletRequest request) {
-        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
-        return handlerExecutions.get(handlerKey);
     }
 }
