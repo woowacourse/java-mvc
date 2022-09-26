@@ -6,14 +6,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.tobe.exception.ControllerNotFoundException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +26,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Set<Class<?>> controllerClasses = extractClasses();
-        List<Method> methods = extractMethods(controllerClasses);
+        ControllerScanner controllerScanner = new ControllerScanner();
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers(basePackage);
+        List<Method> methods = extractMethods(controllers);
 
         for (Method method : methods) {
             addHandlerExecutions(method);
@@ -40,13 +37,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> extractClasses() {
-        Reflections classReflections = new Reflections(basePackage, Scanners.TypesAnnotated);
-        return classReflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private List<Method> extractMethods(final Set<Class<?>> controllers) {
-        return controllers.stream()
+    private List<Method> extractMethods(final Map<Class<?>, Object> controllers) {
+        return controllers.keySet().stream()
                 .flatMap(it -> Arrays.stream(it.getMethods()))
                 .filter(it -> it.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
