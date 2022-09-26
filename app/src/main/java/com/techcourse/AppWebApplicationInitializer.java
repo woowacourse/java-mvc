@@ -29,16 +29,26 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     }
 
     private DispatcherServlet initDispatcherServlet() {
+        HandlerMappingRegistry handlerMappingRegistry = initHandlerMappingRegistry();
+        final HandlerAdapterRegistry handlerAdapterRegistry = initHandlerAdapterRegistry();
+
+        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
+        return dispatcherServlet;
+    }
+
+    private HandlerAdapterRegistry initHandlerAdapterRegistry() {
+        List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+        handlerAdapters.add(new ControllerHandlerAdapter());
+        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
+        return handlerAdapterRegistry;
+    }
+
+    private HandlerMappingRegistry initHandlerMappingRegistry() {
         List<HandlerMapping> handlerMappings = new ArrayList<>();
         handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping());
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
-        List<HandlerAdapter> handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
-
-        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
-        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
-        return dispatcherServlet;
+        return handlerMappingRegistry;
     }
 }
