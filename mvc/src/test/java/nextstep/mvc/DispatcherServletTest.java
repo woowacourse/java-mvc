@@ -1,6 +1,5 @@
 package nextstep.mvc;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
-import nextstep.mvc.controller.tobe.exception.NotSupportHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,18 +45,5 @@ class DispatcherServletTest {
 
         assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
         verify(requestDispatcher).forward(request, response);
-    }
-
-    @DisplayName("지원하지 않는 핸들러에 대해서는 예외가 발생한다.")
-    @Test
-    void invalidRequest() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/get-invalid");
-        when(request.getMethod()).thenReturn("GET");
-
-        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-                .isInstanceOf(NotSupportHandler.class);
     }
 }

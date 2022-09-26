@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.controller.tobe.exception.NotFoundControllerException;
+import nextstep.mvc.controller.tobe.exception.InvalidReflectionException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
@@ -29,9 +29,9 @@ public class ControllerScanner {
 
     private Object createController(Class<?> controllerClass) {
         try {
-            return controllerClass.getDeclaredConstructor().newInstance();
+            return controllerClass.getConstructor().newInstance();
         } catch(NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new NotFoundControllerException();
+            throw new InvalidReflectionException();
         }
     }
 }
