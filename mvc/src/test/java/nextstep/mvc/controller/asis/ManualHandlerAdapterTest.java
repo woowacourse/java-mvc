@@ -1,11 +1,13 @@
 package nextstep.mvc.controller.asis;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.stream.Stream;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ManualHandlerAdapter;
@@ -18,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import samples.ManualTestController;
+import samples.TestController;
 
 class ManualHandlerAdapterTest {
 
@@ -34,11 +38,19 @@ class ManualHandlerAdapterTest {
         assertThat(result).isEqualTo(canSupport);
     }
 
-    public static Stream<Arguments> supportsData() {
+    public static Stream<Arguments> supportsData() throws NoSuchMethodException {
         return Stream.of(
-                Arguments.of(mock(Controller.class), true),
-                Arguments.of(mock(HandlerExecution.class), false)
+                Arguments.of(new ManualTestController(), true),
+                Arguments.of(getHandlerExecution(), false)
         );
+    }
+
+    private static HandlerExecution getHandlerExecution() throws NoSuchMethodException {
+        final TestController testController = new TestController();
+        final Method method = testController.getClass()
+                .getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+
+        return new HandlerExecution(testController, method);
     }
 
     @Test
@@ -47,18 +59,16 @@ class ManualHandlerAdapterTest {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
-        final Controller controller = mock(Controller.class);
-
-        when(controller.execute(request, response)).thenReturn("/index.html");
+        final Controller controller = new ManualTestController();
 
         // when
-        final ModelAndView result = manualHandlerAdapter.handle(request, response, controller);
+        final ModelAndView modelAndView = manualHandlerAdapter.handle(request, response, controller);
 
         // then
-        Assertions.assertAll(() -> {
-            assertThat(result.getView()).isInstanceOf(JspView.class);
-            assertThat(result.getView()).extracting("viewPath")
-                    .isEqualTo("/index.html");
+        assertAll(() -> {
+            assertThat(modelAndView.getView()).isInstanceOf(JspView.class);
+            assertThat(modelAndView.getView()).extracting("viewPath")
+                    .isEqualTo(controller.execute(request, response));
         });
     }
 }

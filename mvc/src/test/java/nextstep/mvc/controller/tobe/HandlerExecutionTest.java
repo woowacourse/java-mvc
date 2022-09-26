@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +33,10 @@ class HandlerExecutionTest {
         final ModelAndView result = handlerExecution.handle(request, response);
 
         // then
+        final ModelAndView modelAndView = testController.findUserId(request, response);
+
         assertAll(() -> {
-            assertThat(result.getView()).isInstanceOf(JspView.class);
+            assertThat(result.getView()).isEqualTo(modelAndView.getView());
             assertThat(result.getModel()).containsEntry("id", "gugu");
         });
     }
