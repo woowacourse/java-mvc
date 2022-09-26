@@ -10,22 +10,29 @@ import com.techcourse.repository.InMemoryUserRepository;
 import java.util.Optional;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.test.MockMvc;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ControllerTest {
 
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = new MockMvc(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.techcourse")
+        );
+    }
+
     @Test
     void forwardIndexPage() throws Exception {
-        MockMvc mockMvc = new MockMvc(new ManualHandlerMapping());
-
         mockMvc.perform(get("/"))
                 .forwardTo("/index.jsp");
     }
 
     @Test
     void loginSuccessfully() throws Exception {
-        MockMvc mockMvc = new MockMvc(new AnnotationHandlerMapping("com.techcourse"));
-
         mockMvc.perform(post("/login")
                 .param("account", "gugu")
                 .param("password", "password")
@@ -35,8 +42,6 @@ public class ControllerTest {
 
     @Test
     void loginFailed() throws Exception {
-        MockMvc mockMvc = new MockMvc(new AnnotationHandlerMapping("com.techcourse"));
-
         mockMvc.perform(post("/login")
                 .param("account", "gugu")
                 .param("password", "invalid")
@@ -46,24 +51,18 @@ public class ControllerTest {
 
     @Test
     void loginView() throws Exception {
-        MockMvc mockMvc = new MockMvc(new AnnotationHandlerMapping("com.techcourse"));
-
         mockMvc.perform(get("/login/view"))
                 .forwardTo("/login.jsp");
     }
 
     @Test
     void logout() throws Exception {
-        MockMvc mockMvc = new MockMvc(new ManualHandlerMapping());
-
         mockMvc.perform(post("/logout"))
                 .redirectTo("/");
     }
 
     @Test
     void register() throws Exception {
-        MockMvc mockMvc = new MockMvc(new ManualHandlerMapping());
-
         mockMvc.perform(post("/register")
                 .param("account", "verus")
                 .param("password", "password")
@@ -77,8 +76,6 @@ public class ControllerTest {
 
     @Test
     void registerView() throws Exception {
-        MockMvc mockMvc = new MockMvc(new ManualHandlerMapping());
-
         mockMvc.perform(get("/register/view"))
                 .forwardTo("/register.jsp");
     }
