@@ -16,9 +16,8 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
-    public ModelAndView addObject(final String attributeName, final Object attributeValue) {
+    public void addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
-        return this;
     }
 
     public void render(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
