@@ -1,5 +1,7 @@
 package nextstep.mvc.view;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,15 @@ public class ModelAndView {
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
+    }
+
+    public void render(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            view.render(model, request, response);
+        } catch (Exception e) {
+            throw new RuntimeException("View를 Rendering 할 수 없습니다.");
+        }
+
     }
 
     public Object getObject(final String attributeName) {
