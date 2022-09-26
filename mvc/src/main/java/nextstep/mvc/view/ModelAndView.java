@@ -16,6 +16,11 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
+    public ModelAndView(final String viewName) {
+        this.view = new JspView(viewName);
+        this.model = new HashMap<>();
+    }
+
     public void addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
     }
