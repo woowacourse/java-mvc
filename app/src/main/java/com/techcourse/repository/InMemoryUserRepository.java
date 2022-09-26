@@ -5,23 +5,23 @@ import com.techcourse.domain.User;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import nextstep.web.annotation.Repository;
 
+@Repository
 public class InMemoryUserRepository {
 
-    private static final Map<String, User> database = new ConcurrentHashMap<>();
+    private final Map<String, User> database = new ConcurrentHashMap<>();
 
-    static {
+    public InMemoryUserRepository() {
         final var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
         database.put(user.getAccount(), user);
     }
 
-    public static void save(User user) {
+    public void save(User user) {
         database.put(user.getAccount(), user);
     }
 
-    public static Optional<User> findByAccount(String account) {
+    public Optional<User> findByAccount(String account) {
         return Optional.ofNullable(database.get(account));
     }
-
-    private InMemoryUserRepository() {}
 }

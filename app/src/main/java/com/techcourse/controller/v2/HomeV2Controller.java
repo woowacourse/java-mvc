@@ -15,6 +15,12 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class HomeV2Controller {
 
+    private InMemoryUserRepository inMemoryUserRepository;
+
+    public HomeV2Controller(final InMemoryUserRepository inMemoryUserRepository) {
+        this.inMemoryUserRepository = inMemoryUserRepository;
+    }
+
     @RequestMapping(value = "/v2", method = GET)
     public ModelAndView index(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/index.jsp"));

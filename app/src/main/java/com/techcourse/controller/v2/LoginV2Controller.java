@@ -20,6 +20,12 @@ public class LoginV2Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginV2Controller.class);
 
+    private InMemoryUserRepository userRepository;
+
+    public LoginV2Controller(final InMemoryUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @RequestMapping(value = "/v2/login/view", method = GET)
     public ModelAndView loginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final String viewName = UserSession.getUserFrom(req.getSession())
@@ -49,7 +55,7 @@ public class LoginV2Controller {
     }
 
     private String findByAccount(final HttpServletRequest req) {
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return userRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);

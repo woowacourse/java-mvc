@@ -8,13 +8,19 @@ import nextstep.mvc.handler.asis.Controller;
 
 public class RegisterV1Controller implements Controller {
 
+    private final InMemoryUserRepository userRepository;
+
+    public RegisterV1Controller(final InMemoryUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
-        InMemoryUserRepository.save(user);
+        userRepository.save(user);
 
         return "redirect:/index.jsp";
     }

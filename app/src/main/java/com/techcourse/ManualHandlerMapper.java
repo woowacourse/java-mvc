@@ -5,7 +5,9 @@ import com.techcourse.controller.v1.LoginViewV1Controller;
 import com.techcourse.controller.v1.LogoutV1Controller;
 import com.techcourse.controller.v1.RegisterV1Controller;
 import com.techcourse.controller.v1.RegisterViewV1Controller;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.context.PeanutBox;
 import nextstep.mvc.handler.mapper.HandlerMapper;
 import nextstep.mvc.handler.asis.Controller;
 import nextstep.mvc.handler.asis.ForwardController;
@@ -23,12 +25,14 @@ public class ManualHandlerMapper implements HandlerMapper {
 
     @Override
     public void initialize() {
+        final InMemoryUserRepository userRepository = PeanutBox.INSTANCE.getPeanut(InMemoryUserRepository.class);
+
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginV1Controller());
+        controllers.put("/login", new LoginV1Controller(userRepository));
         controllers.put("/login/view", new LoginViewV1Controller());
         controllers.put("/logout", new LogoutV1Controller());
-        controllers.put("/register/view", new RegisterViewV1Controller());
-        controllers.put("/register", new RegisterV1Controller());
+        controllers.put("/register/view", new RegisterViewV1Controller(userRepository));
+        controllers.put("/register", new RegisterV1Controller(userRepository));
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

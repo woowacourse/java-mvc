@@ -15,6 +15,12 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class RegisterV2Controller {
 
+    private final InMemoryUserRepository userRepository;
+
+    public RegisterV2Controller(final InMemoryUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @RequestMapping(value = "/v2/register/view", method = GET)
     public ModelAndView registerView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/register.jsp"));
@@ -26,7 +32,7 @@ public class RegisterV2Controller {
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
-        InMemoryUserRepository.save(user);
+        userRepository.save(user);
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
