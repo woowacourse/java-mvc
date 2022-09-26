@@ -2,7 +2,6 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -10,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -29,46 +25,30 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        List<Method> extractedMethods = searchAnnotatedMethods(reflections);
-        List<HandlerKey> handlerKeys = generateHandlerKeys(extractedMethods);
-        List<HandlerExecution> executions = generateHandlerExecutions(extractedMethods);
-        addHandlerExcutions(handlerKeys, executions);
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        Set<Method> methods = getRequestMappingMethods(controllers.keySet());
+        methods.forEach(each -> addHandlerExecutions(controllers, each, each.getAnnotation(RequestMapping.class)));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExcutions(List<HandlerKey> handlerKeys, List<HandlerExecution> executions) {
-        if (handlerKeys.size() != executions.size()) {
-            throw new IllegalArgumentException("Handler Key의 갯수와 Handler Execution의 갯수가 동일하지 않습니다.");
-        }
-        for (int i = 0; i < handlerKeys.size(); i++) {
-            this.handlerExecutions.put(handlerKeys.get(i), executions.get(i));
-        }
+    private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
+        handlerKeys.forEach(each ->
+                handlerExecutions.put(each, new HandlerExecution(controllers.get(method.getDeclaringClass()), method)));
     }
 
-    private List<HandlerExecution> generateHandlerExecutions(List<Method> extractedMethods) {
-        List<HandlerExecution> executions = extractedMethods.stream()
-                .map(HandlerExecution::new)
-                .collect(Collectors.toUnmodifiableList());
-        return executions;
-    }
-
-    private List<HandlerKey> generateHandlerKeys(List<Method> extractedMethods) {
-        List<HandlerKey> handlerKeys = extractedMethods.stream()
-                .flatMap(each ->
-                        Arrays.stream(each.getAnnotation(RequestMapping.class).method())
-                                .map(requestMethod -> new HandlerKey(each.getAnnotation(RequestMapping.class).value(),
-                                        requestMethod)))
-                .collect(Collectors.toUnmodifiableList());
-        return handlerKeys;
-    }
-
-    private List<Method> searchAnnotatedMethods(Reflections reflections) {
-        List<Method> extractedMethods = reflections.getTypesAnnotatedWith(Controller.class).stream()
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
+        return classes.stream()
                 .flatMap(each -> Arrays.stream(each.getMethods())
-                        .filter(temp -> temp.isAnnotationPresent(RequestMapping.class)))
+                        .filter(method -> method.isAnnotationPresent(RequestMapping.class)))
+                .collect(Collectors.toSet());
+    }
+
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(each -> new HandlerKey(url, each))
                 .collect(Collectors.toUnmodifiableList());
-        return extractedMethods;
     }
 
     public Object getHandler(HttpServletRequest request) {
