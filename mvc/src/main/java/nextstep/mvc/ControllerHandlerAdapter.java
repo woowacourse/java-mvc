@@ -20,5 +20,4 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
         final var viewName = ((Controller) handler).execute(request, response);
         return new ModelAndView(new JspView(viewName));
     }
-
 }
