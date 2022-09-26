@@ -13,6 +13,10 @@ public class HandlerMappingRegistry {
         this.handlerMappings = new ArrayList<>();
     }
 
+    public void init() {
+        handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
