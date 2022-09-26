@@ -3,6 +3,7 @@ package nextstep.mvc;
 import static nextstep.test.MockRequestBuilder.get;
 import static nextstep.test.MockRequestBuilder.post;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
@@ -14,6 +15,7 @@ import samples.User;
 
 class DispatcherServletTest {
 
+    private ObjectMapper objectMapper;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -22,6 +24,8 @@ class DispatcherServletTest {
                 new TestManualHandlerMapping(),
                 new AnnotationHandlerMapping("samples")
         );
+
+        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -50,8 +54,9 @@ class DispatcherServletTest {
 
     @Test
     void getUser() throws Exception {
+        final User verus = new User("verus", 28);
         mockMvc.perform(get("/api/user"))
-                .jsonBody(new User("verus", 28));
+                .jsonBody(objectMapper.writeValueAsString(verus));
     }
 
     @Test
@@ -61,12 +66,12 @@ class DispatcherServletTest {
         body.put("user2", new User("gugu", 30));
 
         mockMvc.perform(get("/api/users"))
-                .jsonBody(body);
+                .jsonBody(objectMapper.writeValueAsString(body));
     }
 
     @Test
     void emptyBody() throws Exception {
         mockMvc.perform(get("/api/empty"))
-                .jsonBody(Map.of());
+                .jsonBody(objectMapper.writeValueAsString(Map.of()));
     }
 }

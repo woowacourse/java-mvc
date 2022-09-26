@@ -4,6 +4,7 @@ import static nextstep.test.MockRequestBuilder.get;
 import static nextstep.test.MockRequestBuilder.post;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techcourse.ManualHandlerMapping;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.Test;
 
 public class ControllerTest {
 
+    private ObjectMapper objectMapper;
+
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -23,6 +26,8 @@ public class ControllerTest {
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse")
         );
+
+        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -78,5 +83,15 @@ public class ControllerTest {
     void registerView() throws Exception {
         mockMvc.perform(get("/register/view"))
                 .forwardTo("/register.jsp");
+    }
+
+    @Test
+    void getUserByJsonBody() throws Exception {
+        User user = InMemoryUserRepository.findByAccount("gugu").orElseThrow();
+
+        mockMvc.perform(get("/api/user")
+                .param("account", "gugu")
+        )
+                .jsonBody(objectMapper.writeValueAsString(user));
     }
 }

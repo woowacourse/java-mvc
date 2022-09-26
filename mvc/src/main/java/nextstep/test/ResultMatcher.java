@@ -41,9 +41,9 @@ public class ResultMatcher {
         return this;
     }
 
-    public ResultMatcher jsonBody(final Object expectedBody) throws Exception {
+    public ResultMatcher jsonBody(String body) throws Exception {
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        verify(response.getWriter()).write(OBJECT_MAPPER.writeValueAsString(expectedBody));
+        verify(response.getWriter()).write(body);
         return this;
     }
 }
