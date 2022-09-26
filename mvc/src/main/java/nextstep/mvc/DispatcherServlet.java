@@ -8,6 +8,7 @@ import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.exception.NotFoundHandlerException;
 import nextstep.mvc.handler.HandlerMapping;
+import nextstep.mvc.handler.HandlerMappingRegistry;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
@@ -23,40 +24,32 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.init();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.add(handlerMapping);
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
         throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-        final Object handler = getHandler(request);
+        final Object handler = handlerMappingRegistry.getHandler(request);
         if (handler instanceof Controller) {
             handleManualHandler(request, response, (Controller) handler);
         }
         if (handler instanceof HandlerExecution) {
             handlerAnnotationHandler(request, response, (HandlerExecution) handler);
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElseThrow(NotFoundHandlerException::new);
     }
 
     private void handleManualHandler(HttpServletRequest request, HttpServletResponse response,
