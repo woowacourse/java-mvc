@@ -9,8 +9,6 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.web.support.MediaType;
@@ -38,7 +36,7 @@ class JsonViewTest {
 
         // then
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        assertThat(writer.written).isEqualTo(new ObjectMapper().writeValueAsString(model));
+        assertThat(writer.written).isEqualTo("{\"hello\":\"world\",\"we are\":\"woowacourse\"}");
     }
 
     @Test
