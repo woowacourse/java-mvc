@@ -30,7 +30,6 @@ class HandlerMappingRegistryTest {
         final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         handlerMappingRegistry.addHandlerMapping(new ManualTestHandlerMapping());
-        handlerMappingRegistry.init();
 
         // when
         final Optional<Object> handlerMappingResult = handlerMappingRegistry.getHandler(request);
