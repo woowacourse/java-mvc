@@ -12,7 +12,7 @@ public class JsonView implements View {
     private static final int SINGLE_DATA_SIZE = 1;
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         String responseBody = convertToJsonString(model);
