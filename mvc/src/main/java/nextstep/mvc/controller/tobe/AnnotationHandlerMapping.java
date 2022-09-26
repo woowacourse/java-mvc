@@ -11,10 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.component.controllerscan.ReflectionLoader;
-import nextstep.mvc.component.controllerscan.ReflectionsReflectionLoader;
+import nextstep.mvc.component.controllerscan.ControllerScanner;
 import nextstep.mvc.exception.NotFoundException;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
@@ -24,27 +22,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final ControllerScanner controllerScanner) {
+        this.controllerScanner = controllerScanner;
         this.handlerExecutions = new HashMap<>();
     }
 
     @Override
     public void initialize() {
-        for (Object packageName : basePackage) {
-            scanController((String) packageName);
-        }
+        final Set<Class<?>> controllerClasses = controllerScanner.scanAllController();
+        controllerClasses.forEach(this::registerMappingHandler);
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private void scanController(final String packageName) {
-        final ReflectionLoader reflectionLoader = new ReflectionsReflectionLoader();
-        final Set<Class<?>> controllers = reflectionLoader.getClassesAnnotatedWith(packageName, Controller.class);
-
-        controllers.forEach(this::registerMappingHandler);
     }
 
     private void registerMappingHandler(final Class<?> controllerClass) {
