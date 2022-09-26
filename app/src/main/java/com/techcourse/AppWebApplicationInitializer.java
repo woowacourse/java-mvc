@@ -14,7 +14,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(AppWebApplicationInitializer.class);
 
     @Override
-    public void onStartup(final ServletContext servletContext) {
+    public void onStartup(ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
 
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
