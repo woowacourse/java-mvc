@@ -1,13 +1,10 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -29,8 +26,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        classes.forEach(this::mappingHandlerExecutions);
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach(this::mappingHandlerExecutions);
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -41,21 +40,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void mappingHandlerExecutions(Class<?> aClass) {
-        Object instance = getNewInstance(aClass);
+    private void mappingHandlerExecutions(Class<?> aClass, Object instance) {
         for (Method method : aClass.getDeclaredMethods()) {
             RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
             mappingHandlerExecution(instance, method, requestMapping);
-        }
-    }
-
-    private Object getNewInstance(Class<?> aClass) {
-        try {
-            return aClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
         }
     }
 
