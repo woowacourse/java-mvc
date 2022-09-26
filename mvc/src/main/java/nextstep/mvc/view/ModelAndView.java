@@ -4,17 +4,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 public class ModelAndView {
 
     private final View view;
     private final Map<String, Object> model;
 
     public ModelAndView(final String viewName) {
-        this(getView(viewName));
-    }
-
-    public ModelAndView(final View view) {
-        this.view = view;
+        this.view = getView(viewName);
         this.model = new HashMap<>();
     }
 
@@ -23,7 +22,11 @@ public class ModelAndView {
         return this;
     }
 
-    private static View getView(String viewName) {
+    public void render(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        view.render(model, request, response);
+    }
+
+    private static View getView(final String viewName) {
         if (viewName.endsWith(".jsp")) {
             return new JspView(viewName);
         }

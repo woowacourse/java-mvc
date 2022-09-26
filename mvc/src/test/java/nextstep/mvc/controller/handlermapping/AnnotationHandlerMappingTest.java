@@ -1,15 +1,16 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller.handlermapping;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import fixture.RequestFixture;
+import fixture.ResponseFixture;
+import nextstep.mvc.handlermapping.AnnotationHandlerMapping;
+import nextstep.mvc.handlermapping.HandlerExecution;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -24,12 +25,8 @@ class AnnotationHandlerMappingTest {
     @DisplayName("GET 요청에 대한 handler 조회")
     @Test
     void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        final var request = RequestFixture.getRequest();
+        final var response = ResponseFixture.response();
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
@@ -40,12 +37,8 @@ class AnnotationHandlerMappingTest {
     @DisplayName("POST 요청에 대한 handler 조회")
     @Test
     void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+        final var request = RequestFixture.postRequest();
+        final var response = ResponseFixture.response();
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
@@ -56,11 +49,7 @@ class AnnotationHandlerMappingTest {
     @DisplayName("추가하지 않은 handler 조회 시 예외 발생")
     @Test
     void getHandlerNotExist() {
-        final var request = mock(HttpServletRequest.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/not-exist-path");
-        when(request.getMethod()).thenReturn("GET");
+        final var request = RequestFixture.getRequest("/not-exist-path");
 
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
             .isInstanceOf(IllegalArgumentException.class)
