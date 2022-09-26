@@ -1,17 +1,13 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
@@ -33,15 +29,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
-        initializeHandlerExecutions(controllers);
+        initializeHandlerExecutions(controllerScanner);
         logSavedController();
     }
 
-    private void initializeHandlerExecutions(final Set<Class<?>> controllers) {
-        for (Class<?> controller : controllers) {
-            final Object controllerInstance = getControllerInstance(controller);
+    private void initializeHandlerExecutions(final ControllerScanner controllerScanner) {
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Class<?> controller : controllers.keySet()) {
+            final Object controllerInstance = controllers.get(controller);
             final Method[] methods = controller.getMethods();
             final List<Method> requestMethods = Arrays.stream(methods)
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
@@ -65,17 +62,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod httpMethod : httpMethods) {
             final HandlerKey handlerKey = new HandlerKey(url, httpMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, requestMethod));
-        }
-    }
-
-    private Object getControllerInstance(Class<?> controller) {
-        try {
-            final Constructor<?> constructor = controller.getConstructor();
-            return constructor.newInstance();
-        } catch (InstantiationException | IllegalAccessException
-                | InvocationTargetException | NoSuchMethodException e) {
-            log.warn(e.getLocalizedMessage());
-            throw new RuntimeException(e);
         }
     }
 
