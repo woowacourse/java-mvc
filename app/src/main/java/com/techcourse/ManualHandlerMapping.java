@@ -1,15 +1,18 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.v1.LoginController;
+import com.techcourse.controller.v1.LoginViewController;
+import com.techcourse.controller.v1.LogoutController;
+import com.techcourse.controller.v1.RegisterController;
+import com.techcourse.controller.v1.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.asis.ForwardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -19,12 +22,12 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+        controllers.put("/v1", new ForwardController("/index.jsp"));
+        controllers.put("/v1/login", new LoginController());
+        controllers.put("/v1/login/view", new LoginViewController());
+        controllers.put("/v1/logout", new LogoutController());
+        controllers.put("/v1/register/view", new RegisterViewController());
+        controllers.put("/v1/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
