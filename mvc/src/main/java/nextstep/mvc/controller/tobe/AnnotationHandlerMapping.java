@@ -34,11 +34,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         for (Class<?> controller : controllers.keySet()) {
             Set<Method> methodsWithAnnotation = getMethodsWithAnnotation(controller);
-            addHandlerExecutions(controller, methodsWithAnnotation);
+            addHandlerExecutions(methodsWithAnnotation);
         }
     }
 
-    private void addHandlerExecutions(Class<?> controller, Set<Method> methodsWithAnnotation) {
+    private void addHandlerExecutions(Set<Method> methodsWithAnnotation) {
         for (Method method : methodsWithAnnotation) {
             RequestMapping requestMappingAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
             String url = requestMappingAnnotation.value();

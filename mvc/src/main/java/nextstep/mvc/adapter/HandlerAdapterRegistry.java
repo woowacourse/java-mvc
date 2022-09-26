@@ -10,10 +10,6 @@ public class HandlerAdapterRegistry {
     public HandlerAdapterRegistry() {
     }
 
-    public HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
-    }
-
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))

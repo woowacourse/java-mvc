@@ -11,11 +11,6 @@ public class HandlerMappingRegistry {
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public HandlerMappingRegistry() {
-
-    }
-
-    public HandlerMappingRegistry(List<HandlerMapping> handlerMappings) {
-        this.handlerMappings = handlerMappings;
     }
 
     public void add(HandlerMapping handlerMapping) {
