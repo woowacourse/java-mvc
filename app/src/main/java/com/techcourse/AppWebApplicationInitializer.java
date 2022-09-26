@@ -4,7 +4,6 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration.Dynamic;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.controller.tobe.adapters.AnnotationHandlerAdapter;
-import nextstep.mvc.controller.tobe.adapters.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.mappings.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.resolvers.DefaultResolver;
 import nextstep.mvc.controller.tobe.resolvers.JsonResolver;

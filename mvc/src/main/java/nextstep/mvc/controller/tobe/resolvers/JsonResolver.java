@@ -1,6 +1,5 @@
 package nextstep.mvc.controller.tobe.resolvers;
 
-import java.util.List;
 import nextstep.mvc.ModelAndViewResolver;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;

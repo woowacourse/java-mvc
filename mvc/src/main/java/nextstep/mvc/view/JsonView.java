@@ -4,11 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import nextstep.web.support.MediaType;
 
 public class JsonView implements View {

@@ -22,7 +22,8 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) {
+    public void render(final Map<String, ?> model, final HttpServletRequest request,
+                       final HttpServletResponse response) {
         try {
             tryRender(model, request, response);
         } catch (IOException | ServletException e) {
