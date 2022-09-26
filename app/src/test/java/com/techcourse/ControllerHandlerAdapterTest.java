@@ -12,11 +12,11 @@ import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 
-class ManualHandlerAdapterTest {
+class ControllerHandlerAdapterTest {
 
     @Test
     void HandlerAdapter가_처리할_수_있는_핸들러이면_true를_반환한다() {
-        HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+        HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
         Controller controller = mock(Controller.class);
 
         boolean actual = handlerAdapter.supports(controller);
@@ -26,7 +26,7 @@ class ManualHandlerAdapterTest {
 
     @Test
     void HandlerAdapter가_처리할_수_없는_핸들러이면_false를_반환한다() {
-        HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+        HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
         HandlerExecution notController = mock(HandlerExecution.class);
 
         boolean actual = handlerAdapter.supports(notController);
@@ -40,7 +40,7 @@ class ManualHandlerAdapterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         Controller handler = mock(Controller.class);
 
-        HandlerAdapter handlerAdapter = new ManualHandlerAdapter();
+        HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
 
         when(handler.execute(request, response)).thenReturn("viewName");
 
