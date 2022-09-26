@@ -5,10 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.exception.RequestMappingNotAnnotatedException;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import nextstep.web.support.RequestUrl;
@@ -45,26 +43,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void putControllerToHandlerExecutions(final Class<?> controller, final Object instance) {
-        Set<Method> controllerMethods = ReflectionUtils.getAllMethods(controller, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
+        Set<Method> controllerMethods = ReflectionUtils.getAllMethods(controller,
+                ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
         for (Method method : controllerMethods) {
-            RequestMapping requestMapping = getRequestMappingAnnotation(method);
+            RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
             putHandlerKeyAndExecution(instance, method, requestMapping);
         }
     }
 
-    private void putHandlerKeyAndExecution(final Object instance, final Method method, final RequestMapping requestMapping) {
+    private void putHandlerKeyAndExecution(final Object instance, final Method method,
+                                           final RequestMapping requestMapping) {
         RequestUrl requestUrl = new RequestUrl(requestMapping.value());
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
             handlerExecutions.put(requestUrl, requestMethod, instance, method);
-        }
-    }
-
-    private RequestMapping getRequestMappingAnnotation(final Method method) {
-        try {
-            return Objects.requireNonNull(method.getDeclaredAnnotation(RequestMapping.class));
-        } catch (NullPointerException e) {
-            throw new RequestMappingNotAnnotatedException();
         }
     }
 }
