@@ -5,6 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,15 @@ public class JsonView implements View {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
         });
 
-        String body = mapper.writeValueAsString(model);
+        String body = generateBody(model);
         response.getWriter().write(body);
+    }
+
+    private String generateBody(Map<String, ?> model) throws JsonProcessingException {
+        if (model.size() == 1) {
+            return model.values().toArray()[0].toString();
+        }
+
+        return mapper.writeValueAsString(model);
     }
 }
