@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import nextstep.mvc.controller.asis.ControllerHandlerAdapter;
 import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
+import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import nextstep.mvc.exception.NotFoundException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
@@ -20,23 +21,23 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.init();
         handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Object handler = getHandler(request);
+            final Object handler = handlerMappingRegistry.getHandler(request);
             final HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
@@ -53,18 +54,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() ->
-                        new NotFoundException(
-                                "핸들러 없는 요청임 method = " + request.getMethod() + ", uri = " + request.getRequestURI()
-                        )
-                );
     }
 
     private HandlerAdapter findHandlerAdapter(final Object handler) {
