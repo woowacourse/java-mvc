@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 
-public class AnnotationHandlerAdapterTest {
+class AnnotationHandlerAdapterTest {
 
     @Test
     void support() {
