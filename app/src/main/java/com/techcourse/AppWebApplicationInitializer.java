@@ -31,9 +31,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     private static DispatcherServlet initializeDispatcherServlet() {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
-//        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
-//        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
         dispatcherServlet.addModelAndViewResolver(new DefaultResolver());
         dispatcherServlet.addModelAndViewResolver(new JspResolver());
