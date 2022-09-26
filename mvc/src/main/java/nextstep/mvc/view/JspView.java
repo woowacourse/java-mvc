@@ -21,7 +21,7 @@ public class JspView implements View {
     public JspView(final String viewName) {
         validateJsp(viewName);
         if (viewName.startsWith(REDIRECT_PREFIX)) {
-            this.viewName = viewName.substring(JspView.REDIRECT_PREFIX.length());
+            this.viewName = viewName.substring(REDIRECT_PREFIX.length());
             this.redirect = true;
             return;
         }

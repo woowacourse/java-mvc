@@ -23,7 +23,7 @@ public class ModelAndView {
         return this;
     }
 
-    private static View getView(String viewName) {
+    private static View getView(final String viewName) {
         if (viewName.endsWith(".jsp")) {
             return new JspView(viewName);
         }
