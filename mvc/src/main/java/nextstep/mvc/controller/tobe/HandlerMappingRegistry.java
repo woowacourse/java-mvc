@@ -27,7 +27,7 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(HandlerNotFoundException::new);
     }
 
     public void init() {

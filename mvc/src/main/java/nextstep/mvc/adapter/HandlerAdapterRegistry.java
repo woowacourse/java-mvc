@@ -18,7 +18,7 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("적절한 핸들러 어댑터가 없습니다"));
+                .orElseThrow(AdapterNotFoundException::new);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
