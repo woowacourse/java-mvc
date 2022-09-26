@@ -32,7 +32,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private void addManualHandler(final DispatcherServlet dispatcherServlet) {
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     private void addAnnotationHandler(final DispatcherServlet dispatcherServlet) {
