@@ -26,7 +26,7 @@ public class UserController {
         final User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow();
 
-        modelAndView.addObject("user", "user");
+        modelAndView.addObject("user", user);
         return modelAndView;
     }
 }
