@@ -18,11 +18,11 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView showUser(final HttpServletRequest request, final HttpServletResponse response) {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final ModelAndView modelAndView = ModelAndView.from(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow();
 

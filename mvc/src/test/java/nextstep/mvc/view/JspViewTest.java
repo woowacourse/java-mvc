@@ -26,13 +26,13 @@ class JspViewTest {
         when(request.getRequestURI()).thenReturn("/zero");
         when(request.getMethod()).thenReturn("GET");
 
-        final JspView jspView = new JspView("redirect:/");
+        final JspView jspView = JspView.from("redirect:/");
 
         assertDoesNotThrow(() -> jspView.render(Map.of(), request, response));
     }
 
-    @DisplayName("forward 할 수 있다.")
     @Test
+    @DisplayName("forward 할 수 있다.")
     void forward() throws ServletException, IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -41,7 +41,7 @@ class JspViewTest {
         when(request.getRequestDispatcher("/login"))
                 .thenReturn(requestDispatcher);
 
-        final JspView jspView = new JspView("/login");
+        final JspView jspView = JspView.from("/login");
 
         assertDoesNotThrow(() -> jspView.render(Map.of(), request, response));
         verify(requestDispatcher).forward(request, response);
