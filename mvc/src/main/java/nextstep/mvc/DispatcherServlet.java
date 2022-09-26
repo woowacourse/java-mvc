@@ -4,9 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.view.JspView;
+import java.util.List;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +15,10 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final List<HandlerAdapter> adapters = List.of(
+            new ControllerHandlerAdapter(),
+            new AnnotationHandlerAdapter()
+    );
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
@@ -46,17 +48,18 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private ModelAndView getModelAndView(final Object controller, final HttpServletRequest request,
+    private ModelAndView getModelAndView(final Object handler, final HttpServletRequest request,
                                          final HttpServletResponse response) throws Exception {
-        if (Controller.class.isAssignableFrom(controller.getClass())) {
-            final var viewName = ((Controller) controller).execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        }
+        final HandlerAdapter adapter = getAdapter(handler);
+        return adapter.handle(request, response, handler);
+    }
 
-        if (HandlerExecution.class.isAssignableFrom(controller.getClass())) {
-            return ((HandlerExecution) controller).handle(request, response);
-        }
-
-        throw new IllegalArgumentException(controller.getClass().getName() + "는 처리할 수 없는 컨트롤러 타입 입니다.");
+    private HandlerAdapter getAdapter(final Object handler) {
+        return adapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() ->
+                        new IllegalArgumentException(handler.getClass().getName() + "는 처리할 수 없는 컨트롤러 타입 입니다.")
+                );
     }
 }
