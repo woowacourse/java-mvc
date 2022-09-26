@@ -29,7 +29,7 @@ class HandlerMappingRegistryTest {
         when(request.getMethod()).thenReturn("POST");
 
         // then
-        Object handler = handlerMappingRegistry.getHandler(request);
+        Object handler = handlerMappingRegistry.getHandler(request).get();
         assertThat((HandlerExecution) handler).extracting("method")
             .isEqualTo(TestController.class.getDeclaredMethod(
                 "save", HttpServletRequest.class, HttpServletResponse.class));

@@ -1,10 +1,13 @@
 package nextstep.mvc;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Optional;
 import nextstep.mvc.controller.registry.HandlerAdapterRegistry;
 import nextstep.mvc.controller.registry.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
@@ -53,10 +56,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private void executeHandler(final HttpServletRequest request,
                                 final HttpServletResponse response) throws Exception {
-        Object handler = handlerMappingRegistry.getHandler(request);
-        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        if (handler.isEmpty()) {
+            response.setStatus(SC_NOT_FOUND);
+            return;
+        }
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
 
-        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
         ViewResolver.resolve(request, response, modelAndView);
     }
 }
