@@ -7,7 +7,7 @@ import nextstep.mvc.view.ModelAndView;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
     @Override
-    public boolean isCanHandled(Object object) {
+    public boolean supports(Object object) {
         return object instanceof HandlerExecution;
     }
 
