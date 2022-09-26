@@ -2,6 +2,7 @@ package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import com.techcourse.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
@@ -12,13 +13,23 @@ public class LoginController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
+    private final UserRepository userRepository;
+
+    public LoginController() {
+        this.userRepository = new InMemoryUserRepository();
+    }
+
+    public LoginController(final UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return userRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
