@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,8 +24,6 @@ class HandlerMappingRegistryTest {
         handlerMappingRegistry.add(new AnnotationHandlerMapping("samples"));
         handlerMappingRegistry.init();
 
-        final Object handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
-
-        assertThat(handlerMapping).isNotNull();
+        assertThat(handlerMappingRegistry.getHandlerMapping(request)).isInstanceOf(HandlerExecution.class);
     }
 }

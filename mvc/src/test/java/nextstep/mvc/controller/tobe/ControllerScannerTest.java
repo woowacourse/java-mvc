@@ -17,6 +17,6 @@ class ControllerScannerTest {
 
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        assertThat(controllers.size()).isEqualTo(1);
+        assertThat(controllers).hasSize(1);
     }
 }

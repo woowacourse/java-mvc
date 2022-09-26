@@ -29,6 +29,7 @@ class HandlerAdapterRegistryTest {
         final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.add(new HandlerExecutionHandlerAdapter());
 
-        assertThat(handlerAdapterRegistry.getHandlerAdapter(handlerMapping)).isNotNull();
+        assertThat(handlerAdapterRegistry.getHandlerAdapter(handlerMapping)).isInstanceOf(
+                HandlerExecutionHandlerAdapter.class);
     }
 }

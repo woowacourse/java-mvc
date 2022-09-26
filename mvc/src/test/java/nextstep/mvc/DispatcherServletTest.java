@@ -48,9 +48,9 @@ class DispatcherServletTest {
         // given
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
         final TestManualHandlerMapping manualHandlerMapping = new TestManualHandlerMapping();
-        manualHandlerMapping.initialize();
         dispatcherServlet.addHandlerMapping(manualHandlerMapping);
         dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
+        manualHandlerMapping.initialize();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
