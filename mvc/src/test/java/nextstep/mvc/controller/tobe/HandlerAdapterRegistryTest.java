@@ -1,6 +1,7 @@
 package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +41,8 @@ public class HandlerAdapterRegistryTest {
         when(request.getAttribute("name")).thenReturn("tonic");
 
         // when
-        ModelAndView actual = handlerAdapterRegistry.handle(request, response, controller);
+        ModelAndView actual = handlerAdapterRegistry.getHandlerAdapter(controller)
+                .handle(request, response, controller);
 
         // then
         Field field = JspView.class
@@ -62,8 +64,16 @@ public class HandlerAdapterRegistryTest {
         when(request.getAttribute("id")).thenReturn("tonic");
 
         // when
-        ModelAndView actual = handlerAdapterRegistry.handle(request, response, handlerExecution);
+        ModelAndView actual = handlerAdapterRegistry.getHandlerAdapter(handlerExecution)
+                .handle(request, response, handlerExecution);
         // then
         assertThat(actual.getObject("id")).isEqualTo("tonic");
+    }
+
+    @DisplayName("Adapter를 찾지 못하면 예외를 발생시킨다.")
+    @Test
+    void getHandlerAdapter_exception() {
+        assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(new Object()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
