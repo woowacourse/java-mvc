@@ -19,7 +19,7 @@ class HandlerAdapterRegistryTest {
     @DisplayName("핸들러 어댑터를 추가할 수 있고, 어댑터를 찾을 수 있다.")
     @Test
     void getHandler() throws NoSuchMethodException, ServletException {
-        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>());
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         var request = mock(HttpServletRequest.class);
