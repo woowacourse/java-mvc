@@ -1,7 +1,7 @@
 package fixture;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -13,9 +13,9 @@ public class RequestFixture {
     public static HttpServletRequest getRequest() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestURI()).willReturn("/get-test");
+        given(request.getMethod()).willReturn("GET");
 
         return request;
     }
@@ -23,9 +23,9 @@ public class RequestFixture {
     public static HttpServletRequest getRequest(final String path) {
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn(path);
-        when(request.getMethod()).thenReturn("GET");
+        given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestURI()).willReturn(path);
+        given(request.getMethod()).willReturn("GET");
 
         return request;
     }
@@ -33,9 +33,9 @@ public class RequestFixture {
     public static HttpServletRequest postRequest() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+        given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestURI()).willReturn("/post-test");
+        given(request.getMethod()).willReturn("POST");
 
         return request;
     }
