@@ -32,13 +32,34 @@ class JsonViewTest {
         jsonView.render(model, request, response);
 
         // then
-
         assertAll(
                 () -> verify(response).setContentType(APPLICATION_JSON_UTF8_VALUE),
                 () -> verify(printWriter).write("{\"user\":{"
                         + "\"id\":1,"
                         + "\"account\":\"hello\""
                         + "}}")
+        );
+    }
+
+    @Test
+    void render는_받은_model_데이터가_1개면_값을_그대로_view로_응답한다() throws Exception {
+        // given
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final PrintWriter printWriter = mock(PrintWriter.class);
+
+        when(response.getWriter()).thenReturn(printWriter);
+
+        final Map<String, String> model = Map.of("user", "hi");
+
+        // when
+        final JsonView jsonView = new JsonView();
+        jsonView.render(model, request, response);
+
+        // then
+        assertAll(
+                () -> verify(response).setContentType(APPLICATION_JSON_UTF8_VALUE),
+                () -> verify(printWriter).write("\"hi\"")
         );
     }
 }
