@@ -17,7 +17,8 @@ public class ControllerScanner {
     }
 
     public List<Object> getControllers() {
-        return reflections.getTypesAnnotatedWith(Controller.class).stream()
+        return reflections.getTypesAnnotatedWith(Controller.class)
+                .stream()
                 .map(this::createController)
                 .collect(Collectors.toList());
     }
@@ -29,7 +30,7 @@ public class ControllerScanner {
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException exception) {
             log.warn(exception.getMessage());
-            throw new IllegalStateException();
+            throw new IllegalStateException("controller를 생성하는데 문제가 발생했습니다.");
         }
     }
 }
