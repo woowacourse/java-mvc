@@ -2,7 +2,7 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
-import nextstep.mvc.RequestMappingHandlerAdapter;
+import nextstep.mvc.controller.RequestMappingHandlerAdapter;
 import nextstep.mvc.controller.RequestMappingHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;

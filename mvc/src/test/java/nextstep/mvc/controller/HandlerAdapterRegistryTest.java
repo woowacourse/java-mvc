@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Map;
-import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.RequestMappingHandlerAdapter;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
