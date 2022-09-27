@@ -1,5 +1,6 @@
 package com.techcourse.controller.v2;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,20 +16,23 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
     private final InMemoryUserRepository userRepository;
 
-    public UserController(final InMemoryUserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final ObjectMapper objectMapper;
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    public UserController(final InMemoryUserRepository userRepository, final ObjectMapper objectMapper) {
+        this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
+    }
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final ModelAndView modelAndView = new ModelAndView(new JsonView(objectMapper));
         final User user = userRepository.findByAccount(account)
                 .orElseThrow();
 

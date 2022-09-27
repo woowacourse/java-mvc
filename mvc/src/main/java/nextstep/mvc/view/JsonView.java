@@ -13,7 +13,11 @@ public class JsonView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+
+    public JsonView(final ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public void render(final Map<String, ?> model,

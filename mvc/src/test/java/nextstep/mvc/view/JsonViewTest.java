@@ -5,9 +5,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import nextstep.web.support.MediaType;
 import org.junit.jupiter.api.DisplayName;
@@ -15,15 +17,17 @@ import org.junit.jupiter.api.Test;
 
 class JsonViewTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Test
     @DisplayName("model 을 key-value json 형식으로 반환한다.")
     void render() throws Exception {
         // given
-        JsonView jsonView = new JsonView();
+        JsonView jsonView = new JsonView(objectMapper);
 
-        Map<String, ?> model = Map.of(
-                "key-1", "value-1",
-                "key-2", "value-2");
+        Map<String, String> model = new LinkedHashMap<>();
+        model.put("key-1", "value-1");
+        model.put("key-2", "value-2");
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -43,7 +47,7 @@ class JsonViewTest {
     @DisplayName("model에 key-value가 한 쌍이면 값만 반환한다.")
     void renderOneValue() throws Exception {
         // given
-        JsonView jsonView = new JsonView();
+        JsonView jsonView = new JsonView(objectMapper);
 
         Map<String, ?> model = Map.of("key-1", "value-1");
 
@@ -65,7 +69,7 @@ class JsonViewTest {
     @Test
     void render_ifModelHasNoValue() throws Exception {
         // given
-        JsonView jsonView = new JsonView();
+        JsonView jsonView = new JsonView(objectMapper);
 
         Map<String, ?> model = Map.of();
 

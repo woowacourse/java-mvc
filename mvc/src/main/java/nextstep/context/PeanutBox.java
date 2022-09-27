@@ -2,13 +2,16 @@ package nextstep.context;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.ImPeanut;
+import nextstep.web.annotation.PeanutConfiguration;
 import nextstep.web.annotation.Repository;
 import nextstep.web.annotation.Service;
+import nextstep.web.annotation.ThisIsPeanut;
 import org.reflections.Reflections;
 
 public enum PeanutBox {
@@ -26,15 +29,34 @@ public enum PeanutBox {
     }
 
     private void initInternal(final String path) throws Exception {
-        final Set<Class<?>> peanutTypes = findPeanutAnnotatedTypes(path);
+        final Reflections reflections = new Reflections(path);
+        scanManualPeanuts(reflections);
+        scanAutoPeanuts(reflections);
+    }
+
+    private void scanManualPeanuts(final Reflections reflections) throws Exception {
+        final Set<Class<?>> peanutConfigs = reflections.getTypesAnnotatedWith(PeanutConfiguration.class);
+        for (final Class<?> peanutConfig : peanutConfigs) {
+            final Object newConfigInstance = peanutConfig.getConstructor().newInstance();
+            for (final Method peanutMethod : peanutConfig.getDeclaredMethods()) {
+                if (peanutMethod.isAnnotationPresent(ThisIsPeanut.class)) {
+                    final Object peanut = peanutMethod.invoke(newConfigInstance);
+                    peanutsCache.putIfAbsent(peanut.getClass(), peanut);
+                }
+            }
+        }
+    }
+
+    private void scanAutoPeanuts(final Reflections reflections)
+            throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        final Set<Class<?>> peanutTypes = findPeanutAnnotatedTypes(reflections);
         for (final Class<?> peanutType : peanutTypes) {
             final Object peanutInstance = dfs(peanutType);
             peanutsCache.putIfAbsent(peanutType, peanutInstance);
         }
     }
 
-    private Set<Class<?>> findPeanutAnnotatedTypes(final String path) {
-        final Reflections reflections = new Reflections(path);
+    private Set<Class<?>> findPeanutAnnotatedTypes(final Reflections reflections) {
         final Set<Class<?>> peanuts = reflections.getTypesAnnotatedWith(ImPeanut.class);
         peanuts.addAll(reflections.getTypesAnnotatedWith(Controller.class));
         peanuts.addAll(reflections.getTypesAnnotatedWith(Service.class));

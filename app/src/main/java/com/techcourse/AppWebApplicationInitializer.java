@@ -17,7 +17,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        PeanutBox.INSTANCE.init("com.techcourse.controller");
+        PeanutBox.INSTANCE.init("com.techcourse");
 
         final DispatcherServlet dispatcherServlet = initDispatcherServlet();
         final Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
