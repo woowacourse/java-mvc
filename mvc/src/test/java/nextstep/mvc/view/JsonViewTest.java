@@ -8,29 +8,40 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 import nextstep.web.support.MediaType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class JsonViewTest {
 
-    @DisplayName(value = "map으로 받은 값을 json 형태로 body에 담아 반환")
-    @Test
-    void jsonParsing() throws Exception {
-        // given
-        final JsonView jsonView = new JsonView();
-        final Map<String, String> model = Map.of("key", "value", "key2", "value2");
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final StringWriter stringWriter = new StringWriter();
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private StringWriter stringWriter;
+
+    @BeforeEach
+    void init() throws IOException {
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+
+        stringWriter = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(stringWriter);
 
         when(response.getWriter()).thenReturn(printWriter);
+    }
+
+    @DisplayName(value = "값이 여러개인 경우 map을 json으로 변환")
+    @Test
+    void jsonMultiParsing() throws Exception {
+        // given
+        final JsonView jsonView = new JsonView();
+        final Map<String, Object> model = Map.of("user", Map.of("account", "yeonlog"), "campus","seolleung");
 
         // when
         jsonView.render(model, request, response);
@@ -38,5 +49,20 @@ class JsonViewTest {
         // then
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(stringWriter.toString()).isEqualTo(objectMapper.writeValueAsString(model));
+    }
+
+    @DisplayName(value = "값이 하나인 경우 해당 값만 json으로 변환")
+    @Test
+    void jsonOneParsing() throws Exception {
+        // given
+        final JsonView jsonView = new JsonView();
+        final Map<String, Object> model = Map.of("user", Map.of("account", "yeonlog"));
+
+        // when
+        jsonView.render(model, request, response);
+
+        // then
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(stringWriter.toString()).isEqualTo(objectMapper.writeValueAsString(model.get("user")));
     }
 }
