@@ -46,7 +46,7 @@ public class LoginController {
         return new ModelAndView(new JspView(getAccount(req)));
     }
 
-    private String getAccount(HttpServletRequest req) {
+    private String getAccount(final HttpServletRequest req) {
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
             .map(user -> {
                 log.info("User : {}", user);
@@ -60,8 +60,7 @@ public class LoginController {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return REDIRECT_INDEX;
-        } else {
-            return REDIRECT_401;
         }
+        return REDIRECT_401;
     }
 }
