@@ -34,7 +34,7 @@ public class UserController {
         }
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", user.get());
         return modelAndView;
     }
 }
