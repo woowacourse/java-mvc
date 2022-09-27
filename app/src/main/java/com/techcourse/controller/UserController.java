@@ -26,7 +26,7 @@ public class UserController {
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         modelAndView.addAttribute("user", user);
         return modelAndView;
