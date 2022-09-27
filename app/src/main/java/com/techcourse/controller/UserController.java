@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class UserController {
 
+    private static final String USER_NOT_FOUND_ERROR = "존재하지 않는 사용자입니다 -> account: %s";
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
@@ -24,7 +25,7 @@ public class UserController {
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException(String.format(USER_NOT_FOUND_ERROR, account)));
 
         modelAndView.addObject("user", user);
         return modelAndView;
