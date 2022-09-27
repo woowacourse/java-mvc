@@ -32,7 +32,8 @@ public class JsonView implements View {
 
     private String generateBody(Map<String, ?> model) throws JsonProcessingException {
         if (model.size() == 1) {
-            return model.values().toArray()[0].toString();
+            Object object = model.values().toArray()[0];
+            return mapper.writeValueAsString(object);
         }
 
         return mapper.writeValueAsString(model);
