@@ -2,6 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -11,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class TestController implements nextstep.mvc.controller.asis.Controller {
+public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
@@ -24,13 +25,20 @@ public class TestController implements nextstep.mvc.controller.asis.Controller {
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return (String) req.getAttribute("name");
+    @RequestMapping(value = "/api/user", method = RequestMethod.POST)
+    public ModelAndView user(final HttpServletRequest request, final HttpServletResponse response) {
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("id", request.getAttribute("user"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/empty-body", method = RequestMethod.POST)
+    public ModelAndView emptyBody(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JsonView());
     }
 }

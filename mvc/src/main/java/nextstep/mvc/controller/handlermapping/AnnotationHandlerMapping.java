@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe.handlermapping;
+package nextstep.mvc.controller.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.tobe.ControllerScanner;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.ControllerScanner;
+import nextstep.mvc.controller.HandlerExecution;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.ReflectionUtils;

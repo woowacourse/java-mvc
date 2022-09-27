@@ -1,11 +1,11 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.controller.tobe.handlermapping.HandlerKey;
+import nextstep.mvc.controller.handlermapping.HandlerKey;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
