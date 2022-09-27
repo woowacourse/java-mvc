@@ -9,29 +9,14 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.FakeHandlerAdapter;
-import samples.ImplementedController;
 import samples.TestController;
 
 class HandlerAdapterRegistryTest {
-
-    @DisplayName("컨트롤러 상속 인스턴스에 대응하는 어댑터 반환")
-    @Test
-    void getHandler_controllerHandlerAdapter() {
-        final var registry = new HandlerAdapterRegistry();
-        registry.add(new ControllerHandlerAdapter());
-        registry.add(new HandlerExecutionHandlerAdapter());
-
-        final var controller = new ImplementedController();
-        final var handlerAdapter = registry.getHandlerAdapter(controller);
-
-        assertThat(handlerAdapter).isInstanceOf(ControllerHandlerAdapter.class);
-    }
 
     @DisplayName("컨트롤러 어노테이션 인스턴스에 대응하는 어댑터 반환")
     @Test
     void getHandler_handlerExecutionHandlerAdapter() throws NoSuchMethodException {
         final var registry = new HandlerAdapterRegistry();
-        registry.add(new ControllerHandlerAdapter());
         registry.add(new HandlerExecutionHandlerAdapter());
 
         final var controller = new TestController();
@@ -47,7 +32,6 @@ class HandlerAdapterRegistryTest {
     @Test
     void getHandlerAdapter_throws_noSuchElementException() {
         final var registry = new HandlerAdapterRegistry();
-        registry.add(new ControllerHandlerAdapter());
         registry.add(new HandlerExecutionHandlerAdapter());
 
         final var unsupported = new FakeHandlerAdapter();
