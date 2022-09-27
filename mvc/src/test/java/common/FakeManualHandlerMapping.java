@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import nextstep.mvc.HandlerMapping;
 import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.asis.ForwardController;
 
 public class FakeManualHandlerMapping implements HandlerMapping {
 
@@ -14,7 +13,6 @@ public class FakeManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
     }
 
     @Override
