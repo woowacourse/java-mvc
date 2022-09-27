@@ -11,14 +11,11 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        System.out.println("들어옴");
-
         String responseBody = new ObjectMapper().writeValueAsString(model);
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 
         PrintWriter out = response.getWriter();
         out.write(responseBody);
-        out.flush();
     }
 }
