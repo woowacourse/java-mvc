@@ -6,10 +6,10 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
+    private final Object view;
     private final Map<String, Object> model;
 
-    public ModelAndView(final View view) {
+    public ModelAndView(final Object view) {
         this.view = view;
         this.model = new HashMap<>();
     }
@@ -19,15 +19,21 @@ public class ModelAndView {
         return this;
     }
 
-    public Object getObject(final String attributeName) {
-        return model.get(attributeName);
-    }
-
     public Map<String, Object> getModel() {
         return Collections.unmodifiableMap(model);
     }
 
     public View getView() {
-        return view;
+        if (view instanceof View) {
+            return (View) view;
+        }
+        return null;
+    }
+
+    public String getViewName() {
+        if (view instanceof String) {
+            return (String) view;
+        }
+        return null;
     }
 }

@@ -4,9 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Objects;
 import nextstep.mvc.controller.tobe.HandlerAdapterRegistry;
 import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
+import nextstep.mvc.controller.tobe.ViewResolverRegistry;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.mvc.view.View;
 import org.slf4j.Logger;
@@ -19,11 +21,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final ViewResolverRegistry viewResolverRegistry;
 
     public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
-                             final HandlerAdapterRegistry handlerAdapterRegistry) {
+                             final HandlerAdapterRegistry handlerAdapterRegistry,
+                             final ViewResolverRegistry viewResolverRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
         this.handlerAdapterRegistry = handlerAdapterRegistry;
+        this.viewResolverRegistry = viewResolverRegistry;
     }
 
     @Override
@@ -39,6 +44,10 @@ public class DispatcherServlet extends HttpServlet {
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    }
+
+    public void addViewResolver(final ViewResolver viewResolver) {
+        viewResolverRegistry.addViewResolver(viewResolver);
     }
 
     @Override
@@ -60,9 +69,16 @@ public class DispatcherServlet extends HttpServlet {
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
                         final HttpServletResponse response)
             throws Exception {
-        if (Objects.nonNull(modelAndView)) {
-            final View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+        final View view = modelAndView.getView();
+        final Map<String, Object> model = modelAndView.getModel();
+
+        if (Objects.nonNull(view)) {
+            view.render(model, request, response);
+            return;
         }
+
+        final ViewResolver viewResolver = viewResolverRegistry.getViewResolver();
+        final View jspView = viewResolver.resolveViewName(modelAndView.getViewName());
+        jspView.render(model, request, response);
     }
 }
