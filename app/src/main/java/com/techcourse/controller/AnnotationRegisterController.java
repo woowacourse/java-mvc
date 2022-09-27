@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class AnnotationRegisterController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationRegisterController.class);
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
