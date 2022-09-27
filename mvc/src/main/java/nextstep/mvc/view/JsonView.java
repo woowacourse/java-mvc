@@ -29,6 +29,9 @@ public class JsonView implements View {
     }
 
     private String writeJsonData(final Map<String, ?> model) throws JsonProcessingException {
+        if (model.isEmpty()) {
+            return "";
+        }
         if (model.size() == 1) {
             return objectMapper.writeValueAsString(getFirstData(model));
         }

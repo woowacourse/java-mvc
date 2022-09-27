@@ -54,4 +54,20 @@ class JsonViewTest {
 
         assertThat(stringWriter.toString()).isEqualTo(objectMapper.writeValueAsString(model));
     }
+
+    @Test
+    @DisplayName("json 객체의 모델 데이터가 없을 때 빈 값을 반환한다.")
+    void renderWithNonObject() throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final StringWriter stringWriter = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(printWriter);
+
+        final Map<String, Object> model = new HashMap<>();
+
+        jsonView.render(model, request, response);
+
+        assertThat(stringWriter.toString()).isEqualTo("");
+    }
 }
