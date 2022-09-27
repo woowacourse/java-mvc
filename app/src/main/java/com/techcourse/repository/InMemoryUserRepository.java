@@ -13,8 +13,10 @@ public class InMemoryUserRepository {
     private final Map<String, User> database = new ConcurrentHashMap<>();
 
     public InMemoryUserRepository() {
-        final var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
-        database.put(user.getAccount(), user);
+        final User gugu = new User(1, "gugu", "password", "hkkang@woowahan.com");
+        final User philz = new User(2, "philz", "1234", "philz@hello.com");
+        database.put(gugu.getAccount(), gugu);
+        database.put(philz.getAccount(), philz);
     }
 
     public void save(User user) {

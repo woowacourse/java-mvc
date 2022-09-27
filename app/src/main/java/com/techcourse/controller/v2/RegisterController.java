@@ -1,6 +1,7 @@
 package com.techcourse.controller.v2;
 
 import static nextstep.web.support.RequestMethod.GET;
+import static nextstep.web.support.RequestMethod.POST;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -25,7 +26,7 @@ public class RegisterController {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 
-    @RequestMapping(value = "/register", method = GET)
+    @RequestMapping(value = "/register", method = POST)
     public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),

@@ -1,6 +1,7 @@
 package com.techcourse.controller.v2;
 
 import static nextstep.web.support.RequestMethod.GET;
+import static nextstep.web.support.RequestMethod.POST;
 
 import com.techcourse.controller.UserSession;
 import com.techcourse.service.LoginService;
@@ -30,7 +31,7 @@ public class LoginController {
         return new ModelAndView(new JspView(viewName));
     }
 
-    @RequestMapping(value = "/login", method = GET)
+    @RequestMapping(value = "/login", method = POST)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
