@@ -1,7 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +18,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
