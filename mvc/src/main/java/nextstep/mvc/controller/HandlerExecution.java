@@ -3,6 +3,7 @@ package nextstep.mvc.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
@@ -16,8 +17,11 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object object = method.invoke(controller, request, response);
-        System.out.println(object.getClass().getName());
-        return (ModelAndView) object;
+        final Object result = method.invoke(controller, request, response);
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+        final String viewName = (String) result;
+        return new ModelAndView(new JspView(viewName));
     }
 }
