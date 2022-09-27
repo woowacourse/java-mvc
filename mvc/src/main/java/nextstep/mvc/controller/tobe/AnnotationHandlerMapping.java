@@ -1,19 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,25 +28,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         for (Object packageName : basePackage) {
-            initializeAnnotationHandlerMapping(packageName);
+            final ControllerScanner controllerScanner = new ControllerScanner((String) packageName);
+            final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+            initializeAnnotationHandlerMapping(controllers);
         }
     }
 
-    private void initializeAnnotationHandlerMapping(final Object packageName) {
-        final Reflections reflections = new Reflections(packageName);
-        final Set<Class<?>> classesWithController = extractClassesWithController(reflections);
-
-        for (Class<?> clazz : classesWithController) {
+    private void initializeAnnotationHandlerMapping(final Map<Class<?>, Object> classesWithController) {
+        for (Class<?> clazz : classesWithController.keySet()) {
             final List<Method> methodsWithRequestMapping = extractMethodsWithRequestMapping(clazz);
             for (Method method : methodsWithRequestMapping) {
-                final Object handler = createInstance(clazz);
-                initializeHandlerExecutions(handler, method);
+                initializeHandlerExecutions(classesWithController.get(clazz), method);
             }
         }
-    }
-
-    private Set<Class<?>> extractClassesWithController(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private List<Method> extractMethodsWithRequestMapping(final Class<?> clazz) {
@@ -60,13 +50,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private Object createInstance(final Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            return new RuntimeException("해당하는 클래스 정보로 인스턴스를 생성할 수 없습니다.");
-        }
-    }
 
     private void initializeHandlerExecutions(final Object handler, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);

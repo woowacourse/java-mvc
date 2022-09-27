@@ -12,3 +12,9 @@
       handle를 실행시킨다.
     - [x] jspView를 구현한다.
     - [x] DisPatcherServlet에서 핸들러 매핑 구현체가 동작되는 것에 상관없이 뷰를 렌더링하는 과정을 통일한다.
+
+## 2단계 요구사항
+- [x] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾아온다.
+- [x] HandlerAdpater를 이용하여 여러 타입의 핸들러를 실행시키게 한다.
+- [x] HandlerMappingRegistry를 이용하여 여러 타입의 핸들러 매핑을 관리한다.
+- [x] HandlerAdapterRegistry 이용하여 여러 타입의 핸들러 어댑터들을 관리한다.
