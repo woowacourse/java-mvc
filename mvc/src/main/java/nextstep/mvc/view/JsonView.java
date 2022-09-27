@@ -17,7 +17,7 @@ public class JsonView implements View {
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
-        writer.print(toJson(model));
+        writer.write(toJson(model));
     }
 
     private String toJson(Map<String, ?> model) throws JsonProcessingException {
