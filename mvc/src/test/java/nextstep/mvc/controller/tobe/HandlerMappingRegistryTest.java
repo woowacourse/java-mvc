@@ -19,7 +19,6 @@ class HandlerMappingRegistryTest {
         final var registry = new HandlerMappingRegistry();
         final var handlerMapping = new AnnotationHandlerMapping("nextstep.mvc");
         registry.add(handlerMapping);
-        registry.init();
 
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(AnnotationController.url);
@@ -34,7 +33,6 @@ class HandlerMappingRegistryTest {
         final var registry = new HandlerMappingRegistry();
         final var handlerMapping = new AnnotationHandlerMapping("nextstep.mvc.controller.tobe.fixture");
         registry.add(handlerMapping);
-        registry.init();
 
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/other");
