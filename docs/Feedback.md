@@ -14,7 +14,7 @@
 
 ## Level 2 - 점진적인 리팩터링
 - [ ] ManualHandlerMapping, 추가된 핸들러 중 사용하지 않는 클래스는 삭제
-- [ ] 공백 제거 
+- [x] 공백 제거 
 - [ ] Registry 클래스 패키지 수정
 - [ ] equals, hashcode 메서드 수정 이유 설명
   - 리팩터링 미션하면서 ResgisterController를 어노테이션을 사용하는 방식으로 수정함.

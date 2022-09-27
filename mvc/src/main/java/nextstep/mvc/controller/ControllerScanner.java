@@ -25,7 +25,6 @@ public class ControllerScanner {
     }
 
     private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
-
         try {
             Map<Class<?>, Object> controllerInstances = new HashMap<>();
             for (Class<?> clazz : controllers) {
