@@ -1,4 +1,5 @@
-package nextstep.web.exception;
+package nextstep.mvc.exception;
 
 public class NotFoundException extends RuntimeException {
+
 }
