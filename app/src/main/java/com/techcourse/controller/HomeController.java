@@ -11,7 +11,7 @@ import nextstep.web.support.RequestMethod;
 public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView loadHomePage(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView("/index.jsp");
     }
 }
