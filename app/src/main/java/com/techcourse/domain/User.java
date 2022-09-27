@@ -40,6 +40,14 @@ public class User {
         return account;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public long getId() {
+        return id;
+    }
+
     public User assignId(long id) {
         return new User(id, this.account, this.password, this.email);
     }
