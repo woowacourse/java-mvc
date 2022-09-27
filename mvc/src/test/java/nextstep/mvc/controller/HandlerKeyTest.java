@@ -3,6 +3,7 @@ package nextstep.mvc.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import nextstep.mvc.mapping.HandlerKey;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

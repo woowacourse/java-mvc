@@ -1,4 +1,4 @@
-package nextstep.mvc.controller;
+package nextstep.mvc.mapping;
 
 import java.util.Objects;
 import nextstep.web.support.RequestMethod;

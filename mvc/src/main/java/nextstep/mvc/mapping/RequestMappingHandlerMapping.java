@@ -1,4 +1,4 @@
-package nextstep.mvc.controller;
+package nextstep.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;

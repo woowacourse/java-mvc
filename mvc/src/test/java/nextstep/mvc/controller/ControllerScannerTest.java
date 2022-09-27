@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Map;
+import nextstep.mvc.mapping.ControllerScanner;
+import nextstep.mvc.mapping.HandlerExecution;
+import nextstep.mvc.mapping.HandlerKey;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

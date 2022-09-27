@@ -1,4 +1,4 @@
-package nextstep.mvc.controller;
+package nextstep.mvc.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
