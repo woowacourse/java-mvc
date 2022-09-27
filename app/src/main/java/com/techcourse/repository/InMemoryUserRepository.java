@@ -10,7 +10,7 @@ public class InMemoryUserRepository {
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 
     static {
-        final var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+        final var user = new User(1, "gugu", "1111", "hkkang@woowahan.com");
         database.put(user.getAccount(), user);
     }
 

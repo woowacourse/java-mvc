@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import java.util.Objects;
 import nextstep.web.support.RequestMethod;
