@@ -2,8 +2,8 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import nextstep.mvc.DispatcherServlet;
+import nextstep.mvc.ManualHandlerAdapter;
 import nextstep.mvc.controller.AnnotationHandlerAdapter;
-import nextstep.mvc.controller.ManualHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;

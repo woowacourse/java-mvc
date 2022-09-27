@@ -2,17 +2,14 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -28,32 +25,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        addHandlerExecutions(reflections);
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        addHandlerExecutions(controllers);
     }
 
-    private void addHandlerExecutions(final Reflections reflections) {
-        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> clazz : classes) {
+    private void addHandlerExecutions(final Map<Class<?>, Object> controllers) {
+        for (Class<?> clazz : controllers.keySet()) {
             final Method[] methods = clazz.getDeclaredMethods();
-            checkRequestMappingMethod(methods);
+            final Object controller = controllers.get(clazz);
+            checkRequestMappingMethod(controller, methods);
         }
     }
 
-    private void checkRequestMappingMethod(final Method[] methods) {
+    private void checkRequestMappingMethod(final Object controller, final Method[] methods) {
         for (final Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
-                putHandlerExecution(method);
+                putHandlerExecution(controller, method);
             }
         }
     }
 
-    private void putHandlerExecution(final Method method) {
+    private void putHandlerExecution(final Object controller, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] applyingMethods = requestMapping.method();
         for (final RequestMethod applyingMethod : applyingMethods) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), applyingMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(method);
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }

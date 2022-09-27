@@ -7,14 +7,15 @@ import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
 
+    private final Object declaredController;
     private final Method method;
 
-    public HandlerExecution(final Method method) {
+    public HandlerExecution(final Object declaredController, final Method method) {
+        this.declaredController = declaredController;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object controller = method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        return (ModelAndView) method.invoke(controller, request, response);
+        return (ModelAndView) method.invoke(declaredController, request, response);
     }
 }
