@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import common.FakeManualHandlerAdapter;
-import common.FakeManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
@@ -24,26 +22,9 @@ class HandlerAdapterRegistryTest {
     @BeforeEach
     void setUp() {
         register.addHandlerMapping(new AnnotationHandlerMapping("samples"));
-        register.addHandlerMapping(new FakeManualHandlerMapping());
         register.init();
 
         adapterRegister.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        adapterRegister.addHandlerAdapter(new FakeManualHandlerAdapter());
-    }
-
-    @DisplayName("인터페이스를 기반으로 하는 handler를 가져온다.")
-    @Test
-    void 인터페이스를_기반으로_하는_handler를_가져온다() {
-        var request = mock(HttpServletRequest.class);
-        var response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-
-        Object handler = register.getHandler(request).get();
-        HandlerAdapter handlerAdapter = adapterRegister.getHandlerAdapter(handler);
-
-        assertThat(handlerAdapter).isNotNull();
     }
 
     @DisplayName("애노테이션을 기반으로 하는 handler를 가져온다.")

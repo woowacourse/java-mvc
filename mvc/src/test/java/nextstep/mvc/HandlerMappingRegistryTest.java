@@ -5,11 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import common.FakeManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +21,6 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void setUp() {
         register.addHandlerMapping(new AnnotationHandlerMapping("samples"));
-        register.addHandlerMapping(new FakeManualHandlerMapping());
         register.init();
     }
 
@@ -40,20 +37,6 @@ class HandlerMappingRegistryTest {
         Object handler = register.getHandler(request).get();
 
         assertThat(handler).isInstanceOf(HandlerExecution.class);
-    }
-
-    @DisplayName("인터페이스 기반으로 handler를 찾아온다.")
-    @Test
-    void 인터페이스_기반으로_handler를_찾아온다() {
-        var request = mock(HttpServletRequest.class);
-        var response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-
-        Object handler = register.getHandler(request).get();
-
-        assertThat(handler).isInstanceOf(Controller.class);
     }
 
     @DisplayName("handler가 존재하지 않으면 예외를 발생한다.")
