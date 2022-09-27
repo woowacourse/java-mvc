@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import org.reflections.Reflections;
 
-public class ReflectionsLibrary implements Reflection{
+public class ReflectionsLibrary implements Reflection {
 
     private Reflections reflections;
 

@@ -23,7 +23,7 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        if(viewName.startsWith(JspView.REDIRECT_PREFIX)){
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             redirect(response);
         }
         setAttribute(model, request);
@@ -45,7 +45,6 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
     }
-
 
 
 }

@@ -18,15 +18,15 @@ public class JsonView implements View {
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final PrintWriter printWriter = response.getWriter();
-        try{
+        try {
             printWriter.print(objectMapper.writeValueAsString(getAttribute(model)));
-        }catch (EmptyModelException e){
+        } catch (EmptyModelException e) {
             printWriter.print(EMPTY);
         }
     }
 
     private Object getAttribute(Map<String, ?> model) {
-        if(model.size() > 1){
+        if (model.size() > 1) {
             return model;
         }
         return model.values()
