@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe.exception;
+package nextstep.mvc.controller.exception;
 
 public class InvalidReflectionException extends RuntimeException {
 
