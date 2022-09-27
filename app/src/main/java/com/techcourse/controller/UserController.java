@@ -19,14 +19,18 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView showUser(HttpServletRequest request, HttpServletResponse response) {
-        final String account = request.getParameter("account");
-        log.debug("user id : {}", account);
+        try {
+            final String account = request.getParameter("account");
+            log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+            final ModelAndView modelAndView = new ModelAndView(new JsonView());
+            final User user = InMemoryUserRepository.findByAccount(account)
+                    .orElseThrow();
 
-        modelAndView.addObject("user", user);
-        return modelAndView;
+            modelAndView.addObject("user", user);
+            return modelAndView;
+        } catch (final NullPointerException e) {
+            return new ModelAndView("/404.jsp");
+        }
     }
 }
