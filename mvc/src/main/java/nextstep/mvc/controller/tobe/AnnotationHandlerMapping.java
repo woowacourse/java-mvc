@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void scanRequestMapping(Object controller) {
-        Set<Method> methods = ReflectionUtils.getAllMethods((Class<?>) controller,
+        Set<Method> methods = ReflectionUtils.getAllMethods(controller.getClass(),
                 ReflectionUtils.withAnnotation(RequestMapping.class));
         for (Method method : methods) {
             putHandlerExecutions(controller, method);
