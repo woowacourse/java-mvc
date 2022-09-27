@@ -8,6 +8,7 @@ import java.util.Optional;
 public class UserSession {
 
     public static final String SESSION_KEY = "user";
+    public static final String INFO_KEY = "account";
 
     public static Optional<User> getUserFrom(HttpSession session) {
         final var user = (User) session.getAttribute(SESSION_KEY);

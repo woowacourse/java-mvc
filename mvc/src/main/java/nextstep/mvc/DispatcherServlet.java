@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.ControllerHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
@@ -12,7 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -30,7 +30,6 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         this.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        this.addHandlerAdapter(new ControllerHandlerAdapter());
         this.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 

@@ -1,8 +1,5 @@
 package nextstep.mvc;
 
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-
 import java.util.List;
 
 public class HandlerAdapterRegistry {
