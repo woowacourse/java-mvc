@@ -3,7 +3,6 @@ package nextstep.mvc.controller.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.asis.Controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,8 +22,8 @@ class AnnotationHandlerAdapterTest {
     @DisplayName("handle 할 수 있는 handler인지 반환한다 (false)")
     @Test
     void supports_False() {
-        Controller controller = Mockito.mock(Controller.class);
+        Object invalidHandler = Mockito.mock(Object.class);
 
-        assertThat(HANDLER_ADAPTER.supports(controller)).isFalse();
+        assertThat(HANDLER_ADAPTER.supports(invalidHandler)).isFalse();
     }
 }
