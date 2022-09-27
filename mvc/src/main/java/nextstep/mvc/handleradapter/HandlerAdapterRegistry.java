@@ -2,7 +2,6 @@ package nextstep.mvc.handleradapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import nextstep.mvc.handleradapter.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 

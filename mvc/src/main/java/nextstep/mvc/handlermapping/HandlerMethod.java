@@ -1,4 +1,4 @@
-package nextstep.mvc.controller;
+package nextstep.mvc.handlermapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
