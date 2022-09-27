@@ -32,14 +32,14 @@ public class JspView implements View {
         forward(request, response);
     }
 
-    private void setAllAttributes(Map<String, ?> model, HttpServletRequest request) {
+    private void setAllAttributes(final Map<String, ?> model, final HttpServletRequest request) {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
     }
 
-    private void forward(HttpServletRequest request, HttpServletResponse response)
+    private void forward(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
