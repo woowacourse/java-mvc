@@ -42,8 +42,9 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView loginForm(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return UserSession.getUserFrom(req.getSession())
+    public ModelAndView loginForm(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return ModelAndView.jspView("redirect:/index.jsp");
