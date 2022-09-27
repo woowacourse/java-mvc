@@ -14,6 +14,7 @@ class HandlerMappingRegistryTest {
 
     @Test
     void getHandler() {
+        // given
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/get-test");
@@ -22,8 +23,10 @@ class HandlerMappingRegistryTest {
         final HandlerMappingRegistry registry = new HandlerMappingRegistry();
         registry.addHandlerMapping(new AnnotationHandlerMapping("samples"));
 
+        // when
         final Object handler = registry.getHandler(request);
 
+        // then
         assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 }
