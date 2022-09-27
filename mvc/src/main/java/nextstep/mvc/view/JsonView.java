@@ -13,8 +13,8 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.writerWithDefaultPrettyPrinter()
+        String jsonData = objectMapper.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(model);
-        response.getWriter().print(objectMapper);
+        response.getWriter().print(jsonData);
     }
 }
