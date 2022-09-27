@@ -22,6 +22,6 @@ public class InMemoryUserRepository {
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {
+    public InMemoryUserRepository() {
     }
 }

@@ -1,11 +1,13 @@
 package nextstep.mvc.registry;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,9 +46,9 @@ class HandlerMappingRegistryTest {
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
         handlerMappingRegistry.init();
 
-        final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        final Object handler = handlerMappingRegistry.getHandler(request);
 
-        assertThat(handler.get()).isNotNull();
+        assertThat(handler).isNotNull();
     }
 
     @Test
@@ -60,9 +62,9 @@ class HandlerMappingRegistryTest {
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
         handlerMappingRegistry.init();
 
-        final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-
-        assertThat(handler).isEqualTo(Optional.empty());
+        assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
+                        .isInstanceOf(NoSuchElementException.class)
+                        .hasMessage("핸들러를 찾지 못했습니다.");
     }
 
 }
