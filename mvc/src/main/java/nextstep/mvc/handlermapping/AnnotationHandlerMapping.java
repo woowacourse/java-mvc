@@ -20,7 +20,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        this.handlerExecutions.putAll(new HandlerScanner(basePackage).scan());
+        this.handlerExecutions.putAll(new AnnotationHandlerScanner(basePackage).scan());
         log.info("Initialized AnnotationHandlerMapping!");
     }
 

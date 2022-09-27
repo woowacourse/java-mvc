@@ -14,11 +14,11 @@ import nextstep.web.annotation.RequestMapping;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 
-public class HandlerScanner {
+public class AnnotationHandlerScanner {
 
     private final Reflections reflections;
 
-    public HandlerScanner(Object[] bassPackage) {
+    public AnnotationHandlerScanner(Object[] bassPackage) {
         reflections = new Reflections(bassPackage);
     }
 
