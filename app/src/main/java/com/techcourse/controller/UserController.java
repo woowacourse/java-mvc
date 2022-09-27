@@ -1,6 +1,5 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,17 +20,19 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
-        final String account = request.getParameter("account");
+        final var account = request.getParameter("account");
         log.debug("user id : {}", account);
         if (validate(account)) {
             return new ModelAndView(new JspView("/404.jsp"));
         }
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+        final var modelAndView = new ModelAndView(new JsonView());
+        final var foundUser = InMemoryUserRepository.findByAccount(account);
+        if (foundUser.isEmpty()) {
+            return new ModelAndView(new JspView("/404.jsp"));
+        }
 
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", foundUser.get());
         return modelAndView;
     }
 
