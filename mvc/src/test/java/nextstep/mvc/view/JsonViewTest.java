@@ -41,7 +41,7 @@ class JsonViewTest {
         View view = new JsonView();
         Map<String, TUser> model = new HashMap<>();
         model.put("루키", new TUser(1L, "루키"));
-        model.put("다우", new TUser(2L, "디우"));
+        model.put("디우", new TUser(2L, "디우"));
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -53,9 +53,15 @@ class JsonViewTest {
 
         // then
         verify(printWriter).write(
-            "{"
-                + "\"다우\":{\"id\":2,\"account\":\"디우\"},"
-                + "\"루키\":{\"id\":1,\"account\":\"루키\"}"
+            "{\n"
+                + "  \"디우\" : {\n"
+                + "    \"id\" : 2,\n"
+                + "    \"account\" : \"디우\"\n"
+                + "  },\n"
+                + "  \"루키\" : {\n"
+                + "    \"id\" : 1,\n"
+                + "    \"account\" : \"루키\"\n"
+                + "  }\n"
                 + "}");
     }
 
@@ -76,6 +82,9 @@ class JsonViewTest {
         view.render(model, request, response);
 
         // then
-        verify(printWriter).write("{\"id\":1,\"account\":\"루키\"}");
+        verify(printWriter).write("{\n"
+            + "  \"id\" : 1,\n"
+            + "  \"account\" : \"루키\"\n"
+            + "}");
     }
 }
