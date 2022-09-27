@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
+import nextstep.mvc.controller.ControllerScanner;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 

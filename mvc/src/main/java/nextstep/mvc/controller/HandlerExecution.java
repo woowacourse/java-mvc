@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,9 +21,6 @@ public class HandlerExecution {
 
     @Override
     public String toString() {
-        return "HandlerExecution{" +
-                "controller=" + controller +
-                ", method=" + method.getName() +
-                '}';
+        return controller.toString();
     }
 }
