@@ -14,11 +14,9 @@ public class HandlerAdapterRegistry {
     }
 
     public HandlerAdapter getHandlerAdapter(final Object object) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(object)) {
-                return handlerAdapter;
-            }
-        }
-        throw new NoSuchElementException("지원하지 않는 어댑터입니다.");
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(object))
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("지원하지 않는 어댑터입니다."));
     }
 }
