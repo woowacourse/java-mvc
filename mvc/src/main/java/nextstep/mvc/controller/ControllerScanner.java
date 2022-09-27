@@ -1,24 +1,21 @@
 package nextstep.mvc.controller;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Map<Class<?>, Object> controllers = new HashMap<>();
+    private final Map<Class<?>, Object> controllers;
 
     public ControllerScanner(final Object[] basePackage) {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        initialize(controllers);
-    }
-
-    private void initialize(final Set<Class<?>> controllers) {
-        controllers.forEach(it -> this.controllers.put(it, newInstance(it)));
+        this.controllers = controllers.stream()
+                .collect(Collectors.toMap(it -> it, this::newInstance));
     }
 
     private Object newInstance(final Class<?> controller) {
