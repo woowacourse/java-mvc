@@ -14,10 +14,10 @@
                             <div class="col-lg-6">
                                 <div class="text-center mt-4">
                                     <img class="mb-4 img-error" src="/assets/img/error-404-monochrome.svg" />
-                                    <p class="lead">This requested URL was not found on this server.</p>
-                                    <a href="/index.jsp">
+                                    <p class="lead">요청을 제대로 보내시기 바랍니다</p>
+                                    <a href="https://www.naepyeon.site/login">
                                         <i class="fas fa-arrow-left me-1"></i>
-                                        Return to Dashboard
+                                        요청 보내는 것을 포기하고 내편 사이트나 구경하러 가기
                                     </a>
                                 </div>
                             </div>
