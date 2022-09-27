@@ -27,9 +27,13 @@ public class JsonView implements View {
     }
 
     private String convertJson(Map<String, ?> model) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(extractResult(model));
+    }
+
+    private static Object extractResult(Map<String, ?> model) {
         if (model.size() == 1) {
-            return objectMapper.writeValueAsString(model.values());
+            return model.values();
         }
-        return objectMapper.writeValueAsString(model);
+        return model;
     }
 }
