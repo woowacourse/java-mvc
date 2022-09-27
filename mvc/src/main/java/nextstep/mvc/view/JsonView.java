@@ -12,17 +12,15 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        PrintWriter writer = response.getWriter();
+        String jsonString = new ObjectMapper().writeValueAsString(filterObjectToJsonify(model));
+        response.getWriter().write(jsonString);
+    }
 
+    private Object filterObjectToJsonify(Map<String, ?> model) {
         if (model.size() == 1) {
-            Object obj = model.values().iterator().next();
-            String jsonString = objectMapper.writeValueAsString(obj);
-            writer.write(jsonString);
-            return;
+            return model.values().iterator().next();
         }
-        String jsonString = objectMapper.writeValueAsString(model);
-        writer.write(jsonString);
+        return model;
     }
 }
