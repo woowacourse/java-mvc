@@ -17,7 +17,12 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
-    @RequestMapping(value = "/api/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String show(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return "/register.jsp";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
@@ -25,10 +30,5 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
         return new ModelAndView(new RedirectView("redirect:/index.jsp"));
-    }
-
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String show(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "/register.jsp";
     }
 }
