@@ -11,7 +11,7 @@ public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    private static final int DEFAULT_PORT = 8000;
+    private static final int DEFAULT_PORT = 8080;
 
     public static void main(final String[] args) throws Exception {
         final int port = defaultPortIfNull(args);

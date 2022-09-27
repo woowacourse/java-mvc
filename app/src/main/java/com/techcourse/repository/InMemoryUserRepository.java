@@ -1,7 +1,6 @@
 package com.techcourse.repository;
 
 import com.techcourse.domain.User;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,5 +22,10 @@ public class InMemoryUserRepository {
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {}
+    public static synchronized int getDatabaseSize() {
+        return database.size();
+    }
+
+    private InMemoryUserRepository() {
+    }
 }
