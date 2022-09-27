@@ -44,22 +44,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final var handler = handlerMappingRegistry.getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappingRegistry.getHandler(request);
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response)
