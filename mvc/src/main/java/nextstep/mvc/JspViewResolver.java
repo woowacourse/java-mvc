@@ -10,6 +10,9 @@ public class JspViewResolver implements ViewResolver {
 
     @Override
     public View resolveViewName(final String viewName) {
-        return new JspView(PREFIX + viewName + SUFFIX);
+        if (!viewName.contains(JspView.REDIRECT_PREFIX) && !viewName.endsWith(SUFFIX)) {
+            return new JspView(viewName + SUFFIX);
+        }
+        return new JspView(viewName);
     }
 }

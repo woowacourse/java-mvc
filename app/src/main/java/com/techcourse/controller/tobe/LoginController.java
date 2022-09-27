@@ -39,7 +39,7 @@ public class LoginController {
         }
 
         request.setAttribute(SESSION_KEY, user);
-        return "index";
+        return "/index";
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
@@ -49,6 +49,6 @@ public class LoginController {
         if (user.isPresent()) {
             return "redirect:/index.jsp";
         }
-        return "login";
+        return "/login";
     }
 }

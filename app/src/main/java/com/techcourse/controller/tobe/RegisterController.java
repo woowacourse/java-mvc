@@ -24,6 +24,6 @@ public class RegisterController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public String showRegister(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "register";
+        return "/register";
     }
 }

@@ -11,6 +11,6 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String show(HttpServletRequest request, HttpServletResponse response) {
-        return "index";
+        return "/index";
     }
 }

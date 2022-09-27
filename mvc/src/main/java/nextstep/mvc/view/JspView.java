@@ -42,6 +42,6 @@ public class JspView implements View {
     }
 
     private boolean isRedirect() {
-        return viewName.contains(JspView.REDIRECT_PREFIX);
+        return viewName.startsWith(JspView.REDIRECT_PREFIX);
     }
 }
