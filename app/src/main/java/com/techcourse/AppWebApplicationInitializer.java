@@ -18,13 +18,17 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(final ServletContext servletContext) {
         log.info("Start AppWebApplication Initializer");
         final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
-        dispatcherServlet.addHandlerAdapter(new ModelAndViewHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ViewNameHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new VoidHandlerAdapter());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
+        addHandlerAdapters(dispatcherServlet);
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
+    }
+
+    private void addHandlerAdapters(DispatcherServlet dispatcherServlet) {
+        dispatcherServlet.addHandlerAdapter(new ModelAndViewHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new ViewNameHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new VoidHandlerAdapter());
     }
 }
