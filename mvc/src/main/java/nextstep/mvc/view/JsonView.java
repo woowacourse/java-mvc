@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -18,8 +20,7 @@ public class JsonView implements View {
     }
 
     private String getJson(final Map<String, ?> model) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(model);
+        return OBJECT_MAPPER.writeValueAsString(model);
     }
 
     private void writeJson(final HttpServletResponse response, final String json) throws IOException {
