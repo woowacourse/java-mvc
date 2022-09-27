@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
@@ -59,6 +60,7 @@ class DispatcherServletTest {
                         )
                 );
         dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
 
         dispatcherServlet.init();
         dispatcherServlet.service(request, response);

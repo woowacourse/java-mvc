@@ -8,7 +8,7 @@ public class ControllerScanner {
 
     private final Object[] basePackage;
 
-    public ControllerScanner(final Object... basePackage) {
+    public ControllerScanner(final Object[] basePackage) {
         this.basePackage = basePackage;
     }
 
