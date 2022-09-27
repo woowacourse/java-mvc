@@ -11,7 +11,7 @@ class ControllerScannerTest {
 
     @Test
     void getControllers() {
-        ControllerScanner controllerScanner = ControllerScanner.from("samples");
+        ControllerScanner controllerScanner = ControllerScanner.of("samples");
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         Object controller = controllers.get(TestController.class);

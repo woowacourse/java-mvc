@@ -15,7 +15,7 @@ public class ControllerScanner {
         this.reflections = reflections;
     }
 
-    public static ControllerScanner from(final Object... basePackage) {
+    public static ControllerScanner of(final Object... basePackage) {
         Reflections reflections = new Reflections(basePackage);
         return new ControllerScanner(reflections);
     }
