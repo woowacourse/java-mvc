@@ -15,17 +15,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class LoginV2Controller {
+public class LoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginV2Controller.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     private InMemoryUserRepository userRepository;
 
-    public LoginV2Controller(final InMemoryUserRepository userRepository) {
+    public LoginController(final InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @RequestMapping(value = "/v2/login/view", method = GET)
+    @RequestMapping(value = "/login/view", method = GET)
     public ModelAndView loginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
