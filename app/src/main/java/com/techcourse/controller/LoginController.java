@@ -31,6 +31,23 @@ public class LoginController {
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView findLoginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                })
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        final var session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        return new ModelAndView(new JspView("redirect:/"));
+    }
+
     private ModelAndView login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
