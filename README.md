@@ -34,11 +34,11 @@
 - 클래스들에서 @RequestMapping이 붙은 메서드들을 찾아와 HandlerKey와 HandlerExecution을 만든다.
 
 ### 3단계 - JSON View 구현하기
-- [ ] JsonView 클래스를 구현한다.
-  - [ ] JSON으로 응답할 때 ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE이어야 한다.
-  - [ ] model에 데이터가 1개면 값을 그대로 반환한다.
-  - [ ] model에 데이터가 2개 이상이면 Map형태 그대로 JSON으로 변환해서 반환한다. 
-  - [ ] UserController가 JSON 형태로 응답을 반환한다.
+- [X] JsonView 클래스를 구현한다.
+  - [X] JSON으로 응답할 때 ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE이어야 한다.
+  - [X] model에 데이터가 1개면 값을 그대로 반환한다.
+  - [X] model에 데이터가 2개 이상이면 Map형태 그대로 JSON으로 변환해서 반환한다. 
+  - [X] UserController가 JSON 형태로 응답을 반환한다.
 - [X] Legacy MVC를 제거한다.
   - [X] 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
   - [X] asis 패키지의 모든 클래스를 삭제해도 프로그램이 정상적으로 동작해야한다.
