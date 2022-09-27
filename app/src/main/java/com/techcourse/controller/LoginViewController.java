@@ -18,7 +18,7 @@ public class LoginViewController {
 
     @RequestMapping(value="/login/view", method = RequestMethod.GET)
     public ModelAndView doGet(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        String viewName = UserSession.getUserFrom(req.getSession())
+        final String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";

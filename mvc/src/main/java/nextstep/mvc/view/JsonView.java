@@ -12,9 +12,9 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         final ObjectMapper objectMapper = new ObjectMapper();
-
-        String jsonData = objectMapper.writerWithDefaultPrettyPrinter()
+        final String jsonData = objectMapper.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(model);
+
         response.getWriter().print(jsonData);
     }
 }

@@ -24,7 +24,7 @@ public class LoginController {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
