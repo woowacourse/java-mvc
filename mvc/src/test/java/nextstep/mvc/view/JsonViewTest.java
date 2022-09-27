@@ -35,12 +35,13 @@ class JsonViewTest {
     }
 
     @Test
-    @DisplayName("Model의 값을 직렬화 할 수 있다.")
-    void canSerializeOfModel() throws Exception {
+    @DisplayName("Model의 값을 Json 형식의 view로 리턴한다.")
+    void canReturnJsonViewWhenGreaterOneData() throws Exception {
         // given
         View view = new JsonView();
         Map<String, TUser> model = new HashMap<>();
-        model.put("user", new TUser(1L, "rookie"));
+        model.put("루키", new TUser(1L, "루키"));
+        model.put("다우", new TUser(2L, "디우"));
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -51,9 +52,30 @@ class JsonViewTest {
         view.render(model, request, response);
 
         // then
-        verify(printWriter).write("{\"user\":{"
-            + "\"id\":1,"
-            + "\"account\":\"rookie\""
-            + "}}");
+        verify(printWriter).write(
+            "{"
+                + "\"다우\":{\"id\":2,\"account\":\"디우\"},"
+                + "\"루키\":{\"id\":1,\"account\":\"루키\"}"
+                + "}");
+    }
+
+    @Test
+    @DisplayName("Model의 값이 1개일 경우 값을 그대로 값을 리턴한다.")
+    void canReturnValueWhenOneData() throws Exception {
+        // given
+        View view = new JsonView();
+        Map<String, TUser> model = new HashMap<>();
+        model.put("루키", new TUser(1L, "루키"));
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        PrintWriter printWriter = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(printWriter);
+
+        // when
+        view.render(model, request, response);
+
+        // then
+        verify(printWriter).write("{\"id\":1,\"account\":\"루키\"}");
     }
 }
