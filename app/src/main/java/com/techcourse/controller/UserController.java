@@ -4,7 +4,9 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import nextstep.mvc.view.JsonView;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -21,6 +23,9 @@ public class UserController {
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
+        if (validate(account)) {
+            return new ModelAndView(new JspView("/404.jsp"));
+        }
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
@@ -28,6 +33,10 @@ public class UserController {
 
         modelAndView.addObject("user", user);
         return modelAndView;
+    }
+
+    private boolean validate(final String account) {
+        return Objects.isNull(account);
     }
 }
 
