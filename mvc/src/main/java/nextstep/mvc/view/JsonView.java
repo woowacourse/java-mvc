@@ -24,18 +24,14 @@ public class JsonView implements View {
     }
 
     private String getBody(final Map<String, ?> model) throws JsonProcessingException {
-        if (model.size() == 1) {
-            final Object attribute = getAttribute(model);
-            return objectMapper.writeValueAsString(attribute);
-        }
-        return objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(model);
+        return objectMapper.writeValueAsString(getAttribute(model));
     }
 
     private Object getAttribute(final Map<String, ?> model) {
-        return model.values()
-                .stream()
-                .findFirst()
-                .orElseThrow();
+        if (model.size() == 1) {
+            final String key = (String) model.keySet().toArray()[0];
+            return model.get(key);
+        }
+        return model;
     }
 }

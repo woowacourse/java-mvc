@@ -61,7 +61,7 @@ class JsonViewTest {
         jsonView.render(model, request, response);
 
         final String writtenValue = stringWriter.toString();
-        final String expected = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
+        final String expected = objectMapper.writeValueAsString(model);
         assertThat(writtenValue).isEqualTo(expected);
     }
 }
