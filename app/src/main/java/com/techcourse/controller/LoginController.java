@@ -58,8 +58,7 @@ public class LoginController {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return new ModelAndView(new JspView("redirect:/index.jsp"));
-        } else {
-            return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
+        return new ModelAndView(new JspView("redirect:/401.jsp"));
     }
 }
