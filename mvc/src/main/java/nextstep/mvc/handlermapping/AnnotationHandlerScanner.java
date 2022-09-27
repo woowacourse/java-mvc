@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -23,20 +24,17 @@ public class AnnotationHandlerScanner {
     }
 
     public Map<HandlerKey, HandlerExecution> scan() {
-        return instantiateControllers(reflections.getTypesAnnotatedWith(Controller.class));
-    }
-
-    private Map<HandlerKey, HandlerExecution> instantiateControllers(final Set<Class<?>> controllers) {
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
         for (Class<?> ctrl : controllers) {
-            Object controller = createHandlerInstance(ctrl);
+            Object controller = createControllerInstance(ctrl);
             Set<Method> methods = getControllerMethods(controller);
             setHandlerExecutions(controller, methods, handlerExecutions);
         }
         return handlerExecutions;
     }
 
-    private Object createHandlerInstance(final Class<?> handlerClass) {
+    private Object createControllerInstance(final Class<?> handlerClass) {
         try {
             Constructor<?> constructor = handlerClass.getDeclaredConstructor();
             return constructor.newInstance();
