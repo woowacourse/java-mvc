@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.v2;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -20,6 +20,7 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("gogo");
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
