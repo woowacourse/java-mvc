@@ -19,6 +19,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("어뎁터를 찾을 수 없습니다."));
     }
 }

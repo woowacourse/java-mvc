@@ -4,8 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
 import nextstep.mvc.adapter.HandlerAdapter;
 import nextstep.mvc.adapter.HandlerAdapterRegistry;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -48,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
             modelAndView.renderView(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            new JspView("redirect:/404.jsp").render(new HashMap<>(), request, response);
         }
     }
 }
