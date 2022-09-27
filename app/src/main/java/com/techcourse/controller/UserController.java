@@ -29,4 +29,10 @@ public class UserController {
         modelAndView.addObject("user", user);
         return modelAndView;
     }
+
+    @RequestMapping(value = "/api/test", method = RequestMethod.GET)
+    public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        return modelAndView;
+    }
 }

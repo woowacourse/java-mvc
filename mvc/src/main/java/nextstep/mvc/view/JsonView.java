@@ -25,6 +25,9 @@ public class JsonView implements View {
     }
 
     private String convertJson(Map<String, ?> model) throws JsonProcessingException {
+        if (model.size() == 0) {
+            return "";
+        }
         if (model.size() == 1) {
             ArrayList<?> objects = new ArrayList<>(model.values());
             Object object = objects.get(0);
