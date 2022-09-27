@@ -5,11 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handler.asis.Controller;
 
-public class RegisterViewV1Controller implements Controller {
+public class RegisterViewOldController implements Controller {
 
     private final InMemoryUserRepository userRepository;
 
-    public RegisterViewV1Controller(final InMemoryUserRepository userRepository) {
+    public RegisterViewOldController(final InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

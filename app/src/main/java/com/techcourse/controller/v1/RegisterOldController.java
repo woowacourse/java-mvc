@@ -6,11 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handler.asis.Controller;
 
-public class RegisterV1Controller implements Controller {
+public class RegisterOldController implements Controller {
 
     private final InMemoryUserRepository userRepository;
 
-    public RegisterV1Controller(final InMemoryUserRepository userRepository) {
+    public RegisterOldController(final InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

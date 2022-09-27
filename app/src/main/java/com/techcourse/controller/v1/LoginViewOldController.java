@@ -7,9 +7,9 @@ import nextstep.mvc.handler.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginViewV1Controller implements Controller {
+public class LoginViewOldController implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewV1Controller.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginViewOldController.class);
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {

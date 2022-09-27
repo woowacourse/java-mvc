@@ -1,4 +1,4 @@
-package com.techcourse.controller.v2;
+package com.techcourse.controller.v2.controller;
 
 import static nextstep.web.support.RequestMethod.GET;
 
@@ -10,23 +10,22 @@ import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
 
 @Controller
-public class RegisterV2Controller {
+public class RegisterController {
 
     private final InMemoryUserRepository userRepository;
 
-    public RegisterV2Controller(final InMemoryUserRepository userRepository) {
+    public RegisterController(final InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @RequestMapping(value = "/v2/register/view", method = GET)
+    @RequestMapping(value = "/register/view", method = GET)
     public ModelAndView registerView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 
-    @RequestMapping(value = "/v2/register", method = GET)
+    @RequestMapping(value = "/register", method = GET)
     public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
