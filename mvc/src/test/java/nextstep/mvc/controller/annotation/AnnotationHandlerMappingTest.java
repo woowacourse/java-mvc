@@ -1,11 +1,13 @@
 package nextstep.mvc.controller.annotation;
 
+import static nextstep.web.support.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.JspView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +23,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void get_jsp() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -37,7 +39,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void post() throws Exception {
+    void post_jsp() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -50,5 +52,21 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
         assertThat(modelAndView.getView()).isInstanceOf(JspView.class);
+    }
+
+    @Test
+    void get_json() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("ash");
+        when(request.getRequestURI()).thenReturn("/api/test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(response.getContentType()).isEqualTo(APPLICATION_JSON_UTF8_VALUE);
+        assertThat(modelAndView.getView()).isInstanceOf(JsonView.class);
     }
 }
