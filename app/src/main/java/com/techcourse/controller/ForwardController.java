@@ -9,14 +9,13 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class LogoutController {
+public class ForwardController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
-        final var session = request.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        String viewName = "redirect:/";
-        JspView view = new JspView(viewName);
+    private static final String PATH = "/index.jsp";
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        JspView view = new JspView(PATH);
         return new ModelAndView(view);
     }
 }
