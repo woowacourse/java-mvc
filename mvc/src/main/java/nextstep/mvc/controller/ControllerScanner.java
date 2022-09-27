@@ -15,7 +15,7 @@ public class ControllerScanner {
 
     private final Reflections reflections;
 
-    public ControllerScanner(Reflections reflections) {
+    public ControllerScanner(final Reflections reflections) {
         this.reflections = reflections;
     }
 
@@ -24,7 +24,7 @@ public class ControllerScanner {
         return instantiateControllers(classes);
     }
 
-    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> classes) {
+    private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> classes) {
         final Map<Class<?>, Object> controllers = new HashMap<>();
         for (final Class<?> clazz : classes) {
             try {

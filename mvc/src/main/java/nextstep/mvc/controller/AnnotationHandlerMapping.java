@@ -25,8 +25,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        final ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         addHandlerExecutions(controllers);
     }
 
@@ -56,9 +56,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod()));
+    public Object getHandler(final HttpServletRequest req) {
+        final HandlerKey handlerKey = new HandlerKey(req.getRequestURI(),
+                RequestMethod.valueOf(req.getMethod()));
         try {
             return handlerExecutions.get(handlerKey);
         } catch (NullPointerException e) {

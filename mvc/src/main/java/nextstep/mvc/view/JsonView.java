@@ -14,11 +14,11 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        Object jsonData = getJsonData(model);
-        response.getWriter().write(objectMapper.writeValueAsString(jsonData));
+        final Object data = getData(model);
+        response.getWriter().write(objectMapper.writeValueAsString(data));
     }
 
-    private Object getJsonData(Map<String, ?> model) {
+    private Object getData(final Map<String, ?> model) {
         if (model.size() == 1) {
             return model.values().toArray()[0];
         }

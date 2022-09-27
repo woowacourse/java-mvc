@@ -11,11 +11,11 @@ public class HandlerAdapterRegistry {
         this.handlerAdapters = new ArrayList<>();
     }
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object controller) {
+    public HandlerAdapter getHandlerAdapter(final Object controller) {
         return handlerAdapters.stream()
                 .filter(it -> it.supports(controller))
                 .findFirst()

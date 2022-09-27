@@ -17,13 +17,13 @@ public class HandlerMappingRegistry {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
-    public Object getHandler(HttpServletRequest httpServletRequest) {
+    public Object getHandler(final HttpServletRequest req) {
         return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
+                .map(handlerMapping -> handlerMapping.getHandler(req))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("handler not found"));
