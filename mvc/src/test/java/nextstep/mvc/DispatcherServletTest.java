@@ -6,11 +6,11 @@ import static nextstep.test.MockRequestBuilder.post;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
+import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.test.MockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import samples.TestManualHandlerMapping;
 import samples.User;
 
 class DispatcherServletTest {
@@ -21,8 +21,8 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         mockMvc = new MockMvc(
-                new TestManualHandlerMapping(),
-                new AnnotationHandlerMapping("samples")
+                new AnnotationHandlerMapping("samples"),
+                new AnnotationHandlerAdapter()
         );
 
         objectMapper = new ObjectMapper();

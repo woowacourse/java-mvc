@@ -5,10 +5,10 @@ import static nextstep.test.MockRequestBuilder.post;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techcourse.ManualHandlerMapping;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import java.util.Optional;
+import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.test.MockMvc;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +23,8 @@ public class ControllerTest {
     @BeforeEach
     void setUp() {
         mockMvc = new MockMvc(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse")
+                new AnnotationHandlerMapping("com.techcourse"),
+                new AnnotationHandlerAdapter()
         );
 
         objectMapper = new ObjectMapper();
@@ -62,7 +62,7 @@ public class ControllerTest {
 
     @Test
     void logout() throws Exception {
-        mockMvc.perform(post("/logout"))
+        mockMvc.perform(get("/logout"))
                 .redirectTo("/");
     }
 

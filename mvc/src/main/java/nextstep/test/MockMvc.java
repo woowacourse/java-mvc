@@ -6,8 +6,7 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import nextstep.mvc.AnnotationHandlerAdapter;
-import nextstep.mvc.ControllerHandlerAdapter;
+import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.HandlerMapping;
 
@@ -15,15 +14,10 @@ public class MockMvc {
 
     private final DispatcherServlet dispatcherServlet;
 
-    public MockMvc(final HandlerMapping... handlerMappings) {
+    public MockMvc(final HandlerMapping handlerMapping, final AnnotationHandlerAdapter handlerAdapter) {
         this.dispatcherServlet = new DispatcherServlet();
-
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            dispatcherServlet.addHandlerMapping(handlerMapping);
-        }
-
-        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        dispatcherServlet.addHandlerMapping(handlerMapping);
+        dispatcherServlet.addHandlerAdapter(handlerAdapter);
         dispatcherServlet.init();
     }
 

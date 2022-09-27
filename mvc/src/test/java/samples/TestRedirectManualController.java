@@ -2,12 +2,17 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class TestRedirectManualController implements Controller {
+@Controller
+public class TestRedirectManualController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "redirect:/index.jsp";
+    @RequestMapping(value = "/redirect-index", method = RequestMethod.GET)
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }

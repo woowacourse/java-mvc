@@ -18,7 +18,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
@@ -28,7 +28,7 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(new ModelAndView(new JspView("/redirect:index.jsp")));
+                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
     private ModelAndView login(final HttpServletRequest request, final User user) {
@@ -36,8 +36,8 @@ public class LoginController {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return new ModelAndView(new JspView("redirect:/index.jsp"));
-        } else {
-            return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
+
+        return new ModelAndView(new JspView("redirect:/401.jsp"));
     }
 }
