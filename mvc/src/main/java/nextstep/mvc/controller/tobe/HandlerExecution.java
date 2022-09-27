@@ -21,7 +21,7 @@ public class HandlerExecution {
         if (result instanceof ModelAndView) {
             return (ModelAndView) result;
         }
-        if (isJspResourceReturn(result)) {
+        if (isJspResource(result)) {
             JspView jspView = new JspView((String) result);
             ModelAndView modelAndView = new ModelAndView(jspView);
             setAttribute(request, modelAndView);
@@ -30,7 +30,7 @@ public class HandlerExecution {
         throw new RuntimeException("[ERROR] HandlerAdapter 가 처리할 수 없는 Handler 의 결과입니다.");
     }
 
-    private boolean isJspResourceReturn(final Object result) {
+    private boolean isJspResource(final Object result) {
         return result instanceof String && ((String) result).contains(JSP_FILE_TYPE);
     }
 

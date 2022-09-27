@@ -10,7 +10,7 @@ import nextstep.web.support.RequestMethod;
 public class RegisterViewController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String getRegisterView(final HttpServletRequest req, final HttpServletResponse response) {
+    public String getRegisterView(final HttpServletRequest request, final HttpServletResponse response) {
         return "register.jsp";
     }
 }
