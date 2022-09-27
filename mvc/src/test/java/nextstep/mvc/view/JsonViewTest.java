@@ -26,14 +26,15 @@ class JsonViewTest {
         final HttpServletResponse response = mock(HttpServletResponse.class);
         final StringWriter stringWriter = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(stringWriter);
+        final Map<String, String> expected = Map.of("parang", "koparang");
         when(response.getWriter()).thenReturn(printWriter);
 
         final Map<String, Object> model = new HashMap<>();
-        model.put("wooteco", Map.of("parang", "koparang"));
+        model.put("wooteco", expected);
 
         jsonView.render(model, request, response);
 
-        assertThat(stringWriter.toString()).isEqualTo(objectMapper.writeValueAsString(model));
+        assertThat(stringWriter.toString()).isEqualTo(objectMapper.writeValueAsString(expected));
     }
 
     @Test
@@ -47,6 +48,7 @@ class JsonViewTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("wooteco", Map.of("parang", "koparang", "k", "kobaby"));
+        model.put("parang", Map.of("kotlin", 10, "alcohol", 9));
 
         jsonView.render(model, request, response);
 
