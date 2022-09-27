@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());
 
