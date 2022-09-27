@@ -11,9 +11,6 @@ import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
 
-    public JsonView() {
-    }
-
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request,
         HttpServletResponse response) throws Exception {
@@ -23,7 +20,18 @@ public class JsonView implements View {
     }
 
     private String parseToJson(final Map<String, ?> model) throws JsonProcessingException {
+
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(model);
+        return objectMapper.writeValueAsString(extract(model));
+    }
+
+    private Object extract(final Map<String, ?> model) {
+        if(model.size() > 1) {
+            return model;
+        }
+
+        return model.values().stream()
+            .findFirst()
+            .orElseThrow();
     }
 }
