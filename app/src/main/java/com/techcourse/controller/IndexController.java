@@ -10,10 +10,10 @@ import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 
 @Controller
-public class RegisterViewController {
+public class IndexController {
 
-    @RequestMapping(value = "/register/view", method = GET)
-    public ModelAndView renderRegisterView(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/register.jsp"));
+    @RequestMapping(value = "/", method = GET)
+    public ModelAndView renderMainView(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

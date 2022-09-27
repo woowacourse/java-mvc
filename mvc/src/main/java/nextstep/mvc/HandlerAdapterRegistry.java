@@ -2,7 +2,7 @@ package nextstep.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
-import nextstep.mvc.controller.tobe.exception.NotSupportHandler;
+import nextstep.mvc.controller.exception.NotSupportHandler;
 
 public class HandlerAdapterRegistry {
 

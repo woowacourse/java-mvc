@@ -1,8 +1,9 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
+import nextstep.mvc.controller.ControllerScanner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;

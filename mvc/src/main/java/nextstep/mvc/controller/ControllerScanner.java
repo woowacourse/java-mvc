@@ -1,10 +1,10 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import nextstep.mvc.controller.tobe.exception.InvalidReflectionException;
+import nextstep.mvc.controller.exception.InvalidReflectionException;
 import nextstep.web.annotation.Controller;
 import org.reflections.Reflections;
 
