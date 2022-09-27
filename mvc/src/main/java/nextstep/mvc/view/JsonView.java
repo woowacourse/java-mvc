@@ -21,11 +21,6 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
-
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter printWriter = response.getWriter();
         printWriter.write(convertJson(model));
