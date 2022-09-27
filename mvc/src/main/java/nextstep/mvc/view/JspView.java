@@ -23,9 +23,15 @@ public class JspView implements View {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
-        fromModelToRequestAttribute(model, request);
+        if (hasData(model)) {
+            fromModelToRequestAttribute(model, request);
+        }
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    private boolean hasData(final Map<String, ?> model) {
+        return model.size() > 0;
     }
 
     private void fromModelToRequestAttribute(final Map<String, ?> model, final HttpServletRequest request) {
@@ -36,6 +42,6 @@ public class JspView implements View {
     }
 
     private boolean isRedirect() {
-        return viewName.startsWith(JspView.REDIRECT_PREFIX);
+        return viewName.contains(JspView.REDIRECT_PREFIX);
     }
 }
