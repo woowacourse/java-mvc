@@ -36,6 +36,6 @@ public class JsonView implements View {
     private void write(final HttpServletResponse response, final String jsonBody) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
-        writer.println(jsonBody);
+        writer.print(jsonBody);
     }
 }
