@@ -4,7 +4,9 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import nextstep.mvc.view.JsonView;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -15,7 +17,6 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class UserController {
 
-    private static final String USER_NOT_FOUND_ERROR = "존재하지 않는 사용자입니다 -> account: %s";
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
@@ -23,10 +24,16 @@ public class UserController {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(USER_NOT_FOUND_ERROR, account)));
+        if (account == null) {
+            return new ModelAndView(new JspView("redirect:/400.jsp"));
+        }
 
+        final Optional<User> user = InMemoryUserRepository.findByAccount(account);
+        if (user.isEmpty()) {
+            return new ModelAndView(new JspView("redirect:/404.jsp"));
+        }
+
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
         return modelAndView;
     }
