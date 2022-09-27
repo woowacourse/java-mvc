@@ -11,11 +11,11 @@ public class JsonView implements View {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
+    public void render(final Map<String, ?> model, final HttpServletRequest req, HttpServletResponse res)
             throws Exception {
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        res.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final Object data = getData(model);
-        response.getWriter().write(objectMapper.writeValueAsString(data));
+        res.getWriter().write(objectMapper.writeValueAsString(data));
     }
 
     private Object getData(final Map<String, ?> model) {
