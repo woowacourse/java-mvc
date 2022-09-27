@@ -12,7 +12,7 @@ public class ControllerScanner {
     private final Reflections reflections;
 
     public ControllerScanner(final Object... basePackage) {
-        this.reflections = new Reflections(basePackage[0]);
+        this.reflections = new Reflections(basePackage);
     }
 
     public List<Object> scan() {

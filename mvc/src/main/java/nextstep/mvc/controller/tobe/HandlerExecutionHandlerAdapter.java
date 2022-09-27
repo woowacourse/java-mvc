@@ -3,6 +3,7 @@ package nextstep.mvc.controller.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
@@ -17,6 +18,10 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
                                final Object handler)
             throws Exception {
         final var handlerExecution = (HandlerExecution) handler;
-        return handlerExecution.handle(request, response);
+        final var result = handlerExecution.handle(request, response);
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+        return new ModelAndView(new JspView(result.toString()));
     }
 }
