@@ -15,7 +15,6 @@ import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
 
-    private static final Logger log = LoggerFactory.getLogger(JsonView.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
