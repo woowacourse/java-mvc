@@ -8,10 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryUserRepository {
 
+    private static final int NEXT_USER = 1;
+
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 
     static {
-        final var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+        final var user = new User(NEXT_USER, "gugu", "password", "hkkang@woowahan.com");
         database.put(user.getAccount(), user);
     }
 
@@ -21,6 +23,10 @@ public class InMemoryUserRepository {
 
     public static Optional<User> findByAccount(String account) {
         return Optional.ofNullable(database.get(account));
+    }
+
+    public static int getNextUserId() {
+        return database.size() + NEXT_USER;
     }
 
     private InMemoryUserRepository() {}
