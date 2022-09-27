@@ -1,4 +1,4 @@
-package com.techcourse.controller.v2.service;
+package com.techcourse.service;
 
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;

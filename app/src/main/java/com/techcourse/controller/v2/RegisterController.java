@@ -1,4 +1,4 @@
-package com.techcourse.controller.v2.controller;
+package com.techcourse.controller.v2;
 
 import static nextstep.web.support.RequestMethod.GET;
 

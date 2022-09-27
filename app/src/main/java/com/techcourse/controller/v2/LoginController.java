@@ -1,9 +1,9 @@
-package com.techcourse.controller.v2.controller;
+package com.techcourse.controller.v2;
 
 import static nextstep.web.support.RequestMethod.GET;
 
 import com.techcourse.controller.UserSession;
-import com.techcourse.controller.v2.service.LoginService;
+import com.techcourse.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.JspView;

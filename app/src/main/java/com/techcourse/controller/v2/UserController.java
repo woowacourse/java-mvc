@@ -1,4 +1,4 @@
-package com.techcourse.controller.v2.controller;
+package com.techcourse.controller.v2;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
