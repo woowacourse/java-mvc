@@ -41,7 +41,7 @@ class JsonViewTest {
     void jsonMultiParsing() throws Exception {
         // given
         final JsonView jsonView = new JsonView();
-        final Map<String, Object> model = Map.of("user", Map.of("account", "yeonlog"), "campus","seolleung");
+        final Map<String, Object> model = Map.of("user", Map.of("account", "yeonlog"), "campus", "seolleung");
 
         // when
         jsonView.render(model, request, response);
@@ -64,5 +64,20 @@ class JsonViewTest {
         // then
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(stringWriter.toString()).isEqualTo(objectMapper.writeValueAsString(model.get("user")));
+    }
+
+    @DisplayName(value = "값이 없는 경우 빈 값 반환")
+    @Test
+    void jsonZeroParsing() throws Exception {
+        // given
+        final JsonView jsonView = new JsonView();
+        final Map<String, Object> model = Map.of();
+
+        // when
+        jsonView.render(model, request, response);
+
+        // then
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(stringWriter.toString()).isEqualTo("");
     }
 }
