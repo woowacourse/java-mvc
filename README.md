@@ -7,8 +7,8 @@
 ---
 
 ![Generic badge](https://img.shields.io/badge/Level4-mvc-green.svg)
-![Generic badge](https://img.shields.io/badge/test-57_passed-blue.svg)
-![Generic badge](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)
+![Generic badge](https://img.shields.io/badge/test-43_passed-blue.svg)
+![Generic badge](https://img.shields.io/badge/version-3.0.0-brightgreen.svg)
 
 > 우아한테크코스 웹 백엔드 4기, @MVC 구현하기 저장소입니다.
 
@@ -69,13 +69,13 @@ public class TestController {
 
 ## Step3 체크리스트
 
-- [ ] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
+- [x] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
 - [x] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
 
 ### 기능 요구사항
 
 - [x] JspView 클래스를 구현한다.
-- [ ] JsonView 클래스를 구현한다.
+- [x] JsonView 클래스를 구현한다.
 - [x] Legacy MVC 제거하기
     - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
     - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링하자.
