@@ -4,6 +4,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.NoSuchElementException;
 import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -24,7 +25,7 @@ public class UserController {
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("해당 계정을 가진 사용자가 없습니다."));
 
         modelAndView.addObject("user", user);
         return modelAndView;
