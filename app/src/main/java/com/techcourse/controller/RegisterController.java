@@ -23,7 +23,7 @@ public class RegisterController {
         return ModelAndView.jspView("redirect:/index.jsp");
     }
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView registerForm(HttpServletRequest req, HttpServletResponse res) {
         return ModelAndView.jspView("/register.jsp");
     }
