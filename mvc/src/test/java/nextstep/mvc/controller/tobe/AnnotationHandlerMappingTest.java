@@ -49,3 +49,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 }
+
+
+
+

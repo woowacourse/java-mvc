@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.controller.tobe.exception.NotSupportInstantiateControllerException;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RestController;
 import org.reflections.Reflections;
 
 public class ControllerScanner {
@@ -20,7 +21,11 @@ public class ControllerScanner {
     }
 
     private Set<Class<?>> getAllControllers(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClazz.addAll(reflections.getTypesAnnotatedWith(RestController.class));
+
+        //:todo 여기 까지 작업 했음 어뎁터 만들어서 restController 일 때 JsonView 반환 작업만 해주면 될 듯
+        return controllerClazz;
     }
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllers) {
