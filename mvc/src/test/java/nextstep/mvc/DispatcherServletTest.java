@@ -34,7 +34,6 @@ class DispatcherServletTest {
             final DispatcherServlet dispatcherServlet = new DispatcherServlet();
             dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
             dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-            dispatcherServlet.init();
 
             // when
             dispatcherServlet.service(request, response);
