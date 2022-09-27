@@ -2,6 +2,7 @@ package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import nextstep.mvc.controller.ControllerScanner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
