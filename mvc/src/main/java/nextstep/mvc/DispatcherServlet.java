@@ -51,9 +51,8 @@ public class DispatcherServlet extends HttpServlet {
                 throw new RuntimeException("알맞은 핸들러가 없습니다.");
             }
         }
-
-        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
         modelAndView.render(request, response);
     }
 }

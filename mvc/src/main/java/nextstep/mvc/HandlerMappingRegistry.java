@@ -24,7 +24,6 @@ public class HandlerMappingRegistry {
     public Optional<Object> getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
                 .findAny();
     }
 }
