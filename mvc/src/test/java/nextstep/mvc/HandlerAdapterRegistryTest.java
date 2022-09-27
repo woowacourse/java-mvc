@@ -1,11 +1,13 @@
 package nextstep.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
@@ -25,5 +27,16 @@ class HandlerAdapterRegistryTest {
         HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         assertThat(handlerAdapter).isExactlyInstanceOf(AnnotationHandlerAdapter.class);
+    }
+
+    @DisplayName("적절한 HandlerAdapter가 없을 경우 예외를 발생시킨다.")
+    @Test
+    void getHandlerAdapter_HandlerAdapterNotFoundException() {
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        Object invalidHandler = Integer.MAX_VALUE;
+
+        assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(invalidHandler))
+                .isInstanceOf(HandlerAdapterNotFoundException.class);
     }
 }
