@@ -2,7 +2,6 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +41,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
             final var instance = entry.getValue();
-            final var publicMethods = Arrays
+            final var methods = Arrays
                     .stream(entry.getKey().getDeclaredMethods())
-                    .filter(it -> Modifier.isPublic(it.getModifiers()))
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .toArray(Method[]::new);
-            instanceAndMethods.put(instance, publicMethods);
+            instanceAndMethods.put(instance, methods);
         }
         return instanceAndMethods;
     }
