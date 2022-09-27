@@ -24,12 +24,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
         final ControllerScanner controllerScanner = new ControllerScanner(reflections);
 
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         controllers.forEach(this::mappingHandlerExecutions);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
