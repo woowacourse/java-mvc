@@ -27,16 +27,20 @@ public class ControllerScanner {
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> classes) {
         final Map<Class<?>, Object> controllers = new HashMap<>();
         for (final Class<?> clazz : classes) {
-            try {
-                controllers.put(clazz, clazz.getDeclaredConstructor().newInstance());
-            } catch (InstantiationException
-                    | IllegalAccessException
-                    | InvocationTargetException
-                    | NoSuchMethodException e) {
-                log.error("class constructor error");
-                throw new RuntimeException();
-            }
+            addController(controllers, clazz);
         }
         return controllers;
+    }
+
+    private void addController(Map<Class<?>, Object> controllers, Class<?> clazz) {
+        try {
+            controllers.put(clazz, clazz.getDeclaredConstructor().newInstance());
+        } catch (InstantiationException
+                | IllegalAccessException
+                | InvocationTargetException
+                | NoSuchMethodException e) {
+            log.error("class constructor error");
+            throw new RuntimeException();
+        }
     }
 }
