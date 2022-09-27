@@ -8,12 +8,12 @@ import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter()
-                .write(objectMapper.writeValueAsString(model));
+                .write(OBJECT_MAPPER.writeValueAsString(model));
     }
 }
