@@ -10,4 +10,12 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
     }
+
+    @Override
+    public void show(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+    }
+
+
 }

@@ -37,6 +37,12 @@ public class JspView implements View {
         requestDispatcher.forward(request, response);
     }
 
+    @Override
+    public void show(final ModelAndView modelAndView, final HttpServletRequest request,
+                     final HttpServletResponse response) throws Exception {
+        modelAndView.getView().render(modelAndView.getModel(), request, response);
+    }
+
     public String getViewName() {
         return viewName;
     }

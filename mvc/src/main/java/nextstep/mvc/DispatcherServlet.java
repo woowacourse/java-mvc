@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,15 +47,11 @@ public class DispatcherServlet extends HttpServlet {
                     .orElseThrow(() -> new NoSuchElementException(NO_MAPPING_ERROR_EXCEPTION));
             ModelAndView modelAndView = handlerAdapterRegistry.findAdapter(handler)
                     .handle(request, response, handler);
-            render(modelAndView, request, response);
+            View view = modelAndView.getView();
+            view.show(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
-                        final HttpServletResponse response) throws Exception {
-        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
