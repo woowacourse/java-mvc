@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Map;
 import nextstep.web.support.MediaType;
 
@@ -30,7 +31,7 @@ public class JsonView implements View {
 
     private String writeJsonData(final Map<String, ?> model) throws JsonProcessingException {
         if (model.isEmpty()) {
-            return "";
+            return objectMapper.writeValueAsString(Collections.emptyMap());
         }
         if (model.size() == 1) {
             return objectMapper.writeValueAsString(getFirstData(model));

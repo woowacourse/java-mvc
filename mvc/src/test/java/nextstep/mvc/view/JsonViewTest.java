@@ -68,6 +68,6 @@ class JsonViewTest {
 
         jsonView.render(model, request, response);
 
-        assertThat(stringWriter.toString()).isEqualTo("");
+        assertThat(stringWriter.toString()).isEqualTo("{}");
     }
 }
