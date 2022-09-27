@@ -10,6 +10,5 @@
 - [x] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현했다.
 
 ## step3 요구사항
-- [x] JspView 클래스를 구현한다.
-- [ ] JsonView 클래스를 구현한다.
-- [ ] Legacy MVC 제거하기
+- [x] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
+- [x] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
