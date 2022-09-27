@@ -15,7 +15,8 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
+                               final Object handler)
             throws Exception {
         final Controller controller = (Controller) handler;
         final String viewName = controller.execute(request, response);
