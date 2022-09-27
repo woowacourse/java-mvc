@@ -3,6 +3,8 @@ package nextstep.mvc;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +19,7 @@ class DispatcherServletTest {
 
     @Test
     @DisplayName("어노테이션 기반 service를 검증한다")
-    void annotationService() {
+    void annotationService() throws IOException {
         // given
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());

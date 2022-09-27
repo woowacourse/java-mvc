@@ -1,5 +1,7 @@
 package nextstep.mvc;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +42,18 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        final Object handler = handlerMappingRegistry.getHandler(request);
-        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-
-        render(request, response, handler, handlerAdapter);
+        try {
+            final Object handler = handlerMappingRegistry.getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            render(request, response, handler, handlerAdapter);
+        } catch (ServletException e) {
+            log.debug(e.getMessage());
+            response.setStatus(404);
+            response.sendRedirect("/404.jsp");
+        }
     }
 
     private void render(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
