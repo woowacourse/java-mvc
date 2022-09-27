@@ -5,11 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import jakarta.servlet.http.HttpServletRequest;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class HandlerMappingRegistryTest {
 
+    @DisplayName("적절한 Handler를 반환한다.")
     @Test
     void getHandler() {
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();

@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import nextstep.mvc.controller.tobe.HandlerExecution;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
 class HandlerAdapterRegistryTest {
 
+    @DisplayName("적절한 HandlerAdapter를 반환한다.")
     @Test
     void getHandlerAdapter() throws NoSuchMethodException {
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
