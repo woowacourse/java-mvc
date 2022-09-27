@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Objects;
 import nextstep.mvc.controller.tobe.HandlerAdapterRegistry;
 import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
 import nextstep.mvc.controller.tobe.ViewResolverRegistry;
@@ -67,18 +66,21 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
-                        final HttpServletResponse response)
-            throws Exception {
-        final View view = modelAndView.getView();
+                        final HttpServletResponse response) throws Exception {
         final Map<String, Object> model = modelAndView.getModel();
 
-        if (Objects.nonNull(view)) {
+        if (modelAndView.hasViewImpl()) {
+            final View view = modelAndView.getView();
             view.render(model, request, response);
             return;
         }
 
-        final ViewResolver viewResolver = viewResolverRegistry.getViewResolver();
-        final View jspView = viewResolver.resolveViewName(modelAndView.getViewName());
+        final View jspView = resolveView(modelAndView);
         jspView.render(model, request, response);
+    }
+
+    private View resolveView(final ModelAndView modelAndView) {
+        final ViewResolver jspViewResolver = viewResolverRegistry.getJspViewResolver();
+        return jspViewResolver.resolveViewName(modelAndView.getViewName());
     }
 }
