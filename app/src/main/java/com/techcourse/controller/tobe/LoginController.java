@@ -1,8 +1,9 @@
-package com.techcourse.tobe;
+package com.techcourse.controller.tobe;
 
-import static com.techcourse.tobe.UserSession.SESSION_KEY;
+import static com.techcourse.controller.UserSession.SESSION_KEY;
+import static com.techcourse.controller.UserSession.getUserFrom;
+import static com.techcourse.controller.UserSession.isLoggedIn;
 
-import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,11 +20,11 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class LoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(com.techcourse.controller.LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(com.techcourse.controller.asis.LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
+        if (isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
@@ -47,7 +48,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView showLogin(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final Optional<User> user = UserSession.getUserFrom(req.getSession());
+        final Optional<User> user = getUserFrom(req.getSession());
 
         if (user.isPresent()) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));

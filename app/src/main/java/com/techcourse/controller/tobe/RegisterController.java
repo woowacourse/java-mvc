@@ -1,4 +1,4 @@
-package com.techcourse.tobe;
+package com.techcourse.controller.tobe;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;

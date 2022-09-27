@@ -1,4 +1,4 @@
-package com.techcourse.tobe;
+package com.techcourse.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
