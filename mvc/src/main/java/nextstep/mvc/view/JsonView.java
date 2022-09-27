@@ -19,10 +19,17 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-       final String body = objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(model);
+        final String body = objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(getJsonBodyTarget(model));
         response.setHeader(Header.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter()
                 .write(body);
+    }
+
+    private Object getJsonBodyTarget(final Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().toArray()[0];
+        }
+        return model;
     }
 }
