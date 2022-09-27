@@ -7,7 +7,7 @@ import nextstep.mvc.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 
-    private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public void add(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
