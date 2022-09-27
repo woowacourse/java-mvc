@@ -47,7 +47,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void mappingHandlerExecution(final Object instance, final Method method, final RequestMapping requestMapping) {
+    private void mappingHandlerExecution(final Object instance, final Method method,
+                                         final RequestMapping requestMapping) {
+        if (requestMapping == null) {
+            return;
+        }
+
         final String url = requestMapping.value();
         for (final RequestMethod requestMethod : requestMapping.method()) {
             final HandlerKey key = new HandlerKey(url, requestMethod);
