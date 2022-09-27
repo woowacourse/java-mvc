@@ -9,7 +9,7 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    public static Map<Class<?>, Object> findAllControllers(String path) {
+    public static Map<Class<?>, Object> findAllControllers(Object path) {
         Reflections reflections = new Reflections(path);
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Controller.class);
 
