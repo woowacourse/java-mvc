@@ -2,13 +2,8 @@ package nextstep.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
 
 public class HandlerExecution {
-
-    public static final String JSP_FILE_TYPE = ".jsp";
 
     private final HandlerMethod handlerMethod;
 
@@ -16,29 +11,7 @@ public class HandlerExecution {
         this.handlerMethod = handlerMethod;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Object result = handlerMethod.invoke(request, response);
-        if (result instanceof ModelAndView) {
-            return (ModelAndView) result;
-        }
-        if (isJspResource(result)) {
-            JspView jspView = new JspView((String) result);
-            ModelAndView modelAndView = new ModelAndView(jspView);
-            setAttribute(request, modelAndView);
-            return modelAndView;
-        }
-        throw new RuntimeException("[ERROR] HandlerAdapter 가 처리할 수 없는 Handler 의 결과입니다.");
-    }
-
-    private boolean isJspResource(final Object result) {
-        return result instanceof String && ((String) result).contains(JSP_FILE_TYPE);
-    }
-
-    private void setAttribute(final HttpServletRequest request, final ModelAndView modelAndView) {
-        Enumeration<String> attributeNames = request.getAttributeNames();
-        while (attributeNames.hasMoreElements()) {
-            String attributeName = attributeNames.nextElement();
-            modelAndView.addObject(attributeName, request.getAttribute(attributeName));
-        }
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handlerMethod.invoke(request, response);
     }
 }
