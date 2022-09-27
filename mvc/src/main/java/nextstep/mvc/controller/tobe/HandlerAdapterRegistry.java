@@ -1,7 +1,8 @@
-package nextstep.mvc;
+package nextstep.mvc.controller.tobe;
 
 import java.util.ArrayList;
 import java.util.List;
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 
 public class HandlerAdapterRegistry {

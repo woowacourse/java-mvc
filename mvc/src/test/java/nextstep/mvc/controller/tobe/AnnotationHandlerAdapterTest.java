@@ -1,9 +1,9 @@
-package nextstep.mvc;
+package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
