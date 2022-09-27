@@ -23,7 +23,7 @@ public class ControllerScanner {
         return instantiateControllers(controllerTypes);
     }
 
-    public Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerTypes) {
+    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerTypes) {
         Map<Class<?>, Object> controllers = new HashMap<>();
         for (Class<?> controllerType : controllerTypes) {
             controllers.put(controllerType, createInstance(controllerType));
