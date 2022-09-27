@@ -16,15 +16,15 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
+        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
 
         final var dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
-    }
+        }
 }
