@@ -9,10 +9,10 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class RegisterViewController {
+public class IndexController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView registerView(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
