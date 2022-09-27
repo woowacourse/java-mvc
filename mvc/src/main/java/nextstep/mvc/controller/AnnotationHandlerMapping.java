@@ -19,11 +19,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, Handler> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+    }
+
+    public void setWelcomePage(String viewName) {
+        handlerExecutions.put(new HandlerKey("/", RequestMethod.GET),
+                (request, response) -> viewName);
     }
 
     public void initialize() {
@@ -40,7 +45,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
+        final String requestURI = request.getRequestURI();
+        return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
 
     private Set<Method> getHandlerMethods(final Class<?> controllerClass) {
