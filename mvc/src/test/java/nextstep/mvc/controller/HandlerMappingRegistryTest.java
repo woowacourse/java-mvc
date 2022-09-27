@@ -7,15 +7,16 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.mvc.mapping.HandlerExecution;
+import nextstep.mvc.mapping.HandlerMappingRegistry;
+import nextstep.mvc.mapping.RequestMappingHandlerMapping;
 import nextstep.mvc.view.ModelAndView;
-import nextstep.mvc.view.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import support.CustomReflectionUtils;
 
 class HandlerMappingRegistryTest {
 
@@ -45,15 +46,18 @@ class HandlerMappingRegistryTest {
             // when
             final HandlerExecution handler = (HandlerExecution) handlerMappingRegistry.findHandler(httpServletRequest);
             final ModelAndView modelAndView = (ModelAndView) handler.handle(httpServletRequest, null);
-            final View view = modelAndView.getView();
-            final String viewName = CustomReflectionUtils.readFieldValue(view, "viewName");
-            final String id = (String) modelAndView.getModel().get("id");
 
             // then
             assertAll(
                     () -> assertThat(handler).isInstanceOf(HandlerExecution.class),
-                    () -> assertThat(viewName).isEqualTo(""),
-                    () -> assertThat(id).isEqualTo(value)
+                    () -> assertThat(modelAndView)
+                            .extracting("view")
+                            .extracting("viewName")
+                            .isEqualTo(""),
+                    () -> assertThat(modelAndView)
+                            .extracting("model")
+                            .extracting("id")
+                            .isEqualTo(value)
             );
         }
 
