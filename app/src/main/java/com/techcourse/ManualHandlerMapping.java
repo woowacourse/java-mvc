@@ -1,7 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +16,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/register/view", new RegisterViewController());
-
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
