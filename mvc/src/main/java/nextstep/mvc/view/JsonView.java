@@ -10,6 +10,8 @@ import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
 
+    private static final int DEFAULT_FORMAT_SIZE = 1;
+    private static final String EMPTY_MODEL_JSON_VALUE = "";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -21,12 +23,12 @@ public class JsonView implements View {
             Object attributes = getAttributes(model);
             writer.print(objectMapper.writeValueAsString(attributes));
         } catch (EmptyModelException e) {
-            writer.print("");
+            writer.print(EMPTY_MODEL_JSON_VALUE);
         }
     }
 
     private Object getAttributes(final Map<String, ?> model) {
-        if (model.size() > 1) {
+        if (model.size() > DEFAULT_FORMAT_SIZE) {
             return model;
         }
         return model.values()
