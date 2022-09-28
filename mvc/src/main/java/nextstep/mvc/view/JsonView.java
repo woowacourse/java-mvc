@@ -11,7 +11,7 @@ import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
 
-    private final static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request,
