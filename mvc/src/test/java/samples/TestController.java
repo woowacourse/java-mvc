@@ -26,7 +26,7 @@ public class TestController {
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
-        final var modelAndView = new ModelAndView(new JspView("/redirect:/index.jsp"));
+        final var modelAndView = new ModelAndView(new JspView("/redirect:/"));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
