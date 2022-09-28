@@ -46,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         Optional<Object> handler = handlerMappingRegistry.getHandler(request);
         if (handler.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("request에 대응되는 handler가 없습니다.");
         }
         Object handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
         ModelAndView modelAndView = ((HandlerAdapter) handlerAdapter).handle(request, response, handler.get());
