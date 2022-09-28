@@ -13,7 +13,7 @@ public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String register(final HttpServletRequest req, final HttpServletResponse res) {
-        final var user = new User(2,
+        final var user = new User(InMemoryUserRepository.count() + 1,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
