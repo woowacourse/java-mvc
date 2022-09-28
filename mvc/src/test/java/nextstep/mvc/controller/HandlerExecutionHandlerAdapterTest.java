@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.ForwardController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,10 +44,10 @@ class HandlerExecutionHandlerAdapterTest {
     void supports_false() {
         // given
         final var annotationHandlerAdapter = new HandlerExecutionHandlerAdapter();
-        final var forwardController = new ForwardController("");
+        final var stringController = "Controller";
 
         // when
-        final var actual = annotationHandlerAdapter.supports(forwardController);
+        final var actual = annotationHandlerAdapter.supports(stringController);
 
         // then
         assertThat(actual).isFalse();
