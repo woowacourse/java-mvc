@@ -1,5 +1,6 @@
 package nextstep.mvc.view;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +12,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class JsonViewTest {
         jsonView.render(model, request, response);
 
         // then
-        Assertions.assertThat(writer)
+        assertThat(writer)
                 .hasToString("{\"account\":\"pepper\"}");
     }
 
@@ -63,7 +63,7 @@ class JsonViewTest {
         jsonView.render(model, request, response);
 
         // then
-        Assertions.assertThat(writer)
+        assertThat(writer)
                 .hasToString("{\n"
                         + "  \"user1\" : {\n"
                         + "    \"account\" : \"pepper\"\n"
