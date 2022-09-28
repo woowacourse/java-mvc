@@ -6,6 +6,9 @@ import nextstep.mvc.view.View;
 
 public class JsonViewResolver implements ViewResolver {
 
+    private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String JSP_SUFFIX = ".jsp";
+
     @Override
     public View resolve(final Object view) {
         if (Objects.nonNull(view) && doesNotEndsWithJsp(view) && doesNotStartsWithRedirect(view)) {
@@ -16,7 +19,7 @@ public class JsonViewResolver implements ViewResolver {
     }
 
     private boolean doesNotEndsWithJsp(final Object view) {
-        if (view instanceof String && ((String) view).endsWith(".jsp")) {
+        if (view instanceof String && ((String) view).endsWith(JSP_SUFFIX)) {
             return false;
         }
 
@@ -24,7 +27,7 @@ public class JsonViewResolver implements ViewResolver {
     }
 
     private boolean doesNotStartsWithRedirect(final Object view) {
-        if (view instanceof String && ((String) view).startsWith("redirect:")) {
+        if (view instanceof String && ((String) view).startsWith(REDIRECT_PREFIX)) {
             return false;
         }
 
