@@ -1,101 +1,77 @@
 package nextstep.mvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static nextstep.test.MockRequestBuilder.get;
+import static nextstep.test.MockRequestBuilder.post;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
 import java.util.Map;
+import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.test.MockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import samples.TestManualHandlerMapping;
+import samples.User;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet sut;
+    private ObjectMapper objectMapper;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        sut = new DispatcherServlet();
-        sut.addHandlerMapping(new TestManualHandlerMapping());
-        sut.addHandlerMapping(new AnnotationHandlerMapping("samples"));
-        sut.addHandlerAdapter(new AnnotationHandlerAdapter());
-        sut.addHandlerAdapter(new ControllerHandlerAdapter());
-        sut.init();
+        mockMvc = new MockMvc(
+                new AnnotationHandlerMapping("samples"),
+                new AnnotationHandlerAdapter()
+        );
+
+        objectMapper = new ObjectMapper();
     }
 
     @Test
-    void forwardIndexView() throws ServletException, IOException {
-        final HttpServletRequest request = createMockedRequest("/index", "GET");
-        final HttpServletResponse response = createMockedResponse();
-
-        sut.service(request, response);
-
-        verify(request.getRequestDispatcher("/index.jsp")).forward(request, response);
+    void forwardIndexView() throws Exception {
+        mockMvc.perform(get("/index"))
+                .forwardTo("/index.jsp");
     }
 
     @Test
-    void redirectIndexView() throws ServletException, IOException {
-        final HttpServletRequest request = createMockedRequest("/redirect-index", "GET");
-        final HttpServletResponse response = createMockedResponse();
-
-        sut.service(request, response);
-
-        verify(response).sendRedirect("/index.jsp");
+    void redirectIndexView() throws Exception {
+        mockMvc.perform(get("/redirect-index"))
+                .redirectTo("/index.jsp");
     }
 
     @Test
-    void getTestViewWithModel() throws ServletException, IOException {
-        final HttpServletRequest request = createMockedRequest("/get-test", "GET",
-                Map.of("id", "gugu"));
-        final HttpServletResponse response = createMockedResponse();
-
-        sut.service(request, response);
-
-        verify(request.getRequestDispatcher("/get-test.jsp")).forward(request, response);
-        verify(request).setAttribute("id", "gugu");
+    void getTestViewWithModel() throws Exception {
+        mockMvc.perform(get("/get-test").attribute("id", "gugu"))
+                .forwardTo("/get-test.jsp", Map.of("id", "gugu"));
     }
 
     @Test
-    void postTestViewWithModel() throws ServletException, IOException {
-        final HttpServletRequest request = createMockedRequest("/post-test", "POST",
-                Map.of("id", "gugu"));
-        final HttpServletResponse response = createMockedResponse();
-
-        sut.service(request, response);
-
-        verify(request.getRequestDispatcher("/post-test.jsp")).forward(request, response);
-        verify(request).setAttribute("id", "gugu");
+    void postTestViewWithModel() throws Exception {
+        mockMvc.perform(post("/post-test").attribute("id", "gugu"))
+                .forwardTo("/post-test.jsp", Map.of("id", "gugu"));
     }
 
-    private HttpServletRequest createMockedRequest(final String url, final String method) {
-        return createMockedRequest(url, method, Map.of());
+    @Test
+    void getUser() throws Exception {
+        final User verus = new User("verus", 28);
+        mockMvc.perform(get("/api/user"))
+                .jsonBody(objectMapper.writeValueAsString(verus));
     }
 
-    private HttpServletRequest createMockedRequest(
-            final String url, final String method, final Map<String, Object> attributes
-    ) {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+    @Test
+    void getUsers() throws Exception {
+        Map<String, Object> body = new HashMap<>();
+        body.put("user1", new User("verus", 28));
+        body.put("user2", new User("gugu", 30));
 
-        when(request.getRequestURI()).thenReturn(url);
-        when(request.getMethod()).thenReturn(method);
-        when(request.getRequestDispatcher(any())).thenReturn(requestDispatcher);
-
-        for (String key : attributes.keySet()) {
-            when(request.getAttribute(key)).thenReturn(attributes.get(key));
-        }
-
-        return request;
+        mockMvc.perform(get("/api/users"))
+                .jsonBody(objectMapper.writeValueAsString(body));
     }
 
-    private HttpServletResponse createMockedResponse() {
-        return mock(HttpServletResponse.class);
+    @Test
+    void emptyBody() throws Exception {
+        mockMvc.perform(get("/api/empty"))
+                .jsonBody(objectMapper.writeValueAsString(Map.of()));
     }
 }

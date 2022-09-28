@@ -2,6 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -29,5 +30,25 @@ public class TestController {
         final var modelAndView = new ModelAndView(new JspView("/post-test.jsp"));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/user", method = RequestMethod.GET)
+    public ModelAndView user(HttpServletRequest request, HttpServletResponse response) {
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", new User("verus", 28));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView users(HttpServletRequest request, HttpServletResponse response) {
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user1", new User("verus", 28));
+        modelAndView.addObject("user2", new User("gugu", 30));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/empty", method = RequestMethod.GET)
+    public ModelAndView empty(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JsonView());
     }
 }

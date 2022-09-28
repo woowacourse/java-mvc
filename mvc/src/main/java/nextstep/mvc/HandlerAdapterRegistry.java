@@ -19,8 +19,8 @@ public class HandlerAdapterRegistry {
         return adapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() ->
-                        new IllegalArgumentException(handler.getClass().getName() + "는 처리할 수 없는 핸들러 타입 입니다.")
+                .orElseThrow(
+                        () -> new IllegalArgumentException(handler.getClass().getName() + "에 맞는 어뎁터를 찾을 수 없습니다.")
                 );
     }
 }

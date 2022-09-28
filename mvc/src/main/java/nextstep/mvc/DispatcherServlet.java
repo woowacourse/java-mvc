@@ -40,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = handlerMappingRegistry.getController(request);
-            final var modelAndView = getModelAndView(controller, request, response);
+            final var handler = handlerMappingRegistry.getHandler(request);
+            final var modelAndView = getModelAndView(handler, request, response);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

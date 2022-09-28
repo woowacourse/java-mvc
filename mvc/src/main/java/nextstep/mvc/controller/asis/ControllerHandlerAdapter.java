@@ -1,20 +1,23 @@
-package nextstep.mvc;
+package nextstep.mvc.controller.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.HandlerAdapter;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter {
+public class ControllerHandlerAdapter implements HandlerAdapter {
+
     @Override
     public boolean supports(final Object handler) {
-        return HandlerExecution.class.isAssignableFrom(handler.getClass());
+        return Controller.class.isAssignableFrom(handler.getClass());
     }
 
     @Override
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler)
             throws Exception {
-        return ((HandlerExecution) handler).handle(request, response);
+        final var viewName = ((Controller) handler).execute(request, response);
+        return new ModelAndView(new JspView(viewName));
     }
 }
