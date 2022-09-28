@@ -41,7 +41,7 @@ class JsonViewTest {
 
     @Test
     @DisplayName("하나의 객체가 담겨있지 않으면 Map 자체를 json으로 마샬링한다")
-    void writeMapWhenNotSingleObject() throws Exception{
+    void writeMapWhenNotSingleObject() throws Exception {
         // given
         JsonView view = new JsonView();
 
@@ -58,6 +58,7 @@ class JsonViewTest {
 
         // then
         String value = writeValueAsString(model);
+        System.out.println("value = " + value);
         verify(writer, times(1)).write(value);
     }
 
