@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
 import org.junit.jupiter.api.Test;
 
 class DispatcherServletTest {
