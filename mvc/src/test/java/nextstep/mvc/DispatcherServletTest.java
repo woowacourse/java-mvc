@@ -1,18 +1,26 @@
 package nextstep.mvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.ManualHandlerMapping;
+import samples.TestUser;
 
 class DispatcherServletTest {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @DisplayName("Annotation 기반의 handler를 동작시킬 수 있다.")
     @Test
@@ -35,23 +43,30 @@ class DispatcherServletTest {
                 .isThrownBy(() -> dispatcherServlet.service(request, response));
     }
 
-    @DisplayName("Interface 기반의 handler를 동작시킬 수 있다.")
+    @DisplayName("json view를 응답하는 handler를 동작시킬 수 있다.")
     @Test
-    void service_interfaceHandler() {
+    void service_jsonResponse() throws IOException, ServletException {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         dispatcherServlet.init();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
-        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+        final StringWriter stringWriter = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getRequestDispatcher("/index.jsp"))
-                .thenReturn(requestDispatcher);
+        final String name = "forky";
+        final int age = 26;
+        final TestUser user = new TestUser("forky", 26);
 
-        assertThatNoException()
-                .isThrownBy(() -> dispatcherServlet.service(request, response));
+        when(request.getAttribute("name")).thenReturn(name);
+        when(request.getAttribute("age")).thenReturn(age);
+        when(request.getRequestURI()).thenReturn("/json-test");
+        when(request.getMethod()).thenReturn("GET");
+        when(response.getWriter())
+                .thenReturn(printWriter);
+
+        dispatcherServlet.service(request, response);
+        assertThat(stringWriter.toString()).isEqualTo(objectMapper.writeValueAsString(user));
     }
-
 }

@@ -1,11 +1,11 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestAnnotatedController;
+import samples.TestController;
 
 class ControllerScannerTest {
 
@@ -15,6 +15,6 @@ class ControllerScannerTest {
         final ControllerScanner controllerScanner = new ControllerScanner(new Object[]{"samples"});
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        assertThat(controllers.keySet()).containsExactly(TestAnnotatedController.class);
+        assertThat(controllers.keySet()).containsExactly(TestController.class);
     }
 }

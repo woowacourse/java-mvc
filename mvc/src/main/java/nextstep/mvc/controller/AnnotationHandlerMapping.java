@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -10,8 +10,7 @@ import java.util.stream.Collectors;
 import nextstep.mvc.mapping.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +19,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, Handler> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+    }
+
+    public void setWelcomePage(String viewName) {
+        handlerExecutions.put(new HandlerKey("/", RequestMethod.GET),
+                (request, response) -> viewName);
     }
 
     public void initialize() {
@@ -41,12 +45,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), requestMethod));
+        final String requestURI = request.getRequestURI();
+        return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
 
     private Set<Method> getHandlerMethods(final Class<?> controllerClass) {
-        return new Reflections(controllerClass, Scanners.MethodsAnnotated)
-                .getMethodsAnnotatedWith(RequestMapping.class);
+        return ReflectionUtils.getAllMethods(
+                controllerClass,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
     }
 
     private Map<Method, Set<HandlerKey>> getHandlerKeysPerMethod(final Set<Method> methods) {

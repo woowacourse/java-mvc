@@ -1,11 +1,10 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import nextstep.mvc.view.ModelAndView;
 
-public class HandlerExecution {
+public class HandlerExecution implements Handler {
 
     private final Object controller;
     private final Method method;
@@ -15,7 +14,8 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(controller, request, response);
+    @Override
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return method.invoke(controller, request, response);
     }
 }

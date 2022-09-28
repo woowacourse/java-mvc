@@ -7,8 +7,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecution;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
@@ -23,13 +22,6 @@ class HandlerExecutionAdapterTest {
     void supports_true() {
         final boolean actual = handlerExecutionAdapter.supports(mock(HandlerExecution.class));
         assertThat(actual).isTrue();
-    }
-
-    @DisplayName("Handler가 HandlerExecution의 구현체가 아니면 지원하지 않는다.")
-    @Test
-    void supports_false() {
-        final boolean actual = handlerExecutionAdapter.supports(mock(Controller.class));
-        assertThat(actual).isFalse();
     }
 
     @DisplayName("HandlerExecution을 실행시킨다.")
