@@ -12,6 +12,7 @@ public enum Page {
     LOGIN("login.jsp", JspView::new),
     REGISTER("register.jsp", JspView::new),
     ERROR_401("401.jsp", JspView::new),
+    ERROR_404("404.jsp", JspView::new),
     ;
 
     private static final String REDIRECT_PREFIX = "redirect:";

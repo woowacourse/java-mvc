@@ -18,7 +18,7 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView showPage(final HttpServletRequest req, final HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
