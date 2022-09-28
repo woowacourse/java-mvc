@@ -19,8 +19,8 @@ public class HandlerExecution {
     public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Object invoke = method.invoke(handler, request, response);
         if (invoke instanceof ModelAndView) {
-            return method.invoke(handler, request, response);
+            return invoke;
         }
-        return new ModelAndView(new JspView((String) method.invoke(handler, request, response)));
+        return new ModelAndView(new JspView((String) invoke));
     }
 }
