@@ -36,7 +36,11 @@
 ### 3단계 - JSON View 구현하기
 - [X] JsonView 클래스를 구현한다.
   - [X] JSON으로 응답할 때 ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE이어야 한다.
+  - [X] model에 데이터가 0개면 빈 문자열을 반환한다.
   - [X] model에 데이터가 1개면 값을 그대로 반환한다.
+    - [X] key는 반환하지 않는다.
+    - [X] 기본타입, 래퍼타입 일 경우에는 JSON으로 변환하지 않고 그 값을 그대로 반환한다.
+    - [X] 기본타입, 래퍼타입 이외의 경우에는 JSON으로 변환해서 반환한다.
   - [X] model에 데이터가 2개 이상이면 Map형태 그대로 JSON으로 변환해서 반환한다. 
   - [X] UserController가 JSON 형태로 응답을 반환한다.
 - [X] Legacy MVC를 제거한다.
