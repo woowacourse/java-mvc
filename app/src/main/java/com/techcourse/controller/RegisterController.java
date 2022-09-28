@@ -1,5 +1,6 @@
 package com.techcourse.controller;
 
+import static nextstep.web.support.RequestMethod.GET;
 import static nextstep.web.support.RequestMethod.POST;
 
 import com.techcourse.domain.User;
@@ -13,6 +14,11 @@ import nextstep.web.annotation.RequestMapping;
 
 @Controller
 public class RegisterController {
+
+    @RequestMapping(value = "/register", method = GET)
+    public ModelAndView registerPage(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return new ModelAndView(new JspView("/register.jsp"));
+    }
 
     @RequestMapping(value = "/register", method = POST)
     public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {

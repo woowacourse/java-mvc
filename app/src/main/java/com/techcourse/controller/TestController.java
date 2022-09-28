@@ -1,4 +1,4 @@
-package com.techcourse.controller.annotation;
+package com.techcourse.controller;
 
 import static nextstep.web.support.RequestMethod.GET;
 import static nextstep.web.support.RequestMethod.POST;
