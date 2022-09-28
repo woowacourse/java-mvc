@@ -14,7 +14,7 @@ public class JsonView implements View {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         response.setContentType(CONTENT_TYPE);
         PrintWriter writer = response.getWriter();

@@ -19,12 +19,12 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
-        final String account = request.getParameter("account");
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
+        String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
+        ModelAndView modelAndView = new ModelAndView(new JsonView());
+        User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow(UserNotFoundException::new);
 
         modelAndView.addObject("user", user);
