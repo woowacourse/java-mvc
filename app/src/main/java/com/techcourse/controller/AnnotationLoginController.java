@@ -48,7 +48,6 @@ public class AnnotationLoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            session.setAttribute(UserSession.INFO_KEY, user.getAccount());
             return "redirect:/index.jsp";
         } else {
             return "redirect:/401.jsp";

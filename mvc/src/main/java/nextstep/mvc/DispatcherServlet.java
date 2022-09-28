@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -51,6 +50,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        modelAndView.getView().render(modelAndView.getModel(), request, response);
+        modelAndView.render(request, response);
     }
 }
