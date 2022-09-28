@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ControllerScannerTest {
 
     @Test
-    @DisplayName("Controller 어노테이션이 분은 클래스를 찾을 수 있다.")
+    @DisplayName("Controller 어노테이션이 붙은 클래스를 찾을 수 있다.")
     void redirect() {
         final ControllerScanner controllerScanner = ControllerScanner.from("samples");
 
