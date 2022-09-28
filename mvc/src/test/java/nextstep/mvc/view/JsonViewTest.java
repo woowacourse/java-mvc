@@ -29,7 +29,10 @@ class JsonViewTest {
         view.render(Map.of("테스트", new TestObject("테스트 객체", "테스트")), request, response);
 
         // then
-        verify(writer).write("{\"field1\":\"테스트 객체\",\"field2\":\"테스트\"}");
+        verify(writer).write("{\n"
+                + "  \"field1\" : \"테스트 객체\",\n"
+                + "  \"field2\" : \"테스트\"\n"
+                + "}");
     }
 
     @Test
@@ -50,9 +53,15 @@ class JsonViewTest {
 
         // then
         verify(writer)
-                .write("{"
-                        + "\"테스트1\":{\"field1\":\"테스트 객체\",\"field2\":\"테스트\"},"
-                        + "\"테스트2\":{\"field1\":\"테스트 객체2\",\"field2\":\"테스트테스트\"}"
+                .write("{\n"
+                        + "  \"테스트1\" : {\n"
+                        + "    \"field1\" : \"테스트 객체\",\n"
+                        + "    \"field2\" : \"테스트\"\n"
+                        + "  },\n"
+                        + "  \"테스트2\" : {\n"
+                        + "    \"field1\" : \"테스트 객체2\",\n"
+                        + "    \"field2\" : \"테스트테스트\"\n"
+                        + "  }\n"
                         + "}");
     }
 }
