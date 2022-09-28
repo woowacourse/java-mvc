@@ -19,13 +19,11 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) {
-        final String viewName;
         if (UserSession.isLoggedIn(req.getSession())) {
-            viewName = "redirect:/index.jsp";
-            return new ModelAndView(new JspView(viewName));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
