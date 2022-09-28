@@ -12,7 +12,7 @@ import nextstep.web.support.RequestMethod;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public String register(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
@@ -20,5 +20,10 @@ public class RegisterController {
         InMemoryUserRepository.save(user);
 
         return "redirect:/index.jsp";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String renderRegisterView(final HttpServletRequest req, final HttpServletResponse res) {
+        return "/register.jsp";
     }
 }
