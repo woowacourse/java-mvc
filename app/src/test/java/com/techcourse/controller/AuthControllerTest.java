@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.techcourse.support.Fixture;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,9 +16,51 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class LoginControllerTest {
+class AuthControllerTest {
 
-    private final LoginController controller = new LoginController();
+    private final AuthController controller = new AuthController();
+
+    @DisplayName("/login/view 요청시")
+    @Nested
+    class LoginView {
+
+        @DisplayName("로그인 되어있지 않다면 viewName으로 /login.jsp를 응답한다")
+        @Test
+        void loginView_should_return_login_jsp_if_not_logged_in() {
+            // given
+            final HttpServletRequest request = mock(HttpServletRequest.class);
+            final HttpServletResponse response = mock(HttpServletResponse.class);
+            final HttpSession session = mock(HttpSession.class);
+            given(request.getParameter("account")).willReturn("gugu");
+            given(request.getSession()).willReturn(session);
+
+            // when
+            final String viewName = controller.loginView(request, response);
+
+            // then
+            assertThat(viewName).isEqualTo("/login.jsp");
+        }
+
+        @DisplayName("로그인 되어있다면 viewName으로 redirect:/index.jsp를 응답한다")
+        @Test
+        void loginView_should_return_index_jsp_if_logged_in() {
+            // given
+            final HttpServletRequest request = mock(HttpServletRequest.class);
+            final HttpServletResponse response = mock(HttpServletResponse.class);
+            final HttpSession session = mock(HttpSession.class);
+            given(request.getSession()).willReturn(session);
+            given(session.getAttribute("user")).willReturn(Fixture.GUGU_FIXTURE);
+
+            // when
+            final String viewName = controller.loginView(request, response);
+
+            // then
+            assertAll(
+                    () -> verify(request, never()).getParameter("account"),
+                    () -> assertThat(viewName).isEqualTo("redirect:/index.jsp")
+            );
+        }
+    }
 
     @DisplayName("/login 요청 시")
     @Nested
@@ -35,7 +78,7 @@ class LoginControllerTest {
             given(request.getSession()).willReturn(session);
 
             // when
-            final String viewName = controller.execute(request, response);
+            final String viewName = controller.login(request, response);
 
             // then
             assertThat(viewName).isEqualTo("redirect:/index.jsp");
@@ -53,7 +96,7 @@ class LoginControllerTest {
             given(request.getSession()).willReturn(session);
 
             // when
-            final String viewName = controller.execute(request, response);
+            final String viewName = controller.login(request, response);
 
             // then
             assertThat(viewName).isEqualTo("redirect:/401.jsp");
@@ -70,7 +113,7 @@ class LoginControllerTest {
             given(session.getAttribute("user")).willReturn(Fixture.GUGU_FIXTURE);
 
             // when
-            final String viewName = controller.execute(request, response);
+            final String viewName = controller.login(request, response);
 
             // then
             assertAll(
@@ -78,5 +121,24 @@ class LoginControllerTest {
                     () -> assertThat(viewName).isEqualTo("redirect:/index.jsp")
             );
         }
+    }
+
+    @DisplayName("/logout 요청 시 session.removeAttribute가 호출되고, viewName으로 redirect:/ 가 응답된다")
+    @Test
+    void logout_should_return_root_page_with_calling_removeAttribute() {
+        // given
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpSession session = mock(HttpSession.class);
+        given(request.getSession()).willReturn(session);
+
+        // when
+        final String viewName = controller.logout(request, response);
+
+        // then
+        assertAll(
+                () -> verify(session, times(1)).removeAttribute("user"),
+                () -> assertThat(viewName).isEqualTo("redirect:/")
+        );
     }
 }

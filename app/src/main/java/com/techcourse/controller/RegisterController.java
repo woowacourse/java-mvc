@@ -9,12 +9,21 @@ import java.util.stream.Stream;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class RegisterController {
 
+    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public String registerView(final HttpServletRequest req, final HttpServletResponse res) {
+        return "/register.jsp";
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public String register(final HttpServletRequest req, final HttpServletResponse res) {
         if (absenceEssential(req)) {
             return "redirect:/register.jsp";
         }
@@ -40,5 +49,7 @@ public class RegisterController {
         );
 
         InMemoryUserRepository.save(user);
+
+        log.info("New User Registered : {} : {}", user.getAccount(), user.getEmail());
     }
 }

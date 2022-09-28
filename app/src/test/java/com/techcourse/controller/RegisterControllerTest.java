@@ -16,6 +16,20 @@ class RegisterControllerTest {
 
     private final RegisterController controller = new RegisterController();
 
+    @DisplayName("/@mvc/register/view 요청 시 viewName으로 /register.jsp 가 응답된다")
+    @Test
+    void registerView_should_return_register_jsp() {
+        // given
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // when
+        final String viewName = controller.registerView(request, response);
+
+        // then
+        assertThat(viewName).isEqualTo("/register.jsp");
+    }
+
     @DisplayName("/register 요청 시 ")
     @Nested
     class Register {
@@ -30,7 +44,7 @@ class RegisterControllerTest {
             given(request.getParameter("email")).willReturn("hkkang@woowahan.com");
 
             // when
-            final String viewName = controller.execute(request, response);
+            final String viewName = controller.register(request, response);
 
             // then
             assertThat(viewName).isEqualTo("redirect:/register.jsp");
@@ -46,7 +60,7 @@ class RegisterControllerTest {
             given(request.getParameter("email")).willReturn("hkkang@woowahan.com");
 
             // when
-            final String viewName = controller.execute(request, response);
+            final String viewName = controller.register(request, response);
 
             // then
             assertThat(viewName).isEqualTo("redirect:/register.jsp");
@@ -62,7 +76,7 @@ class RegisterControllerTest {
             given(request.getParameter("password")).willReturn("password");
 
             // when
-            final String viewName = controller.execute(request, response);
+            final String viewName = controller.register(request, response);
 
             // then
             assertThat(viewName).isEqualTo("redirect:/register.jsp");
@@ -79,7 +93,7 @@ class RegisterControllerTest {
             given(request.getParameter("email")).willReturn("hkkang2@woowahan.com");
 
             // when
-            final String viewName = controller.execute(request, response);
+            final String viewName = controller.register(request, response);
             final boolean isRegistered = InMemoryUserRepository.findByAccount("gugu2").isPresent();
 
             // then
