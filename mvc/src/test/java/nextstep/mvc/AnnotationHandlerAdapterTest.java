@@ -16,7 +16,7 @@ import samples.TestAnnotationController;
 
 class AnnotationHandlerAdapterTest {
 
-    private final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+    private final AnnotationModelAndViewHandlerAdapter adapter = new AnnotationModelAndViewHandlerAdapter();
 
     @DisplayName("AnnotationHandlerAdapter가 HandlerExecution을 지원하는지 확인한다.")
     @Test
@@ -25,7 +25,7 @@ class AnnotationHandlerAdapterTest {
                 HttpServletRequest.class,
                 HttpServletResponse.class);
 
-        assertThat(annotationHandlerAdapter.supports(new HandlerExecution("/get-test", method))).isTrue();
+        assertThat(adapter.supports(new HandlerExecution("/get-test", method))).isTrue();
     }
 
     @DisplayName("AnnotationHandlerAdapter가 HandlerExecution을 실행한다.")
@@ -44,7 +44,7 @@ class AnnotationHandlerAdapterTest {
 
         //when & then
         var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        assertThat(annotationHandlerAdapter.handle(request, response, handlerExecution))
+        assertThat(adapter.handle(request, response, handlerExecution))
                 .isInstanceOf(ModelAndView.class);
     }
 }

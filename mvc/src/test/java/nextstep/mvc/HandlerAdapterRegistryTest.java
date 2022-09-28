@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,8 @@ class HandlerAdapterRegistryTest {
     @Test
     void getHandler() throws NoSuchMethodException, ServletException {
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationViewNameHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationModelAndViewHandlerAdapter());
 
         var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/get-test");
@@ -31,6 +31,6 @@ class HandlerAdapterRegistryTest {
                 HttpServletResponse.class);
 
         assertThat(handlerAdapterRegistry.getAdapter(new HandlerExecution("/get-test", method)))
-                .isInstanceOf(AnnotationHandlerAdapter.class);
+                .isInstanceOf(AnnotationModelAndViewHandlerAdapter.class);
     }
 }

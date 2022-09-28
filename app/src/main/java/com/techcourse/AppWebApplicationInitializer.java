@@ -1,7 +1,8 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
-import nextstep.mvc.AnnotationHandlerAdapter;
+import nextstep.mvc.AnnotationModelAndViewHandlerAdapter;
+import nextstep.mvc.AnnotationViewNameHandlerAdapter;
 import nextstep.mvc.DispatcherServlet;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.web.WebApplicationInitializer;
@@ -31,6 +32,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private void initHandlerAdapters(final DispatcherServlet dispatcherServlet) {
         dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new AnnotationViewNameHandlerAdapter());
+        dispatcherServlet.addHandlerAdapter(new AnnotationModelAndViewHandlerAdapter());
     }
 }
