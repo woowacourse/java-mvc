@@ -15,7 +15,7 @@ public class LoginViewController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.POST)
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView showLoginView(final HttpServletRequest request, final HttpServletResponse response) {
         final String viewName = findViewName(request);
         return ModelAndView.from(JspView.from(viewName));
