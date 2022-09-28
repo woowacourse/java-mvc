@@ -21,8 +21,6 @@ import static java.util.stream.Collectors.toList;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-
     private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
