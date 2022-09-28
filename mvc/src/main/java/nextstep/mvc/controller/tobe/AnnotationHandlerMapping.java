@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void scanRequestMapping(Object controller) {
-        Set<Method> methods = ReflectionUtils.getAllMethods((Class<?>) controller,
+        Set<Method> methods = ReflectionUtils.getAllMethods(controller.getClass(),
                 ReflectionUtils.withAnnotation(RequestMapping.class));
         for (Method method : methods) {
             putHandlerExecutions(controller, method);
@@ -50,6 +50,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
         for (RequestMethod requestMethod : requestMapping.method()) {
+            log.info("url: " + url + " method: " + requestMethod.toString());
             handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution(controllerClass, method));
         }
     }
