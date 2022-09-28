@@ -5,9 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
@@ -34,9 +33,7 @@ public class JsonView implements View {
 
     private Object getModelToWrite(final Map<String, ?> model) {
         if (model.size() == 1) {
-       if (model.size() == 1) {
-            return new ArrayList<>(model.values());
-        }
+            return new ArrayList<>(model.values()).get(0);
         }
 
         return model;
