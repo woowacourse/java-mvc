@@ -22,7 +22,7 @@ class JsonResolverTest {
     }
 
     @Test
-    @DisplayName("이미 알고있는(nextstep) 객체라면 suuport 할 수 없다")
+    @DisplayName("이미 알고있는(nextstep) 객체라면 support 할 수 없다")
     void supportsFailsOnKnownClass() {
         // given
         JsonResolver resolver = new JsonResolver();
