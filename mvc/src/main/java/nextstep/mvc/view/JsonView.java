@@ -16,6 +16,17 @@ public class JsonView implements View {
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
-        writer.write(objectMapper.writeValueAsString(model));
+
+        writer.write(objectMapper.writeValueAsString(extract(model)));
+    }
+
+    private Object extract(final Map<String, ?> model) {
+        if (model.size() > 1) {
+            return model;
+        }
+        return model.values()
+                .stream()
+                .findFirst()
+                .orElseThrow();
     }
 }
