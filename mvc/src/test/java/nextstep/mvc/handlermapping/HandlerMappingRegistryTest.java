@@ -5,10 +5,9 @@ import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.mock;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.mvc.controller.HandlerExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestManualController;
-import samples.TestManualHandlerMapping;
 
 class HandlerMappingRegistryTest {
 
@@ -17,7 +16,7 @@ class HandlerMappingRegistryTest {
     void getHandler() {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        willReturn("/get-manual")
+        willReturn("/get-test")
                 .given(request)
                 .getRequestURI();
         willReturn("GET")
@@ -25,7 +24,7 @@ class HandlerMappingRegistryTest {
                 .getMethod();
 
         final HandlerMappingRegistry registry = new HandlerMappingRegistry();
-        final TestManualHandlerMapping handlerMapping = new TestManualHandlerMapping();
+        final AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
 
         // when
@@ -33,6 +32,6 @@ class HandlerMappingRegistryTest {
         final Object handler = registry.getHandler(request);
 
         // then
-        assertThat(handler).isInstanceOf(TestManualController.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 }
