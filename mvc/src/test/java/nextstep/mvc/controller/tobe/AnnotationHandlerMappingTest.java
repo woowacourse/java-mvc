@@ -11,7 +11,7 @@ import nextstep.mvc.view.JspView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AnnotationHandlerMappingTest {
+class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
 

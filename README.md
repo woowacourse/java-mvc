@@ -22,12 +22,24 @@
 
 구현 기능 목록
 
-- [ ] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾기
+- [x] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾기
 - [x] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리
 - [x] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리
 
+</details>
+
+<details>
+<summary>3단계 - JSON View 구현하기</summary>
+
+구현 기능 목록
+
+- [x] JspView 클래스 구현
+- [x] JsonView 클래스 구현
+- [x] Legacy MVC 제거
+
 리팩터링
 
-- [ ] manual handler에 대한 sample을 만들어 인터페이스 기반으로도 잘 작동하는지 테스트
+- [x] 기존에 주워진 url을 사용하도록 수정(회원가입)
+- [x] UserController에서 account 정보가 없을 경우 예외 처리
 
 </details>

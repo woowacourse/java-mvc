@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.mvc.controller.asis.ControllerScanner;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 

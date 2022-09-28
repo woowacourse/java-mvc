@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import nextstep.web.support.RequestMethod;
 import org.junit.jupiter.api.Test;
 
-public class EnumTest {
+class EnumTest {
 
     @Test
     void valueOf() {
