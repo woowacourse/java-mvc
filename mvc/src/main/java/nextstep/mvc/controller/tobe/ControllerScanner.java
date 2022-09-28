@@ -18,14 +18,16 @@ public class ControllerScanner {
     public List<Object> scan() {
         final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         return classes.stream()
-                .map(it -> {
-                    try {
-                        return it.getDeclaredConstructor().newInstance();
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                             NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .map(this::createInstance)
                 .collect(Collectors.toList());
+    }
+
+    private Object createInstance(final Class<?> it) {
+        try {
+            return it.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException("인스턴스 생성에 실패했습니다.", e);
+        }
     }
 }
