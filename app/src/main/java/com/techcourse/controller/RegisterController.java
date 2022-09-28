@@ -21,4 +21,10 @@ public class RegisterController {
 
         return "redirect:/index.jsp";
     }
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public String handleRegisterView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return "/register.jsp";
+    }
+
 }
