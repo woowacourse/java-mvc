@@ -15,8 +15,12 @@ public class JspView implements View {
 
     private final String viewName;
 
-    public JspView(final String viewName) {
+    private JspView(final String viewName) {
         this.viewName = viewName;
+    }
+
+    public static JspView from(final String viewName) {
+        return new JspView(viewName);
     }
 
     @Override
