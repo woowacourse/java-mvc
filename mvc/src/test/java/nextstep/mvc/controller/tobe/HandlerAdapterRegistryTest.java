@@ -3,37 +3,26 @@ package nextstep.mvc.controller.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
-import nextstep.mvc.controller.tobe.fixture.AnnotationController;
-import nextstep.mvc.controller.tobe.fixture.FakeHandlerAdapter;
-import nextstep.mvc.controller.tobe.fixture.ImplementedController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.FakeHandlerAdapter;
+import samples.TestController;
 
 class HandlerAdapterRegistryTest {
-
-    @DisplayName("컨트롤러 상속 인스턴스에 대응하는 어댑터 반환")
-    @Test
-    void getHandler_controllerHandlerAdapter() {
-        final var registry = new HandlerAdapterRegistry();
-        registry.add(new ControllerHandlerAdapter());
-        registry.add(new HandlerExecutionHandlerAdapter());
-
-        final var controller = new ImplementedController();
-        final var handlerAdapter = registry.getHandlerAdapter(controller);
-
-        assertThat(handlerAdapter).isInstanceOf(ControllerHandlerAdapter.class);
-    }
 
     @DisplayName("컨트롤러 어노테이션 인스턴스에 대응하는 어댑터 반환")
     @Test
     void getHandler_handlerExecutionHandlerAdapter() throws NoSuchMethodException {
         final var registry = new HandlerAdapterRegistry();
-        registry.add(new ControllerHandlerAdapter());
         registry.add(new HandlerExecutionHandlerAdapter());
 
-        final var controller = new AnnotationController();
-        final var execution = new HandlerExecution(controller, AnnotationController.class.getDeclaredMethod("get"));
+        final var controller = new TestController();
+        final var execution = new HandlerExecution(controller,
+                TestController.class.getDeclaredMethod("findUserId", HttpServletRequest.class,
+                        HttpServletResponse.class));
         final var handlerAdapter = registry.getHandlerAdapter(execution);
 
         assertThat(handlerAdapter).isInstanceOf(HandlerExecutionHandlerAdapter.class);
@@ -43,7 +32,6 @@ class HandlerAdapterRegistryTest {
     @Test
     void getHandlerAdapter_throws_noSuchElementException() {
         final var registry = new HandlerAdapterRegistry();
-        registry.add(new ControllerHandlerAdapter());
         registry.add(new HandlerExecutionHandlerAdapter());
 
         final var unsupported = new FakeHandlerAdapter();
