@@ -9,12 +9,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import nextstep.mvc.adapter.RequestMappingHandlerAdapter;
 import nextstep.mvc.mapping.RequestMappingHandlerMapping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import support.DummyPrintWriter;
 
 class DispatcherServletTest {
 
@@ -63,25 +63,6 @@ class DispatcherServletTest {
 
             // then
             assertThat(writer.written).isEqualTo("{\"id\":1,\"account\":\"gugu\",\"email\":\"hkkang@woowahan.com\"}");
-        }
-    }
-
-    static class DummyPrintWriter extends PrintWriter {
-
-        public String written;
-
-        public DummyPrintWriter() {
-            super(System.out);
-        }
-
-        @Override
-        public void write(String s) {
-            super.write(s);
-            written = s;
-        }
-
-        @Override
-        public void close() {
         }
     }
 }

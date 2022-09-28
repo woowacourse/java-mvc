@@ -10,6 +10,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import support.User;
 
 @Controller
 public class TestController {
@@ -38,17 +39,5 @@ public class TestController {
         final var modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", new User(1L, "gugu", "hkkang@woowahan.com"));
         return modelAndView;
-    }
-
-    class User {
-        public Long id;
-        public String account;
-        public String email;
-
-        public User(final Long id, final String account, final String email) {
-            this.id = id;
-            this.account = account;
-            this.email = email;
-        }
     }
 }
