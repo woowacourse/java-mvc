@@ -73,7 +73,7 @@ class JsonViewTest {
         view.render(model, null, response);
 
         // then
-        assertThat(writer.getCache()).isEqualTo("world");
+        assertThat(writer.getCache()).isEqualTo("\"world\"");
     }
 
     @Test
