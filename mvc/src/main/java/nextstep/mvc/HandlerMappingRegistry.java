@@ -19,10 +19,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(each -> each.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("request에 대응되는 handler가 없습니다."));
     }
 }

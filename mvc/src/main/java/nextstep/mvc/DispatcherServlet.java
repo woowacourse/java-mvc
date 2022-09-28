@@ -44,12 +44,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-        if (handler.isEmpty()) {
-            throw new IllegalArgumentException("request에 대응되는 handler가 없습니다.");
-        }
-        Object handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
-        ModelAndView modelAndView = ((HandlerAdapter) handlerAdapter).handle(request, response, handler.get());
+        Object handler = handlerMappingRegistry.getHandler(request);
+        Object handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        ModelAndView modelAndView = ((HandlerAdapter) handlerAdapter).handle(request, response, handler);
         render(modelAndView, request, response);
     }
 
