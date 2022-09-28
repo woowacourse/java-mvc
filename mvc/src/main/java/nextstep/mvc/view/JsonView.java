@@ -12,6 +12,9 @@ public class JsonView implements View {
 
     private static final ObjectWriter OBJECT_WRITER = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
+    private static final int EMPTY = 0;
+    private static final int ONE = 1;
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -21,11 +24,11 @@ public class JsonView implements View {
     }
 
     private Object getJsonModel(Map<String, ?> model) {
-        if (model.size() == 0) {
+        if (model.size() == EMPTY) {
             return "";
         }
 
-        if (model.size() == 1) {
+        if (model.size() == ONE) {
             return model.values().toArray()[0];
         }
         return model;
