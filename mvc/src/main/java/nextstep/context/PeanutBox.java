@@ -14,10 +14,14 @@ import nextstep.web.annotation.Repository;
 import nextstep.web.annotation.Service;
 import nextstep.web.annotation.ThisIsPeanut;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum PeanutBox {
 
     INSTANCE;
+
+    private static final Logger log = LoggerFactory.getLogger(PeanutBox.class);
 
     private final Set<Object> peanutsCache = new HashSet<>();
     private Reflections reflections;
@@ -32,13 +36,24 @@ public enum PeanutBox {
 
     public <T> T getPeanut(final Class<T> clazz) {
         return (T) peanutsCache.stream()
-                .filter(peanut -> peanut.getClass().isAssignableFrom(clazz))
+                .filter(peanut -> clazz.isAssignableFrom(peanut.getClass()))
                 .findAny()
                 .orElse(null);
     }
 
     public void clear() {
         peanutsCache.clear();
+    }
+
+    public void changePeanut(final Class<?> oldPeanutType, final Object newPeanut) {
+        final Object beforePeanut = getPeanut(oldPeanutType);
+        if (beforePeanut == null) {
+            throw new RuntimeException("제거할 peanut이 존재하지 않습니다.");
+        }
+        peanutsCache.remove(beforePeanut);
+        log.info("remove peanut = {}", beforePeanut.getClass().getSimpleName());
+        peanutsCache.add(newPeanut);
+        log.info("add new peanut = {}", newPeanut.getClass().getSimpleName());
     }
 
     private void initInternal(final String path) throws Exception {

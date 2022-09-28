@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.function.Function;
 import nextstep.web.annotation.Service;
+import nextstep.web.annotation.Toransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ public class LoginService {
         this.userRepository = userRepository;
     }
 
+    @Toransactional
     public String loginViewName(final HttpSession session) {
         return UserSession.getUserFrom(session)
                 .map(this::toLoginSuccessUrl)
@@ -32,6 +34,7 @@ public class LoginService {
         return "redirect:/index.jsp";
     }
 
+    @Toransactional
     public String findByAccount(final HttpServletRequest req) {
         return userRepository.findByAccount(req.getParameter("account"))
                 .map(convertUserToRedirectUrl(req))

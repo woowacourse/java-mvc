@@ -3,6 +3,7 @@ package com.techcourse;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration.Dynamic;
 import nextstep.context.PeanutBox;
+import nextstep.context.PeanutPostProcessor;
 import nextstep.mvc.handler.adapter.AnnotationHandlerAdapter;
 import nextstep.mvc.servlet.DispatcherServlet;
 import nextstep.mvc.handler.adapter.ManualHandlerAdapter;
@@ -18,6 +19,7 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         PeanutBox.INSTANCE.init("com.techcourse");
+        PeanutPostProcessor.INSTANCE.init("com.techcourse");
 
         final DispatcherServlet dispatcherServlet = initDispatcherServlet();
         final Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
