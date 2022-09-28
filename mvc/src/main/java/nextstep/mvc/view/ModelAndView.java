@@ -42,10 +42,6 @@ public class ModelAndView {
     }
 
     public void render(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            view.render(model, request, response);
-        } catch (Exception e) {
-            log.warn("exception raised on render " + e);
-        }
+        view.render(model, request, response);
     }
 }

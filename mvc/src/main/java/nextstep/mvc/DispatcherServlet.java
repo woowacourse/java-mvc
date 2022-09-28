@@ -76,19 +76,10 @@ public class DispatcherServlet extends HttpServlet {
     private void render(HttpServletRequest request, HttpServletResponse response, Object handleResult) {
         ModelAndViewResolver resolver = findModelAndViewResolver(handleResult);
         ModelAndView modelAndView = resolver.resolve(handleResult);
-
-        render(modelAndView, request, response);
+        modelAndView.render(request, response);
     }
 
     private ModelAndViewResolver findModelAndViewResolver(Object handleResult) {
         return modelAndViewResolverRegistry.findModelAndViewResolver(handleResult);
-    }
-
-    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
-        try {
-            modelAndView.render(request, response);
-        } catch (RuntimeException e) {
-            throw new IllegalArgumentException("Unexpected exception occured while rendering", e);
-        }
     }
 }

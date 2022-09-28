@@ -27,7 +27,7 @@ public class JspView implements View {
         try {
             tryRender(model, request, response);
         } catch (IOException | ServletException e) {
-            throw new RuntimeException("Unexpected exception occurs during rendering : ", e);
+            throw new IllegalArgumentException("Unexpected exception occurs during rendering Jsp View: ", e);
         }
 
     }

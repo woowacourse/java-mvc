@@ -21,7 +21,7 @@ public class JsonView implements View {
             String serialized = mapper.writeValueAsString(value);
             response.getWriter().write(serialized);
         } catch (IOException e) {
-            throw new RuntimeException("Fails on write model as json", e);
+            throw new IllegalArgumentException("Unexpected exception occurs during rendering Json View: ", e);
         }
     }
 
