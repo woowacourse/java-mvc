@@ -24,8 +24,6 @@ public class JsonView implements View {
 
         Class<?> serializationView = (Class<?>) model.get(com.fasterxml.jackson.annotation.JsonView.class.getName());
         writeContent(serializationView, stream, modelData);
-
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
     private Object getModelData(final Map<String, ?> model) {
