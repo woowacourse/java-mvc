@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -21,8 +20,8 @@ public class LoginViewController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return Page.INDEX.getRedirectModelAndView();
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse(Page.LOGIN.getModelAndView());
     }
 }
