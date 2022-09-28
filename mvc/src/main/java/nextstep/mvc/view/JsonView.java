@@ -9,9 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
@@ -31,21 +29,12 @@ public class JsonView implements View {
     }
 
     private Object getModelData(final Map<String, ?> model) {
-        Map<String, Object> result = new HashMap<>();
-        final Set<String> modelKeys = model.keySet();
-
-        model.forEach((key, value) -> {
-            if (modelKeys.contains(key)) {
-                result.put(key, value);
-            }
-        });
-
-        if (result.size() == 1) {
-            return result.values()
+        if (model.size() == 1) {
+            return model.values()
                     .iterator()
                     .next();
         }
-        return result;
+        return model;
     }
 
     private void writeContent(final Class<?> serializationView, final OutputStream stream, final Object value) throws IOException {
