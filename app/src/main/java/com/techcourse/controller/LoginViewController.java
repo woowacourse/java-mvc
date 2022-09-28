@@ -13,7 +13,7 @@ public class LoginViewController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
