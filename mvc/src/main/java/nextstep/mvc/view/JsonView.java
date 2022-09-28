@@ -34,11 +34,9 @@ public class JsonView implements View {
 
     private Object getModelToWrite(final Map<String, ?> model) {
         if (model.size() == 1) {
-            return model.entrySet()
-                    .stream()
-                    .map(Entry::getValue)
-                    .collect(Collectors.toList())
-                    .get(0);
+       if (model.size() == 1) {
+            return new ArrayList<>(model.values());
+        }
         }
 
         return model;
