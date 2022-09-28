@@ -2,7 +2,6 @@ package nextstep.mvc.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class ModelAndView {
     }
 
     public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
-            view.render(model, request, response);
+        view.render(model, request, response);
     }
 
     public Object getObject(final String attributeName) {

@@ -12,7 +12,7 @@ import nextstep.web.support.RequestMethod;
 public class ForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView getIndexView(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
 }
