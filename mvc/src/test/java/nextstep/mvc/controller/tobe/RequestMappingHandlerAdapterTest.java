@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Nested;
@@ -18,17 +17,6 @@ class RequestMappingHandlerAdapterTest {
 
     @Nested
     class supports_메서드는 {
-
-        @Nested
-        class 실행할_수_없는_Handler이면 {
-
-            @Test
-            void false를_반환한다() {
-                final Controller handler = mock(Controller.class);
-
-                assertThat(requestMappingHandlerAdapter.supports(handler)).isFalse();
-            }
-        }
 
         @Nested
         class 실행할_수_있는_Handler이면 {
