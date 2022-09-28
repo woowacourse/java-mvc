@@ -21,7 +21,7 @@
                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item"
-                           href="/api/user?account=<%= ((User) session.getAttribute("user")).getAccount() %>">내정보</a>
+                           href="/api/user?account=${user.account}">내정보</a>
                     </li>
                     <li>
                         <hr class="dropdown-divider"/>
