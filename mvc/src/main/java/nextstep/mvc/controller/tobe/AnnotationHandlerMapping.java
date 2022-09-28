@@ -39,6 +39,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Set<Method> requestMappingMethods = getRequestMappingMethods(entry.getKey());
             addHandlerExecutions(entry.getValue(), requestMappingMethods);
         }
+        handlerExecutions.keySet()
+                .forEach(key -> log.info("Path : {}, Controller : {}", key.getUrl(), key.getRequestMethod()));
     }
 
     private Set<Method> getRequestMappingMethods(final Class<?> handler) {
