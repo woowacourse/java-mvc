@@ -1,8 +1,5 @@
 package com.techcourse.controller;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,12 +18,15 @@ class LoginViewControllerTest {
 
     @Test
     void loginView() throws ServletException, IOException {
+        // given
         final HttpServletRequest request = controllerTestEnv.getRequestOf("/login/view", "GET");
         final HttpServletResponse response = controllerTestEnv.getResponse();
         controllerTestEnv.setRequestSessionForLogin(request);
 
+        // when
         controllerTestEnv.sendRequest(request, response);
 
-        verify(request, times(1)).getRequestDispatcher("/login.jsp");
+        // then
+        controllerTestEnv.verifyRequestForwardTo(request, "/login.jsp");
     }
 }

@@ -1,8 +1,5 @@
 package com.techcourse.controller;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,22 +20,28 @@ class LoginControllerTest {
 
     @Test
     void login_success() throws ServletException, IOException {
+        // given
         final HttpServletRequest request = getLoginRequest("gugu", "password");
         final HttpServletResponse response = controllerTestEnv.getResponse();
 
+        // when
         controllerTestEnv.sendRequest(request, response);
 
-        verify(response, times(1)).sendRedirect("/index.jsp");
+        // then
+        controllerTestEnv.verifyResponseSendRedirectTo(response, "/index.jsp");
     }
 
     @Test
     void login_fail() throws ServletException, IOException {
+        // given
         final HttpServletRequest request = getLoginRequest("gugu", "wrong");
         final HttpServletResponse response = controllerTestEnv.getResponse();
 
+        // when
         controllerTestEnv.sendRequest(request, response);
 
-        verify(response, times(1)).sendRedirect("/401.jsp");
+        // then
+        controllerTestEnv.verifyResponseSendRedirectTo(response, "/401.jsp");
     }
 
     private HttpServletRequest getLoginRequest(final String account, final String password) {

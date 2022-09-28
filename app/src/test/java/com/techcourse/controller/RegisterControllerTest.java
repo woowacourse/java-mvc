@@ -1,8 +1,5 @@
 package com.techcourse.controller;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,12 +20,15 @@ class RegisterControllerTest {
 
     @Test
     void register() throws ServletException, IOException {
+        // given
         final HttpServletRequest request = getRegisterRequest();
         final HttpServletResponse response = controllerTestEnv.getResponse();
 
+        // when
         controllerTestEnv.sendRequest(request, response);
 
-        verify(response, times(1)).sendRedirect("/index.jsp");
+        // then
+        controllerTestEnv.verifyResponseSendRedirectTo(response, "/index.jsp");
     }
 
     private HttpServletRequest getRegisterRequest() {

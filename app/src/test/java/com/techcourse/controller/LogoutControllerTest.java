@@ -1,8 +1,5 @@
 package com.techcourse.controller;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,12 +18,15 @@ class LogoutControllerTest {
 
     @Test
     void logout() throws ServletException, IOException {
+        // given
         final HttpServletRequest request = controllerTestEnv.getRequestOf("/logout", "GET");
         final HttpServletResponse response = controllerTestEnv.getResponse();
         controllerTestEnv.setRequestSessionForLogout(request);
 
+        // when
         controllerTestEnv.sendRequest(request, response);
 
-        verify(response, times(1)).sendRedirect("/");
+        // then
+        controllerTestEnv.verifyResponseSendRedirectTo(response, "/");
     }
 }

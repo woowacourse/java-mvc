@@ -1,14 +1,9 @@
 package com.techcourse.controller;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,19 +20,19 @@ class UserControllerTest {
 
     @Test
     void user() throws IOException, ServletException {
+        // given
         Map<String, String> parameter = new HashMap<>();
         parameter.put("account", "gugu");
 
         final HttpServletRequest request = controllerTestEnv.getRequestOf("/api/user", "GET", parameter);
         final HttpServletResponse response = controllerTestEnv.getResponse();
-
-        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+        controllerTestEnv.setWriterForJsonResponse(response);
 
         // when
         controllerTestEnv.sendRequest(request, response);
 
         // then
-        verify(response.getWriter()).write(
+        controllerTestEnv.verifyResponseWrite(response,
                 "{\"id\":1,\"account\":\"gugu\",\"password\":\"password\",\"email\":\"hkkang@woowahan.com\"}");
     }
 }
