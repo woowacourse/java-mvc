@@ -10,9 +10,9 @@ import nextstep.web.support.RequestMethod;
 
 @Controller
 public class ForwardController {
-    
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView getLoginView(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView forward(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
 }
