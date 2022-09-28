@@ -29,11 +29,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        final ControllerScanner controllerScanner = new ControllerScanner(reflections);
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        final Map<Class<?>, Object> controllers = getMappedControllers(basePackage);
         addHandlerExecution(controllers);
     }
+
+    public Map<Class<?>, Object> getMappedControllers(final Object... targetPackages) {
+        final Reflections reflections = new Reflections(targetPackages);
+        final ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        return controllerScanner.getControllers();
+    }
+
 
     private void addHandlerExecution(final Map<Class<?>, Object> controllers) {
         for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
