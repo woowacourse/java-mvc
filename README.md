@@ -7,3 +7,16 @@
 - [x] 어노테이션 기반의 MVC 프레임워크를 구현한다.
 - [x] AnnotationHandlerMappingTest가 정상 동작한다.
 - [x] DispatcherServlet에서 HandlerMapping 인터페이스를 활용하여 AnnotationHandlerMapping과 ManualHandlerMapping 둘다 처리할 수 있다.
+
+## 🚀 2단계 - 점진적인 리팩터링
+### 기능 요구사항
+#### Legacy MVC와 @MVC 통합하기
+- [x] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있도록 한다.
+- [x] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리하도록 구현한다.
+- [x] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리하도록 구현한다.
+
+## 🚀 3단계 - JSON View 구현하기
+### 기능 요구사항
+#### JspView 클래스 구현 | JsonView 클래스 구현 | Legacy MVC 제거
+- [x] UserController 컨트롤러가 json 형태로 응답을 반환한다
+- [x] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
