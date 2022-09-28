@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class ControllerScanner {
 
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
     public Map<Class<?>, Object> getControllers(final Object[] basePackage) {
         try {
