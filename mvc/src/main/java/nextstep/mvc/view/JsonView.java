@@ -32,8 +32,7 @@ public class JsonView implements View {
             return;
         }
 
-        final String value = objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(model);
-        writer.write(value);
+        objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValue(writer, model);
     }
 }
