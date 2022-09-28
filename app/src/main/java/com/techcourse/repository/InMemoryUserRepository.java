@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemoryUserRepository {
 
     private static final Map<String, User> database = new ConcurrentHashMap<>();
+    private static final User NOT_EXIST_USER = null;
 
     static {
         var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
@@ -19,7 +20,10 @@ public class InMemoryUserRepository {
     }
 
     public static Optional<User> findByAccount(String account) {
-        return Optional.ofNullable(database.get(account));
+        if (account == null) {
+            return Optional.ofNullable(NOT_EXIST_USER);
+        }
+        return Optional.ofNullable(database.getOrDefault(account, NOT_EXIST_USER));
     }
 
     private InMemoryUserRepository() {
