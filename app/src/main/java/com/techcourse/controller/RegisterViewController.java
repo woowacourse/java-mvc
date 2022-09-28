@@ -10,7 +10,7 @@ import nextstep.web.support.RequestMethod;
 public class RegisterViewController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public String showRegisterPage(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String showRegisterPage(final HttpServletRequest req, final HttpServletResponse res) {
         return "/register.jsp";
     }
 }
