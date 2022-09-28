@@ -22,7 +22,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView view(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
