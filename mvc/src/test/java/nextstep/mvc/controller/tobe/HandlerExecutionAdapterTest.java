@@ -5,8 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.asis.ForwardController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,17 +17,6 @@ class HandlerExecutionAdapterTest {
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
-    }
-
-    @Test
-    @DisplayName("HandlerExecutionAdapter에서 지원하지 않는 경우 handler일 경우 false")
-    void isFalseSupports() {
-        final HandlerExecutionAdapter handlerExecutionAdapter = new HandlerExecutionAdapter();
-        final Controller forwardController = new ForwardController("/");
-
-        final boolean actual = handlerExecutionAdapter.supports(forwardController);
-
-        assertThat(actual).isFalse();
     }
 
     @Test

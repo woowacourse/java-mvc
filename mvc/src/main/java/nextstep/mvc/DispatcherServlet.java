@@ -45,8 +45,8 @@ public class DispatcherServlet extends HttpServlet {
                 response.setStatus(404);
                 return;
             }
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
