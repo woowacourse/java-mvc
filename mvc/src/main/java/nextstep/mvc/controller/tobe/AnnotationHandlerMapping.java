@@ -25,7 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         Set<Method> methods = getRequestMappingMethods(controllers.keySet());
         methods.forEach(each -> addHandlerExecutions(controllers, each, each.getAnnotation(RequestMapping.class)));
