@@ -27,8 +27,7 @@ public class JsonView implements View {
 
     private void writeContent(final Map<String, ?> model, final PrintWriter writer) throws IOException {
         if (model.size() == 1) {
-            final String key = (String) model.keySet().toArray()[0];
-            final Object value = model.get(key);
+            final Object value = model.values().toArray()[0];
             objectMapper.writeValue(writer, value);
             return;
         }
