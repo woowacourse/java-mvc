@@ -55,7 +55,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/json/test");
         when(response.getOutputStream()).thenReturn(outputStream);
-        final String expected = "{\"id\":\"json\"}";
+        final String expected = "\"json\"";
 
         // when
         dispatcherServlet.service(request, response);

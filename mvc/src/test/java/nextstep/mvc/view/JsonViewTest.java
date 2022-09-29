@@ -26,7 +26,7 @@ class JsonViewTest {
         when(response.getOutputStream())
                 .thenReturn(outputStream);
 
-        final String expected = "{\"user\":{\"id\":1,\"account\":\"corinne\",\"password\":\"1234\",\"email\":\"corinne@gmail.com\"}}";
+        final String expected = "{\"id\":1,\"account\":\"corinne\",\"password\":\"1234\",\"email\":\"corinne@gmail.com\"}";
 
         // when
         jsonView.render(Map.of("user", user), mock(HttpServletRequest.class), response);

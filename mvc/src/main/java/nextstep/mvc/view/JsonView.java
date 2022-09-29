@@ -17,6 +17,15 @@ public class JsonView implements View {
         }
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(response.getOutputStream(), model);
+        final Object convertedModel = convertToWriteModel(model);
+        objectMapper.writeValue(response.getOutputStream(), convertedModel);
+    }
+
+    private Object convertToWriteModel(final Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values()
+                    .toArray()[0];
+        }
+        return model;
     }
 }
