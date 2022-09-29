@@ -43,8 +43,7 @@ class AnnotationHandlerAdapterTest {
         HandlerExecution handlerExecution = new HandlerExecution(fixtures.getInstance(findUserId), findUserId);
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
-        JspView jspView = (JspView) modelAndView.getView();
-        assertThat(jspView.getViewName()).isEqualTo("");
+        assertThat(modelAndView.getView()).isInstanceOf(JspView.class);
         assertThat(modelAndView.getModel()).usingRecursiveComparison()
                 .comparingOnlyFields("id")
                 .isEqualTo(Map.of("id", "gugu"));
