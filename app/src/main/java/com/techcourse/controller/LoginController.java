@@ -1,5 +1,10 @@
 package com.techcourse.controller;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +13,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -16,39 +22,44 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class LoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView showPage(final HttpServletRequest req, final HttpServletResponse res) {
-        return UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return Page.INDEX.getRedirectModelAndView();
-                })
-                .orElse(Page.LOGIN.getModelAndView());
+    public ModelAndView showPage(final HttpServletRequest request, final HttpServletResponse response) {
+        return ifUserLoggedIn(request, Page.LOGIN::getModelAndView);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
-        if (UserSession.isLoggedIn(req.getSession())) {
-            return Page.INDEX.getRedirectModelAndView();
-        }
+    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
+        return ifUserLoggedIn(request, () -> {
+            final var account = request.getParameter("account");
+            final var password = request.getParameter("password");
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse(Page.ERROR_401.getRedirectModelAndView());
-    }
+            if (isNullAnyParameter(account, password)) {
+                return Page.ERROR_404.getModelAndView();
+            }
 
-    private ModelAndView login(final HttpServletRequest request, final User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
+            final Optional<User> user = InMemoryUserRepository.findByAccount(account)
+                    .filter(user1 -> user1.checkPassword(password));
+
+            if (user.isEmpty()) {
+                return Page.ERROR_401.getRedirectModelAndView();
+            }
+
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
+            return Page.INDEX.getRedirectModelAndView();        });
+    }
+
+    private boolean isNullAnyParameter(final String... parameters) {
+        return Stream.of(parameters)
+                .anyMatch(Objects::nonNull);
+    }
+
+    private ModelAndView ifUserLoggedIn(final HttpServletRequest request,
+                                        final Supplier<ModelAndView> supplier) {
+        final HttpSession session = request.getSession();
+        if (UserSession.isLoggedIn(session)) {
             return Page.INDEX.getRedirectModelAndView();
-        } else {
-            return Page.ERROR_401.getRedirectModelAndView();
         }
+        return supplier.get();
     }
 }
