@@ -1,6 +1,4 @@
-package com.techcourse.repository;
-
-import com.techcourse.domain.User;
+package nextstep.context.test_case_2;
 
 import java.util.Map;
 import java.util.Optional;
@@ -8,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import nextstep.web.annotation.Repository;
 
 @Repository
-public class InMemoryUserRepository {
+public class InMemoryUserRepository implements UserDao {
 
     private final Map<String, User> database = new ConcurrentHashMap<>();
 
@@ -19,11 +17,13 @@ public class InMemoryUserRepository {
         database.put(philz.getAccount(), philz);
     }
 
+    @Override
     public void save(User user) {
         database.put(user.getAccount(), user);
     }
 
-    public Optional<User> findByAccount(String account) {
-        return Optional.ofNullable(database.get(account));
+    @Override
+    public User findByAccount(String account) {
+        return database.get(account);
     }
 }

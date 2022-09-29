@@ -6,7 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handler.asis.Controller;
 
-public class RegisterV1Controller implements Controller {
+public class RegisterOldController implements Controller {
+
+    private final InMemoryUserRepository userRepository;
+
+    public RegisterOldController(final InMemoryUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -14,7 +20,7 @@ public class RegisterV1Controller implements Controller {
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
-        InMemoryUserRepository.save(user);
+        userRepository.save(user);
 
         return "redirect:/index.jsp";
     }

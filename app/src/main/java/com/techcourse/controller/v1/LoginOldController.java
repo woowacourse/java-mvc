@@ -9,9 +9,15 @@ import nextstep.mvc.handler.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginV1Controller implements Controller {
+public class LoginOldController implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginV1Controller.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginOldController.class);
+
+    private final InMemoryUserRepository userRepository;
+
+    public LoginOldController(final InMemoryUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -19,7 +25,7 @@ public class LoginV1Controller implements Controller {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return userRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);

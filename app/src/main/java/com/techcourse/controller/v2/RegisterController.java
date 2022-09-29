@@ -1,6 +1,7 @@
 package com.techcourse.controller.v2;
 
 import static nextstep.web.support.RequestMethod.GET;
+import static nextstep.web.support.RequestMethod.POST;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -10,23 +11,28 @@ import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
-import nextstep.web.support.RequestMethod;
 
 @Controller
-public class RegisterV2Controller {
+public class RegisterController {
 
-    @RequestMapping(value = "/v2/register/view", method = GET)
+    private final InMemoryUserRepository userRepository;
+
+    public RegisterController(final InMemoryUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @RequestMapping(value = "/register/view", method = GET)
     public ModelAndView registerView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 
-    @RequestMapping(value = "/v2/register", method = GET)
+    @RequestMapping(value = "/register", method = POST)
     public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
-        InMemoryUserRepository.save(user);
+        userRepository.save(user);
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }

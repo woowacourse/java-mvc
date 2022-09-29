@@ -1,11 +1,13 @@
 package com.techcourse;
 
-import com.techcourse.controller.v1.LoginV1Controller;
-import com.techcourse.controller.v1.LoginViewV1Controller;
-import com.techcourse.controller.v1.LogoutV1Controller;
-import com.techcourse.controller.v1.RegisterV1Controller;
-import com.techcourse.controller.v1.RegisterViewV1Controller;
+import com.techcourse.controller.v1.LoginOldController;
+import com.techcourse.controller.v1.LoginViewOldController;
+import com.techcourse.controller.v1.LogoutOldController;
+import com.techcourse.controller.v1.RegisterOldController;
+import com.techcourse.controller.v1.RegisterViewOldController;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import nextstep.context.PeanutBox;
 import nextstep.mvc.handler.mapper.HandlerMapper;
 import nextstep.mvc.handler.asis.Controller;
 import nextstep.mvc.handler.asis.ForwardController;
@@ -23,12 +25,14 @@ public class ManualHandlerMapper implements HandlerMapper {
 
     @Override
     public void initialize() {
+        final InMemoryUserRepository userRepository = PeanutBox.INSTANCE.getPeanut(InMemoryUserRepository.class);
+
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginV1Controller());
-        controllers.put("/login/view", new LoginViewV1Controller());
-        controllers.put("/logout", new LogoutV1Controller());
-        controllers.put("/register/view", new RegisterViewV1Controller());
-        controllers.put("/register", new RegisterV1Controller());
+        controllers.put("/old/login", new LoginOldController(userRepository));
+        controllers.put("/old/login/view", new LoginViewOldController());
+        controllers.put("/old/logout", new LogoutOldController());
+        controllers.put("/old/register/view", new RegisterViewOldController(userRepository));
+        controllers.put("/old/register", new RegisterOldController(userRepository));
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

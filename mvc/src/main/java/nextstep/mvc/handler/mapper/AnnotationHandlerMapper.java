@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import nextstep.context.PeanutContainer;
+import nextstep.context.PeanutBox;
 import nextstep.mvc.handler.tobe.HandlerExecution;
 import nextstep.mvc.handler.tobe.HandlerKey;
 import nextstep.web.annotation.Controller;
@@ -32,17 +32,25 @@ public class AnnotationHandlerMapper implements HandlerMapper {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
         final Map<HandlerKey, HandlerExecution> handlerExecutions = new Reflections(basePackages)
                 .getTypesAnnotatedWith(Controller.class)
                 .stream()
-                .map(PeanutContainer.INSTANCE::getPeanut)
-                .flatMap(handler -> createHandlerExecutions(handler))
+                .map(PeanutBox.INSTANCE::getPeanut)
+                .flatMap(this::createHandlerExecutions)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
         this.handlerExecutions.putAll(handlerExecutions);
+    }
+
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+        return handlerExecutions.get(handlerKey);
     }
 
     private Stream<? extends Entry<HandlerKey, HandlerExecution>> createHandlerExecutions(final Object handler) {
@@ -70,11 +78,5 @@ public class AnnotationHandlerMapper implements HandlerMapper {
         return Arrays.stream(requestMapping.method())
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    public HandlerExecution getHandler(final HttpServletRequest request) {
-        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
-        return handlerExecutions.get(handlerKey);
     }
 }

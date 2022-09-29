@@ -2,11 +2,11 @@ package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration.Dynamic;
-import nextstep.context.PeanutContainer;
+import nextstep.context.PeanutBox;
 import nextstep.mvc.handler.adapter.AnnotationHandlerAdapter;
-import nextstep.mvc.servlet.DispatcherServlet;
 import nextstep.mvc.handler.adapter.ManualHandlerAdapter;
 import nextstep.mvc.handler.mapper.AnnotationHandlerMapper;
+import nextstep.mvc.servlet.DispatcherServlet;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,9 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        PeanutContainer.INSTANCE.init("com.techcourse.controller");
+        PeanutBox.INSTANCE.init("com.techcourse");
+        // TODO @Toransactional 적용 불가
+//        PeanutPostProcessor.INSTANCE.init("com.techcourse");
 
         final DispatcherServlet dispatcherServlet = initDispatcherServlet();
         final Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
