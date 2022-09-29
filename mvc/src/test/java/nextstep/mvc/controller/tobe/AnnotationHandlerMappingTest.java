@@ -22,32 +22,32 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        var request = mock(HttpServletRequest.class);
+        var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final Optional<Object> handler = handlerMapping.getHandler(request);
-        final HandlerExecution handlerExecution = (HandlerExecution) handler.get();
-        final var modelAndView = handlerExecution.handle(request, response);
+        Optional<Object> handler = handlerMapping.getHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) handler.get();
+        var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @Test
     void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        var request = mock(HttpServletRequest.class);
+        var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final Optional<Object> handler = handlerMapping.getHandler(request);
-        final HandlerExecution handlerExecution = (HandlerExecution) handler.get();
-        final var modelAndView = handlerExecution.handle(request, response);
+        Optional<Object> handler = handlerMapping.getHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) handler.get();
+        var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
