@@ -11,7 +11,7 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class WelcomeController {
 
-    @RequestMapping(value = "/", method = {RequestMethod.GET})
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView welcome(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
