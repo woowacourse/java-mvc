@@ -1,7 +1,8 @@
 package com.techcourse.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -17,18 +18,27 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         final String account = req.getParameter("account");
-        log.debug("user id : {}", account);
+
+        if (isNullAnyParameter(account)) {
+            return Page.ERROR_404.getModelAndView();
+        }
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+        final Optional<User> user = InMemoryUserRepository.findByAccount(account);
+
+        if (user.isEmpty()) {
+            return Page.ERROR_404.getModelAndView();
+        }
 
         modelAndView.addObject("user", user);
         return modelAndView;
+    }
+
+    private boolean isNullAnyParameter(final String... parameters) {
+        return Stream.of(parameters)
+                .anyMatch(Objects::nonNull);
     }
 }
