@@ -28,7 +28,7 @@ public class JsonViewTest {
         when(response.getWriter()).thenReturn(mock(PrintWriter.class));
         jsonView.render(model, request, response);
 
-        String expected = objectMapper.writeValueAsString(model);
+        String expected = objectMapper.writeValueAsString(model.get("name"));
         PrintWriter printWriter = response.getWriter();
 
         verify(printWriter, times(1)).print(expected);
