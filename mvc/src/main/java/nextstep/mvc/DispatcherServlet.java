@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+        handlerMappingRegistry.add(handlerMapping);
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
