@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.exception.HandlerNotFoundException;
 import nextstep.mvc.registry.HandlerAdapterRegistry;
 import nextstep.mvc.registry.HandlerMappingRegistry;
+import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +48,20 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
+        } catch (HandlerNotFoundException e) {
+            handleNotFound(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void handleNotFound(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            ModelAndView modelAndView = new ModelAndView(new JspView("redirect:/404.jsp"));
+            modelAndView.render(request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

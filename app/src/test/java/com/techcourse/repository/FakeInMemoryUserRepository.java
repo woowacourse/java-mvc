@@ -5,17 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class InMemoryUserRepository implements UserRepository {
+public class FakeInMemoryUserRepository implements UserRepository {
 
-    private static final Map<String, User> database = new ConcurrentHashMap<>();
-
-    static {
-        final var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
-        database.put(user.getAccount(), user);
-    }
-
-    public InMemoryUserRepository() {
-    }
+    private final Map<String, User> database = new ConcurrentHashMap<>();
 
     @Override
     public void save(final User user) {

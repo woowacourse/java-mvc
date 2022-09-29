@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.HandlerExecutionHandlerAdapter;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 import org.junit.jupiter.api.Test;
 
