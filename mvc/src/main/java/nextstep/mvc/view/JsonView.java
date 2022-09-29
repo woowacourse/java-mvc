@@ -20,13 +20,21 @@ public class JsonView implements View {
     }
 
     private String getBody(final Map<String, ?> model) throws JsonProcessingException {
-        if (model.size() == 1) {
-            final Object object = model.values()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow();
-            return OBJECT_MAPPER.writeValueAsString(object);
+        if (isSizeOne(model)) {
+            return getBodyByOneModel(model);
         }
         return OBJECT_MAPPER.writeValueAsString(model);
+    }
+
+    private boolean isSizeOne(final Map<String, ?> model) {
+        return model.size() == 1;
+    }
+
+    private String getBodyByOneModel(final Map<String, ?> model) throws JsonProcessingException {
+        final Object object = model.values()
+                .stream()
+                .findFirst()
+                .orElseThrow();
+        return OBJECT_MAPPER.writeValueAsString(object);
     }
 }
