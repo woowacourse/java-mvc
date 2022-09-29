@@ -12,13 +12,17 @@ import nextstep.web.support.RequestMethod;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String register(final HttpServletRequest req) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
-
         return "redirect:/index.jsp";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String registerView() throws Exception {
+        return "/register.jsp";
     }
 }

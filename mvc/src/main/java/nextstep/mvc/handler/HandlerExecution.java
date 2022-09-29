@@ -1,10 +1,19 @@
 package nextstep.mvc.handler;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.reflections.Reflections;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.argumentResolver.ArgumentResolver;
+import nextstep.mvc.argumentResolver.ArgumentResolverMapping;
 import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.RequestParam;
 
 public class HandlerExecution {
 
@@ -16,7 +25,15 @@ public class HandlerExecution {
 
     public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object handler = createHandlerInstance(method.getDeclaringClass());
-        return method.invoke(handler, request, response);
+        Object[] parameters = Arrays.stream(method.getParameters())
+            .map(type -> resolveArgument(request, response, type))
+            .toArray();
+        return method.invoke(handler, parameters);
+    }
+
+    private Object resolveArgument(HttpServletRequest request, HttpServletResponse response, Parameter parameter) {
+        ArgumentResolver argumentResolver = ArgumentResolverMapping.getArgumentResolver(parameter);
+        return argumentResolver.resolve(request, response, parameter);
     }
 
     private Object createHandlerInstance(Class<?> handler) {
