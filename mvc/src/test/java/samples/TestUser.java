@@ -1,13 +1,13 @@
-package com.techcourse.domain;
+package samples;
 
-public class User {
+public class TestUser {
 
     private final long id;
     private final String account;
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
+    public TestUser(long id, String account, String password, String email) {
         this.id = id;
         this.account = account;
         this.password = password;

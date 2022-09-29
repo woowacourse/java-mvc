@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -25,7 +25,6 @@ public class ControllerScanner {
     }
 
     private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
-
         try {
             Map<Class<?>, Object> controllerInstances = new HashMap<>();
             for (Class<?> clazz : controllers) {

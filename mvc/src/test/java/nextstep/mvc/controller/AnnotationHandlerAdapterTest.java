@@ -1,8 +1,10 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.controller.AnnotationHandlerAdapter;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.web.annotation.Controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

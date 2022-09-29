@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
