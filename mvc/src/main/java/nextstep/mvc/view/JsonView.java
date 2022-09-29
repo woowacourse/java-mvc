@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Map;
+import nextstep.mvc.exception.ModelValueNotFoundException;
 import nextstep.web.support.MediaType;
 
 public class JsonView implements View {
@@ -30,8 +31,8 @@ public class JsonView implements View {
     private Object getFirstValue(Map<String, ?> model) {
         return model.keySet()
                 .stream()
-                .map(model::get)
                 .findFirst()
-                .orElseThrow();
+                .map(model::get)
+                .orElseThrow(ModelValueNotFoundException::new);
     }
 }
