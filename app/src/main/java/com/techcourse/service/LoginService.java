@@ -6,6 +6,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.function.Function;
+import nextstep.web.annotation.GiveMePeanut;
 import nextstep.web.annotation.Service;
 import nextstep.web.annotation.Toransactional;
 import org.slf4j.Logger;
@@ -16,11 +17,8 @@ public class LoginService {
 
     private static final Logger log = LoggerFactory.getLogger(LoginService.class);
 
-    private final InMemoryUserRepository userRepository;
-
-    public LoginService(final InMemoryUserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @GiveMePeanut
+    private InMemoryUserRepository userRepository;
 
     @Toransactional
     public String loginViewName(final HttpSession session) {

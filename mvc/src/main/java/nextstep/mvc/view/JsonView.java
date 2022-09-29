@@ -36,12 +36,12 @@ public class JsonView implements View {
         return objectMapper.writeValueAsString(model);
     }
 
-    private String firstModelValue(final Map<String, ?> model) {
-        return model.values().toArray()[0].toString();
-    }
-
     private void logModelEntry(final Map<String, ?> model) {
         model.keySet()
                 .forEach(key -> log.debug("attribute name : {}, value : {}", key, model.get(key)));
+    }
+
+    private String firstModelValue(final Map<String, ?> model) {
+        return model.values().toArray()[0].toString();
     }
 }

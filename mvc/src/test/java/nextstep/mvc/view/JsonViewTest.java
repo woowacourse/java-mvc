@@ -20,7 +20,7 @@ class JsonViewTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    @DisplayName("model 을 key-value json 형식으로 반환한다.")
+    @DisplayName("model의 크기가 2이상일 경우 key-value json 형식으로 반환한다.")
     void render() throws Exception {
         // given
         JsonView jsonView = new JsonView(objectMapper);
@@ -99,6 +99,11 @@ class JsonViewTest {
         public void write(String s) {
             super.write(s);
             written = s;
+        }
+
+        @Override
+        public void close() {
+            super.close();
         }
     }
 }

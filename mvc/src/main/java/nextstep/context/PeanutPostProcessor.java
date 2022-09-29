@@ -31,24 +31,29 @@ public enum PeanutPostProcessor {
     private void initInternal(final String path) {
         reflections = new Reflections(path);
         final Set<Class<?>> services = reflections.getTypesAnnotatedWith(Service.class);
-        for (final Class<?> service : services) {
-            final List<Method> toransactionals = findToransactionalAnnotations(service);
-            if (toransactionals.size() > 0) {
-                final Object target = PeanutBox.INSTANCE.getPeanut(service);
-                final Enhancer enhancer = new Enhancer();
-                enhancer.setSuperclass(target.getClass());
-                enhancer.setCallback(new ToransactionalMethod(target));
-                final Object proxy = enhancer.create();
-                log.info("target class = {}", target.getClass());
-                log.info("proxy class = {}", proxy.getClass());
-                PeanutBox.INSTANCE.changePeanut(service, proxy);
+        for (final Class<?> original : services) {
+            final List<Method> toransactionalMethods = findToransactionalMethods(original);
+            if (toransactionalMethods.size() > 0) {
+                final Object target = PeanutBox.INSTANCE.getPeanut(original);
+                final Object proxy = createProxy(target);
+                PeanutBox.INSTANCE.changePeanut(original, proxy);
             }
         }
     }
 
-    private List<Method> findToransactionalAnnotations(final Class<?> service) {
+    private List<Method> findToransactionalMethods(final Class<?> service) {
         return Arrays.stream(service.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(Toransactional.class))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private Object createProxy(final Object target) {
+        final Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(target.getClass());
+        enhancer.setCallback(new ToransactionalMethod(target));
+        final Object proxy = enhancer.create();
+        log.info("target class = {}", target.getClass());
+        log.info("proxy class = {}", proxy.getClass());
+        return proxy;
     }
 }
