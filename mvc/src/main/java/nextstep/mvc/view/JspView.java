@@ -37,19 +37,16 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        addLocation(response);
+        if (redirect) {
+            response.sendRedirect(viewName);
+            return;
+        }
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.include(request, response);
-    }
-
-    private void addLocation(final HttpServletResponse response) throws IOException {
-        if (redirect) {
-            response.sendRedirect(viewName);
-        }
+        requestDispatcher.forward(request, response);
     }
 }
