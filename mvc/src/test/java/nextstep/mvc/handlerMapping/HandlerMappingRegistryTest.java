@@ -1,4 +1,4 @@
-package nextstep.mvc;
+package nextstep.mvc.handlerMapping;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,8 +9,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import samples.TestController;
+import samples.TestHandlerMapping;
 
 class HandlerMappingRegistryTest {
 
@@ -18,7 +18,7 @@ class HandlerMappingRegistryTest {
     void getHandler() {
         // given
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new HandlerForTest());
+        handlerMappingRegistry.addHandlerMapping(new TestHandlerMapping());
         handlerMappingRegistry.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -30,7 +30,7 @@ class HandlerMappingRegistryTest {
         // then
         assertAll(
             () -> assertThat(handler).isNotEmpty(),
-            () -> assertThat(handler.get()).isInstanceOf(ControllerForTest.class)
+            () -> assertThat(handler.get()).isInstanceOf(TestController.class)
         );
     }
 
@@ -38,7 +38,6 @@ class HandlerMappingRegistryTest {
     void cantGetHandler() {
         // given
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new HandlerForTest());
         handlerMappingRegistry.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -49,27 +48,5 @@ class HandlerMappingRegistryTest {
 
         // then
         assertThat(handler).isEmpty();
-    }
-
-    class HandlerForTest implements HandlerMapping {
-        @Override
-        public void initialize() {
-
-        }
-
-        @Override
-        public Object getHandler(HttpServletRequest request) {
-            if (request.getRequestURI().equals("/test")) {
-                return new ControllerForTest();
-            }
-            return null;
-        }
-    }
-
-    class ControllerForTest implements Controller {
-        @Override
-        public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-            return null;
-        }
     }
 }

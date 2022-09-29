@@ -9,6 +9,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.handlerAdapter.HandlerAdapter;
+import nextstep.mvc.handlerAdapter.HandlerAdapterRegistry;
+import nextstep.mvc.handlerMapping.HandlerMapping;
+import nextstep.mvc.handlerMapping.HandlerMappingRegistry;
 import nextstep.mvc.view.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -54,7 +58,6 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
             modelAndView.render(request, response);
-
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

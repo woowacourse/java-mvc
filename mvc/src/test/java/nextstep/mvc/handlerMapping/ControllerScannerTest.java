@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.handlerMapping;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,7 +19,6 @@ class ControllerScannerTest {
 
         assertThat(controllers.get(TestController.class))
             .isInstanceOf(TestController.class);
-
     }
 
 }
