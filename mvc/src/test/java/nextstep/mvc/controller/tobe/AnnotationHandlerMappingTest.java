@@ -21,6 +21,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
+        // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -28,14 +29,17 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
+        // when
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
 
+        // then
+        final var modelAndView = handlerExecution.handle(request, response);
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @Test
     void post() throws Exception {
+        // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -43,9 +47,11 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
+        // when
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
 
+        // then
+        final var modelAndView = handlerExecution.handle(request, response);
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 }

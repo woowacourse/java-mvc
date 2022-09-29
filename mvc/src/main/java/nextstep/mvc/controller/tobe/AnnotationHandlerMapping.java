@@ -2,8 +2,11 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -24,12 +27,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
         final ControllerScanner controllerScanner = new ControllerScanner(reflections);
 
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         controllers.forEach(this::mappingHandlerExecutions);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -41,13 +44,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void mappingHandlerExecutions(final Class<?> aClass, final Object instance) {
-        for (final Method method : aClass.getDeclaredMethods()) {
-            final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-            mappingHandlerExecution(instance, method, requestMapping);
-        }
+        Arrays.stream(aClass.getDeclaredMethods())
+                .forEach(method -> mappingHandlerExecution(instance, method));
     }
 
-    private void mappingHandlerExecution(final Object instance, final Method method, final RequestMapping requestMapping) {
+    private void mappingHandlerExecution(final Object instance, final Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+
+        final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         final String url = requestMapping.value();
         for (final RequestMethod requestMethod : requestMapping.method()) {
             final HandlerKey key = new HandlerKey(url, requestMethod);

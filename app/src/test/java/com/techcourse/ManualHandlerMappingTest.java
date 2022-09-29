@@ -20,16 +20,19 @@ class ManualHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void getHandler() throws Exception {
+        // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
+        // when
         final var handlerExecution = handlerMapping.getHandler(request);
-        final var result = handlerExecution.execute(request, response);
 
+        // then
+        final var result = handlerExecution.execute(request, response);
         assertThat(result).isEqualTo("/index.jsp");
     }
 }
