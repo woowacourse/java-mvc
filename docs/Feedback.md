@@ -23,4 +23,4 @@
 
 ## Level 3 - JsonView 구현
 - [ ] 리팩터링 이후 실패하는 테스트 코드 개선
-- [ ] JsonView 힌트 적용
+- [x] JsonView 힌트 적용
