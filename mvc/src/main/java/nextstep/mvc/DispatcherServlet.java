@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import nextstep.mvc.controller.tobe.handleradapter.HandlerAdapterRegistry;
 import nextstep.mvc.controller.tobe.handlermapping.HandlerMappingRegistry;
+import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +43,12 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        final var handler = handlerMappingRegistry.getHandler(request)
+        Object handler = handlerMappingRegistry.getHandler(request)
                 .orElseThrow(() -> new NoSuchElementException("적절한 컨트롤러가 존재하지 않습니다."));
-        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         try {
-            final var modelAndView = handlerAdapter.handle(request, response, handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

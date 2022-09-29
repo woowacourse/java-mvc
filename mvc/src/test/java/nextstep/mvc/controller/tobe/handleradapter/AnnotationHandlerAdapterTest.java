@@ -11,7 +11,6 @@ import nextstep.mvc.controller.tobe.handlermapping.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.Test;
 import samples.TestAnnotationController;
-import samples.TestManualController;
 
 class AnnotationHandlerAdapterTest {
 
@@ -25,15 +24,6 @@ class AnnotationHandlerAdapterTest {
         boolean supports = annotationHandlerAdapter.supports(handler);
 
         assertThat(supports).isTrue();
-    }
-
-    @Test
-    void notSupports() {
-        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-
-        boolean supports = annotationHandlerAdapter.supports(new TestManualController());
-
-        assertThat(supports).isFalse();
     }
 
     @Test
