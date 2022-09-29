@@ -23,5 +23,5 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
         dispatcher.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
-        }
+    }
 }

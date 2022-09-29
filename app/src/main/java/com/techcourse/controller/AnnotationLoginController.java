@@ -18,20 +18,20 @@ public class AnnotationLoginController {
     private static final Logger log = LoggerFactory.getLogger(AnnotationLoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
+    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return execute(req, user);
+                    return execute(request, user);
                 })
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {

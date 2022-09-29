@@ -10,10 +10,6 @@ public class JsonView implements View {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-//    public JsonView() {
-//        objectMapper = new ObjectMapper();
-//    }
-
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
