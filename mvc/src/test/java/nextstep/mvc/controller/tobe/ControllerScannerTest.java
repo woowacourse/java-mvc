@@ -1,9 +1,11 @@
 package nextstep.mvc.controller.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.TestController;
 
 public class ControllerScannerTest {
 
@@ -12,6 +14,9 @@ public class ControllerScannerTest {
     void initControllerScanner() {
         final ControllerScanner sut = new ControllerScanner("samples");
 
-        assertThat(sut.getControllers()).hasSize(1);
+        assertAll(
+                () -> assertThat(sut.getControllers()).hasSize(1),
+                () -> assertThat(sut.getControllers()).contains(TestController.class)
+        );
     }
 }
