@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.dummy.DummyDto;
 import samples.dummy.DummyObject;
 
 class JsonViewTest {
@@ -42,14 +44,10 @@ class JsonViewTest {
 
         when(response.getWriter()).thenReturn(writer);
 
-        jsonView.render(Map.of("test1", dummyObject1, "test2", dummyObject2), request, response);
 
-        verify(writer).write("{\"test2\":{"
-                + "\"name\":\"dummy2\","
-                + "\"price\":10000"
-                + "},"
-                + "\"test1\":{"
-                + "\"name\":\"dummy1\","
-                + "\"price\":1000}}");
+        jsonView.render(Map.of("test1", dummyObject1, "test2", dummyObject2), request, response);
+        DummyDto dummyDto = new DummyDto(dummyObject1, dummyObject2);
+
+        verify(writer).write(new ObjectMapper().writeValueAsString(dummyDto));
     }
 }
