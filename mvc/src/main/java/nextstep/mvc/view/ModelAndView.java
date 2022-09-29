@@ -5,8 +5,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModelAndView {
+
+    private static final Logger log = LoggerFactory.getLogger(ModelAndView.class);
 
     private final View view;
     private final Map<String, Object> model;
