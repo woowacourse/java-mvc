@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ public class ControllerScanner {
             final var emptyConstructor = clazz.getConstructor();
             return emptyConstructor.newInstance();
 
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new NoSuchMethodError("빈 생성자를 조회할 수 없습니다.");
 
         } catch (final InstantiationException | IllegalAccessException | InvocationTargetException e) {

@@ -1,38 +1,71 @@
 package com.techcourse.controller;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpSession;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RequestMapping;
+import nextstep.web.support.RequestMethod;
 
-public class LoginController implements Controller {
+@Controller
+public class LoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
-        }
-
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView showPage(final HttpServletRequest request, final HttpServletResponse response) {
+        return ifUserLoggedIn(request, Page.LOGIN::getModelAndView);
     }
 
-    private String login(final HttpServletRequest request, final User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
+        return ifUserLoggedIn(request, () -> {
+            final var account = request.getParameter("account");
+            final var password = request.getParameter("password");
+
+            if (isNullAnyParameter(account, password)) {
+                return Page.ERROR_404.getModelAndView();
+            }
+
+            final Optional<User> user = InMemoryUserRepository.findByAccount(account)
+                    .filter(user1 -> user1.checkPassword(password));
+
+            if (user.isEmpty()) {
+                return Page.ERROR_401.getRedirectModelAndView();
+            }
+
             final var session = request.getSession();
-            session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
-        } else {
-            return "redirect:/401.jsp";
+            session.setAttribute(UserSession.SESSION_KEY, user.get());
+            return Page.INDEX.getRedirectModelAndView();
+        });
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) {
+        final var session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        return new ModelAndView(new JspView("redirect:/"));
+    }
+
+    private boolean isNullAnyParameter(final String... parameters) {
+        return Stream.of(parameters)
+                .anyMatch(Objects::isNull);
+    }
+
+    private ModelAndView ifUserLoggedIn(final HttpServletRequest request,
+                                        final Supplier<ModelAndView> supplier) {
+        final HttpSession session = request.getSession();
+        if (UserSession.isLoggedIn(session)) {
+            return Page.INDEX.getRedirectModelAndView();
         }
+        return supplier.get();
     }
 }
