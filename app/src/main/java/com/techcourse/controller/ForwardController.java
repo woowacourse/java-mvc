@@ -1,4 +1,4 @@
-package com.techcourse.controllerV2;
+package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,10 +8,10 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class RegisterController {
+public class ForwardController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView doGet(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView("/register.jsp");
+        return new ModelAndView("/index.jsp");
     }
 }

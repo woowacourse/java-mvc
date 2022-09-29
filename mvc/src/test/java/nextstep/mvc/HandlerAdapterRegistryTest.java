@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import common.FakeManualHandlerAdapter;
-import common.FakeManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.tobe.AnnotationHandlerAdapter;
@@ -21,11 +19,9 @@ class HandlerAdapterRegistryTest {
 
     @BeforeEach
     void setUp() {
-        handlerMappingRegistry.addHandlerMapping(new FakeManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         handlerMappingRegistry.init();
 
-        handlerAdapterRegistry.addHandlerAdapter(new FakeManualHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
@@ -36,23 +32,6 @@ class HandlerAdapterRegistryTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
-
-        // when
-        Object handler = handlerMappingRegistry.getHandler(request);
-        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-
-        // then
-        assertThat(handlerAdapter).isNotNull();
-    }
-
-    @Test
-    @DisplayName("인터페이스를 기반으로 하는 핸들러를 가져온다.")
-    void getHandlerWithInterface() {
-        // given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
         // when
