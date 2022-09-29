@@ -1,23 +1,20 @@
-package nextstep.mvc.controller.asis;
+package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
-public class ControllerHandlerAdapter implements HandlerAdapter {
+public class TestHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof Controller;
+        return false;
     }
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        Controller controller = (Controller) handler;
-        String uri = controller.execute(request, response);
-        return new ModelAndView(new JspView(uri));
+        return null;
     }
 }
