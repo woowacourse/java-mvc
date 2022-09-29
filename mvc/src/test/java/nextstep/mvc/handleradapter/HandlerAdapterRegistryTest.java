@@ -22,7 +22,6 @@ class HandlerAdapterRegistryTest {
 
         // when
         registry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        registry.addHandlerAdapter(new ManualHandlerAdapter());
 
         final HandlerAdapter actual = registry.getAdaptor(handler);
 
