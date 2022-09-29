@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         final Object handler = handlerMappingRegistry.getHandler(request);
-        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapters(handler);
+        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         try {
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             final View view = modelAndView.getView();
