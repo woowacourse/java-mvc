@@ -32,7 +32,7 @@ class JsonViewTest {
         final String expected = "{\n" +
         "  \"hello\" : \"world\"\n" +
         "}";
-        
+
         assertThat(stringWriter.toString()).isEqualTo(expected);
     }
 }

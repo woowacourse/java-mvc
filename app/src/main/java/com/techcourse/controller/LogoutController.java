@@ -9,7 +9,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class LogoutController{
+public class LogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
