@@ -1,4 +1,4 @@
-package com.techcourse.controller.tobe;
+package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,8 +9,8 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class RegisterViewController {
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String getRegisterView(final HttpServletRequest req, final HttpServletResponse response) {
-        return "register.jsp";
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public String getRegisterView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return "/register.jsp";
     }
 }
