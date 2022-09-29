@@ -29,12 +29,7 @@ public class UserController {
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final Optional<User> user = InMemoryUserRepository.findByAccount(account);
 
-        if (user.isEmpty()) {
-            modelAndView.addObject("user", null);
-            return modelAndView;
-        }
-
-        modelAndView.addObject("user", user.get());
+        modelAndView.addObject("user", user.orElse(null));
         return modelAndView;
     }
 
