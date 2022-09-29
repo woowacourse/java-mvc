@@ -30,10 +30,11 @@ public class UserController {
         final Optional<User> user = InMemoryUserRepository.findByAccount(account);
 
         if (user.isEmpty()) {
-            return Page.ERROR_404.getModelAndView();
+            modelAndView.addObject("user", null);
+            return modelAndView;
         }
 
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", user.get());
         return modelAndView;
     }
 
