@@ -13,14 +13,19 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class RegisterController {
 
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView showRegisterView(final HttpServletRequest req, final HttpServletResponse res) {
+        return new ModelAndView(new JspView("/register.jsp"));
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }
