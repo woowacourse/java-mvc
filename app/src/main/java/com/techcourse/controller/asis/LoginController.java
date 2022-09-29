@@ -1,5 +1,6 @@
-package com.techcourse.controller;
+package com.techcourse.controller.asis;
 
+import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +9,7 @@ import nextstep.mvc.controller.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class LoginController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);

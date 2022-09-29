@@ -35,20 +35,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Set<Class<?>> mappedControllers = ControllerScanner.getInstance()
-            .getAllAnnotations(basePackage);
-        Map<Class<?>, Object> controllers = mappedControllers.stream()
-            .collect(toMap(Function.identity(), this::getInitializedController));
+        Map<Class<?>, Object> controllers = ControllerScanner.getInstance()
+            .getControllers(basePackage);
 
         extractHandlerExecutions(controllers);
-    }
-
-    private Object getInitializedController(final Class<?> mappedController) {
-        try {
-            return mappedController.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 
     private void extractHandlerExecutions(final Map<Class<?>, Object> controllers) {

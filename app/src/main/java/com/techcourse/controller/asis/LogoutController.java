@@ -1,9 +1,11 @@
-package com.techcourse.controller;
+package com.techcourse.controller.asis;
 
+import com.techcourse.controller.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
 
+@Deprecated
 public class LogoutController implements Controller {
 
     @Override
