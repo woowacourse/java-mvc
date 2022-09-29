@@ -23,6 +23,7 @@ public class HandlerMappingRegistry {
 
     public Optional<Object> getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
+                .filter(Objects::nonNull)
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .findAny();
     }
