@@ -19,7 +19,6 @@ public class JspView implements View {
     private final boolean redirect;
 
     public JspView(final String viewName) {
-        validateJsp(viewName);
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             this.viewName = viewName.substring(REDIRECT_PREFIX.length());
             this.redirect = true;
@@ -27,12 +26,6 @@ public class JspView implements View {
         }
         this.viewName = viewName;
         this.redirect = false;
-    }
-
-    private void validateJsp(final String viewName) {
-        if (!viewName.endsWith(".jsp")) {
-            throw new IllegalArgumentException(String.format("JSP 형식이 아닙니다. [%s]", viewName));
-        }
     }
 
     @Override
