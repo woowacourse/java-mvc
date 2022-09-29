@@ -5,7 +5,7 @@ import java.lang.reflect.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HttpRequestArgumentResolver implements ArgumentResolver {
+public class HttpServletRequestArgumentResolver implements ArgumentResolver {
 
 	@Override
 	public boolean support(Parameter parameter) {
