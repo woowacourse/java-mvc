@@ -1,21 +1,25 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.stream.Stream;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.view.JspView;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecutionHandlerAdapter;
 import nextstep.mvc.view.ModelAndView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import samples.ManualTestController;
+import samples.TestController;
 
 class HandlerExecutionHandlerAdapterTest {
 
@@ -32,31 +36,40 @@ class HandlerExecutionHandlerAdapterTest {
         assertThat(result).isEqualTo(canSupport);
     }
 
-    public static Stream<Arguments> supportsData() {
+    public static Stream<Arguments> supportsData() throws NoSuchMethodException {
         return Stream.of(
-                Arguments.of(mock(HandlerExecution.class), true),
-                Arguments.of(mock(Controller.class), false)
+                Arguments.of(getHandlerExecution(), true),
+                Arguments.of(new ManualTestController(), false)
         );
+    }
+
+    private static HandlerExecution getHandlerExecution() throws NoSuchMethodException {
+        final TestController testController = new TestController();
+        final Method method = testController.getClass()
+                .getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+
+        return new HandlerExecution(testController, method);
     }
 
     @Test
     @DisplayName("handle 메소드는 입력 받은 HandlerExecution의 handle 메소드를 실행하고 결과를 ModelAndView 객체로 반환한다.")
     void handle() throws Exception {
         // given
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final HandlerExecution handlerExecution = mock(HandlerExecution.class);
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        when(request.getAttribute("id")).thenReturn("gugu");
 
-        when(handlerExecution.handle(request, response)).thenReturn(new ModelAndView(new JspView("/index.html")));
+        HandlerExecution handlerExecution = getHandlerExecution();
 
         // when
         final ModelAndView result = handlerAdapter.handle(request, response, handlerExecution);
 
         // then
-        Assertions.assertAll(() -> {
-            assertThat(result.getView()).isInstanceOf(JspView.class);
-            assertThat(result.getView()).extracting("viewPath")
-                    .isEqualTo("/index.html");
+        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+
+        assertAll(() -> {
+            assertThat(result.getView()).isEqualTo(modelAndView.getView());
+            assertThat(result.getModel()).containsEntry("id", "gugu");
         });
     }
 }
