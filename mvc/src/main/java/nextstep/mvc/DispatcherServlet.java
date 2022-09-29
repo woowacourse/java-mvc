@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import nextstep.mvc.view.ModelAndView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,17 +41,18 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        final var handler = getHandler(request);
-        final var handlerAdapter = getHandlerAdapter(handler);
-        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        final var handler = handlerMappingRegistry.getHandler(request);
+        if (handler.isEmpty()) {
+            try {
+                response.setStatus(404);
+                response.sendRedirect("/404.jsp");
+                return;
+            } catch (IOException e) {
+                throw new RuntimeException("알맞은 핸들러가 없습니다.");
+            }
+        }
+        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
         modelAndView.render(request, response);
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        return handlerAdapterRegistry.getHandlerAdapter(handler);
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappingRegistry.getHandler(request);
     }
 }
