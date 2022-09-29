@@ -43,7 +43,7 @@ public class LoginController {
             }
 
             final var session = request.getSession();
-            session.setAttribute(UserSession.SESSION_KEY, user);
+            session.setAttribute(UserSession.SESSION_KEY, user.get());
             return Page.INDEX.getRedirectModelAndView();
         });
     }
