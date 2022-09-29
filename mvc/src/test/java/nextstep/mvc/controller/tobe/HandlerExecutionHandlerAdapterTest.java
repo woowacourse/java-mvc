@@ -9,12 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.asis.ForwardController;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
+import samples.TestObject;
 
 class HandlerExecutionHandlerAdapterTest {
 
@@ -37,12 +37,12 @@ class HandlerExecutionHandlerAdapterTest {
     @Test
     void HandlerExecutionAdapter는_HandlerExecution_클래스의_객체가_아니면_처리할_수_없다() {
         // given
-        final ForwardController forwardController = new ForwardController("/123.html");
+        final TestObject testObject = new TestObject("/123.html", "테스트 객체");
 
         final HandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
         // when
-        final boolean result = handlerAdapter.supports(forwardController);
+        final boolean result = handlerAdapter.supports(testObject);
 
         // then
         assertThat(result).isFalse();

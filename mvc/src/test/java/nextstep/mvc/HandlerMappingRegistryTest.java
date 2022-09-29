@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import javassist.NotFoundException;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import samples.TestController;
 class HandlerMappingRegistryTest {
 
     @Test
-    void 핸들러를_조회할_수_있다() throws NoSuchMethodException {
+    void 핸들러를_조회할_수_있다() throws NoSuchMethodException, NotFoundException {
         // given
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
