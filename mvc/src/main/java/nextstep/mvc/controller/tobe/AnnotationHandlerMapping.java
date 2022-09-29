@@ -36,7 +36,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final Method[] methods = clazz.getDeclaredMethods();
         Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(m -> mappingHandlerExecution(controller, m));
+                .forEach(it -> mappingHandlerExecution(controller, it));
     }
 
     private void mappingHandlerExecution(final Object controller, final Method method) {
