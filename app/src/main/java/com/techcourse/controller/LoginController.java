@@ -31,7 +31,7 @@ public class LoginController {
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView findLoginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
