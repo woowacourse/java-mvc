@@ -20,3 +20,7 @@
   - 리팩터링 미션하면서 ResgisterController를 어노테이션을 사용하는 방식으로 수정함.
   - 그 과정에서 입력한 Request에 따른 Handler가 검색되지 않는 에러가 발생함.
   - 해당 과정에서 문제점이 equals 메서드인지 의심이 되어 수정해보았음.
+
+## Level 3 - JsonView 구현
+- [ ] 리팩터링 이후 실패하는 테스트 코드 개선
+- [ ] JsonView 힌트 적용
