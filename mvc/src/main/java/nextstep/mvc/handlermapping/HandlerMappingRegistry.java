@@ -27,6 +27,8 @@ public class HandlerMappingRegistry {
             .map(handlerMapping -> handlerMapping.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException(
+                String.format("요청한 핸들러가 존재하지 않습니다. [%s %s]", request.getMethod(), request.getRequestURI())
+            ));
     }
 }

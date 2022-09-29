@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import fixture.RequestFixture;
 import fixture.ResponseFixture;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.handlermapping.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 import samples.TestAnnotationController;
@@ -22,8 +24,8 @@ class HandlerExecutionTest {
         final Method method = object.getClass().getMethods()[0];
         final HandlerExecution handlerExecution = new HandlerExecution(object, method);
 
-        final var request = RequestFixture.getRequest();
-        final var response = ResponseFixture.response();
+        final HttpServletRequest request = RequestFixture.getRequest();
+        final HttpServletResponse response = ResponseFixture.response();
 
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
