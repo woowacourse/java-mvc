@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
@@ -25,6 +24,6 @@ public class LoginViewController {
             })
             .orElse("/login.jsp");
 
-        return new ModelAndView(new JspView(jsp));
+        return new ModelAndView(jsp);
     }
 }
