@@ -45,14 +45,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void addHandlerExecutions(final Object controller, final Set<Method> methods) {
         for (Method method : methods) {
-            addHandlerExecutions(controller, method);
+            addHandlerExecution(controller, method);
         }
     }
 
-    private void addHandlerExecutions(final Object controller,
-                                      final Method method) {
+    private void addHandlerExecution(final Object controller,
+                                     final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        List<HandlerKey> keys = mapHandlerKeys(annotation.value(), annotation.method());
+        List<HandlerKey> keys = getHandlerKeys(annotation.value(), annotation.method());
         HandlerExecution value = new HandlerExecution(method, controller);
 
         for (HandlerKey key : keys) {
@@ -60,7 +60,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private List<HandlerKey> mapHandlerKeys(final String requestUrl, final RequestMethod[] requestMethods) {
+    private List<HandlerKey> getHandlerKeys(final String requestUrl, final RequestMethod[] requestMethods) {
         return Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(requestUrl, requestMethod))
                 .collect(Collectors.toList());

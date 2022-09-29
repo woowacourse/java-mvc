@@ -7,8 +7,7 @@ import nextstep.mvc.exception.HandlerAdapterNotFoundException;
 public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
-
-
+    
     public HandlerAdapterRegistry() {
         handlerAdapters = new ArrayList<>();
     }
