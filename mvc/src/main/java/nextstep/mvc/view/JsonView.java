@@ -11,17 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonView implements View {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final String EMPTY = "";
-
-    private final String body;
-
-    public JsonView() {
-        this(EMPTY);
-    }
-
-    public JsonView(final String body) {
-        this.body = body;
-    }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
