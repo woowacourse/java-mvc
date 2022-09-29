@@ -23,6 +23,10 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
+    public Object getObject(final String attributeName) {
+        return model.get(attributeName);
+    }
+
     public boolean hasViewImpl() {
         return view instanceof View;
     }
