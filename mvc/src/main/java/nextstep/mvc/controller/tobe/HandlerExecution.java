@@ -11,8 +11,15 @@ public class HandlerExecution {
     private final Object instance;
 
     public HandlerExecution(Method method, Object instance) {
+        checkSameInstance(method, instance);
         this.method = method;
         this.instance = instance;
+    }
+
+    private void checkSameInstance(Method method, Object instance) {
+        if (!method.getDeclaringClass().isInstance(instance)) {
+            throw new IllegalArgumentException("Instance must contain method");
+        }
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
