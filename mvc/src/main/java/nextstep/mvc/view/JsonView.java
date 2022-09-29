@@ -31,10 +31,4 @@ public class JsonView implements View {
         }
         writer.write(MAPPER.writeValueAsString(model));
     }
-
-    @Override
-    public void show(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        modelAndView.getView().render(modelAndView.getModel(), request, response);
-    }
 }
