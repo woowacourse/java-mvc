@@ -7,16 +7,18 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 
-@nextstep.web.annotation.Controller
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
     @RequestMapping(value = "/register", method = {GET, POST})
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (req.getMethod().equals(GET.name())) {
-            return "redirect:/register.jsp";
+            return new ModelAndView(new JspView("redirect:/register.jsp"));
         }
         final var user = new User(2,
                 req.getParameter("account"),
@@ -24,6 +26,6 @@ public class RegisterController implements Controller {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return "redirect:/index.jsp";
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }

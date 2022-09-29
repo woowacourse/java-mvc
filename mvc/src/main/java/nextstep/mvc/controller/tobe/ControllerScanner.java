@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import nextstep.mvc.controller.tobe.exception.NotSupportInstantiateControllerException;
 import nextstep.web.annotation.Controller;
+import nextstep.web.annotation.RestController;
 import org.reflections.Reflections;
 
 public class ControllerScanner {
@@ -20,7 +21,10 @@ public class ControllerScanner {
     }
 
     private Set<Class<?>> getAllControllers(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClazz.addAll(reflections.getTypesAnnotatedWith(RestController.class));
+
+        return controllerClazz;
     }
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllers) {
