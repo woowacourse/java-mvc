@@ -39,6 +39,6 @@ public class UserController {
 
     private boolean isNullAnyParameter(final String... parameters) {
         return Stream.of(parameters)
-                .anyMatch(Objects::nonNull);
+                .anyMatch(Objects::isNull);
     }
 }

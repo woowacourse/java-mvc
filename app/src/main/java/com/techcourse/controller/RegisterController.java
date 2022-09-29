@@ -39,6 +39,6 @@ public class RegisterController {
 
     private boolean isNullAnyParameter(final String... parameters) {
         return Stream.of(parameters)
-                .anyMatch(Objects::nonNull);
+                .anyMatch(Objects::isNull);
     }
 }

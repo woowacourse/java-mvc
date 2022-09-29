@@ -57,7 +57,7 @@ public class LoginController {
 
     private boolean isNullAnyParameter(final String... parameters) {
         return Stream.of(parameters)
-                .anyMatch(Objects::nonNull);
+                .anyMatch(Objects::isNull);
     }
 
     private ModelAndView ifUserLoggedIn(final HttpServletRequest request,
