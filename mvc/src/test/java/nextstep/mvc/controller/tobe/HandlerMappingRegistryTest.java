@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.exception.HandlerAdapterNotFoundException;
+import nextstep.mvc.exception.HandlerNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,15 +30,15 @@ class HandlerMappingRegistryTest {
     @DisplayName("적절한 Handler가 없을 경우 예외를 발생시킨다.")
     @Test
     void getHandler_HandlerNotFoundException() {
-        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        HttpServletRequest invalidRequest = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(invalidRequest.getRequestURI())
-                .thenReturn("/invalid-uri");
-        Mockito.when(invalidRequest.getMethod())
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        Mockito.when(request.getRequestURI())
+                .thenReturn("/invalid");
+        Mockito.when(request.getMethod())
                 .thenReturn("TRACE");
 
-        assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(invalidRequest))
-                .isInstanceOf(HandlerAdapterNotFoundException.class);
+        assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
+                .isInstanceOf(HandlerNotFoundException.class);
     }
 }
