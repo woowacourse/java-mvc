@@ -41,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.handle(request, response, handler);
             mv.render(request, response);
         } catch (Throwable e) {
@@ -53,9 +53,5 @@ public class DispatcherServlet extends HttpServlet {
     private Object getHandler(final HttpServletRequest request) {
         return handlerMappingRegistry.getHandler(request)
                 .orElseThrow();
-    }
-
-    private HandlerAdapter getHandlerAdapter(Object handler) {
-        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 }

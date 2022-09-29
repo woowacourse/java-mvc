@@ -1,6 +1,9 @@
 package nextstep.mvc.controller.tobe;
 
+import ch.qos.logback.core.html.IThrowableRenderer;
+import jakarta.el.MethodNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.annotation.AnnotationTypeMismatchException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,6 +53,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void setUpHandlerExecutions(Method method, Object instance) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            throw new MethodNotFoundException("No Exist Method with RequestMapping Annotation");
+        }
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);

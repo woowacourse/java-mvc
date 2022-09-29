@@ -25,15 +25,19 @@ public class ControllerScanner {
 
     private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
         Map<Class<?>, Object> controllerInstances = new HashMap<>();
+        for (Class<?> controller : controllers) {
+            Object instance = instantiateController(controller);
+            controllerInstances.put(controller, instance);
+        }
+        return controllerInstances;
+    }
+
+    private Object instantiateController(Class<?> controller) {
         try {
-            for (Class<?> controller : controllers) {
-                Object instance = controller.getConstructor().newInstance();
-                controllerInstances.put(controller, instance);
-            }
+            return controller.getConstructor().newInstance();
         } catch (Exception e) {
             log.warn("Failed to instantiate controllers");
             throw new RuntimeException(e);
         }
-        return controllerInstances;
     }
 }
