@@ -18,3 +18,8 @@
 - [x] HandlerAdpater를 이용하여 여러 타입의 핸들러를 실행시키게 한다.
 - [x] HandlerMappingRegistry를 이용하여 여러 타입의 핸들러 매핑을 관리한다.
 - [x] HandlerAdapterRegistry 이용하여 여러 타입의 핸들러 어댑터들을 관리한다.
+
+## 3단계 요구사항
+- [x] JspView를 구현하여 JspView가 렌더링하게 한다.
+- [x] JsonView를 구현해 Json 형식으로 요청이 들어올 때 바인딩한다.
+- [ ] 모든 컨트롤러를 어노테이션 기반으로 변경한다.
