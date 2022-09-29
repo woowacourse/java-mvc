@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-import nextstep.mvc.controller.tobe.HandlerExecution;
-import nextstep.mvc.controller.tobe.HandlerExecutionAdapter;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.controller.HandlerExecutionAdapter;
 import nextstep.mvc.exception.NotFoundHandlerAdapterException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

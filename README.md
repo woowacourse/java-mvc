@@ -34,3 +34,13 @@
     - 힌트를 보지않고 구현한 뒤 힌트를 보고 개선한다.
 - [x] `HandlerMappingRegistry` 구현
 - [x] `HandlerAdapter` 구현
+
+## 3단계 - `JSON View` 구현하기
+
+1. JspView 클래스를 구현한다.
+2. JsonView 클래스를 구현한다.
+3. Legacy MVC 제거하기
+
+- [x] 힌트에서 제공한 UserController 컨트롤러가 json 형태로 응답을 반환한다.
+- [x] 레거시 코드를 삭제하고 서버를 띄워도 정상 동작한다.
+

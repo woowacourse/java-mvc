@@ -6,8 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
-import nextstep.mvc.controller.tobe.HandlerExecution;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
+import nextstep.mvc.controller.HandlerExecution;
 import nextstep.mvc.exception.NotFoundHandlerException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
