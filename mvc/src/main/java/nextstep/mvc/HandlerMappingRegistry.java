@@ -3,6 +3,7 @@ package nextstep.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class HandlerMappingRegistry {
@@ -16,7 +17,7 @@ public class HandlerMappingRegistry {
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
-    
+
     public void add(final HandlerMapping handlerMapping) {
         this.handlerMappings.add(handlerMapping);
     }
@@ -26,6 +27,6 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(NoSuchElementException::new);
     }
 }

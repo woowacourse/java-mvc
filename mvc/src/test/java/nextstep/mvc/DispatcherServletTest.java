@@ -23,9 +23,9 @@ class DispatcherServletTest {
         // given
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
         final AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
         dispatcherServlet.addHandlerMapping(handlerMapping);
         dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        dispatcherServlet.init();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
@@ -48,9 +48,9 @@ class DispatcherServletTest {
         // given
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
         final TestManualHandlerMapping manualHandlerMapping = new TestManualHandlerMapping();
-        manualHandlerMapping.initialize();
         dispatcherServlet.addHandlerMapping(manualHandlerMapping);
         dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
+        dispatcherServlet.init();
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
