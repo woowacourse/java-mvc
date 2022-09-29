@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -27,7 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        ControllerScanner controllerScanner = ControllerScanner.from(basePackage);
+        ControllerScanner controllerScanner = ControllerScanner.of(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         for (Class<?> clazz : controllers.keySet()) {

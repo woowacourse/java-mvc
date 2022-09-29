@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -23,10 +23,7 @@ public class HandlerKey {
 
     @Override
     public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
+        return requestMethod + " " + url;
     }
 
     @Override

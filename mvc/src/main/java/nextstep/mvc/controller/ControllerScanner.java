@@ -1,4 +1,4 @@
-package nextstep.mvc.controller.tobe;
+package nextstep.mvc.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -15,7 +15,7 @@ public class ControllerScanner {
         this.reflections = reflections;
     }
 
-    public static ControllerScanner from(final Object... basePackage) {
+    public static ControllerScanner of(final Object... basePackage) {
         Reflections reflections = new Reflections(basePackage);
         return new ControllerScanner(reflections);
     }
