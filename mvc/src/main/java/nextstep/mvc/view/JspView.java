@@ -31,6 +31,5 @@ public class JspView implements View {
         });
 
         request.getRequestDispatcher(viewName).forward(request, response);
-
     }
 }

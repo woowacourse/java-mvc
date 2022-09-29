@@ -31,10 +31,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdaptors.addHandlerAdaptor(handlerAdapter);
     }
 
-    public void addHandlerAdaptors(final HandlerAdaptor handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
-    }
-
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws
         ServletException {
@@ -53,6 +49,7 @@ public class DispatcherServlet extends HttpServlet {
         HandlerAdaptor handlerAdapter = handlerAdaptors.getHandlerAdaptor(handler);
 
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
         View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
     }
