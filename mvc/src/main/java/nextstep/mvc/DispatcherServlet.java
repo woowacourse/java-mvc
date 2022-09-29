@@ -19,8 +19,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry(new ArrayList<>());
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>());
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -41,7 +41,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = handlerMappingRegistry.getHandler(request);
+            final var controller = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new ServletException("처리할 수 있는 handler를 찾지 못했습니다."));
             final HandlerAdapter adapter = handlerAdapterRegistry.getAdapter(controller);
             final ModelAndView mv = adapter.handle(request, response, controller);
             mv.render(request, response);

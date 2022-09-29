@@ -18,7 +18,7 @@ class HandlerMappingRegistryTest {
     @DisplayName("핸들러 매핑을 추가하고, 핸들러를 찾을 수 있다.")
     @Test
     void getHandler() throws ServletException {
-        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(new ArrayList<>());
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         handlerMappingRegistry.addHandlerMapping(
                 new AnnotationHandlerMapping(TestAnnotationController.class.getPackageName())
         );
@@ -28,6 +28,6 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThat(handlerMappingRegistry.getHandler(request)).isInstanceOf(HandlerExecution.class);
+        assertThat(handlerMappingRegistry.getHandler(request).get()).isInstanceOf(HandlerExecution.class);
     }
 }

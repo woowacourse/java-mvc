@@ -1,14 +1,15 @@
 package nextstep.mvc;
 
 import jakarta.servlet.ServletException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapterRegistry(final List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+    public HandlerAdapterRegistry() {
+        this.handlerAdapters = new ArrayList<>();
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {

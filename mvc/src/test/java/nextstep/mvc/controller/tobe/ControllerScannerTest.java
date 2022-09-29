@@ -13,7 +13,7 @@ class ControllerScannerTest {
     @Test
     void getAnnotationController() {
         final ControllerScanner scanner = new ControllerScanner(TestAnnotationController.class.getPackageName());
-        final Set<Class<?>> annotationController = scanner.getAnnotationController();
+        final Set<Class<?>> annotationController = scanner.getControllers().keySet();
 
         assertThat(annotationController.contains(TestAnnotationController.class)).isTrue();
     }

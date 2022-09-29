@@ -16,3 +16,8 @@
 - [X] ControllerScanner 클래스에서 @Controller가 붙은 클래스를 찾을 수 있다.
 - [X] HandlerMappingRegistry 클래스에서 HandlerMapping을 처리
 - [X] HandlerAdapterRegistry 클래스에서 HandlerAdapter를 처리
+
+### 3단계
+- [X] JSON View 구현
+- [X] UserController 컨트롤러가 json 형태로 응답을 반환한다.
+- [X] 레거시 컨트롤러를 제거해도 서버가 정상 동작한다.
