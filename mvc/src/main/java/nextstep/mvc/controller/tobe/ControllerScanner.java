@@ -24,7 +24,6 @@ public class ControllerScanner {
         final Set<Class<?>> controllerClazz = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClazz.addAll(reflections.getTypesAnnotatedWith(RestController.class));
 
-        //:todo 여기 까지 작업 했음 어뎁터 만들어서 restController 일 때 JsonView 반환 작업만 해주면 될 듯
         return controllerClazz;
     }
 
