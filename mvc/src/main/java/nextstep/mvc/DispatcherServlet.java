@@ -4,8 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.tobe.HandlerAdapterRegistry;
-import nextstep.mvc.controller.tobe.HandlerMappingRegistry;
+import nextstep.mvc.adapter.HandlerAdapter;
+import nextstep.mvc.adapter.HandlerAdapterRegistry;
+import nextstep.mvc.mapping.HandlerMapping;
+import nextstep.mvc.mapping.HandlerMappingRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

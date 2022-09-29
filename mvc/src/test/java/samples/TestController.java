@@ -2,6 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -9,6 +10,7 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import support.User;
 
 @Controller
 public class TestController {
@@ -28,6 +30,14 @@ public class TestController {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/get-json-test", method = RequestMethod.GET)
+    public ModelAndView jsonTest(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller get json method");
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", new User(1L, "gugu", "hkkang@woowahan.com"));
         return modelAndView;
     }
 }

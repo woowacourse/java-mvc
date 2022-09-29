@@ -36,8 +36,16 @@ public class User {
         return this.password.equals(password);
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getAccount() {
         return account;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public User assignId(long id) {
