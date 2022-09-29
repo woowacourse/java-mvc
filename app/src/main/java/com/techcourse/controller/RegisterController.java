@@ -4,8 +4,6 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.view.JspView;
-import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
@@ -19,18 +17,18 @@ public class RegisterController {
     private Long id = 2L;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(id++,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
         log.info("user = [ id: " + user.getId() + ", account: " + user.getAccount() + "]");
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return "redirect:/index.jsp";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView findRegisterView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return new ModelAndView(new JspView("/register.jsp"));
+    public String findRegisterView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return "/register.jsp";
     }
 }
