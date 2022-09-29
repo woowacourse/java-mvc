@@ -2,6 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.view.JsonView;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 import nextstep.web.annotation.Controller;
@@ -14,6 +15,13 @@ import org.slf4j.LoggerFactory;
 public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
+
+    @RequestMapping(value = "/json/test", method = RequestMethod.GET)
+    public ModelAndView jsonResponseTest(final HttpServletRequest request, final HttpServletResponse response) {
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("id", "json");
+        return modelAndView;
+    }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {

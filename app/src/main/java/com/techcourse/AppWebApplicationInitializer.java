@@ -26,7 +26,6 @@ public class AppWebApplicationInitializer implements WebApplicationInitializer {
 
     private DispatcherServlet getDispatcherServlet() {
         final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
         dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new HandlerExecutionAdapter());

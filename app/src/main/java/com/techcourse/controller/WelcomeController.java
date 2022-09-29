@@ -9,10 +9,10 @@ import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
 
 @Controller
-public class AnnotationController {
+public class WelcomeController {
 
-    @RequestMapping(value = "/annotation/login", method = RequestMethod.GET)
-    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("/login.jsp"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView welcome(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
