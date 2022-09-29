@@ -7,6 +7,7 @@ import nextstep.mvc.controller.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class LoginViewController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
