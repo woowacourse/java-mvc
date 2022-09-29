@@ -8,19 +8,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
-
+    private final Object declaredObject;
     private final Method method;
 
-    public HandlerExecution(Method method) {
+    public HandlerExecution(Object declaredObject, Method method) {
+        this.declaredObject = declaredObject;
         this.method = method;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Class<?> declaringClass = method.getDeclaringClass();
-            Object instance = declaringClass.getConstructor().newInstance();
-            return (ModelAndView) method.invoke(instance, request, response);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+            return (ModelAndView) method.invoke(declaredObject, request, response);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
