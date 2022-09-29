@@ -1,11 +1,8 @@
 package nextstep.mvc.controller.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.view.ModelAndView;
 
 public class HandlerAdapterRegistry {
     private final List<HandlerAdapter> handlerAdapters;
@@ -18,14 +15,10 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerMapping);
     }
 
-    public ModelAndView execute(Object handler, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return handlerAdapter.handle(request, response, handler);
-            }
-        }
-        return null;
+    public HandlerAdapter getAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(it -> it.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 handler adapter입니다."));
     }
-
 }
