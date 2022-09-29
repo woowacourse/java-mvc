@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import nextstep.mvc.exception.InstanceCreationFailException;
 
 public class ControllerScanner {
 
@@ -30,7 +31,7 @@ public class ControllerScanner {
         try {
             return clazz.getConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new InstanceCreationFailException();
         }
     }
 }
