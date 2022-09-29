@@ -38,7 +38,7 @@ class UserControllerTest {
         // then
         final User user = (User) modelAndView.getObject("user");
         assertThat(user.getAccount()).isEqualTo("gugu");
-        assertThat(testWriter.getWriteBuffer()).isEqualTo("{\"account\":\"gugu\"}");
+        assertThat(testWriter.getWriteBuffer()).isEqualTo("{\"id\":1,\"account\":\"gugu\",\"email\":\"hkkang@woowahan.com\"}");
     }
 
     private static class TestWriter extends Writer {
