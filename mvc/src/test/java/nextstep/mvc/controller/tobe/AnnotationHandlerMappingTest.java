@@ -6,6 +6,9 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.controller.AnnotationHandlerMapping;
+import nextstep.mvc.controller.HandlerExecution;
+import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +33,8 @@ class AnnotationHandlerMappingTest {
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
-        
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+
+        assertThat(((ModelAndView) modelAndView).getObject("id")).isEqualTo("gugu");
     }
 
     @Test
@@ -46,6 +49,6 @@ class AnnotationHandlerMappingTest {
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(((ModelAndView) modelAndView).getObject("id")).isEqualTo("gugu");
     }
 }
