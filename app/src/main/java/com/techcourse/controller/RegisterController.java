@@ -12,7 +12,7 @@ import nextstep.web.support.RequestMethod;
 @Controller
 public class RegisterController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView doGet(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView("/register.jsp");
     }
