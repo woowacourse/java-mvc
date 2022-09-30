@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.HandlerAdapter;
-import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
 
@@ -24,16 +23,6 @@ class AnnotationHandlerAdapterTest {
 
         boolean expected = handlerAdapter.supports(handlerExecution);
         assertThat(expected).isTrue();
-    }
-
-    @DisplayName("처리할 수 없는 핸들러일 경우 False를 반환한다.")
-    @Test
-    void isNotSupportedHandler() {
-        HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
-        Controller controller = mock(Controller.class);
-
-        boolean expected = handlerAdapter.supports(controller);
-        assertThat(expected).isFalse();
     }
 
     @DisplayName("handle메서드를 통해 ModelAndView를 반환한다.")

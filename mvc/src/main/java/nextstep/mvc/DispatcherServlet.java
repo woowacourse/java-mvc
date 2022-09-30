@@ -27,16 +27,16 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.initialize();
     }
 
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+    protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
