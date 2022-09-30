@@ -8,8 +8,6 @@ import static org.mockito.Mockito.mock;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import nextstep.mvc.controller.asis.Controller;
-import nextstep.mvc.controller.asis.ForwardController;
 import nextstep.mvc.view.ModelAndView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,7 @@ class AnnotationHandlerAdapterTest {
     void supports() {
         // given
         final HandlerExecution supportedHandler = new HandlerExecution(null, null);
-        final Controller notSupportedHandler = new ForwardController("");
+        final Object notSupportedHandler = new Object();
 
         // when
         final boolean notSupportExpected = adapter.supports(notSupportedHandler);
