@@ -10,10 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nextstep.mvc.HandlerMapping;
-import nextstep.web.annotation.Controller;
 import nextstep.web.annotation.RequestMapping;
 import nextstep.web.support.RequestMethod;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,20 +30,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Set<Class<?>> controllers = controllerScanner.getControllers();
 
         mapHandlerExecution(controllers);
     }
 
     private void mapHandlerExecution(final Set<Class<?>> controllers) {
         for (Class<?> controller : controllers) {
-            final List<Method> methods = getMethodsAnnotatedWithRequestMapping(controller);
+            final List<Method> methods = getMethods(controller);
             putHandlerExecution(methods, controller);
         }
     }
 
-    private List<Method> getMethodsAnnotatedWithRequestMapping(final Class<?> controller) {
+    private List<Method> getMethods(final Class<?> controller) {
         final Method[] declaredMethods = controller.getDeclaredMethods();
         return Arrays.stream(declaredMethods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
