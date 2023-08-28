@@ -1,10 +1,9 @@
 plugins {
     id "java"
     id "idea"
-    id "jacoco"
 }
 
-group "org.example"
+group "nextstep"
 version "1.0-SNAPSHOT"
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -15,17 +14,24 @@ repositories {
 }
 
 dependencies {
-    implementation project(":mvc")
-
+    implementation "org.reflections:reflections:0.10.2"
     implementation "org.apache.tomcat.embed:tomcat-embed-core:10.1.13"
     implementation "org.apache.tomcat.embed:tomcat-embed-jasper:10.1.13"
     implementation "ch.qos.logback:logback-classic:1.2.12"
     implementation "org.apache.commons:commons-lang3:3.13.0"
 
+    implementation "org.springframework:spring-context:5.3.29"
+
     testImplementation "org.assertj:assertj-core:3.24.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
     testImplementation "org.mockito:mockito-core:5.4.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.7.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
+    testImplementation 'com.h2database:h2:2.2.220'
+}
+
+test {
+    maxParallelForks 3
+    useJUnitPlatform()
 }
 
 idea {
@@ -37,6 +43,6 @@ idea {
 
 sourceSets {
     main {
-        java.destinationDirectory.set(file("src/main/webapp/WEB-INF/classes"))
+        java.outputDir = file('src/main/webapp/WEB-INF/classes')
     }
 }
