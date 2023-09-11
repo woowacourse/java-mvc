@@ -6,41 +6,46 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String BASE_PACKAGE = "com.techcourse";
 
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private ManualHandlerMapping manualHandlerMapping;
 
-    @Override
-    public void init() {
-        try {
-            annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        annotationHandlerMapping.initialize();
+    public DispatcherServlet() {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+    public void init() {
+        manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
+    }
+
+    @Override
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+        final String requestURI = request.getRequestURI();
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            HandlerExecution handler = annotationHandlerMapping.getHandler(request);
-            ModelAndView handle = handler.handle(request, response);
-            View view = handle.getView();
-            view.render(handle.getModel(), request, response);
+            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var viewName = controller.execute(request, response);
+            move(viewName, request, response);
         } catch (Throwable e) {
+            log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            return;
+        }
+
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
