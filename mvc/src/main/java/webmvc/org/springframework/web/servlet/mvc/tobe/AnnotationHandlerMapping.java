@@ -1,19 +1,19 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
 
@@ -27,47 +27,36 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackages);
-        Set<Class<?>> clazz = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> aClass : clazz) {
-            initializeControllerMappings(aClass);
-        }
-    }
-
-    private void initializeControllerMappings(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Method[] methods = clazz.getMethods();
-        Object object = clazz.getConstructor().newInstance();
-        processControllerMethods(methods, object);
-    }
-
-    private void processControllerMethods(Method[] methods, Object object) {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        Set<Method> methods = getRequestMappingMethods(controllers.keySet());
         for (Method method : methods) {
-            processMethodAnnotations(object, method, method.getAnnotations());
-
-        }
-    }
-
-    private void processMethodAnnotations(Object object, Method method, Annotation[] annotations) {
-        for (Annotation annotation : annotations) {
-            handleRequestMappingAnnotation(object, method, annotation);
-        }
-    }
-
-    private void handleRequestMappingAnnotation(Object object, Method method, Annotation annotation) {
-        if (annotation.annotationType().equals(RequestMapping.class)) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            processControllerMethods(object, method, requestMapping);
+            addHandleExecutions(controllers, method, requestMapping);
         }
     }
 
-    private void processControllerMethods(Object object, Method method, RequestMapping requestMapping) {
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(object, method);
+    private void addHandleExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
+        List<HandlerKey> handlerKeys = mapHandlerKey(requestMapping.value(), requestMapping.method());
+        for (HandlerKey handlerKey : handlerKeys) {
+            HandlerExecution handlerExecution = new HandlerExecution(controllers.get(method.getDeclaringClass()), method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
+    }
+
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
+        return classes.stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
+    private List<HandlerKey> mapHandlerKey(String path, RequestMethod[] methods) {
+        return Arrays.stream(methods)
+                .map(method -> new HandlerKey(path, method))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
