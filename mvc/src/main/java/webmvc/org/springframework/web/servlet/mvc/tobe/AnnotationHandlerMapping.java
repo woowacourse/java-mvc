@@ -1,11 +1,11 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +21,16 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        HandlerKey handlerKey = new HandlerKey("/get-test", RequestMethod.GET);
+        HandlerKey handlerKey1 = new HandlerKey("/post-test", RequestMethod.POST);
+        handlerExecutions.put(handlerKey, new HandlerExecution());
+        handlerExecutions.put(handlerKey1, new HandlerExecution());
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        String method = request.getMethod();
+        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
+        return handlerExecutions.get(handlerKey);
     }
 }
