@@ -17,7 +17,7 @@ public class HandlerAdapterRegistry {
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        this.handlerAdapters.add(handlerAdapter);
+        handlerAdapters.add(handlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
