@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,27 @@ class AnnotationHandlerMappingTest {
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+    }
+
+    @Test
+    void methodDuplicationException_case1() {
+        // given & when & then
+        AnnotationHandlerMapping duplicatedHandlerMapping = new AnnotationHandlerMapping(
+            "samples",
+            "duplicate.case1");
+        assertThatThrownBy(() -> duplicatedHandlerMapping.initialize())
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Duplicated HandlerKey");
+    }
+
+    @Test
+    void methodDuplicationException_case2() {
+        // given & when & then
+        AnnotationHandlerMapping duplicatedHandlerMapping = new AnnotationHandlerMapping(
+            "duplicate.case2");
+        assertThatThrownBy(() -> duplicatedHandlerMapping.initialize())
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Duplicated HandlerKey");
     }
 
     @Test
