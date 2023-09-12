@@ -4,6 +4,6 @@
 
 ### 1 단계 : @MVC Framework
 
-- [ ] AnnotationHandlerMappingTest 성공하기
-  - [ ] Map<HandlerKey, HandlerExecution> handlerExecutions 에 TestController 메서드 추가하기
-  - [ ] HandlerExecution 에서 method.invoke() 호출
+- [x] AnnotationHandlerMappingTest 성공하기
+  - [x] Map<HandlerKey, HandlerExecution> handlerExecutions 에 TestController 메서드 추가하기
+  - [x] HandlerExecution 에서 method.invoke() 호출
