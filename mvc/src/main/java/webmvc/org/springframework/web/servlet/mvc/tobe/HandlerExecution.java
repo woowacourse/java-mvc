@@ -19,12 +19,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
-        try {
-            return (ModelAndView) method.invoke(controller, request, response);
-        } catch (final Exception e) {
-            log.warn("handle failed", e);
-            throw new IllegalArgumentException();
-        }
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return (ModelAndView) method.invoke(controller, request, response);
     }
 }

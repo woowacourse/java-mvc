@@ -17,7 +17,7 @@ import samples.TestController;
 class HandlerExecutionTest {
 
     @Test
-    void 메서드를_호출한다() throws NoSuchMethodException {
+    void 메서드를_호출한다() throws Exception {
         // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
