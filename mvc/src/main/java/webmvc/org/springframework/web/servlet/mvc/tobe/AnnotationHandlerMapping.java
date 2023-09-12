@@ -38,10 +38,17 @@ public class AnnotationHandlerMapping {
 
 	private void mapController(final Class<?> clazz) {
 		Method[] methods = clazz.getDeclaredMethods();
-		Object controller = createControllerInstance(clazz);
 		for (final Method method : methods) {
-			mapControllerMethod(controller, method);
+			mapControllerMethod(createControllerInstance(clazz), method, getRequestPath(clazz));
 		}
+	}
+
+	public String getRequestPath(final Class<?> clazz) {
+		RequestMapping requestMappingAnnotation = clazz.getAnnotation(RequestMapping.class);
+		if (requestMappingAnnotation == null) {
+			return "";
+		}
+		return requestMappingAnnotation.value();
 	}
 
 	private Object createControllerInstance(final Class<?> clazz) {
@@ -52,13 +59,13 @@ public class AnnotationHandlerMapping {
 		}
 	}
 
-	private void mapControllerMethod(final Object controller, final Method method) {
+	private void mapControllerMethod(final Object controller, final Method method, final String requestPath) {
 		RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 		if (requestMapping == null) {
 			return;
 		}
 		RequestMethod[] requestMethods = requestMapping.method();
-		String url = requestMapping.value();
+		String url = requestPath + requestMapping.value();
 		for (final RequestMethod requestMethod : requestMethods) {
 			addHandlerExecution(controller, method, url, requestMethod);
 		}
