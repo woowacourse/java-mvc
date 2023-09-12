@@ -13,4 +13,4 @@
 - [x] HandlerMapping 리스트를 가지고 있는 HandlerMappingRegistry 추가
 - [x] HandlerExecution 메서드를 호출하는 HandlerExecutorHandlerAdapter 추가
 - [x] Controller 메서드를 호출하는 ControllerHandlerAdapter 추가
-- [ ] HandlerAdapter를 리스트를 가지고 있는 HandlerAdapterRegistry 추가
+- [x] HandlerAdapter를 리스트를 가지고 있는 HandlerAdapterRegistry 추가
