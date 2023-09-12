@@ -3,20 +3,15 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class AnnotationHandlerMapping {
-
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -37,19 +32,21 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerMethods(final Class<?> clazz) {
-        Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> registerMethod(clazz, method));
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                registerMethod(clazz, method);
+            }
+        }
     }
 
     private void registerMethod(final Class<?> clazz, final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String value = requestMapping.value();
-        Arrays.stream(requestMapping.method())
-                .forEach(requestMethod -> handlerExecutions.put(
-                        new HandlerKey(value, requestMethod),
-                        new HandlerExecution(clazz, method))
-                );
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            handlerExecutions.put(
+                    new HandlerKey(value, requestMethod),
+                    new HandlerExecution(clazz, method));
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -58,6 +55,6 @@ public class AnnotationHandlerMapping {
                 .filter(handlerKey::equals)
                 .map(handlerExecutions::get)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("안돼"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 요청입니다."));
     }
 }
