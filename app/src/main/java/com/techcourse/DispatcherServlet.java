@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.HandlerExecutor;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.view.JspView;
@@ -22,10 +23,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
@@ -41,8 +44,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow();
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
             move(modelAndView, request, response);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
