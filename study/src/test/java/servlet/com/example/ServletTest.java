@@ -9,6 +9,11 @@ class ServletTest {
 
     private final String WEBAPP_DIR_LOCATION = "src/main/webapp/";
 
+    /**
+     * tomcat start 후에 init()
+     * 요청을 보낼 때 doFilter() -> service() 호출
+     * tomcat stop 후에 destory()
+     */
     @Test
     void testSharedCounter() {
         // 톰캣 서버 시작
@@ -27,8 +32,8 @@ class ServletTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
-        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까? shared
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -49,7 +54,7 @@ class ServletTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
-        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까? local var
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
