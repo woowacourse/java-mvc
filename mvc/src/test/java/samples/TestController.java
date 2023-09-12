@@ -31,4 +31,12 @@ public class TestController {
 		modelAndView.addObject("id", request.getAttribute("id"));
 		return modelAndView;
 	}
+
+	@RequestMapping(value = "/update-test", method = {RequestMethod.PUT, RequestMethod.PATCH})
+	public ModelAndView update(final HttpServletRequest request, final HttpServletResponse response) {
+		log.info("test controller update method");
+		final var modelAndView = new ModelAndView(new JspView(""));
+		modelAndView.addObject("id", request.getAttribute("id"));
+		return modelAndView;
+	}
 }

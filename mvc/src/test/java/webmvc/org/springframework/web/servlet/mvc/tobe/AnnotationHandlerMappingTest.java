@@ -50,6 +50,36 @@ class AnnotationHandlerMappingTest {
 	}
 
 	@Test
+	void put() throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
+
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/update-test");
+		when(request.getMethod()).thenReturn("PUT");
+
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+		final var modelAndView = handlerExecution.handle(request, response);
+
+		assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+	}
+
+	@Test
+	void patch() throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
+
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/update-test");
+		when(request.getMethod()).thenReturn("PATCH");
+
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+		final var modelAndView = handlerExecution.handle(request, response);
+
+		assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+	}
+
+	@Test
 	void getWithClassRequestMapping() throws Exception {
 		final var request = mock(HttpServletRequest.class);
 		final var response = mock(HttpServletResponse.class);
