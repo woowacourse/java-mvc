@@ -3,9 +3,13 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
+
+    private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
 
     private final Object controller;
     private final Method method;
@@ -15,7 +19,12 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(controller, request, response);
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            return (ModelAndView) method.invoke(controller, request, response);
+        } catch (final Exception e) {
+            log.warn("handle failed", e);
+            throw new IllegalArgumentException();
+        }
     }
 }
