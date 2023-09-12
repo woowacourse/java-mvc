@@ -7,7 +7,6 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,7 +27,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    @Override
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         ControllerScanner controllerScanner = new ControllerScanner(basePackages);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
@@ -42,7 +42,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandleExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
         List<HandlerKey> handlerKeys = mapHandlerKey(requestMapping.value(), requestMapping.method());
         for (HandlerKey handlerKey : handlerKeys) {
-            HandlerExecution handlerExecution = new HandlerExecution(controllers.get(method.getDeclaringClass()), method);
+            Object controller = controllers.get(method.getDeclaringClass());
+            log.info("Path : {}, Controller : {}", handlerKey, controller);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }

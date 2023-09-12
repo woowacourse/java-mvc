@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class HandlerMappingRegistry {
@@ -25,6 +26,12 @@ public class HandlerMappingRegistry {
     public Optional<Object> getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .findAny();
+                .filter(Objects::nonNull)
+                .findFirst();
+    }
+
+    public void initialize() {
+        handlerMappings.stream()
+                .forEach(HandlerMapping::initialize);
     }
 }
