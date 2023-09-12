@@ -28,7 +28,7 @@ class HandlerExecutionHandlerAdapterTest {
     }
 
     @Test
-    void 핸들러를_실행시킨다() throws NoSuchMethodException {
+    void 핸들러를_실행시킨다() throws Exception {
         // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
