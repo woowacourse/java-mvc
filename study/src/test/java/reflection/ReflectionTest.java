@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Date;
@@ -120,7 +121,7 @@ class ReflectionTest {
     }
 
     @Test
-    void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
+    void givenClassField_whenSetsAndGetsValue_thenCorrect() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         final Class<?> studentClass = Student.class;
         final Student student = (Student) studentClass.getConstructor().newInstance();
         final Field field = studentClass.getDeclaredField("age");
