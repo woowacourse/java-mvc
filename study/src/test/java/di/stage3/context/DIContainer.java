@@ -1,5 +1,6 @@
 package di.stage3.context;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -10,11 +11,16 @@ class DIContainer {
     private final Set<Object> beans;
 
     public DIContainer(final Set<Class<?>> classes) {
-        this.beans = Set.of();
+        this.beans = Set.of(classes.toArray());
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
+        for (Object bean : beans) {
+            if (aClass.isAssignableFrom(bean.getClass())) {
+                return (T) bean;
+            }
+        }
         return null;
     }
 }
