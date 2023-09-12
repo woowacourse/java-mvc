@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
-class Junit4TestRunner extends JunitTest {
+class Junit4TestRunner extends OutputStreamTestSetup {
 
     @Test
     void run() throws Exception {

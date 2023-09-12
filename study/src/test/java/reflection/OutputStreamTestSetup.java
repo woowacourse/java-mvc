@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import org.junit.jupiter.api.BeforeEach;
 
-public abstract class JunitTest {
+public abstract class OutputStreamTestSetup {
 
     protected OutputStream out;
 

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
-class Junit3TestRunner extends JunitTest {
+class Junit3TestRunner extends OutputStreamTestSetup {
 
     @Test
     void run() throws Exception {
