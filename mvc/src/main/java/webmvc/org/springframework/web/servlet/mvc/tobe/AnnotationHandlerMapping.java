@@ -1,13 +1,16 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import static web.org.springframework.web.bind.annotation.RequestMethod.GET;
-import static web.org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.reflections.util.ReflectionUtilsPredicates.withAnnotation;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
@@ -22,10 +25,24 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
+    public void initialize() throws Exception {
         log.info("Initialized AnnotationHandlerMapping!");
-        handlerExecutions.put(new HandlerKey("/get-test", GET), new HandlerExecution());
-        handlerExecutions.put(new HandlerKey("/post-test", POST), new HandlerExecution());
+        ControllerScanner controllerScanner = ControllerScanner.from(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.controllers();
+        for (Class<?> clazz : controllers.keySet()) {
+            putExecutionBy(clazz, controllers.get(clazz));
+        }
+    }
+
+    private void putExecutionBy(Class<?> clazz, Object controller) {
+        Set<Method> methods = ReflectionUtils.getMethods(clazz, withAnnotation(RequestMapping.class));
+        for (Method method : methods) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            handlerExecutions.put(
+                    new HandlerKey(annotation.value(), annotation.method()),
+                    new HandlerExecution(controller, method)
+            );
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {

@@ -1,5 +1,7 @@
 package web.org.springframework.web.bind.annotation;
 
+import static web.org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,5 +12,5 @@ import java.lang.annotation.Target;
 public @interface RequestMapping {
     String value() default "";
 
-    RequestMethod[] method() default {};
+    RequestMethod method() default GET;
 }
