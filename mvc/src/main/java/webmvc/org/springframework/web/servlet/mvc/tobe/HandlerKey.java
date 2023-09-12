@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import jakarta.servlet.http.HttpServletRequest;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Objects;
@@ -12,6 +13,11 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public boolean canHandle(HttpServletRequest httpServletRequest){
+        return httpServletRequest.getMethod().equals(requestMethod.name()) &&
+            httpServletRequest.getRequestURI().equals(url);
     }
 
     @Override
