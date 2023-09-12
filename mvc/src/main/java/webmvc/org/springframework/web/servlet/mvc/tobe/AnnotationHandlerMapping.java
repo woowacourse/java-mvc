@@ -50,13 +50,17 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
-        Object instance = controllers.get(method.getDeclaringClass());
-        HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+        HandlerExecution handlerExecution = mapHandlerExecution(controllers, method);
         RequestMethod[] requestMethods = requestMapping.method();
         List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMethods);
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
+    }
+
+    private HandlerExecution mapHandlerExecution(Map<Class<?>, Object> controllers, Method method) {
+        Object instance = controllers.get(method.getDeclaringClass());
+        return new HandlerExecution(instance, method);
     }
 
     private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
