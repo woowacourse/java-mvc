@@ -14,18 +14,20 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private final String viewName;
+
     public JspView(final String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
-
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
-        // todo
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
