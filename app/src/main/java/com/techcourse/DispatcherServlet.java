@@ -11,10 +11,9 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.HandlerExecutor;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -24,16 +23,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
-        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
@@ -48,9 +45,7 @@ public class DispatcherServlet extends HttpServlet {
                 response.setStatus(404);
                 return;
             }
-            final Object getHandlers = handler.get();
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(getHandlers);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, getHandlers);
+            final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -72,8 +67,16 @@ public class DispatcherServlet extends HttpServlet {
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
-//        3 단계
+//        3 단계 - 현재는 임시로 view에 getViewName 사용
 //        final View view = modelAndView.getView();
 //        view.render(modelAndView.getModel(), request, response);
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 }
