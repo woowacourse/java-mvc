@@ -47,47 +47,14 @@ public class AnnotationHandlerMapping {
     }
 
     public void registerFromBasePackage(String basePackage) {
-        Set<Class<?>> handlers = scanAnnotatedHandler(basePackage);
-        for (Class<?> handler : handlers) {
-            Object instance = getInstance(handler);
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+
+        for (Class<?> handler : controllers.keySet()) {
+            Object instance = controllers.get(handler);
             List<Method> methods = getRequestMappingMethods(handler);
             register(instance, methods);
         }
-    }
-
-    private Set<Class<?>> scanAnnotatedHandler(String basePackage) {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private Object getInstance(Class<?> clazz) {
-        try {
-            Constructor<?> noArgumentConstructor = getNoArgumentConstructor(clazz);
-            noArgumentConstructor.setAccessible(true);
-            return noArgumentConstructor.newInstance();
-        } catch (IllegalAccessException e) {
-            log.error("Constructor is not accessible.");
-        } catch (IllegalArgumentException e) {
-            log.error("Type of Arguments doesn't matched.");
-        } catch (InstantiationException e) {
-            log.error("The instance is abstract class.");
-        } catch (InvocationTargetException e) {
-            log.error("Exception occurs during constructing.");
-        } catch (ExceptionInInitializerError error) {
-            log.error("Initializing fails.");
-        }
-        throw new IllegalArgumentException("Getting instance using constructor fails.");
-    }
-
-    private Constructor<?> getNoArgumentConstructor(Class<?> clazz) {
-        Constructor<?>[] declaredConstructors = clazz.getDeclaredConstructors();
-        for (Constructor<?> declaredConstructor : declaredConstructors) {
-            int parameterCount = declaredConstructor.getParameterCount();
-            if (parameterCount == 0) {
-                return declaredConstructor;
-            }
-        }
-        throw new IllegalArgumentException("Handler doesn't have no argument constructor");
     }
 
     private List<Method> getRequestMappingMethods(Class<?> handler) {
