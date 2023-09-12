@@ -7,4 +7,4 @@
 ### 2단계 - 점진적인 리팩터링
 
 [ ] RegisterController를 어노테이션 기반으로 변경해도 동작하도록 만들기
-[ ] 컨트롤러를 찾아서 인스턴스 생성하는 역할을 담당하는 ControllerScanner 추가
+[x] 컨트롤러를 찾아서 인스턴스 생성하는 역할을 담당하는 ControllerScanner 추가
