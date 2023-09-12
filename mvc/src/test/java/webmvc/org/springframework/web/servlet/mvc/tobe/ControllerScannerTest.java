@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class ControllerScannerTest {
 
     @Test
-    void 패키지_내부의_컨트롤러를_모두_반환한다() throws Exception {
+    void 패키지_내부의_컨트롤러를_모두_반환한다() {
         // given
         final String basePackage = "samples";
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
