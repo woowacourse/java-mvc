@@ -5,6 +5,7 @@ import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -30,6 +31,11 @@ public class ManualHandlerMapping implements HandlerMapping {
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest httpServletRequest) {
+        return getHandler(httpServletRequest.getRequestURI());
     }
 
     public Controller getHandler(final String requestURI) {

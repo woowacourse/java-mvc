@@ -10,3 +10,4 @@
 [x] 컨트롤러를 찾아서 인스턴스 생성하는 역할을 담당하는 ControllerScanner 추가
 [x] 기존의 AnnotationHandlerMapping 클래스에 ControllerScanner 사용하도록 적용
 [x] HandlerMapping 인터페이스 추가
+[x] HandlerMapping 리스트를 가지고 있는 HandlerMappingRegistry 추가

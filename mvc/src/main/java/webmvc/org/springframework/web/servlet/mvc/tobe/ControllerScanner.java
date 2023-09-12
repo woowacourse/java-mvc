@@ -6,8 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControllerScanner {
+
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Reflections reflections;
 
@@ -15,9 +19,14 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-    public Map<Class<?>, Object> getControllers() throws Exception {
+    public Map<Class<?>, Object> getControllers() {
         final Set<Class<?>> types = reflections.getTypesAnnotatedWith(Controller.class);
-        return instantiateControllers(types);
+        try {
+            return instantiateControllers(types);
+        } catch (final Exception e) {
+            log.error("Instantiate Failed!", e);
+            throw new IllegalStateException();
+        }
     }
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> types) throws Exception {
