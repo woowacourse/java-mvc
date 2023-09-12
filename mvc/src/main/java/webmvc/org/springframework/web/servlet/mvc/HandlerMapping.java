@@ -1,8 +1,10 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
-public interface HandlerMapping<T> {
+import jakarta.servlet.http.HttpServletRequest;
+
+public interface HandlerMapping {
 
     void initialize();
 
-    Object getHandler(final T target);
+    Object getHandler(final HttpServletRequest target);
 }

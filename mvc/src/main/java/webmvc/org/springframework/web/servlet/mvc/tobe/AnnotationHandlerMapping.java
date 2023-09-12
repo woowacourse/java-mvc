@@ -16,7 +16,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
-public class AnnotationHandlerMapping implements HandlerMapping<HttpServletRequest> {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
