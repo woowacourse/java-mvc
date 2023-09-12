@@ -12,8 +12,8 @@ public class ControllerScanner {
 
     private final Reflections reflections;
 
-    public ControllerScanner(Object[] basePacages) {
-        this.reflections = new Reflections(basePacages);
+    public ControllerScanner(Object... basePackages) {
+        this.reflections = new Reflections(basePackages);
     }
 
     public Map<Class<?>, Object> getControllers() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {

@@ -12,7 +12,7 @@ class ControllerScannerTest {
 
     @Test
     void Controller_어노테이션이_붙은_클래스를_반환한다() throws Exception {
-        final var controllerScanner = new ControllerScanner(new Object[]{"samples"});
+        final var controllerScanner = new ControllerScanner("samples");
 
         var controllers = controllerScanner.getControllers();
 
@@ -21,7 +21,7 @@ class ControllerScannerTest {
 
     @Test
     void Controller_어노테이션이_없는_클래스를_반환하지_않는다() throws Exception {
-        final var controllerScanner = new ControllerScanner(new Object[]{"webmvc.org.springframework.web.servlet.mvc.tobe"});
+        final var controllerScanner = new ControllerScanner("webmvc.org.springframework.web.servlet.mvc.tobe");
 
         var controllers = controllerScanner.getControllers();
 
