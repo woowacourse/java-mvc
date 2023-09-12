@@ -1,9 +1,9 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class AnnotationHandlerMapping {
 
@@ -30,7 +29,6 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-
         try {
             final List<Class<?>> controllers = new ArrayList<>();
             for (Object path : basePackage) {
@@ -58,7 +56,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private static File[] 주어진_경로에_있는_파일들_가져오기(final String 경로) throws URISyntaxException {
+    private File[] 주어진_경로에_있는_파일들_가져오기(final String 경로) throws URISyntaxException {
         final String packagePath = 경로.replace('.', '/');
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final File 패키지 = new File(classLoader.getResource(packagePath).toURI());
@@ -76,7 +74,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private static Class<?> 클래스로_바꾸기(final String 파일) throws ClassNotFoundException {
+    private Class<?> 클래스로_바꾸기(final String 파일) throws ClassNotFoundException {
         String className = 파일.replace(".class", "");
         return Class.forName(className);
     }
@@ -96,18 +94,15 @@ public class AnnotationHandlerMapping {
             final Class<?> controller,
             final Method 메서드,
             final RequestMapping requestMapping,
-            final RequestMethod requestMethod
-    ) {
-        final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-        final HandlerExecution handlerExecution = new HandlerExecution() {
-            @Override
-            public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
-                return (ModelAndView) 메서드.invoke(controller.getDeclaredConstructor().newInstance(), request, response);
-            }
-        };
-
-        handlerExecutions.put(handlerKey, handlerExecution);
+            final RequestMethod requestMethod) {
+        try {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(
+                    controller.getDeclaredConstructor().newInstance(), 메서드);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
