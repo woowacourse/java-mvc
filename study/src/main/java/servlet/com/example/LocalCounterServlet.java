@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "localCounterServlet", urlPatterns = "/local-counter")
+    @WebServlet(name = "localCounterServlet", urlPatterns = "/local-counter")
 public class LocalCounterServlet extends HttpServlet {
 
     @Override
