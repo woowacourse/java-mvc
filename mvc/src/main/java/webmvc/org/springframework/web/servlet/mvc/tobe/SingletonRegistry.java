@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SingletonRegistry {
+public final class SingletonRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(SingletonRegistry.class);
     private static final Map<Class<?>, Object> singletonObjects = new ConcurrentHashMap<>();
