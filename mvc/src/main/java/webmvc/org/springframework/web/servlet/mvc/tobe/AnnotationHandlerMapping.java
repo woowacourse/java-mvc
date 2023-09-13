@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class AnnotationHandlerMapping {
@@ -64,6 +66,15 @@ public class AnnotationHandlerMapping {
             .collect(Collectors.toList());
     }
 
+    private Map<HandlerKey, HandlerExecution> extractHandler(String targetPackage) {
+        Reflections reflections = new Reflections(targetPackage);
+        return reflections.getTypesAnnotatedWith(Controller.class).stream()
+            .map(this::extractHandlerFromClass)
+            .reduce(
+                new HashMap<>(),
+                migrateHandler());
+    }
+
     private void checkDuplication(Map<HandlerKey, HandlerExecution> originHandlers,
                                   Map<HandlerKey, HandlerExecution> newHandlers) {
         Set<HandlerKey> duplicatedHandlerKeys = new HashSet<>(originHandlers.keySet());
@@ -73,15 +84,6 @@ public class AnnotationHandlerMapping {
             log.error("duplication handler : {}", duplicatedHandlerKey);
             throw new IllegalArgumentException("Duplicated HandlerKey");
         }
-    }
-
-    private Map<HandlerKey, HandlerExecution> extractHandler(String targetPackage) {
-        Reflections reflections = new Reflections(targetPackage);
-        return reflections.getTypesAnnotatedWith(Controller.class).stream()
-            .map(this::extractHandlerFromClass)
-            .reduce(
-                new HashMap<>(),
-                migrateHandler());
     }
 
     private Map<HandlerKey, HandlerExecution> extractHandlerFromClass(Class<?> targetClass) {
@@ -95,32 +97,6 @@ public class AnnotationHandlerMapping {
             );
     }
 
-    private Map<HandlerKey, HandlerExecution> extractHandlerFromMethod(Method method,
-                                                                       Object handler) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        return Arrays.stream(requestMapping.method())
-            .map(requestMethod -> {
-                Map<HandlerKey, HandlerExecution> extractedHandlerMapping = new HashMap<>();
-                extractedHandlerMapping.put(
-                    new HandlerKey(requestMapping.value(), requestMethod),
-                    new HandlerExecutionImpl(handler, method)
-                );
-                return extractedHandlerMapping;
-            })
-            .reduce(
-                new HashMap<>(),
-                migrateHandler()
-            );
-    }
-
-    private BinaryOperator<Map<HandlerKey, HandlerExecution>> migrateHandler() {
-        return (extractedHandler, extractingController) -> {
-            checkDuplication(extractedHandler, extractingController);
-            extractedHandler.putAll(extractingController);
-            return extractedHandler;
-        };
-    }
-
     private Object makeClass(Class<?> targetClass) {
         try {
             return targetClass.getDeclaredConstructor().newInstance();
@@ -132,6 +108,37 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    private Map<HandlerKey, HandlerExecution> extractHandlerFromMethod(Method method,
+                                                                       Object handler) {
+        return Arrays.stream(method.getAnnotation(RequestMapping.class).method())
+            .map(makeHandler(method, handler, method.getAnnotation(RequestMapping.class)))
+            .reduce(
+                new HashMap<>(),
+                migrateHandler()
+            );
+    }
+
+    private Function<RequestMethod, Map<HandlerKey, HandlerExecution>> makeHandler(Method method,
+                                                                                   Object handler,
+                                                                                   RequestMapping requestMapping) {
+        return requestMethod -> {
+            Map<HandlerKey, HandlerExecution> extractedHandlerMapping = new HashMap<>();
+            extractedHandlerMapping.put(
+                new HandlerKey(requestMapping.value(), requestMethod),
+                new HandlerExecution(handler, method)
+            );
+            return extractedHandlerMapping;
+        };
+    }
+
+    private BinaryOperator<Map<HandlerKey, HandlerExecution>> migrateHandler() {
+        return (extractedHandler, extractingController) -> {
+            checkDuplication(extractedHandler, extractingController);
+            extractedHandler.putAll(extractingController);
+            return extractedHandler;
+        };
+    }
+
     private boolean haveRequestMapping(Method method) {
         return Arrays.stream(method.getDeclaredAnnotations())
             .anyMatch(RequestMapping.class::isInstance);
@@ -141,26 +148,7 @@ public class AnnotationHandlerMapping {
         Optional<HandlerKey> findHandler = handlerExecutions.keySet().stream()
             .filter(handlerKey -> handlerKey.canHandle(request))
             .findAny();
-        if (findHandler.isPresent()) {
-            return handlerExecutions.get(findHandler.get());
-        }
-        return null;
-    }
-
-    private class HandlerExecutionImpl extends HandlerExecution {
-
-        private final Object handler;
-        private final Method handlerMethod;
-
-        private HandlerExecutionImpl(Object handler, Method handlerMethod) {
-            this.handler = handler;
-            this.handlerMethod = handlerMethod;
-        }
-
-        @Override
-        public ModelAndView handle(HttpServletRequest request,
-                                   HttpServletResponse response) throws Exception {
-            return (ModelAndView) handlerMethod.invoke(handler, request, response);
-        }
+        return findHandler.map(handlerExecutions::get)
+            .orElse(null);
     }
 }
