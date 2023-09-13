@@ -38,14 +38,14 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        handlerExecutions.putAll(initHandlerExecutions(controllers));
+        handlerExecutions.putAll(addHandlerExecution(controllers));
     }
 
-    private Map<HandlerKey, HandlerExecution> initHandlerExecutions(Set<Class<?>> controllers) {
+    private Map<HandlerKey, HandlerExecution> addHandlerExecution(Set<Class<?>> controllers) {
         return controllers.stream().map(Class::getDeclaredMethods)
                 .flatMap(Arrays::stream)
                 .filter(this::isRequestMappingAnnotation)
-                .flatMap(this::addHandlerExecution)
+                .flatMap(this::createHandlerExecution)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
@@ -53,7 +53,7 @@ public class AnnotationHandlerMapping {
         return method.isAnnotationPresent(RequestMapping.class);
     }
 
-    private Stream<Entry<HandlerKey, HandlerExecution>> addHandlerExecution(Method method) {
+    private Stream<Entry<HandlerKey, HandlerExecution>> createHandlerExecution(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] httpMethods = requestMapping.method();
         Object instance = getInstance(method.getDeclaringClass());
