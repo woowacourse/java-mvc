@@ -1,5 +1,8 @@
 package reflection;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
@@ -8,6 +11,20 @@ class Junit4TestRunner {
     void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        final var methods = clazz.getDeclaredMethods();
+        final var constructor = clazz.getDeclaredConstructor();
+        for (Method method : methods) {
+            invokeMethodsAnnotatedMyTest(constructor, method);
+        }
     }
+
+    private void invokeMethodsAnnotatedMyTest(Constructor<Junit4Test> constructor, Method method)
+            throws IllegalAccessException,
+            InvocationTargetException,
+            InstantiationException {
+        if (method.isAnnotationPresent(MyTest.class)) {
+            method.invoke(constructor.newInstance());
+        }
+    }
+    
 }
