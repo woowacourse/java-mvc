@@ -1,8 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import web.org.springframework.web.bind.annotation.RequestMethod;
-
 import java.util.Objects;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
 
@@ -10,24 +9,36 @@ public class HandlerKey {
     private final RequestMethod requestMethod;
 
     public HandlerKey(final String url, final RequestMethod requestMethod) {
+        validateUrl(url);
+        validateRequestMethod(requestMethod);
+
         this.url = url;
         this.requestMethod = requestMethod;
     }
 
-    @Override
-    public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
+    private void validateUrl(final String url) {
+        if (url == null || url.isEmpty() || url.isBlank()) {
+            throw new IllegalArgumentException("유효하지 않은 URL 입니다.");
+        }
+    }
+
+    private void validateRequestMethod(final RequestMethod requestMethod) {
+        if (requestMethod == null) {
+            throw new IllegalArgumentException("유효하지 않은 HTTP Method 입니다.");
+        }
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerKey)) return false;
-        HandlerKey that = (HandlerKey) o;
-        return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
+    public boolean equals(final Object target) {
+        if (this == target) {
+            return true;
+        }
+        if (target == null || getClass() != target.getClass()) {
+            return false;
+        }
+        final HandlerKey targetHandlerKey = (HandlerKey) target;
+
+        return Objects.equals(url, targetHandlerKey.url) && requestMethod == targetHandlerKey.requestMethod;
     }
 
     @Override
