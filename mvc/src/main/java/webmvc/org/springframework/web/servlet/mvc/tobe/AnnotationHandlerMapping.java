@@ -1,10 +1,18 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
@@ -20,11 +28,55 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        HandlerKey handlerKey = new HandlerKey("/get-test", RequestMethod.GET);
-        HandlerKey handlerKey1 = new HandlerKey("/post-test", RequestMethod.POST);
-        handlerExecutions.put(handlerKey, new HandlerExecution());
-        handlerExecutions.put(handlerKey1, new HandlerExecution());
+        try {
+            log.info("Initialized AnnotationHandlerMapping!");
+            String packageName = (String) basePackage[0];
+            Set<Class<?>> controllerClasses = findAllControllerClasses(packageName);
+            controllerClasses.forEach(this::addHandlerExecution);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private Set<Class<?>> findAllControllerClasses(String packageName) {
+        Reflections reflections = new Reflections(packageName);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private void addHandlerExecution(Class<?> clazz) {
+        List<Method> methods = getMethods(clazz);
+        Object controller = createInstance(clazz);
+        methods.forEach(method -> addHandlerExecution(method, controller));
+    }
+
+    private List<Method> getMethods(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+        return Arrays.asList(methods);
+    }
+
+    private Object createInstance(Class<?> clazz) {
+        try {
+            Constructor<?> constructor = clazz.getConstructor();
+            return constructor.newInstance();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new IllegalArgumentException("컨트롤러에 예상치 못한 문제가 발생했습니다");
+        }
+    }
+
+    private void addHandlerExecution(Method method, Object controller) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            String uri = annotation.value();
+            List<RequestMethod> requestMethods = Arrays.asList(annotation.method());
+            requestMethods.forEach(requestMethod -> addHandlerExecution(uri, requestMethod, controller, method));
+        }
+    }
+
+    private void addHandlerExecution(String uri, RequestMethod requestMethod, Object controller, Method method) {
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
