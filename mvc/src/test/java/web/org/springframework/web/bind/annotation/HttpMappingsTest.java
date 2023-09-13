@@ -19,7 +19,7 @@ class HttpMappingsTest {
         final RequestMapping annotation = TestController.class.getDeclaredAnnotation(RequestMapping.class);
 
         // expect
-        assertThat(isAnyMatch(annotation)).isEqualTo(true);
+        assertThat(isAnyMatch(annotation)).isTrue();
     }
 
     @Test
@@ -28,6 +28,6 @@ class HttpMappingsTest {
         final Controller annotation = TestController.class.getDeclaredAnnotation(Controller.class);
 
         // expect
-        assertThat(isAnyMatch(annotation)).isEqualTo(false);
+        assertThat(isAnyMatch(annotation)).isFalse();
     }
 }

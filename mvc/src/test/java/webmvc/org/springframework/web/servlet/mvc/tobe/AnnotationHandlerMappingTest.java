@@ -7,7 +7,8 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -19,89 +20,15 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
-    @Test
-    void request() throws Exception {
+    @CsvSource({"/request, GET", "/get, GET", "/post, POST", "/patch, PATCH", "/put, PUT", "/delete, DELETE"})
+    @ParameterizedTest
+    void handlerMapping이_정상적으로_동작한다(final String uri, final String method) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/test/request");
-        when(request.getMethod()).thenReturn("GET");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/test/get");
-        when(request.getMethod()).thenReturn("GET");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/test/post");
-        when(request.getMethod()).thenReturn("POST");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void patch() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/test/patch");
-        when(request.getMethod()).thenReturn("PATCH");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void put() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/test/put");
-        when(request.getMethod()).thenReturn("PUT");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void delete() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/test/delete");
-        when(request.getMethod()).thenReturn("DELETE");
+        when(request.getRequestURI()).thenReturn("/test" + uri);
+        when(request.getMethod()).thenReturn(method);
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);

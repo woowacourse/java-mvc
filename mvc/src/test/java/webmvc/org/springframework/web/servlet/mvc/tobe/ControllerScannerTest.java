@@ -35,6 +35,6 @@ class ControllerScannerTest {
         final Map<Class<?>, String> uriPrefixes = controllerScanner.getUriPrefixes();
 
         // then
-        assertThat(uriPrefixes.get(TestController.class)).isEqualTo("/test");
+        assertThat(uriPrefixes).containsEntry(TestController.class, "/test");
     }
 }
