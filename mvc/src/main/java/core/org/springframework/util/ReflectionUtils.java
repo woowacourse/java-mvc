@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -52,7 +53,7 @@ public abstract class ReflectionUtils {
         return reflections.getTypesAnnotatedWith(annotation);
     }
 
-    public static List<Method> getMethodHasAnnotationWith(
+    public static Map<Class<?>, List<Method>> getMethodHasAnnotationWith(
             final Class<? extends Annotation> annotation,
             final Set<Class<?>> controllers
     ) {
@@ -60,7 +61,7 @@ public abstract class ReflectionUtils {
                 .map(Class::getDeclaredMethods)
                 .flatMap(Arrays::stream)
                 .filter(it -> it.isAnnotationPresent(annotation))
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.groupingBy(Method::getDeclaringClass));
     }
 
     public static <T extends Annotation> T getMethodAnnotation(final Method method, final Class<T> type) {

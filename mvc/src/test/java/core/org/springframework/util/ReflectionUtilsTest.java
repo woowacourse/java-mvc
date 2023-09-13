@@ -7,6 +7,7 @@ import context.org.springframework.stereotype.Controller;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -39,23 +40,27 @@ class ReflectionUtilsTest {
         final Set<Class<?>> annotatedClass = ReflectionUtils.getClassHasAnnotationWith(annotation, basePackage);
 
         // when
-        final List<Method> methods = ReflectionUtils.getMethodHasAnnotationWith(RequestMapping.class, annotatedClass);
+        Map<Class<?>, List<Method>> classMethods = ReflectionUtils.
+                getMethodHasAnnotationWith(RequestMapping.class, annotatedClass);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(methods.size()).isEqualTo(1);
-            softly.assertThat(methods.get(0).getName()).isEqualTo("sample");
+            softly.assertThat(classMethods.get(SampleController.class).size()).isEqualTo(1);
+            softly.assertThat(classMethods.get(SampleController.class).get(0).getName()).isEqualTo("sample");
         });
     }
 
     @Test
     void 매서드에_있는_어노테이션을_가져온다() {
         // given
-        final List<Method> methods = ReflectionUtils.
-                getMethodHasAnnotationWith(RequestMapping.class, Set.of(SampleController.class));
+        Map<Class<?>, List<Method>> classMethods = ReflectionUtils.getMethodHasAnnotationWith(
+                RequestMapping.class, Set.of(SampleController.class));
 
         // when
-        RequestMapping found = ReflectionUtils.getMethodAnnotation(methods.get(0), RequestMapping.class);
+        RequestMapping found = ReflectionUtils.getMethodAnnotation(
+                classMethods.get(SampleController.class).get(0),
+                RequestMapping.class
+        );
 
         // then
         assertSoftly(softly -> {
