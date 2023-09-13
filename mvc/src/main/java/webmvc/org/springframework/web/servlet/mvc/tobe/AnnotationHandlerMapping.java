@@ -32,19 +32,30 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         final Set<Class<?>> controllerClasses = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
         for (final Class<?> controllerClass : controllerClasses) {
-            final List<Method> methods = Arrays.stream(controllerClass.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
+            saveControllerAnnotatedClass(controllerClass);
+        }
+    }
 
-            for (final Method method : methods) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                final String url = requestMapping.value();
-                final RequestMethod[] requestMethods = requestMapping.method();
-                for (RequestMethod requestMethod : requestMethods) {
-                    final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                    handlerExecutions.put(handlerKey, new HandlerExecution(method));
-                }
-            }
+    private void saveControllerAnnotatedClass(final Class<?> controllerClass) {
+        final List<Method> methods = getDeclaredMethodsInControllerClass(controllerClass);
+        for (final Method method : methods) {
+            saveHandlerByDeclaredMethods(method);
+        }
+    }
+
+    private List<Method> getDeclaredMethodsInControllerClass(final Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+    }
+
+    private void saveHandlerByDeclaredMethods(final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final String url = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(method));
         }
     }
 
