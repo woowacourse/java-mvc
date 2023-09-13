@@ -22,7 +22,8 @@
 ### 요구사항
 
 - [ ] @RequestMapping 어노테이션으로 URL 및 메서드를 컨트롤러에 매핑
-    - [ ] `AnnotationHandlerMapping`에서 어노테이션에 따른 매핑을 구현한다.
-    - [ ] `HandlerExecution`의 `handle` 메서드를 구현한다.
+    - [x] `AnnotationHandlerMapping`에서 어노테이션에 따른 매핑을 구현한다. (초기화)
+    - [x] `HandlerExecution`의 `handle` 메서드를 구현한다.
     - [ ] `ManualHandlerMapping` 대신 `AnnotationHandlerMapping` 클래스를 사용한다.
+    - [ ] `RequestMapping` 어노테이션을 사용한 핸들러 메서드를 작성한다.
 
