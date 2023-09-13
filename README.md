@@ -4,3 +4,6 @@
 - [x] ReflectionTest
 - [x] ServletTest
 - [x] FilterTest
+
+## 요구 사항
+- [] AnnotationHandlerMappingTest 성공 테스트로 변경
