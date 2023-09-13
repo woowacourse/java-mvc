@@ -28,28 +28,24 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        final List<Method> methods = getMethods(controllers);
-
-        for (Method method : methods) {
-            addToHandlerExecutions(method);
-        }
+        getControllerMethods().forEach(this::addToHandlerExecutions);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addToHandlerExecutions(final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final HandlerExecution handlerExecution = new HandlerExecution(method);
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
+        Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
-    private List<Method> getMethods(final Set<Class<?>> controllers) {
+    private List<Method> getControllerMethods() {
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+
         return controllers.stream()
                 .flatMap(controller -> Arrays.stream(controller.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
