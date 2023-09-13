@@ -18,7 +18,7 @@ public class HandlerKeyGenerator {
     }
 
     public List<HandlerKey> generate(final String prefix, final Method method) {
-        final Annotation annotation = getDeclaredAnnotations(method);
+        final Annotation annotation = getHttpMappingAnnotation(method);
         final String uri = httpMappingExtractor.extractRequestUri(annotation);
         final RequestMethod[] requestMethods = httpMappingExtractor.extractRequestMethod(annotation);
         return Arrays.stream(requestMethods)
@@ -26,7 +26,7 @@ public class HandlerKeyGenerator {
                 .collect(toList());
     }
 
-    private Annotation getDeclaredAnnotations(final Method method) {
+    private Annotation getHttpMappingAnnotation(final Method method) {
         return Arrays.stream(method.getDeclaredAnnotations())
                 .filter(HttpMappings::isAnyMatch)
                 .findFirst()
