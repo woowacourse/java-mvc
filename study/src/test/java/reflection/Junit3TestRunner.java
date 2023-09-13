@@ -44,7 +44,7 @@ class Junit3TestRunner {
                 .collect(Collectors.toList());
 
         assertAll(
-                () -> assertThat(methodNames.size()).isEqualTo(3),
+                () -> assertThat(methodNames).hasSize(3),
                 () -> assertThat(methodNames)
                         .containsAll(List.of("test1", "test2", "three"))
         );
