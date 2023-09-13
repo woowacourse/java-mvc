@@ -10,10 +10,12 @@ import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
 
 public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
+    private static final String EMPTY = "";
 
     private final Reflections reflections;
 
@@ -21,7 +23,7 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-    public Map<Class<?>, Object> scan() {
+    public Map<Class<?>, Object> getControllers() {
         final Set<Class<?>> types = reflections.getTypesAnnotatedWith(Controller.class);
         return types.stream()
                 .collect(toMap(identity(), this::instantiate));
@@ -35,5 +37,19 @@ public class ControllerScanner {
             log.error("Instantiate Failed!", e);
             throw new IllegalArgumentException("Instantiate Failed");
         }
+    }
+
+    public Map<Class<?>, String> getUriPrefixes() {
+        final Set<Class<?>> types = reflections.getTypesAnnotatedWith(Controller.class);
+        return types.stream()
+                .collect(toMap(identity(), this::parseUri));
+    }
+
+    private String parseUri(Class<?> type) {
+        if (!type.isAnnotationPresent(RequestMapping.class)) {
+            return EMPTY;
+        }
+        final RequestMapping requestMapping = type.getDeclaredAnnotation(RequestMapping.class);
+        return requestMapping.value();
     }
 }
