@@ -15,8 +15,7 @@ class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
