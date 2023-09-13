@@ -31,13 +31,13 @@ public class AnnotationHandlerMapping {
         final Reflections reflections = new Reflections(basePackage);
         reflections.getTypesAnnotatedWith(Controller.class)
                 .forEach(this::putHandlerMethodInController);
-        final Method defaultHandler = this.getClass()
+        final Method defaultHandler = DefaultHandler.class
                 .getDeclaredMethod(
                         "defaultHandler",
                         HttpServletRequest.class,
                         HttpServletResponse.class
                 );
-        defaultHandlerExecution = new HandlerExecution(this.getClass(), defaultHandler);
+        defaultHandlerExecution = new HandlerExecution(DefaultHandler.class, defaultHandler);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -65,10 +65,5 @@ public class AnnotationHandlerMapping {
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.getOrDefault(handlerKey, defaultHandlerExecution);
-    }
-
-    private Object defaultHandler(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("요청하신 HTTP 메서드와 경로에 매핑되는 핸들러가 존재하지 않습니다.");
-        return null;
     }
 }
