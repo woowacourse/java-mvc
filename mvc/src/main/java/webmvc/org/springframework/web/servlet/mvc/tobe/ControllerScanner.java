@@ -1,10 +1,13 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
+import org.reflections.Reflections;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
 
 public class ControllerScanner {
 
@@ -18,15 +21,25 @@ public class ControllerScanner {
         return new ControllerScanner(new Reflections(basePackages));
     }
 
-    public Map<Class<?>, Object> controllers() throws Exception {
+    public Map<Class<?>, Object> controllers() {
         Map<Class<?>, Object> controllers = new HashMap<>();
 
         Set<Class<?>> typesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : typesAnnotatedWithController) {
-            Object controller = clazz.getDeclaredConstructor().newInstance();
+            Object controller = instantiate(clazz);
             controllers.put(clazz, controller);
         }
 
         return controllers;
+    }
+
+    private Object instantiate(Class<?> clazz) {
+        try {
+            Constructor<?> declaredConstructor = clazz.getDeclaredConstructor();
+            return declaredConstructor.newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

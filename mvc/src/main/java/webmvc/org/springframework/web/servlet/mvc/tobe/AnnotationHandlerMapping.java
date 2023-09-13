@@ -25,13 +25,13 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
-        log.info("Initialized AnnotationHandlerMapping!");
+    public void initialize() {
         ControllerScanner controllerScanner = ControllerScanner.from(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.controllers();
         for (Class<?> clazz : controllers.keySet()) {
             putExecutionBy(clazz, controllers.get(clazz));
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void putExecutionBy(Class<?> clazz, Object controller) {

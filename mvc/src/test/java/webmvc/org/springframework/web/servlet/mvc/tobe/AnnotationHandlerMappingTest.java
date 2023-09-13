@@ -14,13 +14,13 @@ class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
 
     @Test
-    void get() throws Exception {
+    void get() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -35,7 +35,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void post() throws Exception {
+    void post() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 

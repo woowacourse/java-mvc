@@ -23,7 +23,7 @@ class ControllerScannerTest {
     }
 
     @Test
-    void base_패키지의_Controller_Annotated_클래스들을_반환한다() throws Exception {
+    void base_패키지의_Controller_Annotated_클래스들을_반환한다() {
         // given
         String basePackage = "samples";
         ControllerScanner controllerScanner = ControllerScanner.from(basePackage);
