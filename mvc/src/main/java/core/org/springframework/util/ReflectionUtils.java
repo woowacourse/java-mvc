@@ -62,4 +62,8 @@ public abstract class ReflectionUtils {
                 .filter(it -> it.isAnnotationPresent(annotation))
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    public static <T extends Annotation> T getMethodAnnotation(final Method method, final Class<T> type) {
+        return method.getDeclaredAnnotation(type);
+    }
 }

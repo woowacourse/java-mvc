@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -44,6 +45,22 @@ class ReflectionUtilsTest {
         assertSoftly(softly -> {
             softly.assertThat(methods.size()).isEqualTo(1);
             softly.assertThat(methods.get(0).getName()).isEqualTo("sample");
+        });
+    }
+
+    @Test
+    void 매서드에_있는_어노테이션을_가져온다() {
+        // given
+        final List<Method> methods = ReflectionUtils.
+                getMethodHasAnnotationWith(RequestMapping.class, Set.of(SampleController.class));
+
+        // when
+        RequestMapping found = ReflectionUtils.getMethodAnnotation(methods.get(0), RequestMapping.class);
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(found.value()).isEqualTo("/sample");
+            softly.assertThat(found.method()).contains(RequestMethod.GET);
         });
     }
 }
