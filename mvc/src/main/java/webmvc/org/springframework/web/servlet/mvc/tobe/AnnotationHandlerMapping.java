@@ -2,11 +2,13 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,30 +26,50 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
+        collectAllControllerClasses().forEach(this::generateHandlerExecutions);
+    }
 
-        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllerClasses) {
-            final Object controller = controllerClass.getConstructor().newInstance();
-            final Method[] methods = controllerClass.getMethods();
-            for (Method method : methods) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-                final RequestMethod[] requestMethods = requestMapping.method();
-                final String path = requestMapping.value();
-                for (RequestMethod requestMethod : requestMethods) {
-                    handlerExecutions.put(
-                            new HandlerKey(path, requestMethod),
-                            new HandlerExecution(controller, method)
-                    );
-                }
-            }
+    private Set<Class<?>> collectAllControllerClasses() {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private void generateHandlerExecutions(final Class<?> controllerClass) {
+        final Object controller = generateInstance(controllerClass);
+        final Method[] methods = controllerClass.getMethods();
+        for (Method method : methods) {
+            generateHandlerExecutions(controller, method);
         }
+    }
+
+    private Object generateInstance(final Class<?> clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new IllegalStateException("인스턴스 생성에 실패하였습니다.");
+        }
+    }
+
+    private void generateHandlerExecutions(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return;
+        }
+
+        final String path = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        final List<HandlerKey> handlerKeys = generateHandlerKeys(path, requestMethods);
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        handlerKeys.forEach(key -> handlerExecutions.put(key, handlerExecution));
+    }
+
+    private List<HandlerKey> generateHandlerKeys(final String path, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(path, requestMethod))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
