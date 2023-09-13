@@ -18,6 +18,6 @@ public enum RequestMethod {
         return Arrays.stream(RequestMethod.values())
                 .filter(method -> method.name().equalsIgnoreCase(methodName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 HTTP 요청 메서드입니다"));
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 HTTP 요청 메서드입니다"));
     }
 }
