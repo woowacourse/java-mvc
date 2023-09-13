@@ -12,7 +12,9 @@ class Junit3TestRunner {
         // TODO Junit3Test에서 test로 시작하는 메소드 실행
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            method.invoke(clazz.getConstructor().newInstance());
+            if (method.getName().startsWith("test")) {
+                method.invoke(clazz.getConstructor().newInstance());
+            }
         }
     }
 }
