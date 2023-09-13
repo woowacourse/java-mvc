@@ -9,9 +9,9 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -32,19 +32,27 @@ public class AnnotationHandlerMapping {
 
     private void putHandlerExecutions() {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> aClass : typesAnnotatedWith) {
-            for (Method method : aClass.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    String url = annotation.value();
-                    RequestMethod requestMethod = annotation.method()[0];
-                    HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                    HandlerExecution handlerExecution = new HandlerExecution(method);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-            }
-        }
+        reflections.getTypesAnnotatedWith(Controller.class)
+                .forEach(this::processControllerClass);
+    }
+
+    private void processControllerClass(Class<?> aClass) {
+        Arrays.stream(aClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(this::processControllerMethod);
+    }
+
+    private void processControllerMethod(Method method) {
+        HandlerKey handlerKey = makeHandlerKey(method);
+        HandlerExecution handlerExecution = new HandlerExecution(method);
+        handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
+    private static HandlerKey makeHandlerKey(Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        String url = annotation.value();
+        RequestMethod requestMethod = annotation.method()[0];
+        return new HandlerKey(url, requestMethod);
     }
 
     public Object getHandler(final HttpServletRequest request) {
