@@ -9,15 +9,15 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Object clazz;
+    private final Object handler;
     private final Method method;
 
-    public HandlerExecution(Object clazz, Method method) {
-        this.clazz = clazz;
+    public HandlerExecution(Object handler, Method method) {
+        this.handler = handler;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
-        return (ModelAndView) method.invoke(clazz, request, response);
+        return (ModelAndView) method.invoke(handler, request, response);
     }
 }
