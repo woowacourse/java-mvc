@@ -38,35 +38,34 @@ public class AnnotationHandlerMapping {
         final Method[] methods = controller.getDeclaredMethods();
 
         for (final Method method : methods) {
-            processHandlerExecutors(controller, method);
+            final Object handler = createInstanceOf(controller);
+
+            processHandlerExecutors(handler, method);
         }
     }
 
-    private void processHandlerExecutors(final Class<?> controller, final Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method());
-            final HandlerExecution handlerExecution = calculateHandlerExecution(controller, method);
-
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private HandlerExecution calculateHandlerExecution(final Class<?> controller, final Method method) {
+    private Object createInstanceOf(final Class<?> controller) {
         try {
-            final Object handler = controller.getConstructor()
-                                             .newInstance();
-
-            return new HandlerExecution(handler, method);
+            return controller.getConstructor()
+                             .newInstance();
         } catch (final NoSuchMethodException |
                 InvocationTargetException |
                 InstantiationException |
-                IllegalAccessException e)
-        {
+                IllegalAccessException e) {
             log.error("", e);
         }
 
         throw new IllegalArgumentException("해당 Handler의 Mapping 정보를 처리할 수 없습니다.");
+    }
+
+    private void processHandlerExecutors(final Object handler, final Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method());
+            final HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
