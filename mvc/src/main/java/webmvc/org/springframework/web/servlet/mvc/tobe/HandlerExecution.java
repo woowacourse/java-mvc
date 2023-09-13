@@ -9,16 +9,14 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Class<?> controller;
     private final Method handler;
 
-    public HandlerExecution(final Class<?> controller, final Method handler) {
-        this.controller = controller;
+    public HandlerExecution(final Method handler) {
         this.handler = handler;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
             throws InstantiationException, IllegalAccessException, InvocationTargetException {
-        return (ModelAndView) handler.invoke(controller.newInstance(), request, response);
+        return (ModelAndView) handler.invoke(handler.getDeclaringClass().newInstance(), request, response);
     }
 }

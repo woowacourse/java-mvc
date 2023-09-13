@@ -22,7 +22,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("요청 메서드가 GET이고 경로가 /get-test이면 해당 값이 @RequestMapping으로 매핑된 핸들러가 호출된다.")
-    void get() throws Exception {
+    void getHandler_get() throws Exception {
         // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -41,7 +41,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("요청 메서드가 POST이고 경로가 /post-test이면 해당 값이 @RequestMapping으로 매핑된 핸들러가 호출된다.")
-    void post() throws Exception {
+    void getHandler_post() throws Exception {
         // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -60,7 +60,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("요청 메서드, 경로에 부합하는 핸들러가 없을 경우 기본 핸들러가 호출된다.")
-    void not_found() throws Exception {
+    void getHandler_not_found() throws Exception {
         // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
