@@ -3,9 +3,10 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -22,36 +23,47 @@ public class AnnotationHandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) throws Exception {
-        this.basePackage = null;
+    public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
-
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> aClass : typesAnnotatedWith) {
-            Method[] methods = aClass.getDeclaredMethods();
-            for (Method method : methods) {
-                RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                if (annotation != null) {
-                    for (RequestMethod requestMethod : annotation.method()) {
-                        HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                        Object o = aClass.getConstructor().newInstance();
-                        HandlerExecution handlerExecution = new HandlerExecution() {
-                            @Override
-                            public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
-                                    throws Exception {
-                                return (ModelAndView) method.invoke(o, request, response);
-                            }
-                        };
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
-            }
-        }
     }
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Set<Class<?>> controllers = findController();
+        controllers.stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Arrays::stream)
+                .filter(this::isReturnType)
+                .filter(this::isSameParameter)
+                .forEach(this::process);
+    }
+
+    private Set<Class<?>> findController() {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private boolean isReturnType(final Method method) {
+        return method.getReturnType().equals(ModelAndView.class);
+    }
+
+    private boolean isSameParameter(final Method method) {
+        method.getReturnType().equals(ModelAndView.class);
+        List<Class<?>> parameterTypes = List.of(method.getParameterTypes());
+        return parameterTypes.containsAll(List.of(HttpServletRequest.class, HttpServletResponse.class));
+    }
+
+    private void process(final Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+
+        if (annotation != null) {
+            for (RequestMethod requestMethod : annotation.method()) {
+                HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+                HandlerExecution handlerExecution = new HandlerExecution(method);
+                handlerExecutions.put(handlerKey, handlerExecution);
+            }
+        }
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
