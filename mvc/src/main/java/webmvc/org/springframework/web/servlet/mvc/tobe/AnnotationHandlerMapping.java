@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -34,6 +34,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.putAll(extractHandler());
@@ -83,11 +84,14 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         Optional<HandlerKey> findHandler = handlerExecutions.keySet().stream()
             .filter(handlerKey -> handlerKey.canHandle(request))
             .findAny();
-        return findHandler.map(handlerExecutions::get)
-            .orElseGet(null);
+        if (findHandler.isPresent()) {
+            return Optional.of(handlerExecutions.get(findHandler.get()));
+        }
+        return Optional.empty();
     }
 }
