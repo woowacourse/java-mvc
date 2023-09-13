@@ -1,21 +1,17 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
 
@@ -31,48 +27,25 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> classes = new HashSet<>();
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Object pkg : basePackage) {
-            String packageName = (String) pkg;
-            classes.addAll(findAllClass(packageName));
-        }
-
-        for (Class<?> aClass : classes) {
-            Method[] methods = aClass.getMethods();
-            for (Method method : methods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    addExecution(aClass, method);
+        for (Class<?> controller : controllers) {
+            Method[] declaredMethods = controller.getDeclaredMethods();
+            for (Method declaredMethod : declaredMethods) {
+                if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
+                    Object instance = getInstance(controller);
+                    addExecution(instance, declaredMethod);
                 }
             }
         }
     }
 
-    public Set<Class<?>> findAllClass(String packageName) {
-        InputStream stream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream(packageName.replaceAll("[.]", "/"));
-
-        if (stream == null) {
-            return Collections.emptySet();
+    private void addExecution(Object instance, Method method) {
+        if (instance == null) {
+            return;
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        return reader.lines()
-                .filter(line -> line.endsWith(".class"))
-                .map(line -> getClass(line, packageName))
-                .collect(Collectors.toSet());
-    }
-
-    private Class<?> getClass(String className, String packageName) {
-        try {
-            return Class.forName(packageName + "." + className.substring(0, className.lastIndexOf('.')));
-        } catch (ClassNotFoundException ignored) {
-        }
-        return null;
-    }
-
-    private void addExecution(Class<?> clazz, Method method) {
-        Object instance = getInstance(clazz);
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey key = new HandlerKey(annotation.value(), requestMethod);
