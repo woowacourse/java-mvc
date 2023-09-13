@@ -1,9 +1,9 @@
 package servlet.com.example;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletTest {
 
