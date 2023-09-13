@@ -3,9 +3,12 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +28,10 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         for (final Object targetPackage : basePackage) {
             addAllHandlerExecutionsInBasePackage(targetPackage);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addAllHandlerExecutionsInBasePackage(final Object base) {
@@ -42,21 +45,21 @@ public class AnnotationHandlerMapping {
 
     private void addHandlerExecutionsInController(final Class<?> clazz) {
         final Method[] methods = clazz.getMethods();
+        final List<Method> methodsAbleToHandleRequest = findMethodsAbleToHandleRequest(methods);
 
-        for (final Method method : methods) {
-            addMethodAbleToHandleRequest(method);
+        for (final Method method : methodsAbleToHandleRequest) {
+            saveAllPossibleHandlerExecutions(method);
         }
     }
 
-    private void addMethodAbleToHandleRequest(final Method method) {
-        final RequestMapping handlerAnnotation = method.getAnnotation(RequestMapping.class);
-        if (handlerAnnotation == null) {
-            return;
-        }
-        putAllMatchingHandlerExecutions(method, handlerAnnotation);
+    private List<Method> findMethodsAbleToHandleRequest(final Method[] methods) {
+        return Arrays.stream(methods)
+            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+            .collect(Collectors.toList());
     }
 
-    private void putAllMatchingHandlerExecutions(final Method method, final RequestMapping requestMappingAnnotation) {
+    private void saveAllPossibleHandlerExecutions(final Method method) {
+        final RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = requestMappingAnnotation.method();
         final String path = requestMappingAnnotation.value();
         final HandlerExecution handlerExecution = new HandlerExecution(method);

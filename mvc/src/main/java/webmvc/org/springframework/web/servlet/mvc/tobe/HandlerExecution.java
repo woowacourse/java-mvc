@@ -22,6 +22,7 @@ public class HandlerExecution {
 
     private Object getObjectToRunMethod() throws Exception {
         final Class<?> clazz = method.getDeclaringClass();
+
         return ReflectionUtils.accessibleConstructor(clazz).newInstance();
     }
 }
