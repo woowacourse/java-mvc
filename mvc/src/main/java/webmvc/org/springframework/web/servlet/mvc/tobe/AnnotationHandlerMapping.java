@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -29,18 +30,31 @@ public class AnnotationHandlerMapping {
         for (final Object basePackage : basePackages) {
             final Reflections reflections = new Reflections(basePackage);
             final Set<Class<?>> controllerClazzSet = reflections.getTypesAnnotatedWith(Controller.class);
-            for (final Class<?> clazz : controllerClazzSet) {
-                for (final Method method : clazz.getDeclaredMethods()) {
-                    final RequestMapping requestMappingAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
-                    if (requestMappingAnnotation != null) {
-                        final HandlerKey handlerKey =
-                                new HandlerKey(requestMappingAnnotation.value(), requestMappingAnnotation.method()[0]);
-                        final Object controller = getControllerInstance(clazz);
-                        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
-            }
+            circuitClasses(controllerClazzSet);
+        }
+    }
+
+    private void circuitClasses(final Set<Class<?>> controllerClazzSet) {
+        for (final Class<?> clazz : controllerClazzSet) {
+            circuitMethods(clazz);
+        }
+    }
+
+    private void circuitMethods(final Class<?> clazz) {
+        for (final Method method : clazz.getDeclaredMethods()) {
+            final RequestMapping requestMappingAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
+            mapHandler(clazz, method, requestMappingAnnotation);
+        }
+    }
+
+    private void mapHandler(final Class<?> clazz, final Method method, final RequestMapping requestMappingAnnotation) {
+        if (requestMappingAnnotation != null) {
+            final String requestUrl = requestMappingAnnotation.value();
+            final RequestMethod requestMethod = requestMappingAnnotation.method()[0];
+            final HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
+            final Object controller = getControllerInstance(clazz);
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
@@ -48,13 +62,14 @@ public class AnnotationHandlerMapping {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
-            throw new IllegalArgumentException("인스턴스를 찾을 수 없습니다.");
+            throw new NoSuchElementException("인스턴스를 찾을 수 없습니다.");
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey =
-                new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        final String requestURI = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
 }
