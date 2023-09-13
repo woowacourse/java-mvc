@@ -1,6 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,15 +32,15 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            initializeController(controller);
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> clazz : classes) {
+            initializeHandler(clazz);
         }
     }
 
-    private void initializeController(Class<?> controller) {
-        Object instance = getInstance(controller);
-        List<Method> methods = getAnnotatedMethod(controller);
+    private void initializeHandler(Class<?> clazz) {
+        Object instance = toInstance(clazz);
+        Set<Method> methods = getAnnotatedMethod(clazz);
         for (Method method : methods) {
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
             List<HandlerKey> handlerKeys = getHandlerKeys(annotation);
@@ -48,19 +49,19 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Object getInstance(Class<?> controller) {
+    private Object toInstance(Class<?> clazz) {
         try {
-            return controller.getConstructor().newInstance();
+            return clazz.getConstructor().newInstance();
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    private List<Method> getAnnotatedMethod(Class<?> controller) {
-        Method[] methods = controller.getMethods();
+    private Set<Method> getAnnotatedMethod(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
         return Arrays.stream(methods)
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-            .collect(toList());
+            .collect(toSet());
     }
 
     private List<HandlerKey> getHandlerKeys(RequestMapping annotation) {
