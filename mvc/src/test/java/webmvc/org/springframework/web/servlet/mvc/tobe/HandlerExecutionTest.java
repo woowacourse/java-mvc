@@ -8,16 +8,12 @@ import static org.mockito.Mockito.mock;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
-import webmvc.org.springframework.web.servlet.view.resolver.JspViewResolver;
-import webmvc.org.springframework.web.servlet.view.resolver.ViewResolver;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -27,12 +23,12 @@ class HandlerExecutionTest {
     void 생성자는_handler와_method를_전달하면_HandlerExecution을_초기화한다() throws NoSuchMethodException {
         final TestController testController = new TestController();
         final Method method = TestController.class.getMethod(
-                "execute",
+                "test",
                 HttpServletRequest.class,
                 HttpServletResponse.class
         );
 
-        assertDoesNotThrow(() -> new HandlerExecution(Collections.emptyList(), testController, method));
+        assertDoesNotThrow(() -> new HandlerExecution(testController, method));
     }
 
     @Test
@@ -43,8 +39,7 @@ class HandlerExecutionTest {
                 HttpServletRequest.class,
                 HttpServletResponse.class
         );
-        final List<ViewResolver> viewResolvers = List.of(new JspViewResolver());
-        final HandlerExecution handlerExecution = new HandlerExecution(viewResolvers, testController, method);
+        final HandlerExecution handlerExecution = new HandlerExecution(testController, method);
         final HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
 
         given(httpServletRequest.getSession(anyBoolean())).willReturn(null);
