@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.bind.annotation.RequestMappingMethods;
+import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMappings;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import java.lang.annotation.Annotation;
@@ -43,40 +43,94 @@ public class AnnotationHandlerMapping {
         Method[] methods = clazz.getDeclaredMethods();
 
         for (Method method : methods) {
-            if (RequestMappings.hasAnyOfRequestMappings(method)) {
-                setupHandlerExecutionForMethod(clazz, method);
+            Annotation[] annotations = method.getDeclaredAnnotations();
+            setupHandlerExecutionIfRequestMappingAnnotationExists(clazz, method, annotations);
+        }
+    }
+
+    private void setupHandlerExecutionIfRequestMappingAnnotationExists(Class<?> clazz, Method method, Annotation[] annotations) {
+        for (Annotation annotation : annotations) {
+            if (RequestMappings.isAnyMatch(annotation)) {
+                setupHandlerExecution(clazz, method);
             }
         }
     }
 
-    private void setupHandlerExecutionForMethod(Class<?> clazz, Method method) {
-        Annotation requestMapping = extractRequestMapping(method);
-        Class<? extends Annotation> annotationType = requestMapping.annotationType();
+    private void setupHandlerExecution(Class<?> clazz, Method method) {
+        Annotation requestMappingAnnotation = extractRequestMappingAnnotation(method);
+        Class<? extends Annotation> annotationType = requestMappingAnnotation.annotationType();
 
-        String requestURI = extractRequestURI(requestMapping);
-        RequestMethod requestMethod = RequestMappingMethods.getMethod(annotationType);
+        if (annotationType.isInstance(RequestMapping.class)) {
+            setupWhenAnnotationTypeIsRequestMapping(clazz, method);
+            return;
+        }
+        setupWhenAnnotationTypeIsExtendedRequestMapping(clazz, method);
+    }
 
-        HandlerExecution handlerExecution = new HandlerExecution(instantiate(clazz), method);
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        handlerExecutions.put(handlerKey, handlerExecution);
+    private void setupWhenAnnotationTypeIsRequestMapping(Class<?> clazz, Method method) {
+        Annotation requestMappingAnnotation = extractRequestMappingAnnotation(method);
+
+        String requestURI = extractRequestURI(requestMappingAnnotation);
+        RequestMethod[] requestMethods = extractHttpMethod(requestMappingAnnotation);
+
+        addHandlerMapping(instantiate(clazz), method, requestMethods, requestURI);
+    }
+
+    private void setupWhenAnnotationTypeIsExtendedRequestMapping(Class<?> clazz, Method method) {
+        Annotation requestMappingAnnotation = extractRequestMappingAnnotation(method);
+        Annotation metaRequestMappingAnnotation = extractMetaRequestMappingAnnotation(requestMappingAnnotation);
+
+        String requestURI = extractRequestURI(requestMappingAnnotation);
+        RequestMethod[] requestMethods = extractHttpMethod(metaRequestMappingAnnotation);
+
+        addHandlerMapping(instantiate(clazz), method, requestMethods, requestURI);
+    }
+
+    private void addHandlerMapping(Object clazz, Method method, RequestMethod[] requestMethods, String requestURI) {
+        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+        for (RequestMethod each : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestURI, each);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private Annotation extractMetaRequestMappingAnnotation(Annotation annotation) {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        Annotation[] metaAnnotations = annotationType.getDeclaredAnnotations();
+
+        return Arrays.stream(metaAnnotations)
+                .filter(metaAnnotation -> metaAnnotation.annotationType().equals(RequestMapping.class))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private Annotation extractRequestMappingAnnotation(Method method) {
+        return Arrays.stream(method.getDeclaredAnnotations())
+                .filter(RequestMappings::isAnyMatch)
+                .findFirst()
+                .orElseThrow(RequestMappingNotFoundException::new);
     }
 
     private static String extractRequestURI(Annotation requestMapping) {
         Class<? extends Annotation> annotationType = requestMapping.annotationType();
         try {
-            Method valueMethod = annotationType.getDeclaredMethod("value");
-            return (String) valueMethod.invoke(requestMapping);
+            Method method = annotationType.getDeclaredMethod("value");
+            return (String) method.invoke(requestMapping);
         } catch (Exception e) {
             e.printStackTrace();
         }
         throw new RequestMappingPathNotProvidedException();
     }
 
-    private Annotation extractRequestMapping(Method method) {
-        return Arrays.stream(method.getDeclaredAnnotations())
-                .filter(declaredAnnotation -> RequestMappings.contains(declaredAnnotation.annotationType()))
-                .findFirst()
-                .orElseThrow(RequestMappingDuplicatedException::new);
+    private static RequestMethod[] extractHttpMethod(Annotation requestMapping) {
+        Class<? extends Annotation> annotationType = requestMapping.annotationType();
+        try {
+            Method method = annotationType.getDeclaredMethod("method");
+            return (RequestMethod[]) method.invoke(requestMapping);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new RequestMappingPathNotProvidedException();
     }
 
     private Object instantiate(Class<?> clazz) {

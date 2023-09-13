@@ -1,7 +1,6 @@
 package web.org.springframework.web.bind.annotation;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public enum RequestMappings {
@@ -10,28 +9,19 @@ public enum RequestMappings {
     POST(PostMapping.class),
     PUT(PutMapping.class),
     DELETE(DeleteMapping.class),
-    PATCH(PatchMapping.class);
+    PATCH(PatchMapping.class),
+    BASIC(RequestMapping.class);
 
-    private final Class<?> clazz;
+    private final Class<?> annotation;
 
-    RequestMappings(Class<?> clazz) {
-        this.clazz = clazz;
+    RequestMappings(Class<?> annotation) {
+        this.annotation = annotation;
     }
 
-    public static boolean contains(Class<?> clazz) {
+    public static boolean isAnyMatch(Annotation annotation) {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+
         return Arrays.stream(values())
-                .anyMatch(requestMapping -> requestMapping.clazz.equals(clazz));
-    }
-
-    public static boolean hasAnyOfRequestMappings(Method method) {
-        Annotation[] annotations = method.getDeclaredAnnotations();
-
-        return Arrays.stream(annotations)
-                .anyMatch(RequestMappings::hasRequestMapping);
-    }
-
-    private static boolean hasRequestMapping(Annotation annotation) {
-       return Arrays.stream(values())
-                .anyMatch(requestMapping -> requestMapping.clazz.equals(annotation.annotationType()));
+                .anyMatch(each -> each.annotation.equals(annotationType));
     }
 }
