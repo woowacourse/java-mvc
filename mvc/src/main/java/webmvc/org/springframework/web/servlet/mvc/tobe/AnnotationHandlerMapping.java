@@ -55,23 +55,26 @@ public class AnnotationHandlerMapping {
             log.error("", e);
         }
 
-        throw new IllegalArgumentException("해당 Handler의 Mapping 정보를 처리할 수 없습니다.");
+        throw new IllegalArgumentException("해당 Handler를 생성할 수 없습니다.");
     }
 
     private void processHandlerExecutors(final Object handler, final Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method());
-            final HandlerExecution handlerExecution = new HandlerExecution(handler, method);
 
-            handlerExecutions.put(handlerKey, handlerExecution);
+            for (final RequestMethod requestMethod : requestMapping.method()) {
+                final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                final HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+
+                handlerExecutions.put(handlerKey, handlerExecution);
+            }
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
         final String url = request.getRequestURI();
         final RequestMethod method = RequestMethod.from(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(url, method);
+        final HandlerKey  handlerKey = new HandlerKey(url, method);
 
         return handlerExecutions.get(handlerKey);
     }
