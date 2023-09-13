@@ -2,4 +2,4 @@
 
 
 ## 1단계
-- [ ] AnnotationHandlerMappingTest 통과하기
+- [x] AnnotationHandlerMappingTest 통과하기
