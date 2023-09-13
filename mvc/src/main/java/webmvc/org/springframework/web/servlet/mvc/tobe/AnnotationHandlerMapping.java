@@ -33,11 +33,11 @@ public class AnnotationHandlerMapping {
         for (final Object basePackage : basePackages) {
             final Reflections reflections = new Reflections(basePackage);
             final var classes = reflections.getTypesAnnotatedWith(Controller.class);
-            putHandlerExecutionsByClasses(classes);
+            putHandlerExecutionsByControllers(classes);
         }
     }
 
-    private void putHandlerExecutionsByClasses(final Set<Class<?>> classes) {
+    private void putHandlerExecutionsByControllers(final Set<Class<?>> classes) {
         for (final Class<?> clazz : classes) {
             final Constructor<?> constructor = getConstructor(clazz);
             final List<Method> methods = getMethodsWithAnnotation(clazz);
