@@ -28,34 +28,38 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() throws Exception {
-        log.info("Initialized AnnotationHandlerMapping!");
         initHandlerExecutions();
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void initHandlerExecutions() throws Exception {
         Reflections reflections = new Reflections(basePackages);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        Set<Method> methods = getRequestMappingMethods(controllers);
-        for (Method method : methods) {
-            Class<?> controllerClass = method.getDeclaringClass();
-            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            String url = annotation.value();
-            putHandlerExecutions(method, controllerClass, annotation, url);
+        for (Class<?> controller : controllers) {
+            Set<Method> methods = getRequestMappingMethods(controller);
+            putHandlerExecutionsForAllMethod(controller, methods);
         }
     }
 
-    private Set<Method> getRequestMappingMethods(final Set<Class<?>> controllers) {
-        return controllers.stream()
-                .flatMap(controller -> Arrays.stream(controller.getDeclaredMethods()))
+    private Set<Method> getRequestMappingMethods(final Class<?> controller) {
+        return Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toSet());
     }
 
-    private void putHandlerExecutions(final Method method, final Class<?> controllerClass,
-                                      final RequestMapping annotation, final String url) throws Exception {
+    private void putHandlerExecutionsForAllMethod(final Class<?> controller, final Set<Method> methods) throws Exception {
+        for (Method method : methods) {
+            putHandlerExecutionsForMethod(controller, method);
+        }
+    }
+
+    private void putHandlerExecutionsForMethod(final Class<?> controller, final Method method) throws Exception {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        String url = annotation.value();
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controllerClass.getDeclaredConstructor().newInstance(), method);
+            HandlerExecution handlerExecution = new HandlerExecution(controller.getDeclaredConstructor().newInstance(),
+                    method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
