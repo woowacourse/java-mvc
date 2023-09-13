@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +32,17 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Set<Class<?>> controllers = findController();
-        controllers.stream()
-                .map(Class::getDeclaredMethods)
-                .flatMap(Arrays::stream)
+        List<Method> methods = getMethods(controllers);
+        methods.stream()
                 .filter(this::isReturnType)
                 .filter(this::isSameParameter)
-                .forEach(this::process);
+                .forEach(this::addHandler);
+    }
+
+    private List<Method> getMethods(final Set<Class<?>> controllers) {
+        return controllers.stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Arrays::stream).collect(Collectors.toList());
     }
 
     private Set<Class<?>> findController() {
@@ -54,7 +60,7 @@ public class AnnotationHandlerMapping {
         return parameterTypes.containsAll(List.of(HttpServletRequest.class, HttpServletResponse.class));
     }
 
-    private void process(final Method method) {
+    private void addHandler(final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
         if (annotation != null) {
