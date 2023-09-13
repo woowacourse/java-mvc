@@ -34,67 +34,67 @@ public class AnnotationHandlerMapping {
         try {
             final List<Class<?>> controllers = new ArrayList<>();
             for (Object path : basePackage) {
-                컨트롤러찾기((String) path, controllers);
+                findControllers((String) path, controllers);
             }
             for (Class<?> controller : controllers) {
-                핸들러추가하기(controller);
+                addHandler(controller);
             }
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void 컨트롤러찾기(final String 경로, final List<Class<?>> controllers) throws URISyntaxException, IOException {
-        final File[] 파일들 = 주어진_경로에_있는_파일들_가져오기(경로);
+    private void findControllers(final String path, final List<Class<?>> controllers) throws URISyntaxException, IOException {
+        final File[] files = findFilesByPath(path);
 
-        for (File 파일 : 파일들) {
-            final String 파일경로 = 경로 + "." + 파일.getName();
-            if (파일.isDirectory()) {
-                컨트롤러찾기(파일경로, controllers);
+        for (File file : files) {
+            final String filePath = path + "." + file.getName();
+            if (file.isDirectory()) {
+                findControllers(filePath, controllers);
             }
-            if (파일.getName().endsWith(".class")) {
-                컨트롤러인지_판별하기(파일경로, controllers);
+            if (file.getName().endsWith(".class")) {
+                verifyController(filePath, controllers);
             }
         }
     }
 
-    private static File[] 주어진_경로에_있는_파일들_가져오기(final String 경로) throws URISyntaxException {
-        final String packagePath = 경로.replace('.', '/');
+    private static File[] findFilesByPath(final String path) throws URISyntaxException {
+        final String packagePath = path.replace('.', '/');
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final File 패키지 = new File(classLoader.getResource(packagePath).toURI());
-        return 패키지.listFiles();
+        final File directory = new File(classLoader.getResource(packagePath).toURI());
+        return directory.listFiles();
     }
 
-    private void 컨트롤러인지_판별하기(final String 파일, final List<Class<?>> controllers) {
+    private void verifyController(final String file, final List<Class<?>> controllers) {
         try {
-            final Class<?> 클래스 = 클래스로_바꾸기(파일);
-            if (클래스.isAnnotationPresent(context.org.springframework.stereotype.Controller.class)) {
-                controllers.add(클래스);
+            final Class<?> clazz = convertToClass(file);
+            if (clazz.isAnnotationPresent(context.org.springframework.stereotype.Controller.class)) {
+                controllers.add(clazz);
             }
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private static Class<?> 클래스로_바꾸기(final String 파일) throws ClassNotFoundException {
-        String className = 파일.replace(".class", "");
+    private static Class<?> convertToClass(final String file) throws ClassNotFoundException {
+        String className = file.replace(".class", "");
         return Class.forName(className);
     }
 
-    private void 핸들러추가하기(final Class<?> controller) {
-        for (Method 메서드 : controller.getDeclaredMethods()) {
-            if (메서드.isAnnotationPresent(RequestMapping.class)) {
-                final RequestMapping requestMapping = 메서드.getAnnotation(RequestMapping.class);
+    private void addHandler(final Class<?> controller) {
+        for (Method method : controller.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 for (RequestMethod requestMethod : requestMapping.method()) {
-                    메서드별로_핸들러추가하기(controller, 메서드, requestMapping, requestMethod);
+                    addHandlerByMethod(controller, method, requestMapping, requestMethod);
                 }
             }
         }
     }
 
-    private void 메서드별로_핸들러추가하기(
+    private void addHandlerByMethod(
             final Class<?> controller,
-            final Method 메서드,
+            final Method method,
             final RequestMapping requestMapping,
             final RequestMethod requestMethod
     ) {
@@ -103,7 +103,7 @@ public class AnnotationHandlerMapping {
             @Override
             public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
                     throws Exception {
-                return (ModelAndView) 메서드.invoke(controller.getDeclaredConstructor().newInstance(), request, response);
+                return (ModelAndView) method.invoke(controller.getDeclaredConstructor().newInstance(), request, response);
             }
         };
 
