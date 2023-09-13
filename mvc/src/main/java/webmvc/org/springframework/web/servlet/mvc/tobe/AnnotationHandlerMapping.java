@@ -1,15 +1,13 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import static webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationExtractor.*;
-
 import context.org.springframework.stereotype.Controller;
 import core.org.springframework.util.ReflectionUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.CustomRequestMappings;
+import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -68,8 +66,10 @@ public class AnnotationHandlerMapping {
     private void addWhenAnnotationTypeIsRequestMapping(Class<?> clazz, Method method) {
         Annotation requestMappingAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
 
-        String requestURI = (String) extractByMethodName(requestMappingAnnotation, "value");
-        RequestMethod[] requestMethods = (RequestMethod[]) extractByMethodName(requestMappingAnnotation, "method");
+        String requestURI = (String) AnnotationExtractor.
+                extractByMethodName(requestMappingAnnotation, "value");
+        RequestMethod[] requestMethods = (RequestMethod[]) AnnotationExtractor.
+                extractByMethodName(requestMappingAnnotation, "method");
 
         addHandlerExecution(instantiate(clazz), method, requestMethods, requestURI);
     }
@@ -78,8 +78,10 @@ public class AnnotationHandlerMapping {
         Annotation customRequestMappingAnnotation = extractCustomRequestMappingAnnotation(method);
         Annotation requestMappingAnnotation = extractRequestMappingAnnotation(customRequestMappingAnnotation);
 
-        String requestURI = (String) extractByMethodName(customRequestMappingAnnotation, "value");
-        RequestMethod[] requestMethods = (RequestMethod[]) extractByMethodName(requestMappingAnnotation, "method");
+        String requestURI = (String) AnnotationExtractor.
+                extractByMethodName(customRequestMappingAnnotation, "value");
+        RequestMethod[] requestMethods = (RequestMethod[]) AnnotationExtractor.
+                extractByMethodName(requestMappingAnnotation, "method");
 
         addHandlerExecution(instantiate(clazz), method, requestMethods, requestURI);
     }
