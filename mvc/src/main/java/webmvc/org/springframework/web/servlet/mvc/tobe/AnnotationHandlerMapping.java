@@ -30,12 +30,14 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : classes) {
             initializeHandler(clazz);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+            .forEach(handlerKey -> log.info("Handler Key: {}", handlerKey));
     }
 
     private void initializeHandler(Class<?> clazz) {
