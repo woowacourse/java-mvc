@@ -1,11 +1,10 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -19,6 +18,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    // todo: 초기화 할 때 annotation이 붙은 요청을 path와 method를 키로 그리고 요청 handler를 value로 가지게 한다.
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
     }
