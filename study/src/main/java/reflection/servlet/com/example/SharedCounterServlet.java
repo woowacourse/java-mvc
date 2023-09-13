@@ -1,4 +1,4 @@
-package servlet.com.example;
+package reflection.servlet.com.example;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;

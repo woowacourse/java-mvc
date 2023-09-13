@@ -1,10 +1,11 @@
 package servlet.com.example;
 
 import org.junit.jupiter.api.Test;
+import reflection.servlet.com.example.TomcatStarter;
 import support.HttpUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static servlet.com.example.KoreanServlet.인코딩;
+import static reflection.servlet.com.example.KoreanServlet.인코딩;
 
 class FilterTest {
 
