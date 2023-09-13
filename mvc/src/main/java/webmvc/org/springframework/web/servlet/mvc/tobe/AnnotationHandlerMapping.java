@@ -5,10 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,9 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        controllers.stream().map(Class::getDeclaredMethods).flatMap(Stream::of).filter(this::isRequestMappingAnnotation)
+        controllers.stream().map(Class::getDeclaredMethods)
+                .flatMap(Arrays::stream)
+                .filter(this::isRequestMappingAnnotation)
                 .forEach(this::addHandlerExecution);
     }
 
