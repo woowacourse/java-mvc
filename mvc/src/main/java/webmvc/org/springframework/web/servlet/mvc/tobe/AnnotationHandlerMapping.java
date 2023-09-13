@@ -29,10 +29,10 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClazzSet = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> handlerClazzSet = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Class<?> controllerClazz : controllerClazzSet) {
-            setupHandlerExecutions(controllerClazz);
+        for (Class<?> handlerClazz : handlerClazzSet) {
+            setupHandlerExecutions(handlerClazz);
         }
     }
 
@@ -41,22 +41,20 @@ public class AnnotationHandlerMapping {
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
-                setupHandlerExecution(clazz, method);
+                setupRequestMappingIntoHandlerExecution(clazz, method);
             }
         }
     }
 
-    private void setupHandlerExecution(Class<?> clazz, Method method) {
-        Object controller = instantiate(clazz);
+    private void setupRequestMappingIntoHandlerExecution(Class<?> clazz, Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        RequestMethod[] requestMappingMethods = requestMapping.method();
+        String requestMappingPath = requestMapping.value();
 
-        RequestMethod[] requestMethods = requestMapping.method();
-        String requestURL = requestMapping.value();
+        HandlerExecution handlerExecution = new HandlerExecution(instantiate(clazz), method);
 
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(requestURL, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller);
-
+        for (RequestMethod requestMappingMethod : requestMappingMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestMappingPath, requestMappingMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
