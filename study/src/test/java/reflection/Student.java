@@ -1,8 +1,8 @@
 package reflection;
 
 public class Student {
-    private String name;
 
+    private String name;
     private int age;
 
     public String getName() {

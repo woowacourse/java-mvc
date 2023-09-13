@@ -1,5 +1,10 @@
 package reflection;
 
+import static java.util.stream.Collectors.toList;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
@@ -7,7 +12,14 @@ class Junit4TestRunner {
     @Test
     void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
+        Method[] declaredMethods = clazz.getDeclaredMethods();
+        List<Method> targetMethods = Arrays.stream(declaredMethods)
+                .filter(method -> method.isAnnotationPresent(MyTest.class))
+                .collect(toList());
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        Junit4Test instance = new Junit4Test();
+        for (Method method : targetMethods) {
+            method.invoke(instance);
+        }
     }
 }
