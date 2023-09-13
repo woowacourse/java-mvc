@@ -5,10 +5,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,27 +38,28 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        controllers.stream().map(Class::getDeclaredMethods)
+        handlerExecutions.putAll(initHandlerExecutions(controllers));
+    }
+
+    private Map<HandlerKey, HandlerExecution> initHandlerExecutions(Set<Class<?>> controllers) {
+        return controllers.stream().map(Class::getDeclaredMethods)
                 .flatMap(Arrays::stream)
                 .filter(this::isRequestMappingAnnotation)
-                .forEach(this::addHandlerExecution);
+                .flatMap(this::addHandlerExecution)
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     private boolean isRequestMappingAnnotation(Method method) {
         return method.isAnnotationPresent(RequestMapping.class);
     }
 
-    private void addHandlerExecution(Method method) {
+    private Stream<Entry<HandlerKey, HandlerExecution>> addHandlerExecution(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] httpMethods = requestMapping.method();
         Object instance = getInstance(method.getDeclaringClass());
 
-        for (RequestMethod httpMethod : httpMethods) {
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
+        return Arrays.stream(httpMethods)
+                .map(httpMethod -> createHandlerEntry(method, httpMethod, requestMapping, instance));
     }
 
     private Object getInstance(Class<?> clazz) {
@@ -70,6 +75,18 @@ public class AnnotationHandlerMapping {
         } catch (InvocationTargetException e) {
             throw new ClassException(String.format("해당 클래스(%s)의 생성자 호출 중 예외가 발생했습니다 ", clazz.getName()), e);
         }
+    }
+
+    private SimpleEntry<HandlerKey, HandlerExecution> createHandlerEntry(
+            Method method,
+            RequestMethod httpMethod,
+            RequestMapping requestMapping,
+            Object instance
+    ) {
+        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
+        HandlerExecution handlerExecution = new HandlerExecution(method, instance);
+
+        return new SimpleEntry<>(handlerKey, handlerExecution);
     }
 
 
