@@ -18,7 +18,7 @@ class ControllerScannerTest {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
         // when
-        final Map<Class<?>, Object> result = controllerScanner.getControllers();
+        final Map<Class<?>, Object> result = controllerScanner.scan();
 
         // then
         assertThat(result).hasSize(1);

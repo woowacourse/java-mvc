@@ -21,7 +21,7 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-    public Map<Class<?>, Object> getControllers() {
+    public Map<Class<?>, Object> scan() {
         final Set<Class<?>> types = reflections.getTypesAnnotatedWith(Controller.class);
         return types.stream()
                 .collect(toMap(identity(), this::instantiate));
