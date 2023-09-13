@@ -42,9 +42,9 @@ public class AnnotationHandlerMapping {
             for (Method handler : handlers) {
                 putHandlerExecutionOfTypeAnnotatedWithController(handler, instance);
             }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (Exception e) {
             log.error("Failed to initialize controller: {}", type.getSimpleName());
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
