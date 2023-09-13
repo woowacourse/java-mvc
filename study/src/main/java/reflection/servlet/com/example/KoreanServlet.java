@@ -1,4 +1,4 @@
-package servlet.com.example;
+package reflection.servlet.com.example;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -9,8 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "localCounterServlet", urlPatterns = "/local-counter")
-public class LocalCounterServlet extends HttpServlet {
+@WebServlet(name = "koreanServlet", urlPatterns = "/korean")
+public class KoreanServlet extends HttpServlet {
+
+    public static final String 인코딩 = "인코딩";
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
@@ -18,17 +20,10 @@ public class LocalCounterServlet extends HttpServlet {
         getServletContext().log("init() 호출");
     }
 
-    /**
-     * localCounter 같은 로컬 변수는 다른 스레드와 공유되지 않는다.
-     * 비즈니스 로직 처리는 로컬 변수를 사용한다.
-     */
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         getServletContext().log("service() 호출");
-        response.addHeader("Content-Type", "text/html; charset=utf-8");
-        int localCounter = 0;
-        localCounter++;
-        response.getWriter().write(String.valueOf(localCounter));
+        response.getWriter().write(인코딩);
     }
 
     @Override

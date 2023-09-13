@@ -1,4 +1,4 @@
-package servlet.com.example;
+package reflection.servlet.com.example;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
