@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class LoginController {
@@ -20,7 +19,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return getModelAndViewByJspPath("/index.jsp");
+            return ModelAndView.jspView("/index.jsp");
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -28,20 +27,15 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElseGet(() -> getModelAndViewByJspPath("/401.jsp"));
+                .orElseGet(() -> ModelAndView.jspView("/401.jsp"));
     }
 
     private ModelAndView login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return getModelAndViewByJspPath("/index.jsp");
+            return ModelAndView.jspView("/index.jsp");
         }
-        return getModelAndViewByJspPath("/401.jsp");
-    }
-
-    private ModelAndView getModelAndViewByJspPath(String jspPath) {
-        JspView jspView = new JspView(jspPath);
-        return new ModelAndView(jspView);
+        return ModelAndView.jspView("/401.jsp");
     }
 }
