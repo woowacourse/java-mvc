@@ -86,14 +86,6 @@ public class AnnotationHandlerMapping {
         addHandlerExecution(instantiate(clazz), method, requestMethods, requestURI);
     }
 
-    private void addHandlerExecution(Object clazz, Method method, RequestMethod[] requestMethods, String requestURI) {
-        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
-        for (RequestMethod each : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(requestURI, each);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
     private Annotation extractRequestMappingAnnotation(Method method) {
         return Arrays.stream(method.getDeclaredAnnotations())
                 .filter(RequestMappings::isAnyMatch)
@@ -142,6 +134,14 @@ public class AnnotationHandlerMapping {
             e.printStackTrace();
         }
         throw new InstantiationFailedException();
+    }
+
+    private void addHandlerExecution(Object clazz, Method method, RequestMethod[] requestMethods, String requestURI) {
+        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+        for (RequestMethod each : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestURI, each);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
