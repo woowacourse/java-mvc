@@ -59,7 +59,10 @@ public class AnnotationHandlerMapping {
         Object instance = getInstance(method.getDeclaringClass());
 
         return Arrays.stream(httpMethods)
-                .map(httpMethod -> createHandlerEntry(method, httpMethod, requestMapping, instance));
+                .map(httpMethod -> new SimpleEntry<>(
+                        new HandlerKey(requestMapping.value(), httpMethod),
+                        new HandlerExecution(method, instance))
+                );
     }
 
     private Object getInstance(Class<?> clazz) {
@@ -75,18 +78,6 @@ public class AnnotationHandlerMapping {
         } catch (InvocationTargetException e) {
             throw new ClassException(String.format("해당 클래스(%s)의 생성자 호출 중 예외가 발생했습니다 ", clazz.getName()), e);
         }
-    }
-
-    private SimpleEntry<HandlerKey, HandlerExecution> createHandlerEntry(
-            Method method,
-            RequestMethod httpMethod,
-            RequestMapping requestMapping,
-            Object instance
-    ) {
-        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
-        HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-
-        return new SimpleEntry<>(handlerKey, handlerExecution);
     }
 
 
