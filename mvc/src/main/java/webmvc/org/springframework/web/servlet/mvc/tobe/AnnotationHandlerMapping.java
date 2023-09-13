@@ -32,34 +32,22 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllerClazzSet = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClazz : controllerClazzSet) {
-            Object controller = instantiate(controllerClazz);
-            setupHandlerExecutions(controller);
+            setupHandlerExecutions(controllerClazz);
         }
     }
 
-    private Object instantiate(Class<?> controller) {
-        try {
-            Constructor<?> constructor = ReflectionUtils.accessibleConstructor(controller);
-            ReflectionUtils.makeAccessible(constructor);
-            return constructor.newInstance(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        throw new InstantiationFailedException();
-    }
-
-    private void setupHandlerExecutions(Object controller) {
-        Method[] methods = controller.getClass()
-                .getDeclaredMethods();
+    private void setupHandlerExecutions(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
-                setupHandlerExecution(controller, method);
+                setupHandlerExecution(clazz, method);
             }
         }
     }
 
-    private void setupHandlerExecution(Object controller, Method method) {
+    private void setupHandlerExecution(Class<?> clazz, Method method) {
+        Object controller = instantiate(clazz);
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
 
         RequestMethod[] requestMethods = requestMapping.method();
@@ -73,10 +61,20 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    private Object instantiate(Class<?> clazz) {
+        try {
+            Constructor<?> constructor = ReflectionUtils.accessibleConstructor(clazz);
+            ReflectionUtils.makeAccessible(constructor);
+            return constructor.newInstance(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new InstantiationFailedException();
+    }
+
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
         return handlerExecutions.get(handlerKey);
