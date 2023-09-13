@@ -1,11 +1,17 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +26,30 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+
+        controllerClasses.forEach(
+                aClass -> Arrays.stream(aClass.getDeclaredMethods()).forEach(
+                        method -> {
+                            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                            if (requestMapping != null) {
+                                putHandlerExecutions(method, requestMapping);
+                            }
+                        }
+                )
+        );
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void putHandlerExecutions(final Method method, final RequestMapping requestMapping) {
+        Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(method)));
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
     }
 }
