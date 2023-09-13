@@ -15,8 +15,11 @@ public class SingletonRegistry {
     }
 
     public static Object getInstance(final Class<?> controller) {
-        return Optional.ofNullable(singletonObjects.get(controller))
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 아직 인스턴스가 등록되지 않은 클래스입니다"));
+        if (!singletonObjects.containsKey(controller)) {
+            throw new IllegalArgumentException("[ERROR] 아직 인스턴스가 등록되지 않은 클래스입니다");
+        }
+
+        return singletonObjects.get(controller);
     }
 
     public static void registerInstance(final Class<?> controller) {
