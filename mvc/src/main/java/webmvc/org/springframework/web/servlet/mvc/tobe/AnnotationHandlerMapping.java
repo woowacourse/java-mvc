@@ -28,22 +28,22 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         Set<Class<?>> controllers = getAnnotatedControllerClasses();
         for (Class<?> controller : controllers) {
-            for (Method method : controller.getMethods()) {
-                addHandlerExecutionWithAnnotatedMethod(method);
-            }
+            addAnnotatedHandlerExecution(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecutionWithAnnotatedMethod(Method method) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
-            return;
+    private void addAnnotatedHandlerExecution(Class<?> controller) {
+        for (Method method : controller.getMethods()) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
+                continue;
+            }
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(),
+                    requestMapping.method()[0]);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        HandlerKey handlerKey = new HandlerKey(requestMapping.value(),
-                requestMapping.method()[0]);
-        HandlerExecution handlerExecution = new HandlerExecution(method);
-        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     private Set<Class<?>> getAnnotatedControllerClasses() {
