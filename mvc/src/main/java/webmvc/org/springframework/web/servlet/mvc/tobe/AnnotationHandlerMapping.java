@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private static Object instantiate(Class<?> controller) {
+    private Object instantiate(Class<?> controller) {
         try {
             Constructor<?> constructor = ReflectionUtils.accessibleConstructor(controller);
             ReflectionUtils.makeAccessible(constructor);
