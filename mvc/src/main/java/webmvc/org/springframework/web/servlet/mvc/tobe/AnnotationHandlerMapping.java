@@ -66,10 +66,8 @@ public class AnnotationHandlerMapping {
     private void addWhenAnnotationTypeIsRequestMapping(Class<?> clazz, Method method) {
         Annotation requestMappingAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
 
-        String requestURI = (String) AnnotationExtractor.
-                extractByMethodName(requestMappingAnnotation, "value");
-        RequestMethod[] requestMethods = (RequestMethod[]) AnnotationExtractor.
-                extractByMethodName(requestMappingAnnotation, "method");
+        String requestURI = RequestMappingExtractor.extractRequestURI(requestMappingAnnotation);
+        RequestMethod[] requestMethods = RequestMappingExtractor.extractRequestMethod(requestMappingAnnotation);
 
         addHandlerExecution(instantiate(clazz), method, requestMethods, requestURI);
     }
@@ -78,10 +76,8 @@ public class AnnotationHandlerMapping {
         Annotation customRequestMappingAnnotation = extractCustomRequestMappingAnnotation(method);
         Annotation requestMappingAnnotation = extractRequestMappingAnnotation(customRequestMappingAnnotation);
 
-        String requestURI = (String) AnnotationExtractor.
-                extractByMethodName(customRequestMappingAnnotation, "value");
-        RequestMethod[] requestMethods = (RequestMethod[]) AnnotationExtractor.
-                extractByMethodName(requestMappingAnnotation, "method");
+        String requestURI = RequestMappingExtractor.extractRequestURI(customRequestMappingAnnotation);
+        RequestMethod[] requestMethods = RequestMappingExtractor.extractRequestMethod(requestMappingAnnotation);
 
         addHandlerExecution(instantiate(clazz), method, requestMethods, requestURI);
     }
