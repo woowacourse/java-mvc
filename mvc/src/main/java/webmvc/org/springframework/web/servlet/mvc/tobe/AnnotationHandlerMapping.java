@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,32 +21,44 @@ public class AnnotationHandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    // HandlerKey는 url과 RequestMethod(GET, POST, PUT, DELETE, PATCH, ...)를 가지고 있음
-    // HandlerExecution은 메서드 실행하는 것인듯?
-
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> controller : controllers) {
-            // HandlerKey 만들기
-            final Method[] declaredMethods = controller.getDeclaredMethods();
-            for (Method declaredMethod : declaredMethods) {
-                final RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
-                final String url = requestMapping.value();
-                final RequestMethod[] requestMethods = requestMapping.method();
-                for (RequestMethod requestMethod : requestMethods) {
-                    final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        try {
+            final Reflections reflections = new Reflections(basePackage);
+            final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+            for (final Class<?> controller : controllers) {
+                final Object controllerInstance = controller.getDeclaredConstructor().newInstance();
+                final Method[] declaredMethods = controller.getDeclaredMethods();
+                for (Method declaredMethod : declaredMethods) {
+                    if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
+                        final RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
+                        final String url = requestMapping.value();
+                        final RequestMethod[] requestMethods = requestMapping.method();
+                        for (RequestMethod requestMethod : requestMethods) {
+                            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+                            final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, declaredMethod);
+                            handlerExecutions.put(handlerKey, handlerExecution);
+                        }
+                    }
                 }
             }
+        } catch (NoSuchMethodException
+                 | InvocationTargetException
+                 | InstantiationException
+                 | IllegalAccessException e) {
+            log.error("", e);
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final String url = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.find(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+
+        return handlerExecutions.get(handlerKey);
     }
 }
