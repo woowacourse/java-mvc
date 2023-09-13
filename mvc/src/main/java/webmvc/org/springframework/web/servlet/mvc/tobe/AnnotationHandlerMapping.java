@@ -1,12 +1,12 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import static java.util.Arrays.stream;
+
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,29 +26,21 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> aClass : typesAnnotatedWith) {
-            try {
-                Object o = aClass.getConstructor().newInstance();
-                Method[] declaredMethods = o.getClass().getDeclaredMethods();
-                for (Method declaredMethod : declaredMethods) {
-                    Annotation[] declaredAnnotations = declaredMethod.getDeclaredAnnotations();
-                    for (Annotation declaredAnnotation : declaredAnnotations) {
-                        if (declaredAnnotation.annotationType().equals(RequestMapping.class)) {
-                            RequestMapping declaredAnnotation1 = (RequestMapping) declaredAnnotation;
-                            for (RequestMethod requestMethod : declaredAnnotation1.method()) {
-                                HandlerKey handlerKey = new HandlerKey(declaredAnnotation1.value(), requestMethod);
-                                HandlerExecution handlerExecution = new HandlerExecution(declaredMethod);
-                                handlerExecutions.put(handlerKey, handlerExecution);
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+        new Reflections(basePackage)
+                .getTypesAnnotatedWith(Controller.class)
+                .stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Arrays::stream)
+                .flatMap(declaredMethod -> stream(declaredMethod.getDeclaredAnnotations())
+                        .filter(it -> it.annotationType().equals(RequestMapping.class))
+                        .map(RequestMapping.class::cast)
+                        .flatMap(declaredAnnotation -> stream(declaredAnnotation.method())
+                                .map(it -> Map.entry(
+                                        new HandlerKey(declaredAnnotation.value(), it),
+                                        new HandlerExecution(declaredMethod)))
+                        )
+                )
+                .forEach(it -> handlerExecutions.put(it.getKey(), it.getValue()));
     }
 
     public Object getHandler(final HttpServletRequest request) {
