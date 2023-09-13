@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -74,6 +75,8 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         // then
-        assertThat(modelAndView.getObject("id")).isNull();
+        assertThat(modelAndView.getView())
+                .usingRecursiveComparison()
+                .isEqualTo(new JspView(""));
     }
 }
