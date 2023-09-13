@@ -2,5 +2,5 @@
 
 ## 학습테스트
 - [x] ReflectionTest
-- [] ServletTest
+- [x] ServletTest
 - [] FilterTest
