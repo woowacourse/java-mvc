@@ -1,7 +1,10 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class HandlerKey {
@@ -12,6 +15,17 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public static List<HandlerKey> keysByAnnotation(RequestMapping annotation) {
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        String value = annotation.value();
+        RequestMethod[] requestMethods = annotation.method();
+
+        for (RequestMethod requestMethod : requestMethods) {
+            handlerKeys.add(new HandlerKey(value, requestMethod));
+        }
+        return handlerKeys;
     }
 
     @Override
