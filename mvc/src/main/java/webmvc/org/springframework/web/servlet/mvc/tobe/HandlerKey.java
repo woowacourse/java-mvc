@@ -1,37 +1,52 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import web.org.springframework.web.bind.annotation.RequestMethod;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
 
     private final String url;
-    private final RequestMethod requestMethod;
+    private final List<RequestMethod> requestMethods;
 
-    public HandlerKey(final String url, final RequestMethod requestMethod) {
+    public HandlerKey(final String url, final RequestMethod... requestMethods) {
+        validateUrl(url);
+        validateRequestMethods(requestMethods);
+
         this.url = url;
-        this.requestMethod = requestMethod;
+        this.requestMethods = Arrays.asList(requestMethods);
+    }
+
+    private void validateUrl(final String url) {
+        if (url == null || url.isEmpty() || url.isBlank()) {
+            throw new IllegalArgumentException("유효하지 않은 URL 입니다.");
+        }
+    }
+
+    private void validateRequestMethods(final RequestMethod[] requestMethods) {
+        if (requestMethods == null || requestMethods.length <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 HTTP Method 입니다.");
+        }
     }
 
     @Override
-    public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
-    }
+    public boolean equals(final Object target) {
+        if (this == target) {
+            return true;
+        }
+        if (target == null || getClass() != target.getClass()) {
+            return false;
+        }
+        final HandlerKey targetHandlerKey = (HandlerKey) target;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerKey)) return false;
-        HandlerKey that = (HandlerKey) o;
-        return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
+
+        return Objects.equals(url, targetHandlerKey.url) &&
+                this.requestMethods.stream().anyMatch(targetHandlerKey.requestMethods::contains);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, requestMethod);
+        return Objects.hash(url, requestMethods);
     }
 }
