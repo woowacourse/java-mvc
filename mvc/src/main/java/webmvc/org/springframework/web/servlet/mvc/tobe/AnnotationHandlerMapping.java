@@ -1,11 +1,19 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
+import core.org.springframework.util.ReflectionUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +29,42 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Set<Class<?>> typesAnnotatedWith = ReflectionUtils.getTypesAnnotatedWith(basePackage, Controller.class);
+        for (Class<?> type : typesAnnotatedWith) {
+            List<Method> handlers = ReflectionUtils.getMethodsAnnotatedWith(type, RequestMapping.class);
+            putHandlerExecutions(type, handlers);
+        }
+    }
+
+    private void putHandlerExecutions(Class<?> type, List<Method> handlers) {
+        try {
+            Object instance = type.getDeclaredConstructor().newInstance();
+            for (Method handler : handlers) {
+                putHandlerExecutionOfTypeAnnotatedWithController(handler, instance);
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            log.error("Failed to initialize controller: {}", type.getSimpleName());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void putHandlerExecutionOfTypeAnnotatedWithController(Method handler, Object instance) {
+        RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
+        HandlerExecution handlerExecution = new HandlerExecution(handler, instance);
+
+        Arrays.stream(requestMapping.method())
+              .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))
+              .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+
+        return handlerExecutions.get(handlerKey);
+    }
+
+    public Map<Object, Object> getHandlerExecutions() {
+        return Map.copyOf(handlerExecutions);
     }
 }

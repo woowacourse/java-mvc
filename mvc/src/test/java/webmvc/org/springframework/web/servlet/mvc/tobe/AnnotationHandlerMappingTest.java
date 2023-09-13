@@ -20,6 +20,11 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    void initialize_read_Handlers_with_annotation_within_base_package_() {
+        assertThat(handlerMapping.getHandlerExecutions()).hasSize(2);
+    }
+
+    @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
