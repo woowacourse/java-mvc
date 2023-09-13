@@ -1,45 +1,54 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import core.org.springframework.util.ReflectionUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class HandlerExecution {
 
-    private final Object instance;
+    private final Object handler;
 
-    public HandlerExecution(Object instance) {
-        this.instance = instance;
+    public HandlerExecution(Object handler) {
+        this.handler = handler;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Class<?> clazz = instance.getClass();
-        Method[] methods = clazz.getDeclaredMethods();
+        Method method = findMethodToHandle(request);
+        return (ModelAndView) method.invoke(handler, request, response);
+    }
 
-        String requestURI1 = request.getRequestURI();
+    private Method findMethodToHandle(HttpServletRequest request) {
+        Method[] methods = this.handler.getClass()
+                .getDeclaredMethods();
+
+        return Arrays.stream(methods)
+                .filter(method -> canHandleRequest(method, request))
+                .findFirst()
+                .orElseThrow(RequestMappingNotFoundException::new);
+    }
+
+    private boolean canHandleRequest(Method method, HttpServletRequest request) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+            return isRequestAndRequestMappingMatches(request, requestMapping);
+        }
+        return false;
+    }
+
+    private boolean isRequestAndRequestMappingMatches(HttpServletRequest request, RequestMapping requestMapping) {
+        String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
 
-        for (Method method : methods) {
-            RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        return requestMapping.value().equals(requestURI) &&
+                isHttpMethodSupported(requestMapping.method(), requestMethod);
+    }
 
-            String requestURI = requestMapping.value();
-            RequestMethod[] requestMethods = requestMapping.method();
-
-            for (RequestMethod each : requestMethods) {
-                if (requestURI1.equals(requestURI) && each.equals(RequestMethod.valueOf(requestMethod))) {
-                    Constructor<?> constructor = ReflectionUtils.accessibleConstructor(clazz);
-                    ReflectionUtils.makeAccessible(constructor);
-                    Object rawInstance = constructor.newInstance(null);
-
-                    return (ModelAndView) method.invoke(rawInstance, request, response);
-                }
-            }
-        }
-        throw new IllegalArgumentException();
+    private boolean isHttpMethodSupported(RequestMethod[] supportedMethods, String httpMethod) {
+        return Arrays.stream(supportedMethods)
+                .anyMatch(requestMethod -> requestMethod.hasValue(httpMethod));
     }
 }
