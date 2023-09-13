@@ -26,10 +26,14 @@ public class AnnotationHandlerMapping {
     public AnnotationHandlerMapping(final Object... basePackages) {
         this.basePackages = List.of(basePackages);
         this.handlerExecutions = new HashMap<>();
+    }
+
+    public void initialize() {
+        log.info("Initialized AnnotationHandlerMapping!");
         makeHandlerExecutions(basePackages);
     }
 
-    private void makeHandlerExecutions(final Object[] basePackages) {
+    private void makeHandlerExecutions(final List<Object> basePackages) {
         for (final Object basePackage : basePackages) {
             final Reflections reflections = new Reflections(basePackage);
             final var classes = reflections.getTypesAnnotatedWith(Controller.class);
@@ -87,10 +91,6 @@ public class AnnotationHandlerMapping {
                 handlerKey -> handlerKey,
                 handlerKey -> new HandlerExecution(constructor, method)
             ));
-    }
-
-    public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
