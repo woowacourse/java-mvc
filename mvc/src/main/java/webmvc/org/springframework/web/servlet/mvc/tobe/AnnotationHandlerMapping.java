@@ -2,7 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -21,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class AnnotationHandlerMapping {
 

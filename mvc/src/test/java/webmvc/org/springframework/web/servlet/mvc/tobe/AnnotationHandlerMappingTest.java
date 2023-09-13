@@ -21,7 +21,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void methodDuplicationException_case1() {
+    void methodDuplicationException_existMappingInOtherClass_case1() {
         // given & when & then
         AnnotationHandlerMapping duplicatedHandlerMapping = new AnnotationHandlerMapping(
             "samples",
@@ -32,13 +32,43 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void methodDuplicationException_case2() {
+    void methodDuplicationException_existMappingIntSameClass_case2() {
         // given & when & then
         AnnotationHandlerMapping duplicatedHandlerMapping = new AnnotationHandlerMapping(
             "duplicate.case2");
         assertThatThrownBy(() -> duplicatedHandlerMapping.initialize())
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Duplicated HandlerKey");
+    }
+
+    @Test
+    void methodDuplicationException_duplicateMappingInOneMethod_case3() {
+        // given & when & then
+        AnnotationHandlerMapping duplicatedHandlerMapping = new AnnotationHandlerMapping(
+            "duplicate.case3");
+        assertThatThrownBy(() -> duplicatedHandlerMapping.initialize())
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Duplicated HandlerKey");
+    }
+
+    @Test
+    void oneMethodCanCreateManyHttpRequestMappings() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/multi-method-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var getModelAndView = handlerExecution.handle(request, response);
+
+        when(request.getMethod()).thenReturn("POST");
+
+        final var postModelAndView = handlerExecution.handle(request, response);
+
+        assertThat(getModelAndView.getObject("id")).isEqualTo("getPooh");
+        assertThat(postModelAndView.getObject("id")).isEqualTo("postPooh");
     }
 
     @Test
