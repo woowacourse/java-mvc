@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@RequestMapping(method = RequestMethod.PUT)
 public @interface PutMapping {
 
     String value() default "";

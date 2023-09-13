@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@RequestMapping(method = RequestMethod.PATCH)
 public @interface PatchMapping {
 
     String value() default "";
