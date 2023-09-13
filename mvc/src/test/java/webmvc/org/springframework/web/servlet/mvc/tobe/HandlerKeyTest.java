@@ -29,9 +29,7 @@ class HandlerKeyTest {
 
     @Test
     void 생성자는_유효하지_않은_RequestMethod를_전달하면_예외가_발생한다() {
-        final RequestMethod invalidRequestMethod = null;
-
-        assertThatThrownBy(() -> new HandlerKey("/", invalidRequestMethod))
+        assertThatThrownBy(() -> new HandlerKey("/"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("유효하지 않은 HTTP Method 입니다.");
     }
