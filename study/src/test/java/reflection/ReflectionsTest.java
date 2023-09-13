@@ -4,6 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import reflection.annotation.Controller;
+import reflection.annotation.Repository;
+
+import java.util.Set;
 
 class ReflectionsTest {
 
@@ -14,5 +19,15 @@ class ReflectionsTest {
         Reflections reflections = new Reflections("reflection.examples");
 
         // TODO 클래스 레벨에 @Controller, @Service, @Repository 애노테이션이 설정되어 모든 클래스 찾아 로그로 출력한다.
+        printClass(reflections.getTypesAnnotatedWith(Controller.class));
+        printClass(reflections.getTypesAnnotatedWith(Service.class));
+        printClass(reflections.getTypesAnnotatedWith(Repository.class));
     }
+
+    private void printClass(Set<Class<?>> classes) {
+        for (Class<?> clazz : classes) {
+            log.info("{}", clazz);
+        }
+    }
+
 }
