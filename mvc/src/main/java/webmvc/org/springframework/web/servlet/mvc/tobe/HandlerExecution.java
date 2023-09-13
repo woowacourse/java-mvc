@@ -15,7 +15,6 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        /// TODO: 2023/09/13 Class<?> 타입으로 괜찮은가? Constructor 매번 만들어줘야 하나?
         final Class<?> declaringClass = method.getDeclaringClass();
         final Constructor<?> constructor = declaringClass.getConstructor();
 
