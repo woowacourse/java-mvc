@@ -40,6 +40,21 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    private static List<Method> getRequestMappingMethods(Class<?> controller) {
+        return Arrays.stream(controller.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+    }
+
+    private Constructor<?> getConstructor(Class<?> controller) {
+        try {
+            return controller.getConstructor();
+        } catch (NoSuchMethodException e) {
+            log.error("{} 의 기본 생성자가 존재하지 않습니다.", controller.getName());
+            throw new RuntimeException(String.format("%s 의 기본 생성자가 존재하지 않습니다.", controller.getName()));
+        }
+    }
+
     private void addHandlerExecutions(List<Method> requestMappingMethods, Constructor<?> constructor) {
         for (Method requestMappingMethod : requestMappingMethods) {
             RequestMapping requestMapping = requestMappingMethod.getAnnotation(RequestMapping.class);
@@ -61,23 +76,8 @@ public class AnnotationHandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private Constructor<?> getConstructor(Class<?> controller) {
-        try {
-            return controller.getConstructor();
-        } catch (NoSuchMethodException e) {
-            log.error("{} 의 기본 생성자가 존재하지 않습니다.", controller.getName());
-            throw new RuntimeException(String.format("%s 의 기본 생성자가 존재하지 않습니다.", controller.getName()));
-        }
-    }
-
-    private static List<Method> getRequestMappingMethods(Class<?> controller) {
-        return Arrays.stream(controller.getMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
-    }
-
     public Object getHandler(final HttpServletRequest request) {
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        RequestMethod requestMethod = RequestMethod.from(request.getMethod());
         String requestURI = request.getRequestURI();
 
         HandlerKey requestHandlerKey = new HandlerKey(requestURI, requestMethod);
