@@ -2,22 +2,23 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Class<RequestMapping> METHOD_ANNOTATION = RequestMapping.class;
+    private static final Class<Controller> CLASS_ANNOTATION = Controller.class;
 
     private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -27,47 +28,38 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackages);
-        Set<Class<?>> clazz = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> aClass : clazz) {
-            initializeControllerMappings(aClass);
-        }
+        AnnotationScanner annotationScanner = new AnnotationScanner(basePackages);
+        Map<Class<?>, Object> classWithInstance = annotationScanner.findAnnotatedClassWithInstance(CLASS_ANNOTATION);
+        addHandlerExecution(classWithInstance);
     }
 
-    private void initializeControllerMappings(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Method[] methods = clazz.getMethods();
-        Object object = clazz.getConstructor().newInstance();
-        processControllerMethods(methods, object);
-    }
-
-    private void processControllerMethods(Method[] methods, Object object) {
+    private void addHandlerExecution(Map<Class<?>, Object> classWithInstance) {
+        var methods = findRequestMappingMethods(classWithInstance.keySet());
         for (Method method : methods) {
-            processMethodAnnotations(object, method, method.getAnnotations());
-
+            addHandlerExecution(classWithInstance, method);
         }
     }
 
-    private void processMethodAnnotations(Object object, Method method, Annotation[] annotations) {
-        for (Annotation annotation : annotations) {
-            handleRequestMappingAnnotation(object, method, annotation);
-        }
+    private void addHandlerExecution(Map<Class<?>, Object> classWithInstance, Method method) {
+        var handler = classWithInstance.get(method.getDeclaringClass());
+        var handlerExecution = new HandlerExecution(handler, method);
+        addHandlerExecutionByRequestMapping(method.getAnnotation(METHOD_ANNOTATION), handlerExecution);
     }
 
-    private void handleRequestMappingAnnotation(Object object, Method method, Annotation annotation) {
-        if (annotation.annotationType().equals(RequestMapping.class)) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            processControllerMethods(object, method, requestMapping);
-        }
-    }
-
-    private void processControllerMethods(Object object, Method method, RequestMapping requestMapping) {
+    private void addHandlerExecutionByRequestMapping(RequestMapping requestMapping, HandlerExecution handlerExecution) {
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(object, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
+    }
+
+    private Set<Method> findRequestMappingMethods(Set<Class<?>> classes) {
+        return classes.stream()
+                .flatMap(it -> Arrays.stream(it.getMethods()))
+                .filter(it -> it.isAnnotationPresent(METHOD_ANNOTATION))
+                .collect(Collectors.toSet());
     }
 
     public Object getHandler(final HttpServletRequest request) {
