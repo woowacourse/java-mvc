@@ -8,17 +8,16 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
 
-    private final Class<?> controllerClass;
     private final Method method;
 
-    public HandlerExecution(Class<?> controllerClass, Method method) {
-        this.controllerClass = controllerClass;
+    public HandlerExecution(Method method) {
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         /// TODO: 2023/09/13 Class<?> 타입으로 괜찮은가? Constructor 매번 만들어줘야 하나?
-        final Constructor<?> constructor = controllerClass.getConstructor();
+        final Class<?> declaringClass = method.getDeclaringClass();
+        final Constructor<?> constructor = declaringClass.getConstructor();
 
         return (ModelAndView) method.invoke(constructor.newInstance(), request, response);
     }

@@ -33,22 +33,22 @@ public class AnnotationHandlerMapping {
     private void addControllerMethods(Class<?> controller) {
         final var methods = controller.getMethods();
         for (Method method : methods) {
-            addAnnotatedWithRequestMapping(controller, method);
+            addAnnotatedWithRequestMapping(method);
         }
     }
 
-    private void addAnnotatedWithRequestMapping(Class<?> controller, Method method) {
+    private void addAnnotatedWithRequestMapping(Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
-            final var annotation = method.getAnnotation(RequestMapping.class);
-            addHandlerExecution(controller, method, annotation);
+            addHandlerExecution(method);
         }
     }
 
-    private void addHandlerExecution(Class<?> controller, Method method, RequestMapping requestMapping) {
+    private void addHandlerExecution(Method method) {
+        final var requestMapping = method.getAnnotation(RequestMapping.class);
         final var mappingUrl = requestMapping.value();
         final var mappingRequestMethods = requestMapping.method();
         for (RequestMethod requestMethod : mappingRequestMethods) {
-            handlerExecutions.put(new HandlerKey(mappingUrl, requestMethod), new HandlerExecution(controller, method));
+            handlerExecutions.put(new HandlerKey(mappingUrl, requestMethod), new HandlerExecution(method));
         }
     }
 
