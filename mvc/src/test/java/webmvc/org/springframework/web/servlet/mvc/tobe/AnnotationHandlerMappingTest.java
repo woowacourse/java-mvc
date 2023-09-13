@@ -33,6 +33,8 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+    // request ->(id: gugu, uri :/get-test,"GET" )
+    // HandlerExecution ->
 
     @Test
     void post() throws Exception {
