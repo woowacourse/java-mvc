@@ -1,8 +1,8 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe.exception;
 
-public class NotFoundHandlerException extends RuntimeException {
+public class HandlerNotFoundException extends RuntimeException {
 
-    public NotFoundHandlerException() {
+    public HandlerNotFoundException() {
         super("매핑될 핸들러가 존재하지 않습니다.");
     }
 }

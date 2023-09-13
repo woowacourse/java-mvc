@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.tobe.exception.NotFoundHandlerException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotFoundException;
 
 public class AnnotationHandlerMapping {
 
@@ -67,7 +67,7 @@ public class AnnotationHandlerMapping {
         HandlerKey handlerKey = new HandlerKey(url, requestMethod);
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (handlerExecution == null) {
-            throw new NotFoundHandlerException();
+            throw new HandlerNotFoundException();
         }
         return handlerExecution;
     }
