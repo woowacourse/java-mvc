@@ -38,17 +38,17 @@ public class AnnotationHandlerMapping {
     private void addHandlerExecution(Map<Class<?>, Object> classWithInstance) {
         var methods = findRequestMappingMethods(classWithInstance.keySet());
         for (Method method : methods) {
-            addHandlerExecution(classWithInstance, method);
+            addHandlerExecutionByMethod(classWithInstance, method);
         }
     }
 
-    private void addHandlerExecution(Map<Class<?>, Object> classWithInstance, Method method) {
+    private void addHandlerExecutionByMethod(Map<Class<?>, Object> classWithInstance, Method method) {
         var handler = classWithInstance.get(method.getDeclaringClass());
         var handlerExecution = new HandlerExecution(handler, method);
-        addHandlerExecutionByRequestMapping(method.getAnnotation(METHOD_ANNOTATION), handlerExecution);
+        addHandlerExecutionByAnnotation(method.getAnnotation(METHOD_ANNOTATION), handlerExecution);
     }
 
-    private void addHandlerExecutionByRequestMapping(RequestMapping requestMapping, HandlerExecution handlerExecution) {
+    private void addHandlerExecutionByAnnotation(RequestMapping requestMapping, HandlerExecution handlerExecution) {
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
