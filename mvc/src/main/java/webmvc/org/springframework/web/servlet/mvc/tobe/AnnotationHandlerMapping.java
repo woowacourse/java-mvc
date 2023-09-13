@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.exception.ClassException;
 
 public class AnnotationHandlerMapping {
 
@@ -33,10 +34,7 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        controllers.stream()
-                .map(Class::getDeclaredMethods)
-                .flatMap(Stream::of)
-                .filter(this::isRequestMappingAnnotation)
+        controllers.stream().map(Class::getDeclaredMethods).flatMap(Stream::of).filter(this::isRequestMappingAnnotation)
                 .forEach(this::addHandlerExecution);
     }
 
@@ -62,13 +60,13 @@ public class AnnotationHandlerMapping {
             Constructor<?> declaredConstructor = clazz.getDeclaredConstructor();
             return declaredConstructor.newInstance();
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(String.format("해당 클래스(%s)에 기본 생성자가 없습니다 ", clazz.getName()), e);
+            throw new ClassException(String.format("해당 클래스(%s)에 기본 생성자가 없습니다 ", clazz.getName()), e);
         } catch (InstantiationException e) {
-            throw new RuntimeException(String.format("해당 클래스(%s)의 인스턴스를 생성할 수 없습니다 ", clazz.getName()), e);
+            throw new ClassException(String.format("해당 클래스(%s)의 인스턴스를 생성할 수 없습니다 ", clazz.getName()), e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(String.format("해당 클래스(%s)의 생성자에 접근할 수 없습니다 ", clazz.getName()), e);
+            throw new ClassException(String.format("해당 클래스(%s)의 생성자에 접근할 수 없습니다 ", clazz.getName()), e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException(String.format("해당 클래스(%s)의 생성자 호출 중 예외가 발생했습니다 ", clazz.getName()), e);
+            throw new ClassException(String.format("해당 클래스(%s)의 생성자 호출 중 예외가 발생했습니다 ", clazz.getName()), e);
         }
     }
 
