@@ -1,0 +1,67 @@
+package webmvc.org.springframework.web.servlet.mvc.tobe;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.view.resolver.JspViewResolver;
+import webmvc.org.springframework.web.servlet.view.resolver.ViewResolver;
+
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+class HandlerExecutionTest {
+
+    @Test
+    void 생성자는_handler와_method를_전달하면_HandlerExecution을_초기화한다() throws NoSuchMethodException {
+        final TestController testController = new TestController();
+        final Method method = TestController.class.getMethod(
+                "execute",
+                HttpServletRequest.class,
+                HttpServletResponse.class
+        );
+
+        assertDoesNotThrow(() -> new HandlerExecution(Collections.emptyList(), testController, method));
+    }
+
+    @Test
+    void handle_메서드는_Controller의_반환값을_ModelAndView로_변환해_반환한다() throws Exception {
+        final TestController testController = new TestController();
+        final Method method = TestController.class.getMethod(
+                "test",
+                HttpServletRequest.class,
+                HttpServletResponse.class
+        );
+        final List<ViewResolver> viewResolvers = List.of(new JspViewResolver());
+        final HandlerExecution handlerExecution = new HandlerExecution(viewResolvers, testController, method);
+        final HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+
+        given(httpServletRequest.getSession(anyBoolean())).willReturn(null);
+
+        final ModelAndView actual = handlerExecution.handle(httpServletRequest, null);
+
+        // TODO : 이후 미션 단계에서 테스트 케이스 추가 예정
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(actual).isNotNull();
+            softAssertions.assertThat(actual.getView()).isNotNull();
+        });
+    }
+
+    static class TestController {
+
+        public ModelAndView test(final HttpServletRequest ignoreRequest, final HttpServletResponse ignoreResponse) {
+            return new ModelAndView(new JspView("/hello.jsp"));
+        }
+    }
+}
