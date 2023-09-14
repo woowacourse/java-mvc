@@ -18,9 +18,7 @@ public enum CustomRequestMappings {
     }
 
     public static boolean isAnyMatch(Annotation annotation) {
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-
         return Arrays.stream(values())
-                .anyMatch(each -> each.annotation.equals(annotationType));
+                .anyMatch(each -> each.annotation.equals(annotation.annotationType()));
     }
 }
