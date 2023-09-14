@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -17,21 +16,19 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackages;
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackages) {
-        this.basePackages = basePackages;
+    public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (final Object basePackage : basePackages) {
-            final Reflections reflections = new Reflections(basePackage);
-            final Set<Class<?>> controllerClazzSet = reflections.getTypesAnnotatedWith(Controller.class);
-            circuitClasses(controllerClazzSet);
-        }
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllerClazzSet = reflections.getTypesAnnotatedWith(Controller.class);
+        circuitClasses(controllerClazzSet);
     }
 
     private void circuitClasses(final Set<Class<?>> controllerClazzSet) {
@@ -52,17 +49,8 @@ public class AnnotationHandlerMapping {
             final String requestUrl = requestMappingAnnotation.value();
             final RequestMethod requestMethod = requestMappingAnnotation.method()[0];
             final HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
-            final Object controller = getControllerInstance(clazz);
-            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            final HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
             handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private Object getControllerInstance(final Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (final Exception e) {
-            throw new NoSuchElementException("인스턴스를 찾을 수 없습니다.");
         }
     }
 
