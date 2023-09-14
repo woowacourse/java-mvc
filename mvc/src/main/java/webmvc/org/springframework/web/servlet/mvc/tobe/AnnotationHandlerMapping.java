@@ -57,10 +57,7 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey1 = handlerExecutions.keySet().stream()
-                .filter(handlerKey -> {
-                    return Objects.equals(request.getRequestURI(), handlerKey.getUrl())
-                            && Objects.equals(request.getMethod().toLowerCase(), handlerKey.getRequestMethod().name().toLowerCase());
-                })
+                .filter(handlerKey -> handlerKey.isMatching(request))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("404"));
         return handlerExecutions.get(handlerKey1);

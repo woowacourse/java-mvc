@@ -1,11 +1,13 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import jakarta.servlet.http.HttpServletRequest;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Objects;
 
 public class HandlerKey {
 
+    public static final String QUERY_STRING_SEPARATOR = "?";
     private final String url;
     private final RequestMethod requestMethod;
 
@@ -14,12 +16,13 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public RequestMethod getRequestMethod() {
-        return requestMethod;
+    public boolean isMatching(final HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        if (requestURI.contains(QUERY_STRING_SEPARATOR)) {
+            requestURI = requestURI.substring(0, requestURI.indexOf(QUERY_STRING_SEPARATOR));
+        }
+        return Objects.equals(requestURI, url)
+                && Objects.equals(request.getMethod().toLowerCase(), requestMethod.name().toLowerCase());
     }
 
     @Override
