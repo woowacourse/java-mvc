@@ -10,9 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -34,18 +37,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (final Class<?> controller : controllerClasses) {
             final Object controllerInstance = findDefaultConstructor(controller);
-            final Method[] classMethods = controller.getDeclaredMethods();
-            for (final Method classMethod : classMethods) {
-                if (classMethod.isAnnotationPresent(RequestMapping.class)) {
-                    final RequestMapping requestMapping = classMethod.getAnnotation(RequestMapping.class);
-                    final String httpRequestURI = requestMapping.value();
-                    final RequestMethod[] httpRequestMethods = requestMapping.method();
-                    for (final RequestMethod httpRequestMethod : httpRequestMethods) {
-                        final HandlerKey handlerKey = new HandlerKey(httpRequestURI, httpRequestMethod);
-                        final HandlerExecution handlerExecution = HandlerExecution.of(controllerInstance, classMethod);
+            List<Method> classMethods = Arrays.stream(controller.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .collect(Collectors.toList());
 
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
+            for (final Method classMethod : classMethods) {
+                final RequestMapping requestMapping = classMethod.getAnnotation(RequestMapping.class);
+                final String httpRequestURI = requestMapping.value();
+                final RequestMethod[] httpRequestMethods = requestMapping.method();
+                for (final RequestMethod httpRequestMethod : httpRequestMethods) {
+                    final HandlerKey handlerKey = new HandlerKey(httpRequestURI, httpRequestMethod);
+                    final HandlerExecution handlerExecution = HandlerExecution.of(controllerInstance, classMethod);
+
+                    handlerExecutions.put(handlerKey, handlerExecution);
                 }
             }
         }
