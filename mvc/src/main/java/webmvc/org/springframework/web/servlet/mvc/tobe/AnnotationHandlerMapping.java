@@ -1,11 +1,20 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +29,50 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        final Reflections reflections = new Reflections(basePackage);
+        initializeHandlerExecutions(reflections);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void initializeHandlerExecutions(final Reflections reflections) {
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        for (final Class<?> controllerClass : controllerClasses) {
+            initializeByController(controllerClass);
+        }
+    }
+
+    private void initializeByController(final Class<?> controllerClass) {
+        try {
+            final Object controller = controllerClass.getDeclaredConstructor().newInstance();
+            final List<Method> requestMappingMethods = Arrays.stream(controllerClass.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .collect(Collectors.toList());
+
+            for (final Method method : requestMappingMethods) {
+                initializeByRequestMappingMethod(controller, method);
+            }
+        } catch (final Exception e) {
+            // ignore
+        }
+    }
+
+    private void initializeByRequestMappingMethod(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final RequestMethod[] requestMethods = requestMapping.method();
+        final String requestUri = requestMapping.value();
+
+        for (final RequestMethod requestMethod : requestMethods) {
+            handlerExecutions.put(
+                    new HandlerKey(requestUri, requestMethod),
+                    new HandlerExecution(method, controller)
+            );
+        }
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final String method = request.getMethod();
+        final String requestURI = request.getRequestURI();
+        final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
+        return handlerExecutions.get(handlerKey);
     }
 }
