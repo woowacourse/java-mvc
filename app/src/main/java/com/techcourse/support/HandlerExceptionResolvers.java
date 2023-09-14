@@ -9,7 +9,6 @@ public class HandlerExceptionResolvers {
 
     private final Map<Class<? extends Exception>, HandlerExceptionResolver> handlerExceptionResolverMap = new HashMap<>();
 
-
     public void addHandlerExceptionResolver(HandlerExceptionResolver handlerExceptionResolver) {
         handlerExceptionResolverMap.put(handlerExceptionResolver.supportException(), handlerExceptionResolver);
     }
