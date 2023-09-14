@@ -7,10 +7,9 @@ import webmvc.org.springframework.web.servlet.exception.HandlerExecutionExceptio
 
 import java.lang.reflect.Method;
 
-import static java.util.Objects.isNull;
-
 public class HandlerExecution {
 
+    private final Object controller;
     private final Method method;
 
     public HandlerExecution(final Object controller, final Method method) {
@@ -21,14 +20,11 @@ public class HandlerExecution {
             throw new HandlerExecutionException("[ERROR] HandlerExecution 를 생성할 때 Method 는 null 일 수 없습니다.");
         }
 
+        this.controller = controller;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object controller = method.getDeclaringClass()
-                .getDeclaredConstructor()
-                .newInstance();
-
         return (ModelAndView) method.invoke(controller, request, response);
     }
 }
