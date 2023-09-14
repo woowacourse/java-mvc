@@ -45,14 +45,14 @@ public class AnnotationHandlerMapping {
     }
 
     private void putHandlerExecutions(List<Method> requestMappingMethods) {
-        requestMappingMethods.forEach(method -> {
+        for (Method method : requestMappingMethods) {
             Object controller = createControllerInstance(method);
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
             String path = annotation.value();
             RequestMethod[] requestMethods = annotation.method();
             RequestMethod requestMethod = RequestMethod.valueOf(requestMethods[0].name());
             handlerExecutions.put(new HandlerKey(path, requestMethod), new HandlerExecution(controller, method));
-        });
+        }
     }
 
     private Object createControllerInstance(Method method) {
