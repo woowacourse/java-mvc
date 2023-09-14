@@ -2,7 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,17 +43,23 @@ public class AnnotationHandlerMapping {
 
     private void putHandlerExecutionsByControllers(final Set<Class<?>> classes) {
         for (final Class<?> clazz : classes) {
-            final Constructor<?> constructor = getConstructor(clazz);
+            final Object instance = getNewInstance(clazz);
             final List<Method> methods = getMethodsWithAnnotation(clazz);
-            putHandlerExecutionsByMethods(constructor, methods);
+            putHandlerExecutionsByMethods(instance, methods);
         }
     }
 
-    private Constructor<?> getConstructor(final Class<?> clazz) {
+    private Object getNewInstance(final Class<?> clazz) {
         try {
-            return clazz.getConstructor();
+            return clazz.getConstructor().newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException("클래스 객체를 인스턴스화 할 수 없습니다.");
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("클래스 객체의 생성자에 접근할 수 없습니다.");
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("클래스 객체의 생성자를 호출할 수 없습니다.");
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("기본 생성자가 존재하지 않습니다.");
+            throw new RuntimeException("클래스 객체의 생성자를 찾을 수 없습니다.");
         }
     }
 
@@ -63,22 +69,22 @@ public class AnnotationHandlerMapping {
             .collect(Collectors.toList());
     }
 
-    private void putHandlerExecutionsByMethods(final Constructor<?> constructor, final List<Method> methods) {
+    private void putHandlerExecutionsByMethods(final Object object, final List<Method> methods) {
         for (final Method method : methods) {
-            putHandlerExecutionsByMethod(constructor, method);
+            putHandlerExecutionsByMethod(object, method);
         }
     }
 
-    private void putHandlerExecutionsByMethod(final Constructor<?> constructor, final Method method) {
+    private void putHandlerExecutionsByMethod(final Object object, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final Map<HandlerKey, HandlerExecution> handlerExecutionsByMethod =
-            convertHandlerExecutions(constructor, method, requestMapping);
+            convertHandlerExecutions(object, method, requestMapping);
 
         handlerExecutions.putAll(handlerExecutionsByMethod);
     }
 
     private Map<HandlerKey, HandlerExecution> convertHandlerExecutions(
-        final Constructor<?> constructor,
+        final Object object,
         final Method method,
         final RequestMapping requestMapping
     ) {
@@ -89,7 +95,7 @@ public class AnnotationHandlerMapping {
             .map(requestMethod -> new HandlerKey(requestURI, requestMethod))
             .collect(Collectors.toMap(
                 handlerKey -> handlerKey,
-                handlerKey -> new HandlerExecution(constructor, method)
+                handlerKey -> new HandlerExecution(object, method)
             ));
     }
 

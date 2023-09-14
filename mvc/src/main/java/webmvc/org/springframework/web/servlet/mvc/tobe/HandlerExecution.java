@@ -8,15 +8,15 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
 
-    private final Constructor<?> constructor;
+    private final Object object;
     private final Method method;
 
-    public HandlerExecution(final Constructor<?> constructor, final Method method) {
-        this.constructor = constructor;
+    public HandlerExecution(final Object object, final Method method) {
+        this.object = object;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(constructor.newInstance(), request, response);
+        return (ModelAndView) method.invoke(object, request, response);
     }
 }
