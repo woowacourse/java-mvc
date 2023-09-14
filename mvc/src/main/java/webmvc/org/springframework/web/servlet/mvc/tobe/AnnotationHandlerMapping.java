@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private static Constructor<?> getConstructor(final Class<?> clazz) {
+    private Constructor<?> getConstructor(final Class<?> clazz) {
         try {
             return clazz.getConstructor();
         } catch (NoSuchMethodException e) {
