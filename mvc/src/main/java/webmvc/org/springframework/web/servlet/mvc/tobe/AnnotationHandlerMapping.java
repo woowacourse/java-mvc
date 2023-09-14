@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -45,8 +46,8 @@ public class AnnotationHandlerMapping {
     }
 
     public void registerFromBasePackage(Object[] basePackages) {
-        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackages));
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        AnnotationScanner annotationScanner = new AnnotationScanner(new Reflections(basePackages));
+        Map<Class<?>, Object> controllers = annotationScanner.getAnnotatedClasses(Controller.class);
 
         for (Class<?> handler : controllers.keySet()) {
             Object instance = controllers.get(handler);
