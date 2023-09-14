@@ -45,7 +45,7 @@ public class AnnotationHandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    public void registerHandler(final Method method) {
+    private void registerHandler(final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String requestURI = requestMapping.value();
         Arrays.stream(requestMapping.method())
