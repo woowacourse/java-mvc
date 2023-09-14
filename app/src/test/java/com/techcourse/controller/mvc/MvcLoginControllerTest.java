@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 class MvcLoginControllerTest {
 
     private final MvcLoginController mvcLoginController = new MvcLoginController();
+
     private HandlerMapping handlerMapping;
 
     @BeforeEach
