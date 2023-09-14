@@ -17,16 +17,22 @@ public class TestController {
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("test controller get method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        log.info("====================> test controller get method");
+        log.info("====================> Request Uri    = {}", request.getRequestURI());
+        log.info("====================> Request Method = {}", request.getMethod());
+
+        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("test controller post method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        log.info("====================> test controller post method");
+        log.info("====================> Request Uri    = {}", request.getRequestURI());
+        log.info("====================> Request Method = {}", request.getMethod());
+
+        final ModelAndView modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
