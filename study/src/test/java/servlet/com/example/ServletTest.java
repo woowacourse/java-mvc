@@ -20,6 +20,7 @@ class ServletTest {
         HttpUtils.send(PATH);
         HttpUtils.send(PATH);
         final var response = HttpUtils.send(PATH);
+        System.out.println(response.body());
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
@@ -28,7 +29,7 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +51,6 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
