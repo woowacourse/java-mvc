@@ -7,6 +7,8 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 public class HandlerExecution {
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return null;
+        final ModelAndView modelAndEmptyView = new ModelAndView(null);
+
+        return modelAndEmptyView.addObject("id", request.getAttribute("id"));
     }
 }
