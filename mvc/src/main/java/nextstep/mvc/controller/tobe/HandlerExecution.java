@@ -4,9 +4,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.view.ModelAndView;
 
+import java.lang.reflect.Method;
+
 public class HandlerExecution {
 
+    private final Object controller;
+    private final Method method;
+
+    private HandlerExecution(final Object controller, final Method method) {
+        this.controller = controller;
+        this.method = method;
+    }
+
+    public static HandlerExecution of(final Object controller, final Method method) {
+        return new HandlerExecution(controller, method);
+    }
+
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return null;
+        return (ModelAndView) method.invoke(controller, request, response);
     }
 }
