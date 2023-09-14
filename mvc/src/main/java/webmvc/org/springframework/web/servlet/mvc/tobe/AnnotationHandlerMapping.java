@@ -47,12 +47,8 @@ public class AnnotationHandlerMapping {
     }
 
     private Set<Class<?>> getAnnotatedControllerClasses() {
-        Set<Class<?>> controllers = new HashSet<>();
-        for (Object packagePath : basePackage) {
-            Reflections reflections = new Reflections((String) packagePath);
-            controllers.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-        }
-        return controllers;
+        Reflections reflections = new Reflections(basePackage);
+        return new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
     }
 
     public Object getHandler(final HttpServletRequest request) {
