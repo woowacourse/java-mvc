@@ -10,7 +10,6 @@ import webmvc.org.springframework.web.servlet.mvc.exception.MethodException;
 public class HandlerExecution {
 
     private final Method method;
-
     private final Object instance;
 
     public HandlerExecution(Method method, Object instance) {
