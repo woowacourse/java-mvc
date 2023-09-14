@@ -20,17 +20,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class MvcLogoutControllerTest {
+class MvcLogoutControllerTest extends ControllerTest {
 
     private static final MvcLogoutController mvcLogoutController = new MvcLogoutController();
-
-    private HandlerMapping handlerMapping;
-
-    @BeforeEach
-    void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        handlerMapping.initialize();
-    }
 
     @Nested
     class LogoutUser {

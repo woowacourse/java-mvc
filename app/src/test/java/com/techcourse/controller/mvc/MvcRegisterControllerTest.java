@@ -3,13 +3,10 @@ package com.techcourse.controller.mvc;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 import java.lang.reflect.Method;
 
@@ -18,15 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class MvcRegisterControllerTest {
+class MvcRegisterControllerTest extends ControllerTest {
 
-    private HandlerMapping handlerMapping;
-
-    @BeforeEach
-    void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        handlerMapping.initialize();
-    }
+    private static final MvcRegisterController mvcRegisterController = new MvcRegisterController();
 
     @Nested
     class RegisterUser {
@@ -49,7 +40,6 @@ class MvcRegisterControllerTest {
         @Test
         void registerUser() {
             //given
-            MvcRegisterController mvcRegisterController = new MvcRegisterController();
             HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getParameter("account")).thenReturn("moomin");
             when(request.getParameter("password")).thenReturn("password");
@@ -86,10 +76,7 @@ class MvcRegisterControllerTest {
 
         @Test
         void viewRegister() {
-            //given
-            MvcRegisterController mvcRegisterController = new MvcRegisterController();
-
-            //when
+            //given, when
             ModelAndView modelAndView = mvcRegisterController.viewRegister(null, null);
 
             //then

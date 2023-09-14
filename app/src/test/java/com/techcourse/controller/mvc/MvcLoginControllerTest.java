@@ -5,13 +5,10 @@ import com.techcourse.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 import java.lang.reflect.Method;
 
@@ -19,17 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class MvcLoginControllerTest {
+class MvcLoginControllerTest extends ControllerTest {
 
     private final MvcLoginController mvcLoginController = new MvcLoginController();
-
-    private HandlerMapping handlerMapping;
-
-    @BeforeEach
-    void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        handlerMapping.initialize();
-    }
 
     @Nested
     class LoginUser {
