@@ -29,8 +29,8 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         controllers.forEach(controller -> {
             Object handler = createHandlerByConstructor(controller);
@@ -42,17 +42,17 @@ public class AnnotationHandlerMapping {
     }
 
     private void parseMethod(Object handler, Method method) {
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        RequestMethod[] httpMethods = annotation.method();
-        String path = annotation.value();
+        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        final RequestMethod[] httpMethods = annotation.method();
+        final String path = annotation.value();
         addHandlerExecution(handler, method, httpMethods, path);
     }
 
     private void addHandlerExecution(Object handler, Method method, RequestMethod[] httpMethods, String path) {
-        List<HandlerKey> handlerKeys = Arrays.stream(httpMethods)
+        final List<HandlerKey> handlerKeys = Arrays.stream(httpMethods)
                 .map(httpMethod -> new HandlerKey(path, httpMethod))
                 .collect(toList());
-        HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+        final HandlerExecution handlerExecution = new HandlerExecution(handler, method);
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
@@ -69,9 +69,9 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        final String requestURI = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
 
