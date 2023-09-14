@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.exception.GetControllerException;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,9 +51,20 @@ public class AnnotationHandlerMapping {
                 .forEach(method -> {
                     final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                     final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-                    final HandlerExecution handlerExecution = new HandlerExecution(method);
+                    final HandlerExecution handlerExecution = new HandlerExecution(getInstance(controllerClass), method);
                     handlerExecutions.put(handlerKey, handlerExecution);
                 });
+    }
+
+    private Object getInstance(final Class<?> controllerClass) {
+        try {
+            return controllerClass.getConstructor().newInstance();
+        } catch (InvocationTargetException
+                 | InstantiationException
+                 | IllegalAccessException
+                 | NoSuchMethodException e) {
+            throw new GetControllerException();
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
