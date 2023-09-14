@@ -1,6 +1,10 @@
 package reflection;
 
 public class Junit3Test {
+
+    public Junit3Test() {
+    }
+
     public void test1() throws Exception {
         System.out.println("Running Test1");
     }
