@@ -1,8 +1,11 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.exception.HandlerKeyException;
 
 import java.util.Objects;
+
+import static java.util.Objects.*;
 
 public class HandlerKey {
 
@@ -10,16 +13,14 @@ public class HandlerKey {
     private final RequestMethod requestMethod;
 
     public HandlerKey(final String url, final RequestMethod requestMethod) {
+        if (isNull(url)) {
+            throw new HandlerKeyException("[ERROR] HandlerKey 를 생성할 때 url 이 null 일 수 없습니다.");
+        }
+        if (isNull(requestMethod)) {
+            throw new HandlerKeyException("[ERROR] HandlerKey 를 생성할 때 requestMethod 는 null 일 수 없습니다.");
+        }
         this.url = url;
         this.requestMethod = requestMethod;
-    }
-
-    @Override
-    public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
     }
 
     @Override
@@ -32,6 +33,14 @@ public class HandlerKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, requestMethod);
+        return hash(url, requestMethod);
+    }
+
+    @Override
+    public String toString() {
+        return "HandlerKey{" +
+               "url='" + url + '\'' +
+               ", requestMethod=" + requestMethod +
+               '}';
     }
 }
