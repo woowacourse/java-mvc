@@ -2,19 +2,17 @@ package nextstep.mvc.controller.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import nextstep.mvc.view.ModelAndView;
 
 import java.lang.reflect.Method;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class HandlerExecution {
 
     private final Object controller;
     private final Method method;
-
-    private HandlerExecution(final Object controller, final Method method) {
-        this.controller = controller;
-        this.method = method;
-    }
 
     public static HandlerExecution of(final Object controller, final Method method) {
         return new HandlerExecution(controller, method);

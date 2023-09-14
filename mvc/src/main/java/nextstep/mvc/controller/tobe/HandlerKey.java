@@ -1,18 +1,15 @@
 package nextstep.mvc.controller.tobe;
 
+import lombok.RequiredArgsConstructor;
 import nextstep.web.support.RequestMethod;
 
 import java.util.Objects;
 
+@RequiredArgsConstructor
 public class HandlerKey {
 
     private final String url;
     private final RequestMethod requestMethod;
-
-    public HandlerKey(final String url, final RequestMethod requestMethod) {
-        this.url = url;
-        this.requestMethod = requestMethod;
-    }
 
     @Override
     public String toString() {
