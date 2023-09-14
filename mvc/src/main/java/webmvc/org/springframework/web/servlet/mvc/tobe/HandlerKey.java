@@ -17,12 +17,17 @@ public class HandlerKey {
     }
 
     public boolean isMatching(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
+        String path = getPath(request);
+        return Objects.equals(path, url)
+                && requestMethod.isMatching(request);
+    }
+
+    private String getPath(final HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
         if (requestURI.contains(QUERY_STRING_SEPARATOR)) {
-            requestURI = requestURI.substring(0, requestURI.indexOf(QUERY_STRING_SEPARATOR));
+            return requestURI.substring(0, requestURI.indexOf(QUERY_STRING_SEPARATOR));
         }
-        return Objects.equals(requestURI, url)
-                && Objects.equals(request.getMethod().toLowerCase(), requestMethod.name().toLowerCase());
+        return requestURI;
     }
 
     @Override
