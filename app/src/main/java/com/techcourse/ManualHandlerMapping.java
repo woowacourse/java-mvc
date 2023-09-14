@@ -1,6 +1,10 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.legacy.LoginController;
+import com.techcourse.controller.legacy.LoginViewController;
+import com.techcourse.controller.legacy.LogoutController;
+import com.techcourse.controller.legacy.RegisterController;
+import com.techcourse.controller.legacy.RegisterViewController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
