@@ -27,13 +27,9 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-
         final List<Reflections> packageReflections = getPackageReflections();
-
         final List<Class<?>> controllerClasses = getControllerClasses(packageReflections);
-
         final Map<Method, Object> controllerMethodAndObject = getControllerMethodAndObject(controllerClasses);
-
         initializeHandlerExecutions(controllerMethodAndObject);
     }
 
@@ -65,7 +61,7 @@ public class AnnotationHandlerMapping {
                 throw new IllegalStateException("빈 객체 생성 중 에러");
             }
             final List<Method> controllerMethod = Arrays.stream(declaredMethods)
-                    .filter(method -> method.isAnnotationPresent(Controller.class))
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .collect(Collectors.toList());
             for (Method method : controllerMethod) {
                 controllerMethodAndObject.put(method, controller);
