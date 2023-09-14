@@ -18,19 +18,17 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.basePackages = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
         log.info("Initializing AnnotationHandlerMapping starts!");
-        for (Object base : basePackage) {
-            registerFromBasePackage((String) base);
-        }
+        registerFromBasePackage(basePackages);
         log.info("Initializing AnnotationHandlerMapping succeeds!");
     }
 
@@ -46,8 +44,8 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public void registerFromBasePackage(String basePackage) {
-        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+    public void registerFromBasePackage(Object[] basePackages) {
+        ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackages));
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         for (Class<?> handler : controllers.keySet()) {
