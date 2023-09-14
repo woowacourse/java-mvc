@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.mapping;
 
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;

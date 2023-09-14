@@ -1,9 +1,9 @@
-package com.techcourse;
+package com.techcourse.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
-public class ManualHandlerMappingAdapter implements HandlerMapping {
+public class ManualHandlerMappingWrapper implements HandlerMapping {
 
     private final ManualHandlerMapping mappings = new ManualHandlerMapping();
 
