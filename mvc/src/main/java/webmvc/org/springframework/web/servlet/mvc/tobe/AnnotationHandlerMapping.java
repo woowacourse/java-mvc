@@ -50,14 +50,14 @@ public class AnnotationHandlerMapping {
     }
 
     private Map<HandlerKey, HandlerExecution> extractHandlerFromClass(Class<?> targetClass) {
-        Object handler = makeClass(targetClass);
+        Object handler = toInstance(targetClass);
         return Arrays.stream(targetClass.getMethods())
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
             .map(method -> extractHandlerFromMethod(method, handler))
             .reduce(new HashMap<>(), migrateHandler());
     }
 
-    private Object makeClass(Class<?> targetClass) {
+    private Object toInstance(Class<?> targetClass) {
         try {
             return targetClass.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
