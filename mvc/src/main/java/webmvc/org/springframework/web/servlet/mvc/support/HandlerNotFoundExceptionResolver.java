@@ -23,4 +23,9 @@ public class HandlerNotFoundExceptionResolver implements HandlerExceptionResolve
         }
         throw ex;
     }
+
+    @Override
+    public Class<? extends Exception> supportException() {
+        return HandlerNotFoundException.class;
+    }
 }
