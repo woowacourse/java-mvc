@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -13,15 +15,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final transient HandlerMapping mapping;
 
     public DispatcherServlet() {
+        mapping = new ManualHandlerMappingAdapter();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        mapping.initialize();
     }
 
     @Override
@@ -30,11 +32,12 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = (Controller) mapping.getHandler(request);
             final var viewName = controller.execute(request, response);
             move(viewName, request, response);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
+
             throw new ServletException(e.getMessage());
         }
     }
