@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.exception.GetControllerException;
+import webmvc.org.springframework.web.servlet.mvc.exception.GetInstanceException;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -63,7 +63,7 @@ public class AnnotationHandlerMapping {
                  | InstantiationException
                  | IllegalAccessException
                  | NoSuchMethodException e) {
-            throw new GetControllerException();
+            throw new GetInstanceException();
         }
     }
 
