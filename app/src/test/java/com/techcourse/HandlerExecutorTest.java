@@ -34,7 +34,7 @@ class HandlerExecutorTest {
 
         MvcRegisterController mvcRegisterController = MvcRegisterController.class.newInstance();
         Method method= mvcRegisterController.getClass()
-                .getDeclaredMethod("show", HttpServletRequest.class, HttpServletResponse.class);
+                .getDeclaredMethod("viewRegister", HttpServletRequest.class, HttpServletResponse.class);
         HandlerExecution handlerExecution = new HandlerExecution(mvcRegisterController, method);
 
         //when
