@@ -43,8 +43,6 @@ public class AnnotationHandlerMapping {
 
     private void parseMethod(Object handler, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        System.out.println("annotation.value() = " + annotation.value());
-        System.out.println("annotation.method() = " + annotation.method());
         RequestMethod[] httpMethods = annotation.method();
         String path = annotation.value();
         addHandlerExecution(handler, method, httpMethods, path);
