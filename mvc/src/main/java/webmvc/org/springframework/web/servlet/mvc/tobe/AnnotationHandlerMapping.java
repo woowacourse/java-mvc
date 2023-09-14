@@ -23,6 +23,7 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.put(new HandlerKey("/get-test", RequestMethod.GET), new HandlerExecution());
+        handlerExecutions.put(new HandlerKey("/post-test", RequestMethod.POST), new HandlerExecution());
     }
 
     public Object getHandler(final HttpServletRequest request) {
