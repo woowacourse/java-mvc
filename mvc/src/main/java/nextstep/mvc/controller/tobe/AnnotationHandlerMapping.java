@@ -66,6 +66,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String method = request.getMethod();
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        return handlerExecutions.get(handlerKey);
+        return findHandlerExecution(handlerKey);
+    }
+
+    private HandlerExecution findHandlerExecution(final HandlerKey handlerKey) {
+        final HandlerExecution handlerExecution = handlerExecutions.getOrDefault(handlerKey, null);
+        if (handlerExecution == null) {
+            throw new IllegalStateException("해당하는 Handler를 찾을 수 없습니다!");
+        }
+        return handlerExecution;
     }
 }
