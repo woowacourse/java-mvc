@@ -6,12 +6,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -53,24 +55,22 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(HttpServletRequest request) throws ServletException {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
-        throw new ServletException("handler not found! uri: " + uri + ", method: " + method);
+    private Object getHandler(HttpServletRequest request) {
+        return handlerMappings.stream()
+            .map(handlerMapping -> handlerMapping.getHandler(request))
+            .filter(Objects::nonNull)
+            .findAny()
+            .orElseThrow(() -> {
+                String uri = request.getRequestURI();
+                String method = request.getMethod();
+                throw new HandlerNotFoundException("handler not found! uri: " + uri + ", method: " + method);
+            });
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
-        for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
-            }
-        }
-        throw new ServletException("handler adapter not found! handler: " + handler);
+        return handlerAdapters.stream()
+            .filter(adapter -> adapter.supports(handler))
+            .findAny()
+            .orElseThrow(() -> new ServletException("handler adapter not found! handler: " + handler));
     }
 }
