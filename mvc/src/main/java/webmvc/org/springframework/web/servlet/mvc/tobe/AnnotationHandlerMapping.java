@@ -71,11 +71,12 @@ public class AnnotationHandlerMapping {
                 RequestMethod.from(request.getMethod())
         );
 
-        if (!handlerExecutions.containsKey(key)) {
-            throw new IllegalArgumentException("올바르지 않은 요청입니다.");
-        }
-
-        return handlerExecutions.get(key);
+        return handlerExecutions.computeIfAbsent(
+                key,
+                ignored -> {
+                    throw new IllegalArgumentException("올바르지 않은 요청입니다.");
+                }
+        );
     }
 
 }
