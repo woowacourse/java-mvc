@@ -1,12 +1,14 @@
 package samples;
 
+import static web.org.springframework.web.bind.annotation.RequestMethod.GET;
+import static web.org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
-import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -15,7 +17,7 @@ public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
-    @RequestMapping(value = "/get-test", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-test", method = GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
         final var modelAndView = new ModelAndView(new JspView(""));
@@ -23,7 +25,7 @@ public class TestController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/post-test", method = RequestMethod.POST)
+    @RequestMapping(value = "/post-test", method = POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
