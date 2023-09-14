@@ -38,8 +38,11 @@ class ReflectionTest {
     @Test
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
         final Object student = new Student();
-        final Field[] fields = student.getClass().getDeclaredFields();
-        final List<String> actualFieldNames = Arrays.stream(fields).map(Field::getName).collect(Collectors.toList());
+        Class<?> studentClass = student.getClass();
+        final Field[] fields = studentClass.getDeclaredFields();
+        final List<String> actualFieldNames = Arrays.stream(fields)
+                                                    .map(Field::getName)
+                                                    .collect(Collectors.toList());
 
         assertThat(actualFieldNames).contains("name", "age");
     }
@@ -48,11 +51,13 @@ class ReflectionTest {
     void givenClass_whenGetsMethods_thenCorrect() {
         final Class<?> animalClass = Student.class;
         final Method[] methods = animalClass.getDeclaredMethods();
-        final List<String> actualMethods = Arrays.stream(methods).map(Method::getName).collect(Collectors.toList());
+        final List<String> actualMethods = Arrays.stream(methods)
+                                                 .map(Method::getName)
+                                                 .collect(Collectors.toList());
 
         assertThat(actualMethods)
-                .hasSize(3)
-                .contains("getAge", "toString", "getName");
+            .hasSize(3)
+            .contains("getAge", "toString", "getName");
     }
 
     @Test
@@ -67,10 +72,13 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class, String.class, String.class);
+        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class,
+            String.class, String.class);
 
-        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) firstConstructor.newInstance("gugu", "제목2", "내용2");
+        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1",
+            "내용1");
+        final Question secondQuestion = (Question) firstConstructor.newInstance("gugu", "제목2",
+            "내용2");
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -83,9 +91,7 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = Arrays.stream(questionClass.getDeclaredFields())
-            .filter(f -> f.getModifiers() == 1)
-            .toArray(Field[]::new);
+        final Field[] fields = questionClass.getFields();
 
         assertThat(fields).isEmpty();
     }
@@ -118,7 +124,8 @@ class ReflectionTest {
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         final Class<?> studentClass = Student.class;
-        final Student student = (Student) studentClass.getDeclaredConstructor().newInstance();
+        final Student student = (Student) studentClass.getDeclaredConstructor()
+                                                      .newInstance();
         final Field field = studentClass.getDeclaredField("age");
 
         // todo field에 접근 할 수 있도록 만든다.
