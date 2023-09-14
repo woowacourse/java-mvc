@@ -7,7 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+<<<<<<< HEAD
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+=======
+>>>>>>> 6ce849f ([MVC 구현하기 - 1단계] 제이미(임정수) 미션 제출합니다. (#411))
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -36,6 +39,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClasses.forEach(this::putHandlerExecutions);
+<<<<<<< HEAD
+=======
+    }
+
+    private void putHandlerExecutions(final Class<?> clazz) {
+        final List<Method> methods = getMethods(clazz);
+
+        for (final Method method : methods) {
+            final List<HandlerKey> handlerKeys = calculateHandlerKeys(method);
+            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(clazz, method)));
+        }
+    }
+
+    private static List<Method> getMethods(final Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getDeclaredMethods())
+                     .filter(clazz -> clazz.isAnnotationPresent(RequestMapping.class))
+                     .collect(Collectors.toList());
+    }
+
+    private List<HandlerKey> calculateHandlerKeys(final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final String value = requestMapping.value();
+        return Arrays.stream(requestMapping.method())
+                     .map(requestMethod -> new HandlerKey(value, requestMethod))
+                     .collect(Collectors.toList());
+>>>>>>> 6ce849f ([MVC 구현하기 - 1단계] 제이미(임정수) 미션 제출합니다. (#411))
     }
 
     private void putHandlerExecutions(final Class<?> clazz) {
