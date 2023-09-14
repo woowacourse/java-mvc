@@ -51,8 +51,8 @@ public class AnnotationHandlerMapping {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            log.warn("HandlerExecution 을 생성하던 도중 예외가 발생하였습니다.", e);
-            throw new HandlerMappingException("[ERROR] HandlerExecution 을 생성하던 도중 예외가 발생하였습니다.");
+            log.warn("Controller 를 기본생성자로 생성하던 도중 예외가 발생하였습니다.", e);
+            throw new HandlerMappingException("[ERROR] Controller 를 기본생성자로 생성하던 도중 예외가 발생하였습니다.");
         }
     }
 
