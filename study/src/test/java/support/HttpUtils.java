@@ -14,7 +14,7 @@ public abstract class HttpUtils {
             .connectTimeout(Duration.ofSeconds(3))
             .build();
 
-    public static HttpResponse<String> send(final String path) {
+    public static HttpResponse<String> send(final String path) { // 들어온 Path 를 기반으로 Local 에 요청을 보낸다.
         final var request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080" + path))
                 .timeout(Duration.ofSeconds(3))
