@@ -30,4 +30,21 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/multi-method-test", method = {RequestMethod.GET, RequestMethod.POST} )
+    public ModelAndView multiHandle(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller multi-handle method");
+        String method = request.getMethod();
+        if("GET".equals(method)){
+            final var modelAndView = new ModelAndView(new JspView(""));
+            modelAndView.addObject("id", "getPooh");
+            return modelAndView;
+        }
+        if("POST".equals(method)){
+            final var modelAndView = new ModelAndView(new JspView(""));
+            modelAndView.addObject("id", "postPooh");
+            return modelAndView;
+        }
+        throw new IllegalArgumentException("해당 요청을 Handling 할 수 없는 핸들러입니다.");
+    }
 }
