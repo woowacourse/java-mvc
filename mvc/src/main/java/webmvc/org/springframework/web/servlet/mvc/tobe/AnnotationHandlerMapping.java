@@ -4,6 +4,7 @@ import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -34,19 +35,22 @@ public class AnnotationHandlerMapping {
             Object instance = controller.getDeclaredConstructor().newInstance();
             Method[] methods = controller.getDeclaredMethods();
 
-            for (Method method : methods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    HandlerExecution handlerExecution = new HandlerExecution(instance, method);
-                    RequestMethod[] requestMethods = annotation.method();
-                    for (RequestMethod requestMethod : requestMethods) {
-                        HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
-            }
+            Arrays.stream(methods)
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> addHandlerExecutions(instance, method));
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void addHandlerExecutions(Object target, Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        HandlerExecution handlerExecution = new HandlerExecution(target, method);
+
+        RequestMethod[] requestMethods = annotation.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
