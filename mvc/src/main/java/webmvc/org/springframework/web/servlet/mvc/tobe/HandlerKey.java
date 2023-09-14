@@ -13,10 +13,10 @@ public class HandlerKey {
     private final RequestMethod requestMethod;
 
     public HandlerKey(final String url, final RequestMethod requestMethod) {
-        if (isNull(url)) {
+        if (url == null) {
             throw new HandlerKeyException("[ERROR] HandlerKey 를 생성할 때 url 이 null 일 수 없습니다.");
         }
-        if (isNull(requestMethod)) {
+        if (requestMethod == null) {
             throw new HandlerKeyException("[ERROR] HandlerKey 를 생성할 때 requestMethod 는 null 일 수 없습니다.");
         }
         this.url = url;

@@ -13,8 +13,11 @@ public class HandlerExecution {
 
     private final Method method;
 
-    public HandlerExecution(final Method method) {
-        if (isNull(method)) {
+    public HandlerExecution(final Object controller, final Method method) {
+        if (controller == null) {
+            throw new HandlerExecutionException("[ERROR] HandlerExecution 를 생성할 때 Object(Controller) 는 null 일 수 없습니다.");
+        }
+        if (method == null) {
             throw new HandlerExecutionException("[ERROR] HandlerExecution 를 생성할 때 Method 는 null 일 수 없습니다.");
         }
 
