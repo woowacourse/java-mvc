@@ -33,31 +33,32 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> classes = new Reflections(basePackages)
                 .getTypesAnnotatedWith(Controller.class);
 
-        parseClasses(classes);
+        putHandlerExecutionsByController(classes);
     }
 
-    private void parseClasses(Set<Class<?>> classes) {
+    private void putHandlerExecutionsByController(Set<Class<?>> classes) {
         try {
             for (Class<?> clazz : classes) {
                 Object controller = clazz.getConstructor().newInstance();
                 List<Method> methods = Arrays.stream(clazz.getMethods())
                         .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                         .collect(Collectors.toList());
-                registerHandlerExecution(controller, methods);
+                putHandlerExecutionByMethod(controller, methods);
             }
         } catch (Exception exception) {
             log.error("예외 발생 {0}", exception);
         }
     }
 
-    private void registerHandlerExecution(Object controller, List<Method> declaredMethods) {
+    private void putHandlerExecutionByMethod(Object controller, List<Method> declaredMethods) {
         for (Method method : declaredMethods) {
-            putHandlerExecution(controller, method);
+            putHandlerExecutionByAnnotation(controller, method);
         }
     }
 
-    private void putHandlerExecution(Object controller, Method method) {
+    private void putHandlerExecutionByAnnotation(Object controller, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
