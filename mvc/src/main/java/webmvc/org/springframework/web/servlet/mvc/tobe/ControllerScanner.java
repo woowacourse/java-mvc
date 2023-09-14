@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ControllerScanner {
 
@@ -22,17 +23,13 @@ public class ControllerScanner {
 
     public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        return instantiateControllers(controllers);
+        return controllers.stream()
+                .collect(Collectors.toMap(Function.identity(), this::generateInstance));
     }
 
-    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
-        Map<Class<?>, Object> controllerWithInstances = new HashMap<>();
+    private Object generateInstance(Class<?> controller) {
         try {
-            for (Class<?> controller : controllers) {
-                Object instance = controller.getDeclaredConstructor().newInstance();
-                controllerWithInstances.put(controller, instance);
-            }
-            return controllerWithInstances;
+            return controller.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException e) {
             log.error("NoArgConstructor doesn't exist.");
         } catch (SecurityException e) {
