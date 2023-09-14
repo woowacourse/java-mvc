@@ -37,17 +37,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (final Class<?> controller : controllerClasses) {
             final Object controllerInstance = findDefaultConstructor(controller);
-            List<Method> classMethods = Arrays.stream(controller.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
+            List<Method> requestMappingMethods = findMethodsWithRequestMappingAnnotation(controller);
 
-            for (final Method classMethod : classMethods) {
-                final RequestMapping requestMapping = classMethod.getAnnotation(RequestMapping.class);
+            for (final Method requestMappingMethod : requestMappingMethods) {
+                final RequestMapping requestMapping = requestMappingMethod.getAnnotation(RequestMapping.class);
                 final String httpRequestURI = requestMapping.value();
                 final RequestMethod[] httpRequestMethods = requestMapping.method();
                 for (final RequestMethod httpRequestMethod : httpRequestMethods) {
                     final HandlerKey handlerKey = new HandlerKey(httpRequestURI, httpRequestMethod);
-                    final HandlerExecution handlerExecution = HandlerExecution.of(controllerInstance, classMethod);
+                    final HandlerExecution handlerExecution = HandlerExecution.of(controllerInstance, requestMappingMethod);
 
                     handlerExecutions.put(handlerKey, handlerExecution);
                 }
@@ -63,6 +61,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (Exception e) {
             throw new IllegalStateException("Controller 내에 기본 생성자가 없습니다!");
         }
+    }
+
+    private List<Method> findMethodsWithRequestMappingAnnotation(final Class<?> controller) {
+        return Arrays.stream(controller.getDeclaredMethods())
+                .filter(AnnotationHandlerMapping::hasRequestMappingAnnotation)
+                .collect(Collectors.toList());
+    }
+
+    private static boolean hasRequestMappingAnnotation(final Method method) {
+        return method.isAnnotationPresent(RequestMapping.class);
     }
 
     @Override
