@@ -6,16 +6,20 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 @WebServlet(name = "localCounterServlet", urlPatterns = "/local-counter")
 public class LocalCounterServlet extends HttpServlet {
 
+    private static final Logger log = LoggerFactory.getLogger(LocalCounterServlet.class);
+
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        getServletContext().log("init() 호출");
+        getServletContext().log(Thread.currentThread() + " ===============> [LocalCounterServlet] init() 호출");
     }
 
     /**
@@ -24,15 +28,16 @@ public class LocalCounterServlet extends HttpServlet {
      */
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        getServletContext().log("service() 호출");
+        getServletContext().log(Thread.currentThread() + " ===============> [LocalCounterServlet] service() 호출");
         response.addHeader("Content-Type", "text/html; charset=utf-8");
         int localCounter = 0;
         localCounter++;
+        log.info("===============> [LocalCounterServlet] localCounter = {}", localCounter);
         response.getWriter().write(String.valueOf(localCounter));
     }
 
     @Override
     public void destroy() {
-        getServletContext().log("destroy() 호출");
+        getServletContext().log(Thread.currentThread() + " ===============> [LocalCounterServlet] destroy() 호출");
     }
 }
