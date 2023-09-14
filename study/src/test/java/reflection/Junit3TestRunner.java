@@ -2,12 +2,20 @@ package reflection;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
 class Junit3TestRunner {
 
     @Test
     void run() throws Exception {
-        Class<Junit3Test> clazz = Junit3Test.class;
+        final Junit3Test test = new Junit3Test();
+        final Method[] methods = test.getClass().getDeclaredMethods();
 
-        // TODO Junit3Test에서 test로 시작하는 메소드 실행
+        for (final Method method : methods) {
+            if (method.getName().startsWith("test")) {
+                method.invoke(test);
+            }
+        }
     }
 }
