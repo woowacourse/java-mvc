@@ -26,7 +26,7 @@ public class LoginViewController implements MyController {
                 .orElse("/login.jsp");
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
         String path = execute(req, res);
         return new ModelAndView(new JspView(path));

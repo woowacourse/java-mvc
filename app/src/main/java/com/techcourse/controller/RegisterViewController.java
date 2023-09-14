@@ -17,7 +17,7 @@ public class RegisterViewController implements MyController {
         return "/register.jsp";
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
         String path = execute(req, res);
         return new ModelAndView(new JspView(path));
