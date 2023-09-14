@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.reflections.Reflections;
@@ -38,7 +37,7 @@ public class AnnotationHandlerMapping {
             .stream()
             .map(Class::getMethods)
             .flatMap(Arrays::stream)
-            .filter(method -> Objects.nonNull(method.getAnnotation(RequestMapping.class)))
+            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
             .map(method -> entry(method, method.getAnnotation(RequestMapping.class)))
             .flatMap(this::mapExecutions)
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
