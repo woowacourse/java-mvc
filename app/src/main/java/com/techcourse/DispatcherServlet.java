@@ -47,21 +47,23 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappings.getHandler(req);
             HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
-            ModelAndView modelAndView = adapter.handle(req, res, handler);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), req, res);
+            ModelAndView mav = adapter.handle(req, res, handler);
+            render(mav, req, res);
         } catch (Exception e) {
             resolveException(req, res, e);
         }
     }
 
-    private void resolveException(HttpServletRequest req, HttpServletResponse res, Exception ex)
-        throws ServletException {
+    private void render(ModelAndView mav, HttpServletRequest req, HttpServletResponse res) throws Exception {
+        View view = mav.getView();
+        view.render(mav.getModel(), req, res);
+    }
+
+    private void resolveException(HttpServletRequest req, HttpServletResponse res, Exception ex) throws ServletException {
         try {
             HandlerExceptionResolver handlerExceptionResolver = handlerExceptionResolvers.getExceptionResolver(ex);
-            ModelAndView modelAndView = handlerExceptionResolver.resolveException(req, res, ex);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), req, res);
+            ModelAndView mav = handlerExceptionResolver.resolveException(req, res, ex);
+            render(mav, req, res);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
