@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerExceptionResolver;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 
@@ -22,6 +23,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<HandlerExceptionResolver> handlerExceptionResolvers = new ArrayList<>();
 
     public DispatcherServlet() {
     }
@@ -39,19 +41,21 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters.add(handlerAdapter);
     }
 
+    public void addHandlerExceptionResolvers(HandlerExceptionResolver handlerExceptionResolver) {
+        handlerExceptionResolvers.add(handlerExceptionResolver);
+    }
+
     @Override
-    protected void service(final HttpServletRequest req, final HttpServletResponse res) throws ServletException {
-        final String requestURI = req.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", req.getMethod(), requestURI);
+    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException {
+        log.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
             Object handler = getHandler(req);
             HandlerAdapter adapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = adapter.handle(req, res, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), req, res);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+        } catch (Exception e) {
+            resolveException(req, res, e);
         }
     }
 
@@ -72,5 +76,19 @@ public class DispatcherServlet extends HttpServlet {
             .filter(adapter -> adapter.supports(handler))
             .findAny()
             .orElseThrow(() -> new ServletException("handler adapter not found! handler: " + handler));
+    }
+
+    private void resolveException(HttpServletRequest req, HttpServletResponse res, Exception ex)
+        throws ServletException {
+        for (HandlerExceptionResolver handlerExceptionResolver : handlerExceptionResolvers) {
+            try {
+                ModelAndView modelAndView = handlerExceptionResolver.resolveException(req, res, ex);
+                View view = modelAndView.getView();
+                view.render(modelAndView.getModel(), req, res);
+            } catch (Exception e) {
+                log.error("Exception : {}", e.getMessage(), e);
+                throw new ServletException(e.getMessage());
+            }
+        }
     }
 }
