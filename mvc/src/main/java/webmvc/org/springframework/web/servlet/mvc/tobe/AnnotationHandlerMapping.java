@@ -3,10 +3,13 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +36,13 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private Set<Class<?>> getAnnotatedControllerClasses() {
+        Reflections reflections = new Reflections(basePackage);
+        return new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
+    }
+
     private void addAnnotatedHandlerExecution(Class<?> controller) {
-        for (Method method : controller.getMethods()) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
+        for (Method method : getRequestedMappedMethods(controller)) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(),
                     requestMapping.method()[0]);
@@ -46,9 +51,10 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Set<Class<?>> getAnnotatedControllerClasses() {
-        Reflections reflections = new Reflections(basePackage);
-        return new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
+    private List<Method> getRequestedMappedMethods(Class<?> controller) {
+        return Arrays.stream(controller.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
