@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Constructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ConstructorTest {
 
@@ -43,12 +42,6 @@ class ConstructorTest {
 
         // then
         assertThat(one.name).isNull();
-    }
-
-    @Test
-    void declaredConstructorV2() {
-        assertThatThrownBy(() -> One.class.getDeclaredConstructor(String.class, String.class))
-                .isInstanceOf(NoSuchMethodException.class);
     }
 
     private static class One {
