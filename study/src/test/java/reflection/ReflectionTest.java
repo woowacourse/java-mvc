@@ -90,9 +90,7 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = Arrays.stream(questionClass.getDeclaredFields())
-                .filter(field -> field.getModifiers() == Modifier.PUBLIC)
-                .toArray(Field[]::new);
+        final Field[] fields = questionClass.getFields();
 
         assertThat(fields).hasSize(0);
     }
