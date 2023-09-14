@@ -18,7 +18,7 @@ public class MvcRegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView registerUser(HttpServletRequest req, HttpServletResponse res) {
-        final var user = new User(2,
+        User user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));

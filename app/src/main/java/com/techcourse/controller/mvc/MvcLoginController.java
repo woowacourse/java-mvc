@@ -6,6 +6,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +35,7 @@ public class MvcLoginController {
 
     private String login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
-            final var session = request.getSession();
+            HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return "redirect:/index.jsp";
         }
