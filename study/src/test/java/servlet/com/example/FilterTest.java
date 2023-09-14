@@ -9,7 +9,8 @@ import static servlet.com.example.KoreanServlet.인코딩;
 class FilterTest {
 
     @Test
-    void testFilter() {
+    void testFilter() throws InterruptedException {
+        Thread.sleep(2000);
         // 톰캣 서버 시작
         final var tomcatStarter = new TomcatStarter("src/main/webapp/");
         tomcatStarter.start();
