@@ -78,8 +78,9 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) throws NullPointerException {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        return handlerExecution;
     }
 }
