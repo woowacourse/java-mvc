@@ -38,7 +38,7 @@ public class AnnotationHandlerMapping {
     }
 
     private void initHandlerExecutions(Object packagePath) {
-        Set<Class<?>> clazz = getClazzByAnnotation(packagePath, Controller.class);
+        Set<Class<?>> clazz = getClassByAnnotation(packagePath, Controller.class);
         for (Class<?> aClass : clazz) {
             List<Method> methods = getMethodsByAnnotation(aClass, RequestMapping.class);
             Object instance = getInstance(aClass);
@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private <T extends Annotation> Set<Class<?>> getClazzByAnnotation(Object packagePath, Class<T> annotationClass) {
+    private <T extends Annotation> Set<Class<?>> getClassByAnnotation(Object packagePath, Class<T> annotationClass) {
         Reflections reflections = new Reflections(packagePath);
         return reflections.getTypesAnnotatedWith(annotationClass);
     }
