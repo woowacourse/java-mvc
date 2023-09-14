@@ -145,9 +145,10 @@ class ReflectionTest {
 
         field.setAccessible(true);
 
-        // todo field에 접근 할 수 있도록 만든다.
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
+
+        field.set(student, 99);
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
