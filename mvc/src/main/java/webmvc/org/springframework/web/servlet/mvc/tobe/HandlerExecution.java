@@ -7,8 +7,8 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
-    private Object controller;
-    private Method method;
+    private final Object controller;
+    private final Method method;
 
     public HandlerExecution(final Object controller, final Method method) {
         this.controller = controller;

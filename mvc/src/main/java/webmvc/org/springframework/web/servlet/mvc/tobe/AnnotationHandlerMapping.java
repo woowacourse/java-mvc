@@ -41,7 +41,7 @@ public class AnnotationHandlerMapping {
     }
 
     private void initializeByMethod(final Class<?> controller, final Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (Objects.nonNull(requestMapping)) {
             addHandlerExecution(controller, method, requestMapping);
         }
