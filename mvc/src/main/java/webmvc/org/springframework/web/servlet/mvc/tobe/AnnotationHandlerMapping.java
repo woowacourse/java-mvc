@@ -48,18 +48,18 @@ public class AnnotationHandlerMapping {
     }
 
     private void putHandlerExecutionsForAllMethod(final Class<?> controller, final Set<Method> methods) throws Exception {
+        Object handler = controller.getDeclaredConstructor().newInstance();
         for (Method method : methods) {
-            putHandlerExecutionsForMethod(controller, method);
+            putHandlerExecutionsForMethod(handler, method);
         }
     }
 
-    private void putHandlerExecutionsForMethod(final Class<?> controller, final Method method) throws Exception {
+    private void putHandlerExecutionsForMethod(final Object handler, final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller.getDeclaredConstructor().newInstance(),
-                    method);
+            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
