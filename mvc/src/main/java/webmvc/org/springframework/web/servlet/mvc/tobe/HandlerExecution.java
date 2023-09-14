@@ -7,10 +7,13 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import static java.lang.String.format;
+
 public class HandlerExecution {
 
     private static final int REQUEST_INDEX = 0;
     private static final int RESPONSE_INDEX = 1;
+    private static final int VALID_ARGUMENTS_SIZE = 2;
 
     private final Object invoker;
     private final Method method;
@@ -24,6 +27,9 @@ public class HandlerExecution {
     private void validate(final Method method) {
         final Parameter[] parameters = method.getParameters();
 
+        if (parameters.length != VALID_ARGUMENTS_SIZE) {
+            throw new IllegalStateException(format("인자는 %d개여야 합니다.", VALID_ARGUMENTS_SIZE));
+        }
         if (parameters[REQUEST_INDEX].getType() != HttpServletRequest.class) {
             throw new IllegalStateException("HttpServletRequest가 필요합니다.");
         }

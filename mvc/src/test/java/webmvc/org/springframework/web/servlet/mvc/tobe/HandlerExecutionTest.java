@@ -64,6 +64,20 @@ class HandlerExecutionTest {
                 .hasMessage("ModelAndView를 리턴해야 합니다.");
     }
 
+    @Test
+    @DisplayName("handle 메서드의 시그니처와 다르면 예외가 발생한다 - 인자 갯수")
+    void construct_fail4() throws NoSuchMethodException {
+        //given
+        final IllegalController object = new IllegalController();
+        final Method method = object.getClass().getMethod("invalidArgumentsSize", HttpServletRequest.class,
+                HttpServletResponse.class, int.class);
+
+        //when, then
+        assertThatThrownBy(() -> new HandlerExecution(object, method))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("인자는 2개여야 합니다.");
+    }
+
     private static class IllegalController {
 
         public ModelAndView noRequest(final int illegal, final HttpServletResponse response) {
@@ -75,6 +89,11 @@ class HandlerExecutionTest {
         }
 
         public Integer noView(final HttpServletRequest request, final HttpServletResponse response) {
+            return null;
+        }
+
+        public ModelAndView invalidArgumentsSize(final HttpServletRequest request, final HttpServletResponse response,
+                                                 final int illegal) {
             return null;
         }
     }
