@@ -104,9 +104,8 @@ public class AnnotationHandlerMapping {
             Constructor<?> constructor = ReflectionUtils.accessibleConstructor(clazz);
             return constructor.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new InstantiationFailedException(e);
         }
-        throw new InstantiationFailedException();
     }
 
     private void addHandlerExecution(Object clazz, Method method, RequestMethod[] requestMethods, String requestURI) {
