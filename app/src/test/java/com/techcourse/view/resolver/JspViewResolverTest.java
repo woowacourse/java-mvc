@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.view.resolver;
+package com.techcourse.view.resolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

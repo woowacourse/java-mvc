@@ -1,7 +1,8 @@
-package webmvc.org.springframework.web.servlet.view.resolver;
+package com.techcourse.view.resolver;
 
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.view.resolver.ViewResolver;
 
 public class JspViewResolver implements ViewResolver {
 
