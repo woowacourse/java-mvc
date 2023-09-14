@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,7 +16,7 @@ class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
