@@ -1,17 +1,13 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 
 public class AnnotationHandlerMapping {
 
@@ -27,24 +23,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-
-        final Reflections reflections = new Reflections(basePackage);
-
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> controller : controllers) {
-            final Method[] methods = controller.getDeclaredMethods();
-            for (final Method method : methods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    final String requestUrl = requestMapping.value();
-                    final RequestMethod[] requestMethods = requestMapping.method();
-
-                    for (final RequestMethod requestMethod : requestMethods) {
-                        handlerExecutions.put(new HandlerKey(requestUrl, requestMethod), new HandlerExecution(controller, method));
-                    }
-                }
-            }
-        }
+        final Map<HandlerKey, HandlerExecution> handlerExecutions = Objects.requireNonNull(HandlerExecutionFactory.create(basePackage));
+        this.handlerExecutions.putAll(handlerExecutions);
     }
 
     public Object getHandler(final HttpServletRequest request) {
