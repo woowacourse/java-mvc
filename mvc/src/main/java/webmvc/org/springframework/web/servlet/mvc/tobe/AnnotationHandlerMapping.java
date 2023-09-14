@@ -51,7 +51,8 @@ public class AnnotationHandlerMapping {
 
     private Map<HandlerKey, HandlerExecution> extractHandlerFromClass(Class<?> targetClass) {
         Object handler = makeClass(targetClass);
-        return Arrays.stream(targetClass.getMethods()).filter(this::haveRequestMapping)
+        return Arrays.stream(targetClass.getMethods())
+            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
             .map(method -> extractHandlerFromMethod(method, handler))
             .reduce(new HashMap<>(), migrateHandler());
     }
@@ -63,11 +64,6 @@ public class AnnotationHandlerMapping {
                  IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
-    }
-
-    private boolean haveRequestMapping(Method method) {
-        return Arrays.stream(method.getDeclaredAnnotations())
-            .anyMatch(RequestMapping.class::isInstance);
     }
 
     private Map<HandlerKey, HandlerExecution> extractHandlerFromMethod(Method method, Object handler) {
@@ -104,6 +100,7 @@ public class AnnotationHandlerMapping {
         Optional<HandlerKey> findHandler = handlerExecutions.keySet().stream()
             .filter(handlerKey -> handlerKey.canHandle(request))
             .findAny();
-        return findHandler.map(handlerExecutions::get).orElseGet(null);
+        return findHandler.map(handlerExecutions::get)
+            .orElseGet(null);
     }
 }
