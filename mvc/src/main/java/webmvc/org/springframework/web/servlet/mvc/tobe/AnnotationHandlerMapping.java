@@ -76,18 +76,14 @@ public class AnnotationHandlerMapping {
     }
 
     private void putHandlerExecutionsByMethod(final Object object, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final Map<HandlerKey, HandlerExecution> handlerExecutionsByMethod =
-            convertHandlerExecutions(object, method, requestMapping);
+            convertHandlerExecutions(object, method);
 
         handlerExecutions.putAll(handlerExecutionsByMethod);
     }
 
-    private Map<HandlerKey, HandlerExecution> convertHandlerExecutions(
-        final Object object,
-        final Method method,
-        final RequestMapping requestMapping
-    ) {
+    private Map<HandlerKey, HandlerExecution> convertHandlerExecutions(final Object object, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String requestURI = requestMapping.value();
         final List<RequestMethod> requestMethods = List.of(requestMapping.method());
 
