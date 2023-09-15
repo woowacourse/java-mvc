@@ -26,7 +26,7 @@ class HandlerAdaptersTest {
     }
 
     @Test
-    void 지원하는_HandlerAdapter가_없으면_아니면_예외() {
+    void 지원하는_HandlerAdapter가_없으면_예외() {
         // given
         HandlerAdapters handlerAdapters = new HandlerAdapters();
         HandlerExecution handler = new HandlerExecution(null, null);
