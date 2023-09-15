@@ -1,4 +1,4 @@
-package servlet.com.example;
+package com.techcourse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -11,17 +11,17 @@ import java.io.File;
 
 public class TomcatStarter {
 
-    private static final String WEBAPP_DIR_LOCATION = "study/src/main/webapp/";
+    public static final String WEBAPP_DIR_LOCATION = "app/src/main/webapp/";
 
     private final Tomcat tomcat;
 
-    public TomcatStarter() {
-        this(WEBAPP_DIR_LOCATION);
+    public TomcatStarter(final int port) {
+        this(WEBAPP_DIR_LOCATION, port);
     }
 
-    public TomcatStarter(final String webappDirLocation) {
+    public TomcatStarter(final String webappDirLocation, final int port) {
         this.tomcat = new Tomcat();
-        tomcat.setConnector(createConnector());
+        tomcat.setConnector(createConnector(port));
 
         final var docBase = new File(webappDirLocation).getAbsolutePath();
         final var context = (StandardContext) tomcat.addWebapp("", docBase);
@@ -33,12 +33,8 @@ public class TomcatStarter {
         try {
             tomcat.start();
         } catch (LifecycleException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedServletException(e);
         }
-    }
-
-    public void await() {
-        tomcat.getServer().await();
     }
 
     public void stop() {
@@ -46,13 +42,13 @@ public class TomcatStarter {
             tomcat.stop();
             tomcat.destroy();
         } catch (LifecycleException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedServletException(e);
         }
     }
 
-    private Connector createConnector() {
+    private Connector createConnector(final int port) {
         final var connector = new Connector();
-        connector.setPort(8080);
+        connector.setPort(port);
         return connector;
     }
 
@@ -63,9 +59,6 @@ public class TomcatStarter {
 
     private void skipClearReferences(final StandardContext context) {
         /**
-         * 중요한 내용은 아님.
-         * 왜 skip 하는지 궁금한 사람을 위해 번역을 남김.
-         *
          * https://tomcat.apache.org/tomcat-10.1-doc/config/context.html
          *
          * setClearReferencesObjectStreamClassCaches 번역
@@ -81,7 +74,7 @@ public class TomcatStarter {
          * 수정 사항이 포함된 Java 버전에서 실행할 때 확인이 비활성화됩니다.
          *
          * Amazon Corretto-17.0.6은 경고 메시지가 나옴.
-         * 테스트 코드는 메모리 누수 문제 없으니 관련 설정을 끈다.
+         * 학습과 관련 없는 메시지가 나오지 않도록 관련 설정을 끈다.
          */
         context.setClearReferencesObjectStreamClassCaches(false);
         context.setClearReferencesRmiTargets(false);
