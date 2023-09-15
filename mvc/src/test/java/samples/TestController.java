@@ -10,6 +10,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
+@RequestMapping("/prefix")
 public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);

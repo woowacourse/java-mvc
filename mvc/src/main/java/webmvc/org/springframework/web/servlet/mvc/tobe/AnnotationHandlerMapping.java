@@ -1,119 +1,123 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
-import core.org.springframework.util.ReflectionUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.CustomRequestMappings;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class AnnotationHandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-
-    private final Object[] basePackage;
+    private final Reflections reflections;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(Object... basePackage) {
+        this.reflections = new Reflections(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> handlerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-
         for (Class<?> handlerClass : handlerClasses) {
-            addHandlerMappings(handlerClass);
+            String prefix = extractPathPrefix(handlerClass);
+            scanHandlerMethods(prefix, handlerClass);
         }
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerMappings(Class<?> handlerClass) {
-        Method[] methods = handlerClass.getDeclaredMethods();
+    private String extractPathPrefix(Class<?> handlerClass) {
+        if (handlerClass.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping requestMapping = handlerClass.getDeclaredAnnotation(RequestMapping.class);
+            return requestMapping.value();
+        }
+        return "";
+    }
 
+    private void scanHandlerMethods(String prefix, Class<?> controllerClass) {
+        Method[] methods = controllerClass.getDeclaredMethods();
         for (Method method : methods) {
-            addHandlerMappingIfRequestMappingAnnotationExists(handlerClass, method);
+            scanRequestMapping(prefix, method);
         }
     }
 
-    private void addHandlerMappingIfRequestMappingAnnotationExists(Class<?> clazz, Method method) {
-        Annotation[] annotations = method.getDeclaredAnnotations();
-
-        for (Annotation annotation : annotations) {
-            Class<? extends Annotation> annotationType = annotation.annotationType();
-
-            if (annotationType.equals(RequestMapping.class)) {
-                addWhenAnnotationTypeIsRequestMapping(clazz, method);
-                return;
-            }
-            if (CustomRequestMappings.isAnyMatch(annotation)) {
-                addWhenAnnotationTypeIsCustomRequestMapping(clazz, method);
-            }
+    private void scanRequestMapping(String prefix, Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+            addHandlerExecutionWhenRequestMapping(prefix, requestMapping, method);
+            return;
         }
+        scanCustomRequestMapping(prefix, method);
     }
 
-    private void addWhenAnnotationTypeIsRequestMapping(Class<?> clazz, Method method) {
-        Annotation requestMappingAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
+    private void addHandlerExecutionWhenRequestMapping(String prefix, Annotation annotation, Method method) {
+        String requestPath = prefix + extractValueField(annotation);
+        RequestMethod[] requestMethods = extractMethodField(annotation);
 
-        String requestURI = RequestMappingExtractor.extractRequestURI(requestMappingAnnotation);
-        RequestMethod[] requestMethods = RequestMappingExtractor.extractRequestMethod(requestMappingAnnotation);
-
-        addHandlerExecution(instantiate(clazz), method, requestMethods, requestURI);
+        addHandlerExecution(method, requestPath, requestMethods);
     }
 
-    private void addWhenAnnotationTypeIsCustomRequestMapping(Class<?> clazz, Method method) {
-        Annotation customRequestMappingAnnotation = extractCustomRequestMappingAnnotation(method);
-        Annotation requestMappingAnnotation = extractRequestMappingAnnotation(customRequestMappingAnnotation);
-
-        String requestURI = RequestMappingExtractor.extractRequestURI(customRequestMappingAnnotation);
-        RequestMethod[] requestMethods = RequestMappingExtractor.extractRequestMethod(requestMappingAnnotation);
-
-        addHandlerExecution(instantiate(clazz), method, requestMethods, requestURI);
-    }
-
-    private Annotation extractCustomRequestMappingAnnotation(Method method) {
-        return Arrays.stream(method.getDeclaredAnnotations())
+    private void scanCustomRequestMapping(String prefix, Method method) {
+        Arrays.stream(method.getDeclaredAnnotations())
                 .filter(CustomRequestMappings::isAnyMatch)
                 .findFirst()
-                .orElseThrow(RequestMappingNotFoundException::new);
+                .ifPresent(annotation -> addHandlerExecutionWhenCustomMapping(prefix, annotation, method));
     }
 
-    private Annotation extractRequestMappingAnnotation(Annotation annotation) {
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-        Annotation[] metaAnnotations = annotationType.getDeclaredAnnotations();
+    private void addHandlerExecutionWhenCustomMapping(String prefix, Annotation annotation, Method method) {
+        RequestMapping requestMapping = annotation.annotationType()
+                .getDeclaredAnnotation(RequestMapping.class);
 
-        return Arrays.stream(metaAnnotations)
-                .filter(metaAnnotation -> metaAnnotation.annotationType().equals(RequestMapping.class))
-                .findFirst()
-                .orElseThrow(RequestMappingNotFoundException::new);
+        String requestPath = prefix + extractValueField(annotation);
+        RequestMethod[] requestMethods = extractMethodField(requestMapping);
+
+        addHandlerExecution(method, requestPath, requestMethods);
     }
+
+    private void addHandlerExecution(Method method, String requestPath, RequestMethod[] requestMethods) {
+        Object instance = instantiate(method.getDeclaringClass());
+        HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private RequestMethod[] extractMethodField(Annotation annotation) {
+        try {
+            return (RequestMethod[]) annotation.annotationType()
+                    .getDeclaredMethod("method")
+                    .invoke(annotation);
+        } catch (IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
+            throw new AnnotaitonMethodInvokeException("어노테이션의 메소드를 실행시키는 도중 예외가 발생했습니다.", e);
+        }
+    }
+
+    private String extractValueField(Annotation annotation) {
+        try {
+            return (String) annotation.annotationType()
+                    .getDeclaredMethod("value")
+                    .invoke(annotation);
+        } catch (IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
+            throw new AnnotaitonMethodInvokeException("어노테이션의 메소드를 실행시키는 도중 예외가 발생했습니다.", e);
+        }
+    }
+
 
     private Object instantiate(Class<?> clazz) {
         try {
-            Constructor<?> constructor = ReflectionUtils.accessibleConstructor(clazz);
-            return constructor.newInstance();
-        } catch (Exception e) {
-            throw new InstantiationFailedException(e);
-        }
-    }
-
-    private void addHandlerExecution(Object clazz, Method method, RequestMethod[] requestMethods, String requestURI) {
-        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
-
-        for (RequestMethod each : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(requestURI, each);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            return clazz.getConstructor()
+                    .newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            throw new InstantiationFailedException("인스턴스화를 하는 도중 예외가 발생했습니다.", e);
         }
     }
 
