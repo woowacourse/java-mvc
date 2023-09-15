@@ -1,5 +1,6 @@
 package servlet.com.example;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
 
@@ -9,8 +10,9 @@ class ServletTest {
 
     private final String WEBAPP_DIR_LOCATION = "src/main/webapp/";
 
+    @Order(1)
     @Test
-    void testSharedCounter() {
+    void testSharedCounter() throws InterruptedException {
         // 톰캣 서버 시작
         final var tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
         tomcatStarter.start();
@@ -18,7 +20,9 @@ class ServletTest {
         // shared-counter 페이지를 3번 호출한다.
         final var PATH = "/shared-counter";
         HttpUtils.send(PATH);
+        Thread.sleep(500);
         HttpUtils.send(PATH);
+        Thread.sleep(500);
         final var response = HttpUtils.send(PATH);
 
         // 톰캣 서버 종료
@@ -31,8 +35,9 @@ class ServletTest {
         assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
+    @Order(2)
     @Test
-    void testLocalCounter() {
+    void testLocalCounter() throws InterruptedException {
         // 톰캣 서버 시작
         final var tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
         tomcatStarter.start();
