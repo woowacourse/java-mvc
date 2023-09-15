@@ -10,15 +10,15 @@ import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
+import webmvc.org.springframework.web.servlet.mvc.asis.MvcController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapping;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private static final Map<String, MvcController> controllers = new HashMap<>();
 
     @Override
     public void initialize() {
