@@ -35,20 +35,26 @@ public class AnnotationHandlerMapping {
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (final Class<?> controllerClass : controllerClasses) {
-            try {
-                final Object controller = controllerClass.getDeclaredConstructor().newInstance();
-                final Set<Method> handlerMethods = getHandlerMethods(controllerClass);
+            initializeController(controllerClass);
+        }
+    }
 
-                for (final Method method : handlerMethods) {
-                    putHandler(controller, method);
-                }
-            } catch (InstantiationException |
-                     IllegalAccessException |
-                     InvocationTargetException |
-                     NoSuchMethodException e
-            ) {
-                log.error("Fail Initializing Controller - " + e.getMessage(), e);
+    private void initializeController(Class<?> controllerClass) {
+        try {
+            final Object controller = controllerClass.getDeclaredConstructor().newInstance();
+            final Set<Method> handlerMethods = getHandlerMethods(controllerClass);
+
+            for (final Method method : handlerMethods) {
+                putHandler(controller, method);
             }
+        } catch (InstantiationException |
+                 IllegalAccessException |
+                 InvocationTargetException |
+                 NoSuchMethodException e
+        ) {
+            final String errorMessage = "Fail Initializing Controller - {}" + controllerClass.getSimpleName();
+            log.error(errorMessage, e);
+            throw new RuntimeException(errorMessage);
         }
     }
 
