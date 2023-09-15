@@ -39,6 +39,6 @@ class HandlerAdaptersTest {
         HandlerAdapter result = handlerAdapters.getHandlerAdapter(handlerExecution);
 
         // then
-        assertThat(result instanceof AnnotationHandlerAdapter).isTrue();
+        assertThat(result).isInstanceOf(AnnotationHandlerAdapter.class);
     }
 }
