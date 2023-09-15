@@ -1,22 +1,25 @@
 package servlet.com.example;
 
 import org.junit.jupiter.api.Test;
+import support.HttpUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletTest {
 
+    private final String WEBAPP_DIR_LOCATION = "src/main/webapp/";
+
     @Test
-    void testSharedCounter() throws Exception {
+    void testSharedCounter() {
         // 톰캣 서버 시작
-        final var tomcatStarter = TestHttpUtils.createTomcatStarter();
+        final var tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
         tomcatStarter.start();
 
         // shared-counter 페이지를 3번 호출한다.
         final var PATH = "/shared-counter";
-        TestHttpUtils.send(PATH);
-        TestHttpUtils.send(PATH);
-        final var response = TestHttpUtils.send(PATH);
+        HttpUtils.send(PATH);
+        HttpUtils.send(PATH);
+        final var response = HttpUtils.send(PATH);
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
@@ -29,16 +32,16 @@ class ServletTest {
     }
 
     @Test
-    void testLocalCounter() throws Exception {
+    void testLocalCounter() {
         // 톰캣 서버 시작
-        final var tomcatStarter = TestHttpUtils.createTomcatStarter();
+        final var tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
         tomcatStarter.start();
 
         // local-counter 페이지를 3번 호출한다.
         final var PATH = "/local-counter";
-        TestHttpUtils.send(PATH);
-        TestHttpUtils.send(PATH);
-        final var response = TestHttpUtils.send(PATH);
+        HttpUtils.send(PATH);
+        HttpUtils.send(PATH);
+        final var response = HttpUtils.send(PATH);
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
