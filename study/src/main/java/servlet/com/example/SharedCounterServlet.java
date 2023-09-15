@@ -42,6 +42,8 @@ public class SharedCounterServlet extends HttpServlet {
         sharedCounter = 0;
     }
 
+    // 실제로 실행될 때에야 init 메서드를 호출하넹 신기하다
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         getServletContext().log("service() 호출");
