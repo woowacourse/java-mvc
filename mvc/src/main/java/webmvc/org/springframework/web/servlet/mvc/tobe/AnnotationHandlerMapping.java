@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.InvalidClassException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,8 +66,19 @@ public class AnnotationHandlerMapping {
         final RequestMethod[] requestMethods = requestMapping.method();
         for (final RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+            final HandlerExecution handlerExecution = new HandlerExecution(getClassInstance(clazz), method);
             handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private static Object getClassInstance(final Class<?> clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (InstantiationException |
+                 IllegalAccessException |
+                 InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new InvalidClassException("클래스의 인스턴스를 생성할 수 없습니다.");
         }
     }
 

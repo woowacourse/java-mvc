@@ -3,31 +3,27 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.exception.InvalidClassException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.InvalidMethodException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Class<?> clazz;
+    private final Object classInstance;
     private final Method method;
 
-    public HandlerExecution(final Class<?> clazz, final Method method) {
-        this.clazz = clazz;
+    public HandlerExecution(final Object classInstance, final Method method) {
+        this.classInstance = classInstance;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
-        final Object realObject;
         try {
-            realObject = clazz.getDeclaredConstructor().newInstance();
-            return (ModelAndView) method.invoke(realObject, request, response);
-        } catch (InstantiationException |
-                 IllegalAccessException |
-                 InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new InvalidClassException("클래스의 인스턴스를 생성할 수 없습니다.");
+            return (ModelAndView) method.invoke(classInstance, request, response);
+        } catch (IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new InvalidMethodException("메서드를 실행할 수 없습니다.");
         }
     }
 }
