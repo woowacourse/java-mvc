@@ -16,12 +16,8 @@ public class HandlerNotFoundExceptionResolver implements HandlerExceptionResolve
     }
 
     @Override
-    public ModelAndView resolveException(HttpServletRequest req, HttpServletResponse res, Exception ex)
-        throws Exception {
-        if (ex instanceof HandlerNotFoundException) {
-            return new ModelAndView(new JspView(viewPath));
-        }
-        throw ex;
+    public ModelAndView resolveException(HttpServletRequest req, HttpServletResponse res, Exception ex) {
+        return new ModelAndView(new JspView(viewPath));
     }
 
     @Override

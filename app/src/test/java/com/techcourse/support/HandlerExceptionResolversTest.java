@@ -2,12 +2,14 @@ package com.techcourse.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.mock;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.HandlerExceptionResolver;
-import webmvc.org.springframework.web.servlet.mvc.exception.HandlerExceptionResolverNotFoundException;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 import webmvc.org.springframework.web.servlet.mvc.support.HandlerNotFoundExceptionResolver;
 
@@ -16,14 +18,19 @@ import webmvc.org.springframework.web.servlet.mvc.support.HandlerNotFoundExcepti
 class HandlerExceptionResolversTest {
 
     @Test
-    void 지원하지_않는_예외이면_예외() {
+    void 지원하지_않는_예외이면_예외를_그대로_반환() {
         // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
         HandlerExceptionResolvers handlerExceptionResolvers = new HandlerExceptionResolvers();
-        Exception ex = new Exception();
+        IllegalArgumentException ex = new IllegalArgumentException();
 
-        // when & then
-        assertThatThrownBy(() -> handlerExceptionResolvers.getExceptionResolver(ex))
-            .isInstanceOf(HandlerExceptionResolverNotFoundException.class);
+        // when
+        HandlerExceptionResolver exceptionResolver = handlerExceptionResolvers.getExceptionResolver(ex);
+
+        // then
+        assertThatThrownBy(() -> exceptionResolver.resolveException(request, response, ex))
+            .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
