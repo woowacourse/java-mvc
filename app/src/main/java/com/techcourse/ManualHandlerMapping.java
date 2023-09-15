@@ -3,7 +3,6 @@ package com.techcourse;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +24,6 @@ public class ManualHandlerMapping implements HandlerMapper {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register", new RegisterController());
-//      controllers.put("/register/view", new RegisterViewController()); -> 어노테이션 기반 작동으로 변경
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

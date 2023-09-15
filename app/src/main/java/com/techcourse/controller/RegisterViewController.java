@@ -12,7 +12,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class RegisterViewController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView findRegisterView(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 }
