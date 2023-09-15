@@ -2,11 +2,16 @@ package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView findRegisterView(final HttpServletRequest req, final HttpServletResponse res) {
@@ -21,6 +26,7 @@ public class RegisterController implements Controller {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return "redirect:/index.jsp";
+
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
