@@ -55,7 +55,6 @@ public class AnnotationHandlerMapping {
     }
 
     private boolean isSameParameter(final Method method) {
-        method.getReturnType().equals(ModelAndView.class);
         List<Class<?>> parameterTypes = List.of(method.getParameterTypes());
         return parameterTypes.containsAll(List.of(HttpServletRequest.class, HttpServletResponse.class));
     }
