@@ -1,6 +1,9 @@
 package reflection;
 
 public class Junit3Test {
+
+    private final String name = "doggy";
+
     public void test1() throws Exception {
         System.out.println("Running Test1");
     }
