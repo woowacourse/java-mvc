@@ -6,6 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.ManualHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.common.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.common.HandlerMappers;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -13,15 +20,23 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappers handlerMappers;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
+        handlerMappers = new HandlerMappers();
+        handlerAdapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappers.addHandlerMapping(new ManualHandlerMapping());
+        handlerAdapters.addHandlerAdapter(new ManualHandlerAdapter());
+
+        handlerMappers.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
+        handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
+
+        handlerMappers.init();
     }
 
     @Override
@@ -30,9 +45,16 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Object handler = handlerMappers.getHandler(request); // controller 찾아옴
+            HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
+            Object viewName = adapter.execute(request, response, handler);
+
+            if (viewName instanceof ModelAndView) {
+                JspView view = (JspView) ((ModelAndView) viewName).getView();
+                viewName = view.getViewName();
+            }
+
+            move((String) viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
