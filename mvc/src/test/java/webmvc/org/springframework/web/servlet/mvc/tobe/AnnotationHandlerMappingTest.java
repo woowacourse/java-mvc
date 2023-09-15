@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,31 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void givenWrongUrl_whenGetHandler_thenReturnNull()  {
+        final var request = mock(HttpServletRequest.class);
+        String wrongUrl = "/wrong-url";
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn(wrongUrl);
+        when(request.getMethod()).thenReturn("POST");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        Assertions.assertThat(handlerExecution).isNull();
+    }
+
+    @Test
+    void givenWrongRequestMethod_whenGetHandler_thenReturnNull() {
+        final var request = mock(HttpServletRequest.class);
+        String wrongRequestMethod = "PATCH";
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getMethod()).thenReturn(wrongRequestMethod);
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        Assertions.assertThat(handlerExecution).isNull();
     }
 }
