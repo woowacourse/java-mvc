@@ -1,7 +1,6 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.handler.common;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper;
 
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerMapper;
 
 import java.util.ArrayList;
 import java.util.List;
