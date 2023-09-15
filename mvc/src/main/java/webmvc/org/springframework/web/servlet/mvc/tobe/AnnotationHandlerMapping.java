@@ -29,19 +29,19 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         var controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for(Class controller:controllers){
+        for(var controller:controllers){
             findMethodsWithController(controller);
         }
     }
 
-    private void findMethodsWithController(Class controller) {
+    private void findMethodsWithController(Class<?> controller) {
         var methods = controller.getDeclaredMethods();
         for(var method:methods){
             findAnnotationWithMethod(controller, method);
         }
     }
 
-    private void findAnnotationWithMethod(Class controller, Method method) {
+    private void findAnnotationWithMethod(Class<?> controller, Method method) {
         if(!method.isAnnotationPresent(RequestMapping.class)){
             return;
         }
@@ -55,7 +55,6 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        request.getRequestURI();
         RequestMethod requestMethod = Enum.valueOf(RequestMethod.class,request.getMethod());
         HandlerKey key = new HandlerKey(request.getRequestURI(),requestMethod);
         return handlerExecutions.get(key);
