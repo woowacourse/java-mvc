@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.techcourse.view.resolver.JsonViewResolver;
 import com.techcourse.view.resolver.JspViewResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -13,8 +14,10 @@ public class ViewResolvers {
 
     public void initialize() {
         final JspViewResolver jspViewResolver = new JspViewResolver();
+        final JsonViewResolver jsonViewResolver = new JsonViewResolver();
 
         resolvers.add(jspViewResolver);
+        resolvers.add(jsonViewResolver);
     }
 
     public boolean isEmpty() {
