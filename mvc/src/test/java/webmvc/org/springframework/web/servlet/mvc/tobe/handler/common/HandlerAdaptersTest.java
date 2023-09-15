@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import samples.TestController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerExecution;
 
 import java.lang.reflect.Method;

@@ -1,6 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.handler.common;
-
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
