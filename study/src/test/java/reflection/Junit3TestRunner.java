@@ -2,7 +2,6 @@ package reflection;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 class Junit3TestRunner {
@@ -16,7 +15,7 @@ class Junit3TestRunner {
 
         final Method[] declaredMethods = clazz.getDeclaredMethods();
         for (final Method method : declaredMethods) {
-            if (method.getName().contains("test")) {
+            if (method.getName().startsWith("test")) {
                 method.invoke(junit3Test);
             }
         }
