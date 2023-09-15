@@ -6,5 +6,5 @@ public interface HandlerMapper {
 
     void initialize();
 
-    Object getController(final HttpServletRequest req);
+    Object getHandler(final HttpServletRequest req);
 }

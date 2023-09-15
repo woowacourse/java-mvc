@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,13 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerMapper;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapper {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
@@ -33,6 +35,9 @@ public class AnnotationHandlerMapping {
         for (final Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             putHandlerByController(controller);
         }
+
+        handlerExecutions.keySet()
+                .forEach(key -> log.info("Annotated Based Controller : {}", key.toString()));
     }
 
     private void putHandlerByController(final Class<?> controller) {
@@ -52,7 +57,8 @@ public class AnnotationHandlerMapping {
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.valueOf(request.getMethod())));
     }
