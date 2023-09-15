@@ -31,7 +31,7 @@ public class AnnotationHandlerMapping {
     public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        Reflections reflections = new Reflections(basePackage[0]);
+        Reflections reflections = new Reflections(basePackage);
         for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             final List<Method> methods = Arrays.stream(controller.getMethods())
                                                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
