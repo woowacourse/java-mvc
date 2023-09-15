@@ -36,16 +36,15 @@ public class AnnotationHandlerMapping {
             Method[] declaredMethods = controller.getDeclaredMethods();
 
             for (Method declaredMethod : declaredMethods) {
-                RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
-                if (annotation != null) {
+                if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
+
+                    RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
+
                     HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
-                    log.info(handlerKey.toString());
 
                     HandlerExecution handlerExecution = new HandlerExecution(declaredMethod);
-                    log.info(handlerExecution.toString());
 
                     handlerExecutions.put(handlerKey, handlerExecution);
-                    log.info(handlerExecutions.toString());
                 }
             }
         }
