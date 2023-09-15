@@ -15,7 +15,6 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
-import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotFoundException;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -73,10 +72,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMethod requestMethod = RequestMethod.findRequestMethod(methodName);
         String url = request.getRequestURI();
         HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new HandlerNotFoundException();
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }
