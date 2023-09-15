@@ -30,23 +30,24 @@ public class AnnotationHandlerMapping {
 
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> typesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
-
         for (Class<?> controller : typesAnnotatedWithController) {
+            mapHandlerForAnnotatedController(controller);
+        }
+    }
 
-            Method[] declaredMethods = controller.getDeclaredMethods();
+    private void mapHandlerForAnnotatedController(Class<?> controller) {
+        Method[] declaredMethods = controller.getDeclaredMethods();
+        for (Method declaredMethod : declaredMethods) {
+            mapHandlerForAnnotatedMethod(declaredMethod);
+        }
+    }
 
-            for (Method declaredMethod : declaredMethods) {
-                if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-
-                    RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
-
-                    HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
-
-                    HandlerExecution handlerExecution = new HandlerExecution(declaredMethod);
-
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-            }
+    private void mapHandlerForAnnotatedMethod(Method declaredMethod) {
+        if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
+            HandlerExecution handlerExecution = new HandlerExecution(declaredMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
