@@ -1,59 +1,28 @@
 package com.techcourse;
 
-import com.techcourse.adapter.ManualHandlerMappingAdapter;
-import com.techcourse.mapping.ManualHandlerMappingWrapper;
-import com.techcourse.view.resolver.JspViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.resolver.ViewResolver;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final transient List<HandlerMapping> mappings = new ArrayList<>();
-    private final transient List<HandlerAdapter> adapters = new ArrayList<>();
-    private final transient List<ViewResolver> viewResolvers = new ArrayList<>();
+    private final ViewResolvers viewResolvers = new ViewResolvers();
+    private final HandlerMappings mappings = new HandlerMappings();
+    private final HandlerAdapters adapters = new HandlerAdapters();
 
     @Override
     public void init() {
-        initHandlerMappings();
-        initViewResolvers();
-        initHandlerAdapters();
-    }
-
-    private void initHandlerMappings() {
-        final ManualHandlerMappingWrapper manualHandlerMapping = new ManualHandlerMappingWrapper();
-        manualHandlerMapping.initialize();
-
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
-        annotationHandlerMapping.initialize();
-
-        mappings.add(manualHandlerMapping);
-        mappings.add(annotationHandlerMapping);
-    }
-
-    private void initViewResolvers() {
-        final JspViewResolver jspViewResolver = new JspViewResolver();
-
-        viewResolvers.add(jspViewResolver);
-    }
-
-    private void initHandlerAdapters() {
-        final ManualHandlerMappingAdapter manualHandlerMappingAdapter = new ManualHandlerMappingAdapter(viewResolvers);
-
-        adapters.add(manualHandlerMappingAdapter);
+        viewResolvers.initialize();
+        mappings.initialize();
+        adapters.initialize(viewResolvers);
     }
 
     @Override
@@ -62,14 +31,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = getHandler(request);
+            final Object handler = mappings.getHandler(request);
 
             if (handler == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return ;
             }
 
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final HandlerAdapter handlerAdapter = adapters.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.execute(request, response, handler);
 
             move(modelAndView, request, response);
@@ -78,28 +47,6 @@ public class DispatcherServlet extends HttpServlet {
 
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        for (final HandlerMapping mapping : mappings) {
-            final Object handler = mapping.getHandler(request);
-
-            if (handler != null) {
-                return handler;
-            }
-        }
-
-        return null;
-    }
-
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        for (final HandlerAdapter adapter : adapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
-            }
-        }
-
-        throw new IllegalStateException("해당 Handler를 수행할 수 있는 HandlerAdapter가 존재하지 않습니다.");
     }
 
     /**
