@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.support.mvc.handler;
 
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
