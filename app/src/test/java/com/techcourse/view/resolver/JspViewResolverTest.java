@@ -22,7 +22,7 @@ class JspViewResolverTest {
     void supports_메서드는_지원하는_접미사가_있으면_true를_반환한다() {
         final JspViewResolver viewResolver = new JspViewResolver();
 
-        final boolean actual = viewResolver.supports("/index.jsp");
+        final boolean actual = viewResolver.supports(null, "/index.jsp");
 
         assertThat(actual).isTrue();
     }
@@ -31,7 +31,7 @@ class JspViewResolverTest {
     void supports_메서드는_지원하는_접미사가_없으면_false를_반환한다() {
         final JspViewResolver viewResolver = new JspViewResolver();
 
-        final boolean actual = viewResolver.supports("/index.html");
+        final boolean actual = viewResolver.supports(null, "/index.html");
 
         assertThat(actual).isFalse();
     }

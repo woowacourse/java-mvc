@@ -38,7 +38,7 @@ public class ManualHandlerMappingAdapter implements HandlerAdapter {
             final Object handler
     ) throws Exception {
         final String viewName = ((Controller) handler).execute(request, response);
-        final View view = resolvers.findView(viewName);
+        final View view = resolvers.findView(request, viewName);
         final ModelAndView modelAndView = new ModelAndView(view);
 
         addModelData(request, modelAndView);

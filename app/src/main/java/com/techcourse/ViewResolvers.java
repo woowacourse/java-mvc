@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.techcourse.view.resolver.JspViewResolver;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import webmvc.org.springframework.web.servlet.View;
@@ -20,9 +21,9 @@ public class ViewResolvers {
         return resolvers.isEmpty();
     }
 
-    public View findView(final String viewName) {
+    public View findView(final HttpServletRequest request, final String viewName) {
         for (final ViewResolver resolver : resolvers) {
-            if (resolver.supports(viewName)) {
+            if (resolver.supports(request, viewName)) {
                 return resolver.resolve(viewName);
             }
         }
