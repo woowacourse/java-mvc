@@ -31,13 +31,19 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        setupManualHandler();
+        setupAnnotationHandler();
+        handlerMappers.init();
+    }
+
+    private void setupManualHandler() {
         handlerMappers.addHandlerMapping(new ManualHandlerMapping());
         handlerAdapters.addHandlerAdapter(new ManualHandlerAdapter());
+    }
 
+    private void setupAnnotationHandler() {
         handlerMappers.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
         handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
-
-        handlerMappers.init();
     }
 
     @Override
@@ -46,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = handlerMappers.getHandler(request); // controller 찾아옴
+            Object handler = handlerMappers.getHandler(request);
             HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
             Object viewName = adapter.execute(request, response, handler);
 
