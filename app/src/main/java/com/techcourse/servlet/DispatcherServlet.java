@@ -1,5 +1,7 @@
-package com.techcourse;
+package com.techcourse.servlet;
 
+import com.techcourse.servlet.adaptor.HandlerAdaptorScanner;
+import com.techcourse.servlet.handler.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

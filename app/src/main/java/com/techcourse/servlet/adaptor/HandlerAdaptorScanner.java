@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.servlet.adaptor;
 
 import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class HandlerAdaptorScanner {
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(HandlerAdaptorScanner.class);
 
     private final List<HandlerAdaptor> handlerAdaptors = new ArrayList<>();
 

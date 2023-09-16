@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.servlet.handler;
 
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
@@ -15,13 +15,13 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import java.util.HashMap;
 import java.util.Map;
 
-class ManualHandlerMapping implements HandlerMapping {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
-    void initialize() {
+    public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
