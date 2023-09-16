@@ -29,14 +29,10 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        try {
-            log.info("Initialized AnnotationHandlerMapping!");
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            controllerClasses.forEach(this::addControllerHandlers);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClasses.forEach(this::addControllerHandlers);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addControllerHandlers(Class<?> clazz) {
@@ -57,7 +53,7 @@ public class AnnotationHandlerMapping {
             return constructor.newInstance();
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new IllegalArgumentException("컨트롤러를 생성하는데 문제가 생겼습니다");
+            throw new IllegalStateException("컨트롤러를 생성하는데 문제가 생겼습니다");
         }
     }
 
