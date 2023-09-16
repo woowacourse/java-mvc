@@ -6,9 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappings handlerMappings;
+    private final transient HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();
@@ -26,8 +26,6 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping());
         handlerMappings.initialize();
     }
 
@@ -54,5 +52,9 @@ public class DispatcherServlet extends HttpServlet {
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        this.handlerMappings.addHandlerMapping(handlerMapping);
     }
 }
