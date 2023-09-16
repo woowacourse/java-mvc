@@ -4,12 +4,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -17,19 +20,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com");
-        annotationHandlerMapping.initialize();
-
+        handlerMappings = new HandlerMappings(
+            List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com")
+            )
+        );
+        handlerMappings.initialize();
     }
 
     @Override
@@ -39,16 +43,21 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(request);
-            if (controller != null) {
-                final var viewName = controller.execute(request, response);
+            Object handler = handlerMappings.getHandler(request);
+            if (handler instanceof Controller) {
+                Controller controller = (Controller) handler;
+                String viewName = controller.execute(request, response);
                 move(viewName, request, response);
-            } else {
-                HandlerExecution handler = annotationHandlerMapping.getHandler(request);
-                ModelAndView modelAndView = handler.handle(request, response);
+            }
+
+            if (handler instanceof HandlerExecution) {
+                HandlerExecution handlerExecution = (HandlerExecution) handler;
+                ModelAndView modelAndView = handlerExecution.handle(request, response);
                 View view = modelAndView.getView();
                 view.render(modelAndView.getModel(), request, response);
             }
+
+            throw new ClassNotFoundException();
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
