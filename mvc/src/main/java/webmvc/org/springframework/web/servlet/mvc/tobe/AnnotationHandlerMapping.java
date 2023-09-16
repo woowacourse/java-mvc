@@ -98,7 +98,7 @@ public class AnnotationHandlerMapping {
                     .invoke(annotation);
         } catch (IllegalAccessException | NoSuchMethodException |
                  InvocationTargetException e) {
-            throw new AnnotaitonMethodInvokeException("어노테이션의 메소드를 실행시키는 도중 예외가 발생했습니다.", e);
+            throw new AnnotationMethodInvokeException("어노테이션의 메소드를 실행시키는 도중 예외가 발생했습니다.", e);
         }
     }
 
@@ -109,7 +109,7 @@ public class AnnotationHandlerMapping {
                     .invoke(annotation);
         } catch (IllegalAccessException | NoSuchMethodException |
                  InvocationTargetException e) {
-            throw new AnnotaitonMethodInvokeException("어노테이션의 메소드를 실행시키는 도중 예외가 발생했습니다.", e);
+            throw new AnnotationMethodInvokeException("어노테이션의 메소드를 실행시키는 도중 예외가 발생했습니다.", e);
         }
     }
 
