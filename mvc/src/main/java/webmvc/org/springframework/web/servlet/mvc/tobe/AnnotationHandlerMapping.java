@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -99,13 +100,13 @@ public class AnnotationHandlerMapping {
             final RequestMethod requestMethod
     ) {
         final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-        final HandlerExecution handlerExecution = new HandlerExecution() {
-            @Override
-            public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
-                return (ModelAndView) method.invoke(controller.getDeclaredConstructor().newInstance(), request, response);
-            }
-        };
+        final Object target;
+        try {
+            target = controller.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        final HandlerExecution handlerExecution = new HandlerExecution(target, method);
 
         handlerExecutions.put(handlerKey, handlerExecution);
     }
