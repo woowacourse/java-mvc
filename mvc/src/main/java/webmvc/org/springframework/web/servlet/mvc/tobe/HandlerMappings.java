@@ -21,7 +21,7 @@ public class HandlerMappings implements HandlerMapping<Object> {
     @Override
     public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
-            .map(it -> getHandler(request))
+            .map(it -> it.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
             .orElseGet(null);
