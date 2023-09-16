@@ -21,24 +21,27 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
-    private HandlerAdapterFinder handlerAdapters;
+    private HandlerAdapterFinder handlerAdapterFinder;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMappings = new HandlerMappings(
-            List.of(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com")
-            )
-        );
-        handlerMappings.initialize();
+        handlerMappings = initHandlerMappings();
+        handlerAdapterFinder = initHandlerAdapterFinder();
+    }
 
-        handlerAdapters = new HandlerAdapterFinder(
-            List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter())
-        );
+    private HandlerMappings initHandlerMappings() {
+        HandlerMappings handlerMappings = new HandlerMappings(
+            List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com")));
+        handlerMappings.initialize();
+        return handlerMappings;
+    }
+
+    private HandlerAdapterFinder initHandlerAdapterFinder() {
+        return new HandlerAdapterFinder(
+            List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter()));
     }
 
     @Override
@@ -49,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapters.find(handler);
+            HandlerAdapter handlerAdapter = handlerAdapterFinder.find(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
