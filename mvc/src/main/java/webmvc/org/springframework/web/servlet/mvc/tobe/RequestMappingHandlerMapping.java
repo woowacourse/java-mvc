@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping implements HandlerMapping {
+public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private final Reflections reflections;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(Object... basePackage) {
+    public RequestMappingHandlerMapping(Object... basePackage) {
         this.reflections = new Reflections(basePackage);
         this.handlerExecutions = new HashMap<>();
     }

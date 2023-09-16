@@ -8,16 +8,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 
-class AnnotationHandlerMappingTest {
+class RequestMappingHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private RequestMappingHandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new RequestMappingHandlerMapping("samples");
         handlerMapping.initialize();
 
         handlerAdapter = new RequestMappingHandlerAdapter();
