@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Reflections reflections;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -82,8 +82,7 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecution(Method method, String requestPath, RequestMethod[] requestMethods) {
-        Object instance = instantiate(method.getDeclaringClass());
-        HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+        HandlerExecution handlerExecution = new HandlerExecution(method);
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
@@ -113,17 +112,8 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Object instantiate(Class<?> clazz) {
-        try {
-            return clazz.getConstructor()
-                    .newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
-            throw new InstantiationFailedException("인스턴스화를 하는 도중 예외가 발생했습니다.", e);
-        }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
