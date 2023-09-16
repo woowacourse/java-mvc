@@ -45,9 +45,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             final HandlerExecution mappedHandler = getHandler(request);
             final HandlerAdapter handlerAdapter = getHandlerAdapter(mappedHandler.getHandler());
@@ -56,7 +54,6 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerMethod);
 
             final View view = modelAndView.getView();
-
             move(view.getName(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -64,7 +61,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerExecution getHandler(HttpServletRequest request) {
+    private HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
                 .findFirst()
@@ -72,14 +69,15 @@ public class DispatcherServlet extends HttpServlet {
                 .getHandler(request);
     }
 
-    private HandlerAdapter getHandlerAdapter(Object handler) {
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(final String viewName, final HttpServletRequest request,
+                      final HttpServletResponse response) throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;

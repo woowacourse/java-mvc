@@ -15,24 +15,25 @@ import java.lang.reflect.Method;
 public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
-    public boolean supports(Object handler) {
-        Method method = (Method) handler;
+    public boolean supports(final Object handler) {
+        final Method method = (Method) handler;
         return Controller.class.isAssignableFrom(method.getDeclaringClass());
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String viewName = invokeHandler(request, response, handler);
-        View view = new JspView(viewName);
-
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
+                               final Object handler) {
+        final String viewName = invokeHandler(request, response, handler);
+        final View view = new JspView(viewName);
         return new ModelAndView(view);
     }
 
-    private String invokeHandler(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    private String invokeHandler(final HttpServletRequest request, final HttpServletResponse response,
+                                 final Object handler) {
         try {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-            Method method = (Method) handlerMethod.getHandler();
-            Object bean = handlerMethod.getBean();
+            final HandlerMethod handlerMethod = (HandlerMethod) handler;
+            final Object bean = handlerMethod.getBean();
+            final Method method = (Method) handlerMethod.getHandler();
 
             return (String) method.invoke(bean, request, response);
         } catch (InvocationTargetException | IllegalAccessException e) {

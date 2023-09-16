@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     @Override
-    public boolean supports(Object handler) {
+    public boolean supports(final Object handler) {
         final Method method = (Method) handler;
         final Class<?> handlerClass = method.getDeclaringClass();
 
@@ -22,18 +22,19 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
                 isCustomRequestMappingPresent(method);
     }
 
-    private boolean isCustomRequestMappingPresent(Method handlerMethod) {
-        Annotation[] annotations = handlerMethod.getDeclaredAnnotations();
+    private boolean isCustomRequestMappingPresent(final Method handlerMethod) {
+        final Annotation[] annotations = handlerMethod.getDeclaredAnnotations();
 
         return Arrays.stream(annotations)
                 .anyMatch(CustomRequestMappings::isAnyMatch);
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Object bean = handlerMethod.getBean();
-        Method method = (Method) handlerMethod.getHandler();
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
+                               final Object handler) {
+        final HandlerMethod handlerMethod = (HandlerMethod) handler;
+        final Object bean = handlerMethod.getBean();
+        final Method method = (Method) handlerMethod.getHandler();
 
         try {
             return (ModelAndView) method.invoke(bean, request, response);

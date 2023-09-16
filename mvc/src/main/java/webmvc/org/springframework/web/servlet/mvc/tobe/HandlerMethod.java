@@ -5,7 +5,7 @@ public class HandlerMethod {
     private final Object bean;
     private final Object handler;
 
-    public HandlerMethod(Object bean, Object handler) {
+    public HandlerMethod(final Object bean, final Object handler) {
         this.bean = bean;
         this.handler = handler;
     }

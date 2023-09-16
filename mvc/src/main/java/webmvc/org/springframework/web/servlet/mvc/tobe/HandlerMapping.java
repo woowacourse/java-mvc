@@ -4,5 +4,5 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface HandlerMapping {
 
-    HandlerExecution getHandler(HttpServletRequest request);
+    HandlerExecution getHandler(final HttpServletRequest request);
 }

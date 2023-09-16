@@ -20,7 +20,7 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        View view = new JspView("redirect:/index.jsp");
+        final View view = new JspView("redirect:/index.jsp");
         return new ModelAndView(view);
     }
 }
