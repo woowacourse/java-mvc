@@ -1,5 +1,8 @@
 package com.techcourse;
 
+import com.techcourse.support.web.adapter.HandlerAdapters;
+import com.techcourse.support.web.mapping.HandlerMappings;
+import com.techcourse.support.web.resolver.ViewResolvers;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,9 +18,9 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final ViewResolvers viewResolvers = new ViewResolvers();
-    private final HandlerMappings mappings = new HandlerMappings();
-    private final HandlerAdapters adapters = new HandlerAdapters();
+    private final transient ViewResolvers viewResolvers = new ViewResolvers();
+    private final transient HandlerMappings mappings = new HandlerMappings();
+    private final transient HandlerAdapters adapters = new HandlerAdapters();
 
     @Override
     public void init() {

@@ -1,4 +1,4 @@
-package com.techcourse.view.resolver;
+package com.techcourse.support.web.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import webmvc.org.springframework.web.servlet.View;

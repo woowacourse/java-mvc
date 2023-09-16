@@ -1,4 +1,4 @@
-package com.techcourse.mapping;
+package com.techcourse.support.web.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;

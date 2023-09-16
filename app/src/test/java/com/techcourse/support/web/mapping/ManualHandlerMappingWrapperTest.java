@@ -1,11 +1,10 @@
-package com.techcourse;
+package com.techcourse.support.web.mapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import com.techcourse.mapping.ManualHandlerMappingWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;

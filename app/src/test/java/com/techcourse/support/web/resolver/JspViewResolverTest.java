@@ -1,8 +1,9 @@
-package com.techcourse.view.resolver;
+package com.techcourse.support.web.resolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import com.techcourse.support.web.resolver.JspViewResolver;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

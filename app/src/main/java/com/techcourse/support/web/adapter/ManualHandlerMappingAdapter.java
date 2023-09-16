@@ -1,6 +1,6 @@
-package com.techcourse.adapter;
+package com.techcourse.support.web.adapter;
 
-import com.techcourse.ViewResolvers;
+import com.techcourse.support.web.resolver.ViewResolvers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

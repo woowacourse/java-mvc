@@ -1,6 +1,6 @@
-package com.techcourse;
+package com.techcourse.support.web.adapter;
 
-import com.techcourse.adapter.ManualHandlerMappingAdapter;
+import com.techcourse.support.web.resolver.ViewResolvers;
 import java.util.ArrayList;
 import java.util.List;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;

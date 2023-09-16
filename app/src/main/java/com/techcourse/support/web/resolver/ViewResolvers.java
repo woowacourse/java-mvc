@@ -1,7 +1,5 @@
-package com.techcourse;
+package com.techcourse.support.web.resolver;
 
-import com.techcourse.view.resolver.JsonViewResolver;
-import com.techcourse.view.resolver.JspViewResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
