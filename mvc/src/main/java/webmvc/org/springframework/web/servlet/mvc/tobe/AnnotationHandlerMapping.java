@@ -47,6 +47,7 @@ public class AnnotationHandlerMapping {
             for (final Method method : handlerMethods) {
                 putHandler(controller, method);
             }
+            log.info("Load Controller - {}", controllerClass.getSimpleName());
         } catch (InstantiationException |
                  IllegalAccessException |
                  InvocationTargetException |
