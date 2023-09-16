@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping<HandlerExecution> {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -30,6 +30,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object packagePath : basePackage) {
             initHandlerExecutions(packagePath);
@@ -78,6 +79,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request)  {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
