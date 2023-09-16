@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import com.sun.jdi.InternalException;
 import java.util.List;
 
 public class HandlerAdapterFinder {
@@ -15,6 +16,6 @@ public class HandlerAdapterFinder {
         return handlerAdapters.stream()
             .filter(it -> it.supports(handler))
             .findFirst()
-            .orElseGet(null);
+            .orElseThrow(InternalException::new);
     }
 }
