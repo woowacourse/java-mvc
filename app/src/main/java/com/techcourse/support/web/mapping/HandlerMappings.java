@@ -17,13 +17,13 @@ public class HandlerMappings {
     }
 
     public void init() {
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
+        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
 
-        mappings.add(manualHandlerMapping);
         mappings.add(annotationHandlerMapping);
+        mappings.add(manualHandlerMapping);
     }
 
     public Object getHandler(final HttpServletRequest request) {

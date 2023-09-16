@@ -12,15 +12,15 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 import java.util.Collections;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappings handlerMappings;
-    private final HandlerAdapters handlerAdapters;
-
+    private final transient HandlerMappings handlerMappings;
+    private final transient HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappings();
@@ -36,10 +36,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
         try {
             final Object handler = handlerMappings.getHandler(request);
-            if (handler == null) {
+            if (Objects.isNull(handler)) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -51,5 +50,4 @@ public class DispatcherServlet extends HttpServlet {
             throw new ServletException(e.getMessage());
         }
     }
-
 }

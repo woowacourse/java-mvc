@@ -28,7 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public void initialize()  {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
         reflections.getTypesAnnotatedWith(Controller.class)
@@ -43,9 +43,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (final Method annotatedMethod : annotatedMethods) {
             final RequestMapping annotation = annotatedMethod.getAnnotation(RequestMapping.class);
             for (final RequestMethod requestMethod : annotation.method()) {
-                log.info("url = {}, method = {}", annotation.value(), requestMethod.name());
                 final HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                handlerExecutions.put(handlerKey, new HandlerExecution(clazz, annotatedMethod));
+                log.info("handlerKey = {}", handlerKey);
+                handlerExecutions.put(handlerKey, new HandlerExecution(annotatedMethod));
             }
         }
     }

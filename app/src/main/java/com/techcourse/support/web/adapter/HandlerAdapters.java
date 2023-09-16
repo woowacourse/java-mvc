@@ -13,8 +13,8 @@ public class HandlerAdapters {
     }
 
     public void init() {
-        adapters.add(new ManualHanlderAdapter());
         adapters.add(new AnnotationHandlerAdapter());
+        adapters.add(new ManualHanlderAdapter());
     }
 
     public HandlerAdapter getAdapter(final Object handler) {
