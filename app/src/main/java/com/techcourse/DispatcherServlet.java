@@ -8,19 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
+import java.io.IOException;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final ManualHandlerMapping manualHandlerMapping;
 
     public DispatcherServlet() {
+        this.manualHandlerMapping = new ManualHandlerMapping();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
     }
 
@@ -30,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = manualHandlerMapping.getHandler(request);
             final var viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
@@ -39,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
