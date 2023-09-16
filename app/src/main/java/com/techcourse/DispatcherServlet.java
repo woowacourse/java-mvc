@@ -13,15 +13,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private LegacyHandlerMapper legacyHandlerMapper;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        legacyHandlerMapper = new LegacyHandlerMapper();
+        legacyHandlerMapper.initialize();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = legacyHandlerMapper.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
