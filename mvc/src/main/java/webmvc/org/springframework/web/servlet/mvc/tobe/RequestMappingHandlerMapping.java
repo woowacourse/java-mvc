@@ -23,9 +23,11 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     public RequestMappingHandlerMapping(Object... basePackage) {
         this.reflections = new Reflections(basePackage);
         this.handlerExecutions = new HashMap<>();
+
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         Set<Class<?>> handlerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> handlerClass : handlerClasses) {
             String prefix = extractPathPrefix(handlerClass);

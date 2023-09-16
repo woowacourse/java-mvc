@@ -17,8 +17,6 @@ class RequestMappingHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new RequestMappingHandlerMapping("samples");
-        handlerMapping.initialize();
-
         handlerAdapter = new RequestMappingHandlerAdapter();
     }
 
