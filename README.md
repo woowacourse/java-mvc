@@ -9,3 +9,6 @@
 - [x] AnnotationHandlerMappingTest 성공 테스트로 변경
   - [x] get() 성공 테스트로 변경
   - [x] post() 성공 테스트로 변경
+
+- [x] Legacy MVC 와 @MVC 통합하기
+  - [x] 인터페이스 기반 Controller 를 등록하는 클래스 구현
