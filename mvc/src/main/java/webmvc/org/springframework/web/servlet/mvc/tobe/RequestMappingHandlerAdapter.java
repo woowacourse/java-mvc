@@ -15,10 +15,13 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        Method handlerMethod = (Method) handler;
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        return handlerMethod.isAnnotationPresent(RequestMapping.class) ||
-                isCustomRequestMappingPresent(handlerMethod);
+        Object bean = handlerMethod.getBean();
+        Method method = (Method) handlerMethod.getHandler();
+
+        return bean.getClass().isAnnotationPresent(RequestMapping.class) ||
+                isCustomRequestMappingPresent(method);
     }
 
     private boolean isCustomRequestMappingPresent(Method handlerMethod) {

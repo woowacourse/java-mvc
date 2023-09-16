@@ -1,20 +1,20 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-public class HandlerExecution {
+public class HandlerMethod {
 
     private final Object bean;
     private final Object handler;
 
-    public HandlerExecution(Object bean, Object handler) {
+    public HandlerMethod(Object bean, Object handler) {
         this.bean = bean;
         this.handler = handler;
     }
 
-    public Object getHandler() {
-        return handler;
-    }
-
     public Object getBean() {
         return bean;
+    }
+
+    public Object getHandler() {
+        return handler;
     }
 }

@@ -84,7 +84,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     }
 
     private void addHandlerExecution(Method method, String requestPath, RequestMethod[] requestMethods) {
-        HandlerExecution handlerExecution = new HandlerExecution(method);
+        Object bean = instantiate(method.getDeclaringClass());
+        HandlerExecution handlerExecution = new HandlerExecution(bean, method);
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
@@ -111,6 +112,16 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         } catch (IllegalAccessException | NoSuchMethodException |
                  InvocationTargetException e) {
             throw new AnnotationMethodInvokeException("어노테이션의 메소드를 실행시키는 도중 예외가 발생했습니다.", e);
+        }
+    }
+
+    private Object instantiate(Class<?> clazz) {
+        try {
+            return clazz.getConstructor()
+                    .newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            throw new InstantiationFailedException("인스턴스화를 하는 도중 예외가 발생했습니다.", e);
         }
     }
 
