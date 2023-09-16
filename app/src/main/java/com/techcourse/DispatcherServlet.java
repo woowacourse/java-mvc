@@ -1,9 +1,12 @@
 package com.techcourse;
 
+import com.techcourse.exception.HandlerAdapterNotFoundException;
+import com.techcourse.exception.HandlerNotFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +48,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -55,9 +58,12 @@ public class DispatcherServlet extends HttpServlet {
             View view = modelAndView.getView();
             Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
-        } catch (Throwable e) {
+        } catch (HandlerNotFoundException | HandlerAdapterNotFoundException e) {
+            log.error("RuntimeException : {}", e.getMessage(), e);
+            response.sendRedirect("404.jsp");
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            response.sendRedirect("500.jsp");
         }
     }
 
@@ -68,7 +74,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
-        throw new RuntimeException();
+        throw new HandlerNotFoundException("핸들러를 찾을 수 없습니다.");
     }
 
     private ModelAndView getHandlerAdapter(final Object handler, final HttpServletRequest request,
@@ -78,6 +84,6 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerAdapter.handle(handler, request, response);
             }
         }
-        throw new RuntimeException();
+        throw new HandlerAdapterNotFoundException("어댑터를 찾을 수 없습니다.");
     }
 }
