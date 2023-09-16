@@ -1,11 +1,12 @@
 package com.techcourse;
 
 import com.techcourse.controller.lagacy.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapper;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +31,9 @@ public class LegacyHandlerMapper implements HandlerMapper {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    @Override
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
+    public Controller getHandler(final HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.debug("Request Mapping URI : {}", requestURI);
         return controllers.get(requestURI);
     }
 }
