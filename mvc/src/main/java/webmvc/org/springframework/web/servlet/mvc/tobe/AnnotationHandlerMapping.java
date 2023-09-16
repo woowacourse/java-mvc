@@ -54,11 +54,11 @@ public class AnnotationHandlerMapping {
     }
 
     private void generateHandlerExecutions(final Object controller, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (requestMapping == null) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
             return;
         }
 
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String path = requestMapping.value();
         final RequestMethod[] requestMethods = requestMapping.method();
         final List<HandlerKey> handlerKeys = generateHandlerKeys(path, requestMethods);

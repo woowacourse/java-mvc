@@ -14,11 +14,9 @@ class Junit4TestRunner {
         final Method[] methods = clazz.getDeclaredMethods(); // 상속한 메서드 제외
 
         for (Method method : methods) {
-            final MyTest myTest = method.getAnnotation(MyTest.class);
-            if(myTest != null) {
+            if (method.isAnnotationPresent(MyTest.class)) {
                 method.invoke(junit4Test);
             }
-
         }
     }
 }
