@@ -2,16 +2,20 @@ package com.techcourse.domain;
 
 public class User {
 
-    private final long id;
+    private Long id;
     private final String account;
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
+    private User(Long id, String account, String password, String email) {
         this.id = id;
         this.account = account;
         this.password = password;
         this.email = email;
+    }
+
+    public User(String account, String password, String email) {
+        this(null, account, password, email);
     }
 
     public boolean checkPassword(String password) {
@@ -20,6 +24,14 @@ public class User {
 
     public String getAccount() {
         return account;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     @Override

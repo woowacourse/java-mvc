@@ -1,6 +1,8 @@
 package servlet.com.example;
 
+import java.net.http.HttpResponse;
 import org.junit.jupiter.api.Test;
+import support.HttpUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static servlet.com.example.KoreanServlet.인코딩;
@@ -8,12 +10,12 @@ import static servlet.com.example.KoreanServlet.인코딩;
 class FilterTest {
 
     @Test
-    void testFilter() throws Exception {
+    void testFilter() {
         // 톰캣 서버 시작
-        final var tomcatStarter = TestHttpUtils.createTomcatStarter();
+        final var tomcatStarter = new TomcatStarter("src/main/webapp/");
         tomcatStarter.start();
 
-        final var response = TestHttpUtils.send("/korean");
+        HttpResponse<String> response = HttpUtils.send("/korean");
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
