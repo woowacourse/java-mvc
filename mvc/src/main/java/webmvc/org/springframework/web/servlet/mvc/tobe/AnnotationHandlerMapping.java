@@ -33,16 +33,16 @@ public class AnnotationHandlerMapping {
             log.info("Initialized AnnotationHandlerMapping!");
             Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            controllerClasses.forEach(this::addHandlerExecution);
+            controllerClasses.forEach(this::addControllerHandlers);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
-    private void addHandlerExecution(Class<?> clazz) {
+    private void addControllerHandlers(Class<?> clazz) {
         List<Method> methods = getAnnotatedMethods(clazz);
         Object controller = createInstance(clazz);
-        methods.forEach(method -> addHandlerExecution(method, controller));
+        methods.forEach(method -> addHandlerExecutions(controller, method));
     }
 
     private List<Method> getAnnotatedMethods(Class<?> clazz) {
@@ -61,17 +61,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void addHandlerExecution(Method method, Object controller) {
+    private void addHandlerExecutions(Object controller, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        String uri = annotation.value();
-        List<RequestMethod> requestMethods = Arrays.asList(annotation.method());
-        requestMethods.forEach(requestMethod -> addHandlerExecution(uri, requestMethod, controller, method));
-    }
-
-    private void addHandlerExecution(String uri, RequestMethod requestMethod, Object controller, Method method) {
-        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        handlerExecutions.put(handlerKey, handlerExecution);
+        Arrays.stream(annotation.method())
+                .map(requestMethod -> new HandlerKey(annotation.value(), requestMethod))
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
     public Object getHandler(final HttpServletRequest request) {
