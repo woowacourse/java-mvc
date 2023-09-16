@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -97,7 +98,12 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = makeHandlerKey(request);
-        return handlerExecutions.get(handlerKey);
+        final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        if (handlerExecution == null) {
+            throw new NoSuchElementException("해당하는 핸들러가 없습니다.");
+        }
+
+        return handlerExecution;
     }
 
     private HandlerKey makeHandlerKey(final HttpServletRequest request) {
