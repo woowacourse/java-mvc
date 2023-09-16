@@ -10,6 +10,8 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
+import static webmvc.org.springframework.web.servlet.view.JspView.REDIRECT_PREFIX;
+
 @Controller
 public class RegisterController {
 
@@ -21,6 +23,6 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + "/index.jsp"));
     }
 }

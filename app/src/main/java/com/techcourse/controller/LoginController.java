@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
+import static webmvc.org.springframework.web.servlet.view.JspView.REDIRECT_PREFIX;
+
 @Controller
 public class LoginController {
 
@@ -20,7 +22,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_PREFIX + "/index.jsp"));
         }
 
         String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -30,7 +32,7 @@ public class LoginController {
                 })
                 .orElse("/401.jsp");
 
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + viewName));
     }
 
     private String login(final HttpServletRequest request, final User user) {

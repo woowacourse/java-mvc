@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static webmvc.org.springframework.web.servlet.view.JspView.REDIRECT_PREFIX;
 
 class RegisterControllerTest {
 
@@ -32,7 +33,7 @@ class RegisterControllerTest {
         final var modelAndView = registerController.execute(request, response);
 
         //then
-        final var expected = new ModelAndView(new JspView("/index.jsp"));
+        final var expected = new ModelAndView(new JspView(REDIRECT_PREFIX + "/index.jsp"));
 
         assertThat(modelAndView)
                 .usingRecursiveComparison()
