@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +31,19 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
 
         try {
-            final List<Class<?>> controllers = new ArrayList<>();
-            for (Object path : basePackage) {
-                findControllers((String) path, controllers);
-            }
-            for (Class<?> controller : controllers) {
-                addHandler(controller);
-            }
+            initializeHandlers();
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void initializeHandlers() throws URISyntaxException, IOException {
+        final List<Class<?>> controllers = new ArrayList<>();
+        for (Object path : basePackage) {
+            findControllers((String) path, controllers);
+        }
+        for (Class<?> controller : controllers) {
+            addHandler(controller);
         }
     }
 
@@ -46,13 +51,18 @@ public class AnnotationHandlerMapping {
         final File[] files = findFilesByPath(path);
 
         for (File file : files) {
-            final String filePath = path + "." + file.getName();
-            if (file.isDirectory()) {
-                findControllers(filePath, controllers);
-            }
-            if (file.getName().endsWith(".class")) {
-                verifyController(filePath, controllers);
-            }
+            findControllerByFile(path, controllers, file);
+        }
+    }
+
+    private void findControllerByFile(final String path, final List<Class<?>> controllers, final File file)
+            throws URISyntaxException, IOException {
+        final String filePath = path + "." + file.getName();
+        if (file.isDirectory()) {
+            findControllers(filePath, controllers);
+        }
+        if (file.getName().endsWith(".class")) {
+            verifyController(filePath, controllers);
         }
     }
 
@@ -66,11 +76,15 @@ public class AnnotationHandlerMapping {
     private void verifyController(final String file, final List<Class<?>> controllers) {
         try {
             final Class<?> clazz = convertToClass(file);
-            if (clazz.isAnnotationPresent(context.org.springframework.stereotype.Controller.class)) {
-                controllers.add(clazz);
-            }
+            addControllerClass(controllers, clazz);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private static void addControllerClass(final List<Class<?>> controllers, final Class<?> clazz) {
+        if (clazz.isAnnotationPresent(context.org.springframework.stereotype.Controller.class)) {
+            controllers.add(clazz);
         }
     }
 
@@ -80,26 +94,23 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandler(final Class<?> controller) {
-        for (Method method : controller.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                for (RequestMethod requestMethod : requestMapping.method()) {
-                    addHandlerByMethod(controller, method, requestMapping, requestMethod);
-                }
-            }
+        Arrays.stream(controller.getDeclaredMethods())
+                .forEach(method -> addHandlerByMethod(controller, method));
+    }
+
+    private void addHandlerByMethod(final Class<?> controller, final Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerByMethod(controller, method, requestMapping);
         }
     }
 
-    private void addHandlerByMethod(
-            final Class<?> controller,
-            final Method method,
-            final RequestMapping requestMapping,
-            final RequestMethod requestMethod
-    ) {
-        final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-
-        handlerExecutions.put(handlerKey, handlerExecution);
+    private void addHandlerByMethod(final Class<?> controller, final Method method, final RequestMapping requestMapping) {
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
