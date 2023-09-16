@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping {
 
     private Object createInstance(Class<?> clazz) {
         try {
-            return clazz.getDeclaredConstructor().newInstance();
+            return clazz.getConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException();
         }
