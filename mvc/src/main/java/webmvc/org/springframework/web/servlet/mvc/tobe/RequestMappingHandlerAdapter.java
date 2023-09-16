@@ -15,12 +15,10 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        final Method method = (Method) handler;
+        final Class<?> handlerClass = method.getDeclaringClass();
 
-        Object bean = handlerMethod.getBean();
-        Method method = (Method) handlerMethod.getHandler();
-
-        return bean.getClass().isAnnotationPresent(RequestMapping.class) ||
+        return handlerClass.isAnnotationPresent(RequestMapping.class) ||
                 isCustomRequestMappingPresent(method);
     }
 
@@ -33,24 +31,13 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        Object handlerInstance = instantiate(handler);
-        Method handlerMethod = (Method) handler;
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Object bean = handlerMethod.getBean();
+        Method method = (Method) handlerMethod.getHandler();
 
         try {
-            return (ModelAndView) handlerMethod.invoke(handlerInstance, request, response);
+            return (ModelAndView) method.invoke(bean, request, response);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Object instantiate(Object handler) {
-        try {
-            Method handlerMethod = (Method) handler;
-            return handlerMethod.getDeclaringClass()
-                    .getDeclaredConstructor()
-                    .newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
