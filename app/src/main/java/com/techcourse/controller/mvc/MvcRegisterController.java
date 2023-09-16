@@ -12,7 +12,7 @@ import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcRegisterController implements CustomController {
+public class MvcRegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) throws Exception {
@@ -20,7 +20,6 @@ public class MvcRegisterController implements CustomController {
         return new ModelAndView(new JspView(path));
     }
 
-    @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),

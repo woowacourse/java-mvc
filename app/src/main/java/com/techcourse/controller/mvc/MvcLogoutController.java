@@ -10,7 +10,7 @@ import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcLogoutController implements CustomController {
+public class MvcLogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
@@ -18,7 +18,6 @@ public class MvcLogoutController implements CustomController {
         return new ModelAndView(new JspView(path));
     }
 
-    @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var session = req.getSession();
         session.removeAttribute(MvcUserSession.SESSION_KEY);

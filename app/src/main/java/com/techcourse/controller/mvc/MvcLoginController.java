@@ -1,6 +1,5 @@
-package com.techcourse.controller.mvc.view;
+package com.techcourse.controller.mvc;
 
-import com.techcourse.controller.mvc.MvcUserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
@@ -11,11 +10,10 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcLoginController implements CustomController {
+public class MvcLoginController {
 
     private static final Logger log = LoggerFactory.getLogger(MvcLoginController.class);
 
@@ -24,7 +22,6 @@ public class MvcLoginController implements CustomController {
         return new ModelAndView(new JspView(execute(req, res)));
     }
 
-    @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (MvcUserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";

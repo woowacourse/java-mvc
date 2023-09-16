@@ -13,7 +13,7 @@ import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcLoginViewController implements CustomController {
+public class MvcLoginViewController {
 
     private static final Logger log = LoggerFactory.getLogger(MvcLoginViewController.class);
 
@@ -23,7 +23,6 @@ public class MvcLoginViewController implements CustomController {
         return new ModelAndView(new JspView(path));
     }
 
-    @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return MvcUserSession.getUserFrom(req.getSession())
                 .map(user -> {

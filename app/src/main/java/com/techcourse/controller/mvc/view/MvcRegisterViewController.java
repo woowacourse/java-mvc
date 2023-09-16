@@ -10,17 +10,11 @@ import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcRegisterViewController implements CustomController {
+public class MvcRegisterViewController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        String path = execute(req, res);
-        return new ModelAndView(new JspView(path));
-    }
-
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "/register.jsp";
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 
 }
