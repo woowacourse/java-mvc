@@ -10,10 +10,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class ManualHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean support(final Object handler) {
-        if (handler instanceof Controller) {
-            return true;
-        }
-        return false;
+        return handler instanceof Controller;
     }
 
     @Override

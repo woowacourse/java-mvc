@@ -13,6 +13,8 @@ import webmvc.org.springframework.web.servlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -34,6 +36,11 @@ public class DispatcherServlet extends HttpServlet {
         manualHandlerMapping.initialize();
         handlerMappings.add(manualHandlerMapping);
         handlerAdapters.add(new ManualHandlerAdapter());
+
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com");
+        annotationHandlerMapping.initialize();
+        handlerMappings.add(annotationHandlerMapping);
+        handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
     @Override
