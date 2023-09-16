@@ -42,6 +42,13 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    private Set<Method> findRequestMappingMethods(Set<Class<?>> classes) {
+        return classes.stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
+                .filter(method -> method.isAnnotationPresent(METHOD_ANNOTATION))
+                .collect(Collectors.toSet());
+    }
+
     private void addHandlerExecutionByMethod(Map<Class<?>, Object> classWithInstance, Method method) {
         var handler = classWithInstance.get(method.getDeclaringClass());
         var handlerExecution = new HandlerExecution(handler, method);
@@ -53,13 +60,6 @@ public class AnnotationHandlerMapping {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
-    }
-
-    private Set<Method> findRequestMappingMethods(Set<Class<?>> classes) {
-        return classes.stream()
-                .flatMap(it -> Arrays.stream(it.getMethods()))
-                .filter(it -> it.isAnnotationPresent(METHOD_ANNOTATION))
-                .collect(Collectors.toSet());
     }
 
     public Object getHandler(final HttpServletRequest request) {
