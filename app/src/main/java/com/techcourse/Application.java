@@ -1,10 +1,9 @@
 package com.techcourse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Application {
 
@@ -23,9 +22,9 @@ public class Application {
 
     private static int defaultPortIfNull(final String[] args) {
         return Stream.of(args)
-                .findFirst()
-                .map(Integer::parseInt)
-                .orElse(DEFAULT_PORT);
+                     .findFirst()
+                     .map(Integer::parseInt)
+                     .orElse(DEFAULT_PORT);
     }
 
     private static void stop(final TomcatStarter tomcat) {
