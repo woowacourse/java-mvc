@@ -7,7 +7,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
 
-    private Object controller;
+    private final Object controller;
     private final Method method;
 
     public HandlerExecution(Object controller, Method method) {
