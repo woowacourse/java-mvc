@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,14 +45,15 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecution(Class<?> clazz) {
-        List<Method> methods = getMethods(clazz);
+        List<Method> methods = getAnnotatedMethods(clazz);
         Object controller = createInstance(clazz);
         methods.forEach(method -> addHandlerExecution(method, controller));
     }
 
-    private List<Method> getMethods(Class<?> clazz) {
-        Method[] methods = clazz.getDeclaredMethods();
-        return Arrays.asList(methods);
+    private List<Method> getAnnotatedMethods(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
     }
 
     private Object createInstance(Class<?> clazz) {
@@ -65,12 +67,10 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecution(Method method, Object controller) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            String uri = annotation.value();
-            List<RequestMethod> requestMethods = Arrays.asList(annotation.method());
-            requestMethods.forEach(requestMethod -> addHandlerExecution(uri, requestMethod, controller, method));
-        }
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        String uri = annotation.value();
+        List<RequestMethod> requestMethods = Arrays.asList(annotation.method());
+        requestMethods.forEach(requestMethod -> addHandlerExecution(uri, requestMethod, controller, method));
     }
 
     private void addHandlerExecution(String uri, RequestMethod requestMethod, Object controller, Method method) {
