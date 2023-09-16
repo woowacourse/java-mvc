@@ -23,7 +23,6 @@ class ManualHandlerMappingTest {
         final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
 
         SoftAssertions.assertSoftly(softAssertions -> {
-
             softAssertions.assertThatCode(manualHandlerMapping::initialize).doesNotThrowAnyException();
             softAssertions.assertThat(manualHandlerMapping.getHandler("/")).isNotNull();
         });
