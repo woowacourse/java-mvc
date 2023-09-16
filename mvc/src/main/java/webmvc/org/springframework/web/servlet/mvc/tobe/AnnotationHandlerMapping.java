@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,6 +28,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize()  {
         log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
@@ -36,27 +37,20 @@ public class AnnotationHandlerMapping {
     }
 
     private void register(final Class<?> clazz) {
-        try {
-            final Object instance = clazz.getDeclaredConstructor().newInstance();
-            final List<Method> annotatedMethods = Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
+        final List<Method> annotatedMethods = Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
 
-            for (final Method annotatedMethod : annotatedMethods) {
-                final RequestMapping annotation = annotatedMethod.getAnnotation(RequestMapping.class);
-                for (RequestMethod requestMethod : annotation.method()) {
-                    final HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                    handlerExecutions.put(handlerKey, new HandlerExecution(instance, annotatedMethod));
-                }
+        for (final Method annotatedMethod : annotatedMethods) {
+            final RequestMapping annotation = annotatedMethod.getAnnotation(RequestMapping.class);
+            for (final RequestMethod requestMethod : annotation.method()) {
+                final HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+                handlerExecutions.put(handlerKey, new HandlerExecution(clazz, annotatedMethod));
             }
-        } catch (NoSuchMethodException |
-                 InvocationTargetException |
-                 InstantiationException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
