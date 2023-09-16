@@ -8,8 +8,10 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
 
@@ -24,15 +26,20 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllerClasses = getControllerClasses();
         for(Class<?> controllerClass : controllerClasses) {
+            Object controller = findController(controllerClass);
             Method[] methods = controllerClass.getDeclaredMethods();
-            for(Method method : methods) {
-                addHandlerExecution(controllerClass, method);
-            }
+            Arrays.stream(methods)
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> addHandlerExecution(controller, method));
         }
+        log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private Set<Class<?>> getControllerClasses() {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private Object findController(final Class<?> classWithAnnotation) {
@@ -44,27 +51,13 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void addHandlerExecution(final Class<?> controllerClass, final Method method) {
-        Object controller = findController(controllerClass);
-        RequestMapping declaredAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
-        if(declaredAnnotation == null) {
-            return;
-        }
-        String urlValue = declaredAnnotation.value();
-        RequestMethod[] requestMethodsOfUrlValue = declaredAnnotation.method();
-        List<HandlerKey> handlerKeyList = getHandlerKeyList(urlValue, requestMethodsOfUrlValue);
-        for(HandlerKey handlerKey : handlerKeyList) {
+    private void addHandlerExecution(final Object controller, final Method method) {
+        RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
+        String urlValue = annotation.value();
+        for(RequestMethod requestMethod : annotation.method()){
+            HandlerKey handlerKey = new HandlerKey(urlValue, requestMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
-    }
-
-    private List<HandlerKey> getHandlerKeyList(final String urlValue, final RequestMethod[] requestMethodsOfUrlValue) {
-        List<HandlerKey> handlerKeyList = new ArrayList<>();
-        for(RequestMethod requestMethod : requestMethodsOfUrlValue) {
-            HandlerKey handlerKey = new HandlerKey(urlValue, requestMethod);
-            handlerKeyList.add(handlerKey);
-        }
-        return handlerKeyList;
     }
 
     public Object getHandler(final HttpServletRequest request) {
