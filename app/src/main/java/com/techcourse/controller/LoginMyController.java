@@ -7,12 +7,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.asis.MyController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class LoginController implements Controller {
+public class LoginMyController implements MyController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginMyController.class);
 
     @Override
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {

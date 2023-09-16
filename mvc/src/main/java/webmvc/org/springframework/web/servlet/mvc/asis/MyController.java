@@ -4,6 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public interface Controller {
+public interface MyController {
     ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception;
 }

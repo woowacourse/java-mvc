@@ -7,11 +7,11 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.Objects;
 
-public class ForwardController implements Controller {
+public class ForwardMyController implements MyController {
 
     private final String path;
 
-    public ForwardController(final String path) {
+    public ForwardMyController(final String path) {
         this.path = Objects.requireNonNull(path);
     }
 
