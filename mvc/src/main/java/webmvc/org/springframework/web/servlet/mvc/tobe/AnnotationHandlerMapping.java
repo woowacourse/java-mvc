@@ -10,10 +10,12 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
@@ -29,41 +31,45 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> controller : controllers) {
-            initializeByController(controller);
+        final Set<Class<?>> classWithController = reflections.getTypesAnnotatedWith(Controller.class);
+        for (final Class<?> clazz : classWithController) {
+            final Object classInstance = createInstanceByClass(clazz);
+            final List<Method> methodWithRequestMapping = Arrays.stream(clazz.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .collect(Collectors.toList());
+            initializeHandlerExecutions(classInstance, methodWithRequestMapping);
         }
     }
 
-    private void initializeByController(final Class<?> controller) {
-        for (final Method method : controller.getDeclaredMethods()) {
-            initializeByMethod(controller, method);
+    private void initializeHandlerExecutions(final Object classInstance, final List<Method> methodWithRequestMapping) {
+        for (final Method method : methodWithRequestMapping) {
+            final HandlerExecution handlerExecution = new HandlerExecution(classInstance, method);
+            final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            final String url = annotation.value();
+            final RequestMethod[] requestMethods = annotation.method();
+            final List<HandlerKey> handlerKeys = Arrays.stream(requestMethods)
+                    .map(requestMethod -> new HandlerKey(url, requestMethod))
+                    .collect(Collectors.toList());
+            for (final HandlerKey handlerKey : handlerKeys) {
+                handlerExecutions.put(handlerKey, handlerExecution);
+            }
         }
     }
 
-    private void initializeByMethod(final Class<?> controller, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (Objects.nonNull(requestMapping)) {
-            addHandlerExecution(controller, method, requestMapping);
-        }
-    }
-
-    private void addHandlerExecution(final Class<?> controller, final Method method, final RequestMapping requestMapping) {
-        final RequestMethod requestMethod = requestMapping.method()[0];
-        final String value = requestMapping.value();
+    private Object createInstanceByClass(final Class<?> clazz) {
         try {
-            final Object controllerInstance = controller.getConstructor().newInstance();
-            handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(controllerInstance, method));
+            return clazz.getConstructor().newInstance();
         } catch (InstantiationException e) {
-            log.error("{} 클래스는 추상클래스이거나 인터페이스입니다.", controller.getSimpleName());
+            log.error("{} 클래스는 추상클래스이거나 인터페이스입니다.", clazz.getSimpleName());
         } catch (IllegalAccessException e) {
-            log.error("{} 클래스의 생성자에 접근할 수 없습니다.", controller.getSimpleName());
+            log.error("{} 클래스의 생성자에 접근할 수 없습니다.", clazz.getSimpleName());
         } catch (InvocationTargetException e) {
-            log.error("{} 클래스를 생성할 때 예외가 발생하였습니다.", controller.getSimpleName());
+            log.error("{} 클래스를 생성할 때 예외가 발생하였습니다.", clazz.getSimpleName());
             log.error("TargetException: {}", e.getTargetException().getMessage());
         } catch (NoSuchMethodException e) {
-            log.error("{} 클래스의 기본 생성자를 찾을 수 없습니다.", controller.getSimpleName());
+            log.error("{} 클래스의 기본 생성자를 찾을 수 없습니다.", clazz.getSimpleName());
         }
+        throw new IllegalArgumentException();
     }
 
     public Object getHandler(final HttpServletRequest request) {
