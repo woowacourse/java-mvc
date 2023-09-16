@@ -30,4 +30,12 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/put-test", method = RequestMethod.PUT)
+    public ModelAndView edit() {
+        log.info("test controller put method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", "gugu");
+        return modelAndView;
+    }
 }
