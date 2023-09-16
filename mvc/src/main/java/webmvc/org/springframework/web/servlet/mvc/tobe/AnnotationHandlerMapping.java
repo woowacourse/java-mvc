@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -44,6 +43,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (final Method annotatedMethod : annotatedMethods) {
             final RequestMapping annotation = annotatedMethod.getAnnotation(RequestMapping.class);
             for (final RequestMethod requestMethod : annotation.method()) {
+                log.info("url = {}, method = {}", annotation.value(), requestMethod.name());
                 final HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
                 handlerExecutions.put(handlerKey, new HandlerExecution(clazz, annotatedMethod));
             }
