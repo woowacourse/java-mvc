@@ -11,8 +11,10 @@ public class HandlerAdapters {
 
     public void initialize(final ViewResolvers viewResolvers) {
         final ManualHandlerMappingAdapter manualHandlerMappingAdapter = new ManualHandlerMappingAdapter(viewResolvers);
+        final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         adapters.add(manualHandlerMappingAdapter);
+        adapters.add(annotationHandlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
