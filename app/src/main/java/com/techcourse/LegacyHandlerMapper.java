@@ -4,7 +4,7 @@ import com.techcourse.controller.lagacy.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapper;
 
@@ -15,7 +15,7 @@ public class LegacyHandlerMapper implements HandlerMapper {
 
     private static final Logger log = LoggerFactory.getLogger(LegacyHandlerMapper.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private static final Map<String, CustomController> controllers = new HashMap<>();
 
     @Override
     public void initialize() {
@@ -31,7 +31,7 @@ public class LegacyHandlerMapper implements HandlerMapper {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public Controller getHandler(final HttpServletRequest request) {
+    public CustomController getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping URI : {}", requestURI);
         return controllers.get(requestURI);

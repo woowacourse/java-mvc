@@ -65,8 +65,7 @@ public class AnnotationHandlerMapper implements HandlerMapper {
             Object handler = controller.getConstructor().newInstance();
             return handler;
         } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "해당 컨트롤러의 생성자로 객체를 생성할 수 없습니다." + controller.getSimpleName() + "의 생성자를 다시 확인해주세요.");
+            throw new IllegalArgumentException("해당 컨트롤러의 생성자로 객체를 생성할 수 없습니다." + controller.getSimpleName() + "의 생성자를 다시 확인해주세요.");
         }
     }
 

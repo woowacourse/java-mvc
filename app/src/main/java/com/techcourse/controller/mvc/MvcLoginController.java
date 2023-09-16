@@ -6,9 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 
-public class MvcLoginController implements Controller {
+@context.org.springframework.stereotype.Controller
+public class MvcLoginController implements CustomController {
 
     private static final Logger log = LoggerFactory.getLogger(MvcLoginController.class);
 

@@ -2,15 +2,27 @@ package com.techcourse.controller.lagacy;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class LoginController implements Controller {
+import static web.org.springframework.web.bind.annotation.RequestMethod.*;
+
+@Controller
+public class LoginController implements CustomController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+
+    @RequestMapping(value = "/login", method = GET)
+    public ModelAndView login(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        return new ModelAndView(new JspView(execute(req, res)));
+    }
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -34,4 +46,5 @@ public class LoginController implements Controller {
         }
         return "redirect:/401.jsp";
     }
+
 }
