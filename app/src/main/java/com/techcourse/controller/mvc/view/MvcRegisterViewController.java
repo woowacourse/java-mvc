@@ -1,4 +1,4 @@
-package com.techcourse.controller.mvc;
+package com.techcourse.controller.mvc.view;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,18 +10,17 @@ import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcLogoutController implements CustomController {
+public class MvcRegisterViewController implements CustomController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) throws Exception {
         String path = execute(req, res);
         return new ModelAndView(new JspView(path));
     }
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
-        session.removeAttribute(MvcUserSession.SESSION_KEY);
-        return "redirect:/";
+        return "/register.jsp";
     }
+
 }
