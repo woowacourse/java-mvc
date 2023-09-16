@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,8 +54,14 @@ public class AnnotationHandlerMapping {
     private Object createInstance(Class<?> clazz) {
         try {
             return clazz.getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("클래스에 기본 생성자가 없습니다.", e);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException("클래스를 인스턴스화 할 수 없습니다.", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("클래스의 기본 생성자에 접근할 수 없습니다.", e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException("생성자 호출 중 예외가 발생했습니다.", e);
         }
     }
 
