@@ -15,10 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.HandlerNotFoundException;
+import webmvc.org.springframework.web.servlet.HandlerMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -78,10 +78,6 @@ public class AnnotationHandlerMapping {
 
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
 
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution==null){
-            throw new HandlerNotFoundException();
-        }
-        return handlerExecution;
+        return  handlerExecutions.get(handlerKey);
     }
 }

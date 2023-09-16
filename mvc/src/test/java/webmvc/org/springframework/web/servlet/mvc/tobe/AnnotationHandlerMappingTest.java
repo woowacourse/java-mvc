@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.HandlerNotFoundException;
 
 class AnnotationHandlerMappingTest {
 
@@ -49,17 +48,5 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void put() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/put-test");
-        when(request.getMethod()).thenReturn("PUT");
-
-        assertThatThrownBy(() -> handlerMapping.getHandler(request)).isInstanceOf(HandlerNotFoundException.class);
     }
 }
