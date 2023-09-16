@@ -24,6 +24,6 @@ public class HandlerMappings implements HandlerMapping<Object> {
             .map(it -> it.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseGet(null);
+            .orElseThrow(HandlerNotFoundException::new);
     }
 }

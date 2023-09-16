@@ -12,7 +12,7 @@ import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterFinder;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
@@ -21,7 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
-    private HandlerAdapters handlerAdapters;
+    private HandlerAdapterFinder handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -36,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         );
         handlerMappings.initialize();
 
-        handlerAdapters = new HandlerAdapters(
+        handlerAdapters = new HandlerAdapterFinder(
             List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter())
         );
     }
@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapters.findAdapter(handler);
+            HandlerAdapter handlerAdapter = handlerAdapters.find(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
