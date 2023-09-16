@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -19,18 +21,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private AnnotationHandlerMapping annotationHandlerMapping;
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
+        handlerMappings = new HandlerMappings();
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
-        annotationHandlerMapping.initialize();
+        handlerMappings.initialize();
     }
 
     @Override
@@ -38,47 +41,28 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        if (tryAnnotationHandlerMapping(request, response)){
-            return;
-        }
-
-        tryManualHandlerMapping(request, response);
-    }
-
-    private boolean tryAnnotationHandlerMapping(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        final Object handler = handlerMappings.getHandler(request);
         try {
-            final var handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
-            if (handlerExecution != null) {
-                final ModelAndView modelAndView = handlerExecution.handle(request, response);
+            if (handler instanceof HandlerExecution) {
+                final ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
                 render(modelAndView, request, response);
-                return true;
+                return;
+            }
+            if (handler instanceof Controller) {
+                final String viewName;
+                viewName = ((Controller) handler).execute(request, response);
+                move(viewName, request, response);
             }
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-        return false;
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final View view = modelAndView.getView();
         final Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
-    }
-
-    private boolean tryManualHandlerMapping(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        try {
-            final var controller = manualHandlerMapping.getHandler(request.getRequestURI());
-            if (controller != null){
-                final var viewName = controller.execute(request, response);
-                move(viewName, request, response);
-                return true;
-            }
-            return false;
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
