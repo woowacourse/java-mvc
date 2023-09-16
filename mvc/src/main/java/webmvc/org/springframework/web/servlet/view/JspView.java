@@ -11,8 +11,7 @@ import java.util.Map;
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
-    public static final String REDIRECT_PREFIX = "redirect:";
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
 
@@ -35,5 +34,15 @@ public class JspView implements View {
     @Override
     public String getViewName() {
         return viewName;
+    }
+
+    @Override
+    public boolean isRedirectCommand() {
+        return viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    @Override
+    public String getRedirectFilePath() {
+        return viewName.substring(REDIRECT_PREFIX.length());
     }
 }

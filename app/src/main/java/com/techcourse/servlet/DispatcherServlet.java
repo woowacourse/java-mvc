@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -48,13 +48,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final String viewName = modelAndView.getView().getViewName();
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        final View view = modelAndView.getView();
+        if (view.isRedirectCommand()) {
+            response.sendRedirect(view.getRedirectFilePath());
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        final var requestDispatcher = request.getRequestDispatcher(view.getViewName());
         requestDispatcher.forward(request, response);
     }
 }

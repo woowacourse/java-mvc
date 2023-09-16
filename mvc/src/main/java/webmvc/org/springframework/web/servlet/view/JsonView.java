@@ -14,6 +14,16 @@ public class JsonView implements View {
 
     @Override
     public String getViewName() {
-        return null;
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
+    }
+
+    @Override
+    public boolean isRedirectCommand() {
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
+    }
+
+    @Override
+    public String getRedirectFilePath() {
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
     }
 }
