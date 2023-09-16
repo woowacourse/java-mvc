@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -22,12 +22,13 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void initialize() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         log.info("Initialized AnnotationHandlerMapping!");
         final Map<HandlerKey, HandlerExecution> handlerExecutions = Objects.requireNonNull(HandlerExecutionFactory.create(basePackage));
         this.handlerExecutions.putAll(handlerExecutions);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
