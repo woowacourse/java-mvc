@@ -2,6 +2,7 @@ package com.techcourse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.jdt.internal.compiler.ast.Invocation;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
@@ -37,7 +38,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
 
             return (String) method.invoke(bean, request, response);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new MethodInvocationException("핸들러 메소드 실행 중 예외가 발생했습니다.", e);
         }
     }
 }

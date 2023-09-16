@@ -53,7 +53,7 @@ public class ManualHandlerMapping implements HandlerMapping {
             return controller.getClass()
                     .getDeclaredMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new HandlerMethodNotFoundException("핸들러 메소드를 찾을 수 없습니다.", e);
         }
     }
 }
