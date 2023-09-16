@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerMappings() {
         handlerMappings = new ArrayList<>();
         handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new RequestMappingHandlerMapping());
+        handlerMappings.add(new RequestMappingHandlerMapping("com"));
     }
 
     private void initHandlerAdapters() {
