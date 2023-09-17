@@ -22,7 +22,7 @@ class HandlerExecutionTest {
         final var response = mock(HttpServletResponse.class);
 
         final Method mockHandler = HandlerExecutionTest.class.getDeclaredMethod("mockHandler", HttpServletRequest.class, HttpServletResponse.class);
-        final HandlerExecution handlerExecution = new HandlerExecution(mockHandler);
+        final HandlerExecution handlerExecution = new HandlerExecution(mockHandler, mockHandler.getDeclaringClass().newInstance());
         mockHandler.setAccessible(true);
 
         //when

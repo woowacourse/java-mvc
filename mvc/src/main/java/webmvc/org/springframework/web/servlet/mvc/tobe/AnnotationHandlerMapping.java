@@ -12,7 +12,9 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
 
@@ -27,38 +29,41 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException {
+    public void initialize() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         defaultHandlerExecution = makeDefaultHandlerExecution();
         final Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class)
+        final List<Method> methods = reflections.getTypesAnnotatedWith(Controller.class)
                 .stream()
                 .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::putHandlerMethodPerRequestMethod);
+                .collect(Collectors.toList());
+        for (Method method : methods) {
+            putHandlerMethodPerRequestMethod(method);
+        }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private HandlerExecution makeDefaultHandlerExecution() throws NoSuchMethodException {
+    private HandlerExecution makeDefaultHandlerExecution() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         final Method defaultHandler = DefaultHandler.class
                 .getDeclaredMethod(
                         "defaultHandler",
                         HttpServletRequest.class,
                         HttpServletResponse.class
                 );
-        return new HandlerExecution(defaultHandler);
+        return new HandlerExecution(defaultHandler, defaultHandler.getDeclaringClass().newInstance());
     }
 
-    private void putHandlerMethodPerRequestMethod(final Method handler) {
+    private void putHandlerMethodPerRequestMethod(final Method handler) throws IllegalAccessException, InstantiationException {
         final RequestMapping annotation = handler.getAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = annotation.method();
-        Arrays.stream(requestMethods)
-                .forEach(requestMethod ->
-                        handlerExecutions.put(
-                                new HandlerKey(annotation.value(), requestMethod),
-                                new HandlerExecution(handler)
-                        )
-                );
+        for (RequestMethod requestMethod :
+                requestMethods) {
+            handlerExecutions.put(
+                    new HandlerKey(annotation.value(), requestMethod),
+                    new HandlerExecution(handler, handler.getDeclaringClass().newInstance())
+            );
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
