@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface HandlerAdapter {
 
-    boolean isSupport(Object handler);
+    boolean supports(Object handler);
 
-    Object handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 }
