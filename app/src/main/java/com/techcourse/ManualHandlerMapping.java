@@ -8,6 +8,7 @@ import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.HandlerMapping;
@@ -18,9 +19,14 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final Map<String, Controller> controllers = new HashMap<>();
+    private final AtomicBoolean initialized = new AtomicBoolean();
 
     public void initialize() {
+        if (!initialized.compareAndSet(false, true)) {
+            return;
+        }
+
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
