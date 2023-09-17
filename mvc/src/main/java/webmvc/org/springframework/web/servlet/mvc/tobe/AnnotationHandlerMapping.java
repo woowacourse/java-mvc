@@ -62,7 +62,7 @@ public class AnnotationHandlerMapping {
         final RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = requestMappingAnnotation.method();
         final String path = requestMappingAnnotation.value();
-        final HandlerExecution handlerExecution = new HandlerExecution(method);
+        final HandlerExecution handlerExecution = HandlerExecution.from(method);
 
         for (final RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(path, requestMethod);
