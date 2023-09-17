@@ -4,8 +4,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ViewPathHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -13,15 +19,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMapping> handlerMappings = List.of(
+            new ManualHandlerMapping(),
+            new AnnotationHandlerMapping()
+    );
+
+    private List<HandlerAdapter> handlerAdapters = List.of(new ViewPathHandlerAdapter());
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
     }
 
     @Override
@@ -30,13 +42,34 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(request);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final Object handler = findHandler(request);
+
+            final HandlerAdapter handlerAdapter = findHandlerAdaptor(handler);
+            final String viewPath = handlerAdapter.invoke(handler, request, response);
+            move(viewPath, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerAdapter findHandlerAdaptor(final Object handler) {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.support(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new IllegalStateException("Handler Adaptor Not found");
+    }
+
+    private Object findHandler(final HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            final Object handler = handlerMapping.getHandler(request);
+            if (Objects.nonNull(handler)) {
+                return handler;
+            }
+        }
+        throw new IllegalStateException("Handler Not found");
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
