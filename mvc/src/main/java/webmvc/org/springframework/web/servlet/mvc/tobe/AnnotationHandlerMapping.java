@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping {
 		}
 	}
 
-	public String getRequestPath(final Class<?> clazz) {
+	private String getRequestPath(final Class<?> clazz) {
 		RequestMapping requestMappingAnnotation = clazz.getAnnotation(RequestMapping.class);
 		if (requestMappingAnnotation == null) {
 			return "";
