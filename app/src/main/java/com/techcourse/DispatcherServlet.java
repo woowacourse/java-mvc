@@ -11,6 +11,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ExceptionResolver;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterFinder;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
@@ -22,6 +23,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMappings handlerMappings;
     private HandlerAdapterFinder handlerAdapterFinder;
+    private ExceptionResolver exceptionResolver;
 
     public DispatcherServlet() {
     }
@@ -30,6 +32,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappings = initHandlerMappings();
         handlerAdapterFinder = initHandlerAdapterFinder();
+        exceptionResolver = new ExceptionResolver();
     }
 
     private HandlerMappings initHandlerMappings() {
@@ -53,12 +56,22 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappings.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterFinder.find(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            ModelAndView mv = handlerAdapter.handle(request, response, handler);
+            render(request, response, mv);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            ModelAndView mv = exceptionResolver.handle(e);
+            try {
+                render(request, response, mv);
+            } catch (Exception ex) {
+                log.error("Exception : {}", e.getMessage(), e);
+                throw new ServletException(e.getMessage());
+            }
         }
+    }
+
+    private void render(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView)
+        throws Exception {
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
