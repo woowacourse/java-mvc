@@ -33,6 +33,7 @@ public class AnnotationHandlerMapping {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         this.handlerExecutions.putAll(initHandlerExecutions(controllers));
+        log.info("Initialized AnnotationHandlerMapping successfully!");
     }
 
     private Map<HandlerKey, HandlerExecution> initHandlerExecutions(final Set<Class<?>> controllers) {
