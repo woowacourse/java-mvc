@@ -4,32 +4,24 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String CONTROLLER_BASE_PACKAGE = "com";
 
-    private List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final HandlerMappings handlerMappings = new HandlerMappings();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new HandlerMappingAdapter(new ManualHandlerMapping()));
-        handlerMappings.add(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE));
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappings.init();
     }
 
     @Override
@@ -38,13 +30,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            HandlerExecution handler = null;
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                handler = handlerMapping.getHandler(request);
-                if (Objects.nonNull(handler)) {
-                    break;
-                }
-            }
+            HandlerExecution handler = handlerMappings.getHandler(request);
             final var modelAndView = handler.handle(request, response);
             JspView view = (JspView) modelAndView.getView();
             move(view.getName(), request, response);

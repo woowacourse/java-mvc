@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
@@ -21,6 +22,9 @@ public class HandlerMappingAdapter implements HandlerMapping {
     @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         Controller controller = manualHandlerMapping.getHandler(request.getRequestURI());
+        if (Objects.isNull(controller)) {
+            return null;
+        }
         return new HandlerExecutionAdapter(controller);
     }
 }
