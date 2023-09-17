@@ -7,19 +7,12 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
 
-    private Object controller;
-    private Method method;
-
-    private HandlerExecution() {
-    }
+    private final Object controller;
+    private final Method method;
 
     public HandlerExecution(final Method method, final Object controller) {
         this.controller = controller;
         this.method = method;
-    }
-
-    public static HandlerExecution empty() {
-        return new HandlerExecution();
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
