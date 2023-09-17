@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

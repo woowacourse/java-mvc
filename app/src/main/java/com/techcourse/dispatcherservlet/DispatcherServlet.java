@@ -1,5 +1,6 @@
-package com.techcourse;
+package com.techcourse.dispatcherservlet;
 
+import com.techcourse.handlermapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
