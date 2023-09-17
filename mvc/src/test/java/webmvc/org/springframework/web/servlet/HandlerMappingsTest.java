@@ -26,7 +26,7 @@ class HandlerMappingsTest {
         final HandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
 
         // when
-        handlerMappings.addHandlerMapping(handlerMapping);
+        handlerMappings.add(handlerMapping);
 
         // then
         assertThat(handlerMappings.getHandler(request)).isPresent();
@@ -41,7 +41,7 @@ class HandlerMappingsTest {
 
         final HandlerMappings handlerMappings = new HandlerMappings();
         final HandlerMapping handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMappings.addHandlerMapping(handlerMapping);
+        handlerMappings.add(handlerMapping);
 
         // when
         final Optional<Object> handler = handlerMappings.getHandler(request);

@@ -21,7 +21,7 @@ public class HandlerMappings {
         items.addAll(handlerMappings);
     }
 
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+    public void add(final HandlerMapping handlerMapping) {
         handlerMapping.initialize();
         items.add(handlerMapping);
     }
