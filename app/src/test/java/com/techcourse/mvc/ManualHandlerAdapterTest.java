@@ -1,6 +1,5 @@
 package com.techcourse.mvc;
 
-import com.techcourse.mvc.ManualHandlerAdapter;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
