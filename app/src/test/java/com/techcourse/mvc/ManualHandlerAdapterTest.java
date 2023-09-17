@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.mvc;
 
 import com.techcourse.mvc.ManualHandlerAdapter;
 import com.techcourse.controller.RegisterController;
