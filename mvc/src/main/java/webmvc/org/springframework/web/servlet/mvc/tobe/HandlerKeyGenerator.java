@@ -13,6 +13,10 @@ public class HandlerKeyGenerator {
 
     private final HttpMappingExtractor httpMappingExtractor;
 
+    public HandlerKeyGenerator() {
+        this(new HttpMappingExtractor());
+    }
+
     public HandlerKeyGenerator(final HttpMappingExtractor httpMappingExtractor) {
         this.httpMappingExtractor = httpMappingExtractor;
     }
