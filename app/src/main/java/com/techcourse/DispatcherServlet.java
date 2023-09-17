@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -46,6 +47,10 @@ public class DispatcherServlet extends HttpServlet {
     private void move(final ModelAndView modelAndView, final HttpServletRequest request,
                       final HttpServletResponse response)
             throws Exception {
+        if (Objects.isNull(modelAndView.getViewName())) {
+            // TODO JsonView
+            return;
+        }
         if (modelAndView.getViewName().startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(modelAndView.getViewName().substring(JspView.REDIRECT_PREFIX.length()));
             return;
