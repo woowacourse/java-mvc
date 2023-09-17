@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @RequestMapping(method = RequestMethod.HEAD)
 public @interface HeadMapping {
+    String value() default "";
 }

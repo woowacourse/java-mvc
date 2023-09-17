@@ -8,6 +8,7 @@ public enum MethodMapping {
     POST(PostMapping.class),
     PUT(PutMapping.class),
     PATCH(PatchMapping.class),
+    HEAD(HeadMapping.class),
     DELETE(DeleteMapping.class);
 
     private final Class<?> annotation;
