@@ -1,25 +1,28 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import static java.util.Collections.emptyMap;
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.HandlerMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new ConcurrentHashMap<>();
     private final AnnotationScanner annotationScanner;
     private final HandlerKeyGenerator handlerKeyGenerator;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this(Map.of(), new AnnotationScanner(basePackage), new HandlerKeyGenerator());
+        this(emptyMap(), new AnnotationScanner(basePackage), new HandlerKeyGenerator());
     }
 
     public AnnotationHandlerMapping(
