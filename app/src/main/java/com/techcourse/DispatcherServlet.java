@@ -8,11 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterFactory;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.Map;
 
@@ -22,13 +21,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
+    private final HandlerAdapterFactory handlerAdapterFactory;
 
     public DispatcherServlet() {
-        handlerMappings = new HandlerMappings();
+        this.handlerMappings = new HandlerMappings();
+        this.handlerAdapterFactory = new HandlerAdapterFactory();
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapterType(final Class<?> handlerType, final Class<? extends HandlerAdapter> adapterType) {
+        handlerAdapterFactory.addAdapterType(handlerType, adapterType);
     }
 
     @Override
@@ -38,21 +43,13 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        final Object handler = handlerMappings.getHandler(request);
         try {
-            if (handler instanceof HandlerExecution) {
-                final ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                render(modelAndView, request, response);
-                return;
-            }
-            if (handler instanceof Controller) {
-                final String viewName;
-                viewName = ((Controller) handler).execute(request, response);
-                move(viewName, request, response);
-            }
+            final Object handler = handlerMappings.getHandler(request);
+            final HandlerAdapter adapter = handlerAdapterFactory.getAdapter(handler);
+            final ModelAndView modelAndView = adapter.handle(request, response);
+            render(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -63,15 +60,5 @@ public class DispatcherServlet extends HttpServlet {
         final View view = modelAndView.getView();
         final Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
