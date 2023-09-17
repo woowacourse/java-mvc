@@ -22,6 +22,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        log.info("Initializing dispatcher!");
     }
 
     @Override
