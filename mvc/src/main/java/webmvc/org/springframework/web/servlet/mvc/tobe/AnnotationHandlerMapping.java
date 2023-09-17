@@ -38,14 +38,7 @@ public class AnnotationHandlerMapping {
         final Map<Method, Object> controllerMethodAndObject = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
             final Method[] declaredMethods = controllerClass.getDeclaredMethods();
-            final Constructor<?> constructor;
-            final Object controller;
-            try {
-                constructor = controllerClass.getConstructor();
-                controller = constructor.newInstance();
-            } catch (Exception e) {
-                throw new IllegalStateException("빈 객체 생성 중 에러");
-            }
+            final Object controller = createBeanInstance(controllerClass);
             final List<Method> controllerMethod = Arrays.stream(declaredMethods)
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .collect(Collectors.toList());
@@ -54,6 +47,15 @@ public class AnnotationHandlerMapping {
             }
         }
         return controllerMethodAndObject;
+    }
+
+    private Object createBeanInstance(final Class<?> controllerClass) {
+        try {
+            final Constructor<?> constructor = controllerClass.getDeclaredConstructor();
+            return constructor.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("빈 객체 생성 중 에러");
+        }
     }
 
     private void initializeHandlerExecutions(final Map<Method, Object> controllerMethodAndObject) {
