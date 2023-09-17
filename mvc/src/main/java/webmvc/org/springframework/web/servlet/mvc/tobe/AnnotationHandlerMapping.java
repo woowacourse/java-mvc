@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,6 +29,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object targetPackage : basePackage) {
             final Reflections reflections = new Reflections(targetPackage);
@@ -47,13 +48,13 @@ public class AnnotationHandlerMapping {
     private void addHandlerExecutions(final Class<?> controllerClass) {
         final Method[] methods = controllerClass.getMethods();
         Arrays.stream(methods)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> {
-                    final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-                    final HandlerExecution handlerExecution = new HandlerExecution(getInstance(controllerClass), method);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                });
+            .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+            .forEach(method -> {
+                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+                final HandlerExecution handlerExecution = new HandlerExecution(getInstance(controllerClass), method);
+                handlerExecutions.put(handlerKey, handlerExecution);
+            });
     }
 
     private Object getInstance(final Class<?> controllerClass) {
@@ -67,6 +68,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
