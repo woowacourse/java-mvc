@@ -32,13 +32,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
             putHandlerExecutionOfController(controller);
         }
-        log.info("initialization complete!");
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void putHandlerExecutionOfController(Class<?> controller) {
