@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping {
                 .collect(toUnmodifiableMap(
                         this::parseHandlerKey,
                         this::parseHandlerExecution,
-                        (handlerExecution, handlerExecution2) -> handlerExecution)
+                        (oldHandler, newHandler) -> oldHandler)
                 );
     }
 
