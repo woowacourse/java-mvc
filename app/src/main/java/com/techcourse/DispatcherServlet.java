@@ -17,10 +17,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final HandlerExecution noHandlerFoundHandler;
     private final Set<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet(Collection<HandlerMapping> handlerMappings) {
+    public DispatcherServlet(Collection<HandlerMapping> handlerMappings, HandlerExecution noHandlerFoundHandler) {
         this.handlerMappings = new HashSet<>(handlerMappings);
+        this.noHandlerFoundHandler = noHandlerFoundHandler;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
             HandlerExecution handlerExecution = findHandlerMappingFor(request)
                     .map(it -> it.getHandler(request))
                     .map(it -> (HandlerExecution) it)
-                    .orElseThrow(() -> new IllegalArgumentException("리소스를 찾지 못했습니다"));
+                    .orElse(noHandlerFoundHandler);
 
             ModelAndView modelAndView = handlerExecution.handle(request, response);
             modelAndView.getView().render(new HashMap<>(), request, response);
