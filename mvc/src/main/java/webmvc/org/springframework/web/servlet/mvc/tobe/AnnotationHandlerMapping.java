@@ -26,11 +26,12 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final List<Reflections> packageReflections = getPackageReflections();
         final List<Class<?>> controllerClasses = getControllerClasses(packageReflections);
         final Map<Method, Object> controllerMethodAndObject = getControllerMethodAndObject(controllerClasses);
         initializeHandlerExecutions(controllerMethodAndObject);
+
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private List<Reflections> getPackageReflections() {
