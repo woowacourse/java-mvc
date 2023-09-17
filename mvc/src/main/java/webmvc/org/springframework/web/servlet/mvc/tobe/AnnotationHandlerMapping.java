@@ -67,6 +67,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void putHandlerExecutionOfHandlerKeys(List<HandlerKey> handlerKeys, HandlerExecution handlerExecution) {
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
+            handlerExecutions.keySet()
+                    .forEach(path -> log.info("Path : {}, HandlerMapping : {}", path, handlerExecutions.get(handlerKey).getClass()));
         }
     }
 
