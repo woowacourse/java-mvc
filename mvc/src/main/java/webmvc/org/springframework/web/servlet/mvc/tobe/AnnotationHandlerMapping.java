@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.reflection.ReflectiveHandlerExecutionAdapter;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -19,7 +18,6 @@ public class AnnotationHandlerMapping {
 
     private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    private final ControllerInstanceManager controllerInstanceManager = new ControllerInstanceManager();
 
     public AnnotationHandlerMapping(final Object... basePackages) {
         this.basePackages = basePackages;
@@ -27,26 +25,20 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        try {
-            for (var controllerClass : findControllerClassesFrom(basePackages)) {
-                List<Method> handlers = getHandlersIn(controllerClass);
+        Set<Method> handlers = findControllerClassesFrom(basePackages).stream()
+                .flatMap(it -> getHandlersIn(it).stream())
+                .collect(Collectors.toSet());
 
-                Map<HandlerKey, HandlerExecution> newHandlerExecutions = handlers.stream()
-                        .map(it -> getHandlerExecutionMapFor(it))
-                        .flatMap(it -> it.entrySet().stream())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        for (Method handler : handlers) {
+            HandlerExecution handlerExecution = getHandlerExecutionFor(handler);
 
-                handlerExecutions.putAll(newHandlerExecutions);
-            }
-        } catch (ClassNotFoundException e) {
-            log.info("잘못된 basePackage가 있습니다");
-            throw new IllegalArgumentException("잘못된 basePackage가 있습니다");
-        } finally {
-            log.info("Initialized AnnotationHandlerMapping!");
+            Set<HandlerKey> handlerKeys = getHandlerKeysOf(handler);
+            handlerKeys.forEach(key -> handlerExecutions.put(key, handlerExecution));
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> findControllerClassesFrom(Object[] basePackages) throws ClassNotFoundException {
+    private Set<Class<?>> findControllerClassesFrom(Object[] basePackages) {
         return new Reflections(basePackages).getTypesAnnotatedWith(Controller.class);
     }
 
@@ -56,23 +48,29 @@ public class AnnotationHandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private Map<HandlerKey, HandlerExecution> getHandlerExecutionMapFor(Method handler) {
-        Map<HandlerKey, HandlerExecution> handlerExecutionMap = new HashMap<>();
+    private Set<HandlerKey> getHandlerKeysOf(Method handler) {
         RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            handlerExecutionMap.put(
-                    new HandlerKey(requestMapping.value(), requestMethod),
-                    getHandlerExecutionFor(handler)
-            );
-        }
-        return handlerExecutionMap;
+
+        return Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .collect(Collectors.toSet());
     }
 
-    private ReflectiveHandlerExecutionAdapter getHandlerExecutionFor(Method handler) {
+    private HandlerExecution getHandlerExecutionFor(Method handler) {
         return new ReflectiveHandlerExecutionAdapter(
-                controllerInstanceManager.getInstanceOf(handler),
+                safeInstantiate(handler.getDeclaringClass()),
                 handler
         );
+    }
+
+    private Object safeInstantiate(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (NoSuchMethodException exception) {
+            throw new IllegalArgumentException("Class " + clazz.getSimpleName() + "에 기본 생성자가 없습니다");
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Class " + clazz.getSimpleName() + "초기화에 실패했습니다");
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
