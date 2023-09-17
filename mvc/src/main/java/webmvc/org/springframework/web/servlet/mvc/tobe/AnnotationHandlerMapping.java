@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,6 +29,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
 
@@ -76,6 +77,7 @@ public class AnnotationHandlerMapping {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.from(request.getMethod());
         String requestURI = request.getRequestURI();
