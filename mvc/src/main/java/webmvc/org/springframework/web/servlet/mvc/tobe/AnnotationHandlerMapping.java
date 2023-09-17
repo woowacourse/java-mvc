@@ -47,13 +47,14 @@ public class AnnotationHandlerMapping {
             if (requestMappingMethod != null) {
                 String value = requestMappingMethod.value();
                 RequestMethod[] requestMethods = requestMappingMethod.method();
-                RequestMethod requestMethod = requestMethods[0];
+                for (RequestMethod requestMethod : requestMethods) {
 
-                HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+                    HandlerKey handlerKey = new HandlerKey(value, requestMethod);
 
-                HandlerExecution handlerExecution = new HandlerExecution(method, object);
+                    HandlerExecution handlerExecution = new HandlerExecution(method, object);
 
-                handlerExecutions.put(handlerKey, handlerExecution);
+                    handlerExecutions.put(handlerKey, handlerExecution);
+                }
             }
         }
     }
@@ -62,7 +63,7 @@ public class AnnotationHandlerMapping {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 
-        RequestMethod requestMethod = RequestMethod.getRequestMethod(method);
+        RequestMethod requestMethod = RequestMethod.valueOf(method);
 
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
