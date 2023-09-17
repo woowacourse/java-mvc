@@ -52,7 +52,6 @@ public class DispatcherServlet extends HttpServlet {
         throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
         try {
             Object handler = handlerMappings.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterFinder.find(handler);
