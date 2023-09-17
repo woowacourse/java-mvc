@@ -22,7 +22,13 @@
 <br>
 
 - step2 점진적인 리팩터링
-  - [ ] Legacy MVC와 @MVC 통합 구현사항
+  - [x] Legacy MVC와 @MVC 통합 구현사항
     - [x] DispatcherServlet 초기화 시 기존 handlerMapping과 더불어 AnnotationHandlerMapping도 함께 초기화
     - [x] DispatcherServlet 클래스 내 service 메서드 기능 추가 구현
       - [x] manualHandlerMapping 탐색 시 매핑되는 controller가 없는 경우 AnnotationHandlerMapping 탐색
+  - [ ] HandlerMapping 인터페이스 추상화
+    - [ ] initialize() 기능
+    - [ ] getHandler() 기능
+  - [ ] HandlerExecution 인터페이스 추상화
+    - [ ] handle() 기능
+  - [ ] HandlerMappingAdapter, HandlerExecutionAdapter 클래스로 DispatcherServlet에서 하나의 타입으로 로직을 수행할 수 있도록 리팩토링
