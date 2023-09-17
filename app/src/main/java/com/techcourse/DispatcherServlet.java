@@ -9,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ExceptionResolver;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterFinder;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterFinder;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ExceptionResolver;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 

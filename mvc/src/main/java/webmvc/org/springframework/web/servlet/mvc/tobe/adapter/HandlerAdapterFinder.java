@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.adapter;
 
 import com.sun.jdi.InternalException;
 import java.util.List;
