@@ -31,15 +31,25 @@ public class AnnotationHandlerMapping {
 		Reflections reflections = new Reflections(basePackage);
 		Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class, true);
 		for (final Class<?> controller : controllers) {
-			mapController(controller);
+			addHandlerMappings(controller);
 		}
 		log.info("Initialized AnnotationHandlerMapping!");
 	}
 
-	private void mapController(final Class<?> clazz) {
+	private void addHandlerMappings(final Class<?> clazz) {
+		Object controller = instantiate(clazz);
+		String requestPath = getRequestPath(clazz);
 		Method[] methods = clazz.getDeclaredMethods();
 		for (final Method method : methods) {
-			mapControllerMethod(createControllerInstance(clazz), method, getRequestPath(clazz));
+			mapControllerMethod(controller, method, requestPath);
+		}
+	}
+
+	private Object instantiate(final Class<?> clazz) {
+		try {
+			return clazz.getDeclaredConstructor().newInstance();
+		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+			throw new IllegalArgumentException("controller 인스턴스 생성 실패", e);
 		}
 	}
 
@@ -49,14 +59,6 @@ public class AnnotationHandlerMapping {
 			return "";
 		}
 		return requestMappingAnnotation.value();
-	}
-
-	private Object createControllerInstance(final Class<?> clazz) {
-		try {
-			return clazz.getDeclaredConstructor().newInstance();
-		} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-			throw new IllegalArgumentException("controller 인스턴스 생성 실패", e);
-		}
 	}
 
 	private void mapControllerMethod(final Object controller, final Method method, final String requestPath) {
