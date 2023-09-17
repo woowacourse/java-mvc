@@ -17,7 +17,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler) {
         try {
-            HandlerExecution handlerExecution = (HandlerExecution) handler;
+            final var handlerExecution = (HandlerExecution) handler;
             final var method = handlerExecution.getHandler().getClass().getMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
             final var viewName = (String) method.invoke(handlerExecution.getHandler(), request, response);
             return new ModelAndView(new JspView(viewName));
