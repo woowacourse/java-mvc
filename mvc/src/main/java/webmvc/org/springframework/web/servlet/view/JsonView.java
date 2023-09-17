@@ -11,4 +11,9 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
     }
+
+    @Override
+    public String viewName() {
+        return null;
+    }
 }

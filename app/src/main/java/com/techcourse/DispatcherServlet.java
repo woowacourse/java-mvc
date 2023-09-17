@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutorComposite;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingComposite;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -15,12 +17,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappingComposite handlerMappingComposite;
+    private final HandlerMappingComposite handlerMappingComposite;
+    private final HandlerExecutorComposite handlerExecutorComposite;
 
     public DispatcherServlet() {
         ManualHandlerMappingAdapter manualHandlerMappingAdapter =
                 new ManualHandlerMappingAdapter(new ManualHandlerMapping());
         this.handlerMappingComposite = new HandlerMappingComposite(manualHandlerMappingAdapter);
+        this.handlerExecutorComposite = new HandlerExecutorComposite(new ControllerInterfaceHandlerExecutor());
     }
 
     @Override
@@ -35,8 +39,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = handlerMappingComposite.getHandler(request);
-            final var viewName = ((Controller) controller).execute(request, response);
+            final var handler = handlerMappingComposite.getHandler(request);
+            ModelAndView modelAndView = handlerExecutorComposite.handle(request, response, handler);
+            final var viewName = modelAndView.getView().viewName();
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
