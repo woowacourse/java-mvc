@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.exception.GetInstanceException;
-import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -71,10 +70,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new HandlerNotFoundException();
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }
