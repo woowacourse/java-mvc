@@ -34,6 +34,8 @@ public class AnnotationHandlerMapping {
 
             Set<HandlerKey> handlerKeys = getHandlerKeysOf(handler);
             handlerKeys.forEach(key -> handlerExecutions.put(key, handlerExecution));
+
+            handlerKeys.forEach(it -> log.info("mapped " + it));
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
