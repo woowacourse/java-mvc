@@ -1,4 +1,4 @@
-package samples;
+package com.techcourse.controller.annotation;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
