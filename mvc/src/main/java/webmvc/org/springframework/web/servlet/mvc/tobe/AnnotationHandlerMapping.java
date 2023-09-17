@@ -38,18 +38,20 @@ public class AnnotationHandlerMapping {
         final Map<Method, Object> controllerMethodAndObject = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
             final Method[] declaredMethods = controllerClass.getDeclaredMethods();
-            final Object controller = createBeanInstance(controllerClass);
-            final List<Method> controllerMethod = Arrays.stream(declaredMethods)
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .collect(Collectors.toList());
-            for (Method method : controllerMethod) {
-                controllerMethodAndObject.put(method, controller);
-            }
+            final Object controller = createBean(controllerClass);
+            final List<Method> methodsWithRequestMapping = findAllMethodsWithRequestMapping(declaredMethods);
+            methodsWithRequestMapping.forEach(method -> controllerMethodAndObject.put(method, controller));
         }
         return controllerMethodAndObject;
     }
 
-    private Object createBeanInstance(final Class<?> controllerClass) {
+    private List<Method> findAllMethodsWithRequestMapping(final Method[] declaredMethods) {
+        return Arrays.stream(declaredMethods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+    }
+
+    private Object createBean(final Class<?> controllerClass) {
         try {
             final Constructor<?> constructor = controllerClass.getDeclaredConstructor();
             return constructor.newInstance();
