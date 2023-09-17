@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerMapping;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
@@ -44,10 +45,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var handler = getHandler(request);
-            final var adapter = getAdapter(handler);
+            Object handler = getHandler(request);
+            HandlerAdapter adapter = getAdapter(handler);
 
-            final var modelAndView = adapter.handle(request, response, handler);
+            ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
