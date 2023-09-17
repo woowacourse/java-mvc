@@ -1,7 +1,11 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
-import org.apache.tomcat.util.net.AbstractEndpoint;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
@@ -32,8 +36,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+    public Controller getHandler(final HttpServletRequest request) {
+        final String uri = request.getRequestURI();
+        log.debug("Request Mapping Uri : {}", uri);
+        return controllers.get(uri);
     }
 }
