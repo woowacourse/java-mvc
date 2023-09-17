@@ -5,7 +5,11 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class ManualHandlerMappingAdapter implements HandlerMapping {
 
-    private final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+    private final ManualHandlerMapping manualHandlerMapping;
+
+    public ManualHandlerMappingAdapter(ManualHandlerMapping manualHandlerMapping) {
+        this.manualHandlerMapping = manualHandlerMapping;
+    }
 
     @Override
     public void initialize() {
