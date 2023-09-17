@@ -21,9 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerExecutorComposite handlerExecutorComposite;
 
     public DispatcherServlet() {
-        ManualHandlerMappingAdapter manualHandlerMappingAdapter =
-                new ManualHandlerMappingAdapter(new ManualHandlerMapping());
-        this.handlerMappingComposite = new HandlerMappingComposite(manualHandlerMappingAdapter);
+        this.handlerMappingComposite = new HandlerMappingComposite(new ManualHandlerMapping());
         this.handlerExecutorComposite = new HandlerExecutorComposite(new ControllerInterfaceHandlerExecutor());
     }
 
