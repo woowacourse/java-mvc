@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
+public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
