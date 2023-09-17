@@ -10,10 +10,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping {
@@ -32,15 +29,9 @@ public class AnnotationHandlerMapping {
     public void initialize() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         defaultHandlerExecution = makeDefaultHandlerExecution();
         final Reflections reflections = new Reflections(basePackage);
-        final List<Method> methods = reflections.getTypesAnnotatedWith(Controller.class)
-                .stream()
-                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
-        for (Method method : methods) {
-            putHandlerMethodPerRequestMethod(method);
+        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
+            putHandlerMethodPerClass(clazz);
         }
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -54,16 +45,43 @@ public class AnnotationHandlerMapping {
         return new HandlerExecution(defaultHandler, defaultHandler.getDeclaringClass().newInstance());
     }
 
-    private void putHandlerMethodPerRequestMethod(final Method handler) throws IllegalAccessException, InstantiationException {
-        final RequestMapping annotation = handler.getAnnotation(RequestMapping.class);
-        final RequestMethod[] requestMethods = annotation.method();
-        for (RequestMethod requestMethod :
-                requestMethods) {
+    private void putHandlerMethodPerClass(Class<?> clazz) throws IllegalAccessException, InstantiationException {
+        List<Method> methods = Arrays.stream(clazz.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
+        for (Method method : methods) {
+            putHandlerMethodPerRequestMethod(clazz, method);
+        }
+    }
+
+    private void putHandlerMethodPerRequestMethod(final Class<?> clazz, final Method handler) throws IllegalAccessException, InstantiationException {
+        final RequestMapping classAnnotation = clazz.getAnnotation(RequestMapping.class);
+        final RequestMapping methodAnnotation = handler.getAnnotation(RequestMapping.class);
+
+        final String path = getHandlerPath(classAnnotation, methodAnnotation);
+        final List<RequestMethod> requestMethods = getHandlerRequestMethods(classAnnotation, methodAnnotation);
+        for (RequestMethod requestMethod : requestMethods) {
             handlerExecutions.put(
-                    new HandlerKey(annotation.value(), requestMethod),
+                    new HandlerKey(path, requestMethod),
                     new HandlerExecution(handler, handler.getDeclaringClass().newInstance())
             );
         }
+    }
+
+    private String getHandlerPath(final RequestMapping classAnnotation, final RequestMapping methodAnnotation) {
+        if (classAnnotation != null) {
+            return classAnnotation.value() + methodAnnotation.value();
+        }
+        return methodAnnotation.value();
+    }
+
+    private List<RequestMethod> getHandlerRequestMethods(final RequestMapping classAnnotation, final RequestMapping methodAnnotation) {
+        final List<RequestMethod> requestMethods = new ArrayList<>();
+        if (classAnnotation != null) {
+            requestMethods.addAll(List.of(classAnnotation.method()));
+        }
+        requestMethods.addAll(List.of(methodAnnotation.method()));
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
