@@ -50,7 +50,8 @@ public class AnnotationHandlerMapping {
         RequestMethod[] methods = requestMapping.method();
         for (RequestMethod requestMethod : methods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(getObject(aClass), method));
+            HandlerExecution handlerExecution = new HandlerExecution(getObject(aClass), method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
