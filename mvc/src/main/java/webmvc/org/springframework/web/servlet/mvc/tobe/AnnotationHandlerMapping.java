@@ -63,16 +63,20 @@ public class AnnotationHandlerMapping {
     private void initializeHandlerExecutions(final Map<Method, Object> controllerMethodAndObject) {
         for (Map.Entry<Method, Object> methodAndObject : controllerMethodAndObject.entrySet()) {
             final Method method = methodAndObject.getKey();
-            final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
             final Object controller = controllerMethodAndObject.get(method);
             final HandlerExecution handlerExecution = new HandlerExecution(method, controller);
-            final String value = annotation.value();
-            final RequestMethod[] requestMethods = annotation.method();
-            for (RequestMethod requestMethod : requestMethods) {
-                HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                handlerExecutions.put(handlerKey, handlerExecution);
-            }
+            final List<HandlerKey> handlerKeys = getHandlerKeys(method);
+            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
         }
+    }
+
+    private List<HandlerKey> getHandlerKeys(final Method method) {
+        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        final String value = annotation.value();
+        final RequestMethod[] requestMethods = annotation.method();
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(value, requestMethod))
+                .collect(Collectors.toList());
     }
 
     public Object getHandler(final HttpServletRequest request) {
