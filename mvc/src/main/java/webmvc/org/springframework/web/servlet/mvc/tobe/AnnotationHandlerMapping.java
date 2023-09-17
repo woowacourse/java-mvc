@@ -56,12 +56,19 @@ public class AnnotationHandlerMapping {
     }
 
     private void initializeHandlerExecutions(final Method method, final Object controller) {
+        if (!isValidHandlerExecution(method, controller)) {
+            return;
+        }
         final String uri = method.getAnnotation(RequestMapping.class).value();
         final RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
         for (final RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             this.handlerExecutions.put(handlerKey, new HandlerExecution(method, controller));
         }
+    }
+
+    private boolean isValidHandlerExecution(final Method method, final Object controller) {
+        return method != null && controller != null;
     }
 
     public Object getHandler(final HttpServletRequest request) {
