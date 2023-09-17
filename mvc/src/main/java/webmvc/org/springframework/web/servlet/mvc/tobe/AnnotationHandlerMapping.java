@@ -57,11 +57,11 @@ public class AnnotationHandlerMapping {
         return Arrays.stream(controllerClasses.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .filter(method -> method.getReturnType().equals(ModelAndView.class))
-                .filter(method -> validateParameterType(method.getParameterTypes()))
+                .filter(method -> isValidateParameterType(method.getParameterTypes()))
                 .collect(Collectors.toList());
     }
 
-    private boolean validateParameterType(Class<?>[] parameters) {
+    private boolean isValidateParameterType(Class<?>[] parameters) {
         return parameters[REQUEST_INDEX].equals(HttpServletRequest.class) &&
                 parameters[RESPONSE_INDEX].equals(HttpServletResponse.class);
     }
