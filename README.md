@@ -8,5 +8,6 @@
 - [x] Legacy MVC와 @MVC 통합하기
   - [x] ManualHandlerMapping과 AnnotationHandlerMapping 추상화하기
   - [x] HandlerAdaptor 구현하기
+  - [x] 어노테이션 controller 지원
 ## 리팩토링 목록
 - [x] Method 실행 시 불필요한 Controller 인스턴스 생성 제거

@@ -3,8 +3,6 @@ package com.techcourse;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +25,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
