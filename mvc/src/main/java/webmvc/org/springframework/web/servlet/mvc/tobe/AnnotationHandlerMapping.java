@@ -26,30 +26,15 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        final List<Reflections> packageReflections = getPackageReflections();
-        final List<Class<?>> controllerClasses = getControllerClasses(packageReflections);
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         final Map<Method, Object> controllerMethodAndObject = getControllerMethodAndObject(controllerClasses);
         initializeHandlerExecutions(controllerMethodAndObject);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private List<Reflections> getPackageReflections() {
-        return Arrays.stream(basePackage)
-                .map(Reflections::new)
-                .collect(Collectors.toList());
-    }
-
-    private List<Class<?>> getControllerClasses(final List<Reflections> packageReflections) {
-        final List<Class<?>> controllerClasses = new ArrayList<>();
-        for (Reflections reflections : packageReflections) {
-            final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-            controllerClasses.addAll(classes);
-        }
-        return controllerClasses;
-    }
-
-    private Map<Method, Object> getControllerMethodAndObject(final List<Class<?>> controllerClasses) {
+    private Map<Method, Object> getControllerMethodAndObject(final Set<Class<?>> controllerClasses) {
         final Map<Method, Object> controllerMethodAndObject = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
             final Method[] declaredMethods = controllerClass.getDeclaredMethods();
