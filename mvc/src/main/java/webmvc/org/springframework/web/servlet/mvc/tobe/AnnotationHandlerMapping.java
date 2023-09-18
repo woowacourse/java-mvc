@@ -14,12 +14,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping<T> {
+public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution<T>> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -44,10 +44,9 @@ public class AnnotationHandlerMapping<T> {
         }
     }
 
-    private T convertToControllerInstance(Class<?> clazz) {
+    private Object convertToControllerInstance(Class<?> clazz) {
         try {
-            final var controllerClass = (Class<T>) clazz;
-            final var constructor = controllerClass.getDeclaredConstructor();
+            final var constructor = clazz.getDeclaredConstructor();
 
             return createControllerInstance(constructor);
         } catch (ClassCastException exception) {
@@ -57,7 +56,7 @@ public class AnnotationHandlerMapping<T> {
         }
     }
 
-    private T createControllerInstance(Constructor<T> constructor) {
+    private Object createControllerInstance(Constructor<?> constructor) {
         try {
             return constructor.newInstance();
         } catch (InvocationTargetException exception) {
@@ -69,19 +68,19 @@ public class AnnotationHandlerMapping<T> {
         }
     }
 
-    private void addAnnotatedWithRequestMapping(T controller, Method method) {
+    private void addAnnotatedWithRequestMapping(Object controller, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             addHandlerExecution(controller, method);
         }
     }
 
-    private void addHandlerExecution(T controller, Method method) {
+    private void addHandlerExecution(Object controller, Method method) {
         final var requestMapping = method.getAnnotation(RequestMapping.class);
         final var mappingUrl = requestMapping.value();
         final var mappingRequestMethods = requestMapping.method();
 
         for (RequestMethod requestMethod : mappingRequestMethods) {
-            handlerExecutions.put(new HandlerKey(mappingUrl, requestMethod), new HandlerExecution<>(controller, method));
+            handlerExecutions.put(new HandlerKey(mappingUrl, requestMethod), new HandlerExecution(controller, method));
         }
     }
 
