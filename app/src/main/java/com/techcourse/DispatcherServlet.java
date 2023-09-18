@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.techcourse.adapter.ControllerHandlerMappingAdapter;
+import com.techcourse.controller.NotFoundController;
 import java.util.Objects;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
@@ -73,7 +74,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow(() -> new IllegalStateException("요청을 처리하기 위한 핸들러가 존재하지 않습니다."));
+                .orElse(new NotFoundController());
     }
 
     private HandlerAdapter findHandlerAdapter(Object handler) {
