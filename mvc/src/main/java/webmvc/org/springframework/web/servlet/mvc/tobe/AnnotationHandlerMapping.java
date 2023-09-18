@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +12,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ControllerClassNotFoundByNameException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ReflectionInstantiationException;
 
 public class AnnotationHandlerMapping {
@@ -42,28 +39,16 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecutionsScannedInPackage(final Object packageName) {
-        final List<Class<?>> controllerClasses = getControllerClasses(packageName);
+        final Set<Class<?>> controllerClasses = getControllerClasses(packageName);
 
         for (Class<?> controllerClass : controllerClasses) {
             addHandlerExecutionsInController(controllerClass);
         }
     }
 
-    private List<Class<?>> getControllerClasses(final Object name) {
+    private Set<Class<?>> getControllerClasses(final Object name) {
         final Reflections reflections = new Reflections(name);
-        final Set<String> controllerNames =
-            reflections.get(Scanners.TypesAnnotated.with(Controller.class));
-
-        final List<Class<?>> controllerClasses = new ArrayList<>();
-        for (String controllerName : controllerNames) {
-            try {
-                controllerClasses.add(Class.forName(controllerName));
-            } catch (ClassNotFoundException e) {
-                throw new ControllerClassNotFoundByNameException(controllerName);
-            }
-        }
-
-        return controllerClasses;
+        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private void addHandlerExecutionsInController(final Class<?> controllerClass) {
@@ -110,7 +95,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(
             request.getRequestURI(),
             RequestMethod.valueOf(request.getMethod())
