@@ -9,19 +9,16 @@ public class HandlerAdaptors {
 
     private final List<HandlerAdaptor> adaptors = new ArrayList<>();
 
-    public void initialize(){
+    public void initialize() {
         adaptors.add(new AnnotationHandlerAdaptor());
         adaptors.add(new ManualHandlerAdaptor());
     }
 
     public HandlerAdaptor getAdaptor(Object handler) {
-        for (HandlerAdaptor handlerAdaptor : adaptors) {
-            if (handlerAdaptor.supports(handler)) {
-                return handlerAdaptor;
-            }
-        }
-
-        throw new NoSuchElementException("처리할 수 있는 핸들러가 존재하지 않습니다.");
+        return adaptors.stream()
+                .filter(adaptor -> adaptor.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("처리할 수 있는 핸들러가 존재하지 않습니다."));
     }
 
 }
