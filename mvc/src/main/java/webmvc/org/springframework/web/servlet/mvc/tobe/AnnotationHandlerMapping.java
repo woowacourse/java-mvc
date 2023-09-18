@@ -51,7 +51,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private static List<Method> processMethodsBy(final Class<?> controllerClass) {
+    private List<Method> processMethodsBy(final Class<?> controllerClass) {
         return Arrays.stream(controllerClass.getDeclaredMethods())
                      .filter(clazz -> clazz.isAnnotationPresent(RequestMapping.class))
                      .collect(Collectors.toList());
