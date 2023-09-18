@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
 
@@ -63,11 +64,24 @@ public class AnnotationHandlerMapping {
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public boolean supports(final HttpServletRequest request) {
+        final HandlerKey handlerKey = parseToKey(request);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    @Override
+    public Handler getHandler(final HttpServletRequest request) {
+        final HandlerKey handlerKey = parseToKey(request);
+        final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+
+        return new AnnotationHandler(handlerExecution);
+    }
+
+    private HandlerKey parseToKey(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        return new HandlerKey(requestURI, requestMethod);
     }
 }
