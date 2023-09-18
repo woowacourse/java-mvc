@@ -21,15 +21,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappings handlerMappings = new HandlerMappings();
-    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
+    private final HandlerMappings handlerMappings;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
+        this(new HandlerMappings(), new HandlerAdapters());
+    }
+
+    public DispatcherServlet(final HandlerMappings handlerMappings, final HandlerAdapters handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new AnnotationHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
         handlerMappings.add(new ManualHandlerMapping());
         handlerAdapters.add(new ControllerHandlerAdapter());
