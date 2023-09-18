@@ -50,11 +50,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return constructor.newInstance();
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("해당하는 생성자를 찾을 수 없습니다.", e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("해당하는 인스턴스를 만들 수 없습니다.", e);
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException("해당하는 인스턴스를 만들 수 없습니다.", e);
-        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new IllegalArgumentException("해당하는 인스턴스를 만들 수 없습니다.", e);
         }
     }
