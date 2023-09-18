@@ -7,7 +7,7 @@ import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.ModelAndView;
 
-public class RequestMappingHandlerAdapter implements HandlerAdapter {
+public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
