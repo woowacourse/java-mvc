@@ -24,6 +24,11 @@ public class ManualHandlerMapping {
 
     public Controller getHandler(final String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+
+        if (controllers.containsKey(requestURI)) {
+            return controllers.get(requestURI);
+        }
+
+        return new ForwardController("/404.jsp");
     }
 }
