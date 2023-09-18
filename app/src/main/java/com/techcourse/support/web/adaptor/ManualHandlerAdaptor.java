@@ -1,6 +1,5 @@
 package com.techcourse.support.web.adaptor;
 
-import com.techcourse.support.web.mapping.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -12,7 +11,7 @@ public class ManualHandlerAdaptor implements HandlerAdaptor {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof ManualHandlerMapping;
+        return handler instanceof Controller;
     }
 
     @Override
