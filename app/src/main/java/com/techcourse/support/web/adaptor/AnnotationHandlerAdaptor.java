@@ -1,25 +1,23 @@
-package com.techcourse;
+package com.techcourse.support.web.adaptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptor;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
-public class ManualHandlerAdaptor implements HandlerAdaptor {
+public class AnnotationHandlerAdaptor implements HandlerAdaptor {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof ManualHandlerMapping;
+        return handler instanceof HandlerExecution;
     }
 
     @Override
     public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        Controller controller = (Controller) handler;
-        String viewName = controller.execute(request, response);
+        HandlerExecution handlerExecution = (HandlerExecution) handler;
 
-        return new ModelAndView(new JspView(viewName));
+        return handlerExecution.handle(request, response);
     }
 }
