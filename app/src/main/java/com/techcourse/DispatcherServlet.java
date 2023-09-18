@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +30,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = (Controller) manualHandlerMapping.getHandler(request);
-            final var viewName = controller.execute(request, response);
+            final Controller controller = manualHandlerMapping.getHandler(request);
+            final String viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -44,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
 }
