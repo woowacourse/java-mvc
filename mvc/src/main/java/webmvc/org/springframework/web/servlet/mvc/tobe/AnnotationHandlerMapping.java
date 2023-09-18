@@ -55,11 +55,13 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMapping.method()) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(object, method));
+            log.info("put {}", handlerKey);
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        log.debug("Request Mapping Uri : {}", request.getRequestURI());
         return handlerExecutions.get(handlerKey);
     }
 }
