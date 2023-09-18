@@ -6,8 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.HandlerMappings;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotaionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -17,15 +21,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
         handlerMappings = new HandlerMappings();
+        handlerAdapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
         handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping());
+        handlerAdapters.add(new ManualHandlerAdapter());
+        handlerAdapters.add(new AnnotaionHandlerAdapter());
     }
 
     @Override
@@ -34,9 +42,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Controller controller = (Controller) getHandler(request);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final Object handler = getHandler(request);
+            final HandlerAdapter adapter = getAdapter(request);
+            final ModelAndView modelAndView = adapter.handle(handler, request, response);
+
+            modelAndView.render();
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -47,13 +57,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.getHandler(request);
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private HandlerAdapter getAdapter(final Object handler) {
+        return handlerAdapters.getAdaptor(handler);
     }
 }

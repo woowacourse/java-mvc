@@ -27,7 +27,12 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
+
     public View getView() {
         return view;
+    }
+
+    public void render() {
+
     }
 }
