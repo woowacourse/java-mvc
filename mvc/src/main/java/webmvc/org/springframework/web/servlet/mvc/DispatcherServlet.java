@@ -5,21 +5,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
-
-import static webmvc.org.springframework.web.servlet.view.JspView.REDIRECT_PREFIX;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -45,12 +38,12 @@ public class DispatcherServlet extends HttpServlet {
     }
     private void handle(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        final HandlerExecution handlerExecution = getHandlerExecution(request);
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
-        renderModelAndView(request, response, modelAndView);
+        final HandlerExecution handler = getHandler(request);
+        final ModelAndView modelAndView = handler.handle(request, response);
+        render(request, response, modelAndView);
     }
 
-    private HandlerExecution getHandlerExecution(final HttpServletRequest request) throws ServletException {
+    private HandlerExecution getHandler(final HttpServletRequest request) throws ServletException {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
@@ -58,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new ServletException("핸들러를 찾을 수 없습니다."));
     }
 
-    private void renderModelAndView(final HttpServletRequest request, final HttpServletResponse response,
+    private void render(final HttpServletRequest request, final HttpServletResponse response,
                                     final ModelAndView modelAndView) throws Exception {
         final View view = modelAndView.getView();
         if (view.isRedirectView()) {
