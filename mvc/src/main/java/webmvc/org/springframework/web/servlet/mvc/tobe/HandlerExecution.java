@@ -16,7 +16,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             return (ModelAndView) method.invoke(target, request, response);
         } catch (IllegalAccessException | InvocationTargetException e) {
