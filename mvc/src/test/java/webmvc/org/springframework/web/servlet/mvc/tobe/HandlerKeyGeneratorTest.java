@@ -16,7 +16,7 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class HandlerKeyGeneratorTest {
 
-    private final HandlerKeyGenerator handlerKeyGenerator = new HandlerKeyGenerator(new HttpMappingExtractor());
+    private final HandlerKeyGenerator handlerKeyGenerator = new HandlerKeyGenerator(new HttpMappingAnnotationParser());
 
     @Test
     void prefix와_메서드를_입력받아_HandlerKey의_리스트를_반환한다() throws NoSuchMethodException {

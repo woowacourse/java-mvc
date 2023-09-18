@@ -9,8 +9,8 @@
 
 ### 2단계 - 점진적인 리팩터링
 
-- [ ] RegisterController를 어노테이션 기반으로 변경해도 동작하도록 만든다.
+- [x] RegisterController를 어노테이션 기반으로 변경해도 동작하도록 만든다.
 - [x] HandlerMapping 인터페이스를 추가한다.
 - [x] HandlerMapping의 일급 컬렉션을 추가한다.
 - [x] HandleAdapter 인터페이스를 추가한다.
-- [ ] HandleAdapter의 일급 컬렉션을 추가한다.
+- [x] HandleAdapter의 일급 컬렉션을 추가한다.
