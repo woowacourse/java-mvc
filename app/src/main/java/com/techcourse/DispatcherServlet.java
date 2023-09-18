@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
@@ -43,10 +45,7 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = getHandler(request);
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final Object result = handlerAdapter.handle(request, response, handler);
-            if (result instanceof String) {
-                move((String) result, request, response);
-            }
-
+            processResult(result, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -55,16 +54,29 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(final HttpServletRequest request) throws ServletException {
         return handlerMappings.stream()
-                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(request)))
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new ServletException("No handler matches your request."));
     }
-
     private HandlerAdapter getHandlerAdapter(final Object handler) throws ServletException {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
                 .orElseThrow(() -> new ServletException("No handler Adapter matches your request."));
+    }
+
+    private void processResult(final Object result, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        if (result instanceof ModelAndView) {
+            final View view = ((ModelAndView) result).getView();
+            if (view instanceof JspView) {
+                move(((JspView) view).getViewName(), request, response);
+            }
+            // TODO: jsonView
+        }
+        if (result instanceof String) {
+            move((String) result, request, response);
+        }
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
