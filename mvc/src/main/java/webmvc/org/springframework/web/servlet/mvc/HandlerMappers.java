@@ -22,7 +22,6 @@ public class HandlerMappers {
     public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Handler Not Found"));
     }
