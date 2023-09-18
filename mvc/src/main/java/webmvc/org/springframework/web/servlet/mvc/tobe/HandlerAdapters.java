@@ -19,4 +19,7 @@ public class HandlerAdapters {
                 .orElse(null);
     }
 
+    public List<HandlerAdapter> getAdapters() {
+        return adapters;
+    }
 }
