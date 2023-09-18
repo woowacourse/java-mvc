@@ -10,18 +10,16 @@ import webmvc.org.springframework.web.servlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.HandlerMappings;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotaionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappings handlerMappings;
-    private HandlerAdapters handlerAdapters;
+    private final HandlerMappings handlerMappings;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
         handlerMappings = new HandlerMappings();
@@ -30,8 +28,14 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        annotationHandlerMapping.initialize();
+
+        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping.initialize();
+
         handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping());
+        handlerMappings.add(annotationHandlerMapping);
         handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotaionHandlerAdapter());
     }
@@ -43,10 +47,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
-            final HandlerAdapter adapter = getAdapter(request);
+            final HandlerAdapter adapter = getAdapter(handler);
             final ModelAndView modelAndView = adapter.handle(handler, request, response);
 
-            modelAndView.render(request,response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
