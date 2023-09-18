@@ -2,6 +2,8 @@ package com.techcourse;
 
 import com.techcourse.support.mvc.HandlerAdapters;
 import com.techcourse.support.mvc.HandlerMappings;
+import com.techcourse.support.mvc.ManualHandlerAdapter;
+import com.techcourse.support.mvc.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,9 +22,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappings handlerMappings = new HandlerMappings();
     private final HandlerAdapters handlerAdapters = new HandlerAdapters();
-
-    public DispatcherServlet() {
-    }
 
     @Override
     public void init() {

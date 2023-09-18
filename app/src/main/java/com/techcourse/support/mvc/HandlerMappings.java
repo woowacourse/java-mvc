@@ -9,9 +9,6 @@ public class HandlerMappings {
 
     private final List<HandlerMapping> mappings = new ArrayList<>();
 
-    public HandlerMappings() {
-    }
-
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         mappings.add(handlerMapping);
     }

@@ -6,14 +6,14 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 public class HandlerAdapters {
 
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<HandlerAdapter> adapters = new ArrayList<>();
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        adapters.add(handlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
+        return adapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.isSupport(handler))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Handler Adapter 를 찾을 수 없습니다."));
