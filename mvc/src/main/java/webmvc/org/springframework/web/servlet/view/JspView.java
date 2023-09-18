@@ -10,7 +10,7 @@ import webmvc.org.springframework.web.servlet.View;
 
 public class JspView implements View {
 
-    public static final String REDIRECT_PREFIX = "redirect:";
+    private static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     private final String viewName;
 
@@ -19,15 +19,20 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    public void render(
+            Map<String, ?> model,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws Exception {
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            return;
+        }
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
-
         requestDispatcher.forward(request, response);
     }
 }
