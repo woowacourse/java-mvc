@@ -8,7 +8,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 public class AnnotaionHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(final Object handler) {
-        return handler instanceof AnnotationHandlerMapping;
+        return handler instanceof HandlerExecution;
     }
 
     @Override

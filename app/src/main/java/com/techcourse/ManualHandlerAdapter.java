@@ -11,7 +11,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
-        return handler instanceof ManualHandlerMapping;
+        return handler instanceof Controller;
     }
 
     @Override
