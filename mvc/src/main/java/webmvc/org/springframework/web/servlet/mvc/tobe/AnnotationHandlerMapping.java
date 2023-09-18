@@ -53,13 +53,16 @@ public class AnnotationHandlerMapping {
 
     private void addHandlerExecutionsInController(final Class<?> controllerClass) {
         final List<Method> requestMappingMethods = getRequestMappingMethods(controllerClass);
-        try {
-            final Object controller = controllerClass.getDeclaredConstructor()
-                .newInstance();
+        final Object controller = instantiateClass(controllerClass);
+        for (Method requestMappingMethod : requestMappingMethods) {
+            addHandlerExecutions(controller, requestMappingMethod);
+        }
+    }
 
-            for (Method requestMappingMethod : requestMappingMethods) {
-                addHandlerExecutions(controller, requestMappingMethod);
-            }
+    private Object instantiateClass(final Class<?> classType) {
+        try {
+            return classType.getDeclaredConstructor()
+                .newInstance();
         } catch (InstantiationException | NoSuchMethodException
                  | IllegalAccessException | InvocationTargetException e) {
             throw new ReflectionInstantiationException("controller 인스턴스 생성에 실패하였습니다.");
