@@ -8,7 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
@@ -57,18 +56,25 @@ public class DispatcherServlet extends HttpServlet {
       final Object handler = handlerMappingComposite.getHandler(request);
       final Object handleValue = handlerAdapterComposite.handle(request, response, handler);
 
-      if (handleValue instanceof ModelAndView) {
-        // TODO : 3단계 리팩터링
-      }
-
-      if (handleValue instanceof String) {
-        final String viewName = (String) handleValue;
-        move(viewName, request, response);
-      }
+      // TODO : 3단계 리팩터링
+      renderByHandlerValueType(request, response, handleValue);
 
     } catch (Throwable e) {
       log.error("Exception : {}", e.getMessage(), e);
       throw new ServletException(e.getMessage());
+    }
+  }
+
+  private void renderByHandlerValueType(
+      final HttpServletRequest request,
+      final HttpServletResponse response,
+      final Object handleValue
+  ) throws Exception {
+    if (handleValue instanceof ModelAndView) {}
+
+    if (handleValue instanceof String) {
+      final String viewName = (String) handleValue;
+      move(viewName, request, response);
     }
   }
 
