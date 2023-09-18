@@ -13,7 +13,7 @@ public class LoginController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
