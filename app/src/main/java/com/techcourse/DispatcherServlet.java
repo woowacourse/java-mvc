@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -64,15 +61,16 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = findHandler(request);
-            handle(handler, request, response);
+            final HandlerExecution handler = findHandler(request);
+            final ModelAndView modelAndView = handler.handle(request, response);
+            resolveView(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object findHandler(final HttpServletRequest request) {
+    private HandlerExecution findHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
@@ -80,25 +78,15 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow();
     }
 
-    private void handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        // todo: 리팩터링
-        if (handler instanceof Controller) {
-            final String viewName = ((Controller) handler).execute(request, response);
-            move(viewName, request, response);
-            return;
-        }
-        if(handler instanceof HandlerExecution) {
-            final ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-            final View view = modelAndView.getView();
-            final Map<String, Object> model = modelAndView.getModel();
-            view.render(model, request, response);
-            return;
-        }
-        throw new UnsupportedOperationException();
+    private void resolveView(final ModelAndView modelAndView, final HttpServletRequest request,
+                             final HttpServletResponse response) throws Exception {
+        //todo: 리다이렉트 구분..?
+        final View view = modelAndView.getView();
+        final Map<String, Object> model = modelAndView.getModel();
+        view.render(model, request, response);
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
+/*    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ServletException {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
@@ -107,5 +95,5 @@ public class DispatcherServlet extends HttpServlet {
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
-    }
+    }*/
 }

@@ -63,7 +63,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         final String path = requestMapping.value();
         final RequestMethod[] requestMethods = requestMapping.method();
         final List<HandlerKey> handlerKeys = generateHandlerKeys(path, requestMethods);
-        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        final HandlerExecution handlerExecution = new AnnotationHandlerExecution(controller, method);
         handlerKeys.forEach(key -> handlerExecutions.put(key, handlerExecution));
     }
 
@@ -74,7 +74,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.valueOf(request.getMethod())
