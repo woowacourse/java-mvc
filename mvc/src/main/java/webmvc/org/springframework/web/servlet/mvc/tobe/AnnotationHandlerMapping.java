@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
 	private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,13 +27,14 @@ public class AnnotationHandlerMapping {
 		this.handlerExecutions = new HashMap<>();
 	}
 
+	@Override
 	public void initialize() {
 		Reflections reflections = new Reflections(basePackage);
 		Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class, true);
 		for (final Class<?> controller : controllers) {
 			addHandlerMappings(controller);
 		}
-		log.info("Initialized AnnotationHandlerMapping!");
+		log.info("Initialized Annotation Handler Mapping!");
 	}
 
 	private void addHandlerMappings(final Class<?> clazz) {
@@ -78,9 +79,11 @@ public class AnnotationHandlerMapping {
 		HandlerKey handlerKey = new HandlerKey(url, requestMethod);
 		HandlerExecution execution = new HandlerExecution(controller, method);
 		handlerExecutions.put(handlerKey, execution);
+		log.info("Path : {}, Method: {},  Controller : {}", url, requestMethod, controller.getClass());
 	}
 
-	public Object getHandler(final HttpServletRequest request) {
+	@Override
+	public HandlerExecution getHandler(final HttpServletRequest request) {
 		HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
 		return handlerExecutions.get(handlerKey);
 	}
