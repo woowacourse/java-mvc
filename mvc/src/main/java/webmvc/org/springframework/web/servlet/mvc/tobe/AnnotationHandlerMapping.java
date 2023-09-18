@@ -42,21 +42,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (final Method handlerMethod : handlerMethods) {
             if (handlerMethod.isAnnotationPresent(RequestMapping.class)) {
-                registerMapping(handlerType, handlerMethod);
+                final HandlerExecution handlerExecution = getHandlerExecution(handlerType, handlerMethod);
+                registerMapping(handlerExecution, handlerMethod);
             }
-        }
-    }
-
-    private void registerMapping(final Class<?> handlerType,
-                                 final Method handlerMethod) {
-        final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
-        final String mappingUrl = requestMapping.value();
-        final RequestMethod[] requestMethods = requestMapping.method();
-
-        for (final RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
-            final HandlerExecution handlerExecution = getHandlerExecution(handlerType, handlerMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
@@ -72,6 +60,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                        NoSuchMethodException e) {
 
             throw new RuntimeException(e);
+        }
+    }
+
+    private void registerMapping(final HandlerExecution handlerExecution,
+                                 final Method handlerMethod) {
+        final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
+        final String mappingUrl = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+
+        for (final RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 

@@ -12,8 +12,8 @@ public class HandlerExecution {
     private final Object handler;
     private final Method handlerMethod;
 
-    public HandlerExecution(final Object handler,
-                            final Method handlerMethod) {
+    HandlerExecution(final Object handler,
+                     final Method handlerMethod) {
         validateDeclare(handler, handlerMethod);
         validateHandlerMethod(handlerMethod);
         this.handler = handler;
