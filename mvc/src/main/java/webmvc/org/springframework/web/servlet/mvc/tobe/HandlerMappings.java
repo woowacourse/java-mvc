@@ -1,7 +1,8 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappings implements HandlerMapping {
 

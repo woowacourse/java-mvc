@@ -8,6 +8,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
