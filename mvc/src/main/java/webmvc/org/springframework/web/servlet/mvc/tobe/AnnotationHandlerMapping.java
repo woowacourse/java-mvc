@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.reflections.Reflections;
@@ -32,13 +33,13 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        final Map<HandlerKey, HandlerExecution> handlerExecutions = new Reflections(basePackage)
-            .getTypesAnnotatedWith(Controller.class)
+        final Set<Class<?>> controllerClazz = new Reflections(basePackage)
+            .getTypesAnnotatedWith(Controller.class);
+        final Map<HandlerKey, HandlerExecution> handlerExecutions = controllerClazz
             .stream()
             .map(Class::getMethods)
             .flatMap(Arrays::stream)
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-            .map(method -> entry(method, method.getAnnotation(RequestMapping.class)))
             .flatMap(this::mapExecutions)
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
@@ -46,10 +47,9 @@ public class AnnotationHandlerMapping {
     }
 
     private Stream<Entry<HandlerKey, HandlerExecution>> mapExecutions(
-        final Entry<Method, RequestMapping> entry
+        final Method handleTo
     ) {
-        final Method handleTo = entry.getKey();
-        final RequestMapping requestMapping = entry.getValue();
+        final RequestMapping requestMapping = handleTo.getAnnotation(RequestMapping.class);
 
         final String path = requestMapping.value();
         final RequestMethod[] methods = requestMapping.method();
