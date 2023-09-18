@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-import java.util.Map;
-
 public class AnnotationHandler implements Handler {
 
     private final HandlerExecution handlerExecution;
@@ -15,10 +13,12 @@ public class AnnotationHandler implements Handler {
     }
 
     @Override
+    public boolean isSupport() {
+        return handlerExecution != null;
+    }
+
+    @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
-        final Map<String, Object> model = modelAndView.getModel();
-        modelAndView.getView().render(model, request, response);
-        return modelAndView;
+        return handlerExecution.handle(request, response);
     }
 }

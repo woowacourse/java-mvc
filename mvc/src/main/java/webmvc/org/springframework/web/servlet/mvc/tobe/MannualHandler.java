@@ -14,21 +14,15 @@ public class MannualHandler implements Handler {
         this.controller = controller;
     }
 
+    @Override
+    public boolean isSupport() {
+        return controller != null;
+    }
+
     // TODO: 2023/09/18 테스트 작성
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String viewName = controller.execute(request, response);
-        move(viewName, request, response);
         return new ModelAndView(new JspView(viewName));
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }

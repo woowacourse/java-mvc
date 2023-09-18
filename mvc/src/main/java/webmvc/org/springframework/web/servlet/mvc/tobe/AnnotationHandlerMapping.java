@@ -1,7 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    private HandlerExecution defaultHandlerExecution;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -26,23 +24,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public void initialize() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
-        defaultHandlerExecution = makeDefaultHandlerExecution();
+    public void initialize() throws InstantiationException, IllegalAccessException {
+        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(context.org.springframework.stereotype.Controller.class)) {
             putHandlerMethodPerClass(clazz);
         }
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private HandlerExecution makeDefaultHandlerExecution() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
-        final Method defaultHandler = DefaultHandler.class
-                .getDeclaredMethod(
-                        "defaultHandler",
-                        HttpServletRequest.class,
-                        HttpServletResponse.class
-                );
-        return new HandlerExecution(defaultHandler, defaultHandler.getDeclaringClass().newInstance());
     }
 
     private void putHandlerMethodPerClass(Class<?> clazz) throws IllegalAccessException, InstantiationException {
@@ -65,6 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     new HandlerKey(path, requestMethod),
                     new HandlerExecution(handler, handler.getDeclaringClass().newInstance())
             );
+            log.info("Path : {}, Controller : {}", path, handler.getName());
         }
     }
 
@@ -90,6 +78,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        return new AnnotationHandler(handlerExecutions.getOrDefault(handlerKey, defaultHandlerExecution));
+        return new AnnotationHandler(handlerExecutions.get(handlerKey));
     }
 }
