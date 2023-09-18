@@ -18,7 +18,7 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final String DEFAULT_REQUEST_URL = "";
 
-    private final Object[] basePackage; // String이 아닌 왜 Object일까?, URL 타입도 받기 위함인가?
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
