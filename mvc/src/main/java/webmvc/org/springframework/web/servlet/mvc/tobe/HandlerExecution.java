@@ -38,7 +38,8 @@ public class HandlerExecution {
         final List<Class<?>> parameterTypes = Arrays.asList(handlerMethod.getParameterTypes());
         if (parameterTypes.contains(HttpServletRequest.class) &&
             parameterTypes.contains(HttpServletResponse.class)) {
-            throw new IllegalArgumentException("메서드 인자가 적절하지 않습니다. parameters : " + parameterTypes);
+            return;
         }
+        throw new IllegalArgumentException("메서드 인자가 적절하지 않습니다. parameters : " + parameterTypes);
     }
 }
