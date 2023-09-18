@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.techcourse.exception.HandlerAdapterNotFoundException;
+import com.techcourse.exception.HandlerNotFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -48,29 +49,30 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Optional<Object> findHandler = handlerMappings.stream()
+            Object handler = handlerMappings.stream()
                     .map(handlerMapping -> handlerMapping.getHandler(request))
                     .filter(Objects::nonNull)
-                    .findFirst();
-            if (findHandler.isEmpty()) {
-                response.setStatus(404);
-                return;
-            }
-            Object handler = findHandler.get();
+                    .findFirst()
+                    .orElseThrow(() -> new HandlerNotFoundException(
+                            "해당하는 Handler를 찾을 수 없습니다."
+                                    + " URI : " + request.getMethod()
+                                    + " METHOD : " + request.getMethod()));
 
-            Optional<HandlerAdapter> findAdapter = handlerAdapters.stream()
+            HandlerAdapter adapter = handlerAdapters.stream()
                     .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                    .findFirst();
-            if (findAdapter.isEmpty()) {
-                response.setStatus(404);
-                return;
-            }
-            HandlerAdapter adapter = findAdapter.get();
+                    .findFirst()
+                    .orElseThrow(() -> new HandlerAdapterNotFoundException(
+                            "해당 Handler를 처리할 수 있는 HandlerAdapter를 찾을 수 없습니다."
+                    ));
+
             ModelAndView modelAndView = adapter.handle(handler, request, response);
 
             View view = modelAndView.getView();
             Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
+        } catch (HandlerNotFoundException | HandlerAdapterNotFoundException e) {
+            log.error(e.getMessage());
+            response.setStatus(404);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
