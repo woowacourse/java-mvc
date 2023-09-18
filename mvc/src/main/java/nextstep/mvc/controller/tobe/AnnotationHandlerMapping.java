@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -75,11 +76,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<HandlerExecution> getHandler(final HttpServletRequest request) {
         final String method = request.getMethod();
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        return findHandlerExecution(handlerKey);
+        return Optional.of(findHandlerExecution(handlerKey));
     }
 
     private HandlerExecution findHandlerExecution(final HandlerKey handlerKey) {

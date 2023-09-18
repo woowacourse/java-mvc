@@ -7,9 +7,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
+import nextstep.mvc.controller.tobe.HandlerExecution;
 import nextstep.mvc.view.JspView;
+import nextstep.mvc.view.ModelAndView;
+import nextstep.mvc.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -17,7 +23,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-    private final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+    private final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
 
     @Override
     public void init() {
@@ -30,9 +36,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Controller controller = manualHandlerMapping.getHandler(request);
-            final String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final Optional<Controller> controllerOpt = manualHandlerMapping.getHandler(request);
+            if (controllerOpt.isPresent()) {
+                final String viewName = controllerOpt.get().execute(request, response);
+                move(viewName, request, response);
+                return;
+            }
+            final Optional<HandlerExecution> handlerExecutionOpt = annotationHandlerMapping.getHandler(request);
+            if (handlerExecutionOpt.isPresent()) {
+                final HandlerExecution handlerExecution = handlerExecutionOpt.get();
+                final ModelAndView modelAndView = handlerExecution.handle(request, response);
+                final Map<String, Object> model = modelAndView.getModel();
+                final View view = modelAndView.getView();
+                view.render(model, request, response);
+            }
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
