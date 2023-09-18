@@ -24,13 +24,15 @@
 - [x] @RequestMapping 어노테이션으로 URL 및 메서드를 컨트롤러에 매핑하기
     - [x] `AnnotationHandlerMapping`에서 어노테이션에 따른 매핑을 구현한다. (초기화)
     - [x] `HandlerExecution`의 `handle` 메서드를 구현한다.
+    - [x] 매핑 시 발생하는 예외를 처리한다.
 
 ## 2단계 점진적인 리팩터링
 
 - [ ] Legacy MVC와 @MVC 통합하기
     - [ ] 실제로 `ManualHandlerMapping`과 `AnnotationHandlerMapping` 클래스를 모두 사용하게 만든다.
     - [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하도록 만든다.
-        - [ ] `HandlerMapping` 인터페이스로 두 클래스를 추상화하고, 외부에서 주입받는다.
-        - [ ] `HandlerExecution`을 인터페이스로 추상화한다.
-        - [ ] 패키지는 어디에 두어야 할까?
+        - [ ] `AnnotationHandlerMapping`에 쓰이는 인터페이스 또는 추상클래스를 정의한다.
+        - [ ] 동작 확인을 위해 회원가입 컨트롤러를 어노테이션 기반 컨트롤러로 변경한다.
+        - [ ] `DispatcherServlet`이 `AnnotationHandlerMapping`, `ManualHandlerMapping`을 모두 관리하도록 한다.
+        - [ ] `AnnotationHandlerMapping`을 먼저 확인한 뒤, 해당하는 컨트롤러가 없으면 `ManualHandlerMapping`을 찾도록 한다.
 
