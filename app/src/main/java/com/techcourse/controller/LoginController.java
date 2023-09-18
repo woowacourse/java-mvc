@@ -18,12 +18,12 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView render(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
-        return new ModelAndView(new JspView("login.jsp"));
+        return new ModelAndView(new JspView("/login.jsp"));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -34,7 +34,7 @@ public class LoginController {
 
         return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
-                    log.info("User : {}", user);
+                    log.info("Login User: accout={}", user.getAccount());
                     return login(request, user);
                 })
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
