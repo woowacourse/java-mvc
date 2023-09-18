@@ -1,13 +1,13 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -17,6 +17,46 @@ class AnnotationHandlerMappingTest {
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+    }
+
+    @Test
+    void canHandlePostTest() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThat(handlerMapping.canHandle(request)).isTrue();
+    }
+
+    @Test
+    void canHandleGetTest() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.canHandle(request)).isTrue();
+    }
+
+    @Test
+    void postTestHandlerIsInstanceOfHandlerExecution() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
+    }
+
+    @Test
+    void getTestHandlerIsInstanceOfHandlerExecution() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
     }
 
     @Test
