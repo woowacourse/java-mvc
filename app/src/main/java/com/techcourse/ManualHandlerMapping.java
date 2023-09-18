@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
@@ -25,8 +26,8 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+        // controllers.put("/register/view", new RegisterViewController());
+        // controllers.put("/register", new RegisterController());
 
         generateHandlerExecutions(controllers);
 
@@ -36,8 +37,8 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     private void generateHandlerExecutions(final Map<String, Controller> controllers) {
-        for (String key : controllers.keySet()) {
-            handlerExecutions.put(key, new ManualHandlerExecution(controllers.get(key)));
+        for (Entry<String, Controller> entrySet : controllers.entrySet()) {
+            handlerExecutions.put(entrySet.getKey(), new ManualHandlerExecution(entrySet.getValue()));
         }
     }
 
