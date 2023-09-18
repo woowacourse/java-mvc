@@ -78,7 +78,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     final String requestURI = request.getRequestURI();
     final String method = request.getMethod();
 
-    final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.find(method));
+    final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
 
     return handlerExecutions.get(handlerKey);
   }
