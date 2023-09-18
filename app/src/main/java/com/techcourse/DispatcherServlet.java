@@ -45,13 +45,32 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Optional<Object> findHandler = handlerMappings.stream()
+                    .map(handlerMapping -> handlerMapping.getHandler(request))
+                    .filter(Objects::nonNull)
+                    .findFirst();
+            if (findHandler.isEmpty()) {
+                response.setStatus(404);
+                return;
+            }
+            Object handler = findHandler.get();
+
+            Optional<HandlerAdapter> findAdapter = handlerAdapters.stream()
+                    .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                    .findFirst();
+            if (findAdapter.isEmpty()) {
+                response.setStatus(404);
+                return;
+            }
+            HandlerAdapter adapter = findAdapter.get();
+            ModelAndView modelAndView = adapter.handle(handler, request, response);
+
+            View view = modelAndView.getView();
+            Map<String, Object> model = modelAndView.getModel();
+            view.render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
