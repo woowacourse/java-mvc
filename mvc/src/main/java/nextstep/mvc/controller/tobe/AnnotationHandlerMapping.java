@@ -48,6 +48,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     final HandlerExecution handlerExecution = HandlerExecution.of(controllerInstance, requestMappingMethod);
 
                     handlerExecutions.put(handlerKey, handlerExecution);
+                    log.info("Path : {}, Controller : {}", httpRequestURI, controller.getName());
                 }
             }
         }
