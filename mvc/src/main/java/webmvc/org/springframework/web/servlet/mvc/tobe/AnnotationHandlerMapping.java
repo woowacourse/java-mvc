@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             addHandlerWithMethod(controllerClass);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException e) {
-            throw new AnnotationHandlerMappingException(e.getClass().getSimpleName());
+            throw new HandlerReflectionException(e.getClass().getSimpleName());
         }
     }
 
