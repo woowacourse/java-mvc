@@ -37,7 +37,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Class<?> controller : controllers) {
             List<Method> requestMappingMethods = getRequestMappingMethods(controller);
             Constructor<?> constructor = getConstructor(controller);
-            addHandlerExecutions(requestMappingMethods, constructor);
+            Object instance = makeInstance(constructor);
+            addHandlerExecutions(requestMappingMethods, instance);
         }
     }
 
@@ -56,18 +57,27 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void addHandlerExecutions(List<Method> requestMappingMethods, Constructor<?> constructor) {
+    private void addHandlerExecutions(List<Method> requestMappingMethods, Object instance) {
         for (Method requestMappingMethod : requestMappingMethods) {
             RequestMapping requestMapping = requestMappingMethod.getAnnotation(RequestMapping.class);
-            RequestMethod[] controllergMethods = requestMapping.method();
-            List<HandlerKey> handlerKeys = makeHandlerKeys(requestMapping, controllergMethods);
-            putHandlerExecutions(constructor, requestMappingMethod, handlerKeys);
+            RequestMethod[] controllerMethods = requestMapping.method();
+            List<HandlerKey> handlerKeys = makeHandlerKeys(requestMapping, controllerMethods);
+            putHandlerExecutions(instance, requestMappingMethod, handlerKeys);
         }
     }
 
-    private void putHandlerExecutions(Constructor<?> constructor, Method requestMappingMethod, List<HandlerKey> handlerKeys) {
+    private Object makeInstance(Constructor<?> constructor) {
+        try {
+            return constructor.newInstance();
+        } catch (Exception e) {
+            log.debug("fail make to instance");
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void putHandlerExecutions(Object instance, Method requestMappingMethod, List<HandlerKey> handlerKeys) {
         for (HandlerKey handlerKey : handlerKeys) {
-            handlerExecutions.put(handlerKey, new HandlerExecution(requestMappingMethod, constructor));
+            handlerExecutions.put(handlerKey, new HandlerExecution(requestMappingMethod, instance));
         }
     }
 
