@@ -19,10 +19,9 @@ public class HandlerMappings implements HandlerMapping {
 
   @Override
   public Object getHandler(final HttpServletRequest httpServletRequest) {
-    for (final HandlerMapping handlerMapping : handlerMappings) {
-      return handlerMapping.getHandler(httpServletRequest);
-    }
-
-    throw new IllegalArgumentException("요청을 처리할 수 있는 Handler가 존재하지 않습니다.");
+    return handlerMappings.stream()
+        .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 있는 Handler가 존재하지 않습니다."));
   }
 }
