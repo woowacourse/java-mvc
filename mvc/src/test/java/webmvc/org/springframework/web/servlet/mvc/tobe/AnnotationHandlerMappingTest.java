@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,8 +34,8 @@ class AnnotationHandlerMappingTest {
         given(request.getMethod()).willReturn("GET");
 
         // when
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final Handler handler = handlerMapping.getHandler(request);
+        final ModelAndView modelAndView = handler.handle(request, response);
 
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -52,8 +53,8 @@ class AnnotationHandlerMappingTest {
         given(request.getMethod()).willReturn("POST");
 
         // when
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final Handler handler = handlerMapping.getHandler(request);
+        final var modelAndView = handler.handle(request, response);
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -71,8 +72,8 @@ class AnnotationHandlerMappingTest {
         given(request.getMethod()).willReturn("POST");
 
         // when
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final Handler handler = handlerMapping.getHandler(request);
+        final var modelAndView = handler.handle(request, response);
 
         // then
         assertThat(modelAndView.getView())

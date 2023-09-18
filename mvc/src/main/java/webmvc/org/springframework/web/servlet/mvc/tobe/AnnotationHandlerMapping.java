@@ -1,6 +1,5 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
@@ -13,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,10 +25,11 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         defaultHandlerExecution = makeDefaultHandlerExecution();
         final Reflections reflections = new Reflections(basePackage);
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
+        for (Class<?> clazz : reflections.getTypesAnnotatedWith(context.org.springframework.stereotype.Controller.class)) {
             putHandlerMethodPerClass(clazz);
         }
         log.info("Initialized AnnotationHandlerMapping!");
@@ -84,10 +84,12 @@ public class AnnotationHandlerMapping {
         return requestMethods;
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Handler getHandler(final HttpServletRequest request) {
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.getOrDefault(handlerKey, defaultHandlerExecution);
+
+        return new AnnotationHandler(handlerExecutions.getOrDefault(handlerKey, defaultHandlerExecution));
     }
 }
