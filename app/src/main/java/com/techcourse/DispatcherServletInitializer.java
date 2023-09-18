@@ -4,6 +4,9 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -12,12 +15,14 @@ import web.org.springframework.web.WebApplicationInitializer;
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
-
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+
+    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        initHandlerAdapters();
+        final var dispatcherServlet = new DispatcherServlet(handlerAdapters);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +34,10 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private void initHandlerAdapters() {
+        handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
+        handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 }

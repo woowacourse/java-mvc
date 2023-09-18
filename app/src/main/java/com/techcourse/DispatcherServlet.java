@@ -7,11 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +21,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(HandlerAdapters handlerAdapters) {
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
     public void init() {
         initHandlerMappings();
-        initHandlerAdapters();
     }
 
     private void initHandlerMappings() {
@@ -43,11 +42,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(annotationHandlerMapping);
     }
 
-    private void initHandlerAdapters() {
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
-    }
-
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
@@ -55,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(request);
-            HandlerAdapter adapter = getHandlerAdapter(request, response, handler);
+            HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
             render(request, response, handler, adapter);
 
         } catch (Throwable e) {
@@ -73,15 +67,6 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         throw new ServletException("Not found handler for request URI : " + request.getRequestURI());
-    }
-
-    private HandlerAdapter getHandlerAdapter(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new ServletException("Not found handler adapter for handler : " + handler);
     }
 
     private void render(HttpServletRequest request, HttpServletResponse response, Object handler, HandlerAdapter adapter) throws Exception {
