@@ -19,7 +19,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final int REQUEST_INDEX = 0;
@@ -33,11 +33,11 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Set<Class<?>> controllerClasses = findClassesAnnotatedController();
 
         initializeHandlerExecutions(controllerClasses);
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -102,6 +102,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
