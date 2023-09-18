@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -26,13 +27,12 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
 
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
-            Object instance = controller.getDeclaredConstructor().newInstance();
+            Object instance = getInstance(controller);
             Method[] methods = controller.getDeclaredMethods();
 
             Arrays.stream(methods)
@@ -40,6 +40,21 @@ public class AnnotationHandlerMapping {
                     .forEach(method -> addHandlerExecutions(instance, method));
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private Object getInstance(final Class<?> clazz) {
+        try {
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            return constructor.newInstance();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("해당하는 생성자를 찾을 수 없습니다.", e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException("해당하는 인스턴스를 만들 수 없습니다.", e);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException("해당하는 인스턴스를 만들 수 없습니다.", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("해당하는 인스턴스를 만들 수 없습니다.", e);
+        }
     }
 
     private void addHandlerExecutions(Object target, Method method) {
@@ -52,7 +67,7 @@ public class AnnotationHandlerMapping {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
-
+    
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
