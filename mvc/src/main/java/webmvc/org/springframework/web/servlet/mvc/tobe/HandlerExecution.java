@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
 
@@ -15,9 +16,9 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public Object handle(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            return method.invoke(object, request, response);
+            return (ModelAndView) method.invoke(object, request, response);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

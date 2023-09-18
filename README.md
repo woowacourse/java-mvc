@@ -22,5 +22,6 @@
 - HandlerExecution, Controller 의 반환 타입이 다르다.
   - Controller 의 반환 타입을 Object로 바꿔도 되는가?
   - 이미 배포된 Interface라면, 바꾸면 안 되는 것 아닌가?
+  - > 바꿔도 상관없다. Object니까. 최고 조상 클래스!
 
 - DispatcherServlet 에게 HandlerMapping 을 누가 건네주는가?
