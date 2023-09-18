@@ -8,11 +8,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
                 new AnnotationHandlerMapping("com.techcourse.controller")
         ));
         this.handlerAdapters = new HandlerAdapters(List.of(
-                new ManualHandlerAdapter(),
+                new ControllerHandlerAdapter(),
                 new HandlerExecutionAdapter()
         ));
     }
