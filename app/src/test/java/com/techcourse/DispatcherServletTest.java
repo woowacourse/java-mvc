@@ -5,6 +5,8 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,8 +24,18 @@ import static org.mockito.Mockito.when;
 
 public class DispatcherServletTest {
 
-    private final MockedStatic<UserSession> userSession = mockStatic(UserSession.class);
+    private static MockedStatic<UserSession> userSession;
     private final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+
+    @BeforeAll
+    static void sessionInit() {
+        userSession = mockStatic(UserSession.class);
+    }
+
+    @AfterAll
+    static void sessionClose() {
+        userSession.close();
+    }
 
     @BeforeEach
     void servletInit() {
