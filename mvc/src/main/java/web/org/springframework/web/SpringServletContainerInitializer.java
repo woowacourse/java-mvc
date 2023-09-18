@@ -35,7 +35,11 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
         }
 
         for (WebApplicationInitializer initializer : initializers) {
-            initializer.onStartup(servletContext);
+            try {
+                initializer.onStartup(servletContext);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
