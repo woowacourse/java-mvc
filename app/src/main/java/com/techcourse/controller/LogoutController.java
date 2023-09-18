@@ -2,8 +2,13 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
+@context.org.springframework.stereotype.Controller
 public class LogoutController implements Controller {
 
     @Override
@@ -11,5 +16,11 @@ public class LogoutController implements Controller {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return "redirect:/";
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        String path = execute(req, res);
+        return new ModelAndView(new JspView(path));
     }
 }
