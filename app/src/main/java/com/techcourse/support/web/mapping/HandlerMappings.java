@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
@@ -23,15 +24,11 @@ public class HandlerMappings {
     }
 
     public Object getController(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : mappings) {
-            Object handler = handlerMapping.getHandler(request);
-
-            if (handler != null) {
-                return handler;
-            }
-        }
-
-        throw new NoSuchElementException("요청을 처리할 수 있는 컨트롤러가 존재하지 않습니다.");
+        return mappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("요청을 처리할 수 있는 컨트롤러가 존재하지 않습니다."));
     }
 
 }
