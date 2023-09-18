@@ -1,6 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.exception.HandlerMapperNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +19,15 @@ public class HandlerMappers {
         handlerMappings.forEach(HandlerMapper::initialize);
     }
 
-    public void addHandlerMapping(final HandlerMapper handlerMapping) {
+    public void addHandlerMapper(final HandlerMapper handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Object findHandlerMapper(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new HandlerMapperNotFoundException(request.getMethod(), request.getRequestURI()));
     }
 }
