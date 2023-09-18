@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.exception.RequestMethodNotValidException;
 
 public class AnnotationHandlerMapping {
 
@@ -61,10 +62,12 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         final String servletPath = request.getRequestURI();
-        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
-        final HandlerKey handlerKey = new HandlerKey(servletPath, requestMethod);
-
-        return handlerExecutions.get(handlerKey);
+        try {
+            final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+            final HandlerKey handlerKey = new HandlerKey(servletPath, requestMethod);
+            return handlerExecutions.get(handlerKey);
+        } catch (final IllegalArgumentException e) {
+            throw new RequestMethodNotValidException();
+        }
     }
 }

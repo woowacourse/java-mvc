@@ -17,7 +17,7 @@ public class HandlerExecution {
         try {
             this.object = method.getDeclaringClass().getConstructor().newInstance();
         } catch (final Exception e) {
-            throw new IllegalArgumentException(OBJECT_NOT_INITIALIZE_EXCEPTION_MESSAGE);
+            throw new
         }
     }
 
