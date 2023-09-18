@@ -7,8 +7,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -17,6 +23,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -27,6 +34,10 @@ public class DispatcherServlet extends HttpServlet {
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse.controller")
         ));
+        this.handlerAdapters = new HandlerAdapters(List.of(
+                new ManualHandlerAdapter(),
+                new HandlerExecutionAdapter()
+        ));
     }
 
     @Override
@@ -36,21 +47,15 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = handlerMappings.getHandler(request);
-//            final var viewName = controller.execute(request, response);
-//            move(viewName, request, response);
+            final var modelAndView = handlerAdapters.handle(request, response, handler);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
