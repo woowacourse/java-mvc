@@ -37,11 +37,17 @@ public class AnnotationHandlerMapping {
     }
 
     private void putHandlerExecutions(final Class<?> clazz) {
-        final List<Method> methods = processMethodsBy(clazz);
+        try {
+            final List<Method> methods = processMethodsBy(clazz);
 
-        for (final Method method : methods) {
-            final List<HandlerKey> handlerKeys = processHandlerKeysBy(method);
-            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(clazz, method)));
+            final Object instance = clazz.getDeclaredConstructor().newInstance();
+
+            for (final Method method : methods) {
+                final List<HandlerKey> handlerKeys = processHandlerKeysBy(method);
+                handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(instance, method)));
+            }
+        } catch (Exception ex) {
+            log.error("error : {}", ex);
         }
     }
 
