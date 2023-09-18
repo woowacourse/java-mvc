@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -23,12 +26,17 @@ public class DispatcherServlet extends HttpServlet {
             new AnnotationHandlerMapping()
     );
 
+    private final HandlerAdapters adapters;
+
+
     public DispatcherServlet() {
+        this.adapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
         handlerMappings.forEach(HandlerMapping::initialize);
+        adapters.init();
     }
 
     @Override
@@ -38,8 +46,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Controller controller = (Controller) findHandler(request);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final HandlerAdapter adapter = adapters.findAdapter(controller);
+            final ModelAndView modelAndView = adapter.handle(controller, request, response);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -54,8 +63,12 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new IllegalStateException("Handler Not Found"));
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    private void move(
+            final ModelAndView modelAndView,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        final String viewName = modelAndView.getViewName();
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
