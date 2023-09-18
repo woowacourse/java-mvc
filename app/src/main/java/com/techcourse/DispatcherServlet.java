@@ -2,8 +2,8 @@ package com.techcourse;
 
 import com.techcourse.support.mvc.adapter.HandlerAdapters;
 import com.techcourse.support.mvc.adapter.ManualHandlerAdapter;
-import com.techcourse.support.mvc.handler.HandlerMapper;
-import com.techcourse.support.mvc.handler.ManualHandlerMapping;
+import com.techcourse.support.mvc.handler.HandlerMappers;
+import com.techcourse.support.mvc.handler.ManualHandlerMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.AnnotationHandlerMapper;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -22,11 +22,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String TECH_COURSE_BASE_PACKAGES = "com.techcourse";
 
-    private final HandlerMapper handlerMapper;
+    private final HandlerMappers handlerMappers;
     private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
-        handlerMapper = new HandlerMapper();
+        handlerMappers = new HandlerMappers();
         handlerAdapters = new HandlerAdapters();
     }
 
@@ -35,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         addInitHandlerMappings();
         addInitHandlerAdapters();
         try {
-            handlerMapper.init();
+            handlerMappers.init();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -43,8 +43,8 @@ public class DispatcherServlet extends HttpServlet {
 
 
     private void addInitHandlerMappings() {
-        handlerMapper.addHandlerMapping(new AnnotationHandlerMapping(TECH_COURSE_BASE_PACKAGES));
-        handlerMapper.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappers.addHandlerMapping(new AnnotationHandlerMapper(TECH_COURSE_BASE_PACKAGES));
+        handlerMappers.addHandlerMapping(new ManualHandlerMapper());
     }
 
     private void addInitHandlerAdapters() {
@@ -56,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = handlerMapper.getHandler(request);
+            Object handler = handlerMappers.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 

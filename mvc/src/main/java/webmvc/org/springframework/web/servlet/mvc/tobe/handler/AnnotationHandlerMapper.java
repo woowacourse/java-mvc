@@ -16,14 +16,14 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
 
-public class AnnotationHandlerMapping implements HandlerMapping {
+public class AnnotationHandlerMapper implements HandlerMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapper.class);
 
     private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackages) {
+    public AnnotationHandlerMapper(final Object... basePackages) {
         this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }

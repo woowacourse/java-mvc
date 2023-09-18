@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.asis.MvcController;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapper;
 
-public class ManualHandlerMapping implements HandlerMapping {
+public class ManualHandlerMapper implements HandlerMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapper.class);
 
     private static final Map<String, MvcController> controllers = new HashMap<>();
 
