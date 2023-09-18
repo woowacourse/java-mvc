@@ -1,13 +1,16 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 /**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
+ * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
+ * servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
@@ -17,7 +20,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        List<HandlerMapping> handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        final var dispatcherServlet = new DispatcherServlet(handlerMappings);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

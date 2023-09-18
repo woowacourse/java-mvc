@@ -11,10 +11,16 @@
 ### 2 단계 : Legacy MVC와 @MVC 통합
 ![diagram.png](diagram.png)
 
-- [ ] HandlerMapping 추가
-  - [ ] AnnotationHandlerMapping, ManualHandlerMapping 추상화
-  - [ ] DispatcherServlet 의존성 변경
+- [x] HandlerMapping 추가
+  - [x] AnnotationHandlerMapping, ManualHandlerMapping 추상화
+  - [x] DispatcherServlet 의존성 변경
 
-- [ ] Adaptor 추가
-  - [ ] Controller, HandlerExecution 연결
+- [x] Adaptor 추가
+  - [x] Controller, HandlerExecution 연결
 
+고민 혹은 궁금증
+- HandlerExecution, Controller 의 반환 타입이 다르다.
+  - Controller 의 반환 타입을 Object로 바꿔도 되는가?
+  - 이미 배포된 Interface라면, 바꾸면 안 되는 것 아닌가?
+
+- DispatcherServlet 에게 HandlerMapping 을 누가 건네주는가?

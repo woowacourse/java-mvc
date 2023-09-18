@@ -45,9 +45,9 @@ class HandlerExecutionTest {
         HandlerExecution handlerExecution = new HandlerExecution(object, method);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        
+
         // when
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
