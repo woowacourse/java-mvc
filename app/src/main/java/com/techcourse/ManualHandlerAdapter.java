@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import com.techcourse.controller.Controller;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class ManualHandlerAdapter implements HandlerAdapter {
@@ -16,8 +16,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(final Object handler, final HttpServletRequest request,
-                               final HttpServletResponse response) {
+    public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) {
         Controller controller = (Controller) handler;
         String viewName = controller.execute(request, response);
 
