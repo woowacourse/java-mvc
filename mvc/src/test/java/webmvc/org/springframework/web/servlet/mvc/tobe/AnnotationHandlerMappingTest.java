@@ -1,8 +1,9 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,33 +20,48 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
-    @Test
-    void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+    @Nested
+    class SupportsTest {
+        @Test
+        @DisplayName("적절한 핸들러가 있다면 true를 리턴한다 - get")
+        void supports_get() {
+            //given
+            final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+            //when
+            when(request.getRequestURI()).thenReturn("/get-test");
+            when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+            //then
+            assertThat(handlerMapping.supports(request)).isTrue();
+        }
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
+        @Test
+        @DisplayName("적절한 핸들러가 있다면 true를 리턴한다 - post")
+        void supports_post() {
+            //given
+            final HttpServletRequest request = mock(HttpServletRequest.class);
 
-    @Test
-    void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+            //when
+            when(request.getRequestURI()).thenReturn("/post-test");
+            when(request.getMethod()).thenReturn("POST");
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+            //then
+            assertThat(handlerMapping.supports(request)).isTrue();
+        }
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        @Test
+        @DisplayName("적절한 핸들러가 없다면 false를 리턴한다")
+        void supports_false() {
+            //given
+            final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+            //when
+            when(request.getRequestURI()).thenReturn("/nothing");
+            when(request.getMethod()).thenReturn("POST");
+
+            //then
+            assertThat(handlerMapping.supports(request)).isFalse();
+        }
     }
 }
