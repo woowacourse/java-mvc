@@ -14,6 +14,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -28,12 +29,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
-        for (final HandlerMapping handlerMapping : handlerMappings) {
-            handlerMapping.initialize();
-        }
-
-        handlerAdapters = List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter());
+        handlerMappings = List.of(new AnnotationHandlerMapping("com.techcourse"), new ManualHandlerMapping());
+        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerAdapters = List.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter());
     }
 
     @Override
@@ -45,33 +43,29 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = getHandler(request);
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final Object result = handlerAdapter.handle(request, response, handler);
-            move((String) result, request, response);
+            if (result instanceof String) {
+                move((String) result, request, response);
+            }
+
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object getHandler(final HttpServletRequest request) {
-        for (final HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        return null;
+    private Object getHandler(final HttpServletRequest request) throws ServletException {
+        return handlerMappings.stream()
+                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(request)))
+                .findFirst()
+                .orElseThrow(() -> new ServletException("No handler matches your request."));
     }
 
-    private HandlerAdapter getHandlerAdapter(final Object handler) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            final boolean isSupported = handlerAdapter.supports(handler);
-            if (isSupported) {
-                return handlerAdapter;
-            }
-        }
-        return null;
+    private HandlerAdapter getHandlerAdapter(final Object handler) throws ServletException {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new ServletException("No handler Adapter matches your request."));
     }
-
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
