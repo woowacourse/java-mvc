@@ -27,6 +27,6 @@ public class HandlerMappings {
 			.map(handlerMapping -> handlerMapping.getHandler(request))
 			.filter(Objects::nonNull)
 			.findAny()
-			.orElseThrow(() -> new IllegalArgumentException("요청에 맞는 Hanlder가 없습니다."));
+			.orElseThrow(() -> new IllegalArgumentException("요청에 맞는 Handler가 없습니다."));
 	}
 }

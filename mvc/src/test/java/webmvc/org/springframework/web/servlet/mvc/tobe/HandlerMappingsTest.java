@@ -55,6 +55,6 @@ class HandlerMappingsTest {
 		// when & then
 		assertThatThrownBy(() -> handlerMappings.getHandler(request))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("요청에 맞는 Hanlder가 없습니다.");
+			.hasMessage("요청에 맞는 Handler가 없습니다.");
 	}
 }
