@@ -49,21 +49,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = handlerMappings.stream()
-                    .map(handlerMapping -> handlerMapping.getHandler(request))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow(() -> new HandlerNotFoundException(
-                            "해당하는 Handler를 찾을 수 없습니다."
-                                    + " URI : " + request.getMethod()
-                                    + " METHOD : " + request.getMethod()));
-
-            HandlerAdapter adapter = handlerAdapters.stream()
-                    .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                    .findFirst()
-                    .orElseThrow(() -> new HandlerAdapterNotFoundException(
-                            "해당 Handler를 처리할 수 있는 HandlerAdapter를 찾을 수 없습니다."
-                    ));
+            Object handler = getHandler(request);
+            HandlerAdapter adapter = getAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(handler, request, response);
 
@@ -77,5 +64,25 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(final HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new HandlerNotFoundException(
+                        "해당하는 Handler를 찾을 수 없습니다."
+                                + " URI : " + request.getMethod()
+                                + " METHOD : " + request.getMethod()));
+    }
+
+    private HandlerAdapter getAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new HandlerAdapterNotFoundException(
+                        "해당 Handler를 처리할 수 있는 HandlerAdapter를 찾을 수 없습니다."
+                ));
     }
 }
