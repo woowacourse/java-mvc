@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -20,7 +20,6 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
-
 
     public void initialize() {
         getAnnotatedClasses().forEach(this::registerMethods);
