@@ -40,6 +40,9 @@ public class JspView implements View {
     }
 
     public String getViewName() {
+        if (!isRedirectView()) {
+            return viewName;
+        }
         return viewName.split(REDIRECT_PREFIX)[1];
     }
 
