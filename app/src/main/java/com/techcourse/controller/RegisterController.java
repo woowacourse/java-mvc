@@ -17,19 +17,18 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView render(final HttpServletRequest req, final HttpServletResponse res) {
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView render(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("register.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
+        final String account = request.getParameter("account");
+        final String password = request.getParameter("password");
+        final String email = request.getParameter("email");
 
-        final String account = req.getParameter("account");
-        final String password = req.getParameter("password");
-        final String email = req.getParameter("email");
-
-        log.info("");
+        log.info("Register User: accout={}, email={}", account, email);
 
         final var user = new User(2,
                 account,
