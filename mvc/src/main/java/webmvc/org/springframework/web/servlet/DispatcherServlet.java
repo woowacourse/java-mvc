@@ -20,6 +20,20 @@ public class DispatcherServlet extends HttpServlet {
 
     private final transient List<HandlerMapping> handlerMappings;
 
+    public static InitBuilder Builder() {
+        return new InitBuilder();
+    }
+
+    public static class InitBuilder {
+
+        public InitBuilder() {
+        }
+
+        public Builder addHandlerMapping(final HandlerMapping handlerMapping) {
+            return new Builder().addHandlerMapping(handlerMapping);
+        }
+    }
+
     public static class Builder {
 
         private final List<HandlerMapping> handlerMappings;
@@ -34,7 +48,6 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         public DispatcherServlet build() {
-            //todo: handlerMapping이 암것도 안들어온다면?
             return new DispatcherServlet(this);
         }
 
@@ -73,7 +86,11 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "요청을 처리할 수 있는 Handler를 찾을 수 없습니다!: "
+                        + request.getMethod() + " "
+                        + request.getRequestURI())
+                );
     }
 
     private void resolveView(final ModelAndView modelAndView, final HttpServletRequest request,
