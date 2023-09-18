@@ -37,21 +37,21 @@ public class AnnotationHandlerMapping {
     }
 
     private void putHandlerExecutions(final Class<?> clazz) {
-        final List<Method> methods = getMethods(clazz);
+        final List<Method> methods = processMethodsBy(clazz);
 
         for (final Method method : methods) {
-            final List<HandlerKey> handlerKeys = calculateHandlerKeys(method);
+            final List<HandlerKey> handlerKeys = processHandlerKeysBy(method);
             handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(clazz, method)));
         }
     }
 
-    private static List<Method> getMethods(final Class<?> controllerClass) {
+    private static List<Method> processMethodsBy(final Class<?> controllerClass) {
         return Arrays.stream(controllerClass.getDeclaredMethods())
                      .filter(clazz -> clazz.isAnnotationPresent(RequestMapping.class))
                      .collect(Collectors.toList());
     }
 
-    private List<HandlerKey> calculateHandlerKeys(final Method method) {
+    private List<HandlerKey> processHandlerKeysBy(final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String value = requestMapping.value();
         return Arrays.stream(requestMapping.method())
