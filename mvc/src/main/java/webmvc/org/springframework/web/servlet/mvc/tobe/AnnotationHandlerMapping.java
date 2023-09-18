@@ -2,7 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +12,9 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.util.ReflectionUtils;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -36,18 +36,8 @@ public class AnnotationHandlerMapping {
     }
 
     private void instantiateAndStore(Class<?> clazz) {
-        try {
-            Object handler = instantiateHandler(clazz);
-            storeAnnotatedHandlers(clazz, handler);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException e) {
-            throw new SpringInitializationException("AnnotationHandlerMapping 초기화에 실패했습니다.");
-        }
-    }
-
-    private Object instantiateHandler(Class<?> clazz)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return ReflectionUtils.accessibleConstructor(clazz).newInstance();
+        Object handler = ReflectionUtils.instantiate(clazz);
+        storeAnnotatedHandlers(clazz, handler);
     }
 
     private void storeAnnotatedHandlers(Class<?> clazz, Object handler) {
@@ -72,7 +62,8 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(
                 new HandlerKey(request.getRequestURI(),
                         RequestMethod.resolve(request.getMethod())));

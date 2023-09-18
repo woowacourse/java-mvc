@@ -1,6 +1,7 @@
 package webmvc.org.springframework.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
 /**
@@ -8,7 +9,16 @@ import java.lang.reflect.Modifier;
  */
 public class ReflectionUtils {
 
-    public static <T> Constructor<T> accessibleConstructor(Class<T> clazz, Class<?>... parameterTypes)
+    public static <T> Object instantiate(Class<T> clazz) {
+        try {
+            return ReflectionUtils.accessibleConstructor(clazz).newInstance();
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
+            throw new ReflectionUtilsException();
+        }
+    }
+
+    private static <T> Constructor<T> accessibleConstructor(Class<T> clazz, Class<?>... parameterTypes)
             throws NoSuchMethodException {
 
         Constructor<T> ctor = clazz.getDeclaredConstructor(parameterTypes);
@@ -17,7 +27,6 @@ public class ReflectionUtils {
     }
 
     private static void makeAccessible(Constructor<?> ctor) {
-        // TODO: Deprecated 메서드 사용 변경
         if ((!Modifier.isPublic(ctor.getModifiers()) ||
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);
