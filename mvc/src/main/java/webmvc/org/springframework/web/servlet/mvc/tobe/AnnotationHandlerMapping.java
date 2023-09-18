@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -41,7 +41,16 @@ public class AnnotationHandlerMapping {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : annotation.method()) {
             final var handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(method, createHandlerInstance(method)));
+        }
+    }
+
+    private Object createHandlerInstance(Method method) {
+        try {
+            return method.getDeclaringClass().getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e); // TODO: 2023/09/15 expcetion 처리
+
         }
     }
 
