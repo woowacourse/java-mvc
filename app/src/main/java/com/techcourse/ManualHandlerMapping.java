@@ -17,7 +17,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
-
     private static final Map<String, Controller> controllers = new HashMap<>();
 
     @Override
