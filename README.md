@@ -9,5 +9,6 @@
   - [x] ManualHandlerMapping과 AnnotationHandlerMapping 추상화하기
   - [x] HandlerAdaptor 구현하기
   - [x] 어노테이션 controller 지원
+  - [x] handler가 없는 요청이면 404페이지 반환하기
 ## 리팩토링 목록
 - [x] Method 실행 시 불필요한 Controller 인스턴스 생성 제거

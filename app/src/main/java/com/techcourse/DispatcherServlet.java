@@ -4,9 +4,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptor;
@@ -14,8 +17,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptorFinder;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 import webmvc.org.springframework.web.servlet.view.JspView;
-
-import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -55,6 +56,8 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdaptor handlerAdaptor = handlerAdaptorFinder.find(handler);
             final ModelAndView modelAndView = handlerAdaptor.handle(request, response, handler);
             move(modelAndView, request, response);
+        } catch (HandlerNotFoundException e) {
+            renderNotFoundPage(response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -70,5 +73,15 @@ public class DispatcherServlet extends HttpServlet {
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    private void renderNotFoundPage(final HttpServletResponse response) {
+        try {
+            final String notFoundViewName = "/404.jsp";
+            response.sendRedirect(notFoundViewName);
+        } catch (IOException e) {
+            throw new RuntimeException("존재하지 않는 404페이지 입니다.");
+        }
+
     }
 }
