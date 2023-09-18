@@ -6,19 +6,13 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 
-    private final Object handler;
-
-    public AnnotationHandlerAdapter(Object handler) {
-        this.handler = handler;
-    }
-
     @Override
     public boolean supports(Object handler) {
         return handler instanceof HandlerExecution;
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
         return ((HandlerExecution) handler).handle(request, response);
     }
 }
