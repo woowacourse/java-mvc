@@ -29,11 +29,12 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
 
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClasses.forEach(this::makeHandlerExecutions);
+
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void makeHandlerExecutions(final Class<?> controller) {
@@ -43,7 +44,7 @@ public class AnnotationHandlerMapping {
         for (Method method : requestMethods) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping);
-            final HandlerExecution handlerExecution = getHandlerExecution(instance, method);
+            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
 
             addHandlerExecution(handlerKeys, handlerExecution);
         }
@@ -71,10 +72,6 @@ public class AnnotationHandlerMapping {
         return Arrays.stream(methods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .collect(Collectors.toList());
-    }
-
-    private HandlerExecution getHandlerExecution(final Object instance, final Method method) {
-        return new HandlerExecution(instance, method);
     }
 
     private void addHandlerExecution(final List<HandlerKey> handlerKeys, final HandlerExecution handlerExecution) {
