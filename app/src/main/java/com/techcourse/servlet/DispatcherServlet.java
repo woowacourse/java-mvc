@@ -1,7 +1,7 @@
 package com.techcourse.servlet;
 
 import com.techcourse.servlet.adaptor.HandlerAdaptorScanner;
-import com.techcourse.servlet.handler.ManualHandlerMapping;
+import com.techcourse.servlet.handler.HandlerScanner;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,25 +10,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
     private HandlerAdaptorScanner handlerAdaptorScanner;
+    private HandlerScanner handlerScanner;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com");
+        handlerScanner = new HandlerScanner("com");
         handlerAdaptorScanner = new HandlerAdaptorScanner();
     }
 
@@ -37,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = manualHandlerMapping.getHandler(request);
+            final var controller = handlerScanner.getHandler(request);
             final var handlerAdaptor = handlerAdaptorScanner.getHandlerAdaptor(controller);
             final var viewName = handlerAdaptor.handle(controller, request, response);
             move(viewName, request, response);

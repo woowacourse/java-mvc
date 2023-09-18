@@ -38,6 +38,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return handlerExecutions.get(targetKey);
         }
 
-        return new IllegalArgumentException("처리 할 수 없는 요청 입니다.");
+        return null;
     }
 }
