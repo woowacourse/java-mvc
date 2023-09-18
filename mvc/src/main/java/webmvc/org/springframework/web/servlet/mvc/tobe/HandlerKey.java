@@ -1,8 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import web.org.springframework.web.bind.annotation.RequestMethod;
-
 import java.util.Objects;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
 
@@ -17,9 +16,9 @@ public class HandlerKey {
     @Override
     public String toString() {
         return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
+            "url='" + url + '\'' +
+            ", requestMethod=" + requestMethod +
+            '}';
     }
 
     @Override
