@@ -28,8 +28,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
   @Override
   public void initialize() {
-    log.info("Initialized AnnotationHandlerMapping!");
-
     final Reflections reflections = new Reflections(basePackages);
 
     final Set<Class<?>> controllerAnnotationClasses =
@@ -43,6 +41,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
           .filter(method -> method.isAnnotationPresent(RequestMapping.class))
           .forEach(method -> putHandlerExecutions(method, instance));
     }
+
+    log.info("Initialized AnnotationHandlerMapping!");
+
+    handlerExecutions.keySet()
+        .forEach(handlerKey -> log.info("handlerKey : {}, Controller : {}", handlerKey,
+            handlerExecutions.get(handlerKey)));
   }
 
   private Object getControllerInstance(final Class<?> controllerAnnotationClass) {

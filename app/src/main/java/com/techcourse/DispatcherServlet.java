@@ -33,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
     handlerMappingComposite = new HandlerMappings(
         List.of(
             new ManualHandlerMapping(),
-            new AnnotationHandlerMapping()
+            new AnnotationHandlerMapping("com.techcourse")
         )
     );
     handlerMappingComposite.initialize();
@@ -70,7 +70,10 @@ public class DispatcherServlet extends HttpServlet {
       final HttpServletResponse response,
       final Object handleValue
   ) throws Exception {
-    if (handleValue instanceof ModelAndView) {}
+    if (handleValue instanceof ModelAndView) {
+      final ModelAndView modelAndView = (ModelAndView) handleValue;
+      move(modelAndView.getView().getName(), request, response);
+    }
 
     if (handleValue instanceof String) {
       final String viewName = (String) handleValue;

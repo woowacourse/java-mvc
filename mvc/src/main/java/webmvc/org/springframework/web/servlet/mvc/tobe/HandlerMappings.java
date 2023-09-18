@@ -2,7 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import java.util.Objects;
 
 public class HandlerMappings implements HandlerMapping {
 
@@ -21,7 +21,8 @@ public class HandlerMappings implements HandlerMapping {
   public Object getHandler(final HttpServletRequest httpServletRequest) {
     return handlerMappings.stream()
         .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
-        .findFirst()
+        .filter(Objects::nonNull)
+        .findAny()
         .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 있는 Handler가 존재하지 않습니다."));
   }
 }
