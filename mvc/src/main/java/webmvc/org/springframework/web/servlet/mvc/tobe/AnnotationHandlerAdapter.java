@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public class AnnotationHandlerAdaptor implements HandlerAdaptor {
+public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean support(Object handler) {

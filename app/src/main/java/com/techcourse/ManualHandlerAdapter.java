@@ -4,10 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class ManualHandlerAdaptor implements HandlerAdaptor {
+public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean support(Object handler) {

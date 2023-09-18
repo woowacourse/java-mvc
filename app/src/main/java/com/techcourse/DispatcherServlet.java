@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptorFinder;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
@@ -43,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdaptorFinder() {
-        handlerAdaptorFinder = new HandlerAdaptorFinder(List.of(new AnnotationHandlerAdaptor(), new ManualHandlerAdaptor()));
+        handlerAdaptorFinder = new HandlerAdaptorFinder(List.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter()));
     }
 
     @Override
@@ -53,8 +53,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = handlerMapping.getHandler(request);
-            final HandlerAdaptor handlerAdaptor = handlerAdaptorFinder.find(handler);
-            final ModelAndView modelAndView = handlerAdaptor.handle(request, response, handler);
+            final HandlerAdapter handlerAdapter = handlerAdaptorFinder.find(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             move(modelAndView, request, response);
         } catch (HandlerNotFoundException e) {
             renderNotFoundPage(response);
@@ -82,6 +82,5 @@ public class DispatcherServlet extends HttpServlet {
         } catch (IOException e) {
             throw new RuntimeException("존재하지 않는 404페이지 입니다.");
         }
-
     }
 }

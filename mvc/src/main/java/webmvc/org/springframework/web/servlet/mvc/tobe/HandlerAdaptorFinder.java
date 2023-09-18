@@ -4,15 +4,15 @@ import java.util.List;
 
 public class HandlerAdaptorFinder {
 
-    private final List<HandlerAdaptor> handlerAdaptors;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdaptorFinder(final List<HandlerAdaptor> handlerAdaptors) {
-        this.handlerAdaptors = handlerAdaptors;
+    public HandlerAdaptorFinder(final List<HandlerAdapter> handlerAdapters) {
+        this.handlerAdapters = handlerAdapters;
     }
 
-    public HandlerAdaptor find(final Object handler) {
-        return handlerAdaptors.stream()
-            .filter(handlerAdaptor -> handlerAdaptor.support(handler))
+    public HandlerAdapter find(final Object handler) {
+        return handlerAdapters.stream()
+            .filter(handlerAdapter -> handlerAdapter.support(handler))
             .findFirst()
             .orElseThrow();
     }
