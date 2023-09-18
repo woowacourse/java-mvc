@@ -8,14 +8,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -41,7 +38,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
@@ -55,7 +53,8 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(final ModelAndView modelAndView, final HttpServletRequest request,
+                      final HttpServletResponse response) throws Exception {
         modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
