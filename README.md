@@ -32,6 +32,7 @@
     - [ ] 실제로 `ManualHandlerMapping`과 `AnnotationHandlerMapping` 클래스를 모두 사용하게 만든다.
     - [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하도록 만든다.
         - [x] 동작 확인을 위해 회원가입 컨트롤러를 어노테이션 기반 컨트롤러로 변경한다.
-        - [ ] `DispatcherServlet`이 `AnnotationHandlerMapping`, `ManualHandlerMapping`을 모두 관리하도록 한다.
-        - [ ] `AnnotationHandlerMapping`을 먼저 확인한 뒤, 해당하는 컨트롤러가 없으면 `ManualHandlerMapping`을 찾도록 한다.
+        - [x] `DispatcherServlet`이 `AnnotationHandlerMapping`, `ManualHandlerMapping`을 모두 관리하도록 한다.
+        - [x] `AnnotationHandlerMapping`을 먼저 확인한 뒤, 해당하는 컨트롤러가 없으면 `ManualHandlerMapping`을 찾도록 한다.
+        - [ ] `ModelAndView`에서 사용하는 `JspView` 를 동작하게 만든다.
 

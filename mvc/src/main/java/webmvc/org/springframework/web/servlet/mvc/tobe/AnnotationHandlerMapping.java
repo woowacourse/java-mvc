@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class AnnotationHandlerMapping {
 
@@ -84,9 +85,9 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<HandlerExecution> getHandler(final HttpServletRequest request) {
         final var key = new HandlerKey(request.getRequestURI(), RequestMethod.find(request.getMethod()));
 
-        return handlerExecutions.get(key);
+        return Optional.ofNullable(handlerExecutions.get(key));
     }
 }
