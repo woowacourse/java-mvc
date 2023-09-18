@@ -9,37 +9,23 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.HandlerMapping;
-
-import java.util.ArrayList;
-import java.util.List;
+import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet(HandlerAdapters handlerAdapters) {
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters) {
+        this.handlerMappings = handlerMappings;
         this.handlerAdapters = handlerAdapters;
     }
 
     @Override
     public void init() {
-        initHandlerMappings();
-    }
-
-    private void initHandlerMappings() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping.initialize();
-
-        handlerMappings.add(manualHandlerMapping);
-        handlerMappings.add(annotationHandlerMapping);
     }
 
     @Override
@@ -48,9 +34,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = getHandler(request);
+            Object handler = handlerMappings.getHandler(request);
             HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
-            render(request, response, handler, adapter);
+            ModelAndView modelAndView = adapter.handle(request, response, handler);
+            render(request, response, modelAndView);
 
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -58,19 +45,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(HttpServletRequest request) throws ServletException {
-        Object handler = null;
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        throw new ServletException("Not found handler for request URI : " + request.getRequestURI());
-    }
-
-    private void render(HttpServletRequest request, HttpServletResponse response, Object handler, HandlerAdapter adapter) throws Exception {
-        ModelAndView modelAndView = adapter.handle(request, response, handler);
+    private static void render(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) throws Exception {
         modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
