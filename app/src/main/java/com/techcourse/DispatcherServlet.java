@@ -1,51 +1,83 @@
 package com.techcourse;
 
+import com.techcourse.adapter.ControllerHandlerMappingAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMappingAdapter;
+import com.techcourse.handler.ControllerHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        initHandlerMapping();
+        initHandlerAdapter();
+    }
+
+    private void initHandlerMapping() {
+        handlerMappings.add(new ControllerHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
+    }
+
+    private void initHandlerAdapter() {
+        handlerAdapters.add(new ControllerHandlerMappingAdapter());
+        handlerAdapters.add(new AnnotationHandlerMappingAdapter());
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
+            Object handler = findHandler(request);
+            HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private Object findHandler(HttpServletRequest httpServletRequest) {
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.getHandler(httpServletRequest) != null)
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("요청을 처리하기 위한 핸들러가 존재하지 않습니다."));
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("핸들러를 처리하기 위한 어댑터가 존재하지 않습니다."));
     }
 }
