@@ -82,12 +82,13 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    public boolean containsHandler(final HttpServletRequest request) {
+        final HandlerKey handlerKey = HandlerKey.from(request);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        final String url = request.getRequestURI();
-        final String requestMethod = request.getMethod();
-
-        final HandlerKey handlerKey = new HandlerKey(url, RequestMethod.from(requestMethod));
-
+        final HandlerKey handlerKey = HandlerKey.from(request);
         return handlerExecutions.get(handlerKey);
     }
 }
