@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import webmvc.org.springframework.web.servlet.HandlerMapping;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,6 +29,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
 
@@ -80,6 +82,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod method = RequestMethod.valueOf(request.getMethod());
