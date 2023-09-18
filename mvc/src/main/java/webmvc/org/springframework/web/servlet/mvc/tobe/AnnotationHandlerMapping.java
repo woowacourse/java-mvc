@@ -70,11 +70,10 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        HandlerKey foundKey = handlerExecutions.keySet().stream()
-                .filter(key -> key.equals(handlerKey))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("요청에 해당하는 메서드가 없습니다."));
-
-        return handlerExecutions.get(foundKey);
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        if (handlerExecution == null) {
+            throw new IllegalArgumentException("요청에 해당하는 메서드가 없습니다.");
+        }
+        return handlerExecution;
     }
 }
