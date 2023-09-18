@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.exception.HandlerExecutionNotInitializeException;
 
 public class HandlerExecution {
 
@@ -17,7 +18,7 @@ public class HandlerExecution {
         try {
             this.object = method.getDeclaringClass().getConstructor().newInstance();
         } catch (final Exception e) {
-            throw new
+            throw new HandlerExecutionNotInitializeException();
         }
     }
 
