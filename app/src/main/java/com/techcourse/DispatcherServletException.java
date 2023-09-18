@@ -1,10 +1,14 @@
 package com.techcourse;
 
+import jakarta.servlet.ServletException;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterException;
 
-public class DispatcherServletException extends RuntimeException {
+public class DispatcherServletException extends ServletException {
 
+    public DispatcherServletException(String message) {
+        super(message);
+    }
 
     public static class NotFoundHandlerAdapterException extends HandlerAdapterException {
 
