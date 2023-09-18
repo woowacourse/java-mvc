@@ -35,6 +35,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                   .forEach(this::putHandlers);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+        log.info("handler size: {}", handlerExecutions.size());
     }
 
     private void putHandlers(Method method) {
@@ -58,5 +59,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(
                 new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))
         );
+    }
+
+    public Map<HandlerKey, HandlerExecution> getHandlerExecutions() {
+        return handlerExecutions;
     }
 }
