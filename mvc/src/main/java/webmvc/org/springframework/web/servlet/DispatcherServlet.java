@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
@@ -80,20 +78,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private void resolveView(final ModelAndView modelAndView, final HttpServletRequest request,
                              final HttpServletResponse response) throws Exception {
-        //todo: 리다이렉트 구분..?
         final View view = modelAndView.getView();
         final Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
     }
-
-/*    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ServletException {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-    }*/
 }
