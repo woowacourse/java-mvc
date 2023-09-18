@@ -30,4 +30,7 @@
 - [ ] Legacy MVC와 @MVC 통합하기
     - [ ] 실제로 `ManualHandlerMapping`과 `AnnotationHandlerMapping` 클래스를 모두 사용하게 만든다.
     - [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하도록 만든다.
+        - [ ] `HandlerMapping` 인터페이스로 두 클래스를 추상화하고, 외부에서 주입받는다.
+        - [ ] `HandlerExecution`을 인터페이스로 추상화한다.
+        - [ ] 패키지는 어디에 두어야 할까?
 
