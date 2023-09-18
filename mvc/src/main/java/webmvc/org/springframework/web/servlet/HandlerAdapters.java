@@ -1,9 +1,8 @@
 package webmvc.org.springframework.web.servlet;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HandlerAdapters {
     private final List<HandlerAdapter> adapter = new ArrayList<>();
@@ -12,10 +11,11 @@ public class HandlerAdapters {
         adapter.add(handlerAdapter);
     }
 
-    public HandlerAdapter getAdaptor(final Object request) {
+    public HandlerAdapter getAdaptor(final Object handler) {
         return adapter.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(request))
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalStateException::new);
     }
 }
