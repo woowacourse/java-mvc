@@ -25,7 +25,7 @@ class HandlerMappingsTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final Optional<Object> handler = handlerMappings.findHandler(request);
+        final Optional<Object> handler = handlerMappings.findHandlerMapping(request);
 
         assertAll(
                 () -> assertThat(handler).isNotEmpty(),

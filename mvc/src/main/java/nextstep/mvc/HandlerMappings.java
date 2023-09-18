@@ -25,7 +25,7 @@ public class HandlerMappings {
         this.handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> findHandler(final HttpServletRequest httpServletRequest) {
+    public Optional<Object> findHandlerMapping(final HttpServletRequest httpServletRequest) {
         return handlerMappings.stream()
                 .map(it -> it.getHandler(httpServletRequest))
                 .filter(Objects::nonNull)
