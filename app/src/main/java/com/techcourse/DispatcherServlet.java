@@ -18,15 +18,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final transient ViewResolvers viewResolvers = new ViewResolvers();
-    private final transient HandlerMappings mappings = new HandlerMappings();
-    private final transient HandlerAdapters adapters = new HandlerAdapters();
+    private final transient ViewResolvers resolver = new ViewResolvers();
+    private final transient HandlerMappings mapping = new HandlerMappings();
+    private final transient HandlerAdapters adapter = new HandlerAdapters();
 
     @Override
     public void init() {
-        viewResolvers.initialize();
-        mappings.initialize();
-        adapters.initialize(viewResolvers);
+        resolver.initialize();
+        mapping.initialize();
+        adapter.initialize(resolver);
     }
 
     @Override
@@ -35,14 +35,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = mappings.getHandler(request);
+            final Object handler = mapping.getHandler(request);
 
             if (handler == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return ;
             }
 
-            final HandlerAdapter handlerAdapter = adapters.getHandlerAdapter(handler);
+            final HandlerAdapter handlerAdapter = adapter.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.execute(request, response, handler);
 
             move(modelAndView, request, response);

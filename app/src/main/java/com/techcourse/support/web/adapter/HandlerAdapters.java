@@ -7,18 +7,18 @@ import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
 public class HandlerAdapters {
 
-    private final List<HandlerAdapter> adapters = new ArrayList<>();
+    private final List<HandlerAdapter> adapter = new ArrayList<>();
 
     public void initialize(final ViewResolvers viewResolvers) {
         final HandlerAdapter manualHandlerMappingAdapter = new ManualHandlerMappingAdapter(viewResolvers);
         final HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        adapters.add(manualHandlerMappingAdapter);
-        adapters.add(annotationHandlerAdapter);
+        adapter.add(manualHandlerMappingAdapter);
+        adapter.add(annotationHandlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
-        for (final HandlerAdapter adapter : adapters) {
+        for (final HandlerAdapter adapter : adapter) {
             if (adapter.supports(handler)) {
                 return adapter;
             }

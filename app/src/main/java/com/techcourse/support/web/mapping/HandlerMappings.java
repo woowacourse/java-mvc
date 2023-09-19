@@ -8,7 +8,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class HandlerMappings {
 
-    private final List<HandlerMapping> mappings = new ArrayList<>();
+    private final List<HandlerMapping> mapping = new ArrayList<>();
 
     public void initialize() {
         final ManualHandlerMappingWrapper manualHandlerMapping = new ManualHandlerMappingWrapper();
@@ -17,13 +17,13 @@ public class HandlerMappings {
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
 
-        mappings.add(manualHandlerMapping);
-        mappings.add(annotationHandlerMapping);
+        mapping.add(manualHandlerMapping);
+        mapping.add(annotationHandlerMapping);
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        for (final HandlerMapping mapping : mappings) {
-            final Object handler = mapping.getHandler(request);
+        for (final HandlerMapping targetHandlerMapping : mapping) {
+            final Object handler = targetHandlerMapping.getHandler(request);
 
             if (handler != null) {
                 return handler;
