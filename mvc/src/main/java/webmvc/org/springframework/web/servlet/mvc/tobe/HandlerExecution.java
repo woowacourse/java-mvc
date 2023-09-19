@@ -20,4 +20,8 @@ public class HandlerExecution {
 
         return (ModelAndView) method.invoke(controller, request, response);
     }
+
+    public String getMethodName() {
+        return method.getName();
+    }
 }
