@@ -9,4 +9,8 @@ public class HandlerAdapterException extends RuntimeException {
     public HandlerAdapterException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public HandlerAdapterException(Throwable cause) {
+        super(cause);
+    }
 }

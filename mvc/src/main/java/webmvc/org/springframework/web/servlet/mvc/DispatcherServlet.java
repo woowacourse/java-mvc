@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
+import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,6 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private final Set<HandlerMapping> handlerMappings = new LinkedHashSet<>();
     private final Set<HandlerAdapter> handlerAdapters = new LinkedHashSet<>();
+    private ExceptionHandlerAdapter exceptionHandlerAdapter;
 
     public DispatcherServlet() {
         handlerMappings.add(new AnnotationHandlerMapping());
@@ -36,13 +38,17 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
-    public void addHandlerMapping(HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);
+    }
+
+    public void addExceptionHandlerAdapter(ExceptionHandlerAdapter exceptionHandlerAdapter) {
+        this.exceptionHandlerAdapter = exceptionHandlerAdapter;
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
@@ -51,6 +57,10 @@ public class DispatcherServlet extends HttpServlet {
             adaptHandler(request, response, handler);
         } catch (Exception exception) {
             log.error("Exception : {}", exception.getMessage(), exception);
+            if (exceptionHandlerAdapter != null) {
+                exceptionHandlerAdapter.handle(request, response, exception);
+                return;
+            }
             throw new ServletException(exception.getMessage());
         }
     }
@@ -74,5 +84,4 @@ public class DispatcherServlet extends HttpServlet {
             handlerAdapter.handle(request, response, handler);
         }
     }
-
 }
