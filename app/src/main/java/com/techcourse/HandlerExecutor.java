@@ -7,8 +7,6 @@ import java.util.Set;
 
 public class HandlerExecutor {
 
-    private static final String NOT_FOUND_VIEW = "404.jsp";
-
     private static final Set<HandlerAdapter> handlerAdapters = Set.of(
             new ControllerAdapter(),
             new HandlerExecutionAdapter()
@@ -20,6 +18,6 @@ public class HandlerExecutor {
                 return handlerAdapter.adapt(request, response, handler);
             }
         }
-        return NOT_FOUND_VIEW;
+        throw new IllegalArgumentException("Not found handler adapter for handler : " + handler);
     }
 }
