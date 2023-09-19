@@ -20,7 +20,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, Handler> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -58,10 +58,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerExecutions(final Method method, final Object controller) {
         final RequestMapping request = method.getAnnotation(RequestMapping.class);
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        final AnnotationHandler handler = new AnnotationHandler(handlerExecution);
 
         Arrays.stream(request.method())
                 .map(httpMethod -> new HandlerKey(request.value(), httpMethod))
-                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handler));
     }
 
     @Override
@@ -73,9 +74,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Handler getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = parseToKey(request);
-        final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
 
-        return new AnnotationHandler(handlerExecution);
+        return handlerExecutions.get(handlerKey);
     }
 
     private HandlerKey parseToKey(final HttpServletRequest request) {
