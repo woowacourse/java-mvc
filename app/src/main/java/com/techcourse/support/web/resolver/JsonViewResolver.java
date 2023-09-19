@@ -14,7 +14,7 @@ public class JsonViewResolver implements ViewResolver {
     public boolean supports(final HttpServletRequest request, final String ignored) {
         final String acceptHeaderValue = request.getHeader(ACCEPT_HEADER_KET);
 
-        return acceptHeaderValue != null && acceptHeaderValue.contains(APPLICATION_JSON_VALUE);
+        return acceptHeaderValue == null || acceptHeaderValue.contains(APPLICATION_JSON_VALUE);
     }
 
     @Override

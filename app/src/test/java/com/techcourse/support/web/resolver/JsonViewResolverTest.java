@@ -36,7 +36,7 @@ class JsonViewResolverTest {
     void supports_메서드는_요청_헤더_Accept에_json이_없다면_false를_반환한다() {
         final JsonViewResolver viewResolver = new JsonViewResolver();
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        given(request.getHeader("Accept")).willReturn(null);
+        given(request.getHeader("Accept")).willReturn("text/html");
 
         final boolean actual = viewResolver.supports(request, null);
 
