@@ -1,6 +1,8 @@
 package com.techcourse;
 
 import com.techcourse.support.web.handler.adaptor.HandlerAdaptors;
+import com.techcourse.support.web.handler.adaptor.ManualHandlerAdaptor;
+import com.techcourse.support.web.handler.adaptor.ManualHandlerMappingWrapped;
 import com.techcourse.support.web.handler.mapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -24,8 +29,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMapping = new HandlerMappings();
-        handlerAdaptors = new HandlerAdaptors();
+        handlerMapping = new HandlerMappings(List.of(
+                new ManualHandlerMappingWrapped(),
+                new AnnotationHandlerMapping("com.techcourse")));
+        handlerAdaptors = new HandlerAdaptors(List.of(
+                new ManualHandlerAdaptor(),
+                new AnnotationHandlerAdaptor()));
         handlerMapping.initialize();
     }
 
@@ -33,13 +42,13 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            final var handler = handlerMapping.getHandler(request);
-
-            if (handler == null) {
+            final var optionalHandler = handlerMapping.getHandler(request);
+            if (optionalHandler.isEmpty()) {
                 log.warn("Handler Not Found");
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
+            final var handler = optionalHandler.get();
 
             final var handlerAdaptor = findHandlerAdaptor(handler);
             final var modelAndView = handlerAdaptor.execute(request, response, handler);
@@ -52,12 +61,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdaptor findHandlerAdaptor(final Object handler) {
-        try {
-            return handlerAdaptors.findHandlerAdaptor(handler);
-        } catch (final IllegalArgumentException e) {
-            log.error("Exception : {}", e.getMessage(), e);
+        final var optionalHandlerAdaptor = handlerAdaptors.findHandlerAdaptor(handler);
+        if (optionalHandlerAdaptor.isPresent()) {
+            return optionalHandlerAdaptor.get();
         }
-        return null;
+        throw new IllegalArgumentException("Handler Adaptor Not Found");
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {

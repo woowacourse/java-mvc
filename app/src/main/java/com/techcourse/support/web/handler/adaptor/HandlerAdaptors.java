@@ -1,17 +1,20 @@
 package com.techcourse.support.web.handler.adaptor;
 
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdaptor;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import java.util.List;
+import java.util.Optional;
 
 public class HandlerAdaptors {
 
-    private final List<HandlerAdaptor> values = List.of(new ManualHandlerAdaptor(), new AnnotationHandlerAdaptor());
+    private final List<HandlerAdaptor> values;
 
-    public HandlerAdaptor findHandlerAdaptor(final Object handler) {
+    public HandlerAdaptors(final List<HandlerAdaptor> values) {
+        this.values = values;
+    }
+
+    public Optional<HandlerAdaptor> findHandlerAdaptor(final Object handler) {
         return values.stream()
                 .filter(value -> value.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 Handler 입니다."));
+                .findAny();
     }
 }

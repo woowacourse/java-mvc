@@ -8,10 +8,15 @@ import webmvc.org.springframework.web.servlet.mvc.HandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import java.util.List;
+import java.util.Optional;
 
 class HandlerAdaptorsTest {
 
-    private static final HandlerAdaptors handlerAdaptors = new HandlerAdaptors();
+    private static final HandlerAdaptors handlerAdaptors = new HandlerAdaptors(
+            List.of(new ManualHandlerAdaptor(),
+                    new AnnotationHandlerAdaptor())
+    );
 
     @Test
     void testFindHandlerAdaptorWhenHandlerIsHandlerExecution() {
@@ -19,10 +24,11 @@ class HandlerAdaptorsTest {
         final HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
         //when
-        final HandlerAdaptor handlerAdaptor = handlerAdaptors.findHandlerAdaptor(handlerExecution);
+        final Optional<HandlerAdaptor> optionalHandlerAdaptor = handlerAdaptors.findHandlerAdaptor(handlerExecution);
 
         //then
-        assertThat(handlerAdaptor).isInstanceOf(AnnotationHandlerAdaptor.class);
+        assertThat(optionalHandlerAdaptor).isNotEmpty();
+        assertThat(optionalHandlerAdaptor.get()).isInstanceOf(AnnotationHandlerAdaptor.class);
     }
 
     @Test
@@ -31,9 +37,11 @@ class HandlerAdaptorsTest {
         final Controller controller = mock(Controller.class);
 
         //when
-        final HandlerAdaptor handlerAdaptor = handlerAdaptors.findHandlerAdaptor(controller);
+        final Optional<HandlerAdaptor> optionalHandlerAdaptor = handlerAdaptors.findHandlerAdaptor(controller);
 
         //then
-        assertThat(handlerAdaptor).isInstanceOf(ManualHandlerAdaptor.class);
+
+        assertThat(optionalHandlerAdaptor).isNotEmpty();
+        assertThat(optionalHandlerAdaptor.get()).isInstanceOf(ManualHandlerAdaptor.class);
     }
 }

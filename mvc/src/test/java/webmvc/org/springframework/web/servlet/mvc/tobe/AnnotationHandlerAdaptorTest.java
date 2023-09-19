@@ -1,6 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -54,7 +55,9 @@ class AnnotationHandlerAdaptorTest {
         final ModelAndView result = handlerAdaptor.execute(request, response, handlerExecution);
 
         //then
-        assertThat(result.getView()).isInstanceOf(JsonView.class);
-        assertThat(result).isEqualTo(expected);
+        assertAll(
+                () -> assertThat(result.getView()).isInstanceOf(JsonView.class),
+                () -> assertThat(result).isEqualTo(expected)
+        );
     }
 }

@@ -1,16 +1,18 @@
 package com.techcourse.support.web.handler.mapping;
 
-import com.techcourse.support.web.handler.adaptor.ManualHandlerMappingWrapped;
 import jakarta.servlet.http.HttpServletRequest;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class HandlerMappings {
 
-    private final List<HandlerMapping> values = List.of(new ManualHandlerMappingWrapped(),
-            new AnnotationHandlerMapping("com.techcourse"));
+    private final List<HandlerMapping> values;
+
+    public HandlerMappings(final List<HandlerMapping> values) {
+        this.values = values;
+    }
 
     public void initialize() {
         for (final HandlerMapping handlerMapping : values) {
@@ -18,11 +20,11 @@ public class HandlerMappings {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         return values.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
+
 }
