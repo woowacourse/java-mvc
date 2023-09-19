@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerAdapter;
@@ -68,7 +69,7 @@ public class DispatcherServlet extends HttpServlet {
             } catch (Exception ignored) {
             }
         }
-        throw new IllegalArgumentException("404");
+        return new ForwardController("/404.jsp");
     }
 
     private HandlerAdapter getAdapter(final Object handler) {
