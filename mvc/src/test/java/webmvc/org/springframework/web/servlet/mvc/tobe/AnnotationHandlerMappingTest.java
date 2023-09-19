@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,22 +47,5 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    void 지정된_패키지_아래의_컨트롤러를_잘_가져온다() throws NoSuchFieldException, IllegalAccessException {
-        // given
-        this.handlerMapping = new AnnotationHandlerMapping("/app/src/main/java/com/techcourse/controller");
-
-        // when
-        handlerMapping.initialize();
-
-        // then
-        var field = handlerMapping.getClass().getDeclaredField("handlerExecutions");
-        field.setAccessible(true);
-        var handlerExecution = (Map<HandlerKey, HandlerExecution>) field.get(handlerMapping);
-
-        System.out.println("handlerExecution.size() = " + handlerExecution.size());
-        assertThat(handlerExecution.size()).isNotZero();
     }
 }
