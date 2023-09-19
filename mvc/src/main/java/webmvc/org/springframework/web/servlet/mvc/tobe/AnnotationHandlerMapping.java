@@ -40,12 +40,12 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandler(Class<?> aClass, Method method) {
-        Controller controller = aClass.getAnnotation(Controller.class);
+        RequestMapping rootRequestMapping = aClass.getAnnotation(RequestMapping.class);
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (controller == null || requestMapping == null) {
+        if (requestMapping == null) {
             return;
         }
-        String rootUrl = controller.value();
+        String rootUrl = rootRequestMapping == null ? "" : requestMapping.value();
         String url = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
