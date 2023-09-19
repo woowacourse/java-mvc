@@ -25,12 +25,12 @@ class LoginControllerTest extends ControllerTest {
     @ValueSource(strings = {"GET", "DELETE", "PUT", "PATCH"})
     void returnRedirectWhenMethodNotPost(String method) {
         // given
-        given(httpServletRequest.getMethod())
+        given(request.getMethod())
             .willReturn(method);
         String expect = "redirect:/login.jsp";
 
         // when
-        String actual = loginController.execute(httpServletRequest, null);
+        String actual = loginController.execute(request, null);
 
         // then
         assertThat(actual).isEqualTo(expect);
@@ -41,13 +41,13 @@ class LoginControllerTest extends ControllerTest {
         // given
         given(UserSession.isLoggedIn(any()))
             .willReturn(true);
-        given(httpServletRequest.getMethod())
+        given(request.getMethod())
             .willReturn("POST");
 
         String expect = "redirect:/index.jsp";
 
         // when
-        String actual = loginController.execute(httpServletRequest, null);
+        String actual = loginController.execute(request, null);
 
         // then
         assertThat(actual).isEqualTo(expect);
@@ -58,11 +58,11 @@ class LoginControllerTest extends ControllerTest {
         // given
         given(UserSession.isLoggedIn(any()))
             .willReturn(false);
-        given(httpServletRequest.getMethod())
+        given(request.getMethod())
             .willReturn("POST");
 
         HttpSession mockSession = mock(HttpSession.class);
-        given(httpServletRequest.getSession())
+        given(request.getSession())
             .willReturn(mockSession);
 
         User mockUser = mock(User.class);
@@ -74,7 +74,7 @@ class LoginControllerTest extends ControllerTest {
         String expect = "redirect:/index.jsp";
 
         // when
-        String actual = loginController.execute(httpServletRequest, null);
+        String actual = loginController.execute(request, null);
 
         // then
         assertAll(
@@ -88,11 +88,11 @@ class LoginControllerTest extends ControllerTest {
         // given
         given(UserSession.isLoggedIn(any()))
             .willReturn(false);
-        given(httpServletRequest.getMethod())
+        given(request.getMethod())
             .willReturn("POST");
 
         HttpSession mockSession = mock(HttpSession.class);
-        given(httpServletRequest.getSession())
+        given(request.getSession())
             .willReturn(mockSession);
 
         User mockUser = mock(User.class);
@@ -104,7 +104,7 @@ class LoginControllerTest extends ControllerTest {
         String expect = "redirect:/401.jsp";
 
         // when
-        String actual = loginController.execute(httpServletRequest, null);
+        String actual = loginController.execute(request, null);
 
         // then
         assertThat(actual).isEqualTo(expect);

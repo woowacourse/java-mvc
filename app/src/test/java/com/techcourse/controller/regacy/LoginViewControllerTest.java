@@ -20,13 +20,13 @@ class LoginViewControllerTest extends ControllerTest {
     @ValueSource(strings = {"POST", "DELETE", "PUT", "PATCH"})
     void notGetSendRedirect(String method) {
         // given
-        given(httpServletRequest.getMethod())
+        given(request.getMethod())
             .willReturn(method);
 
         String expect = "/404.jsp";
 
         // when
-        String actual = loginViewController.execute(httpServletRequest, null);
+        String actual = loginViewController.execute(request, null);
 
         // then
         assertThat(actual).isEqualTo(expect);
@@ -38,13 +38,13 @@ class LoginViewControllerTest extends ControllerTest {
         User mockUser = mock(User.class);
         given(UserSession.getUserFrom(any()))
             .willReturn(Optional.of(mockUser));
-        given(httpServletRequest.getMethod())
+        given(request.getMethod())
             .willReturn("GET");
 
         String expect = "redirect:/index.jsp";
 
         // when
-        String actual = loginViewController.execute(httpServletRequest, null);
+        String actual = loginViewController.execute(request, null);
 
         // then
         assertThat(actual).isEqualTo(expect);
@@ -55,13 +55,13 @@ class LoginViewControllerTest extends ControllerTest {
         // given
         given(UserSession.getUserFrom(any()))
             .willReturn(Optional.empty());
-        given(httpServletRequest.getMethod())
+        given(request.getMethod())
             .willReturn("GET");
 
         String expect = "/login.jsp";
 
         // when
-        String actual = loginViewController.execute(httpServletRequest, null);
+        String actual = loginViewController.execute(request, null);
 
         // then
         assertThat(actual).isEqualTo(expect);
