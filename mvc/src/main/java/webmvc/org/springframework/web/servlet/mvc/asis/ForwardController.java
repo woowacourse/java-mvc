@@ -2,10 +2,9 @@ package webmvc.org.springframework.web.servlet.mvc.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 
-public class ForwardController implements Controller {
+public class ForwardController implements MvcController {
 
     private final String path;
 

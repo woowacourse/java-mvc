@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,22 +13,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotFoundException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapper implements HandlerMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapper.class);
 
     private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackages) {
+    public AnnotationHandlerMapper(final Object... basePackages) {
         this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
-        initHandlerExecutions();
+    @Override
+    public void initialize() {
+        try {
+            initHandlerExecutions();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -64,15 +70,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String methodName = request.getMethod();
         RequestMethod requestMethod = RequestMethod.findRequestMethod(methodName);
         String url = request.getRequestURI();
         HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new HandlerNotFoundException();
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }

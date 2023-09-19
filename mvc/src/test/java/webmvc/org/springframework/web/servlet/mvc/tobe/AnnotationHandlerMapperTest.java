@@ -8,16 +8,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.AnnotationHandlerMapper;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapper;
 
-class AnnotationHandlerMappingTest {
+class AnnotationHandlerMapperTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private HandlerMapper handlerMapper;
 
     @BeforeEach
     void setUp()
             throws Exception {
-        handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
+        handlerMapper = new AnnotationHandlerMapper("samples");
+        handlerMapper.initialize();
     }
 
     @Test
@@ -29,7 +31,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = (HandlerExecution) handlerMapper.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -44,7 +46,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = (HandlerExecution) handlerMapper.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");

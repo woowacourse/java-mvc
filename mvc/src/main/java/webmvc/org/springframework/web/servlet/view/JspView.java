@@ -2,11 +2,10 @@ package webmvc.org.springframework.web.servlet.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.View;
-
-import java.util.Map;
 
 public class JspView implements View {
 
@@ -14,7 +13,10 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private final String viewName;
+
     public JspView(final String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
@@ -27,5 +29,9 @@ public class JspView implements View {
         });
 
         // todo
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }
