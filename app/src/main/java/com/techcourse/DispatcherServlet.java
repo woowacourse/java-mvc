@@ -6,7 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
+
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -14,6 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private ManualHandlerMapping manualHandlerMapping;
+    private AnnotationHandlerMapping annotationHandlerMapping;
 
     public DispatcherServlet() {
     }
@@ -21,7 +28,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
+        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         manualHandlerMapping.initialize();
+        annotationHandlerMapping.initialize();
     }
 
     @Override
@@ -30,6 +39,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
+            Object handler = annotationHandlerMapping.getHandler(request);
+            if (handler instanceof HandlerExecution) {
+                ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
+                Map<String, Object> model = modelAndView.getModel();
+                View view = modelAndView.getView();
+                view.render(model, request, response);
+                return;
+            }
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
             move(viewName, request, response);
