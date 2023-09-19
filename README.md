@@ -10,7 +10,7 @@
 
 요청의 반환값이 다른 문제를 ModelAndView 객체를 반환하는 것으로 통일한다.
 핸들러마다 어댑터(여러handler의 실행 결과를 통일 시키는 객체)를 둔다.
-- [] Adapter 인터페이스 생성
-  - [] Controller 어댑터 생성
-  - [] HandlerExecution 어댑터 생성
-- [] HandlerAdapter로 묶기
+- [x] Adapter 인터페이스 생성
+  - [x] Controller 어댑터 생성
+  - [x] HandlerExecution 어댑터 생ㅇ
+- [x] HandlerAdapter로 묶기
