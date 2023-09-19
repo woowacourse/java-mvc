@@ -17,7 +17,7 @@ public class MvcLoginController {
 
     private static final Logger log = LoggerFactory.getLogger(MvcLoginController.class);
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView(execute(req, res)));
     }
