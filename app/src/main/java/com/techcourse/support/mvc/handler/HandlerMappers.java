@@ -17,7 +17,7 @@ public class HandlerMappers {
         }
     }
 
-    public void addHandlerMapping(final HandlerMapper handlerMapper) {
+    public void addHandlerMapper(final HandlerMapper handlerMapper) {
         handlerMappers.add(handlerMapper);
     }
 
