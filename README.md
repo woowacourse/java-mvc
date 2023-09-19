@@ -23,12 +23,12 @@
 ### 2단계 미션
 
 #### 매핑 정보 찾기
-  - [ ] HandlerMappingComposite을 통해서 요청에 맞는 컨트롤러 매핑 정보를 찾는다.
-  - [ ] HandlerMapping에 요청에 맞는 메서드 매핑 정보를 찾는다.
-  - [ ] HandleAdapterComposite을 통해서 요청에 맞는 HandlerAdapter를 찾아 로직을 수행한다.
+  - [x] HandlerMappingComposite을 통해서 요청에 맞는 컨트롤러 매핑 정보를 찾는다.
+  - [x] HandlerMapping에 요청에 맞는 메서드 매핑 정보를 찾는다.
+  - [x] HandleAdapterComposite을 통해서 요청에 맞는 HandlerAdapter를 찾아 로직을 수행한다.
 
 #### 디스패처 서블릿
-  - [ ] Annotation과 Manual의 정보가 공존할 수 있도록 하나의 디스패처 서블릿에 둘 수 있도록 한다.
+  - [x] Annotation과 Manual의 정보가 공존할 수 있도록 하나의 디스패처 서블릿에 둘 수 있도록 한다.
 
 ```mermaid
 graph TD
