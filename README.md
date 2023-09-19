@@ -5,8 +5,8 @@
 - [x] AnnotationHandlerMappingTest 클래스의 실패하는 테스트를 통과
 
 ### 2단계 -  점진적인 리팩터링
-- [ ] Legacy MVC와 @MVC 통합하기
-  - [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존
+- [x] Legacy MVC와 @MVC 통합하기
+  - [x] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존
 
 ### 3단계 - JSON View 구현하기
 - [ ] 화면에 대한 책임은 View 클래스가 갖도록 하기
