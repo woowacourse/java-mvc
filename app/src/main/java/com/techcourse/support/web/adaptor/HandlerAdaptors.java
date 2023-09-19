@@ -18,7 +18,7 @@ public class HandlerAdaptors {
         return adaptors.stream()
                 .filter(adaptor -> adaptor.supports(handler))
                 .findAny()
-                .orElseThrow(() -> new NoSuchElementException("처리할 수 있는 핸들러가 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("처리할 수 있는 어댑터가 존재하지 않습니다."));
     }
 
 }
