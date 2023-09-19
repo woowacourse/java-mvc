@@ -29,12 +29,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final var reflections = new Reflections(basePackage);
         final var controllers = reflections.getTypesAnnotatedWith(
                 context.org.springframework.stereotype.Controller.class
         );
         controllers.forEach(this::addControllerMethods);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addControllerMethods(Class<?> clazz) {
