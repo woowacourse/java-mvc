@@ -11,6 +11,7 @@ public class HandlerMappings {
     private final List<HandlerMapping> handler = new ArrayList<>();
 
     public void add(final HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
         handler.add(handlerMapping);
     }
 
