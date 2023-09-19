@@ -48,6 +48,7 @@ public class AnnotationHandlerMapping {
             }
         } catch (Exception exception) {
             log.error("예외 발생 {0}", exception);
+            throw new RuntimeException("AnnotationHandlerMapping Initialized 중에 예외가 발생하였습니다.");
         }
     }
 

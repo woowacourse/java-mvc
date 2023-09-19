@@ -14,7 +14,7 @@ public enum RequestMethod {
     public static RequestMethod from(String input) {
         try {
             return valueOf(input);
-        } catch (IllegalArgumentException illegalArgumentException) {
+        } catch (Exception exception) {
             throw new IllegalArgumentException("잘못된 Method 입니다.");
         }
     }
