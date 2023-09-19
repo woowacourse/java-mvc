@@ -3,11 +3,11 @@ package webmvc.org.springframework.web.servlet.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerAdapterNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class CompositeHandlerAdapter implements HandlerAdapter {
 
@@ -19,19 +19,16 @@ public class CompositeHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        return getAdapter(handler)
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
                 .map(adapter -> adapter.handle(request, response, handler))
-                .orElse(null);
+                .findAny()
+                .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 
     @Override
     public boolean supports(Object handler) {
-        return getAdapter(handler).isPresent();
-    }
-
-    private Optional<HandlerAdapter> getAdapter(Object handler) {
         return handlerAdapters.stream()
-                .filter(adapter -> adapter.supports(handler))
-                .findAny();
+                .anyMatch(adapter -> adapter.supports(handler));
     }
 }

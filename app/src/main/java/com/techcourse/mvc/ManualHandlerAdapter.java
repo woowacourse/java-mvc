@@ -8,8 +8,6 @@ import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-import java.lang.reflect.InvocationTargetException;
-
 public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
@@ -17,10 +15,9 @@ public class ManualHandlerAdapter implements HandlerAdapter {
                                final Object handler) {
         try {
             final var controller = (Controller) handler;
-            final var method = controller.getClass().getMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
-            final var viewName = (String) method.invoke(controller, request, response);
+            final var viewName = controller.execute(request, response);
             return new ModelAndView(new JspView(viewName));
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             throw new CanNotInvokeMethodException();
         }
     }

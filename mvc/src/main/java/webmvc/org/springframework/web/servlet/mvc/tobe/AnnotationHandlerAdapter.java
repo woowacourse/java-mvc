@@ -20,6 +20,9 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return ((HandlerExecution) handler).getHandler().getClass().isAnnotationPresent(Controller.class);
+        if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).getHandler().getClass().isAnnotationPresent(Controller.class);
+        }
+        return false;
     }
 }
