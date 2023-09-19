@@ -15,22 +15,22 @@ public class ManualHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private static final Map<String, ManualHandlerExecution> controllers = new HashMap<>();
 
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
+        controllers.put("/", new ManualHandlerExecution(new ForwardController("/index.jsp")));
+        controllers.put("/login", new ManualHandlerExecution(new LoginController()));
+        controllers.put("/login/view", new ManualHandlerExecution(new LoginViewController()));
+        controllers.put("/logout", new ManualHandlerExecution(new LogoutController()));
 
         log.info("Initialized Manual Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public HandlerExecution getHandler(final String requestURI) {
+    public HandlerExecution getHandler(String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
 
-        return new ManualHandlerExecution(controllers.get(requestURI));
+        return controllers.get(requestURI);
     }
 }
