@@ -9,12 +9,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.AnnotationControllerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.InterfaceControllerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -23,37 +19,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private transient HandlerMappingRegistry handlerMappingRegistry;
-    private transient HandlerAdapterRegistry handlerAdapterRegistry;
+    private final transient HandlerMappingRegistry handlerMappingRegistry;
+    private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry, HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
     public void init() {
-        this.handlerMappingRegistry = getHandlerMappingRegistry();
-        this.handlerAdapterRegistry = getHandlerAdapterRegistry();
-    }
-
-    private HandlerMappingRegistry getHandlerMappingRegistry() {
-        HandlerMappingRegistry registry = new HandlerMappingRegistry();
-        registry.addHandlerMapping(
-            getInitializedHandlerMapping(new ManualHandlerMapping()));
-        registry.addHandlerMapping(
-            getInitializedHandlerMapping(new AnnotationHandlerMapping("com")));
-        return registry;
-    }
-
-    private HandlerAdapterRegistry getHandlerAdapterRegistry() {
-        HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
-        registry.addHandlerAdapter(new AnnotationControllerAdapter());
-        registry.addHandlerAdapter(new InterfaceControllerAdapter());
-        return registry;
-    }
-
-    private HandlerMapping getInitializedHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMapping.initialize();
-        return handlerMapping;
+        if (handlerAdapterRegistry == null) {
+            throw new IllegalStateException("어뎁터 레지스트리가 초기화 되지 않았습니다.");
+        }
+        if (handlerMappingRegistry == null) {
+            throw new IllegalStateException("핸들러 매핑 레지스트리가 초기화 되지 않았습니다.");
+        }
     }
 
     @Override
