@@ -12,7 +12,6 @@ public class HandlerMappings {
 
     private final List<HandlerMapping> mappings = new ArrayList<>();
 
-
     public void initialize() {
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
