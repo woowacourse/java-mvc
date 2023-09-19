@@ -17,12 +17,9 @@ public class HandlerMappings {
     }
 
     public Object getHandler(HttpServletRequest request) throws ServletException {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        throw new ServletException("Not found handler for request URI : " + request.getRequestURI());
+        return handlerMappings.stream()
+                .filter(it -> it.getHandler(request) != null)
+                .findAny()
+                .orElseThrow(() -> new ServletException("Not found handler for request URI : " + request.getRequestURI()));
     }
 }

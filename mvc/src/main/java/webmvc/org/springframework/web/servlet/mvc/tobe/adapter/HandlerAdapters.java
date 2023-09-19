@@ -14,11 +14,9 @@ public class HandlerAdapters {
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new ServletException("handlerAdapter not found for handler: " + handler);
+        return handlerAdapters.stream()
+                .filter(it -> it.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new ServletException("handlerAdapter not found for handler: " + handler));
     }
 }
