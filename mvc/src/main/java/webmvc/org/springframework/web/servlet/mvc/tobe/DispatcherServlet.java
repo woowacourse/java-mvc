@@ -4,10 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -18,18 +14,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappings handlerMappings;
 
     public DispatcherServlet(final HandlerMapping... handlerMappings) {
-        this.handlerMappings = Arrays.stream(handlerMappings)
-            .collect(Collectors.toList());
+        this.handlerMappings = new HandlerMappings(handlerMappings);
     }
 
     @Override
     public void init() {
-        for (final HandlerMapping handlerMapping : handlerMappings) {
-            handlerMapping.initialize();
-        }
+        handlerMappings.initialize();
     }
 
     @Override
@@ -39,21 +32,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = getHandler(request);
+            final var handler = handlerMappings.getHandler(request);
             final var modelAndView = handler.handle(request, response);
             move(modelAndView, request, response);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Handler getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-            .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::nonNull)
-            .findAny()
-            .orElseGet(NotFoundHandler::new);
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request,
