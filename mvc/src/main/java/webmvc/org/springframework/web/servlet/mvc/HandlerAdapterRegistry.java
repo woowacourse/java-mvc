@@ -3,11 +3,10 @@ package webmvc.org.springframework.web.servlet.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class HandlerAdapterRegistry implements Serializable {
+public class HandlerAdapterRegistry {
 
     private final Set<HandlerAdapter> handlerAdapters = new LinkedHashSet<>();
 

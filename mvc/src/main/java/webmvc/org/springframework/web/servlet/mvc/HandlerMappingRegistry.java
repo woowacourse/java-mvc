@@ -3,12 +3,11 @@ package webmvc.org.springframework.web.servlet.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import javassist.NotFoundException;
 
-import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class HandlerMappingRegistry implements Serializable {
+public class HandlerMappingRegistry {
 
     private final Set<HandlerMapping> handlerMappings = new LinkedHashSet<>();
 
