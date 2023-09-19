@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -70,11 +72,11 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
-        final Constructor<?> secondConstructor = questionClass.getConstructor(String.class, String.class, String.class);
+        final Constructor<?> firstConstructor = questionClass.getConstructors()[0];
+        final Constructor<?> secondConstructor = questionClass.getConstructors()[1];
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance("gugu", "제목2", "내용2");
+        final Question secondQuestion = (Question) secondConstructor.newInstance(0, "gugu", "제목2", "내용2", new Date(), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
