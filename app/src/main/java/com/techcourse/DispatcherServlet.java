@@ -11,7 +11,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapper;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMappers;
+import com.techcourse.support.handler.HandlerMappers;
 
 public class DispatcherServlet extends HttpServlet {
 

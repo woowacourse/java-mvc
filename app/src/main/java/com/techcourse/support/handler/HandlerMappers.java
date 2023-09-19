@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc;
+package com.techcourse.support.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapper;
