@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.LegacyHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.Optional;
@@ -17,18 +18,18 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private final AnnotationHandlerMapping annotationHandlerMapping;
+    private final LegacyHandlerMapping manualHandlerMapping;
 
-    private AnnotationHandlerMapping annotationHandlerMapping;
-    private ManualHandlerMapping manualHandlerMapping;
-
-    public DispatcherServlet() {
+    // TODO 일단 이렇게 하고 HandlerAdaptor를 생성하는 걸로 바꾸자.
+    public DispatcherServlet(LegacyHandlerMapping manualHandlerMapping) {
+        this.annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        this.manualHandlerMapping = manualHandlerMapping;
     }
 
     @Override
     public void init() {
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
-        manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
     }
 

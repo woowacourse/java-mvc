@@ -36,4 +36,3 @@
         - [x] `AnnotationHandlerMapping`을 먼저 확인한 뒤, 해당하는 컨트롤러가 없으면 `ManualHandlerMapping`을 찾도록 한다.
         - [x] `ModelAndView`에서 사용하는 `JspView` 를 동작하게 만든다.
         - [ ] 패키지에 따른 설계가 적절한지 확인하고 리팩터링한다.
-
