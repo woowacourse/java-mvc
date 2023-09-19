@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -36,15 +35,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Optional<Controller> controllerOpt = manualHandlerMapping.getHandler(request);
-            if (controllerOpt.isPresent()) {
-                final String viewName = controllerOpt.get().execute(request, response);
+            final Controller controller = manualHandlerMapping.getHandler(request);
+            if (controller != null) {
+                final String viewName = controller.execute(request, response);
                 move(viewName, request, response);
                 return;
             }
-            final Optional<HandlerExecution> handlerExecutionOpt = annotationHandlerMapping.getHandler(request);
-            if (handlerExecutionOpt.isPresent()) {
-                final HandlerExecution handlerExecution = handlerExecutionOpt.get();
+            final HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(request);
+            if (handlerExecution != null) {
                 final ModelAndView modelAndView = handlerExecution.handle(request, response);
                 final Map<String, Object> model = modelAndView.getModel();
                 final View view = modelAndView.getView();
