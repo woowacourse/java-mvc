@@ -12,21 +12,23 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
+        handlerMappings = new ArrayList<>();
+        handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        handlerMappings = new ArrayList<>();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -56,8 +58,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(HttpServletRequest request) {
+        log.info("requestURI = " + request.getRequestURI());
+
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("요청에 맞는 Handler 를 찾지 못하였습니다"));
     }
