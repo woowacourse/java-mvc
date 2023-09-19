@@ -22,7 +22,7 @@ public class HandlerMappings {
         mappings.add(annotationHandlerMapping);
     }
 
-    public Object getController(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         return mappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)

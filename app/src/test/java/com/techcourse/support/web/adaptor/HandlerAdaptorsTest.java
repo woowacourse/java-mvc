@@ -1,12 +1,11 @@
 package com.techcourse.support.web.adaptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.techcourse.support.web.mapping.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -16,11 +15,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 class HandlerAdaptorsTest {
 
     private final HandlerAdaptors handlerAdaptors = new HandlerAdaptors();
-
-    @BeforeEach
-    void setup() {
-        handlerAdaptors.initialize();
-    }
 
     @Test
     @DisplayName("handler 타입에 맞는 Adaptor를 반환한다.")
@@ -39,7 +33,7 @@ class HandlerAdaptorsTest {
         HandlerAdaptor adaptor = handlerAdaptors.getAdaptor(handler);
 
         //then
-        Assertions.assertThat(adaptor).isInstanceOf(ManualHandlerAdaptor.class);
+        assertThat(adaptor).isInstanceOf(ManualHandlerAdaptor.class);
     }
 
     @Test
@@ -59,6 +53,6 @@ class HandlerAdaptorsTest {
         HandlerAdaptor adaptor = handlerAdaptors.getAdaptor(handler);
 
         //then
-        Assertions.assertThat(adaptor).isInstanceOf(AnnotationHandlerAdaptor.class);
+        assertThat(adaptor).isInstanceOf(AnnotationHandlerAdaptor.class);
     }
 }
