@@ -4,11 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -16,18 +16,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final ManualHandlerMapping manualHandlerMapping;
-    private final AnnotationHandlerMapping annotationHandlerMapping;
+    private final HandlerMappingRegistry handlerMapping;
+    private final HandlerAdapterRegistry handlerAdapter;
 
-    public DispatcherServlet(ManualHandlerMapping manualHandlerMapping, AnnotationHandlerMapping annotationHandlerMapping) {
-        this.manualHandlerMapping = manualHandlerMapping;
-        this.annotationHandlerMapping = annotationHandlerMapping;
+    public DispatcherServlet() {
+        this(new HandlerMappingRegistry(), new HandlerAdapterRegistry());
+    }
+
+    public DispatcherServlet(HandlerMappingRegistry handlerMapping, HandlerAdapterRegistry handlerAdapter) {
+        this.handlerMapping = handlerMapping;
+        this.handlerAdapter = handlerAdapter;
     }
 
     @Override
     public void init() {
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping.initialize();
+        handlerMapping.initialize();
     }
 
     @Override
@@ -37,37 +40,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", requestMethod, requestURI);
 
         try {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
-            HandlerExecution handler = annotationHandlerMapping.getHandler(request);
+            Optional<Object> optionalHandler = handlerMapping.getHandler(request);
+            if (optionalHandler.isEmpty()) {
+                response.sendRedirect("404.jsp");
+                return;
+            }
+            Object handler = optionalHandler.get();
+            HandlerAdapter handlerAdapter = this.handlerAdapter.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
-            validateDuplicate(controller, handler, requestURI);
-            executeHandler(controller, handler, request, response);
+            // TODO: 3단계 View 적용
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.debug(e.getMessage());
         }
     }
-
-    private void validateDuplicate(Controller controller, HandlerExecution handler, String requestURI) {
-        if (controller != null && handler != null) {
-            log.debug("요청을 처리하는 URI가 중복되었습니다. Handler1={}, Handelr2={}, requestURI={}", controller, handler, requestURI);
-            throw new RuntimeException();
-        }
-    }
-
-    private void executeHandler(Controller controller, HandlerExecution handler,
-                                HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (controller == null && handler == null) {
-            move("redirect:404.jsp", request, response);
-            return;
-        }
-
-        if (controller != null) {
-            controller.execute(request, response);
-            return;
-        }
-        handler.handle(request, response);
-    }
-
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
