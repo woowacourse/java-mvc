@@ -1,11 +1,11 @@
-package com.techcourse.controller;
+package com.techcourse.controllerv1;
 
 import com.techcourse.domain.User;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
 
-public class UserSession {
+public class UserSessionV1 {
 
     public static final String SESSION_KEY = "user";
 
@@ -18,5 +18,5 @@ public class UserSession {
         return getUserFrom(session).isPresent();
     }
 
-    private UserSession() {}
+    private UserSessionV1() {}
 }

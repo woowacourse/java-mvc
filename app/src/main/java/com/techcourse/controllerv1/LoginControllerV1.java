@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controllerv1;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -8,13 +8,13 @@ import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+public class LoginControllerV1 implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginControllerV1.class);
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
+        if (UserSessionV1.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
 
@@ -29,7 +29,7 @@ public class LoginController implements Controller {
     private String login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
-            session.setAttribute(UserSession.SESSION_KEY, user);
+            session.setAttribute(UserSessionV1.SESSION_KEY, user);
             return "redirect:/index.jsp";
         }
         return "redirect:/401.jsp";
