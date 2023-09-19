@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class HandlerAdapterRegistry {
@@ -15,14 +16,12 @@ public class HandlerAdapterRegistry {
     }
 
     public void adaptHandler(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        final var handlerSupport = handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst();
+        final var handlerAdapter = handlerAdapters.stream()
+                .filter(found -> found.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("cannot find supporting handler adapter"));
 
-        if (handlerSupport.isPresent()) {
-            final var handlerAdapter = handlerSupport.get();
-            handlerAdapter.handle(request, response, handler);
-        }
+        handlerAdapter.handle(request, response, handler);
     }
 
 }
