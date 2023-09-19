@@ -30,12 +30,12 @@ public class AnnotationHandlerMapping {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerAnnotatedClass = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : controllerAnnotatedClass) {
-            checkHavingRequestMappingAnnotation(clazz);
+            findRequestMappingAndRegisterHandler(clazz);
         }
         log.info("Initialized AnnotationHandlerMapping! {}", handlerExecutions);
     }
 
-    private void checkHavingRequestMappingAnnotation(final Class<?> clazz) {
+    private void findRequestMappingAndRegisterHandler(final Class<?> clazz) {
         Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::addHandler);
