@@ -4,9 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
@@ -55,19 +55,24 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object matchHandler(HttpServletRequest request) {
+    private Object matchHandler(HttpServletRequest request) throws NotFoundException {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new HandlerMappingException("cannot find handler for request"));
+                .orElseThrow(() -> new NotFoundException("cannot find handler for request"));
     }
 
-    private void adaptHandler(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        handlerAdapters.stream()
+    // TODO registry로 분리
+    private void adaptHandler(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        final var handlerSupport = handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .ifPresent(handlerAdapter -> handlerAdapter.handle(request, response, handler));
+                .findFirst();
+
+        if (handlerSupport.isPresent()) {
+            final var handlerAdapter = handlerSupport.get();
+            handlerAdapter.handle(request, response, handler);
+        }
     }
 
 }

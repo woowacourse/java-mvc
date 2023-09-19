@@ -15,18 +15,14 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public void handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         validateHandlerType(handler);
 
-        try {
-            final var handlerExecution = (HandlerExecution) handler;
-            final var modelAndView = handlerExecution.handle(request, response);
-            final var view = modelAndView.getView();
+        final var handlerExecution = (HandlerExecution) handler;
+        final var modelAndView = handlerExecution.handle(request, response);
+        final var view = modelAndView.getView();
 
-            view.render(modelAndView.getModel(), request, response);
-        } catch (Exception exception) {
-            throw new HandlerAdapterException("cannot adapt handler " + HANDLER_CLASS_NAME, exception);
-        }
+        view.render(modelAndView.getModel(), request, response);
     }
 
     private void validateHandlerType(Object handler) {
