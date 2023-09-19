@@ -29,8 +29,12 @@ public class AnnotationHandlerMapper implements HandlerMapper {
     }
 
     @Override
-    public void initialize() throws Exception {
-        initHandlerExecutions();
+    public void initialize() {
+        try {
+            initHandlerExecutions();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 

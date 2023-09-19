@@ -34,11 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         addInitHandlerMappings();
         addInitHandlerAdapters();
-        try {
-            handlerMappers.init();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        handlerMappers.init();
     }
 
 

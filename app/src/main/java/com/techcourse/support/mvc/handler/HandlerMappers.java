@@ -11,7 +11,7 @@ public class HandlerMappers {
 
     private final List<HandlerMapper> handlerMappers = new ArrayList<>();
 
-    public void init() throws Exception {
+    public void init() {
         for (HandlerMapper handlerMapper : handlerMappers) {
             handlerMapper.initialize();
         }
