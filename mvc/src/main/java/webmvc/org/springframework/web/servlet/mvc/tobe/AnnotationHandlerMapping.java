@@ -59,11 +59,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return Arrays.stream(controllerClasses.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .filter(method -> method.getReturnType().equals(ModelAndView.class))
-                .filter(method -> isValidateParameterType(method.getParameterTypes()))
+                .filter(method -> isValidParameterType(method.getParameterTypes()))
                 .collect(Collectors.toList());
     }
 
-    private boolean isValidateParameterType(Class<?>[] parameters) {
+    private boolean isValidParameterType(Class<?>[] parameters) {
         return parameters[REQUEST_INDEX].equals(HttpServletRequest.class) &&
                 parameters[RESPONSE_INDEX].equals(HttpServletResponse.class);
     }
