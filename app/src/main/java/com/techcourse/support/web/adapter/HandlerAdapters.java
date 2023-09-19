@@ -10,8 +10,8 @@ public class HandlerAdapters {
     private final List<HandlerAdapter> adapters = new ArrayList<>();
 
     public void initialize(final ViewResolvers viewResolvers) {
-        final ManualHandlerMappingAdapter manualHandlerMappingAdapter = new ManualHandlerMappingAdapter(viewResolvers);
-        final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        final HandlerAdapter manualHandlerMappingAdapter = new ManualHandlerMappingAdapter(viewResolvers);
+        final HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         adapters.add(manualHandlerMappingAdapter);
         adapters.add(annotationHandlerAdapter);
