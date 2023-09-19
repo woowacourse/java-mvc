@@ -30,8 +30,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         initHandlerExecutions();
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void initHandlerExecutions() {
