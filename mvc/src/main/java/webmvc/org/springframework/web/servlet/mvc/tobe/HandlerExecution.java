@@ -6,9 +6,7 @@ import java.lang.reflect.Method;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.exception.HandlerExecutionNotInitializeException;
 
-public class HandlerExecution {
-
-    private static final String OBJECT_NOT_INITIALIZE_EXCEPTION_MESSAGE = "객체가 초기화되지 않습니다.";
+public class HandlerExecution implements Handler {
 
     private final Method method;
     private final Object object;
@@ -22,7 +20,8 @@ public class HandlerExecution {
         }
     }
 
-    final ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+    @Override
+    public final ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         return (ModelAndView) method.invoke(object, request, response);
     }
