@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import com.techcourse.controller.LoginController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.assertj.core.api.SoftAssertions;
@@ -41,7 +42,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     void supports_메서드는_처리할_수_없는_핸들러를_전달하면_false를_반환한다() {
         final AnnotationHandlerAdapter adapter = new AnnotationHandlerAdapter();
-        final Object invalidHandler = null;
+        final Object invalidHandler = new LoginController();
 
         final boolean actual = adapter.supports(invalidHandler);
 

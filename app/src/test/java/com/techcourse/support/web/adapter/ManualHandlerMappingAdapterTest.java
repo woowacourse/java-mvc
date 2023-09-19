@@ -8,7 +8,6 @@ import static org.mockito.Mockito.mock;
 
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.RegisterViewController;
-import com.techcourse.support.web.mapping.ManualHandlerMappingWrapper;
 import com.techcourse.support.web.resolver.ViewResolvers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +16,7 @@ import java.util.Vector;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import samples.TestController;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -56,8 +56,9 @@ class ManualHandlerMappingAdapterTest {
         final ViewResolvers viewResolvers = new ViewResolvers();
         viewResolvers.initialize();
         final ManualHandlerMappingAdapter adapter = new ManualHandlerMappingAdapter(viewResolvers);
+        final Object invalidHandler = new TestController();
 
-        final boolean actual = adapter.supports(new ManualHandlerMappingWrapper());
+        final boolean actual = adapter.supports(invalidHandler);
 
         assertThat(actual).isFalse();
     }

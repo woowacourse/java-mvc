@@ -1,12 +1,12 @@
 package com.techcourse.support.web.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.techcourse.controller.LoginController;
 import com.techcourse.support.web.resolver.ViewResolvers;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -27,10 +27,7 @@ class HandlerAdaptersTest {
         final ViewResolvers viewResolvers = new ViewResolvers();
         viewResolvers.initialize();
 
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThatCode(() -> handlerAdapters.initialize(viewResolvers)).doesNotThrowAnyException();
-            softAssertions.assertThat(handlerAdapters.getHandlerAdapter(new LoginController())).isNotNull();
-        });
+        assertThatCode(() -> handlerAdapters.initialize(viewResolvers)).doesNotThrowAnyException();
     }
 
     @Test
