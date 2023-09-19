@@ -1,9 +1,9 @@
-package webmvc.org.springframework.web.servlet.mvc.asis;
+package com.techcourse.controller.regacy;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 public class ForwardController implements Controller {
 
