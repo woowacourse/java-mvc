@@ -44,7 +44,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Method[] methods = clazz.getDeclaredMethods();
         for (final Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
 
