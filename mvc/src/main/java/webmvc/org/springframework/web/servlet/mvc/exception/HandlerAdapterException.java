@@ -6,11 +6,4 @@ public class HandlerAdapterException extends RuntimeException {
         super(message);
     }
 
-    public HandlerAdapterException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public HandlerAdapterException(Throwable cause) {
-        super(cause);
-    }
 }

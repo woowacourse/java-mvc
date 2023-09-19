@@ -6,8 +6,4 @@ public class HandlerMappingException extends RuntimeException {
         super(message, cause);
     }
 
-    public HandlerMappingException(String message) {
-        super(message);
-    }
-    
 }
