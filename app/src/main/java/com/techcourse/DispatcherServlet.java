@@ -7,8 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
@@ -16,16 +19,26 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappings handlerMappings;
-    private final HandlerAdapters handlerAdapters;
+    private final HandlerMappings handlerMappings = new HandlerMappings();
+    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
 
-    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters) {
-        this.handlerMappings = handlerMappings;
-        this.handlerAdapters = handlerAdapters;
+    public DispatcherServlet() {
     }
 
     @Override
     public void init() {
+        initHandlerMappings();
+        initHandlerAdapters();
+    }
+
+    private void initHandlerMappings() {
+        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+    }
+
+    private void initHandlerAdapters() {
+        handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
+        handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
     @Override

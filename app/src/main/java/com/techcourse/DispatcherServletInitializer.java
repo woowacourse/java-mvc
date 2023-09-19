@@ -19,14 +19,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
-    private final HandlerMappings handlerMappings = new HandlerMappings();
-    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
-
     @Override
     public void onStartup(final ServletContext servletContext) {
-        initHandlerMappings();
-        initHandlerAdapters();
-        final var dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
+        final var dispatcherServlet = new DispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -38,15 +33,5 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
-    }
-
-    private void initHandlerMappings() {
-        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-    }
-
-    private void initHandlerAdapters() {
-        handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
-        handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 }
