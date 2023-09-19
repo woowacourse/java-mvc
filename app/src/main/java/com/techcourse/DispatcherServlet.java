@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -16,22 +14,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String NOT_FOUND_VIEW = "404.jsp";
 
-    private HandlerMapping handlerMapping;
+    private HandlerMappings handlerMappings;
     private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
     }
 
-    public DispatcherServlet(HandlerMapping handlerMapping, HandlerExecutor handlerExecutor) {
-        this.handlerMapping = handlerMapping;
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerExecutor handlerExecutor) {
+        this.handlerMappings = handlerMappings;
         this.handlerExecutor = handlerExecutor;
     }
 
     @Override
     public void init() {
-        handlerMapping = new AnnotationHandlerMapping();
+        handlerMappings = new HandlerMappings();
         handlerExecutor = new HandlerExecutor();
-        handlerMapping.initialize();
+        handlerMappings.init();
     }
 
     @Override
@@ -49,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private String findViewName(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object handler = handlerMapping.getHandler(request);
+        Object handler = handlerMappings.getHandler(request);
         if (handler == null) {
             return NOT_FOUND_VIEW;
         }

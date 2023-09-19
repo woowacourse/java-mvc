@@ -17,12 +17,12 @@ class DispatcherServletTest {
     @Test
     void serviceIfRedirect() throws Exception {
         //given
-        HandlerMapping handlerMapping = mock(HandlerMapping.class);
+        HandlerMappings handlerMappings = mock(HandlerMappings.class);
         HandlerExecutor handlerExecutor = mock(HandlerExecutor.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMapping, handlerExecutor);
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerExecutor);
 
         when(request.getMethod()).thenReturn("POST");
         when(handlerExecutor.execute(any(), any(), any())).thenReturn("redirect:/index.jsp");
@@ -38,13 +38,13 @@ class DispatcherServletTest {
     @Test
     void service() throws Exception {
         //given
-        HandlerMapping handlerMapping = mock(HandlerMapping.class);
+        HandlerMappings handlerMappings = mock(HandlerMappings.class);
         HandlerExecutor handlerExecutor = mock(HandlerExecutor.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
 
-        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMapping, handlerExecutor);
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerExecutor);
 
         when(request.getMethod()).thenReturn("GET");
         when(handlerExecutor.execute(any(), any(), any())).thenReturn("/index.jsp");
