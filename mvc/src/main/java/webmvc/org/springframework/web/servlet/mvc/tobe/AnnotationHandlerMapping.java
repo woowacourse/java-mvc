@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -60,7 +60,7 @@ public class AnnotationHandlerMapping {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
-            throw new NoSuchElementException("인스턴스를 찾을 수 없습니다.");
+            throw new NoSuchElementException("Can not found such instance");
         }
     }
 
