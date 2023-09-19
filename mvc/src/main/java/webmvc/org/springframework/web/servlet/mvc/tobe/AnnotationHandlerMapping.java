@@ -116,7 +116,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .orElseThrow(() -> new HandlerNotFoundException("Handler를 찾을 수 없습니다. inputHandlerKey: " + handlerKey));
     }
 
-    private static HandlerKey createHandlerKey(final HttpServletRequest request) {
+    private HandlerKey createHandlerKey(final HttpServletRequest request) {
         final String method = request.getMethod();
         final RequestMethod requestMethod = RequestMethod.valueOf(method);
         return new HandlerKey(request.getRequestURI(), requestMethod);
