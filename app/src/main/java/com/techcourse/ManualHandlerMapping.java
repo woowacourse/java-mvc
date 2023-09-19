@@ -38,6 +38,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     public Optional<Object> getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return Optional.of(controllers.get(requestURI));
+        return Optional.ofNullable(controllers.get(requestURI));
     }
 }
