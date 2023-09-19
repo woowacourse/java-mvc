@@ -14,6 +14,12 @@ public class HandlerMapping {
         this.mappers = mappers;
     }
 
+    public void initialize() {
+        for(Mapper mapper : mappers) {
+            mapper.initialize();
+        }
+    }
+
     public Object getHandler(HttpServletRequest httpServletRequest) throws ServletException {
         for(Mapper mapper : mappers) {
             mapper.initialize();

@@ -14,3 +14,5 @@
   - [x] Controller 어댑터 생성
   - [x] HandlerExecution 어댑터 생ㅇ
 - [x] HandlerAdapter로 묶기
+
+디스패처서블릿에 HandlerMapping과 HandlerAdapter 적용한다
