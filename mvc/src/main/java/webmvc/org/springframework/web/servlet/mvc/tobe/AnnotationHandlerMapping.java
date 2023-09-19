@@ -26,7 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public void initialize() throws Exception {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Reflections reflections = new Reflections(basePackage);
@@ -34,10 +34,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Class<?> controller : controllers) {
             Method[] methods = controller.getMethods();
-            Object object = controller.getDeclaredConstructor().newInstance();
+
+            Object object = makeController(controller);
 
             generateHandlerExecutions(methods, object);
         }
+    }
+
+    private Object makeController(Class<?> controller) {
+        Object object = null;
+        try {
+            object = controller.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            log.warn("Handler 를 생성하는데 실패했습니다");
+            throw new RuntimeException(e);
+        }
+        return object;
     }
 
     private void generateHandlerExecutions(Method[] methods, Object object) {

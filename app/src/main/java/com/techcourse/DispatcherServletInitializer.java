@@ -19,7 +19,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
     @Override
-    public void onStartup(final ServletContext servletContext) throws Exception {
+    public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackage()));

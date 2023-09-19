@@ -29,7 +29,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings = new ArrayList<>();
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) throws Exception {
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
