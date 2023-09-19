@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.view;
+package webmvc.org.springframework.web.servlet.mvc.view;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

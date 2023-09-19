@@ -1,19 +1,18 @@
-package com.techcourse.support.web.adapter;
+package webmvc.org.springframework.web.servlet.mvc.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import com.techcourse.controller.LoginController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import samples.TestLegacyController;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -22,7 +21,7 @@ class AnnotationHandlerAdapterTest {
 
     @Test
     void 생성자는_호출하면_ManualHandlerMapping을_초기화한다() {
-        assertDoesNotThrow(AnnotationHandlerAdapter::new);
+        Assertions.assertDoesNotThrow(AnnotationHandlerAdapter::new);
     }
 
     @Test
@@ -43,7 +42,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     void supports_메서드는_처리할_수_없는_핸들러를_전달하면_false를_반환한다() {
         final AnnotationHandlerAdapter adapter = new AnnotationHandlerAdapter();
-        final Object invalidHandler = new LoginController();
+        final Object invalidHandler = new TestLegacyController();
 
         final boolean actual = adapter.supports(invalidHandler);
 

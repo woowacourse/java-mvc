@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.view.resolver;
+package webmvc.org.springframework.web.servlet.mvc.view.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import webmvc.org.springframework.web.servlet.View;

@@ -1,8 +1,6 @@
 package com.techcourse;
 
-import com.techcourse.support.web.adapter.HandlerAdapters;
 import com.techcourse.support.web.mapping.HandlerMappings;
-import com.techcourse.support.web.resolver.ViewResolvers;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.view.resolver.ViewResolvers;
 
 public class DispatcherServlet extends HttpServlet {
 

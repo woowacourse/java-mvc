@@ -1,4 +1,4 @@
-package com.techcourse.support.web.adapter;
+package webmvc.org.springframework.web.servlet.mvc.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -16,8 +14,8 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
+import samples.TestLegacyController;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.adapter.ManualHandlerMappingAdapter;
 import webmvc.org.springframework.web.servlet.mvc.view.resolver.ViewResolvers;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -47,7 +45,7 @@ class ManualHandlerMappingAdapterTest {
         viewResolvers.initialize();
         final ManualHandlerMappingAdapter adapter = new ManualHandlerMappingAdapter(viewResolvers);
 
-        final boolean actual = adapter.supports(new LoginController());
+        final boolean actual = adapter.supports(new TestLegacyController());
 
         assertThat(actual).isTrue();
     }
@@ -75,7 +73,7 @@ class ManualHandlerMappingAdapterTest {
         given(request.getSession()).willReturn(session);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final ModelAndView actual = adapter.execute(request, response, new RegisterViewController());
+        final ModelAndView actual = adapter.execute(request, response, new TestLegacyController());
 
         assertThat(actual).isNotNull();
     }

@@ -1,12 +1,12 @@
-package com.techcourse.support.web.adapter;
+package webmvc.org.springframework.web.servlet.mvc.adapter;
 
-import com.techcourse.support.web.resolver.ViewResolvers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.view.resolver.ViewResolvers;
 
 public class ManualHandlerMappingAdapter implements HandlerAdapter {
 

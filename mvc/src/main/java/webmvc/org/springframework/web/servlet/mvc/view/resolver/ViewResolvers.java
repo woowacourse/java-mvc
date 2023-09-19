@@ -1,10 +1,9 @@
-package com.techcourse.support.web.resolver;
+package webmvc.org.springframework.web.servlet.mvc.view.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.view.resolver.ViewResolver;
 
 public class ViewResolvers {
 

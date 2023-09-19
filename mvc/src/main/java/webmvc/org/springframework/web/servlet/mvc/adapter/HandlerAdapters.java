@@ -1,9 +1,9 @@
-package com.techcourse.support.web.adapter;
+package webmvc.org.springframework.web.servlet.mvc.adapter;
 
-import com.techcourse.support.web.resolver.ViewResolvers;
 import java.util.ArrayList;
 import java.util.List;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.view.resolver.ViewResolvers;
 
 public class HandlerAdapters {
 
