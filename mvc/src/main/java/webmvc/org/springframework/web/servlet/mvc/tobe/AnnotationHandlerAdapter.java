@@ -9,8 +9,6 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean isSupport(final Object handler) {
-        System.out.println("a");
-        System.out.println(handler.getClass());
         return handler instanceof HandlerExecution;
     }
 
@@ -18,7 +16,6 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(final HttpServletRequest request,
                                final HttpServletResponse response,
                                final Object handler) throws Exception {
-        System.out.println("======a=====");
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
         return  handlerExecution.handle(request, response);
     }

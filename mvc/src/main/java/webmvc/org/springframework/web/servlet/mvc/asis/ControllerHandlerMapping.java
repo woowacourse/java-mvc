@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class ControllerHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerHandlerMapping.class);
+    public static final String DELIMITER = "/";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, Controller> controllerHandlers;
@@ -47,16 +48,11 @@ public class ControllerHandlerMapping implements HandlerMapping {
 
     private String getPath(final Class<? extends Controller> controllerClass) {
         final String className = controllerClass.getSimpleName();
-        final List<String> controllerPaths = new ArrayList<>();
-        int lowerBound = 0;
-        for (int i = 0; i < className.length(); i++) {
-            final char charAt = className.charAt(i);
-            if (charAt >= 'A' && charAt <= 'Z') {
-                controllerPaths.add(className.substring(lowerBound, i).toLowerCase());
-                lowerBound = i;
-            }
-        }
-        return String.join("/", controllerPaths);
+        final String[] split = className.split("(?=(?<![A-Z])[A-Z])");
+        final List<String> controllerPaths = Arrays.stream(split, 0, split.length - 1)
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+        return DELIMITER + String.join(DELIMITER, controllerPaths);
     }
 
     private Controller getController(final Class<? extends Controller> controllerClass) {
