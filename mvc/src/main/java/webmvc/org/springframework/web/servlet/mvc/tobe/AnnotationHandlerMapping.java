@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -48,12 +49,14 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(
+    public Class<?> getHandler(final HttpServletRequest request) {
+        System.out.println("request.getRequestURI() = " + request.getRequestURI());
+        final HandlerExecution handlerExecution = handlerExecutions.get(
                 new HandlerKey(
                         request.getRequestURI(),
                         RequestMethod.valueOf(request.getMethod())
                 )
         );
+        return handlerExecution.getInstance().getClass();
     }
 }
