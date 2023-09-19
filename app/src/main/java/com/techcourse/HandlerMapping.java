@@ -12,7 +12,7 @@ public class HandlerMapping {
 
     public void initialize() {
         manualHandlerMapping = new ManualHandlerMapping();
-        annotationHandlerMapping = new AnnotationHandlerMapping("controller");
+        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
 
         manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();

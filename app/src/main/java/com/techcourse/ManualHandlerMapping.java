@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 
 public class ManualHandlerMapping {
