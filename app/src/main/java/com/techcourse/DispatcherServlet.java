@@ -7,11 +7,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -20,11 +23,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final transient HandlerMappingRegistry handlerMappingRegistry;
+    private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry(List.of(
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse.controller")
+        ));
+
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(
+                new ControllerHandlerAdapter(),
+                new HandlerExecutionHandlerAdapter()
         ));
     }
 
@@ -43,26 +52,14 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(IllegalArgumentException::new);
 
-            ModelAndView modelAndView = handlerAdapter(request, response, handler);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private ModelAndView handlerAdapter(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        if (handler instanceof Controller) {
-            String viewName = ((Controller) handler).execute(request, response);
-
-            return new ModelAndView(new JspView(viewName));
-        }
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-        throw new IllegalArgumentException();
     }
 
     private void move(
