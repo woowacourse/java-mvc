@@ -26,7 +26,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public static class InitBuilder {
 
-        public InitBuilder() {
+        private InitBuilder() {
         }
 
         public Builder addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
 
         private final List<HandlerMapping> handlerMappings;
 
-        public Builder() {
+        private Builder() {
             this.handlerMappings = new ArrayList<>();
         }
 
@@ -51,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
             return new DispatcherServlet(this);
         }
 
-        public List<HandlerMapping> getHandlerMappings() {
+        private List<HandlerMapping> getHandlerMappings() {
             return handlerMappings;
         }
     }
