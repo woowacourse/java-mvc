@@ -9,11 +9,11 @@ import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 public class RegisterController implements Controller {
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
+            req.getParameter("account"),
+            req.getParameter("password"),
+            req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
         return "redirect:/index.jsp";
