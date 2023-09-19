@@ -3,14 +3,12 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class ManualHandler implements Handler {
+import java.io.IOException;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManualHandler.class);
+public class ManualHandler implements Handler {
 
     private final Controller controller;
 
@@ -23,13 +21,13 @@ public class ManualHandler implements Handler {
         try {
             final var viewName = controller.execute(request, response);
             move(viewName, request, response);
-        } catch (final Throwable e) {
-            LOGGER.error("Exception : {}", e.getMessage(), e);
+        } catch (final Exception e) {
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException, ServletException {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
