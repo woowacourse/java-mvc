@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
@@ -61,6 +62,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
+    @Override
     public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey =
                 new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod().toUpperCase()));
