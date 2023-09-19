@@ -9,7 +9,7 @@ public class HandlerAdaptors {
 
     private final List<HandlerAdaptor> adaptors = new ArrayList<>();
 
-    public void initialize() {
+    public HandlerAdaptors() {
         adaptors.add(new AnnotationHandlerAdaptor());
         adaptors.add(new ManualHandlerAdaptor());
     }
