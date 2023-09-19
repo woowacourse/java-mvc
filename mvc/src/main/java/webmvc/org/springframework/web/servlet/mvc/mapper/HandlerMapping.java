@@ -1,8 +1,7 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.mapper;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.tobe.Mapper;
 
 import java.util.List;
 

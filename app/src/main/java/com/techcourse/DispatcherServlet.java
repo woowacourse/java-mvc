@@ -11,8 +11,9 @@ import webmvc.org.springframework.web.servlet.mvc.adapter.Adapter;
 import webmvc.org.springframework.web.servlet.mvc.adapter.ControllerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerExecutionAdapter;
+import webmvc.org.springframework.web.servlet.mvc.mapper.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.mapper.Mapper;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMapping handlerMapping() {
         List<Mapper> mappers = new ArrayList<>();
         mappers.add(new ManualHandlerMapping());
-        mappers.add(new AnnotationHandlerMapping());
+        mappers.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         return new HandlerMapping(mappers);
     }
 
