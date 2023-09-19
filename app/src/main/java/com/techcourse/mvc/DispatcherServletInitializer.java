@@ -4,6 +4,10 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.CompositeHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.CompositeHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +21,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet(initHandlerMapping(), initHandlerAdapter());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +33,17 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private CompositeHandlerAdapter initHandlerAdapter() {
+        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        final var manualHandlerAdapter = new ManualHandlerAdapter();
+        return new CompositeHandlerAdapter(manualHandlerAdapter, annotationHandlerAdapter);
+    }
+
+    private CompositeHandlerMapping initHandlerMapping() {
+        final var annotationHandlerMapping = new AnnotationHandlerMapping();
+        final var manualHandlerMappingAdapter = new ManualHandlerMappingAdapter();
+        return new CompositeHandlerMapping(manualHandlerMappingAdapter, annotationHandlerMapping);
     }
 }

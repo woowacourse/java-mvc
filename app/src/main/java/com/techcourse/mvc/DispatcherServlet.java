@@ -7,12 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.CompositeHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.CompositeHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -22,19 +18,14 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final HandlerMapping handlerMapping, final HandlerAdapter handlerAdapter) {
+        this.handlerMapping = handlerMapping;
+        this.handlerAdapter = handlerAdapter;
     }
 
     @Override
     public void init() {
-        final var annotationHandlerMapping = new AnnotationHandlerMapping();
-        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        final var manualHandlerMappingAdapter = new ManualHandlerMappingAdapter();
-        final var manualHandlerAdapter = new ManualHandlerAdapter();
-
-        handlerMapping = new CompositeHandlerMapping(manualHandlerMappingAdapter, annotationHandlerMapping);
         handlerMapping.initialize();
-        handlerAdapter = new CompositeHandlerAdapter(manualHandlerAdapter, annotationHandlerAdapter);
     }
 
     @Override
