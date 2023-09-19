@@ -1,27 +1,51 @@
 package com.techcourse;
 
+import com.techcourse.handlerMapper.AnnotationHandlerAdapter;
+import com.techcourse.handlerMapper.AnnotationHandlerMapping;
+import com.techcourse.handlerMapper.HandlerAdapter;
+import com.techcourse.handlerMapper.HandlerMapping;
+import com.techcourse.handlerMapper.ManualHandlerAdapter;
+import com.techcourse.handlerMapper.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        initHandlerMapping();
+        initHandlerAdapter();
+    }
+
+    private void initHandlerMapping() {
+        handlerMappings.add(new ManualHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
+    }
+
+    private void initHandlerAdapter() {
+        handlerAdapters.add(new AnnotationHandlerAdapter());
+        handlerAdapters.add(new ManualHandlerAdapter());
     }
 
     @Override
@@ -30,22 +54,23 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Object handler = handlerMappings.stream()
+                    .map(handlerMapping -> handlerMapping.getHandler(request))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException());
+
+            HandlerAdapter handlerAdapter = handlerAdapters.stream()
+                    .filter(adapter -> adapter.supports(handler))
+                    .findAny()
+                    .orElseThrow(() -> new RuntimeException());
+
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
