@@ -5,46 +5,21 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.MockitoAnnotations;
 
-class LoginControllerTest {
+class LoginControllerTest extends ControllerTest {
 
-    @Mock
-    HttpServletRequest httpServletRequest;
-
-    MockedStatic<UserSession> mockUserSession;
-    MockedStatic<InMemoryUserRepository> mockUserRepository;
     LoginController loginController = new LoginController();
-
-    @BeforeEach
-    void setting() {
-        MockitoAnnotations.openMocks(this);
-        mockUserSession = mockStatic(UserSession.class);
-        mockUserRepository = mockStatic(InMemoryUserRepository.class);
-    }
-
-    @AfterEach
-    void deleteStaticMock() {
-        mockUserSession.close();
-        mockUserRepository.close();
-    }
 
     @ParameterizedTest
     @ValueSource(strings = {"GET", "DELETE", "PUT", "PATCH"})
@@ -133,6 +108,5 @@ class LoginControllerTest {
 
         // then
         assertThat(actual).isEqualTo(expect);
-
     }
 }
