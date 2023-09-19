@@ -6,12 +6,12 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAd
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerMapper;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerMappers;
 
-public class HandlerManager {
+public class HandlerRegistry {
 
     private final HandlerMappers handlerMappers;
     private final HandlerAdapters handlerAdapters;
 
-    public HandlerManager() {
+    public HandlerRegistry() {
         this.handlerMappers = new HandlerMappers();
         this.handlerAdapters = new HandlerAdapters();
     }

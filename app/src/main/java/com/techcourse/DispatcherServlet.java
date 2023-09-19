@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerManager;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.ManualHandlerAdapter;
@@ -20,17 +20,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerManager handlerManager;
+    private final HandlerRegistry handlerRegistry;
 
     public DispatcherServlet() {
-        handlerManager = new HandlerManager();
+        handlerRegistry = new HandlerRegistry();
     }
 
     @Override
     public void init() {
-        handlerManager.addHandler(new ManualHandlerMapping(), new ManualHandlerAdapter());
-        handlerManager.addHandler(new AnnotationHandlerMapping("com.techcourse"), new AnnotationHandlerAdapter());
-        handlerManager.initHandlers();
+        handlerRegistry.addHandler(new ManualHandlerMapping(), new ManualHandlerAdapter());
+        handlerRegistry.addHandler(new AnnotationHandlerMapping("com.techcourse"), new AnnotationHandlerAdapter());
+        handlerRegistry.initHandlers();
     }
 
     @Override
@@ -39,8 +39,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = handlerManager.findHandlerMapper(request);
-            HandlerAdapter adapter = handlerManager.findHandlerAdapter(handler);
+            Object handler = handlerRegistry.findHandlerMapper(request);
+            HandlerAdapter adapter = handlerRegistry.findHandlerAdapter(handler);
             Object viewName = adapter.execute(request, response, handler);
 
             if (viewName instanceof ModelAndView) {
