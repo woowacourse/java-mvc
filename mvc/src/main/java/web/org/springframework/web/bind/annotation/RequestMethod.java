@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 public enum RequestMethod {
     GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
 
-
     public static RequestMethod find(final String name) {
         return Arrays.stream(values())
                 .filter(method -> method.name().equalsIgnoreCase(name))
