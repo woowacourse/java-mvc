@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.disapatchersevlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -24,19 +24,19 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    public static final String BASE_PACKAGE = "com.techcourse.controller";
 
-
+    private final Object[] basePackage;
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
-        final ControllerHandlerMapping controllerHandlerMapping = new ControllerHandlerMapping(BASE_PACKAGE);
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        final ControllerHandlerMapping controllerHandlerMapping = new ControllerHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         controllerHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
