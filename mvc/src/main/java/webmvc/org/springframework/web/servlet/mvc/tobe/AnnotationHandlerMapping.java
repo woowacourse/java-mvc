@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,17 +39,33 @@ public class AnnotationHandlerMapping {
     private void findRequestMappingAndRegisterHandler(final Class<?> clazz) {
         Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::addHandler);
+                .forEach(method -> addHandler(method, clazz));
     }
 
-    private void addHandler(final Method method) {
+    private void addHandler(final Method method, final Class<?> clazz) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = requestMapping.method();
 
         Arrays.stream(requestMethods)
                 .forEach(requestMethod -> handlerExecutions.put(
-                        new HandlerKey(requestMapping.value(), requestMethod), new HandlerExecution(method)
+                        createHandlerKey(requestMapping, requestMethod), createHandlerExecution(method, clazz)
                 ));
+    }
+
+    private HandlerKey createHandlerKey(final RequestMapping requestMapping, final RequestMethod requestMethod) {
+        return new HandlerKey(requestMapping.value(), requestMethod);
+    }
+
+    private HandlerExecution createHandlerExecution(final Method method, final Class<?> clazz) {
+        try {
+            return new HandlerExecution(method, clazz.getDeclaredConstructor().newInstance());
+        } catch (InstantiationException |
+                 IllegalAccessException |
+                 InvocationTargetException |
+                 NoSuchMethodException e
+        ) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
