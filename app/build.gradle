@@ -19,13 +19,13 @@ dependencies {
 
     implementation "org.apache.tomcat.embed:tomcat-embed-core:10.1.13"
     implementation "org.apache.tomcat.embed:tomcat-embed-jasper:10.1.13"
-    implementation "ch.qos.logback:logback-classic:1.2.12"
+    implementation 'ch.qos.logback:logback-classic:1.4.7'
     implementation "org.apache.commons:commons-lang3:3.13.0"
 
     testImplementation "org.assertj:assertj-core:3.24.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testImplementation "org.mockito:mockito-core:5.4.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.2"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 idea {

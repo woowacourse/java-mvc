@@ -14,13 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.HandlerExecution;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackages;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, AnnotationHandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
         this.basePackages = basePackages;
@@ -61,12 +62,12 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            AnnotationHandlerExecution annotationHandlerExecution = new AnnotationHandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, annotationHandlerExecution);
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) {
         HandlerKey key = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.from(request.getMethod())
