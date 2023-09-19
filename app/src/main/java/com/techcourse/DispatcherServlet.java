@@ -65,9 +65,11 @@ public class DispatcherServlet extends HttpServlet {
         throw new IllegalArgumentException();
     }
 
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request,
-                      final HttpServletResponse response)
-            throws Exception {
+    private void move(
+            final ModelAndView modelAndView,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
         View view = modelAndView.getView();
         String viewName = view.getPath();
 
