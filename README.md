@@ -5,5 +5,5 @@
 - MannualHandlerMapping => getController()의 반환값 Controller => Controller.execute()은 String ViewName을 반환한다
     이후, 디스패처 서블릿에서, viewName이 redirect:로 시작하는 경우와 .jsp 파일 반환하는 경우로 나뉨
 - AnnotationHandlerMapping => getController()의 반환값 HandlerExecution => HandlerExecution.handle()은 ModelAndView를 반환한다.
-- [] Mapper 인터페이스 생성
-- [] HandlerMapping으로 묶기
+- [x] Mapper 인터페이스 생성
+- [x] HandlerMapping으로 묶기

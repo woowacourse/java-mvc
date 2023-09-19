@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements Mapper{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
