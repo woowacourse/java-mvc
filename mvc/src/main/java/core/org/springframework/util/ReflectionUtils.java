@@ -1,9 +1,25 @@
 package core.org.springframework.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
-public abstract class ReflectionUtils {
+public class ReflectionUtils {
+
+    /**
+     * Create a new instance of the specified {@code clazz} by invoking its default constructor.
+     * @param clazz the clazz to instantiate
+     * @return the new instance
+     * @param <T> the type of the class
+     */
+    public static <T> T instantiate(final Class<T> clazz) {
+        try {
+            return ReflectionUtils.accessibleConstructor(clazz).newInstance();
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Obtain an accessible constructor for the given class and parameters.
@@ -13,7 +29,7 @@ public abstract class ReflectionUtils {
      * @throws NoSuchMethodException if no such constructor exists
      * @since 5.0
      */
-    public static <T> Constructor<T> accessibleConstructor(Class<T> clazz, Class<?>... parameterTypes)
+    public static <T> Constructor<T> accessibleConstructor(final Class<T> clazz, Class<?>... parameterTypes)
             throws NoSuchMethodException {
 
         Constructor<T> ctor = clazz.getDeclaredConstructor(parameterTypes);
@@ -29,7 +45,7 @@ public abstract class ReflectionUtils {
      * @see Constructor#setAccessible
      */
     @SuppressWarnings("deprecation")
-    public static void makeAccessible(Constructor<?> ctor) {
+    public static void makeAccessible(final Constructor<?> ctor) {
         if ((!Modifier.isPublic(ctor.getModifiers()) ||
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);

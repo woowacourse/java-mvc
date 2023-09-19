@@ -31,7 +31,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         return getHandler(request.getRequestURI());
     }
 
