@@ -2,6 +2,7 @@ package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
@@ -15,7 +16,8 @@ class RegisterControllerTest {
     private final RegisterController registerController = new RegisterController();
 
     @Test
-    void 회원가입을_하면_인덱스를_반환한다() {
+    @DisplayName("회원가입시 인덱스 반환")
+    void register() {
         //given
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
