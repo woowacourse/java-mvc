@@ -32,9 +32,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Map<Class<?>, Object> instances = createControllerInstance(controllers);
         List<Method> requestMappingMethods = mapRequestMappingMethods(controllers);
 
-        putHandlerExecutions(requestMappingMethods);
+        putHandlerExecutions(requestMappingMethods, instances);
+    }
+
+    private Map<Class<?>, Object> createControllerInstance(Set<Class<?>> controllers) {
+        try {
+            Map<Class<?>, Object> instances = new HashMap<>();
+            for (Class<?> controller : controllers) {
+                instances.put(controller, controller.newInstance());
+            }
+            return instances;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private List<Method> mapRequestMappingMethods(Set<Class<?>> controllers) {
@@ -44,22 +57,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private void putHandlerExecutions(List<Method> requestMappingMethods) {
+    private void putHandlerExecutions(List<Method> requestMappingMethods, Map<Class<?>, Object> instances) {
         for (Method method : requestMappingMethods) {
-            Object controller = createControllerInstance(method);
+            Object controller = instances.get(method.getDeclaringClass());
             RequestMapping annotation = method.getAnnotation(RequestMapping.class);
             String path = annotation.value();
             RequestMethod[] requestMethods = annotation.method();
             RequestMethod requestMethod = RequestMethod.valueOf(requestMethods[0].name());
             handlerExecutions.put(new HandlerKey(path, requestMethod), new HandlerExecution(controller, method));
-        }
-    }
-
-    private Object createControllerInstance(Method method) {
-        try {
-            return method.getDeclaringClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
         }
     }
 
