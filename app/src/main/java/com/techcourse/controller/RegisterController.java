@@ -12,16 +12,6 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class RegisterController {
-//    @Override
-//    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-//        final var user = new User(2,
-//                req.getParameter("account"),
-//                req.getParameter("password"),
-//                req.getParameter("email"));
-//        InMemoryUserRepository.save(user);
-//
-//        return "redirect:/index.jsp";
-//    }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
@@ -34,7 +24,7 @@ public class RegisterController {
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
     }

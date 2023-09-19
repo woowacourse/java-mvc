@@ -33,7 +33,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -54,7 +55,8 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new ServletException("Failed to find appropriate handler for this request."));
     }
 
-    private String getViewName(final Object controller, final HttpServletRequest request, final HttpServletResponse response)
+    private String getViewName(final Object controller, final HttpServletRequest request,
+                               final HttpServletResponse response)
             throws Exception {
         if (controller instanceof Controller) {
             Controller handler = (Controller) controller;
@@ -66,10 +68,11 @@ public class DispatcherServlet extends HttpServlet {
             return handler.handle(request, response).getViewName();
         }
 
-        throw new ServletException("Internal Server Error");
+        throw new IllegalStateException("can't response to this response");
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
