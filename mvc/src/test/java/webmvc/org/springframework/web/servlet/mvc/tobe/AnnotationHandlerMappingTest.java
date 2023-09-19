@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.ControllerHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.HandlerExecution;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -49,5 +52,11 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void dd() {
+        ControllerHandlerMapping samples = new ControllerHandlerMapping("samples");
+        samples.initialize();
     }
 }
