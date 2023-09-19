@@ -1,7 +1,6 @@
 package com.techcourse.support.web.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -22,20 +21,11 @@ class HandlerAdaptersTest {
     }
 
     @Test
-    void initialize_메서드는_호출하면_필요한_HandlerAdapter를_등록한다() {
-        final HandlerAdapters handlerAdapters = new HandlerAdapters();
-        final ViewResolvers viewResolvers = new ViewResolvers();
-        viewResolvers.initialize();
-
-        assertThatCode(() -> handlerAdapters.initialize(viewResolvers)).doesNotThrowAnyException();
-    }
-
-    @Test
     void getHandlerAdapter_메서드는_해당_핸들러를_처리할_수_있는_HandlerAdapter가_있다면_해당_HandlerAdapter를_반환한다() {
         final HandlerAdapters handlerAdapters = new HandlerAdapters();
         final ViewResolvers viewResolvers = new ViewResolvers();
         viewResolvers.initialize();
-        handlerAdapters.initialize(viewResolvers);
+        handlerAdapters.addHandlerAdapter(new ManualHandlerMappingAdapter(viewResolvers));
 
         final HandlerAdapter actual = handlerAdapters.getHandlerAdapter(new LoginController());
 

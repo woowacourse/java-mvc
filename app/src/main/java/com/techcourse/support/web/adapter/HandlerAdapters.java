@@ -1,6 +1,5 @@
 package com.techcourse.support.web.adapter;
 
-import com.techcourse.support.web.resolver.ViewResolvers;
 import java.util.ArrayList;
 import java.util.List;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
@@ -9,18 +8,14 @@ public class HandlerAdapters {
 
     private final List<HandlerAdapter> adapter = new ArrayList<>();
 
-    public void initialize(final ViewResolvers viewResolvers) {
-        final HandlerAdapter manualHandlerMappingAdapter = new ManualHandlerMappingAdapter(viewResolvers);
-        final HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-
-        adapter.add(manualHandlerMappingAdapter);
-        adapter.add(annotationHandlerAdapter);
+    public void addHandlerAdapter(final HandlerAdapter targetHandlerAdapter) {
+        adapter.add(targetHandlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
-        for (final HandlerAdapter adapter : adapter) {
-            if (adapter.supports(handler)) {
-                return adapter;
+        for (final HandlerAdapter targetHandlerAdapter : adapter) {
+            if (targetHandlerAdapter.supports(handler)) {
+                return targetHandlerAdapter;
             }
         }
 
