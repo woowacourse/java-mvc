@@ -35,4 +35,8 @@
         - [x] `DispatcherServlet`이 `AnnotationHandlerMapping`, `ManualHandlerMapping`을 모두 관리하도록 한다.
         - [x] `AnnotationHandlerMapping`을 먼저 확인한 뒤, 해당하는 컨트롤러가 없으면 `ManualHandlerMapping`을 찾도록 한다.
         - [x] `ModelAndView`에서 사용하는 `JspView` 를 동작하게 만든다.
-        - [ ] 패키지에 따른 설계가 적절한지 확인하고 리팩터링한다.
+    - 리팩터링
+        - 패키지에 따른 설계가 적절한지 확인한다.
+        - 변화에 유연하도록 추상화한다.
+            - DispatcherServlet에 두 가지 경우에 대한 단순 분기만 만들면, 이후 변화에도 유연할 수 없다.
+            - HandlerMapping을 추상화하고, 같은 형식으로 handle할 수 있게 한다.

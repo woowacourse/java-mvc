@@ -5,4 +5,9 @@ public class HandlerMappingException extends RuntimeException {
     public HandlerMappingException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public HandlerMappingException(String message) {
+        super(message);
+    }
+    
 }
