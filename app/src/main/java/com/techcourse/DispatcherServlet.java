@@ -33,11 +33,11 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-        Object handler = handlerMappers.getHandler(request);
-        HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
+        final Object handler = handlerMappers.getHandler(request);
+        final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
 
         try {
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -46,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void render(HttpServletRequest req, HttpServletResponse res, ModelAndView mav) throws Exception {
-        View view = mav.getView();
+        final View view = mav.getView();
         view.render(mav.getModel(), req, res);
     }
 
