@@ -3,8 +3,6 @@ package com.techcourse;
 import com.techcourse.controller.regacy.LoginController;
 import com.techcourse.controller.regacy.LoginViewController;
 import com.techcourse.controller.regacy.LogoutController;
-import com.techcourse.controller.regacy.RegisterController;
-import com.techcourse.controller.regacy.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +25,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
