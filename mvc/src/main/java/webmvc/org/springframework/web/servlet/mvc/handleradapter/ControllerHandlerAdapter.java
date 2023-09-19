@@ -1,9 +1,9 @@
-package webmvc.org.springframework.web.servlet.mvc.asis;
+package webmvc.org.springframework.web.servlet.mvc.handleradapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import javax.annotation.Nullable;
