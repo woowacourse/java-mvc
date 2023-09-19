@@ -1,8 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -29,32 +25,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        Map<Class<?>, Object> instances = createControllerInstance(controllers);
-        List<Method> requestMappingMethods = mapRequestMappingMethods(controllers);
+        ControllerScanner controllerScanner = new ControllerScanner();
+        RequestMappingScanner requestMappingScanner = new RequestMappingScanner();
+
+        Set<Class<?>> controllers = controllerScanner.scan(basePackage);
+        Map<Class<?>, Object> instances = controllerScanner.createControllerInstance(controllers);
+
+        List<Method> requestMappingMethods = requestMappingScanner.scanRequestMappingMethods(controllers);
 
         putHandlerExecutions(requestMappingMethods, instances);
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private Map<Class<?>, Object> createControllerInstance(Set<Class<?>> controllers) {
-        try {
-            Map<Class<?>, Object> instances = new HashMap<>();
-            for (Class<?> controller : controllers) {
-                instances.put(controller, controller.newInstance());
-            }
-            return instances;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private List<Method> mapRequestMappingMethods(Set<Class<?>> controllers) {
-        return controllers.stream()
-                .map(Class::getDeclaredMethods).flatMap(Stream::of)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toList());
     }
 
     private void putHandlerExecutions(List<Method> requestMappingMethods, Map<Class<?>, Object> instances) {
