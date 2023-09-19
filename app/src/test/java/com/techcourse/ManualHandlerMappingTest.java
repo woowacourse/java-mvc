@@ -21,16 +21,16 @@ class ManualHandlerMappingTest {
 
     @Nested
     class SupportsTest {
+
+        private final HttpServletRequest request = mock(HttpServletRequest.class);
+
         @Test
         @DisplayName("적절한 핸들러가 있다면 true를 리턴한다 - post")
         void supports() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/");
 
-            //then
+            //when, then
             assertThat(handlerMapping.supports(request)).isTrue();
         }
 
@@ -38,12 +38,9 @@ class ManualHandlerMappingTest {
         @DisplayName("적절한 핸들러가 없다면 false를 리턴한다")
         void supports_false() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/nothing");
 
-            //then
+            //when, then
             assertThat(handlerMapping.supports(request)).isFalse();
         }
     }

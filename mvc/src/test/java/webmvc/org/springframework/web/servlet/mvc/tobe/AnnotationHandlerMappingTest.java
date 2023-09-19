@@ -22,17 +22,17 @@ class AnnotationHandlerMappingTest {
 
     @Nested
     class SupportsTest {
+
+        private final HttpServletRequest request = mock(HttpServletRequest.class);
+
         @Test
         @DisplayName("적절한 핸들러가 있다면 true를 리턴한다 - get")
         void supports_get() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/get-test");
             when(request.getMethod()).thenReturn("GET");
 
-            //then
+            //when, then
             assertThat(handlerMapping.supports(request)).isTrue();
         }
 
@@ -40,13 +40,10 @@ class AnnotationHandlerMappingTest {
         @DisplayName("적절한 핸들러가 있다면 true를 리턴한다 - post")
         void supports_post() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/post-test");
             when(request.getMethod()).thenReturn("POST");
 
-            //then
+            //when, then
             assertThat(handlerMapping.supports(request)).isTrue();
         }
 
@@ -54,13 +51,10 @@ class AnnotationHandlerMappingTest {
         @DisplayName("적절한 핸들러가 없다면 false를 리턴한다")
         void supports_false() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/nothing");
             when(request.getMethod()).thenReturn("POST");
 
-            //then
+            //when, then
             assertThat(handlerMapping.supports(request)).isFalse();
         }
     }

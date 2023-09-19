@@ -44,20 +44,19 @@ public class DispatcherServletTest {
 
     @Nested
     class ServiceTest {
+        private final HttpServletRequest request = mock(HttpServletRequest.class);
+        private final HttpServletResponse response = mock(HttpServletResponse.class);
+        private final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+
         @Test
         @DisplayName("요청 테스트 - /")
         void index() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-            final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/");
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
 
-            //then
+            //when, then
             assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
         }
 
@@ -65,17 +64,12 @@ public class DispatcherServletTest {
         @DisplayName("요청 테스트 - /login")
         void login() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-            final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/login");
             when(request.getMethod()).thenReturn("POST");
             when(request.getRequestDispatcher("/login")).thenReturn(requestDispatcher);
             when(UserSession.isLoggedIn(any())).thenReturn(true);
 
-            //then
+            //when, then
             assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
         }
 
@@ -83,16 +77,11 @@ public class DispatcherServletTest {
         @DisplayName("요청 테스트 - /login/view")
         void login_view() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-            final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/login/view");
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestDispatcher("/login.jsp")).thenReturn(requestDispatcher);
 
-            //then
+            //when, then
             assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
         }
 
@@ -100,18 +89,14 @@ public class DispatcherServletTest {
         @DisplayName("요청 테스트 - /logout")
         void logout() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-            final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
             final HttpSession httpSession = mock(HttpSession.class);
 
-            //when
             when(request.getRequestURI()).thenReturn("/logout");
             when(request.getMethod()).thenReturn("GET");
             when(request.getSession()).thenReturn(httpSession);
             when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
 
-            //then
+            //when, then
             assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
         }
 
@@ -119,16 +104,11 @@ public class DispatcherServletTest {
         @DisplayName("요청 테스트 - /register/view")
         void register_view() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-            final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/register/view");
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
 
-            //then
+            //when, then
             assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
         }
 
@@ -136,17 +116,12 @@ public class DispatcherServletTest {
         @DisplayName("요청 테스트 - /register")
         void register() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-            final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/register");
             when(request.getMethod()).thenReturn("POST");
             when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
             when(request.getParameter("account")).thenReturn("id");
 
-            //then
+            //when, then
             assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
         }
 
@@ -154,14 +129,10 @@ public class DispatcherServletTest {
         @DisplayName("핸들러가 존재하지 않는 요청 URL이면 예외가 발생한다")
         void service_fail() {
             //given
-            final HttpServletRequest request = mock(HttpServletRequest.class);
-            final HttpServletResponse response = mock(HttpServletResponse.class);
-
-            //when
             when(request.getRequestURI()).thenReturn("/nothing");
             when(request.getMethod()).thenReturn("GET");
 
-            //then
+            //when, then
             assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                     .isInstanceOf(NoSuchElementException.class);
         }
