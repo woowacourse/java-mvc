@@ -25,7 +25,7 @@ public class HandlerMappings {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        log.info("requestURI = " + request.getRequestURI());
+        log.info("requestURI = {}", request.getRequestURI());
 
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
