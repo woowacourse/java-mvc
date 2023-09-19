@@ -9,12 +9,10 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.ControllerHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;

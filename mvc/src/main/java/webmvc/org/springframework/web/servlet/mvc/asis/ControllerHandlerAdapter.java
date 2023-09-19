@@ -1,9 +1,9 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter;
+package webmvc.org.springframework.web.servlet.mvc.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.disapatchersevlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class ControllerHandlerAdapter implements HandlerAdapter {
