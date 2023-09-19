@@ -8,6 +8,9 @@ public class RegisterViewController implements Controller {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) {
+        if (!"GET".equals(req.getMethod())) {
+            return "/404.jsp";
+        }
         return "/register.jsp";
     }
 }

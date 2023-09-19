@@ -13,6 +13,9 @@ public class LoginViewController implements Controller {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) {
+        if (!"GET".equals(req.getMethod())) {
+            return "/404.jsp";
+        }
         return UserSession.getUserFrom(req.getSession())
             .map(user -> {
                 log.info("logged in {}", user.getAccount());

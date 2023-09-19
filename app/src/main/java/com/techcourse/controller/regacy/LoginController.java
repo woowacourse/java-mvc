@@ -15,6 +15,9 @@ public class LoginController implements Controller {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) {
+        if (!"POST".equals(req.getMethod())) {
+            return "redirect:/login.jsp";
+        }
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
