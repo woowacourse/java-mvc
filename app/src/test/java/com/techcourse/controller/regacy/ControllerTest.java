@@ -14,7 +14,7 @@ import org.mockito.MockitoAnnotations;
 public abstract class ControllerTest {
 
     @Mock
-    HttpServletRequest httpServletRequest;
+    HttpServletRequest request;
 
     MockedStatic<UserSession> mockUserSession;
     MockedStatic<InMemoryUserRepository> mockUserRepository;
