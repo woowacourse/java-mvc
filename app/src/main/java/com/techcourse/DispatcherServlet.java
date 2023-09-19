@@ -21,23 +21,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final HandlerMappings handlerMappings = new HandlerMappings();
+    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerAdapters.add(new ManulHandlerAdapter());
-        handlerAdapters.add(new AnnotationHandlerAdapter());
-
         handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
 
-        for (final var handlerMapping : handlerMappings) {
-            handlerMapping.initialize();
-        }
+        handlerAdapters.add(new ManulHandlerAdapter());
+        handlerAdapters.add(new AnnotationHandlerAdapter());
+
+        handlerMappings.initialize();
     }
 
     @Override
@@ -45,8 +43,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = getHandler(request);
-            HandlerAdapter adapter = getAdapter(handler);
+            Object handler = handlerMappings.getHandler(request);
+            HandlerAdapter adapter = handlerAdapters.getAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.render(request, response);
@@ -54,21 +52,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(IllegalStateException::new);
-    }
-
-    private HandlerAdapter getAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow(IllegalStateException::new);
     }
 
 }
