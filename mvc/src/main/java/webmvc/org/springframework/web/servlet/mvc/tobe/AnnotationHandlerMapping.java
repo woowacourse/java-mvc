@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,21 +29,11 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        getControllerMethods().forEach(this::addToHandlerExecutions);
-
+        getControllersMethods().forEach(this::addToHandlerExecutions);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addToHandlerExecutions(final Method method) {
-        final HandlerExecution handlerExecution = new HandlerExecution(method);
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-        Arrays.stream(requestMapping.method())
-                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
-                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
-    }
-
-    private List<Method> getControllerMethods() {
+    private List<Method> getControllersMethods() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
@@ -50,6 +41,26 @@ public class AnnotationHandlerMapping {
                 .flatMap(controller -> Arrays.stream(controller.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
+    }
+
+    private void addToHandlerExecutions(final Method method) {
+        Object controller = getController(method.getDeclaringClass());
+        final HandlerExecution handlerExecution = new HandlerExecution(method, controller);
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+        Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+    }
+
+    private Object getController(Class<?> controller) {
+        try {
+            final Constructor<?> constructor = controller.getConstructor();
+            return constructor.newInstance();
+        } catch (Exception e) {
+            log.warn("controller 생성 중 문제가 발생했습니다.");
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
