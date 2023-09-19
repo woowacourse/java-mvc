@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
+    private final HandlerExecutor handlerExecutor = new RequestMappingAnnotationHandlerExecutor();
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
@@ -28,8 +29,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var handler = handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecutor.handle(request, response, handler);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -43,8 +44,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var handler =  handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecutor.handle(request, response, handler);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
