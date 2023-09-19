@@ -6,12 +6,16 @@ import java.util.Objects;
 
 import jakarta.servlet.http.HttpServletRequest;
 import webmvc.org.springframework.web.servlet.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class HandlerMappings {
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void initialize() {
+        handlerMappings.add(new ManualHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 

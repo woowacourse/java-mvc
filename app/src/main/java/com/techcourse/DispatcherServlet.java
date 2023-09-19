@@ -1,9 +1,5 @@
 package com.techcourse;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,10 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.HandlerMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -29,12 +22,6 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
-
-        handlerAdapters.add(new ManulHandlerAdapter());
-        handlerAdapters.add(new AnnotationHandlerAdapter());
-
         handlerMappings.initialize();
     }
 
