@@ -40,25 +40,22 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Class<?> controllerType = findController(request);
-            final var controllerExecution = findControllerExecution(controllerType);
-            final Object controllerInstance = controllerType.getDeclaredConstructor().newInstance();
-            final var viewName = controllerExecution.invoke(controllerInstance, request, response);
-            move((String) viewName, request, response);
+            final Object handler = findController(request);
+            final var controllerExecution = findControllerExecution(handler.getClass());
+            final var viewName = controllerExecution.invoke(handler, request, response);
+            move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Class<?> findController(final HttpServletRequest request) {
-        for (final HandlerMapping handlerMapper : handlerMappers) {
-            final Class<?> handler = handlerMapper.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        throw new IllegalArgumentException("존재하지 않는 handler입니다.");
+    private Object findController(final HttpServletRequest request) {
+        return handlerMappers.stream()
+                      .map(handlerMapping -> handlerMapping.getHandler(request))
+                      .filter(Objects::nonNull)
+                      .findFirst()
+                      .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 handler입니다."));
     }
 
     private Method findControllerExecution(final Class<?> controllerType) {
