@@ -1,17 +1,20 @@
 package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings;
 
 
-    public HandlerMappingRegistry(List<HandlerMapping> handlerMappings) {
-        this.handlerMappings = handlerMappings;
+    public HandlerMappingRegistry(HandlerMapping... handlerMappings) {
+        this.handlerMappings = Arrays.stream(handlerMappings)
+                .collect(Collectors.toList());
     }
 
     public void initialize() {

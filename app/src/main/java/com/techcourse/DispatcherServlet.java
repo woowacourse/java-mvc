@@ -4,8 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ControllerHandlerAdapter;
@@ -27,17 +25,14 @@ public class DispatcherServlet extends HttpServlet {
     private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry(new ArrayList<>(List.of(
+        this.handlerMappingRegistry = new HandlerMappingRegistry(
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse.controller")
-        )));
+        );
 
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ArrayList<>(
-                List.of(
-                        new ControllerHandlerAdapter(),
-                        new HandlerExecutionHandlerAdapter()
-                )
-        ));
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ControllerHandlerAdapter(),
+                new HandlerExecutionHandlerAdapter()
+        );
     }
 
     @Override

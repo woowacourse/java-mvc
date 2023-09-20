@@ -7,8 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,15 +24,8 @@ class HandlerMappingRegistryTest {
     void setUp() {
         annotationHandlerMapping = mock(AnnotationHandlerMapping.class);
         handlerMapping = mock(HandlerMapping.class);
-
-        List<HandlerMapping> handlerMappings = new ArrayList<>(List.of(
-                annotationHandlerMapping
-        ));
-
-        registry = new HandlerMappingRegistry(handlerMappings);
-
+        registry = new HandlerMappingRegistry(annotationHandlerMapping);
         request = mock(HttpServletRequest.class);
-
     }
 
     @Test

@@ -6,8 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,12 +22,7 @@ class HandlerAdapterRegistryTest {
         handlerExecutionHandlerAdapter = mock(HandlerExecutionHandlerAdapter.class);
         handlerAdapter = mock(HandlerAdapter.class);
 
-        List<HandlerAdapter> handlerAdapters = new ArrayList<>(List.of(
-                controllerHandlerAdapter,
-                handlerExecutionHandlerAdapter
-        ));
-
-        registry = new HandlerAdapterRegistry(handlerAdapters);
+        registry = new HandlerAdapterRegistry(controllerHandlerAdapter, handlerExecutionHandlerAdapter);
     }
 
     @Test

@@ -1,13 +1,16 @@
 package webmvc.org.springframework.web.servlet;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+    public HandlerAdapterRegistry(HandlerAdapter... handlerAdapters) {
+        this.handlerAdapters = Arrays.stream(handlerAdapters)
+                .collect(Collectors.toList());
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
