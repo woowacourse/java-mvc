@@ -10,11 +10,11 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -31,22 +31,27 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackage);
+        final List<Method> methods = new ArrayList<>();
         for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
-            final List<Method> methods = Arrays.stream(controller.getMethods())
-                                               .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                                               .collect(Collectors.toList());
-            for (Method method : methods) {
-                final HandlerKey handlerKey = new HandlerKey(
-                        method.getAnnotation(RequestMapping.class).value(),
-                        method.getAnnotation(RequestMapping.class).method()[0]);
-                try {
-                    final Object instance = controller.getDeclaredConstructor().newInstance();
-                    final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+            Arrays.stream(controller.getMethods())
+                  .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                  .forEach(methods::add);
+            addHandlerExecution(methods, controller);
+        }
+    }
+
+    private void addHandlerExecution(final List<Method> methods, final Class<?> controller) {
+        for (Method method : methods) {
+            final HandlerKey handlerKey = new HandlerKey(
+                    method.getAnnotation(RequestMapping.class).value(),
+                    method.getAnnotation(RequestMapping.class).method()[0]);
+            try {
+                final Object instance = controller.getDeclaredConstructor().newInstance();
+                final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
+                handlerExecutions.put(handlerKey, handlerExecution);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -57,6 +62,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                         request.getRequestURI(),
                         RequestMethod.valueOf(request.getMethod())
                 )
-        , null);
+                , null);
     }
 }
