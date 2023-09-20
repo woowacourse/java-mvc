@@ -12,6 +12,8 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
+import java.io.IOException;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
 
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             final HandlerExecution mappedHandler = handlerMappings.getHandler(request);
@@ -43,20 +45,24 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, mappedHandler);
             final View view = modelAndView.getView();
             move(view.getName(), request, response);
-
-        } catch (Exception e) { // TODO: 세분화
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+        } catch (Exception e) {
+            log.error("exception occurred : {}", e.getMessage(), e);
+        } catch (Error e) {
+            log.error("error occurred : {}", e.getMessage(), e);
         }
     }
 
     private void move(final String viewName, final HttpServletRequest request,
-                      final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+                      final HttpServletResponse response) {
+        try {
+            if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+                response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+                return;
+            }
+            final var requestDispatcher = request.getRequestDispatcher(viewName);
+            requestDispatcher.forward(request, response);
+        } catch (ServletException | IOException e) {
+            throw new RenderingException(e);
         }
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
