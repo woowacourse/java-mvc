@@ -9,7 +9,6 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Reflections reflections = new Reflections(basePackage);
@@ -41,22 +40,23 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 final HandlerKey handlerKey = new HandlerKey(
                         method.getAnnotation(RequestMapping.class).value(),
                         method.getAnnotation(RequestMapping.class).method()[0]);
-                final Object instance = controller.getDeclaredConstructor()
-                                                  .newInstance();
-                final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-                handlerExecutions.put(handlerKey, handlerExecution);
+                try {
+                    final Object instance = controller.getDeclaredConstructor().newInstance();
+                    final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
+                    handlerExecutions.put(handlerKey, handlerExecution);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
 
-    public Class<?> getHandler(final HttpServletRequest request) {
-        System.out.println("request.getRequestURI() = " + request.getRequestURI());
-        final HandlerExecution handlerExecution = handlerExecutions.get(
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        return handlerExecutions.getOrDefault(
                 new HandlerKey(
                         request.getRequestURI(),
                         RequestMethod.valueOf(request.getMethod())
                 )
-        );
-        return handlerExecution.getInstance().getClass();
+        , null);
     }
 }

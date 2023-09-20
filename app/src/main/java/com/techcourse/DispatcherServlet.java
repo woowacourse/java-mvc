@@ -19,29 +19,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappers;
+    private List<HandlerMapping> handlerMappers = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        final Class<HandlerMapping> clazz = HandlerMapping.class;
-        final Class<?>[] handlerMappingInterfaces = clazz.getInterfaces();
+        handlerMappers.add(new ManualHandlerMapping());
+        handlerMappers.add(new AnnotationHandlerMapping("com.techcourse.controller"));
 
-        handlerMappers = Arrays.stream(handlerMappingInterfaces)
-                               .map(handler -> {
-                                   try {
-                                       final Object instance = handler.getConstructor().newInstance();
-                                       instance.getClass()
-                                               .getMethod("initialize")
-                                               .invoke(instance.getClass());
-                                       return (HandlerMapping) instance;
-                                   } catch (Exception exception) {
-                                       throw new RuntimeException("생성자에 접근할 수 없습니다.");
-                                   }
-                               })
-                               .collect(Collectors.toList());
+        for (final HandlerMapping handlerMapping : handlerMappers) {
+            handlerMapping.initialize();
+        }
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.techcourse;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -27,15 +26,15 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+//        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
                    .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public Class<?> getHandler(final HttpServletRequest request) {
+    public Controller getHandler(final HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request);
-        return controllers.get(request.getRequestURI()).getClass();
+        return controllers.getOrDefault(request.getRequestURI(), null);
     }
 }
