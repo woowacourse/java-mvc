@@ -36,7 +36,7 @@ class RequestMappingHandlerAdapterTest {
         Method method = clazz.getClass()
                 .getDeclaredMethod("get", HttpServletRequest.class, HttpServletResponse.class);
 
-        // when, then
+        // expect
         assertThat(requestMappingHandlerAdapter.supports(method)).isTrue();
     }
 
@@ -48,7 +48,7 @@ class RequestMappingHandlerAdapterTest {
         Method method = clazz.getClass()
                 .getDeclaredMethod("get", HttpServletRequest.class, HttpServletResponse.class);
 
-        // when, then
+        // expect
         assertThat(requestMappingHandlerAdapter.supports(method)).isFalse();
     }
 

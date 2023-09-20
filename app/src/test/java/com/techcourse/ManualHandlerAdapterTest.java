@@ -34,7 +34,7 @@ class ManualHandlerAdapterTest {
         Method method = clazz.getClass()
                 .getDeclaredMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
 
-        // when, then
+        // expect
         assertThat(manualHandlerAdapter.supports(method)).isTrue();
     }
 
@@ -46,7 +46,7 @@ class ManualHandlerAdapterTest {
         Method method = clazz.getClass()
                 .getDeclaredMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
 
-        // when, then
+        // expect
         assertThat(manualHandlerAdapter.supports(method)).isFalse();
     }
 
