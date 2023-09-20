@@ -5,14 +5,14 @@ import java.util.Objects;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
-public class HandlerMapping {
+public class HandlerMappings {
 
     private static final String NOT_FOUND_URI = "/404";
 
     private final ManualHandlerMapping manualHandlerMapping;
     private final AnnotationHandlerMapping annotationHandlerMapping;
 
-    public HandlerMapping(final String packageName) {
+    public HandlerMappings(final String packageName) {
         this.manualHandlerMapping = new ManualHandlerMapping();
         this.annotationHandlerMapping = new AnnotationHandlerMapping(packageName);
     }

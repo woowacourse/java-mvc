@@ -16,7 +16,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerAdaptors handlerAdaptors;
-    private HandlerMapping handlerMapping;
+    private HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
     }
@@ -24,8 +24,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerAdaptors = new HandlerAdaptors();
-        handlerMapping = new HandlerMapping(this.getClass().getPackageName());
-        handlerMapping.initialize();
+        handlerMappings = new HandlerMappings(this.getClass().getPackageName());
+        handlerMappings.initialize();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = handlerMapping.getHandler(request);
+            final var handler = handlerMappings.getHandler(request);
             final var modelAndView = handlerAdaptors.execute(handler, request, response);
             move(modelAndView, request, response);
         } catch (Throwable e) {
