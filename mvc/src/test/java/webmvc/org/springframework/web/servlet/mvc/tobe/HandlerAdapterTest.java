@@ -30,9 +30,9 @@ class HandlerAdapterTest {
 
         // expect
         assertAll(
-                () ->assertThat(handlerAdapter.support("문자열")).isTrue(),
-                () ->assertThat(handlerAdapter.support(1)).isFalse(),
-                () ->assertThat(handlerAdapter.support(new Object())).isFalse()
+                () -> assertThat(handlerAdapter.support("문자열")).isTrue(),
+                () -> assertThat(handlerAdapter.support(1)).isFalse(),
+                () -> assertThat(handlerAdapter.support(new Object())).isFalse()
         );
     }
 
