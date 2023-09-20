@@ -6,4 +6,4 @@
 
 ## 2단계 기능 요구 사항
 
-- [ ] Legacy MVC와 @MVC 통합하기
+- [x] Legacy MVC와 @MVC 통합하기
