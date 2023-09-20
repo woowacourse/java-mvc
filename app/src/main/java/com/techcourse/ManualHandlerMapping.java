@@ -21,6 +21,7 @@ public class ManualHandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
+        controllers.put("/404", new ForwardController("/404.jsp"));
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

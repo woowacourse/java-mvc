@@ -7,14 +7,14 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class HandlerMapping {
 
+    private static final String NOT_FOUND_URI = "/404";
+
     private final ManualHandlerMapping manualHandlerMapping;
     private final AnnotationHandlerMapping annotationHandlerMapping;
-    private final DefaultHandlerMapping defaultHandlerMapping;
 
     public HandlerMapping(final String packageName) {
         this.manualHandlerMapping = new ManualHandlerMapping();
         this.annotationHandlerMapping = new AnnotationHandlerMapping(packageName);
-        this.defaultHandlerMapping = new DefaultHandlerMapping();
     }
 
     public void initialize() {
@@ -33,6 +33,6 @@ public class HandlerMapping {
             return annotationHandler;
         }
 
-        return defaultHandlerMapping.getNotFoundController();
+        return manualHandlerMapping.getHandler(NOT_FOUND_URI);
     }
 }
