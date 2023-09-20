@@ -4,7 +4,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.controller.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +31,7 @@ public class LoginController implements Controller {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return "redirect:/index.jsp";
-        } else {
-            return "redirect:/401.jsp";
         }
+        return "redirect:/401.jsp";
     }
 }

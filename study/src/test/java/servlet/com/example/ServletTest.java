@@ -1,22 +1,27 @@
 package servlet.com.example;
 
 import org.junit.jupiter.api.Test;
+import support.HttpUtils;
+
+import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletTest {
 
+    private final String WEBAPP_DIR_LOCATION = "src/main/webapp/";
+
     @Test
-    void testSharedCounter() throws Exception {
+    void testSharedCounter() {
         // 톰캣 서버 시작
-        final var tomcatStarter = TestHttpUtils.createTomcatStarter();
+        final TomcatStarter tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
         tomcatStarter.start();
 
         // shared-counter 페이지를 3번 호출한다.
-        final var PATH = "/shared-counter";
-        TestHttpUtils.send(PATH);
-        TestHttpUtils.send(PATH);
-        final var response = TestHttpUtils.send(PATH);
+        final String PATH = "/shared-counter";
+        HttpUtils.send(PATH);
+        HttpUtils.send(PATH);
+        final HttpResponse<String> response = HttpUtils.send(PATH);
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
@@ -25,20 +30,20 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
-    void testLocalCounter() throws Exception {
+    void testLocalCounter() {
         // 톰캣 서버 시작
-        final var tomcatStarter = TestHttpUtils.createTomcatStarter();
+        final var tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
         tomcatStarter.start();
 
         // local-counter 페이지를 3번 호출한다.
         final var PATH = "/local-counter";
-        TestHttpUtils.send(PATH);
-        TestHttpUtils.send(PATH);
-        final var response = TestHttpUtils.send(PATH);
+        HttpUtils.send(PATH);
+        HttpUtils.send(PATH);
+        final var response = HttpUtils.send(PATH);
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
@@ -47,6 +52,6 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }

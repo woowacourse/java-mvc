@@ -1,11 +1,9 @@
 package com.techcourse;
 
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.startup.Tomcat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.stream.Stream;
 
 public class Application {
@@ -16,22 +14,11 @@ public class Application {
 
     public static void main(final String[] args) throws Exception {
         final int port = defaultPortIfNull(args);
-
-        final var tomcat = new Tomcat();
-        tomcat.setConnector(createConnector(port));
-        final var docBase = new File("app/src/main/webapp/").getAbsolutePath();
-        tomcat.addWebapp("", docBase);
-        log.info("configuring app with basedir: {}", docBase);
+        final var tomcat = new TomcatStarter(port);
+        log.info("configuring app with basedir: {}", TomcatStarter.WEBAPP_DIR_LOCATION);
 
         tomcat.start();
-        tomcat.getServer().await();
-    }
-
-    private static Connector createConnector(final int port) {
-        final var connector = new Connector();
-        connector.setPort(port);
-        connector.setProperty("bindOnInit", "false");
-        return connector;
+        stop(tomcat);
     }
 
     private static int defaultPortIfNull(final String[] args) {
@@ -39,5 +26,17 @@ public class Application {
                 .findFirst()
                 .map(Integer::parseInt)
                 .orElse(DEFAULT_PORT);
+    }
+
+    private static void stop(final TomcatStarter tomcat) {
+        try {
+            // make the application wait until we press any key.
+            System.in.read();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            log.info("web server stop.");
+            tomcat.stop();
+        }
     }
 }

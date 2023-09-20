@@ -44,6 +44,7 @@ public class TomcatStarter {
     public void stop() {
         try {
             tomcat.stop();
+            tomcat.destroy();
         } catch (LifecycleException e) {
             throw new RuntimeException(e);
         }
