@@ -10,10 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,6 +19,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final transient List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public static InitBuilder Builder() {
         return new InitBuilder();
@@ -39,13 +38,20 @@ public class DispatcherServlet extends HttpServlet {
     public static class Builder {
 
         private final List<HandlerMapping> handlerMappings;
+        private final List<HandlerAdapter> handlerAdapters;
 
         private Builder() {
             this.handlerMappings = new ArrayList<>();
+            this.handlerAdapters = new ArrayList<>();
         }
 
         public Builder addHandlerMapping(final HandlerMapping handlerMapping) {
             handlerMappings.add(handlerMapping);
+            return this;
+        }
+
+        public Builder addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+            handlerAdapters.add(handlerAdapter);
             return this;
         }
 
@@ -56,10 +62,15 @@ public class DispatcherServlet extends HttpServlet {
         private List<HandlerMapping> getHandlerMappings() {
             return handlerMappings;
         }
+
+        public List<HandlerAdapter> getHandlerAdapters() {
+            return handlerAdapters;
+        }
     }
 
     private DispatcherServlet(final Builder builder) {
         this.handlerMappings = builder.getHandlerMappings();
+        this.handlerAdapters = builder.getHandlerAdapters();
     }
 
     @Override
@@ -74,8 +85,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = findHandler(request);
-            final ModelAndView modelAndView = handle(request, response, handler);
+            final Object handler = findHandlerAdapter(request);
+            final HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             resolveView(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -83,19 +95,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
-            throws Exception {
-        if(handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-        if(handler instanceof Controller) {
-            final String viewName = ((Controller) handler).execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        }
-        throw new UnsupportedOperationException();
-    }
-
-    private Object findHandler(final HttpServletRequest request) {
+    private Object findHandlerAdapter(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
@@ -105,6 +105,13 @@ public class DispatcherServlet extends HttpServlet {
                         + request.getMethod() + " "
                         + request.getRequestURI())
                 );
+    }
+
+    private HandlerAdapter findHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 있는 HandlerAdapter를 찾을 수 없습니다!: "));
     }
 
     private void resolveView(final ModelAndView modelAndView, final HttpServletRequest request,
