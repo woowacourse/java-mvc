@@ -5,7 +5,11 @@ import java.util.List;
 
 public class HandlerAdopters {
 
-    private final List<HandlerAdopter> handlerAdopters = new ArrayList<>();
+    private final List<HandlerAdopter> handlerAdopters;
+
+    public HandlerAdopters(final List<HandlerAdopter> handlerAdopters) {
+        this.handlerAdopters = handlerAdopters;
+    }
 
     public void add(final HandlerAdopter adopter) {
         handlerAdopters.add(adopter);

@@ -7,11 +7,11 @@ import java.util.Objects;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class HandlerMappings {
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerMapping> handlerMappings;
 
-    public void add(final HandlerMapping handlerMapping) {
-        handlerMapping.initialize();
-        handlerMappings.add(handlerMapping);
+    public HandlerMappings(final List<HandlerMapping> handlerMappings) {
+        handlerMappings.forEach(HandlerMapping::initialize);
+        this.handlerMappings = handlerMappings;
     }
 
     public Object getHandler(final HttpServletRequest request) {
