@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -21,13 +21,12 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-
     public void initialize() {
         getAnnotatedClasses().forEach(this::registerMethods);
     }
 
     private Set<Class<?>> getAnnotatedClasses() {
-        Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
@@ -40,11 +39,11 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerMethod(final Class<?> clazz, final Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        final String value = requestMapping.value();
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final String uri = requestMapping.value();
         for (RequestMethod requestMethod : requestMapping.method()) {
             handlerExecutions.put(
-                    new HandlerKey(value, requestMethod),
+                    new HandlerKey(uri, requestMethod),
                     new HandlerExecution(clazz, method));
         }
     }
