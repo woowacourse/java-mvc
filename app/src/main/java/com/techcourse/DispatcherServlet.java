@@ -60,13 +60,7 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView mv = handlerAdapter.handle(request, response, handler);
             render(request, response, mv);
         } catch (Throwable e) {
-            ModelAndView mv = exceptionResolver.handle(e);
-            try {
-                render(request, response, mv);
-            } catch (Exception ex) {
-                log.error("Exception : {}", e.getMessage(), e);
-                throw new ServletException(e.getMessage());
-            }
+            handleException(request, response, e);
         }
     }
 
@@ -74,5 +68,16 @@ public class DispatcherServlet extends HttpServlet {
         throws Exception {
         View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
+    }
+
+    private void handleException(HttpServletRequest request, HttpServletResponse response, Throwable e)
+        throws ServletException {
+        ModelAndView mv = exceptionResolver.handle(e);
+        try {
+            render(request, response, mv);
+        } catch (Exception ex) {
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new ServletException(e.getMessage());
+        }
     }
 }
