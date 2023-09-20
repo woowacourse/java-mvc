@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMapping initHandlerMappings() {
         HandlerMapping handlerMapping = new HandlerMappingComposite(
-            List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com")));
+            List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse.controller")));
         handlerMapping.initialize();
         return handlerMapping;
     }
