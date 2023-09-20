@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.mvc.exception;
 
 public class UncheckedServletException extends RuntimeException {
 

@@ -19,4 +19,12 @@ public class HandlerExecution {
             throws Exception {
         return (ModelAndView) method.invoke(handler, request, response);
     }
+
+    public Object getHandler() {
+        return handler;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
 }

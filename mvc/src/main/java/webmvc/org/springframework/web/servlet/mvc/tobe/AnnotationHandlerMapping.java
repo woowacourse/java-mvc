@@ -8,16 +8,19 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.exception.CanNotInstanceHandlerException;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final Set<Class<?>> supportParameters = Set.of(HttpServletRequest.class,
@@ -31,6 +34,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final var reflections = new Reflections(basePackage);
         final var classes = reflections.getTypesAnnotatedWith(Controller.class);
@@ -38,12 +42,19 @@ public class AnnotationHandlerMapping {
             final var handler = getHandlerInstance(clazz);
             final var methods = clazz.getMethods();
 
-            Arrays.stream(methods)
-                    .filter(this::supportParameters)
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> putHandlerExecutions(handler, method));
+            final var executionMap = createHandlerExecutionMap(handler, methods);
+            handlerExecutions.putAll(executionMap);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private Map<HandlerKey, HandlerExecution> createHandlerExecutionMap(final Object handler, final Method[] methods) {
+        return Arrays.stream(methods)
+                .filter(this::supportParameters)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .map(method -> toHandlerExecutions(handler, method))
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     private boolean supportParameters(final Method method) {
@@ -53,31 +64,33 @@ public class AnnotationHandlerMapping {
         return supportParameters.containsAll(parameterTypes) && parameterTypes.size() == 2;
     }
 
-    private void putHandlerExecutions(final Object handler, final Method method) {
+    private Map<HandlerKey, HandlerExecution> toHandlerExecutions(
+            final Object handler, final Method method) {
         final var annotation = method.getDeclaredAnnotation(RequestMapping.class);
         final var handlerExecution = new HandlerExecution(handler, method);
 
-        Arrays.stream(annotation.method())
+        return Arrays.stream(annotation.method())
                 .map(requestMethod -> new HandlerKey(annotation.value(), requestMethod))
-                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+                .collect(Collectors.toMap(Function.identity(), handlerKey -> handlerExecution));
     }
 
     private static Object getHandlerInstance(final Class<?> clazz) {
         try {
             return clazz.getConstructor().newInstance();
         } catch (NoSuchMethodException |
-                IllegalAccessException |
-                InstantiationException |
+                 IllegalAccessException |
+                 InstantiationException |
                  InvocationTargetException e
         ) {
             throw new CanNotInstanceHandlerException();
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        final var requestURI = request.getRequestURI();
+        final var requestMethod = RequestMethod.valueOf(request.getMethod());
+        final var handlerKey = new HandlerKey(requestURI, requestMethod);
 
         return handlerExecutions.get(handlerKey);
     }
