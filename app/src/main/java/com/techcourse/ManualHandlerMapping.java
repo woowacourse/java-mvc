@@ -23,7 +23,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<HandlerKey, Controller> CONTROLLERS = new HashMap<>();
+    private static final Map<HandlerKey, Controller> controllers = new HashMap<>();
 
     public ManualHandlerMapping() {
         initialize();
@@ -31,27 +31,27 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        CONTROLLERS.put(new HandlerKey("/", GET), new ForwardController("/index.jsp"));
-        CONTROLLERS.put(new HandlerKey("/login", POST), new LoginControllerV1());
-        CONTROLLERS.put(new HandlerKey("/login/view", GET), new LoginViewControllerV1());
-        CONTROLLERS.put(new HandlerKey("/logout", GET), new LogoutControllerV1());
-        CONTROLLERS.put(new HandlerKey("/register/view", GET), new RegisterViewControllerV1());
-        CONTROLLERS.put(new HandlerKey("/register", POST), new RegisterControllerV1());
+        controllers.put(new HandlerKey("/", GET), new ForwardController("/index.jsp"));
+        controllers.put(new HandlerKey("/login", POST), new LoginControllerV1());
+        controllers.put(new HandlerKey("/login/view", GET), new LoginViewControllerV1());
+        controllers.put(new HandlerKey("/logout", GET), new LogoutControllerV1());
+        controllers.put(new HandlerKey("/register/view", GET), new RegisterViewControllerV1());
+        controllers.put(new HandlerKey("/register", POST), new RegisterControllerV1());
 
         log.info("Initialized Handler Mapping!");
-        CONTROLLERS.keySet()
-                .forEach(path -> log.info("Path : {}, Controller : {}", path, CONTROLLERS.get(path).getClass()));
+        controllers.keySet()
+                .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
     @Override
     public boolean support(final HttpServletRequest request) {
-        return CONTROLLERS.containsKey(getHandlerKey(request));
+        return controllers.containsKey(getHandlerKey(request));
     }
 
     @Override
     public Object getHandlerExecution(final HttpServletRequest request) {
         final HandlerKey handlerKey = getHandlerKey(request);
 
-        return CONTROLLERS.get(handlerKey);
+        return controllers.get(handlerKey);
     }
 }
