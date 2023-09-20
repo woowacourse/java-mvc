@@ -28,7 +28,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
             );
             return invokeMethod(object, method, request, response);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Adapter가 handle에 실패했습니다.", e);
         }
     }
 

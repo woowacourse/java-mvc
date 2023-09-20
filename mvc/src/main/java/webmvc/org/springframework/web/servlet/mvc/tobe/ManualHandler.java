@@ -21,7 +21,7 @@ public class ManualHandler implements Handler {
             JspView view = new JspView(viewName);
             return new ModelAndView(view);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("메서드 실행에 실패했습니다.", e);
         }
     }
 }
