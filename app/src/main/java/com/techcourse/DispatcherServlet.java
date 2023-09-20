@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.techcourse.exception.HandlerAdapterNotFoundException;
+import com.techcourse.exception.HandlerNotFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
-        throw new IllegalStateException("Handler Not found");
+        throw new HandlerNotFoundException("Handler Not found");
     }
 
     private HandlerAdapter findHandlerAdaptor(final Object handler) {
@@ -69,7 +71,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerAdapter;
             }
         }
-        throw new IllegalStateException("Handler Adaptor Not found");
+        throw new HandlerAdapterNotFoundException("Handler Adaptor Not found");
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
