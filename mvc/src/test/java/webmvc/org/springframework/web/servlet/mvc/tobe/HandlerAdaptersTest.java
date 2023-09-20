@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 
+import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
@@ -24,7 +25,7 @@ class HandlerAdaptersTest {
 
     @DisplayName("Adapters에서 HandlerExecution을 찾아 반환한다.")
     @Test
-    void findAdapter_HandlerExecution() {
+    void findAdapter_HandlerExecution() throws ServletException {
         // given
         final HandlerExecution handlerExecution = mock(HandlerExecution.class);
         handlerAdaptors.init();
@@ -38,7 +39,7 @@ class HandlerAdaptersTest {
 
     @DisplayName("Adapters에서 Controller를 찾아 반환한다.")
     @Test
-    void findAdapter_Controller() {
+    void findAdapter_Controller() throws ServletException {
         // given
         final Controller controller = mock(Controller.class);
         handlerAdaptors.init();
@@ -52,7 +53,7 @@ class HandlerAdaptersTest {
 
     @DisplayName("Adapters에서 원하는 타입을 찾지 못하면 null을 반환한다.")
     @Test
-    void findAdapter_NotFoundObject() {
+    void findAdapter_NotFoundObject() throws ServletException {
         // given
         final Object object = mock(Object.class);
         handlerAdaptors.init();

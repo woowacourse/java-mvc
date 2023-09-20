@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import jakarta.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +13,11 @@ public class HandlerAdapters {
         adapters.add(new AnnotationHandlerAdapter());
     }
 
-    public HandlerAdapter findAdapter(final Object handler) {
+    public HandlerAdapter findAdapter(final Object handler) throws ServletException {
         return adapters.stream()
                 .filter(adapter -> adapter.isSupport(handler))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new ServletException("No adapters support handler"));
     }
 
     public List<HandlerAdapter> getAdapters() {
