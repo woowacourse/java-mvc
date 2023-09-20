@@ -11,17 +11,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private final Reflections reflections;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HandlerExecutions handlerExecutions;
 
     public RequestMappingHandlerMapping(final Object... basePackage) {
         this.reflections = new Reflections(basePackage);
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = new HandlerExecutions(new HashMap<>());
 
         initialize();
     }
@@ -63,7 +62,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         final String requestPath = prefix + extractValueField(annotation);
         final RequestMethod[] requestMethods = extractMethodField(annotation);
 
-        addHandlerExecution(method, requestPath, requestMethods);
+        handlerExecutions.addHandlerExecution(requestPath, requestMethods, method);
     }
 
     private void scanCustomRequestMapping(final String prefix, final Method method) {
@@ -81,18 +80,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         final String requestPath = prefix + extractValueField(annotation);
         final RequestMethod[] requestMethods = extractMethodField(requestMapping);
 
-        addHandlerExecution(method, requestPath, requestMethods);
-    }
-
-    private void addHandlerExecution(final Method method, final String requestPath,
-                                     final RequestMethod[] requestMethods) {
-        final Object bean = instantiate(method.getDeclaringClass());
-        final HandlerExecution handlerExecution = new HandlerExecution(bean, method);
-
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
+        handlerExecutions.addHandlerExecution(requestPath, requestMethods, method);
     }
 
     private RequestMethod[] extractMethodField(final Annotation annotation) {
@@ -117,22 +105,12 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Object instantiate(final Class<?> clazz) {
-        try {
-            return clazz.getConstructor()
-                    .newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
-            throw new InstantiationFailedException("인스턴스화를 하는 도중 예외가 발생했습니다.", e);
-        }
-    }
-
     @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        return handlerExecutions.get(handlerKey);
+        return handlerExecutions.getHandlerExecutions(handlerKey);
     }
 }
