@@ -1,7 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
-import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerAnnotatedClass = reflections.getTypesAnnotatedWith(Controller.class);
@@ -34,6 +34,11 @@ public class AnnotationHandlerMapping {
             findRequestMappingAndRegisterHandler(clazz);
         }
         log.info("Initialized AnnotationHandlerMapping! {}", handlerExecutions);
+    }
+
+    @Override
+    public boolean hasMapping(final Request request) {
+        return handlerExecutions.containsKey(new HandlerKey(request.getUri(), request.getMethod()));
     }
 
     private void findRequestMappingAndRegisterHandler(final Class<?> clazz) {
@@ -68,8 +73,9 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.get(request.getMethod()));
+    @Override
+    public Object getHandler(final Request request) {
+        final HandlerKey handlerKey = new HandlerKey(request.getUri(), request.getMethod());
         return handlerExecutions.get(handlerKey);
     }
 }

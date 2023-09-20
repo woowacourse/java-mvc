@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingNotFoundException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,17 @@ public class ResourceFilter implements Filter {
             log.debug("path : {}", path);
             requestDispatcher.forward(request, response);
         } else {
+            doChain(request, response, chain);
+        }
+    }
+
+    private void doChain(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        try{
             chain.doFilter(request, response);
+        }
+        catch (HandlerMappingNotFoundException e){
+            final RequestDispatcher dispatcher = request.getRequestDispatcher("/404.jsp");
+            dispatcher.forward(request, response);
         }
     }
 
