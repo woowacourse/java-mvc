@@ -44,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
         Set<Class<? extends HandlerMapping>> subTypes = reflections.getSubTypesOf(
                 HandlerMapping.class);
         for (Class<? extends HandlerMapping> clazz : subTypes) {
-            handlerMappings.add((HandlerMapping) ReflectionUtils.instantiate(clazz));
+            handlerMappings.add(ReflectionUtils.instantiate(clazz));
         }
     }
 

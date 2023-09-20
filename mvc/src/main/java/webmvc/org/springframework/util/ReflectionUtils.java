@@ -9,7 +9,7 @@ import java.lang.reflect.Modifier;
  */
 public class ReflectionUtils {
 
-    public static <T> Object instantiate(Class<T> clazz) {
+    public static <T> T instantiate(Class<T> clazz) {
         try {
             return ReflectionUtils.accessibleConstructor(clazz).newInstance();
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
