@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.support.web.mapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 
-import java.util.Collections;
 import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
@@ -29,7 +28,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.init();
+        handlerMappings.init(new ManualHandlerMapping());
         handlerAdapters.init();
     }
 

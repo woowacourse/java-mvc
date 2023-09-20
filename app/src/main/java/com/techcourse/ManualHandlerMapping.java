@@ -1,4 +1,4 @@
-package com.techcourse.support.web.mapping;
+package com.techcourse;
 
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
@@ -20,6 +20,10 @@ public class ManualHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
+
+    public ManualHandlerMapping() {
+        initialize();
+    }
 
     @Override
     public void initialize() {
