@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,11 +14,11 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         Object controller = method.getDeclaringClass()
                 .getConstructor()
                 .newInstance();
 
-        return (ModelAndView) method.invoke(controller, request, response);
+        return (ModelAndView) method.invoke(controller, req, res);
     }
 }
