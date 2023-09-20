@@ -20,7 +20,6 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerAdapterRegistry handlerAdapterRegistry;
 
 
-
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
@@ -38,6 +37,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
+
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
