@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterFinder;
