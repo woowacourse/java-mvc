@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.http.exception.MethodNotAllowedException;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.handler.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapter;
@@ -44,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
             final Object view = handlerAdapter.execute(request, response);
 
             move((String) view, request, response);
-            
+
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -52,24 +53,22 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object mapHandler(final HttpServletRequest request) {
-        return handlerMappings.stream().filter(handlerMapping -> handlerMapping.getHandler(request) != null)
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
                 .findFirst()
-                .orElse(handlerMappings.get(0))
+                .orElseThrow(() -> new MethodNotAllowedException(request.getMethod()))
                 .getHandler(request);
     }
 
     private HandlerAdapter mapHandlerAdapter(final Object handler) {
         if (handler instanceof Controller) {
-            log.info("this is controller");
             return new ControllerHandlerAdapter(handler);
         }
         if (handler instanceof HandlerExecution) {
-            log.info("this is handlerExecution");
             return new HandlerExecutionHandlerAdapter(handler);
         }
-        throw new IllegalArgumentException();
+        throw new MethodNotAllowedException();
     }
-
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
