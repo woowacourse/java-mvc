@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotFoundException;
 
-public class HandlerMappings implements HandlerMapping<Object> {
+public class HandlerMappingComposite implements HandlerMapping<Object> {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappings(List<HandlerMapping> handlerMappings) {
+    public HandlerMappingComposite(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
     }
 

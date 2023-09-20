@@ -14,14 +14,15 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterFinder;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ExceptionResolver;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMappingComposite;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappings handlerMappings;
+    private HandlerMapping handlerMapping;
     private HandlerAdapterFinder handlerAdapterFinder;
     private ExceptionResolver exceptionResolver;
 
@@ -30,16 +31,16 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = initHandlerMappings();
+        handlerMapping = initHandlerMappings();
         handlerAdapterFinder = initHandlerAdapterFinder();
         exceptionResolver = new ExceptionResolver();
     }
 
-    private HandlerMappings initHandlerMappings() {
-        HandlerMappings handlerMappings = new HandlerMappings(
+    private HandlerMapping initHandlerMappings() {
+        HandlerMapping handlerMapping = new HandlerMappingComposite(
             List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com")));
-        handlerMappings.initialize();
-        return handlerMappings;
+        handlerMapping.initialize();
+        return handlerMapping;
     }
 
     private HandlerAdapterFinder initHandlerAdapterFinder() {
@@ -53,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
-            Object handler = handlerMappings.getHandler(request);
+            Object handler = handlerMapping.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterFinder.find(handler);
             ModelAndView mv = handlerAdapter.handle(request, response, handler);
             render(request, response, mv);
