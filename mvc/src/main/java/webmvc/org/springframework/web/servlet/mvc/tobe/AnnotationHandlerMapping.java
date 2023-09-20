@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
@@ -50,6 +51,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public HandlerExecution getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         String method = request.getMethod();
-        return handlerExecutions.get(new HandlerKey(uri, RequestMethod.valueOf(method)));
+        if (Objects.nonNull(uri) || Objects.nonNull(method)) {
+            return handlerExecutions.get(new HandlerKey(uri, RequestMethod.valueOf(method)));
+        }
+        return null;
     }
 }

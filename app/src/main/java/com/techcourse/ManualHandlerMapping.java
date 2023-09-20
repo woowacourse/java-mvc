@@ -8,6 +8,7 @@ import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
@@ -37,7 +38,11 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public Controller getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        Controller controller = controllers.get(requestURI);
+        if (Objects.nonNull(controller)) {
+            log.debug("Request Mapping Uri : {}", requestURI);
+            return controller;
+        }
+        return null;
     }
 }
