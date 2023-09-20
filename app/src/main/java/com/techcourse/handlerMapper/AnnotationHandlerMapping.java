@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping implements HandlerMapping{
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,7 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
@@ -56,7 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.resolve(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
 }
