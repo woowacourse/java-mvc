@@ -1,51 +1,72 @@
 package com.techcourse;
 
+import com.techcourse.support.HandlerAdapters;
+import com.techcourse.support.HandlerExceptionResolvers;
+import com.techcourse.support.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerExceptionResolver;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-
-    public DispatcherServlet() {
-    }
+    private final transient HandlerMappings handlerMappings = new HandlerMappings();
+    private final transient HandlerAdapters handlerAdapters = new HandlerAdapters();
+    private final transient HandlerExceptionResolvers handlerExceptionResolvers = new HandlerExceptionResolvers();
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappings.initialize();
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.addHandlerAdapter(handlerAdapter);
+    }
+
+    public void addHandlerExceptionResolvers(HandlerExceptionResolver handlerExceptionResolver) {
+        handlerExceptionResolvers.addHandlerExceptionResolver(handlerExceptionResolver);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
+    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException {
+        log.debug("Method : {}, Request URI : {}", req.getMethod(), req.getRequestURI());
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            Object handler = handlerMappings.getHandler(req);
+            HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
+            ModelAndView mav = adapter.handle(req, res, handler);
+            render(mav, req, res);
+        } catch (Exception e) {
+            resolveException(req, res, e);
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private void render(ModelAndView mav, HttpServletRequest req, HttpServletResponse res) throws Exception {
+        View view = mav.getView();
+        view.render(mav.getModel(), req, res);
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private void resolveException(HttpServletRequest req, HttpServletResponse res, Exception ex) throws ServletException {
+        try {
+            HandlerExceptionResolver handlerExceptionResolver = handlerExceptionResolvers.getExceptionResolver(ex);
+            ModelAndView mav = handlerExceptionResolver.resolveException(req, res, ex);
+            render(mav, req, res);
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new ServletException(e.getMessage());
+        }
     }
 }
