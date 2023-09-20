@@ -1,18 +1,17 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
+import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
+import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -35,9 +34,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(final HttpServletRequest request) {
+    public Handler getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        return new ManualHandler(controllers.get(requestURI));
     }
 }

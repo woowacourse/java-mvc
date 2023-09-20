@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.TestAnnotationController;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -32,6 +32,6 @@ class ControllerScannerTest {
         Map<Class<?>, Object> controllers = controllerScanner.controllers();
 
         // then
-        assertThat(controllers.get(TestController.class)).isNotNull();
+        assertThat(controllers.get(TestAnnotationController.class)).isNotNull();
     }
 }

@@ -19,7 +19,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class HandlerExecutionTest {
+class AnnotationHandlerTest {
 
     @Mock
     HttpServletRequest request;
@@ -36,18 +36,18 @@ class HandlerExecutionTest {
     @Test
     void 다룬다() throws Exception {
         // given
-        Class<?> clazz = Class.forName("samples.TestController");
+        Class<?> clazz = Class.forName("samples.TestAnnotationController");
         Object object = clazz.getDeclaredConstructor().newInstance();
         Method method = Arrays.stream(clazz.getDeclaredMethods())
                 .filter(declaredMethod -> Objects.nonNull(declaredMethod.getAnnotation(RequestMapping.class)))
                 .findAny()
                 .orElseThrow(IllegalArgumentException::new);
-        HandlerExecution handlerExecution = new HandlerExecution(object, method);
+        AnnotationHandler annotationHandler = new AnnotationHandler(object, method);
 
         when(request.getAttribute("id")).thenReturn("gugu");
 
         // when
-        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
+        ModelAndView modelAndView = annotationHandler.handle(request, response);
 
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");

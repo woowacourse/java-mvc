@@ -4,14 +4,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
+
+import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -34,25 +35,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Controller controller = getHandler(request);
-
-            if (AnnotationHandlerMapping.class.isAssignableFrom(controller.getClass())) {
-                ModelAndView modelAndView = (ModelAndView) controller.execute(request, response);
-                return;
-            }
-
-            var viewName = (String) controller.execute(request, response);
-            move(viewName, request, response);
+            Handler handler = getHandler(request);
+            ModelAndView modelAndView = handler.handle(request, response);
+            move(modelAndView.getViewName(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Controller getHandler(HttpServletRequest request) {
+    private Handler getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .findAny()
+                .filter(Objects::nonNull)
+                .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }
 
