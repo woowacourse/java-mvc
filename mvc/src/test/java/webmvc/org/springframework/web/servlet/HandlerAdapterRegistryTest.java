@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 class HandlerAdapterRegistryTest {
 
