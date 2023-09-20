@@ -12,9 +12,7 @@ import webmvc.org.springframework.web.servlet.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -49,32 +47,14 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(IllegalArgumentException::new);
-
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-
-            move(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(
-            final ModelAndView modelAndView,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws Exception {
-        View view = modelAndView.getView();
-        String viewName = view.getPath();
-
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-    }
 
 }
