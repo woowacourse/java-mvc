@@ -51,10 +51,4 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
-
-    @Test
-    void dd() {
-        ControllerHandlerMapping samples = new ControllerHandlerMapping("samples");
-        samples.initialize();
-    }
 }
