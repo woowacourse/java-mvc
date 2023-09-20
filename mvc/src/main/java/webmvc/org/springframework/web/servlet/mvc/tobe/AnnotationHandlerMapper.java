@@ -13,21 +13,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapper;
 
 import static java.util.stream.Collectors.toList;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapper implements HandlerMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapper.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapper(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
@@ -63,11 +65,11 @@ public class AnnotationHandlerMapping {
             Object handler = controller.getConstructor().newInstance();
             return handler;
         } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "해당 컨트롤러의 생성자로 객체를 생성할 수 없습니다." + controller.getSimpleName() + "의 생성자를 다시 확인해주세요.");
+            throw new IllegalArgumentException("해당 컨트롤러의 생성자로 객체를 생성할 수 없습니다." + controller.getSimpleName() + "의 생성자를 다시 확인해주세요.");
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());

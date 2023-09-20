@@ -1,12 +1,12 @@
-package com.techcourse.controller;
+package com.techcourse.controller.lagacy;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 
-public class RegisterController implements Controller {
+public class RegisterController implements CustomController {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {

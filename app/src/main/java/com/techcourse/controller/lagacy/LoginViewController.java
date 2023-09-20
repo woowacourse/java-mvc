@@ -1,12 +1,12 @@
-package com.techcourse.controller;
+package com.techcourse.controller.lagacy;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.asis.CustomController;
 
-public class LoginViewController implements Controller {
+public class LoginViewController implements CustomController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 

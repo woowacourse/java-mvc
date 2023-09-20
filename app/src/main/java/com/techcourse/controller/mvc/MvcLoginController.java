@@ -1,20 +1,29 @@
-package com.techcourse.controller;
+package com.techcourse.controller.mvc;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class LoginController implements Controller {
+@Controller
+public class MvcLoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(MvcLoginController.class);
 
-    @Override
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        return new ModelAndView(new JspView(execute(req, res)));
+    }
+
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
+        if (MvcUserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
 
@@ -29,7 +38,7 @@ public class LoginController implements Controller {
     private String login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
-            session.setAttribute(UserSession.SESSION_KEY, user);
+            session.setAttribute(MvcUserSession.SESSION_KEY, user);
             return "redirect:/index.jsp";
         }
         return "redirect:/401.jsp";
