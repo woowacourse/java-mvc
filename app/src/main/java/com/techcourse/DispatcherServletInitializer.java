@@ -4,10 +4,13 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 /**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
+ * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
+ * servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
@@ -15,9 +18,16 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
+    public static final String BASE_PACKAGE = "com.techcourse.controller";
+
+
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping())
+                .addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE))
+                .addHandlerAdapter(new HandlerExecutionHandlerAdapter())
+                .addHandlerAdapter(new ControllerHandlerAdapter());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
