@@ -4,6 +4,12 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.view.JspView;
+
+import java.util.Set;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +23,14 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        Set<HandlerMapping> handlerMappings = Set.of(
+                new AnnotationHandlerMapping("com.techcourse.controller"),
+                new ManualHandlerMappingAdapter(new ManualHandlerMapping())
+        );
+        final var dispatcherServlet = new DispatcherServlet(
+                handlerMappings,
+                (request, response) -> new ModelAndView(new JspView("/404.jsp"))
+        );
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

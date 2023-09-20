@@ -1,18 +1,17 @@
-package webmvc.org.springframework.web.servlet.mvc.reflection;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
 import java.lang.reflect.Method;
 
-public class ReflectiveHandlerExecutionAdapter extends HandlerExecution {
+public class ReflectiveHandlerExecution implements HandlerExecution {
 
     private final Object instance;
     private final Method method;
 
-    public ReflectiveHandlerExecutionAdapter(Object instance, Method method) {
+    public ReflectiveHandlerExecution(Object instance, Method method) {
         this.instance = instance;
         this.method = method;
     }
