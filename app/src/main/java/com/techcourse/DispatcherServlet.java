@@ -6,13 +6,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -67,16 +71,33 @@ public class DispatcherServlet extends HttpServlet {
 
     private static boolean isExecuteMethod(final Method method) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
-        return parameterTypes.length == 2 && parameterTypes[0].equals(HttpServletRequest.class) && parameterTypes[1].equals(HttpServletResponse.class);
+        return parameterTypes.length == 2
+                && parameterTypes[0].equals(HttpServletRequest.class)
+                && parameterTypes[1].equals(HttpServletResponse.class);
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+    private void move(final Object view, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        // TODO : 3단계 미션에서 리팩토링 필요
+        if (view.getClass().equals(String.class)) {
+            moveString((String) view, request, response);
+        }
+        if (view.getClass().equals(HandlerExecution.class)) {
+            moveHandlerExecution((ModelAndView) view, request, response);
+        }
+    }
+
+    private void moveString(final String view, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        if (view.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(view.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        final var requestDispatcher = request.getRequestDispatcher(view);
         requestDispatcher.forward(request, response);
+    }
+
+    private void moveHandlerExecution(final ModelAndView view, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final String name = view.getView().getClass().getName();
+        moveString(name, request, response);
     }
 }
