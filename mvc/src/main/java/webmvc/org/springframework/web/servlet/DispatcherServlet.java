@@ -4,54 +4,74 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final transient List<HandlerMapping> handlerMappings;
+    private final transient HandlerMappingRegistry handlerMappingRegistry;
     private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public static InitBuilder Builder() {
-        return new InitBuilder();
+    public static FirstBuilder builder() {
+        return new FirstBuilder();
     }
 
-    public static class InitBuilder {
+    public static class FirstBuilder {
 
-        private InitBuilder() {
+        private FirstBuilder() {
         }
 
-        public Builder addHandlerMapping(final HandlerMapping handlerMapping) {
-            return new Builder().addHandlerMapping(handlerMapping);
+        public SecondBuilder addHandlerMapping(final HandlerMapping handlerMapping) {
+            return new SecondBuilder().addHandlerMapping(handlerMapping);
         }
     }
 
-    public static class Builder {
+    public static class SecondBuilder {
 
-        private final List<HandlerMapping> handlerMappings;
+        private final HandlerMappingRegistry handlerMappingRegistry;
         private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-        private Builder() {
-            this.handlerMappings = new ArrayList<>();
+        private SecondBuilder() {
+            this.handlerMappingRegistry = new HandlerMappingRegistry();
             this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         }
 
-        public Builder addHandlerMapping(final HandlerMapping handlerMapping) {
-            handlerMappings.add(handlerMapping);
+        public SecondBuilder addHandlerMapping(final HandlerMapping handlerMapping) {
+            handlerMappingRegistry.addHandlerMapping(handlerMapping);
             return this;
         }
 
-        public Builder addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        public LastBuilder addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+            handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+            return new LastBuilder(handlerMappingRegistry, handlerAdapterRegistry);
+        }
+    }
+
+    public static class LastBuilder {
+
+        private final HandlerMappingRegistry handlerMappings;
+        private final HandlerAdapterRegistry handlerAdapterRegistry;
+
+        private LastBuilder(final HandlerMappingRegistry handlerMappings,
+                           final HandlerAdapterRegistry handlerAdapterRegistry) {
+            this.handlerMappings = handlerMappings;
+            this.handlerAdapterRegistry = handlerAdapterRegistry;
+        }
+
+        public LastBuilder addHandlerMapping(final HandlerMapping handlerMapping) {
+            handlerMappings.addHandlerMapping(handlerMapping);
+            return this;
+        }
+
+        public LastBuilder addHandlerAdapter(final HandlerAdapter handlerAdapter) {
             handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
             return this;
         }
@@ -60,23 +80,23 @@ public class DispatcherServlet extends HttpServlet {
             return new DispatcherServlet(this);
         }
 
-        private List<HandlerMapping> getHandlerMappings() {
+        private HandlerMappingRegistry getHandlerMappings() {
             return handlerMappings;
         }
 
-        public HandlerAdapterRegistry getHandlerAdapterRegistry() {
+        private HandlerAdapterRegistry getHandlerAdapterRegistry() {
             return handlerAdapterRegistry;
         }
     }
 
-    private DispatcherServlet(final Builder builder) {
-        this.handlerMappings = builder.getHandlerMappings();
+    private DispatcherServlet(final LastBuilder builder) {
+        this.handlerMappingRegistry = builder.getHandlerMappings();
         this.handlerAdapterRegistry = builder.getHandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.initialize();
     }
 
     @Override
@@ -86,7 +106,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = findHandler(request);
+            final Object handler = handlerMappingRegistry.findHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.findHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             resolveView(modelAndView, request, response);
@@ -94,18 +114,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object findHandler(final HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "요청을 처리할 수 있는 Handler를 찾을 수 없습니다!: "
-                        + request.getMethod() + " "
-                        + request.getRequestURI())
-                );
     }
 
     private void resolveView(final ModelAndView modelAndView, final HttpServletRequest request,
