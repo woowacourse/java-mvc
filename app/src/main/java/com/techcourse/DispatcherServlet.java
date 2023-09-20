@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerProcessor;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -13,15 +16,16 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private static HandlerProcessor handlerProcessor;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        handlerProcessor = new HandlerProcessor(manualHandlerMapping, annotationHandlerMapping);
     }
 
     @Override
@@ -30,8 +34,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
+            Object handleResult = handlerProcessor.handle(request, response);
+
+            if (handleResult instanceof ModelAndView) {
+                ModelAndView modelAndView = (ModelAndView) handleResult;
+                modelAndView.getView().render(modelAndView.getModel(), request, response);
+                return;
+            }
+            String viewName = (String) handleResult;
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
