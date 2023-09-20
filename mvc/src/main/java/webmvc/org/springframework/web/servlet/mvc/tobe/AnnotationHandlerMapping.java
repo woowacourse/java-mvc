@@ -16,15 +16,15 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.basePackage = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
@@ -33,12 +33,12 @@ public class AnnotationHandlerMapping {
         final var reflections = new Reflections(basePackage);
         final var methodsPerClass = groupingMethodsByClass(reflections);
 
-        for (var classAndMethods : methodsPerClass.entrySet()) {
+        for (final var classAndMethods : methodsPerClass.entrySet()) {
             final var clazz = classAndMethods.getKey();
             final var methods = classAndMethods.getValue();
             try {
                 initializeEachClassExecutions(clazz, methods);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -71,7 +71,7 @@ public class AnnotationHandlerMapping {
               .forEach(key -> handlerExecutions.put(key, new HandlerExecution(target, method)));
     }
 
-
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod().toUpperCase())));
     }
