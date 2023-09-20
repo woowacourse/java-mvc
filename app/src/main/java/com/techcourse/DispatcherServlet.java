@@ -13,6 +13,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -63,10 +64,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(HandlerMappingNotFoundException::new)
-                .getHandler(request);
+                .orElseThrow(HandlerMappingNotFoundException::new);
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
