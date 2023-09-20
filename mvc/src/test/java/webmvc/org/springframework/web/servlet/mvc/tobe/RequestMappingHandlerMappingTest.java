@@ -30,8 +30,7 @@ class RequestMappingHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var handlerMethod = new HandlerMethod(handlerExecution.getBean(), handlerExecution.getHandler());
-        final var modelAndView = handlerAdapter.handle(request, response, handlerMethod);
+        final var modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -46,8 +45,7 @@ class RequestMappingHandlerMappingTest {
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var handlerMethod = new HandlerMethod(handlerExecution.getBean(), handlerExecution.getHandler());
-        final var modelAndView = handlerAdapter.handle(request, response, handlerMethod);
+        final var modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -62,8 +60,7 @@ class RequestMappingHandlerMappingTest {
         when(request.getMethod()).thenReturn("PUT");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var handlerMethod = new HandlerMethod(handlerExecution.getBean(), handlerExecution.getHandler());
-        final var modelAndView = handlerAdapter.handle(request, response, handlerMethod);
+        final var modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -78,9 +75,7 @@ class RequestMappingHandlerMappingTest {
         when(request.getMethod()).thenReturn("DELETE");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var handlerMethod = new HandlerMethod(handlerExecution.getBean(), handlerExecution.getHandler());
-        final var modelAndView = handlerAdapter.handle(request, response, handlerMethod);
-
+        final var modelAndView = handlerAdapter.handle(request, response, handlerExecution);
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
@@ -94,8 +89,7 @@ class RequestMappingHandlerMappingTest {
         when(request.getMethod()).thenReturn("PATCH");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var handlerMethod = new HandlerMethod(handlerExecution.getBean(), handlerExecution.getHandler());
-        final var modelAndView = handlerAdapter.handle(request, response, handlerMethod);
+        final var modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -110,8 +104,7 @@ class RequestMappingHandlerMappingTest {
         when(request.getMethod()).thenReturn("OPTIONS");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var handlerMethod = new HandlerMethod(handlerExecution.getBean(), handlerExecution.getHandler());
-        final var modelAndView = handlerAdapter.handle(request, response, handlerMethod);
+        final var modelAndView = handlerAdapter.handle(request, response, handlerExecution);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }

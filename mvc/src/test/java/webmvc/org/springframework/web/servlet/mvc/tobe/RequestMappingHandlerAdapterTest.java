@@ -60,13 +60,13 @@ class RequestMappingHandlerAdapterTest {
         // when
         Method method = clazz.getClass()
                 .getDeclaredMethod("get", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerMethod handlerMethod = new HandlerMethod(clazz, method);
+        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
 
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
         // then
-        ModelAndView modelAndView = requestMappingHandlerAdapter.handle(request, response, handlerMethod);
+        ModelAndView modelAndView = requestMappingHandlerAdapter.handle(request, response, handlerExecution);
         assertThat(modelAndView.getView().getName()).isEqualTo("viewName");
     }
 

@@ -49,14 +49,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             final HandlerExecution mappedHandler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(mappedHandler.getHandler());
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(mappedHandler.getMethod());
 
-            final HandlerMethod handlerMethod = new HandlerMethod(mappedHandler.getBean(), mappedHandler.getHandler());
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerMethod);
-
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, mappedHandler);
             final View view = modelAndView.getView();
             move(view.getName(), request, response);
-        } catch (Exception e) {
+
+        } catch (Exception e) { // TODO: 세분화
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }

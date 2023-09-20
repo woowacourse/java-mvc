@@ -32,9 +32,9 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler) {
-        final HandlerMethod handlerMethod = (HandlerMethod) handler;
-        final Object bean = handlerMethod.getBean();
-        final Method method = (Method) handlerMethod.getHandler();
+        final HandlerExecution handlerExecution = (HandlerExecution) handler;
+        final Object bean = handlerExecution.getBean();
+        final Method method = (Method) handlerExecution.getMethod();
 
         try {
             return (ModelAndView) method.invoke(bean, request, response);

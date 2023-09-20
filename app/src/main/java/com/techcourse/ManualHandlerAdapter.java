@@ -6,7 +6,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -31,9 +31,9 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     private String invokeHandler(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object handler) {
         try {
-            final HandlerMethod handlerMethod = (HandlerMethod) handler;
-            final Object bean = handlerMethod.getBean();
-            final Method method = (Method) handlerMethod.getHandler();
+            final HandlerExecution handlerExecution = (HandlerExecution) handler;
+            final Object bean = handlerExecution.getBean();
+            final Method method = (Method) handlerExecution.getMethod();
 
             return (String) method.invoke(bean, request, response);
         } catch (InvocationTargetException | IllegalAccessException e) {

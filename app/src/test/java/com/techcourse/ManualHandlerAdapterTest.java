@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
 import java.lang.reflect.Method;
 
@@ -58,13 +58,13 @@ class ManualHandlerAdapterTest {
         // when
         Method method = clazz.getClass()
                 .getDeclaredMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerMethod handlerMethod = new HandlerMethod(clazz, method);
+        HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
 
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
         // then
-        ModelAndView modelAndView = manualHandlerAdapter.handle(request, response, handlerMethod);
+        ModelAndView modelAndView = manualHandlerAdapter.handle(request, response, handlerExecution);
         assertThat(modelAndView.getView().getName()).isEqualTo("viewName");
     }
 
