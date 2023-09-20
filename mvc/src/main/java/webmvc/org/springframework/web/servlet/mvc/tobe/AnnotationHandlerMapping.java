@@ -15,18 +15,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, Handler> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
 
@@ -57,17 +58,30 @@ public class AnnotationHandlerMapping {
     private void addHandlerExecutions(final Method method, final Object controller) {
         final RequestMapping request = method.getAnnotation(RequestMapping.class);
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        final AnnotationHandler handler = new AnnotationHandler(handlerExecution);
 
         Arrays.stream(request.method())
                 .map(httpMethod -> new HandlerKey(request.value(), httpMethod))
-                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handler));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public boolean supports(final HttpServletRequest request) {
+        final HandlerKey handlerKey = parseToKey(request);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    @Override
+    public Handler getHandler(final HttpServletRequest request) {
+        final HandlerKey handlerKey = parseToKey(request);
+
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private HandlerKey parseToKey(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        return new HandlerKey(requestURI, requestMethod);
     }
 }

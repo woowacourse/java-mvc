@@ -1,7 +1,7 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package com.techcourse;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,13 +10,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AnnotationHandlerMappingTest {
+class ManualHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private static ManualHandlerMapping handlerMapping = new ManualHandlerMapping();
 
-    @BeforeEach
-    void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+    @BeforeAll
+    static void setUp() {
         handlerMapping.initialize();
     }
 
@@ -26,22 +25,10 @@ class AnnotationHandlerMappingTest {
         private final HttpServletRequest request = mock(HttpServletRequest.class);
 
         @Test
-        @DisplayName("적절한 핸들러가 있다면 true를 리턴한다 - get")
-        void supports_get() {
-            //given
-            when(request.getRequestURI()).thenReturn("/get-test");
-            when(request.getMethod()).thenReturn("GET");
-
-            //when, then
-            assertThat(handlerMapping.supports(request)).isTrue();
-        }
-
-        @Test
         @DisplayName("적절한 핸들러가 있다면 true를 리턴한다 - post")
-        void supports_post() {
+        void supports() {
             //given
-            when(request.getRequestURI()).thenReturn("/post-test");
-            when(request.getMethod()).thenReturn("POST");
+            when(request.getRequestURI()).thenReturn("/");
 
             //when, then
             assertThat(handlerMapping.supports(request)).isTrue();
@@ -52,7 +39,6 @@ class AnnotationHandlerMappingTest {
         void supports_false() {
             //given
             when(request.getRequestURI()).thenReturn("/nothing");
-            when(request.getMethod()).thenReturn("POST");
 
             //when, then
             assertThat(handlerMapping.supports(request)).isFalse();
