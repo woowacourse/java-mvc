@@ -57,6 +57,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    private static File[] findFilesByPath(final String path) throws URISyntaxException {
+        final String packagePath = path.replace('.', '/');
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final File directory = new File(classLoader.getResource(packagePath).toURI());
+        return directory.listFiles();
+    }
+
     private void findControllerByFile(final String path, final List<Class<?>> controllers, final File file)
             throws URISyntaxException, IOException {
         final String filePath = path + "." + file.getName();
@@ -68,13 +75,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private static File[] findFilesByPath(final String path) throws URISyntaxException {
-        final String packagePath = path.replace('.', '/');
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final File directory = new File(classLoader.getResource(packagePath).toURI());
-        return directory.listFiles();
-    }
-
     private void verifyController(final String file, final List<Class<?>> controllers) {
         try {
             final Class<?> clazz = convertToClass(file);
@@ -84,15 +84,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    private static Class<?> convertToClass(final String file) throws ClassNotFoundException {
+        String className = file.replace(".class", "");
+        return Class.forName(className);
+    }
+
     private static void addControllerClass(final List<Class<?>> controllers, final Class<?> clazz) {
         if (clazz.isAnnotationPresent(context.org.springframework.stereotype.Controller.class)) {
             controllers.add(clazz);
         }
-    }
-
-    private static Class<?> convertToClass(final String file) throws ClassNotFoundException {
-        String className = file.replace(".class", "");
-        return Class.forName(className);
     }
 
     private void addHandler(final Class<?> controller) {

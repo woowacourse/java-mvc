@@ -53,15 +53,6 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter findHandlerAdaptor(final Object handler) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.support(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new IllegalStateException("Handler Adaptor Not found");
-    }
-
     private Object findHandler(final HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             final Object handler = handlerMapping.getHandler(request);
@@ -70,6 +61,15 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         throw new IllegalStateException("Handler Not found");
+    }
+
+    private HandlerAdapter findHandlerAdaptor(final Object handler) {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.support(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new IllegalStateException("Handler Adaptor Not found");
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
