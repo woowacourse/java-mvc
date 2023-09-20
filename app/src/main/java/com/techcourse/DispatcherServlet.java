@@ -44,7 +44,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request);
+            final Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElse(new IllegalArgumentException("경로에 맞는 핸들러가 존재하지 않습니다."));
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
