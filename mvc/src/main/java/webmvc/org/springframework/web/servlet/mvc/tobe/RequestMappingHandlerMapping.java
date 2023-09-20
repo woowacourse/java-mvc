@@ -3,7 +3,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
-import web.org.springframework.web.bind.annotation.CustomRequestMappings;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
@@ -69,7 +68,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private void scanCustomRequestMapping(final String prefix, final Method method) {
         Arrays.stream(method.getDeclaredAnnotations())
-                .filter(CustomRequestMappings::isAnyMatch)
+                .filter(annotation -> annotation.annotationType().isAnnotationPresent(RequestMapping.class))
                 .findFirst()
                 .ifPresent(annotation -> addHandlerExecutionWhenCustomMapping(prefix, annotation, method));
     }

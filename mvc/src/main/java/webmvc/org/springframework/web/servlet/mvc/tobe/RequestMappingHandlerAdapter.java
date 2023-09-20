@@ -2,7 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import web.org.springframework.web.bind.annotation.CustomRequestMappings;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
@@ -26,7 +25,8 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         final Annotation[] annotations = handlerMethod.getDeclaredAnnotations();
 
         return Arrays.stream(annotations)
-                .anyMatch(CustomRequestMappings::isAnyMatch);
+                .map(Annotation::annotationType)
+                .anyMatch(annotationType -> annotationType.isAnnotationPresent(RequestMapping.class));
     }
 
     @Override
