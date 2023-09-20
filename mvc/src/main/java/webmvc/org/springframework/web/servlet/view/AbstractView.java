@@ -26,7 +26,6 @@ public abstract class AbstractView implements View {
             return;
         }
         renderInternal(model, request, response);
-        addModelAttributes(model, request);
     }
 
     private boolean isRedirect() {
@@ -39,11 +38,4 @@ public abstract class AbstractView implements View {
 
     protected abstract void renderInternal(Map<String, ?> model, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
-
-    private void addModelAttributes(Map<String, ?> model, HttpServletRequest request) {
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
-    }
 }
