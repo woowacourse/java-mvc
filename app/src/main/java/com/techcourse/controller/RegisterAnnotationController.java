@@ -13,7 +13,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class RegisterAnnotationController {
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register-annotated", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         final var user = new User(2,
                 request.getParameter("account"),
@@ -24,7 +24,7 @@ public class RegisterAnnotationController {
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register-annotated", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("register.jsp"));
     }

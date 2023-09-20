@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.support.web.adapter.HandlerAdapters;
 import com.techcourse.support.web.mapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -8,12 +7,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.view.JspView;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
 
 import java.util.Collections;
-import java.util.Objects;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -38,15 +37,17 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            final Object handler = handlerMappings.getHandler(request);
-            if (Objects.isNull(handler)) {
+            final Optional<Object> handlerOptional = handlerMappings.getHandler(request);
+            if (handlerOptional.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            final HandlerAdapter handlerAdapter = handlerAdapters.getAdapter(handler);
+            final Object handler = handlerOptional.get();
+            final HandlerAdapter handlerAdapter = handlerAdapters.getAdapter(handler)
+                    .orElseThrow(() -> new IllegalStateException("핸들러 어댑터를 찾을 수 없습니다."));
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             modelAndView.getView().render(Collections.EMPTY_MAP, request, response);
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }

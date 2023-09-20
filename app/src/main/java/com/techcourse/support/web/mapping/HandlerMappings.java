@@ -7,6 +7,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class HandlerMappings {
     private final List<HandlerMapping> mappings;
@@ -25,13 +26,13 @@ public class HandlerMappings {
         mappings.add(manualHandlerMapping);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         for (final HandlerMapping handlerMapping : mappings) {
             final Object handler = handlerMapping.getHandler(request);
             if (Objects.nonNull(handler)) {
-                return handler;
+                return Optional.of(handler);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

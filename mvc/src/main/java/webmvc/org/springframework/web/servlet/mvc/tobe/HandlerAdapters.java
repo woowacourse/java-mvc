@@ -1,9 +1,8 @@
-package com.techcourse.support.web.adapter;
-
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HandlerAdapters {
     private final List<HandlerAdapter> adapters;
@@ -14,15 +13,15 @@ public class HandlerAdapters {
 
     public void init() {
         adapters.add(new AnnotationHandlerAdapter());
-        adapters.add(new ManualHanlderAdapter());
+        adapters.add(new ManualHandlerAdapter());
     }
 
-    public HandlerAdapter getAdapter(final Object handler) {
+    public Optional<HandlerAdapter> getAdapter(final Object handler) {
         for (final HandlerAdapter handlerAdapter : adapters) {
             if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
+                return Optional.of(handlerAdapter);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }
