@@ -1,11 +1,10 @@
 package com.techcourse.mvc;
 
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import samples.TestController;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -27,7 +26,7 @@ class ManualHandlerAdapterTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        final var handler = new RegisterViewController();
+        final var handler = new TestController();
 
         // when
         final ModelAndView result = manualHandlerAdapter.handle(request, response, handler);
@@ -35,13 +34,13 @@ class ManualHandlerAdapterTest {
         // then
         assertThat(result.getView())
                 .usingRecursiveComparison()
-                .isEqualTo(new JspView("/register.jsp"));
+                .isEqualTo(new JspView("/test.jsp"));
     }
 
     @Test
     void supports() {
         // given
-        final var handler = new RegisterController();
+        final var handler = new TestController();
 
         // when
         final boolean supports = manualHandlerAdapter.supports(handler);

@@ -18,6 +18,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
             final var viewName = controller.execute(request, response);
             return new ModelAndView(new JspView(viewName));
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CanNotInvokeMethodException();
         }
     }
