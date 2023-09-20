@@ -9,21 +9,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.ClassScanner;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private final Object[] basePackage;
+    private final ClassScanner classScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.classScanner = new ClassScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
@@ -34,8 +34,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Class<?>> collectAllControllerClasses() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
+        return classScanner.findClassesHasAnnotation(Controller.class);
     }
 
     private void generateHandlerExecutions(final Class<?> controllerClass) {
