@@ -7,6 +7,7 @@ import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.MethodInvocationException;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.lang.reflect.InvocationTargetException;

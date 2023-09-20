@@ -39,7 +39,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         try {
             return (ModelAndView) method.invoke(bean, request, response);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new AnnotationMethodInvokeException("어노테이션 메소드를 실행하는 도중 예외가 발생했습니다.", e);
+            throw new MethodInvocationException("어노테이션 메소드를 실행하는 도중 예외가 발생했습니다.", e);
         }
     }
 }
