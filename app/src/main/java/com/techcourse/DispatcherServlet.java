@@ -46,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapters.getAdapter(handler)
                     .orElseThrow(() -> new IllegalStateException("핸들러 어댑터를 찾을 수 없습니다."));
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-            modelAndView.getView().render(Collections.EMPTY_MAP, request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
