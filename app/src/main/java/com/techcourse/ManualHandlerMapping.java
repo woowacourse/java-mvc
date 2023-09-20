@@ -13,6 +13,7 @@ import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,11 +48,11 @@ public class ManualHandlerMapping implements HandlerMapping {
         if (controller == null) {
             return null;
         }
-        final Object handlerMethod = extractHandlerMethod(controller);
+        final Method handlerMethod = extractHandlerMethod(controller);
         return new HandlerExecution(controller, handlerMethod);
     }
 
-    private Object extractHandlerMethod(final Controller controller) {
+    private Method extractHandlerMethod(final Controller controller) {
         try {
             return controller.getClass()
                     .getDeclaredMethod("execute", HttpServletRequest.class, HttpServletResponse.class);

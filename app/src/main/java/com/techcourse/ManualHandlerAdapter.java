@@ -34,7 +34,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
         try {
             final HandlerExecution handlerExecution = (HandlerExecution) handler;
             final Object bean = handlerExecution.getBean();
-            final Method method = (Method) handlerExecution.getMethod();
+            final Method method = handlerExecution.getMethod();
 
             return (String) method.invoke(bean, request, response);
         } catch (InvocationTargetException | IllegalAccessException e) {

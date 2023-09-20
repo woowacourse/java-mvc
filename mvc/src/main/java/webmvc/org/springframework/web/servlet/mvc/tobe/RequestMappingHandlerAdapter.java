@@ -34,7 +34,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
                                final Object handler) {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
         final Object bean = handlerExecution.getBean();
-        final Method method = (Method) handlerExecution.getMethod();
+        final Method method = handlerExecution.getMethod();
 
         try {
             return (ModelAndView) method.invoke(bean, request, response);
