@@ -8,7 +8,6 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 public class HandlerExecution {
 
     private final Class<?> clazz;
-
     private final Method method;
 
     public HandlerExecution(final Class<?> clazz, final Method method) {
