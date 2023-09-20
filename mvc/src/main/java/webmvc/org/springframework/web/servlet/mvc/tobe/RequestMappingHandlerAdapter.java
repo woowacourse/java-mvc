@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class RequestMappingHandlerAdapter implements HandlerAdapter {
+
     @Override
     public boolean supports(final Object handler) {
         return handler instanceof HandlerExecution;

@@ -12,14 +12,14 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class LogoutController implements Controller {
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return "redirect:/";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
         String path = execute(req, res);
         return new ModelAndView(new JspView(path));
     }

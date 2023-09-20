@@ -12,12 +12,12 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class RegisterViewController implements Controller {
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
         return "/register.jsp";
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView registerView(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public ModelAndView registerView(HttpServletRequest req, HttpServletResponse res) {
         String path = execute(req, res);
         return new ModelAndView(new JspView(path));
     }
