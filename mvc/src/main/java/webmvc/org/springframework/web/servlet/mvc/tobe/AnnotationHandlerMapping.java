@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private static void addControllerClass(final List<Class<?>> controllers, final Class<?> clazz) {
-        if (clazz.isAnnotationPresent(context.org.springframework.stereotype.Controller.class)) {
+        if (clazz.isAnnotationPresent(Controller.class)) {
             controllers.add(clazz);
         }
     }
