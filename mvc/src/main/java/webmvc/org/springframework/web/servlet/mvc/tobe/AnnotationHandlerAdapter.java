@@ -1,6 +1,5 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -20,9 +19,6 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).getHandler().getClass().isAnnotationPresent(Controller.class);
-        }
-        return false;
+        return handler instanceof HandlerExecution;
     }
 }
