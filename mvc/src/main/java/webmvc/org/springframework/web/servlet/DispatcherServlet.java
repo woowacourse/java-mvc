@@ -11,6 +11,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
@@ -19,7 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final transient List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
     public static InitBuilder Builder() {
         return new InitBuilder();
@@ -38,11 +39,11 @@ public class DispatcherServlet extends HttpServlet {
     public static class Builder {
 
         private final List<HandlerMapping> handlerMappings;
-        private final List<HandlerAdapter> handlerAdapters;
+        private final HandlerAdapterRegistry handlerAdapterRegistry;
 
         private Builder() {
             this.handlerMappings = new ArrayList<>();
-            this.handlerAdapters = new ArrayList<>();
+            this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         }
 
         public Builder addHandlerMapping(final HandlerMapping handlerMapping) {
@@ -51,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         public Builder addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-            handlerAdapters.add(handlerAdapter);
+            handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
             return this;
         }
 
@@ -63,14 +64,14 @@ public class DispatcherServlet extends HttpServlet {
             return handlerMappings;
         }
 
-        public List<HandlerAdapter> getHandlerAdapters() {
-            return handlerAdapters;
+        public HandlerAdapterRegistry getHandlerAdapterRegistry() {
+            return handlerAdapterRegistry;
         }
     }
 
     private DispatcherServlet(final Builder builder) {
         this.handlerMappings = builder.getHandlerMappings();
-        this.handlerAdapters = builder.getHandlerAdapters();
+        this.handlerAdapterRegistry = builder.getHandlerAdapterRegistry();
     }
 
     @Override
@@ -85,8 +86,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = findHandlerAdapter(request);
-            final HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
+            final Object handler = findHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.findHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             resolveView(modelAndView, request, response);
         } catch (Exception e) {
@@ -95,7 +96,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object findHandlerAdapter(final HttpServletRequest request) {
+    private Object findHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
@@ -105,13 +106,6 @@ public class DispatcherServlet extends HttpServlet {
                         + request.getMethod() + " "
                         + request.getRequestURI())
                 );
-    }
-
-    private HandlerAdapter findHandlerAdapter(final Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 있는 HandlerAdapter를 찾을 수 없습니다!: "));
     }
 
     private void resolveView(final ModelAndView modelAndView, final HttpServletRequest request,
