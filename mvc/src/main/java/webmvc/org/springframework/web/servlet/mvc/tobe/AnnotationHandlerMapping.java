@@ -2,8 +2,8 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,16 +26,15 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Object pacakage : basePackage) {
-            Set<Class<?>> controllers = getControllers((String) pacakage);
-            registerControllers(controllers);
-        }
+        Set<Class<?>> controllers = getControllers();
+        registerControllers(controllers);
     }
 
-    private Set<Class<?>> getControllers(String pacakge) {
-        Reflections reflections = new Reflections(new ConfigurationBuilder().forPackage(pacakge));
+    private Set<Class<?>> getControllers() {
+        Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
@@ -62,7 +61,21 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+    }
+
+    @Override
+    public Object executeHandler(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final HandlerExecution handlerExecution = (HandlerExecution) getHandler(request);
+        return handlerExecution.handle(request, response);
+    }
+
+    @Override
+    public boolean isSupport(HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
+        final String method = request.getMethod();
+        return handlerExecutions.containsKey(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
     }
 }
