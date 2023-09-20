@@ -10,8 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -72,8 +74,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final HandlerExecution handler = findHandler(request);
-            final ModelAndView modelAndView = handler.handle(request, response);
+            final Object handler = findHandler(request);
+            final ModelAndView modelAndView = handle(request, response, handler);
             resolveView(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -81,7 +83,19 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerExecution findHandler(final HttpServletRequest request) {
+    private ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
+            throws Exception {
+        if(handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
+        }
+        if(handler instanceof Controller) {
+            final String viewName = ((Controller) handler).execute(request, response);
+            return new ModelAndView(new JspView(viewName));
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    private Object findHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
