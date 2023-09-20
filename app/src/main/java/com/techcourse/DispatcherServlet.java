@@ -21,7 +21,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings = List.of(
             new ManualHandlerMapping(),
-            new AnnotationHandlerMapping()
+            new AnnotationHandlerMapping("com/techcourse")
     );
 
     private List<HandlerAdapter> handlerAdapters = List.of(new ViewPathHandlerAdapter());

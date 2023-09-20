@@ -67,7 +67,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void findControllerByFile(final String path, final List<Class<?>> controllers, final File file)
             throws URISyntaxException, IOException {
-        final String filePath = path + "." + file.getName();
+        final String filePath = path + "/" + file.getName();
         if (file.isDirectory()) {
             findControllers(filePath, controllers);
         }
@@ -86,7 +86,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private static Class<?> convertToClass(final String file) throws ClassNotFoundException {
-        String className = file.replace(".class", "");
+        String className = file
+                .replace(".class", "")
+                .replace("/", ".");
         return Class.forName(className);
     }
 
