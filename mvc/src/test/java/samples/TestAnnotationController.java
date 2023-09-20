@@ -18,7 +18,7 @@ public class TestAnnotationController {
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = new ModelAndView(new JspView("/tests"));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }

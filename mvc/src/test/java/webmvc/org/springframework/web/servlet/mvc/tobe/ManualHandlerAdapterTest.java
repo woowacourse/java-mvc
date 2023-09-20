@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import samples.TestAnnotationController;
+import samples.TestManualController;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -67,13 +67,5 @@ class ManualHandlerAdapterTest {
 
         // then
         assertThat(modelAndView.getViewName()).isEqualTo("/tests");
-    }
-
-    static class TestManualController implements Controller {
-
-        @Override
-        public String execute(HttpServletRequest req, HttpServletResponse res) {
-            return "/tests";
-        }
     }
 }
