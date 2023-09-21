@@ -12,31 +12,46 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String NOT_FOUND_VIEW = "404.jsp";
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMappings handlerMappings;
+    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
     }
 
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerExecutor handlerExecutor) {
+        this.handlerMappings = handlerMappings;
+        this.handlerExecutor = handlerExecutor;
+    }
+
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappings = new HandlerMappings();
+        handlerExecutor = new HandlerExecutor();
+        handlerMappings.init();
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
+            String viewName = findViewName(request, response);
+
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private String findViewName(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object handler = handlerMappings.getHandler(request);
+        if (handler == null) {
+            return NOT_FOUND_VIEW;
+        }
+        return handlerExecutor.execute(request, response, handler);
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
