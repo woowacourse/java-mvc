@@ -13,7 +13,7 @@ public enum RequestMethod {
     TRACE;
 
     public static RequestMethod from(final String methodName) {
-        return Arrays.stream(RequestMethod.values())
+        return Arrays.stream(values())
                      .filter(requestMethod -> requestMethod.name().equalsIgnoreCase(methodName))
                      .findAny()
                      .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 HTTP Method 입니다."));

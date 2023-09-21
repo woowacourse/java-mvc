@@ -1,21 +1,19 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
 
     private final String url;
-    private final List<RequestMethod> requestMethods;
+    private final RequestMethod requestMethod;
 
-    public HandlerKey(final String url, final RequestMethod... requestMethods) {
+    public HandlerKey(final String url, final RequestMethod requestMethod) {
         validateUrl(url);
-        validateRequestMethods(requestMethods);
+        validateRequestMethods(requestMethod);
 
         this.url = url;
-        this.requestMethods = Arrays.asList(requestMethods);
+        this.requestMethod = requestMethod;
     }
 
     private void validateUrl(final String url) {
@@ -24,8 +22,8 @@ public class HandlerKey {
         }
     }
 
-    private void validateRequestMethods(final RequestMethod[] requestMethods) {
-        if (requestMethods == null || requestMethods.length <= 0) {
+    private void validateRequestMethods(final RequestMethod requestMethod) {
+        if (requestMethod == null) {
             throw new IllegalArgumentException("유효하지 않은 HTTP Method 입니다.");
         }
     }
@@ -41,12 +39,11 @@ public class HandlerKey {
         final HandlerKey targetHandlerKey = (HandlerKey) target;
 
 
-        return Objects.equals(url, targetHandlerKey.url) &&
-                this.requestMethods.stream().anyMatch(targetHandlerKey.requestMethods::contains);
+        return Objects.equals(url, targetHandlerKey.url) && this.requestMethod == targetHandlerKey.requestMethod;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, requestMethods);
+        return Objects.hash(url, requestMethod);
     }
 }
