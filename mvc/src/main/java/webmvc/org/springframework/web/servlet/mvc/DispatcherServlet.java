@@ -15,7 +15,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -44,8 +43,10 @@ public class DispatcherServlet extends HttpServlet {
   }
 
   @Override
-  protected void service(final HttpServletRequest request, final HttpServletResponse response)
-      throws ServletException {
+  protected void service(
+      final HttpServletRequest request,
+      final HttpServletResponse response
+  ) throws ServletException {
     final String requestURI = request.getRequestURI();
     log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
@@ -53,40 +54,14 @@ public class DispatcherServlet extends HttpServlet {
       final Object handler = handlerMappingComposite.getHandler(request);
       final Object handleValue = handlerAdapterComposite.handle(request, response, handler);
 
-      renderByHandlerValueType(request, response, handleValue);
+      final ModelAndView modelAndView = (ModelAndView) handleValue;
+
+      final View view = modelAndView.getView();
+      view.render(modelAndView.getModel(), request, response);
 
     } catch (Throwable e) {
       log.error("Exception : {}", e.getMessage(), e);
       throw new ServletException(e.getMessage());
     }
-  }
-
-  private void renderByHandlerValueType(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object handleValue
-  ) throws Exception {
-    if (handleValue instanceof ModelAndView) {
-      final ModelAndView modelAndView = (ModelAndView) handleValue;
-
-      final View view = modelAndView.getView();
-      view.render(modelAndView.getModel(), request, response);
-    }
-
-    if (handleValue instanceof String) {
-      final String viewName = (String) handleValue;
-      move(viewName, request, response);
-    }
-  }
-
-  private void move(final String viewName, final HttpServletRequest request,
-      final HttpServletResponse response) throws Exception {
-    if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-      response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-      return;
-    }
-
-    final var requestDispatcher = request.getRequestDispatcher(viewName);
-    requestDispatcher.forward(request, response);
   }
 }
