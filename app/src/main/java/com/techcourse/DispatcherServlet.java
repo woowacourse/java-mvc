@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
@@ -71,7 +72,9 @@ public class DispatcherServlet extends HttpServlet {
   ) throws Exception {
     if (handleValue instanceof ModelAndView) {
       final ModelAndView modelAndView = (ModelAndView) handleValue;
-      move(modelAndView.getView().getName(), request, response);
+
+      final View view = modelAndView.getView();
+      view.render(modelAndView.getModel(), request, response);
     }
 
     if (handleValue instanceof String) {
