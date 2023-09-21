@@ -59,7 +59,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void initializeHandlerExecutions(final Method method, final Object controller) {
         if (!isValidHandlerExecution(method, controller)) {
-            return;
+            throw new IllegalArgumentException("옳지 않은 메소드이거나 없는 핸들러 입니다!");
         }
         final String uri = method.getAnnotation(RequestMapping.class).value();
         final RequestMethod[] requestMethods = method.getAnnotation(RequestMapping.class).method();
