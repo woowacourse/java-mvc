@@ -1,4 +1,4 @@
-package com.techcourse.mvc;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
