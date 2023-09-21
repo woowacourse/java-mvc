@@ -25,18 +25,26 @@ class ManualHandlerMappingTest {
     @ParameterizedTest
     @CsvSource({"/", "/logout", "/register", "/register/view"})
     void getHandler(String requestURI) {
+        // given
         when(request.getRequestURI()).thenReturn(requestURI);
 
+        // when
         Object handler = handlerMapping.getHandler(request);
+
+        // then
         assertThat(handler).isNotNull();
     }
 
     @ParameterizedTest
     @CsvSource({"/login", "/login/view"})
     void getHandlerFail(String requestURI) {
+        // given
         when(request.getRequestURI()).thenReturn(requestURI);
 
+        // when
         Object handler = handlerMapping.getHandler(request);
+
+        // then
         assertThat(handler).isNull();
     }
 }

@@ -16,33 +16,37 @@ class HandlerMappingsTest {
     @ParameterizedTest
     @CsvSource({"/logout", "/register/view", "/register"})
     void getHandlerFromManualHandlerMapping(String requestURI) {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-
         when(request.getRequestURI()).thenReturn(requestURI);
-
         HandlerMappings handlerMappings = new HandlerMappings();
         handlerMappings.addHandlerMapping(new ManualHandlerMapping());
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.initialize();
 
+        // when
         Object handler = handlerMappings.getHandler(request);
+
+        // then
         assertThat(handler).isInstanceOf(Controller.class);
     }
 
     @ParameterizedTest
     @CsvSource({"/login, POST", "/login/view, GET"})
     void getHandlerFromAnnotationHandlerMapping(String requestURI, String method) {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-
         when(request.getRequestURI()).thenReturn(requestURI);
         when(request.getMethod()).thenReturn(method);
-
         HandlerMappings handlerMappings = new HandlerMappings();
         handlerMappings.addHandlerMapping(new ManualHandlerMapping());
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.initialize();
 
+        // when
         Object handler = handlerMappings.getHandler(request);
+
+        // then
         assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 }

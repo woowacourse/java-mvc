@@ -29,25 +29,33 @@ class HandlerAdaptersTest {
     @ParameterizedTest
     @CsvSource({"/", "/logout", "/register/view", "/register"})
     void getHandlerAdapterFromManualHandlerAdapter(String requestURI) {
+        // given
         when(request.getRequestURI()).thenReturn(requestURI);
         HandlerMapping handlerMapping = new ManualHandlerMapping();
         handlerMapping.initialize();
         Object handler = handlerMapping.getHandler(request);
 
+        // when
         HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
+
+        // then
         assertThat(handlerAdapter).isInstanceOf(ManualHandlerAdapter.class);
     }
 
     @ParameterizedTest
     @CsvSource({"/login, POST", "/login/view, GET"})
     void getHandlerAdapterFromAnnotationHandlerAdapter(String requestURI, String method) {
+        // given
         when(request.getRequestURI()).thenReturn(requestURI);
         when(request.getMethod()).thenReturn(method);
         HandlerMapping handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         handlerMapping.initialize();
         Object handler = handlerMapping.getHandler(request);
 
+        // when
         HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
+
+        // then
         assertThat(handlerAdapter).isInstanceOf(AnnotationHandlerAdapter.class);
     }
 }

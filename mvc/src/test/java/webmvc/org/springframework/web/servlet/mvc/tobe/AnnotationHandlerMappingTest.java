@@ -21,71 +21,91 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void canHandlePostTest() {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        assertThat(handlerMapping.canHandle(request)).isTrue();
+        // when
+        boolean result = handlerMapping.canHandle(request);
+
+        // then
+        assertThat(result).isTrue();
     }
 
     @Test
     void canHandleGetTest() {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThat(handlerMapping.canHandle(request)).isTrue();
+        // when
+        boolean result = handlerMapping.canHandle(request);
+
+        // then
+        assertThat(result).isTrue();
     }
 
     @Test
     void postTestHandlerIsInstanceOfHandlerExecution() {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
+        // when
+        Object result = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(result).isInstanceOf(HandlerExecution.class);
     }
 
     @Test
     void getTestHandlerIsInstanceOfHandlerExecution() {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
+        // when
+        Object result = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(result).isInstanceOf(HandlerExecution.class);
     }
 
     @Test
     void get() throws Exception {
+        // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
+        // when
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @Test
     void post() throws Exception {
+        // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
+        // when
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 }
