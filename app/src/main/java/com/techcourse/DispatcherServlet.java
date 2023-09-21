@@ -8,11 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.DefaultHandler;
 import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
-import java.util.List;
 import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
@@ -20,7 +17,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
+    private HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
     }
@@ -28,10 +25,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         try {
-            handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse"));
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                handlerMapping.initialize();
-            }
+            handlerMappings = new HandlerMappings(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse"));
+            handlerMappings.initialize();
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
@@ -43,11 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Handler handler = handlerMappings.stream()
-                    .map(handlerMapping -> handlerMapping.getHandler(request))
-                    .filter(Handler::isSupport)
-                    .findFirst()
-                    .orElse(new DefaultHandler());
+            final Handler handler = handlerMappings.getHandler(request);
             final ModelAndView modelAndView = handler.handle(request, response);
             final Map<String, Object> model = modelAndView.getModel();
             modelAndView.getView().render(model, request, response);
