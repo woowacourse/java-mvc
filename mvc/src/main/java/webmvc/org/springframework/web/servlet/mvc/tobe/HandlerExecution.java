@@ -15,7 +15,17 @@ public class HandlerExecution {
         this.handler = handler;
     }
 
+    public HandlerExecution(final Method handler) {
+        try {
+            this.instance = handler.getDeclaringClass().getConstructor().newInstance();
+            this.handler = handler;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return (ModelAndView) handler.invoke(instance, request, response);
     }
+
 }

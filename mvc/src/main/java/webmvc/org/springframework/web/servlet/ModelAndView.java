@@ -3,6 +3,9 @@ package webmvc.org.springframework.web.servlet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import webmvc.org.springframework.web.servlet.view.JspView;
+
+import static webmvc.org.springframework.web.servlet.view.JspView.REDIRECT_PREFIX;
 
 public class ModelAndView {
 
@@ -30,4 +33,5 @@ public class ModelAndView {
     public View getView() {
         return view;
     }
+
 }
