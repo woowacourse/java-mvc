@@ -1,17 +1,17 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import web.org.springframework.web.bind.annotation.RequestMapping;
-import web.org.springframework.web.bind.annotation.RequestMethod;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.reflections.ReflectionUtils;
+import org.reflections.Reflections;
+import org.reflections.util.ReflectionUtilsPredicates;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -27,12 +27,12 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner scanner = new ControllerScanner(new Reflections(basePackage));
+        Map<Class<?>, Object> controllers = scanner.getControllers();
 
-        for (Class<?> controller : controllers) {
-            Method[] declaredMethods = controller.getDeclaredMethods();
-            for (Method declaredMethod : declaredMethods) {
+        for (Class<?> controller : controllers.keySet()) {
+            Set<Method> allMethods = ReflectionUtils.getAllMethods(controller, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
+            for (Method declaredMethod : allMethods) {
                 if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
                     Object instance = getInstance(controller);
                     addExecution(instance, declaredMethod);
@@ -46,9 +46,9 @@ public class AnnotationHandlerMapping {
             return;
         }
 
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        for (RequestMethod requestMethod : annotation.method()) {
-            HandlerKey key = new HandlerKey(annotation.value(), requestMethod);
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution execution = new HandlerExecution(instance, method);
             handlerExecutions.put(key, execution);
         }
