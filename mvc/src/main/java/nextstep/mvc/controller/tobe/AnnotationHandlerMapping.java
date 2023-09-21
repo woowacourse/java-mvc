@@ -48,6 +48,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     final HandlerExecution handlerExecution = HandlerExecution.of(controllerInstance, requestMappingMethod);
 
                     handlerExecutions.put(handlerKey, handlerExecution);
+                    log.info("Path : {}, Controller : {}", httpRequestURI, controller.getName());
                 }
             }
         }
@@ -74,7 +75,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final String method = request.getMethod();
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
@@ -82,10 +83,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private HandlerExecution findHandlerExecution(final HandlerKey handlerKey) {
-        final HandlerExecution handlerExecution = handlerExecutions.getOrDefault(handlerKey, null);
-        if (handlerExecution == null) {
-            throw new IllegalStateException("해당하는 Handler를 찾을 수 없습니다!");
-        }
-        return handlerExecution;
+        return handlerExecutions.getOrDefault(handlerKey, null);
     }
 }
