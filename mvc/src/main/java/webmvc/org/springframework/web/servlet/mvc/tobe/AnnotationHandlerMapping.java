@@ -55,7 +55,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Controller controllerAnnotation = controller.getDeclaredAnnotation(Controller.class);
         RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
 
-        String url = controllerAnnotation.path() + requestMappingAnnotation.value();
+        final String url = controllerAnnotation.path() + requestMappingAnnotation.value();
         for (RequestMethod requestMethod : requestMappingAnnotation.method()) {
             handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution(controller, method));
         }

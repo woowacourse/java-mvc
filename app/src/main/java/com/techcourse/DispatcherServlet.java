@@ -37,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
             Object handleResult = handlerProcessor.handle(request, response);
 
             if (handleResult instanceof ModelAndView) {
-                ModelAndView modelAndView = (ModelAndView) handleResult;
+                final ModelAndView modelAndView = (ModelAndView) handleResult;
                 modelAndView.getView().render(modelAndView.getModel(), request, response);
                 return;
             }
