@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class LoginViewController {
@@ -19,8 +20,8 @@ public class LoginViewController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return ModelAndView.jspView("/index.jsp");
+                    return new ModelAndView(new JspView("/index.jsp"));
                 })
-                .orElseGet(() -> ModelAndView.jspView("/login.jsp"));
+                .orElseGet(() -> new ModelAndView(new JspView("/login.jsp")));
     }
 }

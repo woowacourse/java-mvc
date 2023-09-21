@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class ModelAndView {
 
@@ -15,11 +14,6 @@ public class ModelAndView {
     public ModelAndView(final View view) {
         this.view = view;
         this.model = new HashMap<>();
-    }
-
-    public static ModelAndView jspView(String jspPath) {
-        JspView jspView = new JspView(jspPath);
-        return new ModelAndView(jspView);
     }
 
     public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
