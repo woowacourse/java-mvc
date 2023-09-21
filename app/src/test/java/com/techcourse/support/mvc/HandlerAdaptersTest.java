@@ -28,7 +28,7 @@ class HandlerAdaptersTest {
 
     @ParameterizedTest
     @CsvSource({"/", "/logout", "/register/view", "/register"})
-    void getHandlerAdapterFromManualHandlerAdapter(String requestURI) {
+    void 매뉴얼_핸들러_매핑의_핸들러를_받으면_매뉴얼_핸들러_어댑터를_반환한다(String requestURI) {
         // given
         when(request.getRequestURI()).thenReturn(requestURI);
         HandlerMapping handlerMapping = new ManualHandlerMapping();
@@ -44,7 +44,7 @@ class HandlerAdaptersTest {
 
     @ParameterizedTest
     @CsvSource({"/login, POST", "/login/view, GET"})
-    void getHandlerAdapterFromAnnotationHandlerAdapter(String requestURI, String method) {
+    void 어노테이션_핸들러_매핑의_핸들러를_받으면_어노테이션_핸들러_어댑터를_반환한다(String requestURI, String method) {
         // given
         when(request.getRequestURI()).thenReturn(requestURI);
         when(request.getMethod()).thenReturn(method);
