@@ -22,11 +22,6 @@ public class JsonView implements View {
             return;
         }
 
-        if (model.size() == 1) {
-            response.getWriter().write(model.values().iterator().next().toString());
-            return;
-        }
-
         response.getWriter().write(objectMapper.writeValueAsString(model));
     }
 }
