@@ -34,18 +34,17 @@ class DIContainer {
 
     private void setFields(Object bean) {
         Field[] fields = bean.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            beans.stream()
-                 .filter(field.getType()::isInstance)
-                 .findFirst()
-                 .ifPresent(o -> {
-                     field.setAccessible(true);
-                     try {
-                         field.set(bean, o);
-                     } catch (IllegalAccessException e) {
-                         e.printStackTrace();
-                     }
-                 });
+        for (Object o : beans) {
+            for (Field field : fields) {
+                if (field.getType().isInstance(o)) {
+                    field.setAccessible(true);
+                    try {
+                        field.set(bean, o);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 
