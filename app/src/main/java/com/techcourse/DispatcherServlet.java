@@ -10,23 +10,32 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.view.resolver.ViewResolvers;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final transient ViewResolvers viewResolvers = new ViewResolvers();
-    private final transient HandlerMappings mappings = new HandlerMappings();
-    private final transient HandlerAdapters adapters = new HandlerAdapters();
+    private final transient HandlerMappings mapping = new HandlerMappings();
+    private final transient HandlerAdapters adapter = new HandlerAdapters();
+
+    public DispatcherServlet addHandlerMapping(final HandlerMapping targetHandlerMapping) {
+        mapping.addHandlerMapping(targetHandlerMapping);
+
+        return this;
+    }
+
+    public DispatcherServlet addHandlerAdapter(final HandlerAdapter targetHandlerAdapter) {
+        adapter.addHandlerAdapter(targetHandlerAdapter);
+
+        return this;
+    }
 
     @Override
     public void init() {
-        viewResolvers.initialize();
-        mappings.initialize();
-        adapters.initialize(viewResolvers);
+        mapping.initialize();
     }
 
     @Override
@@ -35,14 +44,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = mappings.getHandler(request);
+            final Object handler = mapping.getHandler(request);
 
             if (handler == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return ;
             }
 
-            final HandlerAdapter handlerAdapter = adapters.getHandlerAdapter(handler);
+            final HandlerAdapter handlerAdapter = adapter.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.execute(request, response, handler);
 
             move(modelAndView, request, response);

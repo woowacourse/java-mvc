@@ -32,6 +32,7 @@ class HandlerMappingsTest {
     @Test
     void getHander_메서드는_해당_요청을_처리할_수_있는_핸들러가_있다면_해당_핸들러를_반환한다() {
         final HandlerMappings handlerMappings = new HandlerMappings();
+        handlerMappings.addHandlerMapping(new ManualHandlerMappingWrapper());
         handlerMappings.initialize();
         final HttpServletRequest request = mock(HttpServletRequest.class);
         given(request.getRequestURI()).willReturn("/");

@@ -3,24 +3,19 @@ package webmvc.org.springframework.web.servlet.mvc.adapter;
 import java.util.ArrayList;
 import java.util.List;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.view.resolver.ViewResolvers;
 
 public class HandlerAdapters {
 
-    private final List<HandlerAdapter> adapters = new ArrayList<>();
+    private final List<HandlerAdapter> adapter = new ArrayList<>();
 
-    public void initialize(final ViewResolvers viewResolvers) {
-        final HandlerAdapter manualHandlerMappingAdapter = new ManualHandlerMappingAdapter(viewResolvers);
-        final HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-
-        adapters.add(manualHandlerMappingAdapter);
-        adapters.add(annotationHandlerAdapter);
+    public void addHandlerAdapter(final HandlerAdapter targetHandlerAdapter) {
+        adapter.add(targetHandlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
-        for (final HandlerAdapter adapter : adapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
+        for (final HandlerAdapter targetHandlerAdapter : adapter) {
+            if (targetHandlerAdapter.supports(handler)) {
+                return targetHandlerAdapter;
             }
         }
 
