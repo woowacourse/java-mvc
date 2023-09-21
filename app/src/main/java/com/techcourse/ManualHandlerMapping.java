@@ -20,7 +20,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
