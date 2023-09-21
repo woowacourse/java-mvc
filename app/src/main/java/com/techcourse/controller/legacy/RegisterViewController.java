@@ -1,9 +1,10 @@
-package com.techcourse.controller;
+package com.techcourse.controller.legacy;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
+@Deprecated
 public class RegisterViewController implements Controller {
 
     @Override

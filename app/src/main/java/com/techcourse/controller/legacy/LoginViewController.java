@@ -1,11 +1,13 @@
-package com.techcourse.controller;
+package com.techcourse.controller.legacy;
 
+import com.techcourse.controller.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
+@Deprecated
 public class LoginViewController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
