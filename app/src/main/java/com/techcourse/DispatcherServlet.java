@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -19,22 +18,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappings handlerMappings;
-    private HandlerAdapters handlerAdapters;
+    private final HandlerMappings handlerMappings;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
+        this.handlerMappings = new HandlerMappings();
+        this.handlerAdapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
-        this.handlerMappings = new HandlerMappings(List.of(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse.controller")
-        ));
-        this.handlerAdapters = new HandlerAdapters(List.of(
-                new ControllerHandlerAdapter(),
-                new HandlerExecutionAdapter()
-        ));
+        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping());
+        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
+        handlerAdapters.addHandlerAdapter(new HandlerExecutionAdapter());
+        handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     @Override

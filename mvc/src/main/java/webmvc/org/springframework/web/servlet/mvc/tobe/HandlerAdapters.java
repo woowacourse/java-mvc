@@ -1,13 +1,18 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapters {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapters(final List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+    public HandlerAdapters() {
+        this.handlerAdapters = new ArrayList<>();
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     public HandlerAdapter getAdapterByHandler(final Object handler) {

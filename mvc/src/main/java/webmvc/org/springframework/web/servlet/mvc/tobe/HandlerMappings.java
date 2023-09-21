@@ -1,6 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,9 +9,13 @@ public class HandlerMappings {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappings(final List<HandlerMapping> handlerMappings) {
-        handlerMappings.forEach(HandlerMapping::initialize);
-        this.handlerMappings = handlerMappings;
+    public HandlerMappings() {
+        this.handlerMappings = new ArrayList<>();
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
+        handlerMappings.add(handlerMapping);
     }
 
     public Object getHandler(final HttpServletRequest request) {
