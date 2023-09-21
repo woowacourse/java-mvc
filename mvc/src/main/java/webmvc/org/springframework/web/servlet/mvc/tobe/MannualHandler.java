@@ -18,11 +18,14 @@ public class MannualHandler implements Handler {
     public boolean isSupport() {
         return controller != null;
     }
-
-    // TODO: 2023/09/18 테스트 작성
+    
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String viewName = controller.execute(request, response);
         return new ModelAndView(new JspView(viewName));
+    }
+
+    public Controller getController() {
+        return controller;
     }
 }

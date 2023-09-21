@@ -16,11 +16,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, AnnotationHandler> handlers;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlers = new HashMap<>();
     }
 
     @Override
@@ -48,9 +48,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String path = getHandlerPath(classAnnotation, methodAnnotation);
         final List<RequestMethod> requestMethods = getHandlerRequestMethods(classAnnotation, methodAnnotation);
         for (RequestMethod requestMethod : requestMethods) {
-            handlerExecutions.put(
+            handlers.put(
                     new HandlerKey(path, requestMethod),
-                    new HandlerExecution(handler, handler.getDeclaringClass().newInstance())
+                    new AnnotationHandler(new HandlerExecution(handler, handler.getDeclaringClass().newInstance()))
             );
             log.info("Path : {}, Controller : {}", path, handler.getName());
         }
@@ -78,6 +78,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        return new AnnotationHandler(handlerExecutions.get(handlerKey));
+        return handlers.get(handlerKey);
     }
 }
