@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -37,14 +38,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void addControllerHandlers(Class<?> clazz) {
-        List<Method> methods = getAnnotatedMethods(clazz);
+        List<Method> methods = getAnnotatedMethods(clazz, RequestMapping.class);
         Object controller = createInstance(clazz);
         methods.forEach(method -> addHandlerExecutions(controller, method));
     }
 
-    private List<Method> getAnnotatedMethods(Class<?> clazz) {
+    private List<Method> getAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotation) {
         return Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .filter(method -> method.isAnnotationPresent(annotation))
                 .collect(Collectors.toList());
     }
 
