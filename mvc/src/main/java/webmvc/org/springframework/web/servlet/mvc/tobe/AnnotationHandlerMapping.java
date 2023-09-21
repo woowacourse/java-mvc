@@ -70,8 +70,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public boolean canHandle(HttpServletRequest request) {
         HandlerKey handlerKey = getHandlerKey(request);
-        return handlerExecutions.keySet().stream()
-                .anyMatch(handlerKey::equals);
+        return handlerExecutions.containsKey(handlerKey);
     }
 
     private HandlerKey getHandlerKey(HttpServletRequest request) {
