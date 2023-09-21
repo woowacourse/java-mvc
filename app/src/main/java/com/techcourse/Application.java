@@ -37,6 +37,8 @@ public class Application {
         } finally {
             log.info("web server stop.");
             tomcat.stop();
+            log.info("web server destroy.");
+            tomcat.destroy();
         }
     }
 }

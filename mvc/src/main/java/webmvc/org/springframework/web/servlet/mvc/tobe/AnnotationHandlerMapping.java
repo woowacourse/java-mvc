@@ -1,14 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.reflections.util.ReflectionUtilsPredicates;
@@ -17,6 +9,15 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -45,7 +46,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
         Set<Method> requestMappingMethods = new HashSet<>();
         for (Class<?> clazz : classes) {
-            Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
+            Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
+                    ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
             requestMappingMethods.addAll(methods);
         }
         return requestMappingMethods;
@@ -69,6 +71,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
-        return handlerExecutions.getOrDefault(handlerKey, null);
+        return handlerExecutions.get(handlerKey);
     }
 }
