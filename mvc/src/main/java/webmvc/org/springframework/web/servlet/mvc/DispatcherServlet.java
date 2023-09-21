@@ -18,17 +18,17 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
-    private final HandlerExecutor handlerExecutor;
+    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
-        this.handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
     public void init() {
         handlerMappingRegistry.initialize();
+        this.handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
@@ -40,8 +40,7 @@ public class DispatcherServlet extends HttpServlet {
             return;
         }
 
-
-        ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
+        ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
         try {
             render(modelAndView, request, response);
         } catch (Exception e) {
