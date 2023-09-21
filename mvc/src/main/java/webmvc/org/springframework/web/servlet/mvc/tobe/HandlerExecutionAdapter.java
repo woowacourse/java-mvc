@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecutionAdapter implements HandlerAdapter {
+
     @Override
     public boolean isSupport(final Object handler) {
         return handler instanceof HandlerExecution;
