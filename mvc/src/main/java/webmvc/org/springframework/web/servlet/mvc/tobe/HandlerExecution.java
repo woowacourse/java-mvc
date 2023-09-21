@@ -19,7 +19,11 @@ public class HandlerExecution {
   public ModelAndView handle(
       final HttpServletRequest request,
       final HttpServletResponse response
-  ) throws InvocationTargetException, IllegalAccessException {
-    return (ModelAndView) method.invoke(target, request, response);
+  ) {
+    try {
+      return (ModelAndView) method.invoke(target, request, response);
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw new IllegalArgumentException("Reflection Exception");
+    }
   }
 }

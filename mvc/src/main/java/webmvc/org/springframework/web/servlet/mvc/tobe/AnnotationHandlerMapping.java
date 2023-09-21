@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
   private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,23 +26,41 @@ public class AnnotationHandlerMapping {
     this.handlerExecutions = new HashMap<>();
   }
 
-  public void initialize()
-      throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-    log.info("Initialized AnnotationHandlerMapping!");
-
+  @Override
+  public void initialize() {
     final Reflections reflections = new Reflections(basePackages);
 
     final Set<Class<?>> controllerAnnotationClasses =
         reflections.getTypesAnnotatedWith(Controller.class);
 
     for (Class<?> controllerAnnotationClass : controllerAnnotationClasses) {
-      final Object instance = controllerAnnotationClass.getDeclaredConstructor().newInstance();
+      final Object instance = getControllerInstance(controllerAnnotationClass);
       final Method[] methods = controllerAnnotationClass.getDeclaredMethods();
 
       Arrays.stream(methods)
           .filter(method -> method.isAnnotationPresent(RequestMapping.class))
           .forEach(method -> putHandlerExecutions(method, instance));
     }
+
+    log.info("Initialized AnnotationHandlerMapping!");
+
+    handlerExecutions.keySet()
+        .forEach(handlerKey -> log.info("handlerKey : {}, Controller : {}", handlerKey,
+            handlerExecutions.get(handlerKey)));
+  }
+
+  private Object getControllerInstance(final Class<?> controllerAnnotationClass) {
+    final Object instance;
+    try {
+      instance = controllerAnnotationClass.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException
+             | IllegalAccessException
+             | InvocationTargetException
+             | NoSuchMethodException e
+    ) {
+      throw new IllegalArgumentException("AnnotationHandlerMapping Reflection Exception");
+    }
+    return instance;
   }
 
   private void putHandlerExecutions(final Method method, final Object target) {
@@ -55,11 +73,12 @@ public class AnnotationHandlerMapping {
     }
   }
 
+  @Override
   public Object getHandler(final HttpServletRequest request) {
     final String requestURI = request.getRequestURI();
     final String method = request.getMethod();
 
-    final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.find(method));
+    final HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
 
     return handlerExecutions.get(handlerKey);
   }
