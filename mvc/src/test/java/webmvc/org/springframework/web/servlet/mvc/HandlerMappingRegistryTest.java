@@ -2,19 +2,13 @@ package webmvc.org.springframework.web.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 class HandlerMappingRegistryTest {
 
@@ -31,8 +25,8 @@ class HandlerMappingRegistryTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(
                         "요청을 처리할 수 있는 Handler를 찾을 수 없습니다!: "
-                        + request.getMethod() + " "
-                        + request.getRequestURI()
+                                + request.getMethod() + " "
+                                + request.getRequestURI()
                 );
     }
 
