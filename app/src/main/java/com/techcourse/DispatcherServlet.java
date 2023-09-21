@@ -45,7 +45,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = handlerMappings.getHandler(request);
-            final var modelAndView = handlerAdapters.handle(request, response, handler);
+            final var handlerAdapter = handlerAdapters.getAdapterByHandler(handler);
+            final var modelAndView = handlerAdapter.handle(request, response, handler);
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
