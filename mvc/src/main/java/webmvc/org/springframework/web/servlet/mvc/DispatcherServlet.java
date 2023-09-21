@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +15,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -33,14 +32,12 @@ public class DispatcherServlet extends HttpServlet {
   public void init() {
     handlerMappingComposite = new HandlerMappings(
         List.of(
-            new ManualHandlerMapping(),
             new AnnotationHandlerMapping("com.techcourse")
         )
     );
 
     handlerAdapterComposite = new HandlerAdapters(
         List.of(
-            new ManualHandlerAdapter(),
             new AnnotationHandlerAdapter()
         )
     );
@@ -56,7 +53,6 @@ public class DispatcherServlet extends HttpServlet {
       final Object handler = handlerMappingComposite.getHandler(request);
       final Object handleValue = handlerAdapterComposite.handle(request, response, handler);
 
-      // TODO : 3단계 리팩터링
       renderByHandlerValueType(request, response, handleValue);
 
     } catch (Throwable e) {

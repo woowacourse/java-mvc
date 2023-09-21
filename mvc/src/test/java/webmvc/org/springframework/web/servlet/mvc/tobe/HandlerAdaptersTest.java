@@ -1,6 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,6 @@ class HandlerAdaptersTest {
   void setUp() {
     handlerAdapters = new HandlerAdapters(
         List.of(
-            new ManualHandlerAdapter(),
             new AnnotationHandlerAdapter()
         )
     );
