@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,23 +26,23 @@ class HandlerMappingCompositeTest {
 
         // when
         when(expected.support(any(HttpServletRequest.class))).thenReturn(true);
-        final HandlerMapping actual = handlerMappingComposite.getHandlerMapping(request);
+        final Optional<HandlerMapping> actual = handlerMappingComposite.getHandlerMapping(request);
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).contains(expected);
     }
 
     @Test
-    void 핸들러_매핑_목록에서_요청에_맞는_핸들러_매핑이_없는_경우_null을_반환한다() {
+    void 핸들러_매핑_목록에서_요청에_맞는_핸들러_매핑이_없는_경우_비어있는_Optional을_반환한다() {
         // given
         final HandlerMappingComposite handlerMappingComposite = new HandlerMappingComposite(Collections.emptyList());
 
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
         // when
-        final HandlerMapping actual = handlerMappingComposite.getHandlerMapping(request);
+        final Optional<HandlerMapping> actual = handlerMappingComposite.getHandlerMapping(request);
 
         // then
-        assertThat(actual).isEqualTo(null);
+        assertThat(actual).isEmpty();
     }
 }

@@ -16,6 +16,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -39,11 +40,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        final HandlerMapping handlerMapping = handlerMappingComposite.getHandlerMapping(request);
-        if (handlerMapping == null) {
+        final Optional<HandlerMapping> maybeHandlerMapping = handlerMappingComposite.getHandlerMapping(request);
+        if (maybeHandlerMapping.isEmpty()) {
             throw new DispatcherServletException("[ERROR] DispatcherServlet 에서 현재 요청에 맞는 HandlerMapping 을 찾던 도중에 오류가 발생하였습니다.");
         }
 
+        final HandlerMapping handlerMapping = maybeHandlerMapping.get();
         final Object handlerExecution = handlerMapping.getHandlerExecution(request);
         final ModelAndView mv = handlerAdapterComposite.doService(request, response, handlerExecution);
 
