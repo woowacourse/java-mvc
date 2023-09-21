@@ -3,11 +3,16 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 class AnnotationHandlerMappingTest {
 
@@ -47,5 +52,32 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("asdf")
+    void asdf() {
+        //given
+        final String ads = List.of(new Asdf("adf"), new Asdf())
+                .stream()
+                .map(asdf -> asdf.st)
+//                .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("ads"));
+
+        //when
+
+        //then
+    }
+    public static class Asdf{
+        public String st = null;
+
+        public Asdf(final String st) {
+            this.st = st;
+        }
+
+        public Asdf() {
+            this(null);
+        }
     }
 }
