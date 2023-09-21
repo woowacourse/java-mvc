@@ -37,13 +37,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private CompositeHandlerAdapter initHandlerAdapter() {
         final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        final var manualHandlerAdapter = new ManualHandlerAdapter();
-        return new CompositeHandlerAdapter(manualHandlerAdapter, annotationHandlerAdapter);
+        return new CompositeHandlerAdapter(annotationHandlerAdapter);
     }
 
     private CompositeHandlerMapping initHandlerMapping() {
         final var annotationHandlerMapping = new AnnotationHandlerMapping();
-        final var manualHandlerMappingAdapter = new ManualHandlerMappingAdapter();
-        return new CompositeHandlerMapping(manualHandlerMappingAdapter, annotationHandlerMapping);
+        return new CompositeHandlerMapping(annotationHandlerMapping);
     }
 }
