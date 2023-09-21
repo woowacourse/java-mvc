@@ -36,7 +36,6 @@ public class DispatcherServlet extends HttpServlet {
             new AnnotationHandlerMapping("com.techcourse")
         )
     );
-    handlerMappingComposite.initialize();
 
     handlerAdapterComposite = new HandlerAdapters(
         List.of(

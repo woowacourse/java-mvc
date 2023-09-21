@@ -10,6 +10,8 @@ public class HandlerMappings implements HandlerMapping {
 
   public HandlerMappings(final List<HandlerMapping> handlerMappings) {
     this.handlerMappings = handlerMappings;
+
+    initialize();
   }
 
   @Override
