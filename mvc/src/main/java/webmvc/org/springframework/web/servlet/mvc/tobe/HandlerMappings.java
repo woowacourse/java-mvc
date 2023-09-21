@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 
 public class HandlerMappings {
 
@@ -15,7 +16,8 @@ public class HandlerMappings {
     public Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .findFirst()
+                .filter(Objects::nonNull)
+                .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("Not found handler: " + request.getRequestURI()));
     }
 }
