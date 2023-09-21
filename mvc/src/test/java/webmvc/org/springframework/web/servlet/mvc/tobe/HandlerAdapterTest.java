@@ -59,6 +59,6 @@ class HandlerAdapterTest {
         // expect
         final Object actual = handlerAdapter.doInternalService(request, response, value);
 
-        assertThat(actual).isEqualTo("로직이 수행된 문자열");
+        assertThat(actual).isEqualTo(expected);
     }
 }
