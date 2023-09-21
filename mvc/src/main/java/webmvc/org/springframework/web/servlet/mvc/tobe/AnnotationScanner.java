@@ -27,9 +27,9 @@ public class AnnotationScanner {
                 .collect(Collectors.toMap(Function.identity(), this::newInstance));
     }
 
-    private Object newInstance(Class<?> aClass) {
+    private Object newInstance(Class<?> clazz) {
         try {
-            return aClass.getConstructor().newInstance();
+            return clazz.getConstructor().newInstance();
         } catch (
                 InstantiationException |
                 IllegalAccessException |

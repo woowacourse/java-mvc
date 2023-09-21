@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final Class<RequestMapping> METHOD_ANNOTATION = RequestMapping.class;
@@ -28,6 +29,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         AnnotationScanner annotationScanner = new AnnotationScanner(basePackages);
@@ -40,6 +42,13 @@ public class AnnotationHandlerMapping {
         for (Method method : methods) {
             addHandlerExecutionByMethod(classWithInstance, method);
         }
+    }
+
+    private Set<Method> findRequestMappingMethods(Set<Class<?>> classes) {
+        return classes.stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
+                .filter(method -> method.isAnnotationPresent(METHOD_ANNOTATION))
+                .collect(Collectors.toSet());
     }
 
     private void addHandlerExecutionByMethod(Map<Class<?>, Object> classWithInstance, Method method) {
@@ -55,13 +64,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Set<Method> findRequestMappingMethods(Set<Class<?>> classes) {
-        return classes.stream()
-                .flatMap(it -> Arrays.stream(it.getMethods()))
-                .filter(it -> it.isAnnotationPresent(METHOD_ANNOTATION))
-                .collect(Collectors.toSet());
-    }
-
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
