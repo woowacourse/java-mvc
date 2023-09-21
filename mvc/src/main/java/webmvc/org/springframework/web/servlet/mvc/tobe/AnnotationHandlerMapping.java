@@ -46,8 +46,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
         Set<Method> requestMappingMethods = new HashSet<>();
         for (Class<?> clazz : classes) {
-            Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
-                    ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
+            Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
             requestMappingMethods.addAll(methods);
         }
         return requestMappingMethods;
