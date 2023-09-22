@@ -1,6 +1,4 @@
-package com.techcourse.adapter;
-
-import webmvc.org.springframework.web.servlet.HandlerAdapter;
+package webmvc.org.springframework.web.servlet;
 
 import java.util.ArrayList;
 import java.util.List;
