@@ -13,8 +13,8 @@ public class ManualHandlerAdaptor implements HandlerAdaptor {
     }
 
     @Override
-    public ModelAndView handle(final Object controller, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final MyController interfaceMyController = (MyController) controller;
+    public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final MyController interfaceMyController = (MyController) handler;
         return interfaceMyController.execute(request, response);
     }
 }

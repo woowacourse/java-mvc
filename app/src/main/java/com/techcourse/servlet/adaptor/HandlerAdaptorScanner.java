@@ -18,14 +18,14 @@ public class HandlerAdaptorScanner {
         handlerAdaptors.add(new AnnotationHandlerAdaptor());
     }
 
-    public HandlerAdaptor getHandlerAdaptor(final Object controller) throws ServletException {
+    public HandlerAdaptor getHandlerAdaptor(final Object handler) throws ServletException {
         for (final HandlerAdaptor handlerAdaptor : handlerAdaptors) {
-            if (handlerAdaptor.supports(controller)) {
+            if (handlerAdaptor.supports(handler)) {
                 return handlerAdaptor;
             }
         }
 
-        log.error("해당 controller 를 지원하는 어댑터가 없습니다. controller 정보 = {}", controller.getClass());
+        log.error("해당 handler 를 지원하는 어댑터가 없습니다. handler 정보 = {}", handler.getClass());
 
         throw new ServletException("핸들러를 지원하는 어댑터가 없습니다.");
     }
