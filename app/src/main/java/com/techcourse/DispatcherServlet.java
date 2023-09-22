@@ -80,7 +80,7 @@ public class DispatcherServlet extends HttpServlet {
             final String notFoundViewName = "/404.jsp";
             response.sendRedirect(notFoundViewName);
         } catch (IOException e) {
-            throw new RuntimeException("존재하지 않는 404페이지 입니다.");
+            throw new RuntimeException("404페이지 리다이렉션을 실패했습니다.");
         }
     }
 }
