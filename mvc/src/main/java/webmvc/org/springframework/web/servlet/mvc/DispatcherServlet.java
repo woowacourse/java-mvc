@@ -6,8 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotaionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMappings;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
 
