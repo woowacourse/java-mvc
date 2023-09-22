@@ -31,7 +31,7 @@ public class ModelAndView {
         return view;
     }
 
-    public String getViewName(){
+    public String getViewName() {
         return view.getViewName();
     }
 }
