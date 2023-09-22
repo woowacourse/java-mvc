@@ -12,8 +12,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.RequestMappingHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.SimpleControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +31,10 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings = new ArrayList<>();
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
         handlerMappings.forEach(HandlerMapping::initialize);
 
         handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new SimpleControllerHandlerAdapter());
         handlerAdapters.add(new RequestMappingHandlerAdapter());
     }
 
