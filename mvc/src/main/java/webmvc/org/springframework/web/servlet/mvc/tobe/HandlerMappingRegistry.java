@@ -15,7 +15,6 @@ public class HandlerMappingRegistry {
 
     public HandlerMappingRegistry() {
         this.handlerMappings = new ArrayList<>();
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
