@@ -5,7 +5,7 @@ import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 public class HandlerMappings {
 
@@ -20,13 +20,10 @@ public class HandlerMappings {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest httpServletRequest) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(httpServletRequest);
-            if (handler != null) {
-                return Optional.of(handler);
-            }
-        }
-        return Optional.empty();
+    public Object getHandler(HttpServletRequest httpServletRequest) {
+        return handlerMappings.stream()
+                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(httpServletRequest)))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("There is not matched handler"));
     }
 }

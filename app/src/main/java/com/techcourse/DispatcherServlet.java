@@ -44,10 +44,8 @@ public class DispatcherServlet extends HttpServlet {
         log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = handlerMappings.getHandler(request)
-                    .orElseThrow(() -> new IllegalArgumentException("There is not matched handler"));
-            HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler)
-                    .orElseThrow(() -> new IllegalArgumentException("Not Supported Handler"));
+            Object handler = handlerMappings.getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {

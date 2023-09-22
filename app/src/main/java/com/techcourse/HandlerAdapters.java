@@ -5,7 +5,6 @@ import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HandlerAdapters {
 
@@ -16,12 +15,10 @@ public class HandlerAdapters {
         return this;
     }
 
-    public Optional<HandlerAdapter> getHandlerAdapter(Object handler) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return Optional.of(handlerAdapter);
-            }
-        }
-        return Optional.empty();
+    public HandlerAdapter getHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Not Supported Handler"));
     }
 }
