@@ -7,7 +7,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-import static web.org.springframework.web.bind.annotation.RequestMethod.*;
+import static web.org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class RegisterViewControllerV2 {
