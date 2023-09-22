@@ -90,8 +90,9 @@ Annotation으로 찾은 매핑 정보와 Manual의 매핑 정보가 중복되어
 - ~~[ ] HandlerMappingRegistry를 구현한다.~~
 - ~~[ ] HandlerAdapterRegistry를 구현한다.~~
 - [x] AnnotationHandlerMapping에서 외부 라이브러리인 Reflection 의존을 ControllerScanner 도입을 이용하여 끊는다.
-- [ ] HandlerAdapterComposite에서 HandlerAdapter를 찾지 못했을 때 예외
-- [ ] Controller와 Annotation으로 구분하여 패키지를 분리한다.
+- ~~[ ] HandlerAdapterComposite에서 HandlerAdapter를 찾지 못했을 때 예외~~
+- [x] ManaualHandlerAdapter 클래스명을 ControllerHandlerAdapter 로 변경한다.
+- [x] Controller와 Annotation으로 구분하여 패키지를 분리한다.
 
 ```text
 👨‍🚀 비교해봐요.
@@ -141,7 +142,7 @@ graph RL
             AnnotationHandlerAdapter --> HandlerAdapter
         end
         subgraph 자바 선언 기반 핸들러 어댑터
-            ManualHandlerAdapter --> HandlerAdapter
+            ControllerHandlerAdapter --> HandlerAdapter
         end
     end
 
