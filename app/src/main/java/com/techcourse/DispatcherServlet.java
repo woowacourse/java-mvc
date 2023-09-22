@@ -48,7 +48,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Optional<Object> handler = handlerMappings.getHandler(request);
             if (handler.isEmpty()) {
-                // handler is null when no handler is found
+                log.debug("No handler found");
+                response.sendRedirect("404.jsp");
+                return;
             }
 
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
