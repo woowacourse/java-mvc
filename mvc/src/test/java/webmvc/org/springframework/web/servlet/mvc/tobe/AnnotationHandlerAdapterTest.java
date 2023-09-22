@@ -18,8 +18,10 @@ class AnnotationHandlerAdapterTest {
     @Test
     void supports_메서드는_HandlerExecution_타입이면_true_반환() throws NoSuchMethodException {
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        HandlerExecution handlerExecution = new HandlerExecution(new TestController(),
-                TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class));
+        HandlerExecution handlerExecution = new HandlerExecution(
+                new TestController(),
+                TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class)
+        );
 
         boolean supports = annotationHandlerAdapter.supports(handlerExecution);
 
@@ -41,8 +43,10 @@ class AnnotationHandlerAdapterTest {
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        HandlerExecution handlerExecution = new HandlerExecution(new TestController(),
-                TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class));
+        HandlerExecution handlerExecution = new HandlerExecution(
+                new TestController(),
+                TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class)
+        );
 
         ModelAndView modelAndView = annotationHandlerAdapter.handle(httpServletRequest, httpServletResponse,
                 handlerExecution);
