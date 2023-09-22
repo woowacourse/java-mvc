@@ -25,7 +25,7 @@ public class HandlerAdaptorScanner {
             }
         }
 
-        log.warn("해당 controller 를 지원하는 어댑터가 없습니다. controller 정보 = {}", controller.getClass());
+        log.error("해당 controller 를 지원하는 어댑터가 없습니다. controller 정보 = {}", controller.getClass());
 
         throw new ServletException("핸들러를 지원하는 어댑터가 없습니다.");
     }
