@@ -73,7 +73,7 @@ public class DispatcherServlet extends HttpServlet {
                 .findFirst()
                 .orElseThrow(() -> new HandlerNotFoundException(
                         "해당하는 Handler를 찾을 수 없습니다."
-                                + " URI : " + request.getMethod()
+                                + " URI : " + request.getRequestURI()
                                 + " METHOD : " + request.getMethod()));
     }
 
