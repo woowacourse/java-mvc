@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.techcourse.adapter.ManualHandlerAdapter;
+import com.techcourse.mapping.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,8 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.HandlerMappings;
+import com.techcourse.adapter.HandlerAdapters;
+import com.techcourse.mapping.HandlerMappings;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotaionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;

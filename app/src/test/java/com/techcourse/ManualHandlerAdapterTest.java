@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.techcourse.adapter.ManualHandlerAdapter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
