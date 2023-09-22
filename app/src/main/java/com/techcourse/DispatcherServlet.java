@@ -14,6 +14,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterComposite;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingComposite;
+import webmvc.org.springframework.web.servlet.mvc.tobe.annotation.MappingAnnotationComposite;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         this.handlerMappingComposite = new HandlerMappingComposite(List.of(
-                new AnnotationHandlerMapping(),
+                new AnnotationHandlerMapping(new MappingAnnotationComposite()),
                 new ManualHandlerMapping()
         ));
 

@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.annotation.MappingAnnotationComposite;
 import webmvc.org.springframework.web.servlet.mvc.tobe.scanner.ControllerScanner;
 
 import java.lang.reflect.Method;
@@ -17,10 +19,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
+    private final MappingAnnotationComposite mappingAnnotationComposite;
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final MappingAnnotationComposite mappingAnnotationComposite, final Object... basePackage) {
+        this.mappingAnnotationComposite = mappingAnnotationComposite;
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
         initialize();
@@ -42,8 +46,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void putHandlerExecutions(final Class<?> clazz, final Object controller) {
         final List<Method> methods = getMethods(clazz);
         for (final Method method : methods) {
-            final RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
-            final HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
+            final String requestUrl = mappingAnnotationComposite.getRequestUrl(method);
+            final RequestMethod requestMethod = mappingAnnotationComposite.getRequestMethod(method);
+
+            final HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
             final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
             handlerExecutions.put(handlerKey, handlerExecution);
