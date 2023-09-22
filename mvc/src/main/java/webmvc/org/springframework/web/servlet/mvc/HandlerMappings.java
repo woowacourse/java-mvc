@@ -1,7 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,8 @@ public class HandlerMappings {
 
     public Object getHandler(HttpServletRequest httpServletRequest) {
         return handlerMappings.stream()
-                .filter(handlerMapping -> Objects.nonNull(handlerMapping.getHandler(httpServletRequest)))
+                .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
+                .filter(Objects::nonNull)
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("There is not matched handler"));
     }
