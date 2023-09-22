@@ -16,11 +16,11 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> controllers;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.controllers = new HashMap<>();
     }
 
     public void initialize() {
@@ -46,7 +46,7 @@ public class AnnotationHandlerMapping {
         }
         var annotation = method.getDeclaredAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : annotation.method()) {
-            handlerExecutions.put(
+            controllers.put(
                     new HandlerKey(annotation.value(), requestMethod),
                     HandlerExecution.of(controller, method)
             );
@@ -56,6 +56,6 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod = Enum.valueOf(RequestMethod.class, request.getMethod());
         HandlerKey key = new HandlerKey(request.getRequestURI(), requestMethod);
-        return handlerExecutions.get(key);
+        return controllers.get(key);
     }
 }
