@@ -12,3 +12,5 @@
   - [x] handler가 없는 요청이면 404페이지 반환하기
 ## 리팩토링 목록
 - [x] Method 실행 시 불필요한 Controller 인스턴스 생성 제거
+- [ ] HandlerAdapter 커스템 예외 추가(HandlerAdapter Not Found) 
+- [ ] 예외처리 메세지 명확하게 수정
