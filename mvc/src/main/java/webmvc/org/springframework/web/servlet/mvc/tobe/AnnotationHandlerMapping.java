@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,6 +25,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
@@ -46,18 +47,19 @@ public class AnnotationHandlerMapping {
         if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
             RequestMethod[] method = annotation.method();
-            mapHandlerForRequestMethods(declaredMethod, annotation, method);
+            HandlerExecution handlerExecution = new HandlerExecution(declaredMethod);
+            mapHandlerForRequestMethods(declaredMethod, annotation, method, handlerExecution);
         }
     }
 
-    private void mapHandlerForRequestMethods(Method declaredMethod, RequestMapping annotation, RequestMethod[] method) {
+    private void mapHandlerForRequestMethods(Method declaredMethod, RequestMapping annotation, RequestMethod[] method, HandlerExecution handlerExecution) {
         for (RequestMethod requestMethod : method) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(declaredMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
