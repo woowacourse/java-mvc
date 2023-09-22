@@ -60,7 +60,7 @@ public class DispatcherServlet extends HttpServlet {
         } catch (HandlerNotFoundException | HandlerAdapterNotFoundException e) {
             log.error(e.getMessage());
             response.setStatus(404);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
