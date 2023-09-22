@@ -10,12 +10,17 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private final ObjectMapper objectMapper;
+
+    public JsonView(final ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final ObjectMapper objectMapper = new ObjectMapper();
         final String body = objectMapper.writeValueAsString(model);
 
-        if (model.size() == 1) {
+        if (hasSingle(model)) {
             response.setContentType("text/html");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(body);
@@ -26,8 +31,7 @@ public class JsonView implements View {
         response.getWriter().write(body);
     }
 
-    @Override
-    public String getName() {
-        return null;
+    private static boolean hasSingle(final Map<String, ?> model) {
+        return model.size() == 1;
     }
 }
