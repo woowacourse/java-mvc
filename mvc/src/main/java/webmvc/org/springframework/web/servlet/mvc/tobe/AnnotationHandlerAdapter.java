@@ -1,10 +1,11 @@
-package webmvc.org.springframework.web.servlet.mvc;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter{
+public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {

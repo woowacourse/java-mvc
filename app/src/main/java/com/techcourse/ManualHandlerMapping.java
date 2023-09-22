@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
-import com.techcourse.controller.Controller;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import com.techcourse.controller.ForwardController;
 
 import java.util.HashMap;
