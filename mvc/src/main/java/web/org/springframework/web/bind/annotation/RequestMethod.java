@@ -1,27 +1,39 @@
 package web.org.springframework.web.bind.annotation;
 
-import java.util.Arrays;
-
 public enum RequestMethod {
-    GET("GET"),
-    HEAD("HEAD"),
-    POST("POST"),
-    PUT("PUT"),
-    PATCH("PATCH"),
-    DELETE("DELETE"),
-    OPTIONS("OPTIONS"),
-    TRACE("TRACE");
+    GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
 
-    private final String methodName;
-
-    RequestMethod(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public static RequestMethod from(String methodName) {
-        return Arrays.stream(values())
-                .filter(method -> method.methodName.equals(methodName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메소드입니다"));
+    public static RequestMethod resolve(String method) {
+        RequestMethod requestMethod;
+        switch (method) {
+            case "GET":
+                requestMethod = GET;
+                break;
+            case "HEAD":
+                requestMethod = HEAD;
+                break;
+            case "POST":
+                requestMethod = POST;
+                break;
+            case "PUT":
+                requestMethod = PUT;
+                break;
+            case "PATCH":
+                requestMethod = PATCH;
+                break;
+            case "DELETE":
+                requestMethod = DELETE;
+                break;
+            case "OPTIONS":
+                requestMethod = OPTIONS;
+                break;
+            case "TRACE":
+                requestMethod = TRACE;
+                break;
+            default:
+                throw new RuntimeException();
+        }
+        ;
+        return requestMethod;
     }
 }
