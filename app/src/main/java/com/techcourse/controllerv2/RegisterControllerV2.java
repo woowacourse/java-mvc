@@ -5,16 +5,14 @@ import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.PostMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
-
-import static web.org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class RegisterControllerV2 {
 
-    @RequestMapping(value = "/register", method = POST)
+    @PostMapping("/register")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final User user = new User(2,
                 request.getParameter("account"),

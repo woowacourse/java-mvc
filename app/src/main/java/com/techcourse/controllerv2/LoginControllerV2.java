@@ -8,20 +8,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.PostMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import static com.techcourse.controllerv2.UserSessionV2.SESSION_KEY;
 import static com.techcourse.controllerv2.UserSessionV2.isLoggedIn;
-import static web.org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class LoginControllerV2 {
 
     private static final Logger log = LoggerFactory.getLogger(LoginControllerV2.class);
 
-    @RequestMapping(value = "/login", method = POST)
+    @PostMapping("/login")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return new ModelAndView(new JspView(getViewName(request)));
     }
