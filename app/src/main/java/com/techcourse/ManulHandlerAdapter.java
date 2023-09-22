@@ -11,7 +11,7 @@ public class ManulHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof Controller;
+        return Controller.class.isInstance(handler);
     }
 
     @Override
