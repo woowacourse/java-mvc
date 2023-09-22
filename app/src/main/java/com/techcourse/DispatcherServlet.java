@@ -8,32 +8,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappings;
+    private final HandlerAdapterRegistry handlerAdapters;
 
     public DispatcherServlet() {
+        handlerMappings = new HandlerMappingRegistry();
+        handlerAdapters = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings = List.of(new AnnotationHandlerMapping("com.techcourse"), new ManualHandlerMapping());
-        handlerMappings.forEach(HandlerMapping::initialize);
-        handlerAdapters = List.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter());
+        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
+        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
+
+        handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapters.addHandlerAdapter(new ManualHandlerAdapter());
     }
 
     @Override
@@ -42,28 +46,18 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = getHandler(request);
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final Optional<Object> handler = handlerMappings.getHandler(request);
+            if (handler.isEmpty()) {
+                // handler is null when no handler is found
+            }
+
+            final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final Object result = handlerAdapter.handle(request, response, handler);
             processResult(result, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) throws ServletException {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new ServletException("No handler matches your request."));
-    }
-    private HandlerAdapter getHandlerAdapter(final Object handler) throws ServletException {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new ServletException("No handler Adapter matches your request."));
     }
 
     private void processResult(final Object result, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
