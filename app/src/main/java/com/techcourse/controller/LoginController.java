@@ -4,9 +4,9 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 public class LoginController implements Controller {
 
@@ -19,11 +19,11 @@ public class LoginController implements Controller {
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
+            .map(user -> {
+                log.info("User : {}", user);
+                return login(req, user);
+            })
+            .orElse("redirect:/401.jsp");
     }
 
     private String login(final HttpServletRequest request, final User user) {
