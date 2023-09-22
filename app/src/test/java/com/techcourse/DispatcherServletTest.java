@@ -80,7 +80,7 @@ class DispatcherServletTest {
         // when & then
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
             .isInstanceOf(ServletException.class)
-            .hasMessage("핸드러를 처리할 어댑터가 없습니다.");
+            .hasMessage("핸들러를 처리할 어댑터가 없습니다.");
     }
 
     @Test

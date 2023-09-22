@@ -51,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             Object handler = registryHandler.get();
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler)
-                .orElseThrow(() -> new IllegalStateException("핸드러를 처리할 어댑터가 없습니다."));
+                .orElseThrow(() -> new IllegalStateException("핸들러를 처리할 어댑터가 없습니다."));
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
