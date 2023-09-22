@@ -8,7 +8,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappings {
-    private static final Object[] BASE_PACKAGE_PATH = {"com.techcourse", "samples"};
+    private static final Object[] BASE_PACKAGE_PATH = {"com.techcourse"};
 
     private final List<HandlerMapping> mappings;
 
