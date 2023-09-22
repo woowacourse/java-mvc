@@ -82,9 +82,9 @@ Annotation으로 찾은 매핑 정보와 Manual의 매핑 정보가 중복되어
 - [x] HandlerMappingComposite의 getHandlerMapping 반환값을 Optional로 래핑한다.
 - [x] static final + 인스턴스 != 상수; 즉, 대문자로 선언된 필드명을 소문자로 수정한다.
 - [x] 테스트 검증부 정렬하기
-- [ ] 스프링의 동일한 매핑 동작 참고,
+- [x] 스프링의 동일한 매핑 동작 참고,
 - [ ] v1, v2
-- [ ] GetMapping, PostMapping, RequestMapping
+- [x] GetMapping, PostMapping, RequestMapping
 
 ### 2단계 힌트 훔쳐보기 😋
 - ~~[ ] HandlerMappingRegistry를 구현한다.~~
@@ -154,6 +154,12 @@ graph RL
         subgraph 어노테이션 기반 핸들러 매핑
             AnnotationHandlerMapping ---- HandlerKey
             AnnotationHandlerMapping ---- HandlerExecution
+            subgraph 어노테이션 매핑
+                AnnotationHandlerMapping ---- MappingAnnotationComposite
+                MappingAnnotationComposite ---- RequestMapping
+                MappingAnnotationComposite ---- GetMapping
+                MappingAnnotationComposite ---- PostMapping
+            end
         end
 
         subgraph 자바 선언 기반 핸들러 매핑
@@ -163,6 +169,6 @@ graph RL
     end
 
     subgraph 컨트롤러 어노테이션 리플랙션
-        ControllerScanner ---- |Reflection 의존 분리| AnnotationHandlerMapping
+        ControllerScanner ----|Reflection 의존 분리| AnnotationHandlerMapping
     end
 ```
