@@ -1,6 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import java.util.List;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerAdapterNotFoundException;
 
 public class HandlerAdaptorFinder {
 
@@ -14,6 +15,6 @@ public class HandlerAdaptorFinder {
         return handlerAdapters.stream()
             .filter(handlerAdapter -> handlerAdapter.support(handler))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 }
