@@ -1,8 +1,8 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
-import com.techcourse.support.HandlerAdapters;
-import com.techcourse.support.HandlerExceptionResolvers;
-import com.techcourse.support.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.support.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.support.HandlerExceptionResolvers;
+import webmvc.org.springframework.web.servlet.mvc.support.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,9 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.HandlerExceptionResolver;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
