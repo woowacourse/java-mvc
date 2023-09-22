@@ -2,8 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 
@@ -11,7 +9,6 @@ public class HandlerAdapterRegistry {
 
     public HandlerAdapterRegistry() {
         this.handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
