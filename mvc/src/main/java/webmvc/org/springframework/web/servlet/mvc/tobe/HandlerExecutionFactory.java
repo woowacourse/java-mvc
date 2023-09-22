@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toList;
 
 public class HandlerExecutionFactory {
 
-    public static Map<HandlerKey, HandlerExecution> create(final Object... basePackage) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static Map<HandlerKey, HandlerExecution> create(final Object... basePackage) {
         final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
         final Reflections reflections = new Reflections(basePackage);
@@ -34,7 +34,7 @@ public class HandlerExecutionFactory {
                 final RequestMethod[] requestMethods = requestMapping.method();
                 final String requestUrl = requestMapping.value();
 
-                final Object controllerInstance = controller.getDeclaredConstructor().newInstance();
+                final Object controllerInstance = createControllerInstance(controller);
                 final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
 
                 for (final RequestMethod requestMethod : requestMethods) {
@@ -45,6 +45,18 @@ public class HandlerExecutionFactory {
         }
 
         return handlerExecutions;
+    }
+
+    private static Object createControllerInstance(final Class<?> controller) {
+        try {
+            return controller.getDeclaredConstructor().newInstance();
+        } catch (final NoSuchMethodException |
+                       InvocationTargetException |
+                       InstantiationException |
+                       IllegalAccessException e) {
+
+            throw new IllegalStateException("controllerInstance 를 생성할 수 없습니다.");
+        }
     }
 
 }
