@@ -48,12 +48,13 @@ public class DispatcherServlet extends HttpServlet {
             final Optional<Object> handler = handlerMappings.getHandler(request);
             if (handler.isEmpty()) {
                 log.debug("No handler found");
+                response.setStatus(404);
                 response.sendRedirect("404.jsp");
                 return;
             }
 
-            final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler.get());
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
