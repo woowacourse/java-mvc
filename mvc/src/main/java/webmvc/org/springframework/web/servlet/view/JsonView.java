@@ -22,7 +22,6 @@ public class JsonView implements View {
 
         if (hasSingle(model)) {
             response.setContentType("text/html");
-            response.setCharacterEncoding("UTF-8");
             response.getWriter().write(body);
             return;
         }
@@ -31,7 +30,7 @@ public class JsonView implements View {
         response.getWriter().write(body);
     }
 
-    private static boolean hasSingle(final Map<String, ?> model) {
+    private boolean hasSingle(final Map<String, ?> model) {
         return model.size() == 1;
     }
 }
