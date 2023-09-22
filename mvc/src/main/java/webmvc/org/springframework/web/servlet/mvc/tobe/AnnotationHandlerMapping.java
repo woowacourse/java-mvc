@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import webmvc.org.springframework.web.servlet.HandlerMapping;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,12 +29,14 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
 
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClasses.forEach(this::makeHandlerExecutions);
+
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void makeHandlerExecutions(final Class<?> controller) {
@@ -43,7 +46,7 @@ public class AnnotationHandlerMapping {
         for (Method method : requestMethods) {
             final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             final List<HandlerKey> handlerKeys = getHandlerKeys(requestMapping);
-            final HandlerExecution handlerExecution = getHandlerExecution(instance, method);
+            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
 
             addHandlerExecution(handlerKeys, handlerExecution);
         }
@@ -73,16 +76,13 @@ public class AnnotationHandlerMapping {
                 .collect(Collectors.toList());
     }
 
-    private HandlerExecution getHandlerExecution(final Object instance, final Method method) {
-        return new HandlerExecution(instance, method);
-    }
-
     private void addHandlerExecution(final List<HandlerKey> handlerKeys, final HandlerExecution handlerExecution) {
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod method = RequestMethod.valueOf(request.getMethod());
