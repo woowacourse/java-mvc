@@ -17,7 +17,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final transient HandlerMappingRegistry handlerMappingRegistry;
     private final transient HandlerAdapterRegistry handlerAdapterRegistry;
@@ -25,23 +25,24 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry, HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
         this.handlerAdapterRegistry = handlerAdapterRegistry;
+        if (handlerAdapterRegistry == null) {
+            throw new IllegalStateException("어뎁터 레지스트리는 필수로 등록되어야 합니다.");
+        }
+        if (handlerMappingRegistry == null) {
+            throw new IllegalStateException("핸들러 매핑 레지스트리는 필수로 등록되어야 합니다.");
+        }
     }
 
     @Override
     public void init() {
-        if (handlerAdapterRegistry == null) {
-            throw new IllegalStateException("어뎁터 레지스트리가 초기화 되지 않았습니다.");
-        }
-        if (handlerMappingRegistry == null) {
-            throw new IllegalStateException("핸들러 매핑 레지스트리가 초기화 되지 않았습니다.");
-        }
+        logger.info("initialized DispatcherServlet");
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
         throws ServletException {
         final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        logger.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
             Optional<Object> registryHandler = handlerMappingRegistry.getHandler(request);
             if (registryHandler.isEmpty()) {
@@ -54,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            logger.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
