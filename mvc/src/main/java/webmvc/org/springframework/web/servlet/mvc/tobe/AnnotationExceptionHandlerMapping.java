@@ -20,7 +20,7 @@ public class AnnotationExceptionHandlerMapping implements ExceptionHandlerMappin
     private static final Logger log = LoggerFactory.getLogger(AnnotationExceptionHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<Class<? extends Throwable>, HandlerExecution> handlerExecutions;
+    private final Map<String, HandlerExecution> handlerExecutions;
 
     public AnnotationExceptionHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -106,12 +106,12 @@ public class AnnotationExceptionHandlerMapping implements ExceptionHandlerMappin
             final ExceptionHandler exceptionHandler = method.getAnnotation(ExceptionHandler.class);
 
             final HandlerExecution handlerExecution = new HandlerExecution(method);
-            handlerExecutions.put(exceptionHandler.value(), handlerExecution);
+            handlerExecutions.put(exceptionHandler.value().getName(), handlerExecution);
         }
     }
 
     @Override
     public Object getHandler(final Class<? extends Throwable> exception) {
-        return handlerExecutions.get(exception);
+        return handlerExecutions.get(exception.getName());
     }
 }
