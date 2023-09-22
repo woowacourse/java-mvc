@@ -23,6 +23,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import webmvc.org.springframework.web.servlet.mvc.tobe.DispatcherServlet;
 
 class DispatcherServletTest {
 
@@ -53,7 +54,7 @@ class DispatcherServletTest {
 
     @Test
     @DisplayName("/register POST (annotation)")
-    void registerPostTest() throws ServletException {
+    void registerPostTest() throws ServletException, IOException {
         // given
         given(request.getRequestURI()).willReturn("/register");
         given(request.getMethod()).willReturn("POST");
@@ -71,11 +72,11 @@ class DispatcherServletTest {
     }
 
     @Test
-    @DisplayName("/login/view (manual)")
+    @DisplayName("/login (annotation)")
     void LoginViewPageTest() throws ServletException, IOException {
         // given
         final MockedStatic<UserSession> userSessionMockedStatic = mockStatic(UserSession.class);
-        given(request.getRequestURI()).willReturn("/login/view");
+        given(request.getRequestURI()).willReturn("/login");
         given(request.getMethod()).willReturn("GET");
         given(request.getRequestDispatcher(any())).willReturn(requestDispatcher);
         given(UserSession.isLoggedIn(any())).willReturn(false);
