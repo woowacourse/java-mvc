@@ -12,9 +12,9 @@ import static org.mockito.Mockito.*;
 class DispatcherServletTest {
 
     @Test
-    void service_RegisterViewController() throws Exception {
+    void service_TestController() throws Exception {
         // given
-        final var handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        final var handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
         final var handlerAdapter = new AnnotationHandlerAdapter();
         final var dispatcherServlet = new DispatcherServlet(handlerMapping, handlerAdapter);
@@ -23,42 +23,17 @@ class DispatcherServletTest {
         final var response = mock(HttpServletResponse.class);
         final var requestDispatcher = mock(RequestDispatcher.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestDispatcher("")).thenReturn(requestDispatcher);
         doNothing().when(requestDispatcher).forward(any(), any());
 
         // when
         dispatcherServlet.service(request, response);
 
         // then
-        verify(request, times(1)).getRequestDispatcher("/register.jsp");
-        verify(requestDispatcher, times(1)).forward(request, response);
-    }
-
-    @Test
-    void service_RegisterController() throws Exception {
-        // given
-        final var handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        handlerMapping.initialize();
-        final var handlerAdapter = new AnnotationHandlerAdapter();
-        final var dispatcherServlet = new DispatcherServlet(handlerMapping, handlerAdapter);
-
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var requestDispatcher = mock(RequestDispatcher.class);
-
-        when(request.getRequestURI()).thenReturn("/register");
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getParameter(any())).thenReturn("anyParam");
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
-        doNothing().when(requestDispatcher).forward(any(), any());
-
-        // when
-        dispatcherServlet.service(request, response);
-
-        // then
-        verify(request, times(1)).getRequestDispatcher("/index.jsp");
+        verify(request, times(1)).getRequestDispatcher("");
         verify(requestDispatcher, times(1)).forward(request, response);
     }
 }
