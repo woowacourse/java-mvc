@@ -1,12 +1,10 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
-import webmvc.org.springframework.web.servlet.exception.HandlerMappingException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.scanner.ControllerScanner;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -31,8 +29,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("====================> Initialized AnnotationHandlerMapping!");
-        new Reflections(basePackage)
-                .getTypesAnnotatedWith(Controller.class)
+        new ControllerScanner()
+                .getControllers(basePackage)
                 .forEach(this::putHandlerExecutions);
     }
 
@@ -41,8 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.containsKey(getHandlerKey(request));
     }
 
-    private void putHandlerExecutions(final Class<?> clazz) {
-        final Object controller = getController(clazz);
+    private void putHandlerExecutions(final Class<?> clazz, final Object controller) {
         final List<Method> methods = getMethods(clazz);
         for (final Method method : methods) {
             final RequestMapping annotation = method.getDeclaredAnnotation(RequestMapping.class);
@@ -50,15 +47,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
             handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private Object getController(final Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            log.warn("Controller 를 생성자로 생성하던 도중 예외가 발생하였습니다.", e);
-            throw new HandlerMappingException("[ERROR] Controller 를 생성자로 생성하던 도중 예외가 발생하였습니다.");
         }
     }
 
