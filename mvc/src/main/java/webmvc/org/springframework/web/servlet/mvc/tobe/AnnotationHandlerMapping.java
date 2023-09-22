@@ -19,7 +19,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.exception.RequestMethodNotValidException;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -31,6 +31,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
@@ -60,7 +61,8 @@ public class AnnotationHandlerMapping {
             .map(key -> entry(key, new HandlerExecution(handleTo)));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Handler getHandler(final HttpServletRequest request) {
         final String servletPath = request.getRequestURI();
         try {
             final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
