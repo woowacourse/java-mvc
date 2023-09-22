@@ -17,6 +17,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -55,22 +56,11 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final ModelAndView handle = handlerAdapter.handle(request, response, handler);
             final View view = handle.getView();
-            if (view instanceof JspView) {
-                move(((JspView) view).getViewName(), request, response);
-            }
+            final Map<String, Object> model = handle.getModel();
+            view.render(model, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
