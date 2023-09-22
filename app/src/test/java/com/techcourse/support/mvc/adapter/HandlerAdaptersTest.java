@@ -1,5 +1,6 @@
 package com.techcourse.support.mvc.adapter;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.techcourse.controller.LoginController;
@@ -15,7 +16,6 @@ public class HandlerAdaptersTest {
     void getHandlerAdapter() {
         // given
         HandlerAdapters handlerAdapters = new HandlerAdapters();
-        handlerAdapters.addHandlerAdapter(new ManualHandlerAdapter());
         handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         LoginController loginController = new LoginController();
@@ -24,6 +24,6 @@ public class HandlerAdaptersTest {
         HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(loginController);
 
         // then
-        assertThat(handlerAdapter).isInstanceOf(ManualHandlerAdapter.class);
+        assertThat(handlerAdapter).isInstanceOf(AnnotationHandlerAdapter.class);
     }
 }

@@ -1,7 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.support.mvc.adapter.ManualHandlerAdapter;
-import com.techcourse.support.mvc.handler.ManualHandlerMapper;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +21,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapper(new AnnotationHandlerMapper(TECH_COURSE_BASE_PACKAGES));
-        dispatcherServlet.addHandlerMapper(new ManualHandlerMapper());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
