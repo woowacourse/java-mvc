@@ -1,11 +1,11 @@
 package com.techcourse;
 
-import com.techcourse.adapter.ControllerHandlerMappingAdapter;
+import com.techcourse.adapter.ControllerHandlerAdapter;
 import com.techcourse.controller.NotFoundController;
 import java.util.Objects;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMappingAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.techcourse.handler.ControllerHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
@@ -46,8 +46,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdapter() {
-        handlerAdapters.add(new ControllerHandlerMappingAdapter());
-        handlerAdapters.add(new AnnotationHandlerMappingAdapter());
+        handlerAdapters.add(new ControllerHandlerAdapter());
+        handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
     @Override

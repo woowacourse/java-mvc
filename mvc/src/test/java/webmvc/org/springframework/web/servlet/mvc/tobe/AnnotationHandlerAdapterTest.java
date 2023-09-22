@@ -13,25 +13,25 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class AnnotationHandlerMappingAdapterTest {
+class AnnotationHandlerAdapterTest {
 
     @Test
     void supports_메서드는_HandlerExecution_타입이면_true_반환() throws NoSuchMethodException {
-        AnnotationHandlerMappingAdapter annotationHandlerMappingAdapter = new AnnotationHandlerMappingAdapter();
+        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
         HandlerExecution handlerExecution = new HandlerExecution(new TestController(),
                 TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class));
 
-        boolean supports = annotationHandlerMappingAdapter.supports(handlerExecution);
+        boolean supports = annotationHandlerAdapter.supports(handlerExecution);
 
         assertThat(supports).isTrue();
     }
 
     @Test
     void supports_메서드는_HandlerExecution_타입이_아니면_false_반환() {
-        AnnotationHandlerMappingAdapter annotationHandlerMappingAdapter = new AnnotationHandlerMappingAdapter();
+        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
         Object object = new Object();
 
-        boolean supports = annotationHandlerMappingAdapter.supports(object);
+        boolean supports = annotationHandlerAdapter.supports(object);
 
         assertThat(supports).isFalse();
     }
@@ -40,11 +40,11 @@ class AnnotationHandlerMappingAdapterTest {
     void 어노테이션_컨트롤러의_execute_메서드를_실행하고_ModelAndView_반환한다() throws Exception {
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-        AnnotationHandlerMappingAdapter annotationHandlerMappingAdapter = new AnnotationHandlerMappingAdapter();
+        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
         HandlerExecution handlerExecution = new HandlerExecution(new TestController(),
                 TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class));
 
-        ModelAndView modelAndView = annotationHandlerMappingAdapter.handle(httpServletRequest, httpServletResponse,
+        ModelAndView modelAndView = annotationHandlerAdapter.handle(httpServletRequest, httpServletResponse,
                 handlerExecution);
 
         assertThat(modelAndView).isNotNull();
