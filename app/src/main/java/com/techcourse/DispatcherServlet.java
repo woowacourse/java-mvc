@@ -57,9 +57,12 @@ public class DispatcherServlet extends HttpServlet {
             View view = modelAndView.getView();
             Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
-        } catch (HandlerNotFoundException | HandlerAdapterNotFoundException e) {
+        } catch (HandlerNotFoundException e) {
             log.error(e.getMessage());
             response.setStatus(404);
+        } catch (HandlerAdapterNotFoundException e) {
+            log.error(e.getMessage());
+            response.setStatus(500);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
