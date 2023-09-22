@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -9,13 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,31 +29,24 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        try {
-            log.info("Initialized AnnotationHandlerMapping!");
-            String packageName = (String) basePackage[0];
-            Set<Class<?>> controllerClasses = findAllControllerClasses(packageName);
-            controllerClasses.forEach(this::addHandlerExecution);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClasses.forEach(this::addControllerHandlers);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> findAllControllerClasses(String packageName) {
-        Reflections reflections = new Reflections(packageName);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private void addHandlerExecution(Class<?> clazz) {
-        List<Method> methods = getMethods(clazz);
+    private void addControllerHandlers(Class<?> clazz) {
+        List<Method> methods = getAnnotatedMethods(clazz, RequestMapping.class);
         Object controller = createInstance(clazz);
-        methods.forEach(method -> addHandlerExecution(method, controller));
+        methods.forEach(method -> addHandlerExecutions(controller, method));
     }
 
-    private List<Method> getMethods(Class<?> clazz) {
-        Method[] methods = clazz.getDeclaredMethods();
-        return Arrays.asList(methods);
+    private List<Method> getAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotation) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(annotation))
+                .collect(Collectors.toList());
     }
 
     private Object createInstance(Class<?> clazz) {
@@ -60,29 +55,33 @@ public class AnnotationHandlerMapping {
             return constructor.newInstance();
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new IllegalArgumentException("컨트롤러에 예상치 못한 문제가 발생했습니다");
+            throw new IllegalStateException("컨트롤러를 생성하는데 문제가 생겼습니다");
         }
     }
 
-    private void addHandlerExecution(Method method, Object controller) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            String uri = annotation.value();
-            List<RequestMethod> requestMethods = Arrays.asList(annotation.method());
-            requestMethods.forEach(requestMethod -> addHandlerExecution(uri, requestMethod, controller, method));
-        }
-    }
-
-    private void addHandlerExecution(String uri, RequestMethod requestMethod, Object controller, Method method) {
-        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+    private void addHandlerExecutions(Object controller, Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        handlerExecutions.put(handlerKey, handlerExecution);
+        Arrays.stream(annotation.method())
+                .map(requestMethod -> new HandlerKey(annotation.value(), requestMethod))
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        HandlerKey handlerKey = getHandlerKey(request);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    private HandlerKey getHandlerKey(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
+        return new HandlerKey(requestURI, RequestMethod.valueOf(method));
+    }
+
+    @Override
+    public Object getHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = getHandlerKey(request);
         return handlerExecutions.get(handlerKey);
     }
 }

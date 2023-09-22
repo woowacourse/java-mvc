@@ -20,7 +20,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return getModelAndViewByJspPath("/index.jsp");
+            return new ModelAndView(new JspView("/index.jsp"));
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -28,20 +28,15 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElseGet(() -> getModelAndViewByJspPath("/401.jsp"));
+                .orElseGet(() -> new ModelAndView(new JspView("/401.jsp")));
     }
 
     private ModelAndView login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return getModelAndViewByJspPath("/index.jsp");
+            return new ModelAndView(new JspView("/index.jsp"));
         }
-        return getModelAndViewByJspPath("/401.jsp");
-    }
-
-    private ModelAndView getModelAndViewByJspPath(String jspPath) {
-        JspView jspView = new JspView(jspPath);
-        return new ModelAndView(jspView);
+        return new ModelAndView(new JspView("/401.jsp"));
     }
 }
