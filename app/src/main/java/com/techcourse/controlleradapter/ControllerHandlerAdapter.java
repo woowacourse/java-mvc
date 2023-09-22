@@ -1,19 +1,20 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package com.techcourse.controlleradapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
-public class ViewPathHandlerAdapter implements HandlerAdapter {
+public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean support(final Object handler) {
-        return handler instanceof HandlerExecution;
+        return handler instanceof Controller;
     }
 
     @Override
     public String invoke(final Object handler, final HttpServletRequest request,
                                final HttpServletResponse response) throws Exception {
-        return (String) ((HandlerExecution) handler).handle(request, response);
+        return ((Controller) handler).execute(request, response);
     }
 }

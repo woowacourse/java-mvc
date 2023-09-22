@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.techcourse.controlleradapter.ControllerHandlerAdapter;
 import com.techcourse.exception.HandlerAdapterNotFoundException;
 import com.techcourse.exception.HandlerNotFoundException;
 import jakarta.servlet.ServletException;
@@ -15,7 +16,7 @@ import webmvc.org.springframework.web.servlet.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationExceptionHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ViewPathHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -32,7 +33,10 @@ public class DispatcherServlet extends HttpServlet {
             new AnnotationHandlerMapping("com/techcourse")
     );
 
-    private List<HandlerAdapter> handlerAdapters = List.of(new ViewPathHandlerAdapter());
+    private List<HandlerAdapter> handlerAdapters = List.of(
+            new HandlerExecutionHandlerAdapter(),
+            new ControllerHandlerAdapter()
+    );
 
     public DispatcherServlet() {
     }
