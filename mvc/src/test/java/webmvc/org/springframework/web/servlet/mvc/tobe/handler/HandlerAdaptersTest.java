@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.handler.common;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.FakeHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
