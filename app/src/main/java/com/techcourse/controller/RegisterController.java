@@ -14,6 +14,11 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class RegisterController {
 
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView showRegisterPage(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return new ModelAndView(new JspView("/register.jsp"));
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
