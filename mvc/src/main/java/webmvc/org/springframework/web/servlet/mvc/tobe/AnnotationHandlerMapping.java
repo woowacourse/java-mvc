@@ -3,11 +3,13 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -17,7 +19,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final int REQUEST_INDEX = 0;
@@ -31,11 +33,11 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Set<Class<?>> controllerClasses = findClassesAnnotatedController();
 
         initializeHandlerExecutions(controllerClasses);
-
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -57,11 +59,11 @@ public class AnnotationHandlerMapping {
         return Arrays.stream(controllerClasses.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .filter(method -> method.getReturnType().equals(ModelAndView.class))
-                .filter(method -> validateParameterType(method.getParameterTypes()))
+                .filter(method -> isValidParameterType(method.getParameterTypes()))
                 .collect(Collectors.toList());
     }
 
-    private boolean validateParameterType(Class<?>[] parameters) {
+    private boolean isValidParameterType(Class<?>[] parameters) {
         return parameters[REQUEST_INDEX].equals(HttpServletRequest.class) &&
                 parameters[RESPONSE_INDEX].equals(HttpServletResponse.class);
     }
@@ -75,25 +77,32 @@ public class AnnotationHandlerMapping {
         String url = requestMappingAnnotation.value();
         RequestMethod[] requestMethods = requestMappingAnnotation.method();
 
-        try {
-            for (RequestMethod requestMethod : requestMethods) {
-                HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                Object classInstance = extractClassInstance(method);
-                HandlerExecution handlerExecution = new HandlerExecution(method, classInstance);
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            Object classInstance = extractClassInstance(method);
+            HandlerExecution handlerExecution = new HandlerExecution(method, classInstance);
 
-                handlerExecutions.put(handlerKey, handlerExecution);
-            }
-        } catch (Exception e) {
-            log.error("ERROR : {}", e.getMessage());
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    private Object extractClassInstance(Method method) throws Exception {
+    private Object extractClassInstance(Method method) {
         Class<?> declaringClassForMethod = method.getDeclaringClass();
 
-        return declaringClassForMethod.getDeclaredConstructor().newInstance();
+        try {
+            return declaringClassForMethod.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | NoSuchMethodException e) {
+            log.error("ERROR : {}", e.getMessage());
+            throw new NoSuchElementException(declaringClassForMethod.getSimpleName() + " : 기본 생성자가 존재하지 않습니다.");
+        } catch (IllegalAccessException e) {
+            log.error("ERROR : {}", e.getMessage());
+            throw new IllegalStateException(declaringClassForMethod.getSimpleName() + " : 접근 권한이 없습니다.");
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
