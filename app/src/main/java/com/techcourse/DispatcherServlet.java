@@ -11,8 +11,8 @@ import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 import java.util.Optional;
@@ -40,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
         handlerMappings.addHandlerMapping(new ManualHandlerMapping());
 
-        handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapters.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     @Override

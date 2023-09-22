@@ -11,9 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-class AnnotationHandlerAdapterTest {
+class HandlerExecutionHandlerAdapterTest {
 
-    private final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+    private final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
 
     @DisplayName("HandlerExecution 클래스를 구현한 handler는 true를 반환한다.")
     @Test
@@ -22,7 +22,7 @@ class AnnotationHandlerAdapterTest {
         HandlerExecution handler = mock(HandlerExecution.class);
 
         // when
-        boolean actual = annotationHandlerAdapter.supports(handler);
+        boolean actual = handlerExecutionHandlerAdapter.supports(handler);
 
         // then
         assertThat(actual).isTrue();
@@ -35,7 +35,7 @@ class AnnotationHandlerAdapterTest {
         Object objectHandler = mock(Object.class);
 
         // when
-        boolean actual = annotationHandlerAdapter.supports(objectHandler);
+        boolean actual = handlerExecutionHandlerAdapter.supports(objectHandler);
 
         // then
         assertThat(actual).isFalse();
@@ -52,6 +52,6 @@ class AnnotationHandlerAdapterTest {
         given(handler.handle(request, response)).willReturn(new ModelAndView(new JsonView()));
 
         // when & then
-        assertThat(annotationHandlerAdapter.handle(request, response, handler)).isInstanceOf(ModelAndView.class);
+        assertThat(handlerExecutionHandlerAdapter.handle(request, response, handler)).isInstanceOf(ModelAndView.class);
     }
 }

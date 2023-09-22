@@ -10,9 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-class ManualHandlerAdapterTest {
+class ControllerHandlerAdapterTest {
 
-    private final ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+    private final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
 
     @DisplayName("Controller 인터페이스를 구현한 handler는 true를 반환한다.")
     @Test
@@ -21,7 +21,7 @@ class ManualHandlerAdapterTest {
         Controller handler = mock(Controller.class);
 
         // when
-        boolean actual = manualHandlerAdapter.supports(handler);
+        boolean actual = controllerHandlerAdapter.supports(handler);
 
         // then
         assertThat(actual).isTrue();
@@ -34,7 +34,7 @@ class ManualHandlerAdapterTest {
         Object objectHandler = mock(Object.class);
 
         // when
-        boolean actual = manualHandlerAdapter.supports(objectHandler);
+        boolean actual = controllerHandlerAdapter.supports(objectHandler);
 
         // then
         assertThat(actual).isFalse();
@@ -51,6 +51,6 @@ class ManualHandlerAdapterTest {
         given(handler.execute(request, response)).willReturn("index");
 
         // when & then
-        assertThat(manualHandlerAdapter.handle(request, response, handler)).isInstanceOf(ModelAndView.class);
+        assertThat(controllerHandlerAdapter.handle(request, response, handler)).isInstanceOf(ModelAndView.class);
     }
 }
