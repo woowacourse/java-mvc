@@ -1,17 +1,11 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
-import com.techcourse.adapter.ManualHandlerAdapter;
-import com.techcourse.mapping.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.HandlerMappings;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotaionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
@@ -30,9 +24,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping());
-        handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotaionHandlerAdapter());
     }
 
