@@ -33,7 +33,7 @@ class LoginControllerTest {
         when(request.getSession()).thenReturn(httpSession);
 
         //when
-        final ModelAndView modelAndView = new ModelAndView(new JspView(loginController.execute(request, response)));
+        final ModelAndView modelAndView = loginController.login(request, response);
 
         //then
         assertThat(modelAndView)

@@ -28,7 +28,7 @@ class LoginViewControllerTest {
         when(session.getAttribute("user")).thenReturn(null);
 
         //when
-        final ModelAndView modelAndView = new ModelAndView(new JspView(loginViewController.execute(request, response)));
+        final ModelAndView modelAndView = loginViewController.execute(request, response);
 
         //then
         assertThat(modelAndView)
@@ -49,7 +49,7 @@ class LoginViewControllerTest {
                 .thenReturn(new User(1, "gugu", "password", "gugu@email.com"));
 
         //when
-        final ModelAndView modelAndView = new ModelAndView(new JspView(loginViewController.execute(request, response)));
+        final ModelAndView modelAndView = loginViewController.execute(request, response);
 
         //then
         assertThat(modelAndView)
