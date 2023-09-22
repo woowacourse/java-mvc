@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler;
 
 import static java.util.stream.Collectors.toList;
 
@@ -17,8 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerMappingException;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping<HandlerExecution> {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -30,6 +31,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object packagePath : basePackage) {
             initHandlerExecutions(packagePath);
@@ -38,7 +40,7 @@ public class AnnotationHandlerMapping {
     }
 
     private void initHandlerExecutions(Object packagePath) {
-        Set<Class<?>> clazz = getClazzByAnnotation(packagePath, Controller.class);
+        Set<Class<?>> clazz = getClassByAnnotation(packagePath, Controller.class);
         for (Class<?> aClass : clazz) {
             List<Method> methods = getMethodsByAnnotation(aClass, RequestMapping.class);
             Object instance = getInstance(aClass);
@@ -49,7 +51,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private <T extends Annotation> Set<Class<?>> getClazzByAnnotation(Object packagePath, Class<T> annotationClass) {
+    private <T extends Annotation> Set<Class<?>> getClassByAnnotation(Object packagePath, Class<T> annotationClass) {
         Reflections reflections = new Reflections(packagePath);
         return reflections.getTypesAnnotatedWith(annotationClass);
     }
@@ -78,6 +80,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);

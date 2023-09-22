@@ -1,6 +1,5 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.exception;
 
 public class HandlerMappingException extends RuntimeException {
-
 
 }
