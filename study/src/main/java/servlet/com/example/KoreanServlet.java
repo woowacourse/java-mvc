@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 @WebServlet(name = "koreanServlet", urlPatterns = "/korean")
@@ -23,7 +22,10 @@ public class KoreanServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         getServletContext().log("service() 호출");
-        response.getWriter().write(인코딩);
+        response.getWriter().write(인코딩); //여기에 getWriter
+        // The PrintWriter uses the character encoding returned by getCharacterEncoding()
+        // If the response's character encoding has not been specified as described in getCharacterEncoding (i.e., the method just returns the default value ISO-8859-1),
+        // getWriter updates it to ISO-8859-1.
     }
 
     @Override
