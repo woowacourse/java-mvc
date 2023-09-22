@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +12,8 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.Annotatio
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
+
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -41,27 +41,18 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerRegistry.findHandlerMapper(request);
             HandlerAdapter adapter = handlerRegistry.findHandlerAdapter(handler);
-            Object viewName = adapter.execute(request, response, handler);
-
-            if (viewName instanceof ModelAndView) {
-                JspView view = (JspView) ((ModelAndView) viewName).getView();
-                viewName = view.getViewName();
-            }
-
-            move((String) viewName, request, response);
+            ModelAndView modelAndView = adapter.execute(request, response, handler);
+            response(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private void response(final HttpServletRequest request, final HttpServletResponse response, final ModelAndView modelAndView) throws Exception {
+        Map<String, Object> model = modelAndView.getModel();
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        modelAndView.getView()
+                .render(model, request, response);
     }
 }
