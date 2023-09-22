@@ -13,11 +13,8 @@ public class HandlerMappings {
 
     public HandlerMappings addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+        handlerMapping.initialize();
         return this;
-    }
-
-    public void initialize() {
-        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public Object getHandler(HttpServletRequest httpServletRequest) {

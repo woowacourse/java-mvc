@@ -8,9 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 import java.io.IOException;
 
@@ -22,21 +19,14 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMappings handlerMappings;
     private HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        handlerMappings = new HandlerMappings();
-        handlerAdapters = new HandlerAdapters();
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
     public void init() {
-        handlerMappings
-                .addHandlerMapping(new ManualHandlerMapping())
-                .addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        handlerMappings.initialize();
-
-        handlerAdapters
-                .addHandlerAdapter(new ControllerHandlerAdapter())
-                .addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        log.info("Init DispatcherServlet");
     }
 
     @Override
