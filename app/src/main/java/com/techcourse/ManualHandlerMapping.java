@@ -6,7 +6,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapping;
 
 public class ManualHandlerMapping implements HandlerMapping<Controller> {
@@ -17,7 +16,6 @@ public class ManualHandlerMapping implements HandlerMapping<Controller> {
 
     @Override
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
