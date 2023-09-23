@@ -2,7 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.HandlerMapping;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -35,9 +33,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Set<Class<?>> controllers = findController();
         List<Method> methods = getMethods(controllers);
         methods.stream()
-                .filter(this::isReturnType)
-                .filter(this::isSameParameter)
                 .forEach(this::addHandler);
+    }
+
+    private Set<Class<?>> findController() {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private List<Method> getMethods(final Set<Class<?>> controllers) {
@@ -46,28 +47,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .flatMap(Arrays::stream).collect(Collectors.toList());
     }
 
-    private Set<Class<?>> findController() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private boolean isReturnType(final Method method) {
-        return method.getReturnType().equals(ModelAndView.class);
-    }
-
-    private boolean isSameParameter(final Method method) {
-        List<Class<?>> parameterTypes = List.of(method.getParameterTypes());
-        return parameterTypes.containsAll(List.of(HttpServletRequest.class, HttpServletResponse.class));
-    }
-
     private void addHandler(final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
         if (annotation != null) {
             for (RequestMethod requestMethod : annotation.method()) {
-                HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-                HandlerExecution handlerExecution = new HandlerExecution(method);
-                handlerExecutions.put(handlerKey, handlerExecution);
+                try {
+                    HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+                    HandlerExecution handlerExecution = new HandlerExecution(method);
+                    handlerExecutions.put(handlerKey, handlerExecution);
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -78,6 +68,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
 
-        return  handlerExecutions.get(handlerKey);
+        return handlerExecutions.get(handlerKey);
     }
 }
