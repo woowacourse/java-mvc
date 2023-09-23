@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class TestController {
@@ -18,7 +17,7 @@ public class TestController {
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = ModelAndView.from("");
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
@@ -26,7 +25,7 @@ public class TestController {
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = ModelAndView.from("");
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
