@@ -24,6 +24,6 @@ public final class HandlerAdapterRegistry {
             }
         }
 
-        throw new IllegalArgumentException("지원하는 Handler가 존재하지 않습니다.");
+        throw new UncheckedServletException(new IllegalArgumentException("지원하는 Handler가 존재하지 않습니다."));
     }
 }
