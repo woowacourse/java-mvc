@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,6 +25,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
@@ -49,11 +51,21 @@ public class AnnotationHandlerMapping {
             final String requestUrl = requestMappingAnnotation.value();
             final RequestMethod requestMethod = requestMappingAnnotation.method()[0];
             final HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+            final Object controllerInstance = getControllerInstance(clazz);
+            final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
+    private Object getControllerInstance(final Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (final Exception e) {
+            throw new NoSuchElementException("Can not found such instance");
+        }
+    }
+
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
