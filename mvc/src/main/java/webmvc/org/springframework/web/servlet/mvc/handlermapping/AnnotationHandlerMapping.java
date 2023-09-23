@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handlermapping;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,14 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,7 +27,8 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    @Override
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Reflections reflections = new Reflections(basePackage);
@@ -34,10 +36,22 @@ public class AnnotationHandlerMapping {
 
         for (Class<?> controller : controllers) {
             Method[] methods = controller.getMethods();
-            Object object = controller.getDeclaredConstructor().newInstance();
+
+            Object object = makeController(controller);
 
             generateHandlerExecutions(methods, object);
         }
+    }
+
+    private Object makeController(Class<?> controller) {
+        Object object = null;
+        try {
+            object = controller.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            log.warn("Handler 를 생성하는데 실패했습니다");
+            throw new RuntimeException(e);
+        }
+        return object;
     }
 
     private void generateHandlerExecutions(Method[] methods, Object object) {
@@ -47,22 +61,24 @@ public class AnnotationHandlerMapping {
             if (requestMappingMethod != null) {
                 String value = requestMappingMethod.value();
                 RequestMethod[] requestMethods = requestMappingMethod.method();
-                RequestMethod requestMethod = requestMethods[0];
+                for (RequestMethod requestMethod : requestMethods) {
 
-                HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+                    HandlerKey handlerKey = new HandlerKey(value, requestMethod);
 
-                HandlerExecution handlerExecution = new HandlerExecution(method, object);
+                    HandlerExecution handlerExecution = new HandlerExecution(method, object);
 
-                handlerExecutions.put(handlerKey, handlerExecution);
+                    handlerExecutions.put(handlerKey, handlerExecution);
+                }
             }
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
 
-        RequestMethod requestMethod = RequestMethod.getRequestMethod(method);
+        RequestMethod requestMethod = RequestMethod.valueOf(method);
 
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
