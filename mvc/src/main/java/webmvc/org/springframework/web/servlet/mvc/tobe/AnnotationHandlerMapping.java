@@ -38,6 +38,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             controllerMethods.forEach(method -> addHandlerExecutions(method, controller));
         }
 
+        handlerExecutions.keySet().forEach(handlerKey -> log.info("{}", handlerKey));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 

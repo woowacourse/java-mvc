@@ -30,9 +30,9 @@ public class ManualHandlerMapping implements HandlerMapping {
         handlers.put("/logout", createHandler(new LogoutController()));
         handlers.put("/register/view", createHandler(new RegisterViewController()));
 
-        log.info("Initialized Handler Mapping!");
         handlers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, handlers.get(path).getClass()));
+        log.info("Initialized Handler Mapping!");
     }
 
     private Handler createHandler(final Controller controller) {
