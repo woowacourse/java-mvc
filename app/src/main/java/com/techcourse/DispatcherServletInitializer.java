@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 
 /**
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
@@ -27,7 +27,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final HandlerAdapters handlerAdapters = new HandlerAdapters(
-                Set.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter()));
+                Set.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter()));
         final HandlerMappings handlerMappings = new HandlerMappings(
                 Set.of(new ManualHandlerMapping(), new AnnotationHandlerMapping(BASE_PACKAGE)));
 

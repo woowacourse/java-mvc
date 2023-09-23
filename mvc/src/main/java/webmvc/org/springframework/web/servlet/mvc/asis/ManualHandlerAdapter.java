@@ -6,7 +6,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class ControllerHandlerAdapter implements HandlerAdapter {
+public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {

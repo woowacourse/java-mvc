@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
-public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
+public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
