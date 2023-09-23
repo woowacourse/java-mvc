@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.exception.DispatcherServletException;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerKeyComposite;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -36,10 +35,8 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapterComposite = new HandlerAdapterComposite();
 
         handlerMappingComposite.addHandlerMapping(new AnnotationHandlerMapping(new AnnotationHandlerKeyComposite()));
-        handlerMappingComposite.addHandlerMapping(new ManualHandlerMapping());
 
         handlerAdapterComposite.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterComposite.addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     @Override
