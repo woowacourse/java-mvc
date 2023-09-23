@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.annotation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.HandlerMapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,18 +17,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationBasedHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationBasedHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationBasedHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         try {
             init();
@@ -35,7 +37,7 @@ public class AnnotationHandlerMapping {
             e.printStackTrace();
         }
 
-        log.info("Initialized AnnotationHandlerMapping!");
+        log.info("Initialized AnnotationBasedHandlerMapping!");
     }
 
     private void init() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -68,13 +70,19 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public boolean support(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        HandlerKey foundKey = handlerExecutions.keySet().stream()
-                .filter(key -> key.equals(handlerKey))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("요청에 해당하는 메서드가 없습니다."));
+        return handlerExecutions.containsKey(handlerKey);
+    }
 
-        return handlerExecutions.get(foundKey);
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        if (handlerExecution == null) {
+            throw new IllegalArgumentException("요청에 해당하는 메서드가 없습니다.");
+        }
+        return handlerExecution;
     }
 }

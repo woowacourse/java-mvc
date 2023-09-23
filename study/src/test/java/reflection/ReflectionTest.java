@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +73,7 @@ class ReflectionTest {
         final Constructor<?> secondConstructor = questionClass.getConstructors()[1];
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance("gugu", "제목2", "내용2", new Date(), 0);
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -85,9 +86,11 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = questionClass.getFields();
+        final List<Field> fields = Arrays.stream(questionClass.getFields())
+                .filter(field -> Modifier.isPublic(field.getModifiers()))
+                .collect(Collectors.toList());
 
-        assertThat(fields).hasSize(0);
+        assertThat(fields).isEmpty();
     }
 
     @Test

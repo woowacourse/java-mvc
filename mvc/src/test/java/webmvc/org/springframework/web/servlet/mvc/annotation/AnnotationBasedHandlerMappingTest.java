@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.annotation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,13 +9,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AnnotationHandlerMappingTest {
+class AnnotationBasedHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private AnnotationBasedHandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationBasedHandlerMapping("samples");
         handlerMapping.initialize();
     }
 
