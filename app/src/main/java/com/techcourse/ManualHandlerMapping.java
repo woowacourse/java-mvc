@@ -3,7 +3,6 @@ package com.techcourse;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +23,6 @@ public class ManualHandlerMapping {
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
