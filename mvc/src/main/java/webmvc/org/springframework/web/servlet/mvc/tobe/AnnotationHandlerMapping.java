@@ -11,6 +11,7 @@ import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final Reflections reflections = new Reflections(basePackage);
         for (final Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             final List<Method> methods = findRequestMappingMethods(controller);
-            addHandlerExecution(methods, controller);
+            handlerExecutions.putAll(createHandlerExecutions(methods, controller));
         }
     }
 
@@ -44,18 +45,32 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                      .collect(Collectors.toUnmodifiableList());
     }
 
-    private void addHandlerExecution(final List<Method> methods, final Class<?> controller) {
-        for (Method method : methods) {
-            final HandlerKey handlerKey = new HandlerKey(
-                    method.getAnnotation(RequestMapping.class).value(),
-                    method.getAnnotation(RequestMapping.class).method()[0]);
-            try {
-                final Object instance = controller.getDeclaredConstructor().newInstance();
-                final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
-                handlerExecutions.put(handlerKey, handlerExecution);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+    private Map<HandlerKey, HandlerExecution> createHandlerExecutions(
+            final List<Method> methods,
+            final Class<?> controller
+    ) {
+        final HashMap<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+        for (final Method method : methods) {
+            final HandlerKey handlerKey = createHandlerKey(method);
+            final HandlerExecution handlerExecution = createHandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+        return Collections.unmodifiableMap(handlerExecutions);
+    }
+
+    private HandlerKey createHandlerKey(final Method method) {
+        return new HandlerKey(
+                method.getAnnotation(RequestMapping.class).value(),
+                method.getAnnotation(RequestMapping.class).method()[0]
+        );
+    }
+
+    private HandlerExecution createHandlerExecution(final Class<?> controller, final Method method) {
+        try {
+            final Object instance = controller.getDeclaredConstructor().newInstance();
+            return new HandlerExecution(method, instance);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
