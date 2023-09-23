@@ -4,15 +4,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -44,12 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         logger.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
-            Optional<Object> registryHandler = handlerMappingRegistry.getHandler(request);
-            if (registryHandler.isEmpty()) {
-                handlerNotFound(request, response);
-                return;
-            }
-            Object handler = registryHandler.get();
+            Object handler = handlerMappingRegistry.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler)
                 .orElseThrow(() -> new IllegalStateException("핸들러를 처리할 어댑터가 없습니다."));
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
@@ -57,15 +49,6 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             logger.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
-        }
-    }
-
-    private void handlerNotFound(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            JspView jspView = new JspView("/404.jsp");
-            jspView.render(Collections.emptyMap(), request, response);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("404 페이지 출력 실패", e);
         }
     }
 }

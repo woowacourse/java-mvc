@@ -13,15 +13,13 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest httpServletRequest) {
+    public Object getHandler(HttpServletRequest httpServletRequest) {
         Optional<Object> availableHandler = handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findAny();
-        if (availableHandler.isPresent()) {
-            return Optional.of(availableHandler.get());
-        }
-        return Optional.empty();
+        return availableHandler
+            .orElseGet(NotFoundController::new);
     }
 }
