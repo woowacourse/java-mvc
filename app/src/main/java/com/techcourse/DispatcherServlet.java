@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingComposite;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,9 +68,13 @@ public class DispatcherServlet extends HttpServlet {
     private void logRequest(final HttpServletRequest request) {
         log.info("======> Request Method   : {}", request.getMethod());
         log.info("======> Request Url      : {}", request.getRequestURL());
-        log.info("======> Request Cookies  : {}", Arrays.stream(request.getCookies())
+        log.info("=================== 쿠키 {}", request.getCookies() == null ? null : parseCookies(request.getCookies()));
+    }
+
+    private List<String> parseCookies(final Cookie[] cookies) {
+        return Arrays.stream(cookies)
                 .map(cookie -> cookie.getName() + ": " + cookie.getValue())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     private void logResponse(final HttpServletResponse response) {
