@@ -1,17 +1,19 @@
 package webmvc.org.springframework.web.servlet;
 
-import webmvc.org.springframework.web.servlet.mvc.supports.mapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.View;
 import webmvc.org.springframework.web.servlet.mvc.supports.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.supports.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.supports.adapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.supports.mapping.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -39,7 +41,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
@@ -55,6 +58,14 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerAdapter.execute(request, response, handler);
 
             move(modelAndView, request, response);
+        } catch (final InvocationTargetException e) {
+            final Throwable cause = e.getCause();
+
+            log.warn("InvocationTargetException : {}", e.getMessage(), e);
+
+            if (cause instanceof IllegalArgumentException) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, cause.getMessage());
+            }
         } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
 
@@ -68,11 +79,6 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletResponse response
     ) throws Exception {
         final View view = modelAndView.getView();
-
-        if (view == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return ;
-        }
 
         view.render(modelAndView.getModel(), request, response);
     }
