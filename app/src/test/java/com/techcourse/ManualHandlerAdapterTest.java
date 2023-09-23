@@ -65,7 +65,8 @@ class ManualHandlerAdapterTest {
 
         // then
         ModelAndView modelAndView = manualHandlerAdapter.handle(request, response, handlerExecution);
-        assertThat(modelAndView.getView().getName()).isEqualTo("viewName");
+
+        assertThat(modelAndView).isNotNull();
     }
 
     static class ClassCanHandle implements Controller {

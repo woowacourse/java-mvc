@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,9 +9,8 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
-import java.io.IOException;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -43,26 +41,15 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(mappedHandler.getMethod());
 
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, mappedHandler);
+
             final View view = modelAndView.getView();
-            move(view.getName(), request, response);
+            final Map<String, Object> model = modelAndView.getModel();
+
+            view.render(model, request, response);
         } catch (Exception e) {
             log.error("exception occurred : {}", e.getMessage(), e);
         } catch (Error e) {
             log.error("error occurred : {}", e.getMessage(), e);
-        }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request,
-                      final HttpServletResponse response) {
-        try {
-            if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-                response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-                return;
-            }
-            final var requestDispatcher = request.getRequestDispatcher(viewName);
-            requestDispatcher.forward(request, response);
-        } catch (ServletException | IOException e) {
-            throw new RenderingException(e);
         }
     }
 }
