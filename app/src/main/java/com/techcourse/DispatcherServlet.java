@@ -21,7 +21,6 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
     private List<HandlerAdapter> handlerAdapters;
     private List<HandlerMapping> handlerMappings;
 
@@ -36,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMappings() {
         this.handlerMappings = new ArrayList<>();
-        manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
         handlerMappings.add(manualHandlerMapping);
 
@@ -67,19 +66,19 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerAdapter findHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(adapter -> adapter.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 핸들러가 없습니다."));
-    }
-
     private Object findHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 요청입니다."))
                 .getHandler(request);
+    }
+
+    private HandlerAdapter findHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 있는 핸들러 어댑터가 없습니다."));
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
