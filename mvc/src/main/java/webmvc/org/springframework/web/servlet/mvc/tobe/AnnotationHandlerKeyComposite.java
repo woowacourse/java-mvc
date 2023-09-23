@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.annotation;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +13,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-public class MappingAnnotationComposite {
+public class AnnotationHandlerKeyComposite {
 
-    private static final Logger log = LoggerFactory.getLogger(MappingAnnotationComposite.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerKeyComposite.class);
     private static final List<Class<? extends Annotation>> mappingAnnotations = new ArrayList<>();
 
     static {
@@ -25,9 +26,25 @@ public class MappingAnnotationComposite {
         mappingAnnotations.add(PostMapping.class);
     }
 
-    public  String getRequestUrl(final Method method) {
-        final Annotation annotation = getMethodAnnotation(method);
+    public Optional<HandlerKey> getHandlerKey(final Method method) {
+        return getMethodAnnotation(method)
+                .map(methodAnnotation -> new HandlerKey(getRequestUrl(methodAnnotation), getRequestMethod(methodAnnotation)));
+    }
 
+    private Optional<Annotation> getMethodAnnotation(final Method method) {
+        return Arrays.stream(method.getDeclaredAnnotations())
+                .filter(this::isExists)
+                .findFirst();
+    }
+
+    private boolean isExists(final Annotation annotation) {
+        final Class<? extends Annotation> annotationClazz = annotation.annotationType();
+
+        return mappingAnnotations.stream()
+                .anyMatch(mappingAnnotation -> mappingAnnotation.isAssignableFrom(annotationClazz));
+    }
+
+    private String getRequestUrl(final Annotation annotation) {
         try {
             final Method valueMethod = annotation.getClass().getDeclaredMethod("value");
 
@@ -38,26 +55,12 @@ public class MappingAnnotationComposite {
         }
     }
 
-    private Annotation getMethodAnnotation(final Method method) {
-        return Arrays.stream(method.getDeclaredAnnotations())
-                .filter(this::isExists)
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private boolean isExists(final Annotation annotation) {
-        final Class<? extends Annotation> annotationType = annotation.annotationType();
-        return mappingAnnotations.stream()
-                .anyMatch(mappingAnnotation -> mappingAnnotation.isAnnotationPresent(annotationType));
-    }
-
-    public RequestMethod getRequestMethod(final Method method) {
-        final Annotation annotation = getMethodAnnotation(method);
+    private RequestMethod getRequestMethod(final Annotation annotation) {
         if (annotation instanceof RequestMapping) {
             return ((RequestMapping) annotation).method();
         }
 
-        return annotation.getClass()
+        return annotation.annotationType()
                 .getDeclaredAnnotation(RequestMapping.class)
                 .method();
     }

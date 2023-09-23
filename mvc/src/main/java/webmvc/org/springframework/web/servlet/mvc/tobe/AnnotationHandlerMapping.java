@@ -3,12 +3,10 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.bind.annotation.RequestMapping;
-import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.tobe.annotation.MappingAnnotationComposite;
 import webmvc.org.springframework.web.servlet.mvc.tobe.scanner.ControllerScanner;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,12 +17,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final MappingAnnotationComposite mappingAnnotationComposite;
+    private final AnnotationHandlerKeyComposite annotationHandlerKeyComposite;
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final MappingAnnotationComposite mappingAnnotationComposite, final Object... basePackage) {
-        this.mappingAnnotationComposite = mappingAnnotationComposite;
+    public AnnotationHandlerMapping(final AnnotationHandlerKeyComposite annotationHandlerKeyComposite, final Object... basePackage) {
+        this.annotationHandlerKeyComposite = annotationHandlerKeyComposite;
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
         initialize();
@@ -32,10 +30,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        log.info("====================> Initialized AnnotationHandlerMapping!");
         new ControllerScanner()
                 .getControllers(basePackage)
                 .forEach(this::putHandlerExecutions);
+
+        log.info("Initialized Annotation Handler Mapping!");
+        handlerExecutions.keySet()
+                .forEach(path -> log.info("Path : {}, Controller : {}", path, handlerExecutions.get(path)));
     }
 
     @Override
@@ -44,28 +45,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void putHandlerExecutions(final Class<?> clazz, final Object controller) {
-        final List<Method> methods = getMethods(clazz);
-        for (final Method method : methods) {
-            final String requestUrl = mappingAnnotationComposite.getRequestUrl(method);
-            final RequestMethod requestMethod = mappingAnnotationComposite.getRequestMethod(method);
-
-            final HandlerKey handlerKey = new HandlerKey(requestUrl, requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private List<Method> getMethods(final Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+        final List<Method> methods = Arrays.stream(clazz.getDeclaredMethods())
                 .collect(Collectors.toList());
+
+        for (final Method method : methods) {
+            annotationHandlerKeyComposite.getHandlerKey(method)
+                    .ifPresent(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(controller, method)));
+        }
     }
 
     @Override
     public Object getHandlerExecution(final HttpServletRequest request) {
-        final HandlerKey handlerKey = getHandlerKey(request);
+        return handlerExecutions.get(getHandlerKey(request));
+    }
 
-        return handlerExecutions.get(handlerKey);
+    @Override
+    public List<HandlerKey> getHandlerKeys() {
+        return new ArrayList<>(handlerExecutions.keySet());
     }
 }
