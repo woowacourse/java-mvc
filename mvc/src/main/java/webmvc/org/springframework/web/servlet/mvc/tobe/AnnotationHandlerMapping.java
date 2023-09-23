@@ -9,6 +9,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private Object makeInstance(Constructor<?> constructor) {
         try {
             return constructor.newInstance();
-        } catch (Exception e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             log.debug("fail make to instance");
             throw new RuntimeException(e);
         }
