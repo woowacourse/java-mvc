@@ -17,19 +17,6 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object result = method.invoke(controller, request, response);
-        if (result instanceof String) {
-            final String viewName = (String) result;
-            if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-                final String redirectViewName = viewName.substring(JspView.REDIRECT_PREFIX.length());
-                response.sendRedirect(redirectViewName);
-                return new ModelAndView(new JspView(redirectViewName));
-            } else {
-                final var requestDispatcher = request.getRequestDispatcher(viewName);
-                requestDispatcher.forward(request, response);
-                return new ModelAndView(new JspView(viewName));
-            }
-        }
         return (ModelAndView) method.invoke(controller, request, response);
     }
 }
