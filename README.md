@@ -10,6 +10,6 @@
 
 ## 3단계 기능 요구 사항
 
-- [ ] JspView 클래스를 구현한다.
-- [ ] JsonView 클래스를 구현한다.
+- [x] JspView 클래스를 구현한다.
+- [x] JsonView 클래스를 구현한다.
 - [ ] Legacy MVC를 제거한다.
