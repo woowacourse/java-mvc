@@ -3,7 +3,6 @@ package com.techcourse;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterViewController;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
