@@ -45,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = findHandler(request);
-            final var controllerExecution = findControllerExecution(handler.getClass());
+            final var controllerExecution = findControllerExecuteMethod(handler.getClass());
             final var viewName = controllerExecution.invoke(handler, request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
@@ -63,7 +63,7 @@ public class DispatcherServlet extends HttpServlet {
                              .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 handler입니다."));
     }
 
-    private Method findControllerExecution(final Class<?> controllerType) {
+    private Method findControllerExecuteMethod(final Class<?> controllerType) {
         log.info("controllerType : {} ", controllerType);
         return Arrays.stream(controllerType.getDeclaredMethods())
                      .filter(DispatcherServlet::isExecuteMethod)
