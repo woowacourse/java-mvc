@@ -10,11 +10,11 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -32,13 +32,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
 
         final Reflections reflections = new Reflections(basePackage);
-        final List<Method> methods = new ArrayList<>();
-        for (Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
-            Arrays.stream(controller.getMethods())
-                  .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                  .forEach(methods::add);
+        for (final Class<?> controller : reflections.getTypesAnnotatedWith(Controller.class)) {
+            final List<Method> methods = findRequestMappingMethods(controller);
             addHandlerExecution(methods, controller);
         }
+    }
+
+    public List<Method> findRequestMappingMethods(final Class<?> controller) {
+        return Arrays.stream(controller.getMethods())
+                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                     .collect(Collectors.toUnmodifiableList());
     }
 
     private void addHandlerExecution(final List<Method> methods, final Class<?> controller) {
