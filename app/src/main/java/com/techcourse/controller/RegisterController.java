@@ -2,20 +2,38 @@ package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
+        final String redirectViewName = "redirect:register.jsp";
+
+        return new ModelAndView(new JspView(redirectViewName));
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView registerUser(final HttpServletRequest req, final HttpServletResponse res) {
+        final String redirectViewName = "redirect:/index.jsp";
+        saveUser(req);
+
+        return new ModelAndView(new JspView(redirectViewName));
+    }
+
+    private void saveUser(final HttpServletRequest request) {
+        final var user = new User(
+            request.getParameter("account"),
+            request.getParameter("password"),
+            request.getParameter("email")
+        );
         InMemoryUserRepository.save(user);
-
-        return "redirect:/index.jsp";
     }
 }
