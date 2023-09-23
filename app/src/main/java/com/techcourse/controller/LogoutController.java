@@ -1,15 +1,21 @@
 package com.techcourse.controller;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.GetMapping;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class LogoutController implements Controller {
+@Controller
+public class LogoutController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @GetMapping("/logout")
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return "redirect:/";
+        final View view = new JspView("redirect:/");
+        return new ModelAndView(view);
     }
 }

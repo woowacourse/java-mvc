@@ -9,11 +9,11 @@ import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class RegisterViewController {
+public class ForwardController {
 
-    @GetMapping("/register/view")
-    public ModelAndView getRegisterView(final HttpServletRequest req, final HttpServletResponse res) {
-        final View view = new JspView("/register.jsp");
+    @GetMapping("/")
+    public ModelAndView getIndexView(HttpServletRequest req, HttpServletResponse res) {
+        View view = new JspView("index.jsp");
         return new ModelAndView(view);
     }
 }
