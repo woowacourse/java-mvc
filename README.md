@@ -12,4 +12,4 @@
 
 - [x] JspView 클래스를 구현한다.
 - [x] JsonView 클래스를 구현한다.
-- [ ] Legacy MVC를 제거한다.
+- [x] Legacy MVC를 제거한다.
