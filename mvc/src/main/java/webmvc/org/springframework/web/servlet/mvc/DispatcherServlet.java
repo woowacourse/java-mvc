@@ -22,9 +22,9 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappers handlerMappers;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        this.handlerMappers = new HandlerMappers();
-        this.handlerAdapters = new HandlerAdapters();
+    public DispatcherServlet(final HandlerMappers handlerMappers, final HandlerAdapters handlerAdapters) {
+        this.handlerMappers = handlerMappers;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override

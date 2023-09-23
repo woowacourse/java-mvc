@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerMappers;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -20,10 +22,13 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        HandlerMappers handlerMappers = new HandlerMappers();
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
 
-        dispatcherServlet.addHandlerMapper(new AnnotationHandlerMapping(ANNOTATION_BASED_CONTROLLER_PACKAGE));
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerMappers.addHandlerMapper(new AnnotationHandlerMapping(ANNOTATION_BASED_CONTROLLER_PACKAGE));
+        handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
+
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappers, handlerAdapters);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
