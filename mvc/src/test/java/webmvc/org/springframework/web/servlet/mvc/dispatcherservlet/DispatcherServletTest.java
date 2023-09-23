@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.dispatcherservlet;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
