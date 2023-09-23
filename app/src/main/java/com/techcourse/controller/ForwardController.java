@@ -15,5 +15,4 @@ public class ForwardController {
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
-
 }
