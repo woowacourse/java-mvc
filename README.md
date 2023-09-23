@@ -83,14 +83,12 @@ Annotation으로 찾은 매핑 정보와 Manual의 매핑 정보가 중복되어
 - [x] static final + 인스턴스 != 상수; 즉, 대문자로 선언된 필드명을 소문자로 수정한다.
 - [x] 테스트 검증부 정렬하기
 - [x] 스프링의 동일한 매핑 동작 참고,
-- [ ] v1, v2
+- [x] Manual은 v1, Annotation은 v2 주소로 변경
 - [x] GetMapping, PostMapping, RequestMapping
+- [x] 중복되는 요청 주소가 있을 경우 예외를 발생시킨다.
 
 ### 2단계 힌트 훔쳐보기 😋
-- ~~[ ] HandlerMappingRegistry를 구현한다.~~
-- ~~[ ] HandlerAdapterRegistry를 구현한다.~~
 - [x] AnnotationHandlerMapping에서 외부 라이브러리인 Reflection 의존을 ControllerScanner 도입을 이용하여 끊는다.
-- ~~[ ] HandlerAdapterComposite에서 HandlerAdapter를 찾지 못했을 때 예외~~
 - [x] ManaualHandlerAdapter 클래스명을 ControllerHandlerAdapter 로 변경한다.
 - [x] Controller와 Annotation으로 구분하여 패키지를 분리한다.
 
@@ -134,6 +132,7 @@ graph RL
         DispatcherServlet --> HttpServlet
         DispatcherServlet --- HandlerMappingComposite
         DispatcherServlet --- HandlerAdapterComposite
+
     end
 
     subgraph 핸들러 어댑터
@@ -148,6 +147,7 @@ graph RL
 
     subgraph 핸들러 매핑
         HandlerMappingComposite --- HandlerMapping
+
         AnnotationHandlerMapping --> HandlerMapping
         ManualHandlerMapping --> HandlerMapping
 
@@ -155,10 +155,10 @@ graph RL
             AnnotationHandlerMapping ---- HandlerKey
             AnnotationHandlerMapping ---- HandlerExecution
             subgraph 어노테이션 매핑
-                AnnotationHandlerMapping ---- MappingAnnotationComposite
-                MappingAnnotationComposite ---- RequestMapping
-                MappingAnnotationComposite ---- GetMapping
-                MappingAnnotationComposite ---- PostMapping
+                AnnotationHandlerMapping ---- AnnotationHandlerKeyComposite
+                AnnotationHandlerKeyComposite ---- RequestMapping
+                AnnotationHandlerKeyComposite ---- GetMapping
+                AnnotationHandlerKeyComposite ---- PostMapping
             end
         end
 
@@ -166,6 +166,10 @@ graph RL
             ManualHandlerMapping ---- Controller
             ManualHandlerMapping ---- HandlerKey
         end
+    end
+
+    subgraph 요청 주소 중복 검사
+        HandlerMappingComposite --- |등록하는 요청 주소 중복 예외를 검증한다.| HandlerKeyDuplicateChecker
     end
 
     subgraph 컨트롤러 어노테이션 리플랙션
