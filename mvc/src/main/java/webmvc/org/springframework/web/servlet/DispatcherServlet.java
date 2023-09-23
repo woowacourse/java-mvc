@@ -33,8 +33,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final HandlerExecution handler = (HandlerExecution) annotationHandlerMapping.getHandler(request);
-            handleByHandler(request, response, handler);
+            final Object handler = annotationHandlerMapping.getHandler(request);
+
+            if (handler instanceof HandlerExecution) {
+                handleByHandler(request, response, (HandlerExecution) handler);
+                return;
+            }
+
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
