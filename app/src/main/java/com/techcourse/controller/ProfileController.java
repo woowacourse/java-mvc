@@ -13,12 +13,12 @@ import webmvc.org.springframework.web.servlet.view.JsonView;
 public class ProfileController {
 
     @GetMapping("/me")
-    public ModelAndView getProfile(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+    public ModelAndView getProfile(final HttpServletRequest req, final HttpServletResponse res) {
+        final HttpSession session = req.getSession();
+        final User user = (User) session.getAttribute("user");
 
-        JsonView view = new JsonView();
-        ModelAndView modelAndView = new ModelAndView(view);
+        final JsonView view = new JsonView();
+        final ModelAndView modelAndView = new ModelAndView(view);
         modelAndView.addObject("account", user.getAccount());
 
         return modelAndView;

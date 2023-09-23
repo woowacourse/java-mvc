@@ -19,18 +19,18 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request,
-                       HttpServletResponse response) throws Exception {
+                       final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        ServletOutputStream outputStream = response.getOutputStream();
-        String jsonContent = generateJsonFrom(model);
+        final ServletOutputStream outputStream = response.getOutputStream();
+        final String jsonContent = generateJsonFrom(model);
 
         outputStream.write(jsonContent.getBytes());
         response.flushBuffer();
     }
 
-    private String generateJsonFrom(Map<String, ?> model) {
-        String keyValues = generateKeyValues(model);
+    private String generateJsonFrom(final Map<String, ?> model) {
+        final String keyValues = generateKeyValues(model);
         return new StringJoiner(LINE_SEPARATOR)
                 .add(JSON_PREFIX)
                 .add(keyValues)
@@ -38,8 +38,8 @@ public class JsonView implements View {
                 .toString();
     }
 
-    private String generateKeyValues(Map<String, ?> model) {
-        StringJoiner stringJoiner = new StringJoiner(COMMA + LINE_SEPARATOR);
+    private String generateKeyValues(final Map<String, ?> model) {
+        final StringJoiner stringJoiner = new StringJoiner(COMMA + LINE_SEPARATOR);
         model.forEach((key, value) -> stringJoiner.add(String.format(KEY_VALUE_FORMAT, key, value)));
         return stringJoiner.toString();
     }
