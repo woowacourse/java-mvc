@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controller.manual.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,6 @@ public class ManualHandlerMapping implements HandlerMapping<Controller> {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
