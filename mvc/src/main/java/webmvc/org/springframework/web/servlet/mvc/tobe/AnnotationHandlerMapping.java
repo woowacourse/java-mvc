@@ -2,16 +2,21 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingException;
 
-public class AnnotationHandlerMapping {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -23,36 +28,63 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final var reflections = new Reflections(basePackage);
         final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
         controllers.forEach(this::addControllerMethods);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addControllerMethods(Class<?> controller) {
-        final var methods = controller.getMethods();
+    private void addControllerMethods(Class<?> clazz) {
+        final var controller = convertToControllerInstance(clazz);
+
+        final var methods = clazz.getMethods();
         for (Method method : methods) {
-            addAnnotatedWithRequestMapping(method);
+            addAnnotatedWithRequestMapping(controller, method);
         }
     }
 
-    private void addAnnotatedWithRequestMapping(Method method) {
+    private Object convertToControllerInstance(Class<?> clazz) {
+        try {
+            final var constructor = clazz.getDeclaredConstructor();
+
+            return createControllerInstance(constructor);
+        } catch (NoSuchMethodException exception) {
+            throw new HandlerMappingException("Class does not have a default constructor;", exception);
+        }
+    }
+
+    private Object createControllerInstance(Constructor<?> constructor) {
+        try {
+            return constructor.newInstance();
+        } catch (InvocationTargetException exception) {
+            throw new HandlerMappingException("Cannot invoke a constructor;", exception);
+        } catch (InstantiationException exception) {
+            throw new HandlerMappingException("Cannot instantiate an abstract class or interface;", exception);
+        } catch (IllegalAccessException exception) {
+            throw new HandlerMappingException("Cannot access to a constructor;", exception);
+        }
+    }
+
+    private void addAnnotatedWithRequestMapping(Object controller, Method method) {
         if (method.isAnnotationPresent(RequestMapping.class)) {
-            addHandlerExecution(method);
+            addHandlerExecution(controller, method);
         }
     }
 
-    private void addHandlerExecution(Method method) {
+    private void addHandlerExecution(Object controller, Method method) {
         final var requestMapping = method.getAnnotation(RequestMapping.class);
         final var mappingUrl = requestMapping.value();
         final var mappingRequestMethods = requestMapping.method();
+
         for (RequestMethod requestMethod : mappingRequestMethods) {
-            handlerExecutions.put(new HandlerKey(mappingUrl, requestMethod), new HandlerExecution(method));
+            handlerExecutions.put(new HandlerKey(mappingUrl, requestMethod), new HandlerExecution(controller, method));
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final var key = new HandlerKey(request.getRequestURI(), RequestMethod.find(request.getMethod()));
 
         return handlerExecutions.get(key);
