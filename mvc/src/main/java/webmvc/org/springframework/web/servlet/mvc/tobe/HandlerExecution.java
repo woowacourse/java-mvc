@@ -19,7 +19,7 @@ public class HandlerExecution {
         try {
             return (ModelAndView) method.invoke(object, request, response);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }

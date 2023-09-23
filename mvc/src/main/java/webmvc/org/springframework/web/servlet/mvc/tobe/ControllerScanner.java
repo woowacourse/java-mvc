@@ -35,7 +35,7 @@ public class ControllerScanner {
         try {
             return aClass.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }

@@ -20,7 +20,7 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
             String viewName = ((Controller) handler).execute(request, response);
             return new ModelAndView(new JspView(viewName));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }
