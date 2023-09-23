@@ -3,7 +3,6 @@ package webmvc.org.springframework.web.servlet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class ModelAndView {
 
@@ -30,9 +29,5 @@ public class ModelAndView {
 
     public View getView() {
         return view;
-    }
-
-    public boolean isViewExist() {
-        return Objects.nonNull(view);
     }
 }
