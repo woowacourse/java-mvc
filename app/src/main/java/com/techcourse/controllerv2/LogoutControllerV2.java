@@ -12,7 +12,7 @@ import static com.techcourse.controllerv2.UserSessionV2.SESSION_KEY;
 @Controller
 public class LogoutControllerV2 {
 
-    @GetMapping("/logout")
+    @GetMapping("/v2/logout")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         request.getSession().removeAttribute(SESSION_KEY);
 

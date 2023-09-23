@@ -20,7 +20,7 @@ public class LoginControllerV2 {
 
     private static final Logger log = LoggerFactory.getLogger(LoginControllerV2.class);
 
-    @PostMapping("/login")
+    @PostMapping("/v2/login")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return new ModelAndView(new JspView(getViewName(request)));
     }

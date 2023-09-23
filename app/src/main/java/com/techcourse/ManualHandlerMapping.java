@@ -13,7 +13,9 @@ import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static web.org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -32,13 +34,13 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put(new HandlerKey("/", GET), new ForwardController("/index.jsp"));
-        controllers.put(new HandlerKey("/login", POST), new LoginControllerV1());
-        controllers.put(new HandlerKey("/login/view", GET), new LoginViewControllerV1());
-        controllers.put(new HandlerKey("/logout", GET), new LogoutControllerV1());
-        controllers.put(new HandlerKey("/register/view", GET), new RegisterViewControllerV1());
-        controllers.put(new HandlerKey("/register", POST), new RegisterControllerV1());
+        controllers.put(new HandlerKey("/v1/login", POST), new LoginControllerV1());
+        controllers.put(new HandlerKey("/v1/login/view", GET), new LoginViewControllerV1());
+        controllers.put(new HandlerKey("/v1/logout", GET), new LogoutControllerV1());
+        controllers.put(new HandlerKey("/v1/register/view", GET), new RegisterViewControllerV1());
+        controllers.put(new HandlerKey("/v1/register", POST), new RegisterControllerV1());
 
-        log.info("Initialized Handler Mapping!");
+        log.info("Initialized Manual Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
@@ -53,5 +55,10 @@ public class ManualHandlerMapping implements HandlerMapping {
         final HandlerKey handlerKey = getHandlerKey(request);
 
         return controllers.get(handlerKey);
+    }
+
+    @Override
+    public List<HandlerKey> getHandlerKeys() {
+        return new ArrayList<>(controllers.keySet());
     }
 }

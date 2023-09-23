@@ -37,7 +37,7 @@ class ManualHandlerMappingTest {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getRequestURI()).thenReturn("/v1/login");
         when(request.getMethod()).thenReturn("POST");
 
         // when
@@ -52,7 +52,7 @@ class ManualHandlerMappingTest {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getRequestURI()).thenReturn("/v1/login/view");
         when(request.getMethod()).thenReturn("GET");
 
         // when
@@ -67,7 +67,7 @@ class ManualHandlerMappingTest {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getRequestURI()).thenReturn("/v1/logout");
         when(request.getMethod()).thenReturn("GET");
 
         // when
@@ -82,7 +82,7 @@ class ManualHandlerMappingTest {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/register/view");
+        when(request.getRequestURI()).thenReturn("/v1/register/view");
         when(request.getMethod()).thenReturn("GET");
 
         // when
@@ -97,7 +97,7 @@ class ManualHandlerMappingTest {
         // given
         final HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/v1/register");
         when(request.getMethod()).thenReturn("POST");
 
         // when

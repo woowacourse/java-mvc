@@ -15,7 +15,7 @@ public class LoginViewControllerV2 {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewControllerV2.class);
 
-    @GetMapping("/login/view")
+    @GetMapping("/v2/login/view")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (UserSessionV2.isLoggedIn(request.getSession())) {
             final View view = new JspView("redirect:/index.jsp");
