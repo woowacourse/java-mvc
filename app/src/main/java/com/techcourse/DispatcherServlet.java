@@ -7,33 +7,32 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
-import java.io.IOException;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping(getAllSubPackageName(Application.class));
-        annotationHandlerMapping.initialize();
-    }
-
-    private String getAllSubPackageName(Class<?> mainClass) {
-        return mainClass.getPackageName() + ".*";
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(Application.class.getPackageName() + ".*"));
+        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
@@ -44,56 +43,32 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        if (annotationHandlerMapping.containsHandler(request)) {
-            final HandlerExecution handler = (HandlerExecution) annotationHandlerMapping.getHandler(request);
-            handleByAnnotation(request, response, handler);
+        final Optional<Object> nullableHandler = handlerMappingRegistry.getHandler(request);
 
+        if (nullableHandler.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        handleByManual(request, response, requestURI);
+        final Object handler = nullableHandler.get();
+        try {
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            render(modelAndView, request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void handleByAnnotation(
-            final HttpServletRequest request,
-            final HttpServletResponse response,
-            final HandlerExecution handler
+    private void render(final ModelAndView modelAndView,
+                        HttpServletRequest request,
+                        HttpServletResponse response
     ) throws ServletException {
         try {
-            final ModelAndView modelAndView = handler.handle(request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void handleByManual(
-            final HttpServletRequest request,
-            final HttpServletResponse response,
-            final String requestURI
-    ) throws ServletException {
-        try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-    private void move(
-            final String viewName,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws IOException, ServletException {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
