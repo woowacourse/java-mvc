@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -17,8 +18,10 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ReflectionInstantiationException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerKey;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -30,6 +33,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (final Object packageName : basePackage) {
             addHandlerExecutionsScannedInPackage(packageName);
@@ -98,12 +102,15 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    @Override
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(
             request.getRequestURI(),
             RequestMethod.valueOf(request.getMethod())
         );
-
-        return handlerExecutions.get(handlerKey);
+        if (handlerExecutions.containsKey(handlerKey)) {
+            return Optional.of(handlerExecutions.get(handlerKey));
+        }
+        return Optional.empty();
     }
 }
