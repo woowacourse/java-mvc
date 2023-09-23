@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping(getClass().getPackage().getName()));
+        handlerMappings.add(new AnnotationHandlerMapping(getClass().getPackageName()));
         handlerMappings.initialize();
 
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
@@ -50,7 +50,7 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(request, response, modelAndView);
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
