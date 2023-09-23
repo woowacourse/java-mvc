@@ -9,8 +9,6 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import samples.TestLegacyController;
 import webmvc.org.springframework.web.servlet.mvc.supports.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.supports.adapter.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ManualHandlerMappingAdapter;
 import webmvc.org.springframework.web.servlet.mvc.supports.resolver.ViewResolvers;
 
 @SuppressWarnings("NonAsciiCharacters")

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.View;
 import webmvc.org.springframework.web.servlet.mvc.view.JspView;
-import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JspViewResolver;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

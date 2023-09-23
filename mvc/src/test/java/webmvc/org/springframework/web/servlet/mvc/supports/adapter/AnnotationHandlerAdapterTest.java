@@ -12,8 +12,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import samples.TestLegacyController;
-import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.supports.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.supports.mapping.AnnotationHandlerMapping;
 
 @SuppressWarnings("NonAsciiCharacters")
