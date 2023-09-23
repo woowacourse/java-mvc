@@ -1,9 +1,12 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
@@ -23,11 +26,12 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping())
-                .addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE))
-                .addHandlerAdapter(new HandlerExecutionHandlerAdapter())
-                .addHandlerAdapter(new ControllerHandlerAdapter());
+        final HandlerAdapters handlerAdapters = new HandlerAdapters(
+                Set.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter()));
+        final HandlerMappings handlerMappings = new HandlerMappings(
+                Set.of(new ManualHandlerMapping(), new AnnotationHandlerMapping(BASE_PACKAGE)));
+
+        final var dispatcherServlet = new DispatcherServlet(handlerAdapters, handlerMappings);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

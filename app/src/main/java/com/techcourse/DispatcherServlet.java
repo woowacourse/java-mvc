@@ -11,7 +11,6 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
@@ -21,10 +20,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerAdapters handlerAdapters;
     private final HandlerMappings handlerMappings;
-
-    public DispatcherServlet() {
-        this(new HandlerAdapters(), new HandlerMappings());
-    }
 
     public DispatcherServlet(final HandlerAdapters handlerAdapters,
                              final HandlerMappings handlerMappings) {
@@ -54,20 +49,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response)
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
+                        final HttpServletResponse response)
             throws Exception {
         final View view = modelAndView.getView();
         final Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
-    }
-
-    public DispatcherServlet addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        this.handlerAdapters.addHandlerAdapter(handlerAdapter);
-        return this;
-    }
-
-    public DispatcherServlet addHandlerMapping(final HandlerMapping handlerMapping) {
-        handlerMappings.addHandlerMapping(handlerMapping);
-        return this;
     }
 }
