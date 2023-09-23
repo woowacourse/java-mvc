@@ -7,10 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerRegistry;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerMapper;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerMappers;
 
 import java.util.Map;
 
@@ -19,16 +19,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerRegistry handlerRegistry;
+    private final HandlerMappers handlerMappers;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
-        handlerRegistry = new HandlerRegistry();
+        this.handlerMappers = new HandlerMappers();
+        this.handlerAdapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
-        handlerRegistry.addHandler(new AnnotationHandlerMapping("com.techcourse"), new AnnotationHandlerAdapter());
-        handlerRegistry.initHandlers();
+        handlerMappers.init();
     }
 
     @Override
@@ -37,8 +38,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = handlerRegistry.findHandlerMapper(request);
-            HandlerAdapter adapter = handlerRegistry.findHandlerAdapter(handler);
+            Object handler = handlerMappers.findHandlerMapper(request);
+            HandlerAdapter adapter = handlerAdapters.findHandlerAdapter(handler);
             ModelAndView modelAndView = adapter.execute(request, response, handler);
             response(request, response, modelAndView);
         } catch (Throwable e) {
@@ -52,5 +53,13 @@ public class DispatcherServlet extends HttpServlet {
 
         modelAndView.getView()
                 .render(model, request, response);
+    }
+
+    public void addHandlerMapper(final HandlerMapper handlerMapper) {
+        handlerMappers.addHandlerMapper(handlerMapper);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.addHandlerAdapter(handlerAdapter);
     }
 }
