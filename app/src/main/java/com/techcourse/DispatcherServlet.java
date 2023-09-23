@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -44,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = findController(request);
+            final Object handler = findHandler(request);
             final var controllerExecution = findControllerExecution(handler.getClass());
             final var viewName = controllerExecution.invoke(handler, request, response);
             move(viewName, request, response);
@@ -54,15 +54,17 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object findController(final HttpServletRequest request) {
+    private Object findHandler(final HttpServletRequest request) {
         return handlerMappers.stream()
-                      .map(handlerMapping -> handlerMapping.getHandler(request))
-                      .filter(Objects::nonNull)
-                      .findFirst()
-                      .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 handler입니다."));
+                             .map(handlerMapping -> handlerMapping.getHandler(request))
+                             .filter(Optional::isPresent)
+                             .map(Optional::get)
+                             .findAny()
+                             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 handler입니다."));
     }
 
     private Method findControllerExecution(final Class<?> controllerType) {
+        log.info("controllerType : {} ", controllerType);
         return Arrays.stream(controllerType.getDeclaredMethods())
                      .filter(DispatcherServlet::isExecuteMethod)
                      .findFirst()
@@ -70,6 +72,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private static boolean isExecuteMethod(final Method method) {
+        System.out.println(" method.getParameterTypes() = " + Arrays.toString(method.getParameterTypes()));
         final Class<?>[] parameterTypes = method.getParameterTypes();
         return parameterTypes.length == 2
                 && parameterTypes[0].equals(HttpServletRequest.class)

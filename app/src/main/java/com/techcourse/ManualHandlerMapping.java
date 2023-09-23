@@ -13,6 +13,7 @@ import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -33,8 +34,8 @@ public class ManualHandlerMapping implements HandlerMapping {
                    .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public Controller getHandler(final HttpServletRequest request) {
-        log.debug("Request Mapping Uri : {}", request);
-        return controllers.getOrDefault(request.getRequestURI(), null);
+    public Optional<Object> getHandler(final HttpServletRequest request) {
+        log.info("Request Mapping Uri : {}", request.getRequestURI());
+        return Optional.ofNullable(controllers.get(request.getRequestURI()));
     }
 }

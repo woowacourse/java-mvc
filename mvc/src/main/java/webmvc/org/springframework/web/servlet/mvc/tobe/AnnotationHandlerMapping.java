@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
@@ -74,12 +75,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
-        return handlerExecutions.getOrDefault(
-                new HandlerKey(
-                        request.getRequestURI(),
-                        RequestMethod.valueOf(request.getMethod())
-                )
-                , null);
+    public Optional<Object> getHandler(final HttpServletRequest request) {
+        final HandlerKey handlerKey = new HandlerKey(
+                request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod())
+        );
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 }
