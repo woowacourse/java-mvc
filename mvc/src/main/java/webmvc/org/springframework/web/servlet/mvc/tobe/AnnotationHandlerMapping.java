@@ -12,8 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> handlerTypes = reflections.getTypesAnnotatedWith(Controller.class);
@@ -40,21 +42,9 @@ public class AnnotationHandlerMapping {
 
         for (final Method handlerMethod : handlerMethods) {
             if (handlerMethod.isAnnotationPresent(RequestMapping.class)) {
-                registerMapping(handlerType, handlerMethod);
+                final HandlerExecution handlerExecution = getHandlerExecution(handlerType, handlerMethod);
+                registerMapping(handlerExecution, handlerMethod);
             }
-        }
-    }
-
-    private void registerMapping(final Class<?> handlerType,
-                                 final Method handlerMethod) {
-        final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
-        final String mappingUrl = requestMapping.value();
-        final RequestMethod[] requestMethods = requestMapping.method();
-
-        for (final RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
-            final HandlerExecution handlerExecution = getHandlerExecution(handlerType, handlerMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
@@ -73,6 +63,19 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    private void registerMapping(final HandlerExecution handlerExecution,
+                                 final Method handlerMethod) {
+        final RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
+        final String mappingUrl = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+
+        for (final RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestUrl = request.getRequestURI();
         final String requestMethod = request.getMethod();
