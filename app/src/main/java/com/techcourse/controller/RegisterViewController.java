@@ -10,4 +10,5 @@ public class RegisterViewController implements Controller {
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return "/register.jsp";
     }
+
 }
