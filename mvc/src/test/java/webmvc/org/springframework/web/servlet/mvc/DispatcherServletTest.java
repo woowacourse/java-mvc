@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.ApplicationContext;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
 
 class DispatcherServletTest {
 
@@ -16,7 +18,8 @@ class DispatcherServletTest {
     @Test
     void notExistHandlerMappingThrowsException() {
         // given
-        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet(
+            new ApplicationContext("com.techcourse"));
         dispatcherServlet.init();
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/not-exist");

@@ -4,6 +4,8 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.ApplicationContext;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -12,12 +14,14 @@ import web.org.springframework.web.WebApplicationInitializer;
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
+    private static final String APPLICATION_BASE_PACKAGE = "com.techcourse";
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final ApplicationContext applicationContext = new ApplicationContext(APPLICATION_BASE_PACKAGE);
+        final var dispatcherServlet = new DispatcherServlet(applicationContext);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

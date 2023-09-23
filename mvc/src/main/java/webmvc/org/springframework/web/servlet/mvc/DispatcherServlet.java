@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,43 +11,56 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.view.ViewResolverComposite;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String BASE_PACKAGE_PATH = "com.techcourse";
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final ViewResolverComposite viewResolvers;
+    private final ApplicationContext applicationContext;
 
-    public DispatcherServlet() {
-        handlerMappings = new ArrayList<>();
-        handlerAdapters = new ArrayList<>();
+    public DispatcherServlet(final ApplicationContext applicationContext) {
+        this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
+        this.applicationContext = applicationContext;
+        this.viewResolvers = (ViewResolverComposite) applicationContext.getBean(ViewResolverComposite.class);
     }
 
     @Override
     public void init() {
         initHandlerMappings();
         initHandlerAdapters();
+        initViewResolvers();
     }
 
     private void initHandlerMappings() {
-        final List<HandlerMapping> handlerMappingInstances = HandlerMappingFactory.getHandlerMappings(BASE_PACKAGE_PATH)
+        final List<HandlerMapping> handlerMappingInstances = applicationContext.getBeansOfType(HandlerMapping.class)
             .stream()
+            .map(HandlerMapping.class::cast)
             .peek(HandlerMapping::initialize)
             .collect(Collectors.toList());
         handlerMappings.addAll(handlerMappingInstances);
     }
 
     private void initHandlerAdapters() {
-        final List<HandlerAdapter> handlerAdapterInstances = HandlerAdapterFactory.getHandlerAdapters();
+        final List<HandlerAdapter> handlerAdapterInstances = applicationContext.getBeansOfType(HandlerAdapter.class)
+            .stream()
+            .map(HandlerAdapter.class::cast)
+            .collect(Collectors.toList());
         handlerAdapters.addAll(handlerAdapterInstances);
     }
 
+    private void initViewResolvers() {
+        viewResolvers.initialize();
+    }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
@@ -66,7 +79,8 @@ public class DispatcherServlet extends HttpServlet {
         final Object handler = getHandler(request);
         final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-        move(modelAndView, request, response);
+        final View view = viewResolvers.resolveViewName(modelAndView.getViewName());
+        view.render(modelAndView.getModel(), request, response);
     }
 
     private Object getHandler(final HttpServletRequest request) {
@@ -82,20 +96,5 @@ public class DispatcherServlet extends HttpServlet {
             .filter(adapter -> adapter.supports(handler))
             .findFirst()
             .orElseThrow(() -> new NoSuchElementException("해당하는 HandlerAdapter가 없습니다."));
-    }
-
-    private void move(
-        final ModelAndView modelAndView,
-        final HttpServletRequest request,
-        final HttpServletResponse response
-    ) throws Exception {
-        final String viewName = modelAndView.getViewName();
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
