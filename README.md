@@ -10,6 +10,11 @@
   - [x] HandlerAdaptor 구현하기
   - [x] 어노테이션 controller 지원
   - [x] handler가 없는 요청이면 404페이지 반환하기
+## 3단계 - JSON View 구현하기
+- [ ] 화면에 대한 책임을 View 클래스가 갖도록 구성하기
+  - [ ] JspView 클래스를 구현
+  - [ ] JsonView 클래스를 구현
+- [ ] Legacy MVC 제거하기
 ## 리팩토링 목록
 - [x] Method 실행 시 불필요한 Controller 인스턴스 생성 제거
 - [x] HandlerAdapter 커스템 예외 추가(HandlerAdapter Not Found) 
