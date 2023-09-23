@@ -21,4 +21,9 @@ public class RegisterController {
 
         return "redirect:/index.jsp";
     }
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String show(HttpServletRequest req, HttpServletResponse res) {
+        return "/register.jsp";
+    }
 }
