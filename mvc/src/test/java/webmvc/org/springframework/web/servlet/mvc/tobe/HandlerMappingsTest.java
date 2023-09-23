@@ -20,10 +20,16 @@ import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 class HandlerMappingsTest {
 
     @Mock
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
     @Mock
-    HttpServletResponse response;
+    private HttpServletResponse response;
+
+    @Mock
+    private HandlerMapping mockHandlerMapping;
+
+    @Mock
+    private Controller mockController;
 
     @BeforeEach
     void setUp() {
@@ -33,10 +39,10 @@ class HandlerMappingsTest {
     @Test
     void 요청에_맞는_handler를_반환한다() {
         // given
-        given(request.getRequestURI())
-                .willReturn("/login");
-
+        given(mockHandlerMapping.getHandler(request))
+                .willReturn(mockController);
         HandlerMappings mappings = new HandlerMappings();
+        mappings.add(mockHandlerMapping);
 
         // when
         Object handler = mappings.getHandler(request);
@@ -49,6 +55,7 @@ class HandlerMappingsTest {
     void 요청에_맞는_handler가_없을_경우_예외를_던진다() {
         // given
         HandlerMappings mappings = new HandlerMappings();
+        mappings.add(mockHandlerMapping);
 
         // expect
         assertThatThrownBy(() -> mappings.getHandler(request))
