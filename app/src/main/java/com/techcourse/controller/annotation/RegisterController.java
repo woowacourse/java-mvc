@@ -22,7 +22,7 @@ public class RegisterController {
         return "redirect:/index.jsp";
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public String view(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return "/register.jsp";
     }
