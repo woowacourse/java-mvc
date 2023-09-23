@@ -3,12 +3,15 @@ package com.techcourse;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerExecution;
 
 public class ManualHandlerMapping {
 
@@ -21,6 +24,8 @@ public class ManualHandlerMapping {
         controllers.put("/login", new ManualHandlerExecution(new LoginController()));
         controllers.put("/login/view", new ManualHandlerExecution(new LoginViewController()));
         controllers.put("/logout", new ManualHandlerExecution(new LogoutController()));
+        controllers.put("/register/view", new ManualHandlerExecution(new RegisterViewController()));
+        controllers.put("/register", new ManualHandlerExecution(new RegisterController()));
 
         log.info("Initialized Manual Handler Mapping!");
         controllers.keySet()
