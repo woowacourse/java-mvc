@@ -13,7 +13,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class LoginController {
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView showPage(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
