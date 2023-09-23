@@ -1,6 +1,7 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
+import com.techcourse.dto.AddUserDto;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,5 +30,17 @@ public class UserController {
         modelAndView.addObject("user", user);
         return modelAndView;
     }
-    
+
+    @RequestMapping(value = "/api/user", method = RequestMethod.POST)
+    public ModelAndView add(HttpServletRequest request, HttpServletResponse response, AddUserDto userRequest) {
+        log.info("add called");
+        log.info("userRequest info : {} ", userRequest);
+        
+        final var user = new User(userRequest.getAccount(), userRequest.getPassword(), userRequest.getEmail());
+        InMemoryUserRepository.save(user);
+
+        response.setStatus(201);
+        return new ModelAndView(new JsonView());
+    }
+
 }
