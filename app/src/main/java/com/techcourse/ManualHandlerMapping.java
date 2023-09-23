@@ -16,14 +16,16 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
-public class ManualHandlerMapping {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
     private static final String IMPLEMENT_METHOD_NAME = "execute";
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final Map<String, Controller> controllers = new HashMap<>();
 
+    @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
@@ -37,6 +39,7 @@ public class ManualHandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
+    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request.getRequestURI());
         Controller controller = controllers.getOrDefault(request.getRequestURI(), null);
@@ -44,7 +47,7 @@ public class ManualHandlerMapping {
         if (Objects.isNull(controller)) {
             return null;
         }
-        
+
         Method execution = Arrays.stream(controller.getClass()
                 .getMethods())
                 .filter(method -> method.getName().equals(IMPLEMENT_METHOD_NAME))
