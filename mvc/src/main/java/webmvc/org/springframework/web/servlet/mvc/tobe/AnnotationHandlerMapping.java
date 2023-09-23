@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -31,9 +31,7 @@ public class AnnotationHandlerMapping {
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         try {
             for (final Class<?> controller : controllers) {
-                final Constructor<?> constructor = controller.getConstructor();
-                final Object instance = constructor.newInstance();
-                mapRequestMappingAnnotatedMethod(controller, instance);
+                mapRequestMappingAnnotatedMethod(controller);
             }
             log.info("Initialized AnnotationHandlerMapping!");
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
@@ -42,24 +40,28 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void mapRequestMappingAnnotatedMethod(final Class<?> clazz, final Object instance) {
+    private void mapRequestMappingAnnotatedMethod(final Class<?> clazz)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Method[] methods = clazz.getDeclaredMethods();
         for (final Method method : methods) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            if (requestMapping == null) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
 
-            final String url = requestMapping.value();
-            final RequestMethod[] requestMethods = requestMapping.method();
-            registerHandler(instance, method, url, requestMethods);
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            registerHandler(getInstance(clazz), method, requestMapping);
         }
     }
 
-    private void registerHandler(final Object instance, final Method method, final String url,
-                                 final RequestMethod[] requestMethods) {
-        for (final RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+    private Object getInstance(final Class<?> clazz)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        final Constructor<?> constructor = clazz.getConstructor();
+        return constructor.newInstance();
+    }
+
+    private void registerHandler(final Object instance, final Method method, final RequestMapping requestMapping) {
+        for (final RequestMethod requestMethod : requestMapping.method()) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
