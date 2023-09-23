@@ -1,12 +1,13 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import static fixture.HttpServletFixture.httpServletRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,8 @@ class HandlerExecutionTest {
     @Test
     void handle_메서드_실행() throws Exception {
         // given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/test/request");
-        when(request.getMethod()).thenReturn("GET");
+        final HttpServletRequest request = httpServletRequest("/test/get", "GET", Map.of("id", "gugu"));
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
         final Method method = TestController.class.getDeclaredMethod(
                 "find",
@@ -40,5 +37,35 @@ class HandlerExecutionTest {
 
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 핸들러의_메서드명을_반환한다() throws NoSuchMethodException {
+        // given
+        final Method method = TestController.class.getDeclaredMethod(
+                "find",
+                HttpServletRequest.class,
+                HttpServletResponse.class
+        );
+
+        final HandlerExecution handlerExecution = new HandlerExecution(new TestController(), method);
+
+        // expect
+        assertThat(handlerExecution.getMethodName()).isEqualTo("find");
+    }
+
+    @Test
+    void 핸들러의_클래스명을_반환한다() throws NoSuchMethodException {
+        // given
+        final Method method = TestController.class.getDeclaredMethod(
+                "find",
+                HttpServletRequest.class,
+                HttpServletResponse.class
+        );
+
+        final HandlerExecution handlerExecution = new HandlerExecution(new TestController(), method);
+
+        // expect
+        assertThat(handlerExecution.getDeclaringClassName()).isEqualTo("samples.TestController");
     }
 }

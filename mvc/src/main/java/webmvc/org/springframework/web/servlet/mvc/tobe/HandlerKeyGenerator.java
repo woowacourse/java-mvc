@@ -6,30 +6,26 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import web.org.springframework.web.bind.annotation.HttpMappings;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class HandlerKeyGenerator {
 
-    private final HttpMappingExtractor httpMappingExtractor;
+    private final HttpMappingAnnotationParser httpMappingAnnotationParser;
 
-    public HandlerKeyGenerator(final HttpMappingExtractor httpMappingExtractor) {
-        this.httpMappingExtractor = httpMappingExtractor;
+    public HandlerKeyGenerator() {
+        this(new HttpMappingAnnotationParser());
+    }
+
+    public HandlerKeyGenerator(final HttpMappingAnnotationParser httpMappingAnnotationParser) {
+        this.httpMappingAnnotationParser = httpMappingAnnotationParser;
     }
 
     public List<HandlerKey> generate(final String prefix, final Method method) {
-        final Annotation annotation = getHttpMappingAnnotation(method);
-        final String uri = httpMappingExtractor.extractRequestUri(annotation);
-        final RequestMethod[] requestMethods = httpMappingExtractor.extractRequestMethod(annotation);
+        final Annotation annotation = httpMappingAnnotationParser.parseAnnotation(method);
+        final String uri = httpMappingAnnotationParser.parseRequestUri(annotation);
+        final RequestMethod[] requestMethods = httpMappingAnnotationParser.parseRequestMethod(annotation);
         return Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(prefix + uri, requestMethod))
                 .collect(toList());
-    }
-
-    private Annotation getHttpMappingAnnotation(final Method method) {
-        return Arrays.stream(method.getDeclaredAnnotations())
-                .filter(HttpMappings::isAnyMatch)
-                .findFirst()
-                .orElseThrow();
     }
 }

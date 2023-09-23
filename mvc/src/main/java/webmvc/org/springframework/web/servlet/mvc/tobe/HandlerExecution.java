@@ -18,4 +18,12 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return (ModelAndView) method.invoke(controller, request, response);
     }
+
+    public String getMethodName() {
+        return method.getName();
+    }
+
+    public String getDeclaringClassName() {
+        return method.getDeclaringClass().getName();
+    }
 }
