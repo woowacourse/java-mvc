@@ -17,6 +17,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private final transient HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final transient HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private transient HandlerExecutor handlerExecutor;
     private transient ExceptionHandlerAdapter exceptionHandlerAdapter;
 
     public DispatcherServlet() {
@@ -26,6 +27,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -46,9 +48,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = handlerMappingRegistry.matchHandler(request);
+            final var handler = handlerMappingRegistry.getHandler(request);
 
-            handlerAdapterRegistry.adaptHandler(request, response, handler);
+            handlerExecutor.render(request, response, handler);
         } catch (Exception exception) {
             log.error("Exception : {}", exception.getMessage(), exception);
             if (exceptionHandlerAdapter != null) {

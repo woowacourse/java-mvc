@@ -37,7 +37,7 @@ class HandlerMappingRegistryTest {
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/get-test");
-        final var handler = handlerMappingRegistry.matchHandler(request);
+        final var handler = handlerMappingRegistry.getHandler(request);
 
         assertThat(handler).isInstanceOf(HandlerExecution.class);
         final var handlerExecution = (HandlerExecution) handler;
@@ -50,7 +50,7 @@ class HandlerMappingRegistryTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/never-exists");
 
-        assertThatThrownBy((() -> handlerMappingRegistry.matchHandler(request)))
+        assertThatThrownBy((() -> handlerMappingRegistry.getHandler(request)))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
