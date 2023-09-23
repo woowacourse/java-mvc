@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import samples.TestAnnotationController;
 import samples.TestManualController;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

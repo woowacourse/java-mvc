@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -17,9 +18,16 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters) {
+    public DispatcherServlet(HandlerMappings handlerMappings) {
         this.handlerMappings = handlerMappings;
-        this.handlerAdapters = handlerAdapters;
+        handlerAdapters = initHandlerAdapters();
+    }
+
+    private HandlerAdapters initHandlerAdapters() {
+        HandlerAdapters adapters = new HandlerAdapters();
+        adapters.add(new AnnotationHandlerAdapter());
+        adapters.add(new ManualHandlerAdapter());
+        return adapters;
     }
 
     @Override
