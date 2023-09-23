@@ -15,6 +15,7 @@ public class InMemoryUserRepository {
     }
 
     public static void save(User user) {
+        System.out.println("@@@" + user.getAccount());
         database.put(user.getAccount(), user);
     }
 
