@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,15 +19,13 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        handlerMappings = new HandlerMappings();
-        handlerAdapters = new HandlerAdapters();
+    public DispatcherServlet(final HandlerMappings mappings, final HandlerAdapters adapters) {
+        handlerMappings = mappings;
+        handlerAdapters = adapters;
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new AnnotationHandlerMapping());
-        handlerAdapters.add(new AnnotaionHandlerAdapter());
     }
 
     @Override
