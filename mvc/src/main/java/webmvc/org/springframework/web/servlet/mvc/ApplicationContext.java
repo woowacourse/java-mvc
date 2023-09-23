@@ -14,7 +14,6 @@ import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.ViewResolver;
-import webmvc.org.springframework.web.servlet.view.ViewResolverComposite;
 
 public class ApplicationContext {
 

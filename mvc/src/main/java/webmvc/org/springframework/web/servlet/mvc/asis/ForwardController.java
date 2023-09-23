@@ -7,7 +7,10 @@ import java.util.Objects;
 
 public class ForwardController implements Controller {
 
-    private final String path;
+    private String path;
+
+    public ForwardController() {
+    }
 
     public ForwardController(final String path) {
         this.path = Objects.requireNonNull(path);
