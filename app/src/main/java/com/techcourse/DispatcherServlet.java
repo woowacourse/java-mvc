@@ -7,35 +7,38 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappers = new ArrayList<>();
+    private HandlerAdapterRegistry handlerAdapterRegistry;
+    private HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMappers.add(new ManualHandlerMapping());
-        handlerMappers.add(new AnnotationHandlerMapping("com.techcourse"));
-
-        for (final HandlerMapping handlerMapping : handlerMappers) {
-            handlerMapping.initialize();
-        }
+        final List<HandlerMapping> handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.techcourse")
+        );
+        handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
+        final List<HandlerAdapter> handlerAdapters = List.of(
+                new ControllerHandlerAdapter(),
+                new HandlerExecutionHandlerAdapter()
+        );
+        handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
     }
 
     @Override
@@ -44,49 +47,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = findHandler(request);
-            final var controllerExecution = findControllerExecuteMethod(handler.getClass());
-            final var viewName = controllerExecution.invoke(handler, request, response);
-            move(viewName, request, response);
+            final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(request, handlerMapping);
+            final ModelAndView view = handlerAdapter.handle(handlerMapping, request, response);
+            move(view, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object findHandler(final HttpServletRequest request) {
-        return handlerMappers.stream()
-                             .map(handlerMapping -> handlerMapping.getHandler(request))
-                             .filter(Optional::isPresent)
-                             .map(Optional::get)
-                             .findAny()
-                             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 handler입니다."));
-    }
-
-    private Method findControllerExecuteMethod(final Class<?> controllerType) {
-        log.info("controllerType : {} ", controllerType);
-        return Arrays.stream(controllerType.getDeclaredMethods())
-                     .filter(DispatcherServlet::isExecuteMethod)
-                     .findFirst()
-                     .orElseThrow(() -> new IllegalArgumentException("컨트롤러 실행 메서드가 존재하지 않습니다."));
-    }
-
-    private static boolean isExecuteMethod(final Method method) {
-        System.out.println(" method.getParameterTypes() = " + Arrays.toString(method.getParameterTypes()));
-        final Class<?>[] parameterTypes = method.getParameterTypes();
-        return parameterTypes.length == 2
-                && parameterTypes[0].equals(HttpServletRequest.class)
-                && parameterTypes[1].equals(HttpServletResponse.class);
-    }
-
-    private void move(final Object view, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // TODO : 3단계 미션에서 리팩토링 필요
-        if (view.getClass().equals(String.class)) {
-            moveString((String) view, request, response);
-        }
-        if (view.getClass().equals(HandlerExecution.class)) {
-            moveHandlerExecution((ModelAndView) view, request, response);
-        }
+    private void move(final ModelAndView view, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        // TODO : 3단계에서 리팩토링 예정
+        final String name = view.getView().getClass().getName();
+        moveString(name, request, response);
     }
 
     private void moveString(final String view, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -97,10 +71,5 @@ public class DispatcherServlet extends HttpServlet {
 
         final var requestDispatcher = request.getRequestDispatcher(view);
         requestDispatcher.forward(request, response);
-    }
-
-    private void moveHandlerExecution(final ModelAndView view, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final String name = view.getView().getClass().getName();
-        moveString(name, request, response);
     }
 }
