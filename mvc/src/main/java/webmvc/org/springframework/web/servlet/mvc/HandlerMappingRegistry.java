@@ -11,11 +11,8 @@ public class HandlerMappingRegistry {
 
     private final Set<HandlerMapping> handlerMappings = new LinkedHashSet<>();
 
-    public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
-    }
-
     public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
 
