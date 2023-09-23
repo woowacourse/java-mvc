@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerNotFoundException;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.view.ViewResolver;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,12 +22,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final ViewResolver viewResolver;
     private final WebApplicationContext webApplicationContext;
 
     public DispatcherServlet(final WebApplicationContext webApplicationContext) {
         this.webApplicationContext = webApplicationContext;
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
+        this.viewResolver = new ViewResolver();
     }
 
     @Override
@@ -51,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
         final var handlerAdapter = getHandlerAdapter(handler);
         try {
             final var modelAndView = handlerAdapter.handle(request, response, handler);
-            move(modelAndView.getViewName(), request, response);
+            renderView(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -73,13 +76,8 @@ public class DispatcherServlet extends HttpServlet {
                               .orElseThrow(() -> new HandlerNotFoundException("Not found handler adapter for handler : " + handler));
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private void renderView(final ModelAndView mv, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final var view = viewResolver.resolveViewName(mv.getViewName());
+        view.render(mv.getModel(), request, response);
     }
 }

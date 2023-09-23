@@ -2,14 +2,19 @@ package webmvc.org.springframework.web.servlet.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.View;
-
 import java.util.Map;
+import webmvc.org.springframework.web.servlet.View;
 
 public class JsonView implements View {
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        final var entries = model.entrySet();
+        for (final var entry : entries) {
+            response.getWriter().write(entry.getKey() + " : " + entry.getValue() + "\n");
+        }
     }
 
     @Override
