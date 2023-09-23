@@ -23,14 +23,14 @@ public class JsonView implements View {
         response.getWriter().write(requestBody);
     }
 
-    private String getResponseBody(final Map<String,?> model) {
+    private String getResponseBody(final Map<String, ?> model) {
         final ObjectMapper objectMapper = new ObjectMapper();
-        if(model.size() == 1){
+        if (model.size() == 1) {
             return String.valueOf(model.values().stream().findAny().get());
         }
         try {
             return objectMapper.writeValueAsString(model);
-        } catch (JsonProcessingException e){
+        } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("json 타입으로 파싱할 수 없습니다.");
         }
     }
