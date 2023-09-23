@@ -13,8 +13,8 @@ public class ExceptionHandler extends ExceptionHandlerAdapter {
     protected ModelAndView handleException(HttpServletResponse response, Exception exception) {
         // TODO 401 예외 처리 구현 후 매핑
         if (exception instanceof NoSuchElementException) {
-            return new ModelAndView(new JspView("/404.jsp"));
+            return new ModelAndView(new JspView("redirect:/404.jsp"));
         }
-        return new ModelAndView(new JspView("/500.jsp"));
+        return new ModelAndView(new JspView("redirect:/500.jsp"));
     }
 }

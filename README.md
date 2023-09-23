@@ -47,5 +47,6 @@
 - [x] JspView 구현하기
 - [ ] JsonView 구현하기
     - [ ] HTTP Request Body로 받은 JSON 타입의 데이터를 처리하기
+    - [x] Json 으로 응답하기
 - [ ] Legacy MVC 제거하기
     - [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반으로 변경하기

@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
 
             handlerExecutor.render(request, response, handler);
         } catch (Exception exception) {
-            log.error("Exception : {}", exception.getMessage(), exception);
+            log.error("Exception : {} {}", exception.getMessage(), exception.getStackTrace());
             if (exceptionHandlerAdapter != null) {
                 exceptionHandlerAdapter.handle(request, response, exception);
                 return;
