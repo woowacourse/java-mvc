@@ -1,4 +1,4 @@
-package com.techcourse.controllerv2;
+package com.techcourse.controller;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,11 +7,15 @@ import web.org.springframework.web.bind.annotation.GetMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-@Controller
-public class RegisterViewControllerV2 {
+import static com.techcourse.controller.UserSession.SESSION_KEY;
 
-    @GetMapping("/v2/register/view")
+@Controller
+public class LogoutController {
+
+    @GetMapping("/v2/logout")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return new ModelAndView(new JspView("/register.jsp"));
+        request.getSession().removeAttribute(SESSION_KEY);
+
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }

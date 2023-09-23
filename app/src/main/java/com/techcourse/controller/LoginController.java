@@ -1,4 +1,4 @@
-package com.techcourse.controllerv2;
+package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -12,13 +12,13 @@ import web.org.springframework.web.bind.annotation.PostMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-import static com.techcourse.controllerv2.UserSessionV2.SESSION_KEY;
-import static com.techcourse.controllerv2.UserSessionV2.isLoggedIn;
+import static com.techcourse.controller.UserSession.SESSION_KEY;
+import static com.techcourse.controller.UserSession.isLoggedIn;
 
 @Controller
-public class LoginControllerV2 {
+public class LoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginControllerV2.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @PostMapping("/v2/login")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
