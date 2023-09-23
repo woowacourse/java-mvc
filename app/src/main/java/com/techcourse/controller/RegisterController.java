@@ -4,7 +4,11 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class RegisterController implements Controller {
 
@@ -18,4 +22,11 @@ public class RegisterController implements Controller {
 
         return "redirect:/index.jsp";
     }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String path = execute(request, response);
+        return new ModelAndView(new JspView(path));
+    }
+
 }
