@@ -7,13 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.disapatchersevlet.HandlerKey;
+import webmvc.org.springframework.web.servlet.mvc.disapatchersevlet.HandlerMapping;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -79,6 +82,7 @@ public class AnnotationHandlerMapping {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey matchingHandlerKey = handlerExecutions.keySet().stream()
                 .filter(handlerKey -> handlerKey.isMatching(request))
