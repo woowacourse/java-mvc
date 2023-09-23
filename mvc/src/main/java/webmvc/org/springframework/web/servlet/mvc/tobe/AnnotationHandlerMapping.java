@@ -20,11 +20,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final List<Object> basePackages;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
-        this.basePackages = List.of(basePackages);
+        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
@@ -34,7 +34,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         makeHandlerExecutions(basePackages);
     }
 
-    private void makeHandlerExecutions(final List<Object> basePackages) {
+    private void makeHandlerExecutions(final Object... basePackages) {
         for (final Object basePackage : basePackages) {
             final Reflections reflections = new Reflections(basePackage);
             final var classes = reflections.getTypesAnnotatedWith(Controller.class);
