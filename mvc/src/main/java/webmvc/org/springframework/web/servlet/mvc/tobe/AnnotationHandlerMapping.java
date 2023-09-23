@@ -31,6 +31,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Set<Class<?>> controllers = getClassHasAnnotationWith(CONTROLLER_ANNOTATION, basePackage);
         final Map<Class<?>, List<Method>> classMethods = getMethodHasAnnotationWith(REQUEST_MAPPING_ANNOTATION, controllers);
