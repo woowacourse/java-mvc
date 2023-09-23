@@ -19,7 +19,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final List<String> LEGACY_NAMES = List.of("/", "/login", "/login/view", "/logout");
 
     private Object[] basePackage;
     private ManualHandlerMapping manualHandlerMapping;
@@ -47,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            if (LEGACY_NAMES.contains(requestURI)) {
+            if (manualHandlerMapping.isSupport(requestURI)) {
                 final var controller = manualHandlerMapping.getHandler(requestURI);
                 final var viewName = controller.execute(request, response);
                 move(viewName, request, response);
