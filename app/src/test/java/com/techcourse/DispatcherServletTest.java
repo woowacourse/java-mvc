@@ -20,19 +20,6 @@ class DispatcherServletTest {
     private RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
 
     @Test
-    void 매뉴얼_작동_테스트() throws ServletException, IOException {
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher(any())).thenReturn(requestDispatcher);
-
-        DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
-        dispatcherServlet.service(request, response);
-
-        verify(requestDispatcher, times(1)).forward(any(), any());
-    }
-
-    @Test
     void 어노테이션_작동_테스트() throws ServletException, IOException {
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("GET");

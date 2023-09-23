@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerCreateException;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -50,7 +51,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             return method.getDeclaringClass().getConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(e); // TODO: 2023/09/15 expcetion 처리
+            throw new HandlerCreateException(e.getMessage());
 
         }
     }

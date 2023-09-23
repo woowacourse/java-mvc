@@ -1,12 +1,10 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import web.org.springframework.web.bind.annotation.RequestMethod;
-
 import java.util.Objects;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
 
-    // TODO: 2023/09/18 캐싱고려
     private final String url;
     private final RequestMethod requestMethod;
 
@@ -25,8 +23,12 @@ public class HandlerKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HandlerKey)) {
+            return false;
+        }
         HandlerKey that = (HandlerKey) o;
         return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
     }

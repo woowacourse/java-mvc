@@ -20,8 +20,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        handlerAdapterRegistry = new HandlerAdapterRegistry(new AnnotationHandlerAdapter(), new ManualHandlerAdapter());
-        handlerMappingRegistry = new HandlerMappingRegistry(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping());
+        handlerAdapterRegistry = new HandlerAdapterRegistry(new AnnotationHandlerAdapter());
+        handlerMappingRegistry = new HandlerMappingRegistry(new AnnotationHandlerMapping("com.techcourse.controller"));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
             final var handler = handlerMappingRegistry.getHandler(request);
             final var modelAndView = handlerAdapterRegistry.handle(handler, request, response);
             modelAndView.render(request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
