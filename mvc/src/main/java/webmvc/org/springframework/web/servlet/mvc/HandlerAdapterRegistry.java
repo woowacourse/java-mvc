@@ -21,7 +21,10 @@ public class HandlerAdapterRegistry {
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("cannot find supporting handler adapter"));
 
-        handlerAdapter.handle(request, response, handler);
+        final var modelAndView = handlerAdapter.handle(request, response, handler);
+        final var view = modelAndView.getView();
+        final var model = modelAndView.getModel();
+        view.render(model, request, response);
     }
 
 }

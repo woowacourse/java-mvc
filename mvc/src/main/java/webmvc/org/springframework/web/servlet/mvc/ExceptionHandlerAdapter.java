@@ -1,13 +1,12 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 
-public class ExceptionHandlerAdapter implements HandlerAdapter {
+public abstract class ExceptionHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
@@ -15,12 +14,10 @@ public class ExceptionHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        handleException(response, (Exception) handler);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        return handleException(response, (Exception) handler);
     }
 
-    protected void handleException(HttpServletResponse response, Exception exception) throws IOException {
-        response.sendError(SC_INTERNAL_SERVER_ERROR, exception.getMessage());
-    }
+    protected abstract ModelAndView handleException(HttpServletResponse response, Exception exception);
 
 }
