@@ -20,7 +20,7 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackages;
-    private final Map<HandlerKey, AnnotationHandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
         this.basePackages = basePackages;
@@ -62,12 +62,12 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            AnnotationHandlerExecution annotationHandlerExecution = new AnnotationHandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, annotationHandlerExecution);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    public AnnotationHandlerExecution getHandler(HttpServletRequest request) {
+    public HandlerExecution getHandler(HttpServletRequest request) { // 결국 getHandler 라는 것은 동일함
         HandlerKey key = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.from(request.getMethod())
