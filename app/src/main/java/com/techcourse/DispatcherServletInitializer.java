@@ -4,10 +4,11 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
-import webmvc.org.springframework.web.servlet.mvc.adapter.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.adapter.ManualHandlerMappingAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.view.resolver.ViewResolvers;
+import webmvc.org.springframework.web.servlet.DispatcherServlet;
+import webmvc.org.springframework.web.servlet.mvc.supports.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ManualHandlerMappingAdapter;
+import webmvc.org.springframework.web.servlet.mvc.supports.mapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.supports.resolver.ViewResolvers;
 
 /**
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the

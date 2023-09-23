@@ -2,7 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.Controller;
 
 public class TestLegacyController implements Controller {
 

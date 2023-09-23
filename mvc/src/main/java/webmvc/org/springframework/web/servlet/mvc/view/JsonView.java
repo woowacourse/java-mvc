@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import web.org.springframework.http.MediaType;
-import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.View;
 
 import java.util.Map;
 
