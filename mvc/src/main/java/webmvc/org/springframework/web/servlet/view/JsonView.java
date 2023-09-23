@@ -15,6 +15,7 @@ public class JsonView implements View {
     private static final String JSON_POSTFIX = "}";
     private static final String LINE_SEPARATOR = "\r\n";
     private static final String KEY_VALUE_FORMAT = "\t%s: %s";
+    private static final String COMMA = ",";
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request,
@@ -29,10 +30,17 @@ public class JsonView implements View {
     }
 
     private String generateJsonFrom(Map<String, ?> model) {
-        StringJoiner stringJoiner = new StringJoiner(LINE_SEPARATOR);
-        stringJoiner.add(JSON_PREFIX);
+        String keyValues = generateKeyValues(model);
+        return new StringJoiner(LINE_SEPARATOR)
+                .add(JSON_PREFIX)
+                .add(keyValues)
+                .add(JSON_POSTFIX)
+                .toString();
+    }
+
+    private String generateKeyValues(Map<String, ?> model) {
+        StringJoiner stringJoiner = new StringJoiner(COMMA + LINE_SEPARATOR);
         model.forEach((key, value) -> stringJoiner.add(String.format(KEY_VALUE_FORMAT, key, value)));
-        stringJoiner.add(JSON_POSTFIX);
         return stringJoiner.toString();
     }
 }

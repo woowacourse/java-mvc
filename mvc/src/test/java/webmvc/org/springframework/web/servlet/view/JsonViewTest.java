@@ -41,7 +41,7 @@ class JsonViewTest {
 
         assertThat(content).isEqualTo(
                 "{" + "\r\n" +
-                        "\t" + "name: teo" + "\r\n" +
+                        "\t" + "name: teo," + "\r\n" +
                         "\t" + "age: 25" + "\r\n" +
                         "}"
         );
