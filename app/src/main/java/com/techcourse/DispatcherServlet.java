@@ -31,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappers.add(new ManualHandlerMapping());
-        handlerMappers.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+        handlerMappers.add(new AnnotationHandlerMapping("com.techcourse"));
 
         for (final HandlerMapping handlerMapping : handlerMappers) {
             handlerMapping.initialize();
