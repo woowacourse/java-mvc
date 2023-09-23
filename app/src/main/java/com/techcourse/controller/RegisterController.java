@@ -12,7 +12,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class RegisterController {
 
-    @PostMapping("/v2/register")
+    @PostMapping("/register")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final User user = new User(2,
                 request.getParameter("account"),
