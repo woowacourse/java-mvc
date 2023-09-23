@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import web.org.springframework.http.MediaType;
 import web.org.springframework.web.bind.MappingJackson2HttpMessageConverter;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
@@ -19,7 +20,7 @@ public class HandlerExecution {
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final var parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length > 2) {
+        if (parameterTypes.length > 2 && MediaType.isJson(request.getContentType())) {
             /// TODO: 2023/09/23 하나의 body가 아니라 다른 방식으로도 받을 수 있게 하기
             final Class<?> parameterType = parameterTypes[2];
             final Object requestBody = MappingJackson2HttpMessageConverter.readRequestBody(request, parameterType);
