@@ -1,5 +1,6 @@
-package com.techcourse.controller;
+package com.techcourse.controller.annotation_controller;
 
+import com.techcourse.controller.UserSession;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

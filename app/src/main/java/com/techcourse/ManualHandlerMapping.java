@@ -1,6 +1,10 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.manual_controller.LoginController;
+import com.techcourse.controller.manual_controller.LoginViewController;
+import com.techcourse.controller.manual_controller.LogoutController;
+import com.techcourse.controller.manual_controller.RegisterController;
+import com.techcourse.controller.manual_controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
