@@ -6,5 +6,5 @@
 - [X] Legacy MVC, @MVC 통합
 - [X] 예외 핸들러 추가
 - [X] JspView 구현
-- [ ] JsonView 구현
+- [X] JsonView 구현
 - [X] LegacyMVC 제거
