@@ -28,8 +28,12 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotationHandlerMapping = new AnnotationHandlerMapping(getAllSubPackageName(Application.class));
         annotationHandlerMapping.initialize();
+    }
+
+    private String getAllSubPackageName(Class<?> mainClass) {
+        return mainClass.getPackageName() + ".*";
     }
 
     @Override
