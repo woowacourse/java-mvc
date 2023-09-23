@@ -2,21 +2,20 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,8 +28,7 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        initializeHandlerExecutions(reflections);
+        initializeHandlerExecutions(new Reflections(basePackage));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -45,7 +43,7 @@ public class AnnotationHandlerMapping {
         try {
             final Object controller = controllerClass.getDeclaredConstructor().newInstance();
             final List<Method> requestMappingMethods = Arrays.stream(controllerClass.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .filter(this::isValidMethod)
                     .collect(Collectors.toList());
 
             for (final Method method : requestMappingMethods) {
@@ -53,6 +51,7 @@ public class AnnotationHandlerMapping {
             }
         } catch (final Exception e) {
             // ignore
+            log.info(e.getMessage());
         }
     }
 
@@ -67,6 +66,12 @@ public class AnnotationHandlerMapping {
                     new HandlerExecution(method, controller)
             );
         }
+    }
+
+    private boolean isValidMethod(final Method method) {
+        return method.isAnnotationPresent(RequestMapping.class) &&
+                method.getReturnType().equals(ModelAndView.class) &&
+                new HashSet<>(List.of(method.getParameterTypes())).containsAll(List.of(HttpServletRequest.class, HttpServletResponse.class));
     }
 
     public Object getHandler(final HttpServletRequest request) {
