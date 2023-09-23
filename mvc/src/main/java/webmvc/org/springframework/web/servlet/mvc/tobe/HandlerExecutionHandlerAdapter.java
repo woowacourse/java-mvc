@@ -16,7 +16,7 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
             final HttpServletRequest request,
             final HttpServletResponse response,
             final Object handler
-    ) throws Exception {
+    ) {
         return ((HandlerExecution) handler).handle(request, response);
     }
 }
