@@ -16,7 +16,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping(new AnnotationHandlerKeyComposite(), "samples");
         handlerMapping.initialize();
     }
 
@@ -29,7 +29,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandlerExecution(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -44,7 +44,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandlerExecution(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");

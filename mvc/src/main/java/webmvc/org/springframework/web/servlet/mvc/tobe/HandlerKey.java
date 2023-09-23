@@ -5,7 +5,7 @@ import webmvc.org.springframework.web.servlet.exception.HandlerKeyException;
 
 import java.util.Objects;
 
-import static java.util.Objects.*;
+import static java.util.Objects.hash;
 
 public class HandlerKey {
 

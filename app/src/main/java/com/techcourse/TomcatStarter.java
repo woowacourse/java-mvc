@@ -23,8 +23,8 @@ public class TomcatStarter {
         this.tomcat = new Tomcat();
         tomcat.setConnector(createConnector(port));
 
-        final var docBase = new File(webappDirLocation).getAbsolutePath();
-        final var context = (StandardContext) tomcat.addWebapp("", docBase);
+        final String docBase = new File(webappDirLocation).getAbsolutePath();
+        final StandardContext context = (StandardContext) tomcat.addWebapp("", docBase);
         skipJarScan(context);
         skipClearReferences(context);
     }
@@ -47,13 +47,13 @@ public class TomcatStarter {
     }
 
     private Connector createConnector(final int port) {
-        final var connector = new Connector();
+        final Connector connector = new Connector();
         connector.setPort(port);
         return connector;
     }
 
     private void skipJarScan(final Context context) {
-        final var jarScanner = (StandardJarScanner) context.getJarScanner();
+        final StandardJarScanner jarScanner = (StandardJarScanner) context.getJarScanner();
         jarScanner.setScanClassPath(false);
     }
 

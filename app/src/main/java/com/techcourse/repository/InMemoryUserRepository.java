@@ -11,8 +11,15 @@ public class InMemoryUserRepository {
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 
     static {
-        final var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
-        database.put(user.getAccount(), user);
+        final var gugu = new User(1, "gugu", "password", "hkkang@woowahan.com");
+        final var hyena = new User(2, "hyena", "password", "hyena@woowahan.com");
+        final var herb = new User(3, "herb", "password", "herb@woowahan.com");
+        database.put(gugu.getAccount(), gugu);
+        database.put(hyena.getAccount(), hyena);
+        database.put(herb.getAccount(), herb);
+    }
+
+    private InMemoryUserRepository() {
     }
 
     public static void save(User user) {
@@ -22,6 +29,4 @@ public class InMemoryUserRepository {
     public static Optional<User> findByAccount(String account) {
         return Optional.ofNullable(database.get(account));
     }
-
-    private InMemoryUserRepository() {}
 }

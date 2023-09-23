@@ -15,7 +15,7 @@
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
                                     <div class="card-header"><h3 class="text-center font-weight-light my-4">회원 가입</h3></div>
                                     <div class="card-body">
-                                        <form method="post" action="/register">
+                                        <form method="post" action="/v2/register">
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="inputLoginId" name="account" type="Text" placeholder="아이디를 입력하세요" />
                                                 <label for="inputLoginId">아이디</label>
@@ -36,7 +36,7 @@
                                         </form>
                                     </div>
                                     <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="/login/view">이미 가입하셨나요? 로그인 하러가기</a></div>
+                                        <div class="small"><a href="/v2/login/view">이미 가입하셨나요? 로그인 하러가기</a></div>
                                     </div>
                                 </div>
                             </div>
