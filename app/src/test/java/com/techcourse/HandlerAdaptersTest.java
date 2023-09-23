@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -64,5 +65,14 @@ class HandlerAdaptersTest {
         assertThatThrownBy(() -> handlerAdapters.getHandlerAdapter(wrongHandler))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("지원하는 Adapter가 존재하지 않습니다.");
+    }
+
+    @Test
+    void adapter를_추가한다() {
+        // given
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
+
+        // expect
+        assertThatNoException().isThrownBy(() -> handlerAdapters.add(new AnnotationHandlerAdapter()));
     }
 }

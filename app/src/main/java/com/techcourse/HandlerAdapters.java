@@ -2,9 +2,7 @@ package com.techcourse;
 
 import java.util.ArrayList;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
 
 public class HandlerAdapters {
 
@@ -12,8 +10,10 @@ public class HandlerAdapters {
 
     public HandlerAdapters() {
         this.handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new AnnotationHandlerAdapter());
-        handlerAdapters.add(new ManualHandlerAdapter());
+    }
+
+    public void add(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {

@@ -4,18 +4,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappings {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappings(final Object... basePackage) {
+    public HandlerMappings() {
         this.handlerMappings = new ArrayList<>();
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
+    }
 
+    public void add(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
     }
 
     public void init() {
