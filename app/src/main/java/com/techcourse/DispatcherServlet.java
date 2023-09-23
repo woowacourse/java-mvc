@@ -4,15 +4,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.exception.HandlerAdapterNotFoundException;
 import webmvc.org.springframework.web.servlet.exception.HandlerNotFoundException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
@@ -46,11 +43,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler, request, response);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-            View view = modelAndView.getView();
-            Map<String, Object> model = modelAndView.getModel();
-            view.render(model, request, response);
+            modelAndView.render(request, response);
         } catch (HandlerNotFoundException | HandlerAdapterNotFoundException e) {
             log.error("RuntimeException : {}", e.getMessage(), e);
             response.sendRedirect("404.jsp");
@@ -64,8 +59,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappingRegistry.getHandler(request);
     }
 
-    private HandlerAdapter getHandlerAdapter(final Object handler, final HttpServletRequest request,
-                                             final HttpServletResponse response) throws Exception {
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
         return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 }
