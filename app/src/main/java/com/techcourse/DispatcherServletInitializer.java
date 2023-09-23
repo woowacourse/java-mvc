@@ -18,6 +18,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.init();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
