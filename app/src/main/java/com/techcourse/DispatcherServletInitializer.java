@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.support.web.mapping.ManualHandlerMappingWrapper;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +25,16 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
         resolvers.initialize();
 
-        final var dispatcherServlet = new DispatcherServlet();
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMappingWrapper())
-                         .addHandlerMapping(new AnnotationHandlerMapping())
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping())
                          .addHandlerAdapter(new ManualHandlerMappingAdapter(resolvers))
                          .addHandlerAdapter(new AnnotationHandlerAdapter());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
-            throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
-                    "Check if there is another servlet registered under the same name.");
+            throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. "
+                    + "Check if there is another servlet registered under the same name.");
         }
 
         registration.setLoadOnStartup(1);

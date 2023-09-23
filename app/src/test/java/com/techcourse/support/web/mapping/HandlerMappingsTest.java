@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -32,10 +33,11 @@ class HandlerMappingsTest {
     @Test
     void getHander_메서드는_해당_요청을_처리할_수_있는_핸들러가_있다면_해당_핸들러를_반환한다() {
         final HandlerMappings handlerMappings = new HandlerMappings();
-        handlerMappings.addHandlerMapping(new ManualHandlerMappingWrapper());
+        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("samples"));
         handlerMappings.initialize();
         final HttpServletRequest request = mock(HttpServletRequest.class);
-        given(request.getRequestURI()).willReturn("/");
+        given(request.getMethod()).willReturn("GET");
+        given(request.getRequestURI()).willReturn("/get-test");
 
         final Object actual = handlerMappings.getHandler(request);
 
