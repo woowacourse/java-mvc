@@ -6,11 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.exception.InvalidHandlerTypeException;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappingRegistry handlerMappingRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
@@ -33,6 +33,11 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(new AnnotationHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);
         this.handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
+
+        List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+        handlerAdapters.add(new ControllerHandlerAdapter());
+        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
     }
 
     @Override
@@ -43,14 +48,8 @@ public class DispatcherServlet extends HttpServlet {
         HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
         Object handler = handlerMapping.getHandler(request);
         try {
-            ModelAndView mav;
-            if (handler instanceof Controller) {
-                mav = ((Controller)handler).execute(request, response);
-            } else if (handler instanceof HandlerExecution) {
-                mav = ((HandlerExecution)handler).handle(request, response);
-            } else {
-                throw new InvalidHandlerTypeException("존재하지 않는 Handler 타입입니다.");
-            }
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView mav = handlerAdapter.handle(handler, request, response);
             mav.render(request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
