@@ -7,16 +7,17 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.exception.HandlerAdapterException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapterComposite {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerAdapterComposite.class);
 
-    private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public HandlerAdapterComposite(final List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+    public void addHandlerAdapter(final HandlerAdapter newHandlerAdapter) {
+        handlerAdapters.add(newHandlerAdapter);
     }
 
     public ModelAndView doService(final HttpServletRequest request,
