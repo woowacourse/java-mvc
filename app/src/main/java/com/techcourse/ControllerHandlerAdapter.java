@@ -10,6 +10,11 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
+    public boolean support(Object handler) {
+        return handler instanceof Controller;
+    }
+
+    @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         try {
             String viewName = ((Controller) handler).execute(request, response);
@@ -17,10 +22,5 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public boolean support(Object handler) {
-        return handler instanceof Controller;
     }
 }

@@ -6,7 +6,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public interface HandlerAdapter {
 
-    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler);
-
     boolean support(Object handler);
+
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler);
 }
