@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -30,9 +31,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         final var reflections = new Reflections(basePackage);
-        final var controllers = reflections.getTypesAnnotatedWith(
-                context.org.springframework.stereotype.Controller.class
-        );
+        final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
         controllers.forEach(this::addControllerMethods);
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -51,8 +50,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final var constructor = clazz.getDeclaredConstructor();
 
             return createControllerInstance(constructor);
-        } catch (ClassCastException exception) {
-            throw new HandlerMappingException("Class cannot be cast to Class<Controller>; " + clazz.getName(), exception);
         } catch (NoSuchMethodException exception) {
             throw new HandlerMappingException("Class does not have a default constructor;", exception);
         }
