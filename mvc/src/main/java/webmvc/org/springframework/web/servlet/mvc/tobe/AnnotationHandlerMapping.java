@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.ApplicationContextAware;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 public class AnnotationHandlerMapping extends ApplicationContextAware implements HandlerMapping {
 
@@ -31,10 +31,10 @@ public class AnnotationHandlerMapping extends ApplicationContextAware implements
     }
 
     private void createHandlerExecution() {
-        final List<? extends Controller> controllers = getApplicationContext().getBeansOfType(Controller.class);
-        for (final Object controller : controllers) {
-            final List<Method> methods = getMethodsWithAnnotation(controller.getClass());
-            putHandlerExecutionsByMethods(controller, methods);
+        final List<Object> handlerExecutions = getApplicationContext().getBeansOfAnnotationType(Controller.class);
+        for (final Object handlerExecution : handlerExecutions) {
+            final List<Method> methods = getMethodsWithAnnotation(handlerExecution.getClass());
+            putHandlerExecutionsByMethods(handlerExecution, methods);
         }
     }
 

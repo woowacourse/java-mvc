@@ -1,6 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
 import core.org.springframework.util.ReflectionUtils;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.ViewResolver;
@@ -22,8 +22,7 @@ public class ApplicationContext {
         HandlerMapping.class,
         HandlerAdapter.class,
         ApplicationContextAware.class,
-        ViewResolver.class,
-        Controller.class
+        ViewResolver.class
     );
     private final Map<Class<?>, Object> beans;
 
@@ -99,6 +98,13 @@ public class ApplicationContext {
 
     public Object getBean(final Class<?> classType) {
         return beans.get(classType);
+    }
+
+    public List<Object> getBeansOfAnnotationType(final Class<? extends Annotation> annotationType) {
+        return beans.keySet().stream()
+            .filter(clazz -> clazz.isAnnotationPresent(annotationType))
+            .map(beans::get)
+            .collect(Collectors.toList());
     }
 
     public <T> List<? extends T> getBeansOfType(final Class<T> classType) {
