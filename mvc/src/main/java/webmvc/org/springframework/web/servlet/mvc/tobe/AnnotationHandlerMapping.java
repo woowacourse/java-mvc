@@ -10,28 +10,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.WebApplicationContext;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    private WebApplicationContext context;
 
-    public AnnotationHandlerMapping(final Object... basePackages) {
-        this.basePackage = basePackages;
-        this.handlerExecutions = new HashMap<>();
+    public AnnotationHandlerMapping() {
+    }
+
+    public AnnotationHandlerMapping(final WebApplicationContext context) {
+        this.context = context;
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        final var reflections = new Reflections(basePackage);
-        final var methodsPerClass = groupingMethodsByClass(reflections);
+        final var methodsPerClass = groupingMethodsByClass();
 
         for (final var classAndMethods : methodsPerClass.entrySet()) {
             final var clazz = classAndMethods.getKey();
@@ -44,12 +44,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Map<? extends Class<?>, List<Method>> groupingMethodsByClass(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class).stream()
-                          .map(Class::getDeclaredMethods)
-                          .flatMap(Stream::of)
-                          .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                          .collect(Collectors.groupingBy(Method::getDeclaringClass));
+    private Map<? extends Class<?>, List<Method>> groupingMethodsByClass() {
+        return context.getBeansAnnotatedWith(Controller.class)
+                      .stream()
+                      .map(o -> o.getClass().getMethods())
+                      .flatMap(Stream::of)
+                      .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                      .collect(Collectors.groupingBy(Method::getDeclaringClass));
     }
 
     private void initializeEachClassExecutions(
@@ -57,7 +58,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final List<Method> methods
     ) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final var parentPath = clazz.getAnnotation(Controller.class).path();
-        final var target = clazz.getConstructor().newInstance();
+        final var target = context.getBean(clazz);
         for (var method : methods) {
             initializeEachMethodExecution(method, parentPath, target);
         }

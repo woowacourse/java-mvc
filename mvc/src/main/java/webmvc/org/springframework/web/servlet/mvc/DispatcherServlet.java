@@ -1,6 +1,5 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
-import core.org.springframework.util.ReflectionUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,11 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerNotFoundException;
@@ -22,57 +18,30 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String INTERNAL_BASE_PACKAGE = "webmvc.org.springframework.web.servlet.mvc";
 
-    private final Object[] externalBasePackages;
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
+    private final WebApplicationContext webApplicationContext;
 
-    public DispatcherServlet(Object... externalBasePackages) {
-        this.externalBasePackages = externalBasePackages;
+    public DispatcherServlet(final WebApplicationContext webApplicationContext) {
+        this.webApplicationContext = webApplicationContext;
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        final var reflections = new Reflections(externalBasePackages, INTERNAL_BASE_PACKAGE);
-        initHandlerMappings(reflections);
-        initHandlerAdapters(reflections);
+        initHandlerMappings();
+        initHandlerAdapters();
     }
 
-    private void initHandlerMappings(final Reflections reflections) {
-        final var handlerMappingSubTypes = reflections.getSubTypesOf(HandlerMapping.class);
-        addHandlerMappings(handlerMappingSubTypes);
+    private void initHandlerMappings() {
+        handlerMappings.addAll(webApplicationContext.getBeansBySuperType(HandlerMapping.class));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    private void addHandlerMappings(final Set<Class<? extends HandlerMapping>> handlerMappingSubTypes) {
-        for (final var handlerMappingSubType : handlerMappingSubTypes) {
-            if (handlerMappingSubType.isInterface()) {
-                continue;
-            }
-            // exclude pre-defined handler mapping
-            if (handlerMappingSubType.equals(AnnotationHandlerMapping.class)) {
-                handlerMappings.add(new AnnotationHandlerMapping(externalBasePackages));
-                continue;
-            }
-            handlerMappings.add(ReflectionUtils.instantiate(handlerMappingSubType));
-        }
-    }
-
-    private void initHandlerAdapters(final Reflections reflections) {
-        final var handlerAdapterSubTypes = reflections.getSubTypesOf(HandlerAdapter.class);
-        addHandlerAdapters(handlerAdapterSubTypes);
-    }
-
-    private void addHandlerAdapters(final Set<Class<? extends HandlerAdapter>> handlerAdapterSubTypes) {
-        for (final var reflectionsSubTypeOf : handlerAdapterSubTypes) {
-            if (reflectionsSubTypeOf.isInterface()) {
-                continue;
-            }
-            handlerAdapters.add(ReflectionUtils.instantiate(reflectionsSubTypeOf));
-        }
+    private void initHandlerAdapters() {
+        handlerAdapters.addAll(webApplicationContext.getBeansBySuperType(HandlerAdapter.class));
     }
 
     @Override

@@ -14,7 +14,7 @@ public class ReflectionUtils {
      */
     public static <T> T instantiate(final Class<T> clazz) {
         try {
-            return ReflectionUtils.accessibleConstructor(clazz).newInstance();
+            return accessibleConstructor(clazz).newInstance();
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
