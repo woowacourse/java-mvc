@@ -10,6 +10,8 @@ import reflection.annotation.Service;
 
 import java.util.Set;
 
+import static org.reflections.scanners.Scanners.TypesAnnotated;
+
 class ReflectionsTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReflectionsTest.class);
@@ -33,5 +35,9 @@ class ReflectionsTest {
         for (final Class<?> repository : repositories) {
             log.info("Repository: {}", repository.getName());
         }
+
+        // 전체 조회
+        reflections.get(TypesAnnotated.of(Controller.class, Service.class, Repository.class))
+                .forEach(object -> log.info("Object: {}", object));
     }
 }

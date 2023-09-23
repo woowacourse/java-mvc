@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
@@ -17,9 +18,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
-        final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
+        final ServletRegistration.Dynamic registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
             throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
                     "Check if there is another servlet registered under the same name.");

@@ -20,7 +20,6 @@ class ServletTest {
         HttpUtils.send(PATH);
         HttpUtils.send(PATH);
         final var response = HttpUtils.send(PATH);
-        System.out.println(response.body());
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
