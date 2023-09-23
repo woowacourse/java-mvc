@@ -5,11 +5,11 @@ import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerExecution;
 
@@ -32,9 +32,9 @@ public class ManualHandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public HandlerExecution getHandler(String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
+    public ManualHandlerExecution getHandler(HttpServletRequest request) {
+        log.debug("Request Mapping Uri : {}", request.getRequestURI());
 
-        return controllers.get(requestURI);
+        return controllers.getOrDefault(request.getRequestURI(), null);
     }
 }

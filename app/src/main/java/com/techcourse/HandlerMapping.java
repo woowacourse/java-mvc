@@ -19,22 +19,14 @@ public class HandlerMapping {
     }
 
     public HandlerExecution getHandler(HttpServletRequest request) {
-        HandlerExecution handler = manualHandlerMapping.getHandler(request.getRequestURI());
+        HandlerExecution handler = annotationHandlerMapping.getHandler(request);
 
         if (Objects.nonNull(handler)) {
             return handler;
         }
 
-        handler = annotationHandlerMapping.getHandler(request);
-        validateRequest(handler);
-
+        handler = manualHandlerMapping.getHandler(request);
         return handler;
-    }
-
-    private void validateRequest(final HandlerExecution handler) {
-        if (Objects.isNull(handler)) {
-            throw new IllegalArgumentException("요청에 맞는 Controller 를 찾지 못했습니다.");
-        }
     }
 
 }

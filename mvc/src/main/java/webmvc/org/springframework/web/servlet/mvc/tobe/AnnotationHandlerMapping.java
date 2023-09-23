@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.HandlerExecution;
 
 public class AnnotationHandlerMapping {
 
@@ -68,18 +67,13 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public AnnotationHandlerExecution getHandler(HttpServletRequest request) {
         HandlerKey key = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.from(request.getMethod())
         );
 
-        return handlerExecutions.computeIfAbsent(
-                key,
-                ignored -> {
-                    throw new IllegalArgumentException("올바르지 않은 요청입니다.");
-                }
-        );
+        return handlerExecutions.getOrDefault(key, null);
     }
 
 }

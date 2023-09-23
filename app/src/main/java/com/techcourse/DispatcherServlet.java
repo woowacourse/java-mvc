@@ -4,8 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.http.HttpStatus;
 import webmvc.org.springframework.web.servlet.HandlerExecution;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
@@ -31,8 +33,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final HandlerExecution execution  = handlerMapping.getHandler(request);
-            final ModelAndView view = execution.handle(request, response);
+            HandlerExecution execution  = handlerMapping.getHandler(request);
+
+            if (Objects.isNull(execution)) {
+                response.setStatus(HttpStatus.NOT_FOUND.getValue());
+                return;
+            }
+
+            ModelAndView view = execution.handle(request, response);
             move(view.getViewName(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
