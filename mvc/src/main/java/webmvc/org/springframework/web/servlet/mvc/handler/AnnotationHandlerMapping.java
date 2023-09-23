@@ -32,7 +32,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         controllerClasses.forEach(this::addMethodsOnHandler);
-        System.out.println(handler);
     }
 
     private void addMethodsOnHandler(final Class<?> controllerClass) {
@@ -47,8 +46,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String path = controllerClass.getAnnotation(Controller.class).path() + requestMapping.value();
         final HandlerExecution handlerExecution = new HandlerExecution(controllerClass, method);
-
-        System.out.println("===" + path);
 
         Arrays.stream(requestMapping.method())
                 .map(requestMethod -> new HandlerKey(path, requestMethod))
