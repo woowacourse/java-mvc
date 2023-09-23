@@ -30,12 +30,12 @@ public class BodyCachingRequestWrapper extends HttpServletRequestWrapper {
             throw new IllegalStateException();
         }
 
-        return readBody(inputStream);
+        return readBody(inputStream, request.getContentLength());
     }
 
-    private String readBody(InputStream inputStream) throws IOException {
+    private String readBody(final InputStream inputStream, final int contentLength) throws IOException {
         final var bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        char[] charBuffer = new char[128];
+        char[] charBuffer = new char[contentLength];
         int bytesRead = -1;
 
         try (inputStream; bufferedReader) {

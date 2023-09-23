@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JsonView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
@@ -28,6 +29,14 @@ public class TestController {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/post-json-test", method = RequestMethod.POST)
+    public ModelAndView saveId(final HttpServletRequest request, final HttpServletResponse response, TestUser user) {
+        log.info("test controller post json method");
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", user);
         return modelAndView;
     }
 }
