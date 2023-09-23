@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -61,7 +60,7 @@ class HandlerMappingsTest {
     void handler를_추가한다() {
         // given
         HandlerMappings mappings = new HandlerMappings();
-        
+
         // expect
         assertThatNoException().isThrownBy(() -> mappings.add(new AnnotationHandlerMapping()));
     }

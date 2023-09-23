@@ -1,8 +1,7 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import java.util.ArrayList;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 public class HandlerAdapters {
 
