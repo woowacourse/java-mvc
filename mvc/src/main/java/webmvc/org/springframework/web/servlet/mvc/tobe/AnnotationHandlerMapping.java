@@ -29,6 +29,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
+    public boolean supports(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.from(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
@@ -60,7 +69,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
         if (handlerExecutions.containsKey(handlerKey)) {
             return handlerExecutions.get(handlerKey);
