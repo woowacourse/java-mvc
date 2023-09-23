@@ -1,5 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
+import webmvc.org.springframework.web.servlet.exception.UncheckedServletException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 import java.util.ArrayList;
