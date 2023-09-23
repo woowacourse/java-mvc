@@ -7,8 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
+import webmvc.org.springframework.web.servlet.mvc.tobe.*;
 
 import java.util.Map;
 
@@ -18,6 +17,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -27,6 +27,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             handlerMappings = new HandlerMappings(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse"));
             handlerMappings.initialize();
+            handlerAdapters = new HandlerAdapters(new ManualHandlerAdapter(), new AnnotationHandlerAdapter());
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
@@ -39,7 +40,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Handler handler = handlerMappings.getHandler(request);
-            final ModelAndView modelAndView = handler.handle(request, response);
+            final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             final Map<String, Object> model = modelAndView.getModel();
             modelAndView.getView().render(model, request, response);
         } catch (Throwable e) {

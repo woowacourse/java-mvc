@@ -18,7 +18,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, MannualHandler> handlers = new HashMap<>();
+    private final Map<String, MannualHandler> handlers = new HashMap<>();
 
     @Override
     public void initialize() {

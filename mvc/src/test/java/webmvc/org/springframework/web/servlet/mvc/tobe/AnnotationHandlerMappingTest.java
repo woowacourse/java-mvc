@@ -15,11 +15,15 @@ import static org.mockito.Mockito.mock;
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
+    private AnnotationHandlerAdapter handlerAdapter;
+    private DefaultHandlerAdapter defaultHandlerAdapter;
 
     @BeforeEach
     void setUp() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+        handlerAdapter = new AnnotationHandlerAdapter();
+        defaultHandlerAdapter = new DefaultHandlerAdapter();
     }
 
     @Test
@@ -35,7 +39,7 @@ class AnnotationHandlerMappingTest {
 
         // when
         final Handler handler = handlerMapping.getHandler(request);
-        final ModelAndView modelAndView = handler.handle(request, response);
+        final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -54,7 +58,7 @@ class AnnotationHandlerMappingTest {
 
         // when
         final Handler handler = handlerMapping.getHandler(request);
-        final var modelAndView = handler.handle(request, response);
+        final var modelAndView = handlerAdapter.handle(request, response, handler);
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -73,11 +77,11 @@ class AnnotationHandlerMappingTest {
 
         // when
         final Handler handler = handlerMapping.getHandler(request);
-        final var modelAndView = handler.handle(request, response);
+        final var modelAndView = defaultHandlerAdapter.handle(request, response, handler);
 
         // then
         assertThat(modelAndView.getView())
                 .usingRecursiveComparison()
-                .isEqualTo(new JspView(""));
+                .isEqualTo(new JspView("/404.jsp"));
     }
 }
