@@ -1,4 +1,4 @@
-package com.techcourse.exception;
+package webmvc.org.springframework.web.servlet.exception;
 
 public class HandlerNotFoundException extends RuntimeException{
 
