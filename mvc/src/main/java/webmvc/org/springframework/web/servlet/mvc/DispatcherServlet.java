@@ -46,11 +46,8 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        move(modelAndView.getView().getViewName(), request, response);
-    }
+        final String viewName = modelAndView.getView().getViewName();
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
