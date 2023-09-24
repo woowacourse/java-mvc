@@ -13,7 +13,7 @@ public class ManualHandlerMapping {
     private static final Map<String, Controller> controllers = new HashMap<>();
 
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
+//        controllers.put("/", new ForwardController("/index.jsp"));
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
