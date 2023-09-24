@@ -24,6 +24,7 @@
 - [x] JsonView 클래스 구현
   - [x] ObjectMapper를 통해 json을 반환하도록 한다.
   - [x] UserController를 추가한다
-- [ ] Legacy MVC 제거
+- [x] Legacy MVC 제거
   - [x] com.techcourse에 있는 Controller를 모두 어노테이션 기반 컨트롤러로 변경한다
   - [x] "/" 경로를 받아주는 HomeController 생성하고, 컨트롤러 기반 ForwardController 주석 처리
+  - [x] 레거시 관련 코드 전부 삭제
