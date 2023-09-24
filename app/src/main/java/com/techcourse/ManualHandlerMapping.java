@@ -1,8 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -18,9 +15,6 @@ public class ManualHandlerMapping {
 
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
         controllers.put("/404", new ForwardController("/404.jsp"));
 
         log.info("Initialized Handler Mapping!");
