@@ -10,10 +10,8 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerExecutor;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.Optional;
@@ -25,18 +23,22 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-    private final HandlerExecutor handlerExecutor;
+    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
-        this.handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(Application.class.getPackageName() + ".*"));
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
