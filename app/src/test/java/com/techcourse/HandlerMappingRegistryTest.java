@@ -38,7 +38,7 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
-    void register_post_요청에_대한_handlerMapping를_반환한다() {
+    void 회원가입_POST_요청에_대한_handlerMapping를_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/register");
