@@ -2,7 +2,6 @@ package com.techcourse;
 
 import java.util.List;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ControllerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 public class HandlerAdapters {
@@ -11,7 +10,6 @@ public class HandlerAdapters {
 
     public HandlerAdapters() {
         this.adapters = List.of(
-            new ControllerAdapter(),
             new AnnotationHandlerAdapter()
         );
     }

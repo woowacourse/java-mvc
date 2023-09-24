@@ -12,7 +12,6 @@ public class HandlerMappings {
 
     public HandlerMappings(final Object... basePackages) {
         this.mappings = List.of(
-            new ManualHandlerMapping(),
             new AnnotationHandlerMapping(basePackages)
         );
     }
