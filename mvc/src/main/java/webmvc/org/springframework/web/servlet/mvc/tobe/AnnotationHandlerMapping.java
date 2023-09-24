@@ -51,15 +51,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
         }
 
-        logHandlerExecutions();
-    }
-
-    private void logHandlerExecutions() {
         log.info("Initialized AnnotationHandlerMapping!");
-        handlerExecutions.keySet().forEach(key -> {
-            final HandlerExecution handler = handlerExecutions.get(key);
-            log.info("key: {}, Class: {}, Method: {}", key, handler.getDeclaringClassName(), handler.getMethodName());
-        });
+        handlerExecutions.keySet().forEach(key -> log.info("key: {}, Handler: {}", key, handlerExecutions.get(key)));
     }
 
     public Object getHandler(final HttpServletRequest request) {
