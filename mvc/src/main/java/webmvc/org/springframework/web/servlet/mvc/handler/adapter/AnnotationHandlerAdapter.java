@@ -12,7 +12,6 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
         return HandlerExecution.class.isInstance(handler);
     }
 
-
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         return ((HandlerExecution) handler).handle(request, response);
