@@ -12,7 +12,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
@@ -28,15 +27,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        List<HandlerMapping> handlerMappings = new ArrayList<>();
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping());
+        List<HandlerMapping> handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);
         this.handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
 
-        List<HandlerAdapter> handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        List<HandlerAdapter> handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
         this.handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
     }
 
