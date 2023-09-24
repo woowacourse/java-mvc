@@ -4,13 +4,11 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static webmvc.org.springframework.web.servlet.view.JspView.REDIRECT_PREFIX;
