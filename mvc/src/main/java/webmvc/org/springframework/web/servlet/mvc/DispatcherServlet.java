@@ -13,7 +13,6 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerNotFoundException;
-import webmvc.org.springframework.web.servlet.view.ViewResolver;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -22,14 +21,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
-    private final ViewResolver viewResolver;
     private final WebApplicationContext webApplicationContext;
 
     public DispatcherServlet(final WebApplicationContext webApplicationContext) {
         this.webApplicationContext = webApplicationContext;
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
-        this.viewResolver = new ViewResolver();
     }
 
     @Override
@@ -77,7 +74,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void renderView(final ModelAndView mv, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var view = viewResolver.resolveViewName(mv.getViewName());
+        final var view = mv.getView();
         view.render(mv.getModel(), request, response);
     }
 }

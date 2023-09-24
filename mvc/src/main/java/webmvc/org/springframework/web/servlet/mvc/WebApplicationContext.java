@@ -24,7 +24,7 @@ public class WebApplicationContext {
     private final Set<Object> beans;
 
     public static WebApplicationContext createContextForPackage(final Object... externalBasePackages) {
-        final var componentAnnotatedClassesInPackage = ClassPathScanner.getAllAnnotatedClassesInPackage(COMPONENT_CLASS_ANNOTATIONS, externalBasePackages);
+        final var componentAnnotatedClassesInPackage = ClassPathScanner.getAllAnnotatedClassesInPackage(COMPONENT_CLASS_ANNOTATIONS, externalBasePackages, INTERNAL_BASE_PACKAGE);
         final var mvcDefaultClassesInPackage = ClassPathScanner.getAllConcreteClassesInPackage(WEB_APPLICATION_DEFAULT_SUPER_CLASSES, INTERNAL_BASE_PACKAGE, externalBasePackages);
         return new WebApplicationContext(
                 Stream.concat(
