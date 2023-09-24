@@ -16,7 +16,7 @@
   - [x] RegisterViewController의 역할을 RegisterController로 이동하고, 파일 삭제하기
 
 3단계 - JSON View 구현하기
-- [ ] JspView 클래스를 구현한다
+- [x] JspView 클래스를 구현한다
   - [x] JspView 클래스 구현 (2단계에서 완료)
-  - [ ] DispatcherServlet의 service 메서드에 있는 JspView가 가지고 있어야할 로직 제거하기
+  - [x] DispatcherServlet의 service 메서드에 있는 JspView가 가지고 있어야할 로직 제거하기
 

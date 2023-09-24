@@ -49,7 +49,8 @@ public class DispatcherServlet extends HttpServlet {
             if (manualHandlerMapping.isSupport(requestURI)) {
                 final var controller = manualHandlerMapping.getHandler(requestURI);
                 final var viewName = controller.execute(request, response);
-                move(viewName, request, response);
+                final ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+                modelAndView.getView().render(modelAndView.getModel(), request, response);
                 return;
             }
             final HandlerExecution handlerExecution = getHandlerExecution(request);
@@ -69,16 +70,5 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         return null;
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
