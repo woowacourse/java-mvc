@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.mapping;
+package webmvc.org.springframework.web.servlet.mvc.mapping;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
