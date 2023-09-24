@@ -18,8 +18,8 @@ public class JsonView implements View {
                 .writeValueAsString(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        final PrintWriter writer = response.getWriter();
-        writer.println(jsonResult);
-        writer.close();
+        try (final PrintWriter writer = response.getWriter()) {
+            writer.println(jsonResult);
+        }
     }
 }
