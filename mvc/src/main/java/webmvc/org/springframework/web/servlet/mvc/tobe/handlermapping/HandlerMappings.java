@@ -3,7 +3,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotExistException;
 
 public class HandlerMappings {
@@ -21,12 +20,11 @@ public class HandlerMappings {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final Optional<Object> handler = handlerMapping.getHandler(request);
-            if (handler.isPresent()) {
-                return handler.get();
-            }
-        }
-        throw new HandlerNotExistException();
+        final HandlerMapping handlerMapping = handlerMappings.stream()
+            .filter(mapping -> mapping.isHandleable(request))
+            .findFirst()
+            .orElseThrow(HandlerNotExistException::new);
+
+        return handlerMapping.getHandler(request);
     }
 }

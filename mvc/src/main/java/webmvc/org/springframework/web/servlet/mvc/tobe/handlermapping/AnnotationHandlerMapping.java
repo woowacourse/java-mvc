@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -17,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotExistException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ReflectionInstantiationException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerKey;
@@ -103,14 +103,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Optional<Object> getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(
+    public boolean isHandleable(final HttpServletRequest request) {
+        final HandlerKey handlerKey = parseRequestToHandlerKey(request);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        if (!isHandleable(request)) {
+            throw new HandlerNotExistException();
+        }
+
+        final HandlerKey handlerKey = parseRequestToHandlerKey(request);
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private HandlerKey parseRequestToHandlerKey(final HttpServletRequest request) {
+        return new HandlerKey(
             request.getRequestURI(),
             RequestMethod.valueOf(request.getMethod())
         );
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return Optional.of(handlerExecutions.get(handlerKey));
-        }
-        return Optional.empty();
     }
 }
