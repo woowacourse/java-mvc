@@ -7,13 +7,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 import java.util.List;
 
@@ -30,11 +29,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        List<HandlerMapping> handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        List<HandlerMapping> handlerMappings = List.of(new AnnotationHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);
         this.handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
 
-        List<HandlerAdapter> handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+        List<HandlerAdapter> handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
         this.handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
     }
 
