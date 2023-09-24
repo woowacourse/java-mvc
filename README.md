@@ -21,3 +21,5 @@
   - [x] DispatcherServlet의 service 메서드에 있는 JspView가 가지고 있어야할 로직 제거하기
 - [x] 리팩터링 방식을 변경한다
   - [x] DispatcherServlet에 레거시 코드를 완전히 삭제한다
+- [ ] JsonView 클래스 구현
+  - [x] ObjectMapper를 통해 json을 반환하도록 한다.
