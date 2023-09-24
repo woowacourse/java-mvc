@@ -49,8 +49,7 @@ public class JsonView implements View {
 
     private String writeValueAsString(Object object) {
         try {
-            return OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(object);
+            return OBJECT_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
