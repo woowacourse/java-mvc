@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.techcourse.exception;
 
-import com.techcourse.exception.UnauthorizedException;
 import context.org.springframework.stereotype.ControllerAdvice;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
