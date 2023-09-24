@@ -1,19 +1,25 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
+import org.reflections.util.ReflectionUtilsPredicates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+import static java.util.stream.Collectors.toList;
+
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,56 +31,63 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        for (final Object base : basePackage) {
-            initializeHandlerInPackage(base);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        final Set<Method> methods = getRequestMappingMethods(controllers.keySet());
+
+        for (final Method method : methods) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void initializeHandlerInPackage(final Object base) {
-        final Reflections reflections = new Reflections(base);
-        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+    private Set<Method> getRequestMappingMethods(
+            final Set<Class<?>> classes
+    ) {
+        final Set<Method> methods = new HashSet<>();
         for (final Class<?> clazz : classes) {
-            initializeHandlerInClass(clazz);
+            methods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class)));
         }
+
+        return methods;
     }
 
-    private void initializeHandlerInClass(final Class<?> clazz) {
-        final Method[] methods = clazz.getDeclaredMethods();
-        for (final Method method : methods) {
-            initializeHandlerByMethod(clazz, method);
-        }
-    }
-
-    private void initializeHandlerByMethod(final Class<?> clazz, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (requestMapping != null) {
-            initializeRequestMappingHandler(clazz, method, requestMapping);
-        }
-    }
-
-    private void initializeRequestMappingHandler(
-            final Class<?> clazz,
+    private void addHandlerExecutions(
+            final Map<Class<?>, Object> controllers,
             final Method method,
             final RequestMapping requestMapping
     ) {
         final String url = requestMapping.value();
         final RequestMethod[] requestMethods = requestMapping.method();
-        for (final RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+        final List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
+
+        for (final HandlerKey handlerKey : handlerKeys) {
+            final Object classInstance = controllers.get(method.getDeclaringClass());
+            final HandlerExecution handlerExecution = new HandlerExecution(classInstance, method);
+
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
+    private List<HandlerKey> mapHandlerKeys(final String url, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                     .map(requestMethod -> new HandlerKey(url, requestMethod))
+                     .collect(toList());
+    }
+
+    @Override
+    public boolean containsHandler(final HttpServletRequest request) {
+        final HandlerKey handlerKey = HandlerKey.from(request);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    @Override
     public Object getHandler(final HttpServletRequest request) {
-        final String url = request.getRequestURI();
-        final String requestMethod = request.getMethod();
-
-        final HandlerKey handlerKey = new HandlerKey(url, RequestMethod.from(requestMethod));
-
+        final HandlerKey handlerKey = HandlerKey.from(request);
         return handlerExecutions.get(handlerKey);
     }
 }

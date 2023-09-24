@@ -1,5 +1,6 @@
-package com.techcourse.controller;
+package com.techcourse.controller.manual_controller;
 
+import com.techcourse.controller.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -11,12 +12,12 @@ public class LoginViewController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
-                .map(user -> {
+                          .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";
                 })
-                .orElse("/login.jsp");
+                          .orElse("/login.jsp");
     }
 }

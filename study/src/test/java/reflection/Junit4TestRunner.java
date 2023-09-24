@@ -15,7 +15,7 @@ class Junit4TestRunner {
 
         final Method[] declaredMethods = clazz.getDeclaredMethods();
         for (final Method method : declaredMethods) {
-            if (method.getDeclaredAnnotation(MyTest.class) != null) {
+            if (method.isAnnotationPresent(MyTest.class)) {
                 method.invoke(junit4Test);
             }
         }
