@@ -4,6 +4,9 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +20,10 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final HandlerAdapterRegistry handlerAdapterRegistry = initializedHandlerAdapterRegistry();
+        final HandlerMappingRegistry handlerMappingRegistry = initializedHandlerAdapater();
+
+        final var dispatcherServlet = new DispatcherServlet(handlerAdapterRegistry, handlerMappingRegistry);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +35,21 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private static HandlerMappingRegistry initializedHandlerAdapater() {
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+
+        return handlerMappingRegistry;
+    }
+
+    private static HandlerAdapterRegistry initializedHandlerAdapterRegistry() {
+        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+
+        return handlerAdapterRegistry;
     }
 }
