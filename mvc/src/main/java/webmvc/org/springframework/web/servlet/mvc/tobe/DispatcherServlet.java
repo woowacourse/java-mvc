@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,9 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotFoundException;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -18,6 +16,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final transient HandlerMappingRegistry handlerMappingRegistry;
     private final transient HandlerAdapterRegistry handlerAdapterRegistry;
+    private final transient ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry, HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
@@ -46,6 +45,8 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new IllegalStateException("핸들러를 처리할 어댑터가 없습니다."));
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
+        } catch (HandlerNotFoundException e) {
+            exceptionHandler.handle(e, request, response);
         } catch (Exception e) {
             logger.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
