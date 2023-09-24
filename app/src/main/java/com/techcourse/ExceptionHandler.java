@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.techcourse.exception.UnauthorizedException;
+import context.org.springframework.stereotype.ControllerAdvice;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.NoSuchElementException;
 
+@ControllerAdvice
 public class ExceptionHandler extends ExceptionHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);

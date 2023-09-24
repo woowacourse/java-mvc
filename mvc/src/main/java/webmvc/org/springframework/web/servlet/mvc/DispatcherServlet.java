@@ -1,6 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
-import jakarta.servlet.ServletException;
+import context.org.springframework.stereotype.ControllerAdvice;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
-import java.io.IOException;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -18,11 +18,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private final transient HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final transient HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final transient ComponentScanner componentScanner;
     private transient HandlerExecutor handlerExecutor;
 
     public DispatcherServlet(Object... basePackages) {
-        addHandlerMapping(new AnnotationHandlerMapping(basePackages));
+        componentScanner = new ComponentScanner(basePackages);
+        addHandlerMapping(new AnnotationHandlerMapping(componentScanner));
         addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        addExceptionHandlerAdapter();
     }
 
     @Override
@@ -38,12 +41,17 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
-    public void addExceptionHandlerAdapter(ExceptionHandlerAdapter exceptionHandlerAdapter) {
-        handlerAdapterRegistry.addHandlerAdapter(exceptionHandlerAdapter);
+    public void addExceptionHandlerAdapter() {
+        final Optional<Class<?>> clazz = componentScanner.getSingleTypeAnnotateWith(ControllerAdvice.class);
+
+        if (clazz.isPresent()) {
+            final Object controllerAdvice = componentScanner.createInstance(clazz.get());
+            handlerAdapterRegistry.addHandlerAdapter((HandlerAdapter) controllerAdvice);
+        }
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
