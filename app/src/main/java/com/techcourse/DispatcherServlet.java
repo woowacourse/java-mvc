@@ -36,9 +36,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMappings() {
         this.handlerMappings = new ArrayList<>();
-//        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-//        manualHandlerMapping.initialize();
-//        handlerMappings.add(manualHandlerMapping);
 
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
@@ -47,7 +44,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerAdapters() {
         this.handlerAdapters = new ArrayList<>();
-//        handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
