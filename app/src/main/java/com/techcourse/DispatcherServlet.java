@@ -42,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdaptorFinder() {
-        handlerAdaptorFinder = new HandlerAdaptorFinder(List.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter()));
+        handlerAdaptorFinder = new HandlerAdaptorFinder(List.of(new AnnotationHandlerAdapter()));
     }
 
     @Override
