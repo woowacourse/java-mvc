@@ -1,26 +1,20 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import com.techcourse.controller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapper.HandlerMapping;
 
-public class ManualHandlerMapping implements HandlerMapping {
+import java.util.HashMap;
+import java.util.Map;
+
+public class ManualHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
-    @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
@@ -34,13 +28,8 @@ public class ManualHandlerMapping implements HandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    @Override
-    public Object getHandler(final HttpServletRequest request) {
-        return getHandler(request.getRequestURI());
-    }
-
     public Controller getHandler(final String requestURI) {
-        log.info("Request Mapping Uri : {}", requestURI);
+        log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
 }
