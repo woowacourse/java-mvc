@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.HandlerExecutor;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -24,8 +25,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
+        this.handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
@@ -50,8 +53,7 @@ public class DispatcherServlet extends HttpServlet {
 
         final Object handler = nullableHandler.get();
         try {
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
