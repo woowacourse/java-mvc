@@ -20,18 +20,16 @@ public class ControllerScanner {
                 .stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
-                        getControllerInstance()
+                        this::getControllerInstance
                 ));
     }
 
-    private Function<Class<?>, Object> getControllerInstance() {
-        return clazz -> {
-            try {
-                return clazz.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                log.warn("Controller 를 생성자로 생성하던 도중 예외가 발생하였습니다.", e);
-                throw new ControllerScannerException("[ERROR] Controller 를 생성자로 생성하던 도중 예외가 발생하였습니다.");
-            }
-        };
+    private Object getControllerInstance(final Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            log.warn("Controller 를 생성자로 생성하던 도중 예외가 발생하였습니다.", e);
+            throw new ControllerScannerException("[ERROR] Controller 를 생성자로 생성하던 도중 예외가 발생하였습니다.");
+        }
     }
 }
