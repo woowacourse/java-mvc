@@ -1,13 +1,12 @@
 package webmvc.org.springframework.web.servlet.mvc.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
+import java.util.Map;
 import web.org.springframework.http.MediaType;
 import webmvc.org.springframework.web.servlet.mvc.View;
-
-import java.util.Map;
 
 public class JsonView implements View {
 
@@ -22,21 +21,22 @@ public class JsonView implements View {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
+        final String responseBody = findResponseBody(model);
+
+        response.getWriter()
+                .write(responseBody);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        final PrintWriter writer = response.getWriter();
+    }
 
+    private String findResponseBody(final Map<String, ?> model) throws JsonProcessingException {
         if (model.isEmpty()) {
-            writer.write(BLANK);
-            return ;
+            return BLANK;
         }
-
         if (model.size() == MINIMUM_MODEL_SIZE) {
             final Object responseBody = model.values().toArray(Object[]::new)[0];
 
-            writer.write(objectMapper.writeValueAsString(responseBody));
-            return ;
+            return objectMapper.writeValueAsString(responseBody);
         }
-
-        writer.write(objectMapper.writeValueAsString(model));
+        return objectMapper.writeValueAsString(model);
     }
 }
