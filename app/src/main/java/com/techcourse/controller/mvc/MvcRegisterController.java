@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class MvcRegisterController {
@@ -24,11 +25,11 @@ public class MvcRegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView("redirect:/index.jsp");
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView viewRegister(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView("/register.jsp");
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class MvcForwardController {
@@ -16,6 +17,6 @@ public class MvcForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView viewIndex(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView("/index.jsp");
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
