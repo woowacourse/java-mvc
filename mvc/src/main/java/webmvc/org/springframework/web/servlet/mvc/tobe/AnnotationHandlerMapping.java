@@ -1,24 +1,23 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, AnnotationHandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -26,38 +25,37 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Set<Class<?>> controllers = getAnnotatedControllerClasses();
-        for (Class<?> controller : controllers) {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        for (Object controller : controllerScanner.getAnnotatedControllerClasses()) {
             addAnnotatedHandlerExecution(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addAnnotatedHandlerExecution(Class<?> controller) {
-        for (Method method : controller.getMethods()) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(),
-                    requestMapping.method()[0]);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+    private void addAnnotatedHandlerExecution(Object controller) {
+        for (Method method : getRequestMappedMethods(controller)) {
+            HandlerKey handlerKey = createHandlerKey(method);
+            AnnotationHandlerExecution annotationHandlerExecution = new AnnotationHandlerExecution(
+                    controller, method);
+            handlerExecutions.put(handlerKey, annotationHandlerExecution);
         }
     }
 
-    private Set<Class<?>> getAnnotatedControllerClasses() {
-        Set<Class<?>> controllers = new HashSet<>();
-        for (Object packagePath : basePackage) {
-            Reflections reflections = new Reflections((String) packagePath);
-            controllers.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-        }
-        return controllers;
+    private List<Method> getRequestMappedMethods(Object controller) {
+        return Arrays.stream(controller.getClass().getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toList());
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    private HandlerKey createHandlerKey(Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        return new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+    }
+
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod().toUpperCase());
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
 }

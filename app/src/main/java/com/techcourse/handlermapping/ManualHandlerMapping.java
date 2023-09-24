@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.handlermapping;
 
 import com.techcourse.controller.*;
 import org.slf4j.Logger;
