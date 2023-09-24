@@ -11,6 +11,7 @@ import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,8 +30,8 @@ class JsonViewTest {
             return name;
         }
 
-        public void setName(final String name) {
-            this.name = name;
+        public int getAge() {
+            return age;
         }
 
     }
@@ -52,16 +53,14 @@ class JsonViewTest {
         printWriter.flush();
 
         //then
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final String json = objectMapper.writeValueAsString(user);
-        Assertions.assertThat(out.toString()).isEqualTo(json);
+        assertThat(out.toString()).isEqualTo("{\"name\":\"홍길동\",\"age\":20}");
     }
 
     @Test
     void 여러개_클래스를_json으로_파싱할_수_있다() throws Exception {
         //given
         final var user = new User("홍길동", 20);
-        final var model = Map.of("user", user, "hi", user);
+        final var model = Map.of("user", user, "other", user);
 
         //when
         final var jsonView = new JsonView();
@@ -75,9 +74,10 @@ class JsonViewTest {
         printWriter.flush();
 
         //then
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final String json = objectMapper.writeValueAsString(model);
-        Assertions.assertThat(out.toString()).isEqualTo(json);
+        assertThat(out.toString())
+                .startsWith("{")
+                .contains("\"user\":{\"name\":\"홍길동\",\"age\":20}", "\"other\":{\"name\":\"홍길동\",\"age\":20}")
+                .endsWith("}");
     }
 
 }
