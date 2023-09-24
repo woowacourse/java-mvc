@@ -12,7 +12,7 @@
   - [x] handler가 없는 요청이면 404페이지 반환하기
 ## 3단계 - JSON View 구현하기
 - [ ] 화면에 대한 책임을 View 클래스가 갖도록 구성하기
-  - [ ] JspView 클래스를 구현
+  - [x] JspView 클래스를 구현
   - [ ] JsonView 클래스를 구현
 - [ ] Legacy MVC 제거하기
 ## 리팩토링 목록
