@@ -26,7 +26,7 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
-    void register_view_요청에_대한_handlerMapping를_반환한다() {
+    void 회원가입_GET_요청에_대한_handlerMapping를_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/register/view");
@@ -34,7 +34,7 @@ class HandlerMappingRegistryTest {
 
         final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
 
-        assertThat(handlerMapping.getClass()).isEqualTo(ManualHandlerMapping.class);
+        assertThat(handlerMapping.getClass()).isEqualTo(AnnotationHandlerMapping.class);
     }
 
     @Test
