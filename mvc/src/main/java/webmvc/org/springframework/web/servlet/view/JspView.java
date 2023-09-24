@@ -14,10 +14,16 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private static final String FILE_EXTENSION = ".jsp";
+
     private final String viewName;
 
     public JspView(final String viewName) {
-        this.viewName = viewName;
+        if (viewName.contains(FILE_EXTENSION)) {
+            this.viewName = viewName;
+        } else {
+            this.viewName = viewName + FILE_EXTENSION;
+        }
     }
 
     @Override

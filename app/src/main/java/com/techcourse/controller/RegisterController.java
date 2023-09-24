@@ -28,4 +28,9 @@ public class RegisterController {
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
+
+    @RequestMapping(value = "/register/view")
+    public ModelAndView show2(HttpServletRequest req, HttpServletResponse res) {
+        return new ModelAndView(new JspView("/register.jsp"));
+    }
 }
