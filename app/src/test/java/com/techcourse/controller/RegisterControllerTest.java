@@ -12,13 +12,15 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class RegisterControllerTest {
 
     @Test
-    void 회원가입_테스트() throws Exception {
+    void 회원가입_테스트() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         HttpSession session = mock(HttpSession.class);
@@ -29,9 +31,9 @@ class RegisterControllerTest {
         when(request.getSession()).thenReturn(session);
 
         RegisterController registerController = new RegisterController();
-        String execute = registerController.execute(request, response);
+        ModelAndView register = registerController.register(request, response);
 
-        Assertions.assertThat(execute).isEqualTo("redirect:/index.jsp");
+        Assertions.assertThat(register.getView()).isEqualTo(new JspView("redirect:/index.jsp"));
         User user = InMemoryUserRepository.findByAccount("power").get();
         Assertions.assertThat(user.checkPassword("password")).isTrue();
     }
