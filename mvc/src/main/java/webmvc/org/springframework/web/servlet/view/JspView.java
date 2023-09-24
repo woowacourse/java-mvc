@@ -14,7 +14,7 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
-    private String viewName;
+    private final String viewName;
 
     public JspView(final String viewName) {
         this.viewName = viewName;
@@ -27,12 +27,12 @@ public class JspView implements View {
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
