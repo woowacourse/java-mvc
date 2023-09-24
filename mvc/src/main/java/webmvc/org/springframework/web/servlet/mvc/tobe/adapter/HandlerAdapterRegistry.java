@@ -1,4 +1,4 @@
-package com.techcourse.adapter;
+package webmvc.org.springframework.web.servlet.mvc.tobe.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ public class HandlerAdapterRegistry {
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public void init() {
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 

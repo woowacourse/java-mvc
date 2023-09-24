@@ -1,7 +1,5 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import com.techcourse.adapter.HandlerAdapterRegistry;
-import com.techcourse.handler.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -39,7 +38,11 @@ public class DispatcherServlet extends HttpServlet {
 
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
-        } catch (Exception e) {
+        }
+        catch (NotFoundException e) {
+//            new View(new JspView())
+        }
+        catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
