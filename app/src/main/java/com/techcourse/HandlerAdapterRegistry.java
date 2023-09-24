@@ -5,13 +5,14 @@ import java.util.Set;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
+import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 
 public class HandlerAdapterRegistry {
 
     private final Set<HandlerAdapter> handlerAdapters = new HashSet<>();
 
     public HandlerAdapterRegistry() {
-        handlerAdapters.add(new ControllerHandlerAdaptor());
+        handlerAdapters.add(new ControllerHandlerAdaptor(new ViewAdapter()));
         handlerAdapters.add(new HandlerExecutionHandlerAdaptor());
     }
 

@@ -6,11 +6,12 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class ControllerHandlerAdaptorTest {
 
-    private final ControllerHandlerAdaptor handlerAdaptor = new ControllerHandlerAdaptor();
+    private final ControllerHandlerAdaptor handlerAdaptor = new ControllerHandlerAdaptor(new ViewAdapter());
 
     @Test
     void Controller_인터페이스를_구현한_컨트롤러이면_지원한다() {
