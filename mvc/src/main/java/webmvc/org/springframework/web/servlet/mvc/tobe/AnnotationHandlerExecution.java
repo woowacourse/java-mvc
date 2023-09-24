@@ -7,17 +7,24 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class AnnotationHandlerExecution implements HandlerExecution{
 
-    private final Class<?> clazz;
+    private final Object handler;
     private final Method method;
 
     public AnnotationHandlerExecution(Class<?> clazz, Method method) {
-        this.clazz = clazz;
+        this.handler = instantiateController(clazz);
         this.method = method;
+    }
+
+    private Object instantiateController(Class<?> controller) {
+        try {
+            return controller.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new InstantiateControllerException();
+        }
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        return (ModelAndView) method.invoke(clazz.getDeclaredConstructor().newInstance(), request,
-                response);
+        return (ModelAndView) method.invoke(handler, request, response);
     }
 }
