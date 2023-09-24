@@ -20,8 +20,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerExecutorComposite handlerExecutorComposite;
 
     public DispatcherServlet() {
-        this.handlerMappingComposite = new HandlerMappingComposite(new ManualHandlerMapping());
-        this.handlerExecutorComposite = new HandlerExecutorComposite(new ControllerInterfaceHandlerExecutor());
+        this.handlerMappingComposite = new HandlerMappingComposite();
+        this.handlerExecutorComposite = new HandlerExecutorComposite();
     }
 
     @Override
