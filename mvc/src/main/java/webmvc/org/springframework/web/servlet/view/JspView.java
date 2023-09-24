@@ -31,22 +31,15 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        final var requestDispatcher = request.getRequestDispatcher(getViewName());
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
 
-    @Override
-    public String getViewName() {
-        return viewName;
-    }
-
-    @Override
-    public boolean isRedirectCommand() {
+    private boolean isRedirectCommand() {
         return viewName.startsWith(REDIRECT_PREFIX);
     }
 
-    @Override
-    public String getRedirectFilePath() {
+    private String getRedirectFilePath() {
         return viewName.substring(REDIRECT_PREFIX.length());
     }
 }
