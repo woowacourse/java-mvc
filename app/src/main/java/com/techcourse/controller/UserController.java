@@ -16,7 +16,7 @@ import webmvc.org.springframework.web.servlet.view.JsonView;
 public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse ignored) {
         final String account = request.getParameter("account");
         if (validateNotExistUser(account)) {
             return NotExistUserException.createJsonMessage();

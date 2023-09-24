@@ -14,7 +14,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse ignored) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
@@ -26,7 +26,7 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView show(HttpServletRequest ignored1, HttpServletResponse ignored2) {
         final JspView jspView = new JspView("/register.jsp");
         return new ModelAndView(jspView);
     }

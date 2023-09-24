@@ -13,7 +13,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView home(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView home(final HttpServletRequest ignored1, final HttpServletResponse ignored2) {
         final View view = new JspView("/index.jsp");
         return new ModelAndView(view);
     }
