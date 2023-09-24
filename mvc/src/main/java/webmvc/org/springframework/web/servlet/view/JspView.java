@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.View;
@@ -33,5 +34,22 @@ public class JspView implements View {
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        JspView jspView = (JspView) o;
+        return Objects.equals(viewName, jspView.viewName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(viewName);
     }
 }
