@@ -1,20 +1,20 @@
 package webmvc.org.springframework.web.servlet.mvc.asis;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-import java.util.Objects;
+@Controller
+public class ForwardController {
 
-public class ForwardController implements Controller {
+    private static final String INDEX = "/index.jsp";
 
-    private final String path;
-
-    public ForwardController(final String path) {
-        this.path = Objects.requireNonNull(path);
-    }
-
-    @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return path;
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(INDEX));
     }
 }
