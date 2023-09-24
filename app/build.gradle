@@ -21,6 +21,7 @@ dependencies {
     implementation "org.apache.tomcat.embed:tomcat-embed-jasper:10.1.13"
     implementation "ch.qos.logback:logback-classic:1.2.12"
     implementation "org.apache.commons:commons-lang3:3.13.0"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
     testImplementation "org.assertj:assertj-core:3.24.2"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
