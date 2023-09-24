@@ -85,6 +85,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerExecution handlerExecution = new HandlerExecution(method, classInstance);
 
             handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("Initialized handler ! {}", handlerKey);
         }
     }
 
