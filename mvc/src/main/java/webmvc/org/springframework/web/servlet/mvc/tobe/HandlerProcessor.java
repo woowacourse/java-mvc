@@ -8,11 +8,7 @@ import java.util.Set;
 
 public class HandlerProcessor {
 
-    private static final Set<HandlerMapping> handlerMappings = new HashSet<>();
-
-    public static void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
-    }
+    private final Set<HandlerMapping> handlerMappings = new HashSet<>();
 
     public HandlerProcessor(HandlerMapping... handlerMappings) {
         for (HandlerMapping handlerMapping : handlerMappings) {
@@ -21,7 +17,7 @@ public class HandlerProcessor {
         }
     }
 
-    public Object handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         for (HandlerMapping handlerMapping : handlerMappings) {
             if (handlerMapping.isSupport(request)) {
                 return handlerMapping.executeHandler(request, response);
