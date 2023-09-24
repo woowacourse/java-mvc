@@ -73,4 +73,16 @@ class HandlerMappingRegistryTest {
 
         assertThat(handlerMapping.getClass()).isEqualTo(AnnotationHandlerMapping.class);
     }
+
+    @Test
+    void 로그아웃_POST_요청에_대한_handlerMapping를_반환한다() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/logout");
+        when(request.getMethod()).thenReturn("POST");
+
+        final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
+
+        assertThat(handlerMapping.getClass()).isEqualTo(AnnotationHandlerMapping.class);
+    }
 }
