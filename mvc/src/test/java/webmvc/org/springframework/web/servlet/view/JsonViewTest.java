@@ -3,6 +3,7 @@ package webmvc.org.springframework.web.servlet.view;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,14 +39,8 @@ class JsonViewTest {
         jsonView.render(model, request, response);
 
         // then
-        String content = outputStream.getContent();
-
-        assertThat(content).isEqualTo(
-                "{" + "\r\n" +
-                        "\t" + "name: teo," + "\r\n" +
-                        "\t" + "age: 25" + "\r\n" +
-                        "}"
-        );
+        Map<String, String> content = new ObjectMapper().readValue(outputStream.getContent(), HashMap.class);
+        assertThat(content).isEqualTo(model);
     }
 
     static class FakeOutputStream extends ServletOutputStream {
