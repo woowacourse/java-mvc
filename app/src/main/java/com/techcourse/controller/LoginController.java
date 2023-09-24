@@ -3,6 +3,7 @@ package com.techcourse.controller;
 import static com.techcourse.controller.HomeController.REDIRECT_HOME_URL;
 
 import com.techcourse.domain.User;
+import com.techcourse.exception.UnauthorizedException;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,8 +17,6 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class LoginController {
-
-    private static final String REDIRECT_401_URL = "redirect:/401.jsp";
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
@@ -44,7 +43,7 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(REDIRECT_401_URL);
+                .orElseThrow(() -> new UnauthorizedException("잘못된 로그인 정보입니다."));
         return new ModelAndView(new JspView(viewName));
     }
 
@@ -54,7 +53,7 @@ public class LoginController {
             session.setAttribute(UserSession.SESSION_KEY, user);
             return REDIRECT_HOME_URL;
         }
-        return REDIRECT_401_URL;
+        throw new UnauthorizedException("잘못된 로그인 정보입니다.");
     }
 
 }

@@ -1,6 +1,9 @@
 package com.techcourse;
 
+import com.techcourse.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.ExceptionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
@@ -9,9 +12,14 @@ import java.util.NoSuchElementException;
 
 public class ExceptionHandler extends ExceptionHandlerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
+
     @Override
     protected ModelAndView handleException(HttpServletResponse response, Exception exception) {
-        // TODO 401 예외 처리 구현 후 매핑
+        log.error("Handle Exception : {}", exception.getClass().getName());
+        if (exception instanceof UnauthorizedException) {
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
+        }
         if (exception instanceof NoSuchElementException) {
             return new ModelAndView(new JspView("redirect:/404.jsp"));
         }
