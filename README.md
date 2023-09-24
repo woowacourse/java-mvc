@@ -24,3 +24,5 @@
 - [x] JsonView 클래스 구현
   - [x] ObjectMapper를 통해 json을 반환하도록 한다.
   - [x] UserController를 추가한다
+- [ ] Legacy MVC 제거
+  - [ ] com.techcourse에 있는 Controller를 모두 어노테이션 기반 컨트롤러로 변경한다
