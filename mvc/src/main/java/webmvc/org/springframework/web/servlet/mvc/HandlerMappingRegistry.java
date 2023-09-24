@@ -2,7 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import web.org.springframework.web.exception.HandlerMappingNotFoundException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 import java.util.List;
 
