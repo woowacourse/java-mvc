@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -6,23 +6,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.handermapping.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdaptor.HandlerAdaptors;
+import webmvc.org.springframework.web.servlet.mvc.view.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String rootPackagePath;
     private HandlerAdaptors handlerAdaptors;
     private HandlerMappings handlerMappings;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String rootPackagePath) {
+        this.rootPackagePath = rootPackagePath;
     }
 
     @Override
     public void init() {
         handlerAdaptors = new HandlerAdaptors();
-        handlerMappings = new HandlerMappings(this.getClass().getPackageName());
+        handlerMappings = new HandlerMappings(rootPackagePath);
         handlerMappings.initialize();
     }
 

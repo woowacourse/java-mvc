@@ -1,11 +1,9 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.handlerAdaptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
-public class ExecutionHandlerAdaptor implements HandlerAdaptor {
+public class ExecutionHandleradaptor implements Handleradaptor {
 
     @Override
     public boolean isSame(final Object handler) {
@@ -13,8 +11,8 @@ public class ExecutionHandlerAdaptor implements HandlerAdaptor {
     }
 
     @Override
-    public ModelAndView execute(final Object handler, final HttpServletRequest request,
-                                final HttpServletResponse response)
+    public Object execute(final Object handler, final HttpServletRequest request,
+                          final HttpServletResponse response)
             throws Exception {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
         return handlerExecution.handle(request, response);

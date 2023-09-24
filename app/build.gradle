@@ -17,7 +17,6 @@ repositories {
 dependencies {
     implementation project(":mvc")
 
-    implementation "org.apache.tomcat.embed:tomcat-embed-core:10.1.13"
     implementation "org.apache.tomcat.embed:tomcat-embed-jasper:10.1.13"
     implementation "ch.qos.logback:logback-classic:1.2.12"
     implementation "org.apache.commons:commons-lang3:3.13.0"

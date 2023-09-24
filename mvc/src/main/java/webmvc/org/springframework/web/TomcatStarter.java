@@ -1,23 +1,17 @@
-package com.techcourse;
+package webmvc.org.springframework.web;
 
+import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
-
-import java.io.File;
+import webmvc.org.springframework.web.servlet.mvc.UncheckedServletException;
 
 public class TomcatStarter {
 
-    public static final String WEBAPP_DIR_LOCATION = "app/src/main/webapp/";
-
     private final Tomcat tomcat;
-
-    public TomcatStarter(final int port) {
-        this(WEBAPP_DIR_LOCATION, port);
-    }
 
     public TomcatStarter(final String webappDirLocation, final int port) {
         this.tomcat = new Tomcat();
