@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.ApplicationContext;
-import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
+import context.org.springframework.context.ApplicationContext;
+import webmvc.org.springframework.web.servlet.DispatcherServlet;
 
 class DispatcherServletTest {
 

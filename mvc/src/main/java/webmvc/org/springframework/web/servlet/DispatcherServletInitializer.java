@@ -1,11 +1,10 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import context.org.springframework.context.ApplicationContext;
 import web.org.springframework.web.WebApplicationInitializer;
-import webmvc.org.springframework.web.servlet.mvc.ApplicationContext;
-import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
 
 /**
  * Base class for {@link WebApplicationInitializer}

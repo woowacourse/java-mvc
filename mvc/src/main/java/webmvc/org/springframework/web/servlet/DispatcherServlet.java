@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,9 +10,10 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import context.org.springframework.context.ApplicationContext;
+import webmvc.org.springframework.web.servlet.view.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapping.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 

@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc;
+package context.org.springframework.context;
 
 public class ApplicationContextAware {
 

@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc;
+package context.org.springframework.context;
 
 import context.org.springframework.stereotype.Controller;
 import core.org.springframework.util.ReflectionUtils;
@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapping.HandlerMapping;
 
 public class ApplicationContext {
 
