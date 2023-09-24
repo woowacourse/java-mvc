@@ -45,8 +45,11 @@ public class DispatcherServlet extends HttpServlet {
 
             view.render(model, request, response);
         } catch (Exception e) {
+            // TODO: ErrorView 구현
+            response.setStatus(404);
             log.error("exception occurred : {}", e.getMessage(), e);
         } catch (Error e) {
+            response.setStatus(500);
             log.error("error occurred : {}", e.getMessage(), e);
         }
     }
