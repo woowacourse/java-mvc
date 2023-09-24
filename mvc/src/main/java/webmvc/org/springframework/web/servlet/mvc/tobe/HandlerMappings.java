@@ -1,7 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.HandlerMapping;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ public class HandlerMappings {
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void init() {
-        handlerMappings.add(new AnnotationHandlerMapping());
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
@@ -26,5 +24,9 @@ public class HandlerMappings {
             }
         }
         throw new IllegalArgumentException("Not found handler for request : " + request.getRequestURI());
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
     }
 }

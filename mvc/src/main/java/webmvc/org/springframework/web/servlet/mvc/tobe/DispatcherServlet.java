@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.view.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.view.View;
 
@@ -14,8 +16,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappings handlerMappings;
-    private HandlerExecutor handlerExecutor;
+    private HandlerMappings handlerMappings = new HandlerMappings();
+    private HandlerExecutor handlerExecutor = new HandlerExecutor();
 
     public DispatcherServlet() {
     }
@@ -25,10 +27,16 @@ public class DispatcherServlet extends HttpServlet {
         this.handlerExecutor = handlerExecutor;
     }
 
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerExecutor.addHandlerAdapter(handlerAdapter);
+    }
+
     @Override
     public void init() {
-        handlerMappings = new HandlerMappings();
-        handlerExecutor = new HandlerExecutor();
         handlerMappings.init();
     }
 
