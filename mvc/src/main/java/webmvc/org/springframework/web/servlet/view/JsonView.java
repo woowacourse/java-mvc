@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.View;
 
 import java.util.Map;
+import java.util.Set;
 
 import static web.org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -14,9 +15,18 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        String body = objectMapper.writeValueAsString(model);
+        String body = objectMapper.writeValueAsString(parseModel(model));
 
         response.getWriter().write(body);
         response.setContentType(APPLICATION_JSON_UTF8_VALUE);
+    }
+
+    private Object parseModel(Map<String, ?> model) {
+        Set<String> keys = model.keySet();
+        if (keys.size() == 1) {
+            String key = keys.iterator().next();
+            return model.get(key);
+        }
+        return model;
     }
 }
