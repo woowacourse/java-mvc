@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
-import webmvc.org.springframework.web.servlet.mvc.asis.MyController;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -31,7 +31,7 @@ class HandlerExecutionHandlerAdapterTest {
     @Test
     void 지원하지_않는_핸들러면_false() {
         // given
-        MyController handler = new ForwardController("/");
+        Controller handler = new ForwardController("/");
 
         // when & then
         assertThat(handlerAdapter.supports(handler)).isFalse();

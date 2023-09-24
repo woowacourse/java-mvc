@@ -6,17 +6,17 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class MyControllerHandlerAdapter implements HandlerAdapter {
+public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof MyController;
+        return handler instanceof Controller;
     }
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
         throws Exception {
-        MyController controller = (MyController) handler;
+        Controller controller = (Controller) handler;
         return new ModelAndView(new JspView(controller.execute(request, response)));
     }
 }

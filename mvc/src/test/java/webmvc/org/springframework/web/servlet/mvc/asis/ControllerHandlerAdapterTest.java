@@ -15,14 +15,14 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class MyControllerHandlerAdapterTest {
+class ControllerHandlerAdapterTest {
 
-    MyControllerHandlerAdapter handlerAdapter = new MyControllerHandlerAdapter();
+    ControllerHandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
 
     @Test
     void 지원하는_핸들러면_true() {
         // given
-        MyController handler = new ForwardController("/");
+        Controller handler = new ForwardController("/");
 
         // when & then
         assertThat(handlerAdapter.supports(handler)).isTrue();
@@ -46,7 +46,7 @@ class MyControllerHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
-        MyController handler = new ForwardController("/index.jsp");
+        Controller handler = new ForwardController("/index.jsp");
 
         // when
         ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);

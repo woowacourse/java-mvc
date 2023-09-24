@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Objects;
 
-public class ForwardController implements MyController {
+public class ForwardController implements Controller {
 
     private final String path;
 
