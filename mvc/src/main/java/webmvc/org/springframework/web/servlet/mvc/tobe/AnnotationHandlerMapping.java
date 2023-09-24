@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final List<Method> methods,
             final Class<?> controller
     ) {
-        final HashMap<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+        final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
         for (final Method method : methods) {
             final HandlerKey handlerKey = createHandlerKey(method);
             final HandlerExecution handlerExecution = createHandlerExecution(controller, method);
