@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
@@ -45,12 +46,19 @@ public class DispatcherServlet extends HttpServlet {
 
             view.render(model, request, response);
         } catch (Exception e) {
-            // TODO: ErrorView 구현
-            response.setStatus(404);
+            sendError(response, 404);
             log.error("exception occurred : {}", e.getMessage(), e);
         } catch (Error e) {
-            response.setStatus(500);
+            sendError(response, 500);
             log.error("error occurred : {}", e.getMessage(), e);
+        }
+    }
+
+    private void sendError(HttpServletResponse response, final int statusCode) {
+        try {
+            response.sendError(statusCode);
+        } catch (IOException e) {
+            throw new ErrorRenderingException(e);
         }
     }
 }
