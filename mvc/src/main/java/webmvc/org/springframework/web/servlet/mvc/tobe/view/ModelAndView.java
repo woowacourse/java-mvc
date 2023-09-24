@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet;
+package webmvc.org.springframework.web.servlet.mvc.tobe.view;
 
 import java.util.Collections;
 import java.util.HashMap;

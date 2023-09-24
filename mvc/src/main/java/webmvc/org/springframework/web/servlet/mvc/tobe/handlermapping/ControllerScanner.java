@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping;
 
 import context.org.springframework.stereotype.Controller;
 import org.reflections.Reflections;

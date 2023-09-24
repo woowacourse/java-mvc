@@ -1,8 +1,8 @@
-package webmvc.org.springframework.web.servlet;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.HandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,13 +1,12 @@
-package com.techcourse.controller.mvc;
+package com.techcourse.controller;
 
-import com.techcourse.controller.RegisterController;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.view.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlerexecution.HandlerExecution;
 
 import java.lang.reflect.Method;
 
