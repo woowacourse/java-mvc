@@ -1,4 +1,4 @@
-package com.techcourse.controller.annotation_controller;
+package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -11,7 +11,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class RegisterAnnotationController {
+public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView executePostRegister(final HttpServletRequest req, final HttpServletResponse res) {
