@@ -31,7 +31,7 @@ public class JsonView implements View {
 
     private String makeJsonData(final Map<String, ?> model) throws JsonProcessingException {
         if (hasOnlyOneData(model)) {
-            final Object firstData = getFirstData(model);
+            final Object firstData = model.values().toArray(Object[]::new)[0];
             return objectMapper.writeValueAsString(firstData);
         }
         return objectMapper.writeValueAsString(model);
@@ -39,12 +39,5 @@ public class JsonView implements View {
 
     private Boolean hasOnlyOneData(final Map<String, ?> model) {
         return model.size() == ONLY_ONE_DATA;
-    }
-
-    private Object getFirstData(final Map<String, ?> model) {
-        return model.values()
-                .stream()
-                .findFirst()
-                .orElseThrow();
     }
 }
