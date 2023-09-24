@@ -14,7 +14,12 @@ public class HandlerMappingRegistry {
         this.handlerMappings = handlerMappings;
     }
 
-    public HandlerMapping getHandlerMapping(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
+        HandlerMapping handlerMapping = getHandlerMapping(request);
+        return handlerMapping.getHandler(request);
+    }
+
+    private HandlerMapping getHandlerMapping(HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.supports(request))
                 .findFirst()

@@ -40,8 +40,7 @@ public class DispatcherServlet extends HttpServlet {
         String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
-        Object handler = handlerMapping.getHandler(request);
+        Object handler = handlerMappingRegistry.getHandler(request);
         try {
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView mav = handlerAdapter.handle(handler, request, response);
