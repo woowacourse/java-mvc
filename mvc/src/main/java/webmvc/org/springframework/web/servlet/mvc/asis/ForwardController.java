@@ -2,8 +2,9 @@ package webmvc.org.springframework.web.servlet.mvc.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class ForwardController implements Controller {
 
@@ -14,7 +15,7 @@ public class ForwardController implements Controller {
     }
 
     @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return path;
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(path));
     }
 }

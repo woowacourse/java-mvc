@@ -13,8 +13,7 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
-        return modelAndView.getView().getName();
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handlerExecution.handle(request, response);
     }
 }
