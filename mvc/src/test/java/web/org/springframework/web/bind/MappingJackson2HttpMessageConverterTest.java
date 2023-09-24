@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestUser;
 import web.org.springframework.http.CachedBodyInputStream;
+import web.org.springframework.http.MappingJackson2HttpMessageConverter;
 
 import java.io.IOException;
 

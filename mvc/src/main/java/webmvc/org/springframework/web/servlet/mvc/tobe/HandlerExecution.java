@@ -2,8 +2,8 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import web.org.springframework.http.MappingJackson2HttpMessageConverter;
 import web.org.springframework.http.MediaType;
-import web.org.springframework.web.bind.MappingJackson2HttpMessageConverter;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
 import java.lang.reflect.Method;
