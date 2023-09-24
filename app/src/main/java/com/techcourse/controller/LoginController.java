@@ -15,8 +15,8 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller(path = "/login")
 public class LoginController {
 
-    public static final String REDIRECT_INDEX = "redirect:/index.jsp";
-    public static final String REDIRECT_401 = "redirect:/401.jsp";
+    private static final String REDIRECT_INDEX = "redirect:/index.jsp";
+    private static final String REDIRECT_401 = "redirect:/401.jsp";
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(method = RequestMethod.POST)
