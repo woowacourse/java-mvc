@@ -26,6 +26,6 @@ public class HandlerMappings {
                 return handler;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Not found handler for request : " + request.getRequestURI());
     }
 }
