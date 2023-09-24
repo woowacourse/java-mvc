@@ -7,11 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.tobe.mapper.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
