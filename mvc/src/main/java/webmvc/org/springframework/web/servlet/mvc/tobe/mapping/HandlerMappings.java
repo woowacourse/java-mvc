@@ -5,9 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HandlerMappings {
-
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
@@ -18,7 +18,8 @@ public class HandlerMappings {
 
     public Object getHandler(HttpServletRequest request) throws ServletException {
         return handlerMappings.stream()
-                .filter(it -> it.getHandler(request) != null)
+                .map(it -> it.getHandler(request))
+                .filter(Objects::nonNull)
                 .findAny()
                 .orElseThrow(() -> new ServletException("Not found handler for request URI : " + request.getRequestURI()));
     }
