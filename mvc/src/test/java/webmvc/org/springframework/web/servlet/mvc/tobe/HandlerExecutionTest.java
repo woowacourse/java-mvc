@@ -32,8 +32,6 @@ class HandlerExecutionTest {
         when(request.getContentType()).thenReturn("application/json");
         when(request.getContentLength()).thenReturn(requestBody.getBytes().length);
         when(request.getInputStream()).thenReturn(new CachedBodyInputStream(requestBody.getBytes()));
-
-
     }
 
     @Test

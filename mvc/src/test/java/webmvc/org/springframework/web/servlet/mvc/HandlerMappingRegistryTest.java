@@ -27,7 +27,7 @@ class HandlerMappingRegistryTest {
 
     @Test
     @DisplayName("request 에 맞는 Handler 를 반환한다.")
-    void matchHandler_handlerExecution() throws Exception {
+    void matchHandler_handlerExecution() {
         final var annotationHandlerMapping = new AnnotationHandlerMapping(new ComponentScanner("samples"));
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
