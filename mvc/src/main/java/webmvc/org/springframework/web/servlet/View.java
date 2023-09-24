@@ -7,4 +7,10 @@ import java.util.Map;
 
 public interface View {
     void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+    String getViewName();
+
+    boolean isRedirectCommand();
+
+    String getRedirectFilePath();
 }

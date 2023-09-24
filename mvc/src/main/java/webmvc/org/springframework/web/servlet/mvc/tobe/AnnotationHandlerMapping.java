@@ -5,12 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -22,12 +21,13 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final Map<HandlerKey, HandlerExecution> handlerExecutions = Objects.requireNonNull(HandlerExecutionFactory.create(basePackage));
         this.handlerExecutions.putAll(handlerExecutions);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
@@ -37,6 +37,6 @@ public class AnnotationHandlerMapping {
             return handlerExecutions.get(targetKey);
         }
 
-        return new IllegalArgumentException("처리 할 수 없는 요청 입니다.");
+        return null;
     }
 }
