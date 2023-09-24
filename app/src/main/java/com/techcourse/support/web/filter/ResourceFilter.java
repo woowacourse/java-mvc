@@ -50,16 +50,6 @@ public class ResourceFilter implements Filter {
         }
     }
 
-    private void doChain(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        try{
-            chain.doFilter(request, response);
-        }
-        catch (HandlerMappingNotFoundException e){
-            final RequestDispatcher dispatcher = request.getRequestDispatcher("/404.jsp");
-            dispatcher.forward(request, response);
-        }
-    }
-
     private boolean isResourceUrl(final String url) {
         for (final var prefix : resourcePrefixs) {
             if (url.startsWith(prefix)) {
@@ -67,6 +57,18 @@ public class ResourceFilter implements Filter {
             }
         }
         return false;
+    }
+
+    private void doChain(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        try {
+            chain.doFilter(request, response);
+        } catch (HandlerMappingNotFoundException e) {
+            final RequestDispatcher dispatcher = request.getRequestDispatcher("/404.jsp");
+            dispatcher.forward(request, response);
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new ServletException(e.getMessage());
+        }
     }
 
     @Override
