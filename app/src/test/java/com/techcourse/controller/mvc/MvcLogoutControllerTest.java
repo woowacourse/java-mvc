@@ -39,7 +39,7 @@ class MvcLogoutControllerTest extends ControllerTest {
             HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
             // then
-            assertThat(handlerExecution.getMethod()).isEqualTo(handlerExecution.getMethod()).isEqualTo(logoutUser);
+            assertThat(handlerExecution.getMethod()).isEqualTo(logoutUser);
         }
 
         @Test

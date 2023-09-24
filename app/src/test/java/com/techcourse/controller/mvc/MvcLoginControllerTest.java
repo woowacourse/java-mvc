@@ -35,7 +35,7 @@ class MvcLoginControllerTest extends ControllerTest {
             HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
             // then
-            assertThat(handlerExecution.getMethod()).isEqualTo(handlerExecution.getMethod()).isEqualTo(loginUser);
+            assertThat(handlerExecution.getMethod()).isEqualTo(loginUser);
         }
 
         @Test
@@ -119,7 +119,7 @@ class MvcLoginControllerTest extends ControllerTest {
             HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
             // then
-            assertThat(handlerExecution.getMethod()).isEqualTo(handlerExecution.getMethod()).isEqualTo(viewUser);
+            assertThat(handlerExecution.getMethod()).isEqualTo(viewUser);
         }
 
         @Test

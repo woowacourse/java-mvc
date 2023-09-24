@@ -34,7 +34,7 @@ class MvcRegisterControllerTest extends ControllerTest {
             HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
             // then
-            assertThat(handlerExecution.getMethod()).isEqualTo(handlerExecution.getMethod()).isEqualTo(registerUser);
+            assertThat(handlerExecution.getMethod()).isEqualTo(registerUser);
         }
 
         @Test
@@ -71,7 +71,7 @@ class MvcRegisterControllerTest extends ControllerTest {
             HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
             // then
-            assertThat(handlerExecution.getMethod()).isEqualTo(handlerExecution.getMethod()).isEqualTo(viewRegister);
+            assertThat(handlerExecution.getMethod()).isEqualTo(viewRegister);
         }
 
         @Test

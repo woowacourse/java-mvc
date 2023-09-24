@@ -32,7 +32,7 @@ class MvcForwardControllerTest extends ControllerTest {
             HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
             // then
-            assertThat(handlerExecution.getMethod()).isEqualTo(handlerExecution.getMethod()).isEqualTo(viewIndex);
+            assertThat(handlerExecution.getMethod()).isEqualTo(viewIndex);
         }
 
         @Test
