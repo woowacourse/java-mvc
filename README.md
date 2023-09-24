@@ -18,6 +18,6 @@
 ### 3단계 - Json View 구현하기
 
 - [x] JspView를 구현한다.
-- [ ] JsonView를 구현한다.
+- [x] JsonView를 구현한다.
 - [ ] 모든 컨트롤러를 어노테이션 기반으로 변경한다.
 - [ ] DispatcherServlet을 MVC 패키지로 이동한다.
