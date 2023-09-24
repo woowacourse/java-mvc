@@ -13,6 +13,7 @@ import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.Optional;
 
@@ -36,14 +37,14 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         final Optional<Object> nullableHandler = handlerMappingRegistry.getHandler(request);
 
         if (nullableHandler.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            render(new ModelAndView(new JspView("404.jsp")), request, response);
             return;
         }
 
