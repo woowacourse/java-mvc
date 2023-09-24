@@ -26,4 +26,12 @@ public class HandlerExecution {
     public String getDeclaringClassName() {
         return method.getDeclaringClass().getName();
     }
+
+    @Override
+    public String toString() {
+        return "HandlerExecution{" +
+                "controller=" + controller +
+                ", method=" + method +
+                '}';
+    }
 }
