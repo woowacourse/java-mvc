@@ -20,6 +20,8 @@ public class RegisterController {
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
+        final var session = req.getSession();
+        session.setAttribute(UserSession.SESSION_KEY, user);
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
