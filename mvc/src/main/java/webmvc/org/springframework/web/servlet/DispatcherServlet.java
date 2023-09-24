@@ -29,11 +29,11 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappers.init();
     }
 
-    protected void addHandlerMapper(final HandlerMapper handlerMapper) {
+    public void addHandlerMapper(final HandlerMapper handlerMapper) {
         handlerMappers.addHandlerMapper(handlerMapper);
     }
 
-    protected void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.addHandlerAdapter(handlerAdapter);
     }
 
