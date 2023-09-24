@@ -2,21 +2,19 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Objects;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,54 +26,48 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object subPackage : basePackage) {
-            intTargetPackage(subPackage);
+            initTargetPackage(subPackage);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void intTargetPackage(final Object base) {
+    private void initTargetPackage(final Object base) {
         final Reflections reflections = new Reflections(base);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : controllers) {
-            initTargetController(clazz);
-        }
+        reflections.getTypesAnnotatedWith(Controller.class)
+                .forEach(this::initTargetController);
     }
 
     private void initTargetController(final Class<?> clazz) {
         final Method[] methods = clazz.getMethods();
         for (Method method : methods) {
-            initTargetMethod(clazz, method);
+            initTargetMethod(method);
         }
     }
 
-    private void initTargetMethod(final Class<?> clazz, final Method method) {
-        if (Objects.nonNull(method.getDeclaredAnnotation(RequestMapping.class))) {
-            final HandlerKey key = getHandlerKey(method);
-            final Object instance = getInstance(clazz);
-            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
-            handlerExecutions.put(key, handlerExecution);
+    private void initTargetMethod(final Method method) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            final List<HandlerKey> keys = getHandlerKeys(method);
+            final HandlerExecution handlerExecution = new HandlerExecution(method);
+
+            final Map<HandlerKey, HandlerExecution> handlerExecutionMap = keys.stream()
+                    .map(key -> Map.entry(key, handlerExecution))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            handlerExecutions.putAll(handlerExecutionMap);
         }
     }
 
-    private HandlerKey getHandlerKey(final Method method) {
+    private List<HandlerKey> getHandlerKeys(final Method method) {
         final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         final String uri = requestMapping.value();
-        final RequestMethod requestMethod = requestMapping.method()[0];
-        return new HandlerKey(uri, requestMethod);
+        return Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(uri, requestMethod))
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    private Object getInstance(final Class<?> clazz) {
-        try {
-            final Constructor<?> constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            return constructor.newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e){
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
