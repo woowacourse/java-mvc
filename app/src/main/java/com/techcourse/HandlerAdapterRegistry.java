@@ -2,18 +2,14 @@ package com.techcourse;
 
 import java.util.HashSet;
 import java.util.Set;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
-import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 
 public class HandlerAdapterRegistry {
 
-    private final Set<HandlerAdapter> handlerAdapters = new HashSet<>();
+    private final Set<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapterRegistry() {
-        handlerAdapters.add(new ControllerHandlerAdaptor(new ViewAdapter()));
-        handlerAdapters.add(new HandlerExecutionHandlerAdaptor());
+    public HandlerAdapterRegistry(Set<HandlerAdapter> handlerAdapters) {
+        this.handlerAdapters = new HashSet<>(handlerAdapters);
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {

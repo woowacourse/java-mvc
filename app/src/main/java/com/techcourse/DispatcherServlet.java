@@ -5,11 +5,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
 import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -20,7 +25,15 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerAdapterRegistry handlerAdapter;
 
     public DispatcherServlet() {
-        this(new HandlerMappingRegistry(), new HandlerAdapterRegistry());
+        this(new HandlerMappingRegistry(Set.of(
+                        new ManualHandlerMapping(),
+                        new AnnotationHandlerMapping("com"))
+                ),
+                new HandlerAdapterRegistry(Set.of(
+                        new ControllerHandlerAdaptor(new ViewAdapter()),
+                        new HandlerExecutionHandlerAdaptor())
+                )
+        );
     }
 
     public DispatcherServlet(HandlerMappingRegistry handlerMapping, HandlerAdapterRegistry handlerAdapter) {

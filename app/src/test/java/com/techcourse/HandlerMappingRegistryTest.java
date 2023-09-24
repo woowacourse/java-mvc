@@ -8,10 +8,12 @@ import static org.mockito.Mockito.when;
 import com.techcourse.controller.LoginController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -21,7 +23,9 @@ class HandlerMappingRegistryTest {
 
     @BeforeEach
     void setUp() {
-        this.registry = new HandlerMappingRegistry();
+        this.registry = new HandlerMappingRegistry(Set.of(
+                new ManualHandlerMapping(), new AnnotationHandlerMapping("com")
+        ));
         registry.initialize();
     }
 

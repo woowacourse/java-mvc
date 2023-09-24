@@ -4,16 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappingRegistry {
 
-    private final Set<HandlerMapping> handlerMappings = new HashSet<>();
+    private final Set<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRegistry() {
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping("com"));
+    public HandlerMappingRegistry(Set<HandlerMapping> handlerMappings) {
+        this.handlerMappings = new HashSet<>(handlerMappings);
     }
 
     public void initialize() {
