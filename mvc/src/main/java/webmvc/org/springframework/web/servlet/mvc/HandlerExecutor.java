@@ -2,21 +2,48 @@ package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.NoSuchElementException;
 
 public class HandlerExecutor {
 
+    private static final Logger log = LoggerFactory.getLogger(HandlerExecutor.class);
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public HandlerExecutor(final HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
-    public void render(final HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-        final var modelAndView = handlerAdapter.handle(request, response, handler);
-        final var model = modelAndView.getModel();
-        final var view = modelAndView.getView();
+    public void render(final HttpServletRequest request, HttpServletResponse response, Object handler) {
+        try {
+            final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            if (handlerAdapter.isPresent()) {
+                final var adapter = handlerAdapter.get();
+                final var modelAndView = adapter.handle(request, response, handler);
+                final var model = modelAndView.getModel();
+                final var view = modelAndView.getView();
 
-        view.render(model, request, response);
+                view.render(model, request, response);
+                return;
+            }
+
+            throw new NoSuchElementException("Cannot find handler adapter for " + handler.getClass().getCanonicalName());
+        } catch (InvocationTargetException exception) {
+            final var targetException = exception.getTargetException();
+            log.error("Unexpected exception: {}", targetException.getMessage());
+            executeExceptionHandler(request, response, targetException);
+        } catch (Exception exception) {
+            log.error("Unexpected exception: {}", exception.getMessage());
+            executeExceptionHandler(request, response, exception);
+        }
     }
+
+    private void executeExceptionHandler(HttpServletRequest request, HttpServletResponse response, Throwable cause) {
+        handlerAdapterRegistry.getHandlerAdapter(cause)
+                .ifPresent(exceptionHandlerAdapter -> render(request, response, cause));
+    }
+
 }

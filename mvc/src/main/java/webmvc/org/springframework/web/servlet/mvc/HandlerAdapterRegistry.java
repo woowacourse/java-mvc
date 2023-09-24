@@ -1,7 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
 import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 public class HandlerAdapterRegistry {
@@ -12,11 +12,10 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(final Object handler) {
+    public Optional<HandlerAdapter> getHandlerAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(found -> found.supports(handler))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("cannot find supporting handler adapter"));
+                .findFirst();
     }
 
 }

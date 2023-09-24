@@ -10,6 +10,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -18,10 +19,9 @@ public class DispatcherServlet extends HttpServlet {
     private final transient HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final transient HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
     private transient HandlerExecutor handlerExecutor;
-    private transient ExceptionHandlerAdapter exceptionHandlerAdapter;
 
-    public DispatcherServlet() {
-        addHandlerMapping(new AnnotationHandlerMapping());
+    public DispatcherServlet(Object... basePackages) {
+        addHandlerMapping(new AnnotationHandlerMapping(basePackages));
         addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addExceptionHandlerAdapter(ExceptionHandlerAdapter exceptionHandlerAdapter) {
-        this.exceptionHandlerAdapter = exceptionHandlerAdapter;
+        handlerAdapterRegistry.addHandlerAdapter(exceptionHandlerAdapter);
     }
 
     @Override
@@ -49,16 +49,15 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = handlerMappingRegistry.getHandler(request);
-
-            handlerExecutor.render(request, response, handler);
-        } catch (Exception exception) {
-            log.error("Exception : {} {}", exception.getMessage(), exception.getStackTrace());
-            if (exceptionHandlerAdapter != null) {
-                exceptionHandlerAdapter.handle(request, response, exception);
-                return;
+            if (handler.isEmpty()) {
+                throw new NoSuchElementException("Cannot find handler for request");
             }
 
-            throw new ServletException(exception.getMessage());
+            handlerExecutor.render(request, response, handler.get());
+        } catch (Exception exception) {
+            log.error("Exception : {} {}", exception.getMessage(), exception.getStackTrace());
+
+            handlerExecutor.render(request, response, exception);
         }
     }
 

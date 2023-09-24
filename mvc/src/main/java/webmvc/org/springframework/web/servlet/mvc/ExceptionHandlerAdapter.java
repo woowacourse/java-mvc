@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
-
 public abstract class ExceptionHandlerAdapter implements HandlerAdapter {
 
     @Override
@@ -14,7 +12,7 @@ public abstract class ExceptionHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         return handleException(response, (Exception) handler);
     }
 
