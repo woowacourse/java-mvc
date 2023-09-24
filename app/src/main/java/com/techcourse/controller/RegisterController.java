@@ -1,4 +1,4 @@
-package com.techcourse.controller.mvc;
+package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -13,9 +13,9 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcRegisterController {
+public class RegisterController {
 
-    private static final Logger log = LoggerFactory.getLogger(MvcRegisterController.class);
+    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView registerUser(HttpServletRequest req, HttpServletResponse res) {

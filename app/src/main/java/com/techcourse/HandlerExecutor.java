@@ -9,7 +9,6 @@ import java.util.Set;
 public class HandlerExecutor {
 
     private static final Set<HandlerAdapter> handlerAdapters = Set.of(
-            new ControllerAdapter(),
             new HandlerExecutionAdapter()
     );
 

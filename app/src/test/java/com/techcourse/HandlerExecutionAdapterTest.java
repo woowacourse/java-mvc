@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.techcourse.controller.mvc.MvcRegisterController;
+import com.techcourse.controller.RegisterController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ class HandlerExecutionAdapterTest {
     @Test
     void supports() throws Exception {
         //given
-        MvcRegisterController mvcRegisterController = MvcRegisterController.class.newInstance();
-        Method method= mvcRegisterController.getClass()
+        RegisterController registerController = RegisterController.class.newInstance();
+        Method method= registerController.getClass()
                 .getDeclaredMethod("viewRegister", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution handlerExecution = new HandlerExecution(mvcRegisterController, method);
+        HandlerExecution handlerExecution = new HandlerExecution(registerController, method);
 
         //when
         boolean supports = handlerExecutionAdapter.supports(handlerExecution);
@@ -33,10 +33,10 @@ class HandlerExecutionAdapterTest {
     @Test
     void adapt() throws Exception {
         //given
-        MvcRegisterController mvcRegisterController = MvcRegisterController.class.newInstance();
-        Method method= mvcRegisterController.getClass()
+        RegisterController registerController = RegisterController.class.newInstance();
+        Method method= registerController.getClass()
                 .getDeclaredMethod("viewRegister", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution handlerExecution = new HandlerExecution(mvcRegisterController, method);
+        HandlerExecution handlerExecution = new HandlerExecution(registerController, method);
 
         //when, then
         assertThat(handlerExecutionAdapter.adapt(null, null, handlerExecution))

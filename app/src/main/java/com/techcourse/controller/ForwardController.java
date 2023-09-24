@@ -1,4 +1,4 @@
-package com.techcourse.controller.mvc;
+package com.techcourse.controller;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,9 +11,9 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcForwardController {
+public class ForwardController {
 
-    private static final Logger log = LoggerFactory.getLogger(MvcForwardController.class);
+    private static final Logger log = LoggerFactory.getLogger(ForwardController.class);
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView viewIndex(HttpServletRequest req, HttpServletResponse res) {

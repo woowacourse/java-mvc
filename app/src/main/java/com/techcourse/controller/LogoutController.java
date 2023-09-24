@@ -1,6 +1,5 @@
-package com.techcourse.controller.mvc;
+package com.techcourse.controller;
 
-import com.techcourse.controller.UserSession;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,9 +12,9 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class MvcLogoutController {
+public class LogoutController {
 
-    private static final Logger log = LoggerFactory.getLogger(MvcLogoutController.class);
+    private static final Logger log = LoggerFactory.getLogger(LogoutController.class);
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public ModelAndView logoutUser(HttpServletRequest req, HttpServletResponse res) {

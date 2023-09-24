@@ -1,5 +1,6 @@
 package com.techcourse.controller.mvc;
 
+import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,9 +18,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class MvcLogoutControllerTest extends ControllerTest {
+class LogoutControllerTest extends ControllerTest {
 
-    private static final MvcLogoutController mvcLogoutController = new MvcLogoutController();
+    private static final LogoutController LOGOUT_CONTROLLER = new LogoutController();
 
     @Nested
     class LogoutUser {
@@ -29,7 +30,7 @@ class MvcLogoutControllerTest extends ControllerTest {
             HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getRequestURI()).thenReturn("/logout");
             when(request.getMethod()).thenReturn("POST");
-            Method logoutUser = MvcLogoutController.class.newInstance().getClass()
+            Method logoutUser = LogoutController.class.newInstance().getClass()
                     .getDeclaredMethod("logoutUser", HttpServletRequest.class, HttpServletResponse.class);
 
             // when
@@ -47,7 +48,7 @@ class MvcLogoutControllerTest extends ControllerTest {
             when(request.getSession()).thenReturn(httpSession);
 
             //when
-            ModelAndView modelAndView = mvcLogoutController.logoutUser((request), null);
+            ModelAndView modelAndView = LOGOUT_CONTROLLER.logoutUser((request), null);
 
             //then
             verify(httpSession, times(1)).removeAttribute(UserSession.SESSION_KEY);

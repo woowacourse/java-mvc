@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -23,12 +24,14 @@ class DispatcherServletTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
         ModelAndView modelAndView = mock(ModelAndView.class);
+        View view = mock(View.class);
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerExecutor);
 
         when(request.getMethod()).thenReturn("GET");
         when(handlerMappings.getHandler(any())).thenReturn(handlerExecutor);
         when(handlerExecutor.execute(any(), any(), any())).thenReturn(modelAndView);
+        when(modelAndView.getView()).thenReturn(view);
         when(request.getRequestDispatcher(any())).thenReturn(requestDispatcher);
 
         //when
@@ -36,6 +39,6 @@ class DispatcherServletTest {
 
         //then
         verify(handlerExecutor, times(1)).execute(any(), any(), any());
-        verify(modelAndView, times(1)).render(any(), any());
+        verify(view, times(1)).render(any(), any(), any());
     }
 }

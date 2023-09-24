@@ -1,5 +1,6 @@
 package com.techcourse.controller.mvc;
 
+import com.techcourse.controller.RegisterController;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class MvcRegisterControllerTest extends ControllerTest {
+class RegisterControllerTest extends ControllerTest {
 
-    private static final MvcRegisterController mvcRegisterController = new MvcRegisterController();
+    private static final RegisterController REGISTER_CONTROLLER = new RegisterController();
 
     @Nested
     class RegisterUser {
@@ -27,7 +28,7 @@ class MvcRegisterControllerTest extends ControllerTest {
             HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getRequestURI()).thenReturn("/register");
             when(request.getMethod()).thenReturn("POST");
-            Method registerUser = MvcRegisterController.class.newInstance().getClass()
+            Method registerUser = RegisterController.class.newInstance().getClass()
                     .getDeclaredMethod("registerUser", HttpServletRequest.class, HttpServletResponse.class);
 
             // when
@@ -46,7 +47,7 @@ class MvcRegisterControllerTest extends ControllerTest {
             when(request.getParameter("email")).thenReturn("moomin@gmail.com");
 
             //when
-            ModelAndView modelAndView = mvcRegisterController.registerUser(request, null);
+            ModelAndView modelAndView = REGISTER_CONTROLLER.registerUser(request, null);
 
             //then
             assertAll(
@@ -64,7 +65,7 @@ class MvcRegisterControllerTest extends ControllerTest {
             HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getRequestURI()).thenReturn("/register");
             when(request.getMethod()).thenReturn("GET");
-            Method viewRegister = MvcRegisterController.class.newInstance().getClass()
+            Method viewRegister = RegisterController.class.newInstance().getClass()
                     .getDeclaredMethod("viewRegister", HttpServletRequest.class, HttpServletResponse.class);
 
             // when
@@ -77,7 +78,7 @@ class MvcRegisterControllerTest extends ControllerTest {
         @Test
         void viewRegister() {
             //given, when
-            ModelAndView modelAndView = mvcRegisterController.viewRegister(null, null);
+            ModelAndView modelAndView = REGISTER_CONTROLLER.viewRegister(null, null);
 
             //then
             assertThat(modelAndView.getViewName()).isEqualTo("/register.jsp");

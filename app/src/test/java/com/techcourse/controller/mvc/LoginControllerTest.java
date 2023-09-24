@@ -1,5 +1,6 @@
 package com.techcourse.controller.mvc;
 
+import com.techcourse.controller.LoginController;
 import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class MvcLoginControllerTest extends ControllerTest {
+class LoginControllerTest extends ControllerTest {
 
-    private final MvcLoginController mvcLoginController = new MvcLoginController();
+    private final LoginController loginController = new LoginController();
 
     @Nested
     class LoginUser {
@@ -28,7 +29,7 @@ class MvcLoginControllerTest extends ControllerTest {
             HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getRequestURI()).thenReturn("/login");
             when(request.getMethod()).thenReturn("POST");
-            Method loginUser = MvcLoginController.class.newInstance().getClass()
+            Method loginUser = LoginController.class.newInstance().getClass()
                     .getDeclaredMethod("loginUser", HttpServletRequest.class, HttpServletResponse.class);
 
             // when
@@ -48,7 +49,7 @@ class MvcLoginControllerTest extends ControllerTest {
                     .thenReturn(new User(1, "moomin", "password", "moomin@gmail.com"));
 
             //when
-            ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
+            ModelAndView modelAndView = loginController.loginUser(request, null);
 
             //then
             assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
@@ -64,7 +65,7 @@ class MvcLoginControllerTest extends ControllerTest {
             when(request.getParameter("password")).thenReturn("password");
 
             //when
-            ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
+            ModelAndView modelAndView = loginController.loginUser(request, null);
 
             //then
             assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
@@ -80,7 +81,7 @@ class MvcLoginControllerTest extends ControllerTest {
             when(request.getParameter("password")).thenReturn("wrong");
 
             //when
-            ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
+            ModelAndView modelAndView = loginController.loginUser(request, null);
 
             //then
             assertThat(modelAndView.getViewName()).isEqualTo("redirect:/401.jsp");
@@ -97,7 +98,7 @@ class MvcLoginControllerTest extends ControllerTest {
             when(request.getParameter("account")).thenReturn("wrong");
 
             //when
-            ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
+            ModelAndView modelAndView = loginController.loginUser(request, null);
 
             //then
             assertThat(modelAndView.getViewName()).isEqualTo("redirect:/401.jsp");
@@ -112,7 +113,7 @@ class MvcLoginControllerTest extends ControllerTest {
             HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getRequestURI()).thenReturn("/login");
             when(request.getMethod()).thenReturn("GET");
-            Method viewUser = MvcLoginController.class.newInstance().getClass()
+            Method viewUser = LoginController.class.newInstance().getClass()
                     .getDeclaredMethod("viewLogin", HttpServletRequest.class, HttpServletResponse.class);
 
             // when
@@ -132,7 +133,7 @@ class MvcLoginControllerTest extends ControllerTest {
                     .thenReturn(new User(1, "moomin", "password", "moomin@gmail.com"));
 
             //when
-            ModelAndView modelAndView = mvcLoginController.viewLogin(request, null);
+            ModelAndView modelAndView = loginController.viewLogin(request, null);
 
             //then
             assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
@@ -148,7 +149,7 @@ class MvcLoginControllerTest extends ControllerTest {
                     .thenReturn(null);
 
             //when
-            ModelAndView modelAndView = mvcLoginController.viewLogin(request, null);
+            ModelAndView modelAndView = loginController.viewLogin(request, null);
 
             //then
             assertThat(modelAndView.getViewName()).isEqualTo("/login.jsp");

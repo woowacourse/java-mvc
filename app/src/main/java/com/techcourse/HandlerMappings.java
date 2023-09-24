@@ -13,7 +13,6 @@ public class HandlerMappings {
 
     public void init() {
         handlerMappings.add(new AnnotationHandlerMapping());
-        handlerMappings.add(new ManualHandlerMapping());
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
