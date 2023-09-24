@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.frontcontroller.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerExecution;
+import webmvc.org.springframework.web.servlet.view.JsonView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 
@@ -18,6 +20,18 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
                                final HttpServletResponse response,
                                final Object handler) throws Exception {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
-        return  handlerExecution.handle(request, response);
+        final Object result = handlerExecution.handle(request, response);
+
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+
+        if (result instanceof String) {
+            return new ModelAndView(new JspView((String) result));
+        }
+
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("model", result);
+        return modelAndView;
     }
 }
