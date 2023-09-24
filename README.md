@@ -10,5 +10,5 @@
 
 ## 3.JSON View 구현하기
 - [x] JspView 클래스 구현
-- [ ] JsonView 클래스 구현
+- [x] JsonView 클래스 구현
 - [ ] Legacy MVC 제거
