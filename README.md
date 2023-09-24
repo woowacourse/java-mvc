@@ -10,7 +10,7 @@
   - [x] 컨트롤러의 수정 없이 기능을 구현한다.
 
 # 3. JSON View 구현하기
-- [ ] JspView를 구현한다.
+- [x] JspView를 구현한다.
 - [ ] JsonView를 구현한다.
   - [ ] Json 데이터 타입은 key: value로 구성되어있다.
   - [ ] Json 데이터의 value에는 `key: value` 형태의 값이 들어갈 수 있다.
