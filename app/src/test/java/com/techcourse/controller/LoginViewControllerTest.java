@@ -1,15 +1,15 @@
 package com.techcourse.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("/login/view 경로 요청 테스트")
 class LoginViewControllerTest extends UsingTomcatTest {
@@ -19,10 +19,10 @@ class LoginViewControllerTest extends UsingTomcatTest {
     void save() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             //given
-            final HttpPost httpPost = new HttpPost(tomcatUrl + "/login/view");
+            final HttpGet httpGet = new HttpGet(tomcatUrl + "/login/view");
 
             //when
-            final HttpResponse response = httpClient.execute(httpPost);
+            final HttpResponse response = httpClient.execute(httpGet);
 
             //then
             final int actualStatusCode = response.getStatusLine().getStatusCode();
