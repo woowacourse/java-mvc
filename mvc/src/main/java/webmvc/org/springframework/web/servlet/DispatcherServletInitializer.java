@@ -1,11 +1,11 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
-import webmvc.org.springframework.web.servlet.mvc.WebApplicationContext;
+import webmvc.org.springframework.web.servlet.mvc.context.WebApplicationContext;
 
 /**
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the servlet context.

@@ -1,11 +1,10 @@
-package webmvc.org.springframework.web.servlet.view;
+package webmvc.org.springframework.web.servlet.mvc.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.View;
 
 public class JspView implements View {
 

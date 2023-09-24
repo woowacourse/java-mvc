@@ -1,8 +1,9 @@
-package webmvc.org.springframework.web.servlet;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import webmvc.org.springframework.web.servlet.mvc.view.View;
 
 public class ModelAndView {
 

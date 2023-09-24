@@ -1,9 +1,8 @@
-package webmvc.org.springframework.web.servlet.view;
+package webmvc.org.springframework.web.servlet.mvc.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-import webmvc.org.springframework.web.servlet.View;
 
 public class RedirectView implements View {
 

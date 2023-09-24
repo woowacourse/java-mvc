@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.RedirectView;
+import webmvc.org.springframework.web.servlet.mvc.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.view.RedirectView;
 
 @Controller
 public class LogoutController {

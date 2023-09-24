@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc;
+package webmvc.org.springframework.web.servlet.mvc.context;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
