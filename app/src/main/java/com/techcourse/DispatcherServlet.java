@@ -47,13 +47,6 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            if (manualHandlerMapping.isSupport(requestURI)) {
-                final var controller = manualHandlerMapping.getHandler(requestURI);
-                final var viewName = controller.execute(request, response);
-                final ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
-                modelAndView.getView().render(modelAndView.getModel(), request, response);
-                return;
-            }
             final HandlerExecution handlerExecution = getHandlerExecution(request);
             final ModelAndView modelAndView = handlerExecution.handle(request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
@@ -70,6 +63,6 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerExecution;
             }
         }
-        return null;
+        throw new IllegalArgumentException("해당 요청을 처리할 수 없습니다.");
     }
 }

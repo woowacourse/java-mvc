@@ -19,4 +19,5 @@
 - [x] JspView 클래스를 구현한다
   - [x] JspView 클래스 구현 (2단계에서 완료)
   - [x] DispatcherServlet의 service 메서드에 있는 JspView가 가지고 있어야할 로직 제거하기
-
+- [x] 리팩터링 방식을 변경한다
+  - [x] DispatcherServlet에 레거시 코드를 완전히 삭제한다
