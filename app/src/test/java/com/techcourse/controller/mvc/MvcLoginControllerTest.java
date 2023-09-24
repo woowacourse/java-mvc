@@ -51,7 +51,7 @@ class MvcLoginControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("redirect:/index.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
         }
 
         @Test
@@ -67,7 +67,7 @@ class MvcLoginControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("redirect:/index.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
         }
 
         @Test
@@ -83,7 +83,7 @@ class MvcLoginControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("redirect:/401.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("redirect:/401.jsp");
         }
 
         @Test
@@ -100,7 +100,7 @@ class MvcLoginControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcLoginController.loginUser(request, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("redirect:/401.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("redirect:/401.jsp");
         }
     }
 
@@ -135,7 +135,7 @@ class MvcLoginControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcLoginController.viewLogin(request, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("redirect:/index.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp");
         }
 
         @Test
@@ -151,7 +151,7 @@ class MvcLoginControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcLoginController.viewLogin(request, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("/login.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("/login.jsp");
         }
     }
 }

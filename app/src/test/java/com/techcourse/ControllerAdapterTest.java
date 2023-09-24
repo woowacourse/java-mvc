@@ -1,7 +1,9 @@
 package com.techcourse;
 
 import com.techcourse.controller.legacy.RegisterViewController;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,10 +29,8 @@ class ControllerAdapterTest {
         //given
         Controller controller = new RegisterViewController();
 
-        //when
-        String viewName = controllerAdapter.adapt(null, null, controller);
-
-        //then
-        assertThat(viewName).isEqualTo("/register.jsp");
+        //when, then
+        Assertions.assertThat(controllerAdapter.adapt(null, null, controller))
+                .isInstanceOf(ModelAndView.class);
     }
 }

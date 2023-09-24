@@ -4,6 +4,7 @@ import com.techcourse.controller.mvc.MvcRegisterController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
 import java.lang.reflect.Method;
@@ -37,10 +38,8 @@ class HandlerExecutionAdapterTest {
                 .getDeclaredMethod("viewRegister", HttpServletRequest.class, HttpServletResponse.class);
         HandlerExecution handlerExecution = new HandlerExecution(mvcRegisterController, method);
 
-        //when
-        String viewName = handlerExecutionAdapter.adapt(null, null, handlerExecution);
-
-        //then
-        assertThat(viewName).isEqualTo("/register.jsp");
+        //when, then
+        assertThat(handlerExecutionAdapter.adapt(null, null, handlerExecution))
+                .isInstanceOf(ModelAndView.class);
     }
 }

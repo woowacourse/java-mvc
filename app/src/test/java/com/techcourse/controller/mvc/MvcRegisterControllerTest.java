@@ -51,7 +51,7 @@ class MvcRegisterControllerTest extends ControllerTest {
             //then
             assertAll(
                     () -> assertThat(InMemoryUserRepository.findByAccount("moomin")).isPresent(),
-                    () -> assertThat(modelAndView.getView()).isEqualTo("redirect:/index.jsp")
+                    () -> assertThat(modelAndView.getViewName()).isEqualTo("redirect:/index.jsp")
             );
         }
     }
@@ -80,7 +80,7 @@ class MvcRegisterControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcRegisterController.viewRegister(null, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("/register.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("/register.jsp");
         }
     }
 }

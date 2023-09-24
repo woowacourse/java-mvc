@@ -41,7 +41,7 @@ class MvcForwardControllerTest extends ControllerTest {
             ModelAndView modelAndView = mvcForwardController.viewIndex(null, null);
 
             //then
-            assertThat(modelAndView.getView()).isEqualTo("/index.jsp");
+            assertThat(modelAndView.getViewName()).isEqualTo("/index.jsp");
         }
     }
 }

@@ -4,13 +4,10 @@ import com.techcourse.controller.UserSession;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 import java.lang.reflect.Method;
 
@@ -54,7 +51,7 @@ class MvcLogoutControllerTest extends ControllerTest {
 
             //then
             verify(httpSession, times(1)).removeAttribute(UserSession.SESSION_KEY);
-            assertThat(modelAndView.getView()).isEqualTo("redirect:/");
+            assertThat(modelAndView.getViewName()).isEqualTo("redirect:/");
         }
     }
 }
