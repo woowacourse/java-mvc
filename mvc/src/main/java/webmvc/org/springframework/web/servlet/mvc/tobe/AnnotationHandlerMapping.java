@@ -68,7 +68,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-
     @Override
     public Object getHandler(HttpServletRequest request) {
         HandlerKey key = new HandlerKey(

@@ -41,7 +41,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView loginPage(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView loginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
