@@ -58,18 +58,28 @@ public class DispatcherServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
+        Object handler = getHandler(request);
+
+        HandlerAdapter adapter = getHandlerAdapter(handler);
+
+        return adapter.handle(request, response, handler);
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        HandlerAdapter adapter = handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 요청입니다."));
+        return adapter;
+    }
+
+    private Object getHandler(HttpServletRequest request) {
         Object handler = handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.isMatch(request))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 요청입니다."))
                 .getHandler(request);
-
-        HandlerAdapter adapter = handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 요청입니다."));
-
-        return adapter.handle(request, response, handler);
+        return handler;
     }
 
     private void move(
