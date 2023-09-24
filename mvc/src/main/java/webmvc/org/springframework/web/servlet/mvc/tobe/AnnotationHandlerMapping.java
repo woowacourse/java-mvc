@@ -59,6 +59,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             for (RequestMethod httpMethod : httpMethods) {
                 final HandlerKey handlerKey = new HandlerKey(value, httpMethod);
                 final HandlerExecution handlerExecution = new HandlerExecution(controllerClass, method);
+                log.info("add mapping {}, {}", value, httpMethod);
                 handlerExecutions.put(handlerKey, handlerExecution);
             }
         }
