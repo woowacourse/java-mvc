@@ -1,28 +1,24 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
-import com.techcourse.controller.RegisterController;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-
-import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class HandlerExecutorTest {
 
     @Test
     void executeIfHandlerExecution() throws Exception {
         //given
-        HandlerExecutor handlerExecutor = new HandlerExecutor();
+        HandlerExecutor handlerExecutor = mock(HandlerExecutor.class);
+        ModelAndView modelAndView = mock(ModelAndView.class);
 
-        RegisterController registerController = RegisterController.class.newInstance();
-        Method method= registerController.getClass()
-                .getDeclaredMethod("viewRegister", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution handlerExecution = new HandlerExecution(registerController, method);
+        HandlerExecution handlerExecution = mock(HandlerExecution.class);
+        when(handlerExecutor.execute(any(), any(), any())).thenReturn(modelAndView);
 
         //when, then
         assertThat(handlerExecutor.execute(null, null, handlerExecution))

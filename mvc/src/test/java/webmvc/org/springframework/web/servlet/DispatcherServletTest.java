@@ -1,11 +1,9 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
