@@ -33,12 +33,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         for (final Object basePackage : basePackages) {
-            initHandlerExecution(basePackage);
+            registerHandlerWithAnnotation(basePackage);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void initHandlerExecution(final Object basePackage) {
+    private void registerHandlerWithAnnotation(final Object basePackage) {
         final Set<Class<?>> classes = getClassesByAnnotation(basePackage, Controller.class);
         for (final Class<?> clazz : classes) {
             final List<Method> methods = getMethodsByAnnotation(clazz, RequestMapping.class);
