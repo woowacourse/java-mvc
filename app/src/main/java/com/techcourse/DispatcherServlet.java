@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
@@ -39,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var controller = getHandler(request);
-            final var viewName = getViewName(controller, request, response);
-            move(viewName, request, response);
+            final var modelAndView = getModelAndView(controller, request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -55,30 +56,20 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new ServletException("Failed to find appropriate handler for this request."));
     }
 
-    private String getViewName(final Object controller, final HttpServletRequest request,
-                               final HttpServletResponse response)
+    private ModelAndView getModelAndView(final Object controller, final HttpServletRequest request,
+                                         final HttpServletResponse response)
             throws Exception {
         if (controller instanceof Controller) {
             Controller handler = (Controller) controller;
-            return handler.execute(request, response);
+            String viewName = handler.execute(request, response);
+            return new ModelAndView(new JspView(viewName));
         }
 
         if (controller instanceof HandlerExecution) {
             HandlerExecution handler = (HandlerExecution) controller;
-            return handler.handle(request, response).getViewName();
+            return handler.handle(request, response);
         }
 
         throw new IllegalStateException("can't response to this response");
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
