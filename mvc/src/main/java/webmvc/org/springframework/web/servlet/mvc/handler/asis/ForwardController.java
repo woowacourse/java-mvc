@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.asis;
+package webmvc.org.springframework.web.servlet.mvc.handler.asis;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

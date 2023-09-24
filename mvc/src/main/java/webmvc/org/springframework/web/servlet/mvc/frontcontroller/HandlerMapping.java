@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.disapatchersevlet;
+package webmvc.org.springframework.web.servlet.mvc.frontcontroller;
 
 import jakarta.servlet.http.HttpServletRequest;
 

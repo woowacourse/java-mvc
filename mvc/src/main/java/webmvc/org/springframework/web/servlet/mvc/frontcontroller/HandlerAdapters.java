@@ -1,7 +1,7 @@
-package webmvc.org.springframework.web.servlet.mvc.disapatchersevlet;
+package webmvc.org.springframework.web.servlet.mvc.frontcontroller;
 
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.tobe.controllerhandler.ControllerHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.tobe.annoationhandler.AnnotationHandlerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
