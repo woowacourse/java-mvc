@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
             throws Exception {
         final HandlerExecution handler = getHandler(request);
         final ModelAndView modelAndView = handler.handle(request, response);
-        render(request, response, modelAndView);
+        modelAndView.render(request, response);
     }
 
     private HandlerExecution getHandler(final HttpServletRequest request) throws ServletException {
@@ -47,16 +47,6 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new ServletException("핸들러를 찾을 수 없습니다."));
-    }
-
-    private void render(final HttpServletRequest request, final HttpServletResponse response,
-                                    final ModelAndView modelAndView) throws Exception {
-        final View view = modelAndView.getView();
-        if (view.isRedirectView()) {
-            response.sendRedirect(view.getViewName());
-            return;
-        }
-        view.render(modelAndView.getModel(), request, response);
     }
 
 }
