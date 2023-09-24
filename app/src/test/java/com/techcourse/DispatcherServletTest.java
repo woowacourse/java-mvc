@@ -6,12 +6,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.DispatcherServlet;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JsonView;
 
 import java.io.IOException;
@@ -43,8 +44,8 @@ class DispatcherServletTest {
         dispatcherServlet.init();
 
         // then
-        verify(handlerMappings, times(2)).addHandlerMapping(any(HandlerMapping.class));
-        verify(handlerAdpaters, times(2)).addHandlerAdapter(any(HandlerAdapter.class));
+        verify(handlerMappings, atLeast(1)).addHandlerMapping(any(HandlerMapping.class));
+        verify(handlerAdpaters, atLeast(1)).addHandlerAdapter(any(HandlerAdapter.class));
     }
 
     @DisplayName("DispatcherServlet은 요청에 맞는 Handler를 찾아서 처리한다.")
@@ -54,12 +55,12 @@ class DispatcherServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        Controller controller = mock(Controller.class);
+        HandlerExecution handler = mock(HandlerExecution.class);
         HandlerAdapter handlerAdapter = mock(HandlerAdapter.class);
 
-        given(handlerMappings.getHandler(request)).willReturn(Optional.of(controller));
-        given(handlerAdpaters.getHandlerAdapter(controller)).willReturn(handlerAdapter);
-        given(handlerAdapter.handle(request, response, controller)).willReturn(new ModelAndView(new JsonView()));
+        given(handlerMappings.getHandler(request)).willReturn(Optional.of(handler));
+        given(handlerAdpaters.getHandlerAdapter(handler)).willReturn(handlerAdapter);
+        given(handlerAdapter.handle(request, response, handler)).willReturn(new ModelAndView(new JsonView()));
 
         // when
         dispatcherServlet.service(request, response);

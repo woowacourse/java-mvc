@@ -19,6 +19,10 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding("UTF-8");
 
+        if (model.isEmpty()) {
+            return;
+        }
+
         if (model.size() == SINGLE_MODEL_SIZE) {
             final Object oneValue = model.values().toArray()[0];
             writeObjectAsJson(response, oneValue);
@@ -28,8 +32,8 @@ public class JsonView implements View {
         writeObjectAsJson(response, model);
     }
 
-    private void writeObjectAsJson(final HttpServletResponse response, final Object oneValue) throws IOException {
-        final String valueAsString = objectMapper.writeValueAsString(oneValue);
+    private void writeObjectAsJson(final HttpServletResponse response, final Object value) throws IOException {
+        final String valueAsString = objectMapper.writeValueAsString(value);
         response.getWriter().write(valueAsString);
     }
 }
