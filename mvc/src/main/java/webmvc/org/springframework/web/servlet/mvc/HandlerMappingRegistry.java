@@ -1,8 +1,7 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
-import com.techcourse.exception.NotFoundHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.exception.NotFoundHandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;

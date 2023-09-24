@@ -1,7 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
-import com.techcourse.exception.NotFoundHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.exception.NotFoundHandlerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

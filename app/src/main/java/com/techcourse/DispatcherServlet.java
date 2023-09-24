@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 
