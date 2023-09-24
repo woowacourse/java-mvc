@@ -19,8 +19,8 @@
 ### 3 단계 : JSON view 구현
 
 - [x] JspView 클래스 구현
-- [ ] JsonView 클래스 구현
-  - [ ] Json 데이터 처리 로직 구현
+- [x] JsonView 클래스 구현
+  - [x] Json 데이터 처리 로직 구현
 - [ ] Legacy MVC 제거
   - [ ] Controller annotation 기반으로 변경
   - [ ] 서비스 정상 작동 확인
