@@ -7,6 +7,8 @@ import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -20,12 +22,15 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
+        final HandlerMappings handlerMappings = new HandlerMappings();
+        handlerMappings.add(new ManualHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping());
 
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        final HandlerAdapters handlerAdapters = new HandlerAdapters();
+        handlerAdapters.add(new ManualHandlerAdapter());
+        handlerAdapters.add(new AnnotationHandlerAdapter());
+
+        final var dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

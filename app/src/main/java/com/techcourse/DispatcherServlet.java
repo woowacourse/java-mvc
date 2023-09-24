@@ -4,38 +4,28 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappings handlerMappings;
+    private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        handlerMappings = new LinkedList<>();
-        handlerAdapters = new LinkedList<>();
+    public DispatcherServlet(final HandlerMappings handlerMappings, final HandlerAdapters handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
-    }
-
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
-    }
-
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerMappings.init();
     }
 
     @Override
@@ -45,16 +35,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMappings.stream()
-                    .map(handlerMapping -> handlerMapping.getHandler(request))
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElseThrow();
-
-            final HandlerAdapter handlerAdapter = handlerAdapters.stream()
-                    .filter(adapter -> adapter.supports(handler))
-                    .findAny()
-                    .orElseThrow();
+            final Object handler = handlerMappings.getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
 
             handlerAdapter.execute(request, response, handler);
         } catch (Throwable e) {
