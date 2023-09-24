@@ -1,7 +1,5 @@
 package com.techcourse.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -10,6 +8,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DisplayName("/logout 경로 요청 테스트")
 class LogoutControllerTest extends UsingTomcatTest {
 
     @DisplayName("요청시 302 상태코드와 / 로 리다이렉트한다.")
