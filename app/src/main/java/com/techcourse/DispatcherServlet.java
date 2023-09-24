@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -25,33 +25,29 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-       handlerMappings.initialize();
+        handlerMappings.initialize();
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+        throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             final Object handler = handlerMappings.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            move(modelAndView, request, response);
+            render(modelAndView, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final String viewName = modelAndView.getViewName();
-
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
+        final HttpServletResponse response)
+        throws Exception {
+        final View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
