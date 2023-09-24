@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +60,8 @@ public class ManualHandlerMappingAdapter implements HandlerMapping {
         } else {
             controllerInstance = controller.getClass().getDeclaredConstructor().newInstance();
         }
-        final Method method = controllerInstance.getClass().getMethod("execute");
-        return new HandlerExecution(controllerInstance, method);
+        final Method method = controllerInstance.getClass().getDeclaredMethod("execute", HttpServletRequest.class,
+                HttpServletResponse.class);
+        return new ManualHandlerExecution(controllerInstance, method);
     }
 }
