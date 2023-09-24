@@ -22,7 +22,6 @@ public class HandlerScanner {
         final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
         handlerMappings.add(manualHandlerMapping);
-
     }
 
     public Object getHandler(final HttpServletRequest request) throws ServletException {
