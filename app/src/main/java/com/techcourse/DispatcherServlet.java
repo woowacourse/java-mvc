@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
@@ -36,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handle = getHandler(request, response, requestURI);
+            final Object handle = getHandler(request, response);
             move(handle.toString(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -44,13 +45,13 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(final HttpServletRequest request, final HttpServletResponse response, final String requestURI) throws Exception {
-        final HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(request);
+    private Object getHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
         if (handlerExecution != null) {
             return handlerExecution.handle(request, response);
         }
 
-        final var controller = manualHandlerMapping.getHandler(requestURI);
+        final var controller = (Controller) manualHandlerMapping.getHandler(request);
         return controller.execute(request, response);
     }
 
