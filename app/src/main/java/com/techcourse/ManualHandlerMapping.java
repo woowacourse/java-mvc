@@ -36,10 +36,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
 
-        if (controllers.containsKey(requestURI)) {
-            return controllers.get(requestURI);
-        }
-
-        return new ForwardController("/404.jsp");
+        return controllers.getOrDefault(requestURI, new ForwardController("/404.jsp"));
     }
 }
