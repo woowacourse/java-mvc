@@ -12,6 +12,8 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JsonView;
 
+import static java.util.Objects.requireNonNull;
+
 @Controller
 public class UserController {
 
@@ -19,7 +21,7 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
-        final String account = request.getParameter("account");
+        final String account = requireNonNull(request.getParameter("account"), "account를 입력해주세요.");
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
@@ -29,4 +31,5 @@ public class UserController {
         modelAndView.addObject("user", user);
         return modelAndView;
     }
+
 }
