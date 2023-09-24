@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
@@ -46,23 +47,20 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView modelAndView = execute(request, response);
-            String viewName = modelAndView.getView().getName();
-            move(viewName, request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(),request,response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-
     private ModelAndView execute(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
         Object handler = getHandler(request);
-
         HandlerAdapter adapter = getHandlerAdapter(handler);
-
         return adapter.handle(request, response, handler);
     }
 
@@ -81,19 +79,5 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 요청입니다."))
                 .getHandler(request);
         return handler;
-    }
-
-    private void move(
-            final String viewName,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
