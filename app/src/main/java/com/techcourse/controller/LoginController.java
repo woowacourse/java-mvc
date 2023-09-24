@@ -21,7 +21,7 @@ public class LoginController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView doLogin(final HttpServletRequest req, final HttpServletResponse res) {
-        final String view = findViewName(req, res);
+        final String view = findViewName(req);
         final var modelAndView = new ModelAndView(new JspView(view));
         modelAndView.addObject("id", req.getAttribute("id"));
 
@@ -42,7 +42,7 @@ public class LoginController {
         return modelAndView;
     }
 
-    public String findViewName(final HttpServletRequest req, final HttpServletResponse res) {
+    public String findViewName(final HttpServletRequest req) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return REDIRECT_INDEX;
         }
