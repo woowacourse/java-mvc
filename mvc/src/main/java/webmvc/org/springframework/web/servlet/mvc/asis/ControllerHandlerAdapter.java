@@ -9,7 +9,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
-    public boolean isSupport(final Object handler) {
+    public boolean isSupporting(final Object handler) {
         return handler instanceof Controller;
     }
 

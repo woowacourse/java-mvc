@@ -8,7 +8,7 @@ import webmvc.org.springframework.web.servlet.mvc.disapatchersevlet.HandlerAdapt
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
-    public boolean isSupport(final Object handler) {
+    public boolean isSupporting(final Object handler) {
         return handler instanceof HandlerExecution;
     }
 

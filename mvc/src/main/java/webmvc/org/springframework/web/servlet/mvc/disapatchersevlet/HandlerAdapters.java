@@ -17,7 +17,7 @@ public class HandlerAdapters {
 
     public HandlerAdapter getAdapter(final Object handler) {
         return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.isSupport(handler))
+                .filter(handlerAdapter -> handlerAdapter.isSupporting(handler))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("예기치 못한 에러"));
     }
