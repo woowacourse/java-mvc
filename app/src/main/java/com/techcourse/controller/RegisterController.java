@@ -37,6 +37,9 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
+        final var session = req.getSession();
+        session.setAttribute(UserSession.SESSION_KEY, user);
+
         return "redirect:/index.jsp";
     }
 }

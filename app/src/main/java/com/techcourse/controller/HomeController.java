@@ -11,7 +11,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class HomeController {
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView(new JspView("/index.jsp"));
     }

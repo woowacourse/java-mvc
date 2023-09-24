@@ -32,9 +32,4 @@ public class JsonView implements View {
         final ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(model);
     }
-
-    @Override
-    public String getName() {
-        return "";
-    }
 }
