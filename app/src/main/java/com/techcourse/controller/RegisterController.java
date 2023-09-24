@@ -23,11 +23,11 @@ public class RegisterController {
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView(JspView.redirectTo("/index.jsp"));
     }
 
     @GetMapping("/view")
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(JspView.redirectTo("/register.jsp"));
     }
 }
