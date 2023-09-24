@@ -1,9 +1,8 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter;
 
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.tobe.view.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handlerexecution.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerExecutionAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.view.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
