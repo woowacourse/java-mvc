@@ -20,15 +20,15 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         String value = objectMapper.writeValueAsString(model);
 
         if (model.size() == ORIGINAL_VALUE_RETURN_SIZE) {
-            response.setContentType(MediaType.TEXT_PLAIN_UTF8_VALUE);
-            response.getWriter().write(value);
+            Object originalValue = model.values().toArray()[0];
+            response.getWriter().write(String.valueOf(originalValue));
             return;
         }
 
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(value);
     }
 }
