@@ -4,11 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -37,26 +35,18 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappings.getHandler(request);
             final var modelAndView = handlerAdaptors.execute(handler, request, response);
-            move(modelAndView, request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request,
-                      final HttpServletResponse response)
-            throws Exception {
-        if (Objects.isNull(modelAndView.getViewName())) {
-            // TODO JsonView
-            return;
-        }
-        if (modelAndView.getViewName().startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(modelAndView.getViewName().substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
+                        final HttpServletResponse response) throws Exception {
+        final var view = modelAndView.getView();
+        final var model = modelAndView.getModel();
 
-        final var requestDispatcher = request.getRequestDispatcher(modelAndView.getViewName());
-        requestDispatcher.forward(request, response);
+        view.render(model, request, response);
     }
 }
