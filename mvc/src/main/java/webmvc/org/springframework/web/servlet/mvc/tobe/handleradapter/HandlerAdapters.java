@@ -1,10 +1,8 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.ModelAndView;
+import java.util.stream.Collectors;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerAdapterNotExistException;
 
 public class HandlerAdapters {
@@ -14,14 +12,18 @@ public class HandlerAdapters {
     public void addAdapter(final HandlerAdapter handlerAdapter) {
         adapters.add(handlerAdapter);
     }
-
-    public ModelAndView handle(final Object handler, final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
-        for (HandlerAdapter adapter : adapters) {
-            if (adapter.isHandleable(handler)) {
-                return adapter.handle(handler, request, response);
-            }
+    
+    public HandlerAdapter getFirstHandleableAdapterForHandler(final Object handler) {
+        final List<HandlerAdapter> handleableAdaptersForHandler = getHandleableAdaptersForHandler(handler);
+        if (handleableAdaptersForHandler.isEmpty()) {
+            throw new HandlerAdapterNotExistException();
         }
-        throw new HandlerAdapterNotExistException();
+        return handleableAdaptersForHandler.get(0);
+    }
+
+    private List<HandlerAdapter> getHandleableAdaptersForHandler(final Object handler) {
+        return adapters.stream()
+            .filter(adapter -> adapter.isHandleable(handler))
+            .collect(Collectors.toList());
     }
 }
