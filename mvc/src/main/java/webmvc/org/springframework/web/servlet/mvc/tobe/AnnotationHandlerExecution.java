@@ -10,17 +10,9 @@ public class AnnotationHandlerExecution implements HandlerExecution{
     private final Object handler;
     private final Method method;
 
-    public AnnotationHandlerExecution(Class<?> clazz, Method method) {
-        this.handler = instantiateController(clazz);
+    public AnnotationHandlerExecution(Object handler, Method method) {
+        this.handler = handler;
         this.method = method;
-    }
-
-    private Object instantiateController(Class<?> controller) {
-        try {
-            return controller.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new InstantiateControllerException();
-        }
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)

@@ -1,16 +1,12 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
@@ -29,33 +25,31 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     public void initialize() {
-        Set<Class<?>> controllers = getAnnotatedControllerClasses();
-        for (Class<?> controller : controllers) {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        for (Object controller : controllerScanner.getAnnotatedControllerClasses()) {
             addAnnotatedHandlerExecution(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Set<Class<?>> getAnnotatedControllerClasses() {
-        Reflections reflections = new Reflections(basePackage);
-        return new HashSet<>(reflections.getTypesAnnotatedWith(Controller.class));
-    }
-
-    private void addAnnotatedHandlerExecution(Class<?> controller) {
+    private void addAnnotatedHandlerExecution(Object controller) {
         for (Method method : getRequestMappedMethods(controller)) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(),
-                    requestMapping.method()[0]);
+            HandlerKey handlerKey = createHandlerKey(method);
             AnnotationHandlerExecution annotationHandlerExecution = new AnnotationHandlerExecution(
                     controller, method);
             handlerExecutions.put(handlerKey, annotationHandlerExecution);
         }
     }
 
-    private List<Method> getRequestMappedMethods(Class<?> controller) {
-        return Arrays.stream(controller.getMethods())
+    private List<Method> getRequestMappedMethods(Object controller) {
+        return Arrays.stream(controller.getClass().getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toList());
+    }
+
+    private HandlerKey createHandlerKey(Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        return new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
     }
 
     @Override
