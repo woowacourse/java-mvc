@@ -40,8 +40,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private HandlerMappingRegistry getHandlerMappingRegistry() {
         HandlerMappingRegistry registry = new HandlerMappingRegistry();
         registry.addHandlerMapping(
-            getInitializedHandlerMapping(new ManualHandlerMapping()));
-        registry.addHandlerMapping(
             getInitializedHandlerMapping(new AnnotationHandlerMapping("com")));
         return registry;
     }

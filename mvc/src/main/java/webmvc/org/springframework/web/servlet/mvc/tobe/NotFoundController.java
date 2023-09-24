@@ -8,6 +8,6 @@ public class NotFoundController implements Controller {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) {
-        return "/401.jsp";
+        return "/404.jsp";
     }
 }
