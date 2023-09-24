@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -8,15 +8,13 @@ import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptorFinder;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapper.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.HandlerAdaptorFinder;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapper.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapper.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -37,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMapping() {
         handlerMapping = new HandlerMappings(
-            List.of(new AnnotationHandlerMapping(Application.class.getPackageName() + ".*")));
+            List.of(new AnnotationHandlerMapping("com")));
         handlerMapping.initialize();
     }
 

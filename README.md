@@ -14,7 +14,7 @@
 - [x] 화면에 대한 책임을 View 클래스가 갖도록 구성하기
   - [x] JspView 클래스를 구현
   - [x] JsonView 클래스를 구현
-- [ ] Legacy MVC 제거하기
+- [x] Legacy MVC 제거하기 및 파일 위치 수정
 ## 리팩토링 목록
 - [x] Method 실행 시 불필요한 Controller 인스턴스 생성 제거
 - [x] HandlerAdapter 커스템 예외 추가(HandlerAdapter Not Found) 
