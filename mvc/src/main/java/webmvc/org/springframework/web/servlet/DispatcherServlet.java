@@ -1,14 +1,17 @@
 package webmvc.org.springframework.web.servlet;
 
-import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapterRegistry;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.Request;
+import webmvc.org.springframework.web.servlet.view.JspView;
 import webmvc.org.springframework.web.servlet.view.View;
+
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -18,14 +21,17 @@ public class DispatcherServlet extends HttpServlet {
     private final transient HandlerMappingRegistry handlerMappingRegistry;
     private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    private final String packageName;
+
+    public DispatcherServlet(final String packageName) {
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.packageName = packageName;
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry.initialize(getClass().getPackageName());
+        handlerMappingRegistry.initialize(packageName);
         handlerAdapterRegistry.initialize();
     }
 
@@ -35,9 +41,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         final Request customRequest = new Request(requestURI, request.getMethod());
-        final Object handler = handlerMappingRegistry.getHandler(customRequest);
-        final ModelAndView modelAndView = handlerAdapterRegistry.handle(handler, request, response);
-
+        final Optional<Object> handler = handlerMappingRegistry.getHandler(customRequest);
+        if (handler.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            render(new ModelAndView(new JspView("/404")), request, response);
+            return;
+        }
+        final ModelAndView modelAndView = handlerAdapterRegistry.handle(handler.get(), request, response);
         render(modelAndView, request, response);
     }
 

@@ -1,9 +1,10 @@
-package webmvc.org.springframework.web.servlet;
+package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +18,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet(getClass().getPackageName());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

@@ -1,9 +1,8 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingNotFoundException;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
@@ -18,11 +17,10 @@ public class HandlerMappingRegistry {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public Object getHandler(final Request request) {
+    public Optional<Object> getHandler(final Request request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.hasMapping(request))
                 .findFirst()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .orElseThrow(HandlerMappingNotFoundException::new);
+                .map(handlerMapping -> handlerMapping.getHandler(request));
     }
 }
