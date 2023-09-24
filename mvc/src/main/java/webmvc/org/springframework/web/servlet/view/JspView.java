@@ -39,4 +39,9 @@ public class JspView implements View {
     public String getName() {
         return viewName;
     }
+
+    @Override
+    public String getName() {
+        return viewName;
+    }
 }

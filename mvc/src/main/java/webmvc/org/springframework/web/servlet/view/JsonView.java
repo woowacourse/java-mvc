@@ -32,4 +32,9 @@ public class JsonView implements View {
     public String getName() {
         return "";
     }
+
+    @Override
+    public String getName() {
+        return "";
+    }
 }
