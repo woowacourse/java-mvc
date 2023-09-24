@@ -1,5 +1,7 @@
 package com.techcourse.controller;
 
+import com.techcourse.domain.User;
+import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,8 +20,13 @@ public class AnnotationRegisterController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("annotaion controller post method");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
+        final User user = new User(
+                3,
+                request.getParameter("account"),
+                request.getParameter("password"),
+                request.getParameter("email")
+        );
+        InMemoryUserRepository.save(user);
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
