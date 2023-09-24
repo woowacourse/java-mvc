@@ -2,14 +2,17 @@ package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
@@ -17,5 +20,10 @@ public class RegisterController implements Controller {
         InMemoryUserRepository.save(user);
 
         return "redirect:/index.jsp";
+    }
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public String showRegister(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return "/register.jsp";
     }
 }
