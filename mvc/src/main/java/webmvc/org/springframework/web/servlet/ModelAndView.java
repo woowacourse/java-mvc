@@ -1,5 +1,7 @@
 package webmvc.org.springframework.web.servlet;
 
+import webmvc.org.springframework.web.servlet.view.View;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

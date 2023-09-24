@@ -18,7 +18,6 @@ public class HandlerAdapterRegistry {
 
     public void initialize() {
         handlerAdapters.add(new AnnotationHandlerAdapter());
-        handlerAdapters.add(new ManualHandlerAdapter());
     }
 
     public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) {

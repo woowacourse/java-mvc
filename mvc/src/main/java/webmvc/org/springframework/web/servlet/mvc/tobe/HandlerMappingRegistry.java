@@ -1,9 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingNotFoundException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.Request;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +15,6 @@ public class HandlerMappingRegistry {
 
     public void initialize(final String packageName) {
         handlerMappings.add(new AnnotationHandlerMapping(packageName));
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 

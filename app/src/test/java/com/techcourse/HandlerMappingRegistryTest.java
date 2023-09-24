@@ -2,9 +2,9 @@ package com.techcourse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingNotFoundException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.Request;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,14 +26,6 @@ class HandlerMappingRegistryTest {
         final Object handler = handlerMappingRegistry.getHandler(request);
 
         assertThat(handler).isInstanceOf(HandlerExecution.class);
-    }
-
-    @Test
-    void 메뉴얼_핸들러_매핑이_제대로_되어지는지_확인한다() {
-        final Request request = new Request("/register/view", "GET");
-        final Object handler = handlerMappingRegistry.getHandler(request);
-
-        assertThat(handler).isInstanceOf(Controller.class);
     }
 
     @Test
