@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -36,21 +34,10 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = handlerScanner.getHandler(request);
             final var handlerAdaptor = handlerAdaptorScanner.getHandlerAdaptor(controller);
             final var modelAndView = handlerAdaptor.handle(controller, request, response);
-            move(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final View view = modelAndView.getView();
-        if (view.isRedirectCommand()) {
-            response.sendRedirect(view.getRedirectFilePath());
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(view.getViewName());
-        requestDispatcher.forward(request, response);
     }
 }

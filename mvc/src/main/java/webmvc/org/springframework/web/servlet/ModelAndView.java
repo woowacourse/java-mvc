@@ -1,10 +1,16 @@
 package webmvc.org.springframework.web.servlet;
 
-import java.util.Collections;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
+
+    private static final Logger log = LoggerFactory.getLogger(ModelAndView.class);
 
     private final View view;
     private final Map<String, Object> model;
@@ -19,12 +25,16 @@ public class ModelAndView {
         return this;
     }
 
-    public Object getObject(final String attributeName) {
-        return model.get(attributeName);
+    public void render(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            view.render(model, request, response);
+        } catch (final Exception e) {
+            throw new IllegalStateException("화면을 처리할 수 없습니다.");
+        }
     }
 
-    public Map<String, Object> getModel() {
-        return Collections.unmodifiableMap(model);
+    public Object getObject(final String attributeName) {
+        return model.get(attributeName);
     }
 
     public View getView() {
