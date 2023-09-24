@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.Optional;
 
@@ -20,30 +18,29 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView viewLogin(final HttpServletRequest request,
+    public String viewLogin(final HttpServletRequest request,
                                   final HttpServletResponse response) throws Exception {
         final Optional<User> maybeUser = UserSession.getUserFrom(request.getSession());
         if (maybeUser.isPresent()) {
             log.info("user account={}", maybeUser.get().getAccount());
-            return new ModelAndView(new JspView("redirect:/"));
+            return "redirect:/";
         }
-        return new ModelAndView(new JspView("/login.jsp"));
+        return "/login.jsp";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView handleLogin(final HttpServletRequest request, 
+    public String handleLogin(final HttpServletRequest request,
                                     final HttpServletResponse response) throws Exception {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new JspView("redirect:/"));
+            return  "redirect:/";
         }
 
-        final String view = InMemoryUserRepository.findByAccount(request.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(request, user);
                 })
                 .orElse("redirect:/401.jsp");
-        return new ModelAndView(new JspView(view));
     }
 
     private String login(final HttpServletRequest request,
@@ -57,9 +54,9 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/logout", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return "redirect:/";
     }
 }
