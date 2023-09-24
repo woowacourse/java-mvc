@@ -7,9 +7,11 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptor;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.adaptor.AnnotationHandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.adaptor.HandlerAdaptors;
+import webmvc.org.springframework.web.servlet.mvc.mapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.adaptor.HandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.mapping.HandlerMapping;
 
 class HandlerAdaptorsTest {
 
