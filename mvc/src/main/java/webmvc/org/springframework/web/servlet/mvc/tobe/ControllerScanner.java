@@ -17,7 +17,6 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-
     public Map<Class<?>, Object> getControllers() {
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
@@ -34,7 +33,7 @@ public class ControllerScanner {
         return controllers;
     }
 
-    private static Object getClassInstance(final Class<?> clazz) {
+    private Object getClassInstance(final Class<?> clazz) {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException |
