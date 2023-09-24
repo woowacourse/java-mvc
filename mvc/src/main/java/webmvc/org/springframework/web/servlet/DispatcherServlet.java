@@ -26,10 +26,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    public void init() {
-    }
-
-    @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
         final String requestURI = request.getRequestURI();

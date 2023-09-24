@@ -19,11 +19,12 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final String INDEX_PAGE = "/index.jsp";
 
     @PostMapping
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(JspView.redirectTo("/index.jsp"));
+            return new ModelAndView(JspView.redirectTo(INDEX_PAGE));
         }
 
         final View view = InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -36,7 +37,7 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return JspView.redirectTo("/index.jsp");
+            return JspView.redirectTo(INDEX_PAGE);
         }
         return JspView.redirectTo("/401.jsp");
     }
@@ -46,7 +47,7 @@ public class LoginController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(JspView.redirectTo("/index.jsp"));
+                    return new ModelAndView(JspView.redirectTo(INDEX_PAGE));
                 })
                 .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
