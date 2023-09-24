@@ -1,35 +1,41 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
+import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.MannualHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final Map<String, MannualHandler> handlers = new HashMap<>();
 
+    @Override
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+        handlers.put("/", new MannualHandler(new ForwardController("/index.jsp")));
+        handlers.put("/login", new MannualHandler(new LoginController()));
+        handlers.put("/login/view", new MannualHandler(new LoginViewController()));
+        handlers.put("/logout", new MannualHandler(new LogoutController()));
 
         log.info("Initialized Handler Mapping!");
-        controllers.keySet()
-                .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+        handlers.keySet()
+                .forEach(path -> log.info("Path : {}, Controller : {}", path, handlers.get(path).getController().getClass()));
     }
 
-    public Controller getHandler(final String requestURI) {
+    @Override
+    public Handler getHandler(final HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        return handlers.get(requestURI);
     }
 }

@@ -5,20 +5,25 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
+    private AnnotationHandlerAdapter handlerAdapter;
+    private DefaultHandlerAdapter defaultHandlerAdapter;
 
     @BeforeEach
-    void setUp() throws NoSuchMethodException {
+    void setUp() throws NoSuchMethodException, InstantiationException, IllegalAccessException {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+        handlerAdapter = new AnnotationHandlerAdapter();
+        defaultHandlerAdapter = new DefaultHandlerAdapter();
     }
 
     @Test
@@ -28,13 +33,13 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        BDDMockito.given(request.getAttribute("id")).willReturn("gugu");
-        BDDMockito.given(request.getRequestURI()).willReturn("/get-test");
-        BDDMockito.given(request.getMethod()).willReturn("GET");
+        given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestURI()).willReturn("/get-test");
+        given(request.getMethod()).willReturn("GET");
 
         // when
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final Handler handler = handlerMapping.getHandler(request);
+        final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -47,13 +52,13 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        BDDMockito.given(request.getAttribute("id")).willReturn("gugu");
-        BDDMockito.given(request.getRequestURI()).willReturn("/post-test");
-        BDDMockito.given(request.getMethod()).willReturn("POST");
+        given(request.getAttribute("id")).willReturn("gugu");
+        given(request.getRequestURI()).willReturn("/post-test");
+        given(request.getMethod()).willReturn("POST");
 
         // when
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final Handler handler = handlerMapping.getHandler(request);
+        final var modelAndView = handlerAdapter.handle(request, response, handler);
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -66,17 +71,17 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        BDDMockito.given(request.getAttribute("id")).willReturn("not_found");
-        BDDMockito.given(request.getRequestURI()).willReturn("/not_found");
-        BDDMockito.given(request.getMethod()).willReturn("POST");
+        given(request.getAttribute("id")).willReturn("not_found");
+        given(request.getRequestURI()).willReturn("/not_found");
+        given(request.getMethod()).willReturn("POST");
 
         // when
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final Handler handler = handlerMapping.getHandler(request);
+        final var modelAndView = defaultHandlerAdapter.handle(request, response, handler);
 
         // then
         assertThat(modelAndView.getView())
                 .usingRecursiveComparison()
-                .isEqualTo(new JspView(""));
+                .isEqualTo(new JspView("/404.jsp"));
     }
 }

@@ -14,7 +14,10 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private final String viewName;
+
     public JspView(final String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
@@ -26,6 +29,16 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        // todo
+        move(viewName, request, response);
+    }
+
+    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            return;
+        }
+
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
