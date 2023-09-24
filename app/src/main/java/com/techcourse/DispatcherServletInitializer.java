@@ -4,11 +4,6 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapping.HandlerMappings;
 
 /**
  * Base class for {@link WebApplicationInitializer}

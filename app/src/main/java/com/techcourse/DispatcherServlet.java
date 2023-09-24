@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
@@ -32,12 +31,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMappings() {
-        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
     }
 
     private void initHandlerAdapters() {
-        handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
         handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
