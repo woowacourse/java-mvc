@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
 
 import java.util.List;
 
@@ -19,7 +20,6 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void setUp() {
         final List<HandlerMapping> handlerMappings = List.of(
-                new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse")
         );
         handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
@@ -75,11 +75,11 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
-    void 로그아웃_POST_요청에_대한_handlerMapping를_반환한다() {
+    void 로그아웃_GET_요청에_대한_handlerMapping를_반환한다() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/logout");
-        when(request.getMethod()).thenReturn("POST");
+        when(request.getMethod()).thenReturn("GET");
 
         final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
 
