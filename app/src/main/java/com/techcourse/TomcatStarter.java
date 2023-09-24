@@ -1,12 +1,14 @@
 package com.techcourse;
 
-import java.io.File;
+import com.techcourse.exception.UncheckedServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
+
+import java.io.File;
 
 public class TomcatStarter {
 
@@ -23,16 +25,7 @@ public class TomcatStarter {
         tomcat.setConnector(createConnector(port));
 
         final var docBase = new File(webappDirLocation).getAbsolutePath();
-        StandardContext context = (StandardContext) tomcat.addWebapp("", docBase);
-
-        // try-catch 로 감싸지 않으면 실행이 안된다.
-        try {
-            DispatcherServletInitializer dispatcherServletInitializer = new DispatcherServletInitializer();
-            dispatcherServletInitializer.onStartup(context.getServletContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        final var context = (StandardContext) tomcat.addWebapp("", docBase);
         skipJarScan(context);
         skipClearReferences(context);
     }
@@ -40,7 +33,6 @@ public class TomcatStarter {
     public void start() {
         try {
             tomcat.start();
-
         } catch (LifecycleException e) {
             throw new UncheckedServletException(e);
         }

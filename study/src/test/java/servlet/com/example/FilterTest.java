@@ -1,6 +1,5 @@
 package servlet.com.example;
 
-import java.net.http.HttpResponse;
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
 
@@ -15,7 +14,7 @@ class FilterTest {
         final var tomcatStarter = new TomcatStarter("src/main/webapp/");
         tomcatStarter.start();
 
-        HttpResponse<String> response = HttpUtils.send("/korean");
+        final var response = HttpUtils.send("/korean");
 
         // 톰캣 서버 종료
         tomcatStarter.stop();

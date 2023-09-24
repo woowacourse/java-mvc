@@ -1,46 +1,65 @@
 package com.techcourse;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.exception.HandlerAdapterNotFoundException;
+import webmvc.org.springframework.web.servlet.exception.HandlerNotFoundException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String BASE_PACKAGE = "com.techcourse";
 
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
+
+    public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+    }
 
     @Override
     public void init() {
-        try {
-            annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        annotationHandlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com"));
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            HandlerExecution handler = annotationHandlerMapping.getHandler(request);
-            ModelAndView handle = handler.handle(request, response);
-            View view = handle.getView();
-            view.render(handle.getModel(), request, response);
-        } catch (Throwable e) {
-            throw new ServletException(e.getMessage());
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
+            modelAndView.render(request, response);
+        } catch (HandlerNotFoundException | HandlerAdapterNotFoundException e) {
+            log.error("RuntimeException : {}", e.getMessage(), e);
+            response.sendRedirect("404.jsp");
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            response.sendRedirect("500.jsp");
         }
+    }
+
+    private Object getHandler(final HttpServletRequest request) {
+        return handlerMappingRegistry.getHandler(request);
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 }

@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.annotation;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +9,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class HomeController {
+public class AnnotationHomeController {
 
     private static final String INDEX_JSP = "/index.jsp";
 
