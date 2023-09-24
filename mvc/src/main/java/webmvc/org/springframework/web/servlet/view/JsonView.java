@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,21 +17,26 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        PrintWriter writer = response.getWriter();
+        try (PrintWriter writer = response.getWriter()) {
+            writeBody(model, response, writer);
+        }
+
+    }
+
+    private void writeBody(Map<String, ?> model, HttpServletResponse response, PrintWriter writer) throws JsonProcessingException {
         if (model.size() == 1) {
             response.setContentType(MediaType.PLAIN_TEXT_UTF8_VALUE);
-            for (Map.Entry<String, ?> entry : model.entrySet()) {
-                writer.write(entry.getValue().toString());
-            }
+            writeBodyByPlainText(model, writer);
         } else {
             String value = objectMapper.writeValueAsString(model);
             writer.write(value);
         }
     }
 
-    @Override
-    public String getName() {
-        return "";
+    private void writeBodyByPlainText(Map<String, ?> model, PrintWriter writer) {
+        for (Map.Entry<String, ?> entry : model.entrySet()) {
+            writer.write(entry.getValue().toString());
+        }
     }
 
     @Override
