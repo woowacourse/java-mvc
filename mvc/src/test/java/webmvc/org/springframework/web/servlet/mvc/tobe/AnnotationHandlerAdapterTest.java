@@ -83,6 +83,6 @@ class AnnotationHandlerAdapterTest {
         ModelAndView modelAndView = annotationHandlerAdapter.handle(handler, request, response);
 
         // then
-        assertThat(modelAndView.getViewName()).isEqualTo("/tests");
+        assertThat(modelAndView.getView().getViewName()).isEqualTo("/tests");
     }
 }

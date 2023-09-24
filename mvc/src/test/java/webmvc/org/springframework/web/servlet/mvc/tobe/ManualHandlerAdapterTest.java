@@ -67,6 +67,6 @@ class ManualHandlerAdapterTest {
         ModelAndView modelAndView = manualHandlerAdapter.handle(handler, request, response);
 
         // then
-        assertThat(modelAndView.getViewName()).isEqualTo("/tests");
+        assertThat(modelAndView.getView().getViewName()).isEqualTo("/tests");
     }
 }
