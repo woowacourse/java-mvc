@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
@@ -26,22 +27,30 @@ public class ManualHandlerMapping implements HandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
-    }
-
     @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
         try {
-            Controller instance = controllers.get(requestURI);
-            if (instance == null) {
-                return null;
-            }
-            final Method execution = instance.getClass()
-                    .getMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
-            return new HandlerExecution(instance, execution);
+            final String requestUri = request.getRequestURI();
+            final Controller controller = controllers.get(requestUri);
+            return getHandlerExecution(controller);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private HandlerExecution getHandlerExecution(final Controller controller) throws NoSuchMethodException {
+        return Optional.ofNullable(controller)
+                .map(instance -> {
+                    final var clazz = instance.getClass();
+                    final var method = getExecution(clazz);
+                    return new HandlerExecution(controller, method);
+                })
+                .orElse(null);
+    }
+
+    private Method getExecution(final Class<? extends Controller> clazz) {
+        try {
+            return clazz.getMethod("execute", HttpServletRequest.class, HttpServletResponse.class);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
