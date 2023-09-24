@@ -27,9 +27,4 @@ public class JsonView implements View {
         }
         return objectMapper.writeValueAsString(model);
     }
-
-    @Override
-    public String getViewName() {
-        return null;
-    }
 }
