@@ -21,8 +21,17 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request,
+                       final HttpServletResponse response) {
+        try {
+            renderView(model, request, response);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("[ERROR] 응답을 처리하는데 실패했습니다.");
+        }
+    }
+
+    private void renderView(final Map<String, ?> model, final HttpServletRequest request,
+                            final HttpServletResponse response) throws Exception {
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             final String redirectViewName = viewName.substring(JspView.REDIRECT_PREFIX.length());
             response.sendRedirect(redirectViewName);

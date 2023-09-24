@@ -6,5 +6,5 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public interface HandlerExecution {
 
-    ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception;
+    ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response);
 }

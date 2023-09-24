@@ -15,18 +15,21 @@ import webmvc.org.springframework.web.servlet.view.JsonView;
 @Controller
 public class UserController {
 
+    private static final String ACCOUNT = "account";
+    private static final String USER = "user";
+
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse ignored) {
-        final String account = request.getParameter("account");
+        final String account = request.getParameter(ACCOUNT);
         if (validateNotExistUser(account)) {
-            return NotExistUserException.createJsonMessage();
+            throw new NotExistUserException("[ERROR] 해당 유저가 존재하지 않습니다.");
         }
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 예상하지 못한 에러가 발생했습니다."));
+                .orElseThrow(() -> new NotExistUserException("[ERROR] 해당 유저가 존재하지 않습니다."));
 
-        modelAndView.addObject("user", user);
+        modelAndView.addObject(USER, user);
         return modelAndView;
     }
 

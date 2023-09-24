@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.exception.JsonException;
+import webmvc.org.springframework.web.servlet.exception.JsonExceptionHandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
@@ -43,7 +45,12 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerExecution handlerExecution = getHandlerExecution(request);
             final ModelAndView modelAndView = handlerExecution.handle(request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
-        } catch (Throwable e) {
+        } catch (final JsonException e) {
+            log.error("JsonException: {}", e.getMessage(), e);
+            final HandlerExecution handlerExecution = new JsonExceptionHandlerExecution(e.getMessage());
+            final ModelAndView modelAndView = handlerExecution.handle(request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
+        } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
