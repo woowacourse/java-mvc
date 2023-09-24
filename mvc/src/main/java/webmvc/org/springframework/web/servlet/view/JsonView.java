@@ -18,6 +18,7 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
         if (model.size() == 1) {
+            response.setContentType(MediaType.PLAIN_TEXT_UTF8_VALUE);
             for (Map.Entry<String, ?> entry : model.entrySet()) {
                 writer.write(entry.getValue().toString());
             }
