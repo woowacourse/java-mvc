@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotFoundException;
 
 public class HandlerMappingRegistry {
 
@@ -14,12 +15,11 @@ public class HandlerMappingRegistry {
     }
 
     public Object getHandler(HttpServletRequest httpServletRequest) {
-        Optional<Object> availableHandler = handlerMappings.stream()
+        return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .findAny();
-        return availableHandler
-            .orElseGet(NotFoundController::new);
+            .findAny()
+            .orElseThrow(HandlerNotFoundException::new);
     }
 }
