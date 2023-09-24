@@ -24,6 +24,15 @@ public class TestController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/get-json-test", method = RequestMethod.GET)
+    public ModelAndView findUsers(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller get json method");
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", new TestUser("a", "1", "a@gmail.com"));
+        modelAndView.addObject("user2", new TestUser("b", "2", "b@gmail.com"));
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
@@ -33,7 +42,7 @@ public class TestController {
     }
 
     @RequestMapping(value = "/post-json-test", method = RequestMethod.POST)
-    public ModelAndView saveId(final HttpServletRequest request, final HttpServletResponse response, TestUser user) {
+    public ModelAndView saveUser(final HttpServletRequest request, final HttpServletResponse response, TestUser user) {
         log.info("test controller post json method");
         final var modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user", user);
