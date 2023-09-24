@@ -20,13 +20,12 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) {
         try {
             Class<?> clazz = handler.getClass();
-            Object object = clazz.getDeclaredConstructor().newInstance();
             Method method = clazz.getDeclaredMethod(
                     HANDLER_METHOD,
                     HttpServletRequest.class,
                     HttpServletResponse.class
             );
-            return invokeMethod(object, method, request, response);
+            return invokeMethod(handler, method, request, response);
         } catch (Exception e) {
             throw new IllegalArgumentException("Adapter가 handle에 실패했습니다.", e);
         }
