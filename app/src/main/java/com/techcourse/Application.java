@@ -30,7 +30,6 @@ public class Application {
 
     private static void stop(final TomcatStarter tomcat) {
         try {
-            // make the application wait until we press any key.
             System.in.read();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
