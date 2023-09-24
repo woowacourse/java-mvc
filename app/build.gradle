@@ -28,6 +28,11 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.2"
 }
 
+task copyMvcClasses(type: Copy) {
+    from project(':mvc').buildDir.path + '/classes/java/main'
+    into 'src/main/webapp/WEB-INF/classes'
+}
+
 idea {
     module {
         inheritOutputDirs = false

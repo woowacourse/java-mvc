@@ -1,5 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
+import webmvc.org.springframework.web.servlet.exception.UncheckedServletException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 import java.util.ArrayList;
@@ -24,6 +25,6 @@ public final class HandlerAdapterRegistry {
             }
         }
 
-        throw new IllegalArgumentException("지원하는 Handler가 존재하지 않습니다.");
+        throw new UncheckedServletException(new IllegalArgumentException("지원하는 Handler가 존재하지 않습니다."));
     }
 }
