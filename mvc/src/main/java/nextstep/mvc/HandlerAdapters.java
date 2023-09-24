@@ -1,9 +1,8 @@
-package com.techcourse;
+package nextstep.mvc;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.mvc.HandlerAdapter;
 import nextstep.mvc.controller.asis.Controller;
 import nextstep.mvc.view.JspView;
 import nextstep.mvc.view.ModelAndView;
@@ -42,8 +41,8 @@ public class HandlerAdapters {
 
         final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
-        final boolean isJsonView = modelAndView.getModel().isEmpty();
-        if (isJsonView) {
+        final boolean isJspView = modelAndView.getModel().isEmpty();
+        if (isJspView) {
             final Map<String, Object> model = modelAndView.getModel();
             final View view = modelAndView.getView();
             view.render(model, request, response);

@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nextstep.mvc.HandlerAdapters;
 import nextstep.mvc.HandlerMappings;
 import nextstep.mvc.controller.tobe.AnnotationHandlerMapping;
 import nextstep.mvc.controller.tobe.ControllerHandlerAdapter;
