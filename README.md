@@ -21,9 +21,9 @@
 - [x] JspView 클래스 구현
 - [x] JsonView 클래스 구현
   - [x] Json 데이터 처리 로직 구현
-- [ ] Legacy MVC 제거
-  - [ ] Controller annotation 기반으로 변경
-  - [ ] 서비스 정상 작동 확인
+- [x] Legacy MVC 제거
+  - [x] Controller annotation 기반으로 변경
+  - [x] 서비스 정상 작동 확인
 
 ### 고민 혹은 궁금증
 

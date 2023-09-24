@@ -11,14 +11,10 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class HandlerAdaptersTest {
-
-    @Mock
-    private Controller controllerHandler;
 
     @Mock
     private HandlerExecution handlerExecution;
@@ -37,11 +33,11 @@ class HandlerAdaptersTest {
         HandlerAdapters handlerAdapters = new HandlerAdapters();
         handlerAdapters.add(handlerAdapter);
 
-        given(handlerAdapter.supports(controllerHandler))
+        given(handlerAdapter.supports(handlerExecution))
                 .willReturn(true);
 
         // when
-        HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(controllerHandler);
+        HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handlerExecution);
 
         // then
         assertThat(handlerAdapter).isNotNull();
