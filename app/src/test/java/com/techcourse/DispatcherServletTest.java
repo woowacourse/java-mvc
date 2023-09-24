@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -37,9 +35,6 @@ class DispatcherServletTest {
 
     @Mock
     HandlerMappingRegistry mockHandlerMappingRegistry;
-
-    @Captor
-    ArgumentCaptor<String> urlCaptor;
 
     DispatcherServlet dispatcherServlet;
 
