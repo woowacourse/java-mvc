@@ -1,7 +1,9 @@
 package com.techcourse;
 
+import core.org.springframework.util.ReflectionUtils;
 import jakarta.servlet.ServletContext;
 import java.util.List;
+import org.apache.el.util.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
@@ -12,9 +14,9 @@ import webmvc.org.springframework.web.servlet.mvc.AnnotationHandlerMapping;
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
  * servlet context.
  */
-public class DispatcherServletInitializer implements WebApplicationInitializer {
+public class AppInitializer implements WebApplicationInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(AppInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
@@ -23,8 +25,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping(this.getClass().getPackage().getName());
         handlerMapping.initialize();
         servletContext.setAttribute("handlerMappings", List.of(handlerMapping));
-        final var dispatcherServlet = new DispatcherServlet(servletContext);
 
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet(servletContext);
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
             throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
