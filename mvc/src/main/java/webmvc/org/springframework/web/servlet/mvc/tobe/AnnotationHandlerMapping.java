@@ -70,13 +70,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
 
     @Override
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         HandlerKey key = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.from(request.getMethod())
         );
 
-        return handlerExecutions.getOrDefault(key, null);
+        return handlerExecutions.get(key);
     }
 
 }

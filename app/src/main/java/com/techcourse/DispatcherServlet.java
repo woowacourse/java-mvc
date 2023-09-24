@@ -4,13 +4,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.http.HttpStatus;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -19,6 +18,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -28,6 +28,10 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings = new HandlerMappings();
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.addHandlerMapping(new ManualHandlerMapping());
+
+        handlerAdapters = new HandlerAdapters();
+        handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapters.addHandlerAdapter(new ManualHandlerAdapter());
     }
 
     @Override
@@ -35,14 +39,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Optional<HandlerExecution> execution  = handlerMappings.getHandler(request);
-
-            if (execution.isEmpty()) {
-                response.setStatus(HttpStatus.NOT_FOUND.getValue());
-                return;
-            }
-
-            ModelAndView view = execution.get().handle(request, response);
+            Object object  = handlerMappings.getHandler(request);
+            ModelAndView view = handlerAdapters.handle(object, request, response);
             move(view.getViewName(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
