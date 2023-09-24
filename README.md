@@ -21,4 +21,4 @@
 - [x] JsonView를 구현한다.
 - [x] 모든 컨트롤러를 어노테이션 기반으로 변경한다.
 - [x] asis 패키지를 제거한다.
-- [ ] DispatcherServlet을 MVC 패키지로 이동한다.
+- [x] DispatcherServlet을 MVC 패키지로 이동한다.
