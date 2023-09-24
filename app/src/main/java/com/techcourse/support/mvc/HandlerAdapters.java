@@ -2,7 +2,7 @@ package com.techcourse.support.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
 public class HandlerAdapters {
 
