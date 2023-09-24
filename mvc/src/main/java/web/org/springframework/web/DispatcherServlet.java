@@ -1,4 +1,4 @@
-package com.techcourse;
+package web.org.springframework.web;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
