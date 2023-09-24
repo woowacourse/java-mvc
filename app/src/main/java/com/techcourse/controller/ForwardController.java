@@ -7,13 +7,12 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
-import webmvc.org.springframework.web.servlet.view.RedirectView;
 
 @Controller
-public class RegisterViewController {
+public class ForwardController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/register.jsp"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView showIndex(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("index.jsp"));
     }
 }

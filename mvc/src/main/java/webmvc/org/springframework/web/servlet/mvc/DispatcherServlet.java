@@ -11,10 +11,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.ViewResolverComposite;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -24,21 +22,18 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
-    private final ViewResolverComposite viewResolvers;
     private final ApplicationContext applicationContext;
 
     public DispatcherServlet(final ApplicationContext applicationContext) {
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
         this.applicationContext = applicationContext;
-        this.viewResolvers = (ViewResolverComposite) applicationContext.getBean(ViewResolverComposite.class);
     }
 
     @Override
     public void init() {
         initHandlerMappings();
         initHandlerAdapters();
-        initViewResolvers();
     }
 
     private void initHandlerMappings() {
@@ -58,10 +53,6 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters.addAll(handlerAdapterInstances);
     }
 
-    private void initViewResolvers() {
-        viewResolvers.initialize();
-    }
-
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
         throws ServletException {
@@ -79,8 +70,7 @@ public class DispatcherServlet extends HttpServlet {
         final Object handler = getHandler(request);
         final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
         final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-        final View view = viewResolvers.resolveViewName(modelAndView.getViewName());
-        view.render(modelAndView.getModel(), request, response);
+        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 
     private Object getHandler(final HttpServletRequest request) {

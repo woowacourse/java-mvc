@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
+import context.org.springframework.stereotype.Controller;
 import core.org.springframework.util.ReflectionUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -13,17 +14,19 @@ import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.ViewResolver;
 
 public class ApplicationContext {
 
     private static final String INTERNAL_BASE_PACKAGE = "webmvc.org.springframework.web.servlet";
-    private static final List<Class<?>> beanTypes = List.of(
+    private static final List<Class<?>> beanClasses = List.of(
         HandlerMapping.class,
         HandlerAdapter.class,
-        ApplicationContextAware.class,
-        ViewResolver.class
+        ApplicationContextAware.class
     );
+    private static final List<Class<? extends Annotation>> beanAnnotations = List.of(
+        Controller.class
+    );
+
     private final Map<Class<?>, Object> beans;
 
     public ApplicationContext(final String externalPackage) {
@@ -35,8 +38,11 @@ public class ApplicationContext {
 
     public void registerBeans(final String basePackage) {
         final Reflections reflections = new Reflections(basePackage);
-        beanTypes.stream()
+        beanClasses.stream()
             .map(reflections::getSubTypesOf)
+            .forEach(this::registerBeans);
+        beanAnnotations.stream()
+            .map(reflections::getTypesAnnotatedWith)
             .forEach(this::registerBeans);
     }
 
@@ -65,7 +71,6 @@ public class ApplicationContext {
     public void initialize() {
         setFields();
         setApplicationContext();
-
     }
 
     private void setFields() {

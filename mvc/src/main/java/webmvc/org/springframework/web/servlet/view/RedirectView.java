@@ -10,7 +10,6 @@ import webmvc.org.springframework.web.servlet.View;
 public class RedirectView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(RedirectView.class);
-    public static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
 
@@ -22,7 +21,7 @@ public class RedirectView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         log.debug("redirect to {}", viewName);
-        response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+        response.sendRedirect(viewName);
     }
 
     @Override
