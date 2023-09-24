@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.view;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -10,8 +11,7 @@ import webmvc.org.springframework.web.servlet.View;
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
-    public static final String REDIRECT_PREFIX = "redirect:";
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
 
@@ -19,17 +19,25 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
+    public static JspView redirectTo(final String viewName) {
+        return new JspView(REDIRECT_PREFIX + viewName);
+    }
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        // todo
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            return;
+        }
 
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
-        // todo
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 
     @Override
