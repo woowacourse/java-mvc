@@ -56,6 +56,6 @@ class HandlerAdapterRegistryTest {
         final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
         final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(request, handlerMapping);
 
-        assertThat(handlerAdapter.getClass()).isEqualTo(AnnotationHandlerMapping.class);
+        assertThat(handlerAdapter.getClass()).isEqualTo(HandlerExecutionHandlerAdapter.class);
     }
 }
