@@ -3,6 +3,7 @@ package webmvc.org.springframework.web.servlet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class ModelAndView {
 
@@ -11,6 +12,11 @@ public class ModelAndView {
 
     public ModelAndView(final View view) {
         this.view = view;
+        this.model = new HashMap<>();
+    }
+
+    public ModelAndView(final String viewName) {
+        this.view = new JspView(viewName);
         this.model = new HashMap<>();
     }
 

@@ -4,11 +4,11 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
-import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapper.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
+import webmvc.org.springframework.web.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.mapper.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.mapper.HandlerMappingRegistry;
 
 /**
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
@@ -23,11 +23,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
         final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
