@@ -9,32 +9,19 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-
-import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-    }
-
-    @Override
-    public void init() {
-        List<HandlerMapping> handlerMappings = List.of(new AnnotationHandlerMapping());
-        handlerMappings.forEach(HandlerMapping::initialize);
-        this.handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
-
-        List<HandlerAdapter> handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
+    public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry, HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
