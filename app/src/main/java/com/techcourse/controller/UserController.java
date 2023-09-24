@@ -18,7 +18,7 @@ public class UserController {
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         final String account = request.getParameter("account");
-        if (Objects.isNull(account) || notExistUser(account)) {
+        if (validateNotExistUser(account)) {
             return NotExistUserException.createJsonMessage();
         }
 
@@ -28,6 +28,10 @@ public class UserController {
 
         modelAndView.addObject("user", user);
         return modelAndView;
+    }
+
+    private boolean validateNotExistUser(final String account) {
+        return Objects.isNull(account) || notExistUser(account);
     }
 
     private Boolean notExistUser(final String account) {

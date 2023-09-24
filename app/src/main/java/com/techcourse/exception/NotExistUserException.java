@@ -7,7 +7,8 @@ public final class NotExistUserException {
 
     public static ModelAndView createJsonMessage() {
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("error", "[ERROR] 존재하지 않는 유저 입니다.");
+        final ExceptionMessage message = new ExceptionMessage("[ERROR] 존재하지 않는 유저입니다.");
+        modelAndView.addObject("error", message);
         return modelAndView;
     }
 }

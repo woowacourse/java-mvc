@@ -31,9 +31,6 @@ public class JsonView implements View {
     }
 
     private String makeJsonData(final Map<String, ?> model) throws JsonProcessingException {
-        if (model.isEmpty()) {
-            return objectMapper.writeValueAsString(Collections.emptyMap());
-        }
         if (hasOnlyOneData(model)) {
             final Object firstData = getFirstData(model);
             return objectMapper.writeValueAsString(firstData);
