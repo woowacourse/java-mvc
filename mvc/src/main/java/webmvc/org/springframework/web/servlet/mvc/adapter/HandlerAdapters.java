@@ -1,8 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.adapter;
 
 import java.util.List;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 public class HandlerAdapters {
 

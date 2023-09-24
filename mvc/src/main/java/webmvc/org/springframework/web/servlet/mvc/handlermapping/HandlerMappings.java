@@ -1,10 +1,8 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class HandlerMappings {
 
