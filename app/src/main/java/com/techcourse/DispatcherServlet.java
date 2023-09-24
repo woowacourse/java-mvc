@@ -34,14 +34,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handleResult = handlerProcessor.handle(request, response);
+            final Object handleResult = handlerProcessor.handle(request, response);
 
             if (handleResult instanceof ModelAndView) {
                 final ModelAndView modelAndView = (ModelAndView) handleResult;
                 modelAndView.getView().render(modelAndView.getModel(), request, response);
                 return;
             }
-            String viewName = (String) handleResult;
+            final String viewName = (String) handleResult;
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

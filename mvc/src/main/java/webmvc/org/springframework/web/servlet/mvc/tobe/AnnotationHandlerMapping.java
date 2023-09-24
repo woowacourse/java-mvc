@@ -67,7 +67,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object executeHandler(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object executeHandler(HttpServletRequest request, HttpServletResponse response) {
         final HandlerExecution handlerExecution = (HandlerExecution) getHandler(request);
         return handlerExecution.handle(request, response);
     }
@@ -75,7 +75,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public boolean isSupport(HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
-        final String method = request.getMethod();
-        return handlerExecutions.containsKey(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
+        final String requestMethod = request.getMethod();
+        return handlerExecutions.containsKey(new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod)));
     }
 }
