@@ -27,7 +27,6 @@ public class UserController {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         modelAndView.addObject("user", user);
-        modelAndView.addObject("asd", user);
         return modelAndView;
     }
 }

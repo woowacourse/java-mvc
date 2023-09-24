@@ -29,6 +29,7 @@ public class JsonView implements View {
             if (model.size() == SINGLE_SIZE) {
                 final Object onlyValue = model.values().toArray()[0];
                 mapper.writeValue(writer, onlyValue);
+                return;
             }
             mapper.writeValue(writer, model);
         } catch (IOException e) {
