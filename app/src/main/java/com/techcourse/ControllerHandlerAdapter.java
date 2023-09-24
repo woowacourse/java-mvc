@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class ControllerHandlerAdapter implements HandlerAdapter {
 
@@ -18,6 +19,7 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return ((Controller) handler).execute(request, response);
+        String path = ((Controller) handler).execute(request, response);
+        return new ModelAndView(new JspView(path));
     }
 }
