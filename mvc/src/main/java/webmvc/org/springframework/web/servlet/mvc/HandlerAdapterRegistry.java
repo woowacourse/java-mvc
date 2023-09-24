@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import web.org.springframework.web.exception.InvalidHandlerTypeException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
