@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
+    private static final int SINGLE_JSON_SIZE = 1;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -23,7 +24,7 @@ public class JsonView implements View {
     }
 
     private Object createResult(Map<String, ?> model) {
-        if (model.size() == 1) {
+        if (model.size() == SINGLE_JSON_SIZE) {
             return model.values();
         }
         return model;
