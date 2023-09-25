@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 class NotFoundHandlerTest {
 
@@ -20,8 +21,10 @@ class NotFoundHandlerTest {
 
         final ModelAndView modelAndView = notFoundHandler.handle(request, response);
 
-        assertThat(modelAndView.getView().getViewName())
-            .isEqualTo("redirect:/404.jsp");
+        final JspView expectedJspView = new JspView("redirect:/404.jsp");
+        assertThat(modelAndView.getView())
+            .usingRecursiveComparison()
+            .isEqualTo(expectedJspView);
     }
 
 }
