@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
@@ -42,7 +41,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static HandlerMappingRegistry initializedHandlerAdapater() {
         final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
 
         return handlerMappingRegistry;
     }
@@ -50,7 +48,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static HandlerAdapterRegistry initializedHandlerAdapterRegistry() {
         final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
 
         return handlerAdapterRegistry;
     }
