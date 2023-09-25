@@ -1,20 +1,16 @@
 package webmvc.org.springframework.web.servlet.mvc.asis;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.Objects;
+@Controller
+public class ForwardController {
 
-public class ForwardController implements Controller {
-
-    private final String path;
-
-    public ForwardController(final String path) {
-        this.path = Objects.requireNonNull(path);
-    }
-
-    @Override
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return path;
+        return "/index.jsp";
     }
 }
