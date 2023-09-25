@@ -8,7 +8,6 @@ import web.org.springframework.http.MediaType;
 
 public class JsonView implements View {
 
-    private static final int SIZE_OF_PLAIN_TEXT = 1;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -17,12 +16,6 @@ public class JsonView implements View {
         String jsonValue = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(model);
 
         response.getWriter().write(jsonValue);
-
-        if (model.size() <= SIZE_OF_PLAIN_TEXT) {
-            response.setContentType(MediaType.PLAIN_TEXT_UTF_VALUE);
-            return;
-        }
-
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 }
