@@ -44,7 +44,8 @@ public class DispatcherServlet extends HttpServlet {
         final Optional<Object> nullableHandler = handlerMappingRegistry.getHandler(request);
 
         if (nullableHandler.isEmpty()) {
-            render(new ModelAndView(new JspView("404.jsp")), request, response);
+            final ModelAndView notFoundModelAndView = handlerExecutor.handleNotFound();
+            render(notFoundModelAndView, request, response);
             return;
         }
 
