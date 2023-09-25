@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +30,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            Method[] methods = controller.getMethods();
-            Arrays.stream(methods)
-                  .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                  .forEach(this::putHandlers);
+        Set<Method> methods = controllers.stream()
+                                         .map(Class::getMethods)
+                                         .flatMap(Arrays::stream)
+                                         .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                                         .collect(Collectors.toSet());
+
+        for (Method method : methods) {
+            putHandlers(method);
         }
         log.info("Initialized AnnotationHandlerMapping!");
         log.info("handler size: {}", handlerExecutions.size());
