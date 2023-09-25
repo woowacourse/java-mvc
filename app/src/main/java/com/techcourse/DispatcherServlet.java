@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMappings;
@@ -25,9 +24,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com"));
-        handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
         handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 

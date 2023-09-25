@@ -1,13 +1,17 @@
 package com.techcourse.controller;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 
-public class LogoutController implements Controller {
+@Controller
+public class LogoutController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(final HttpServletRequest req,
+                         final HttpServletResponse res) {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return "redirect:/";
