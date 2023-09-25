@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.NotFoundException;
 
 public class HandlerMappingRegistry {
 
@@ -25,6 +24,6 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(httpServletRequest))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow(() -> new NotFoundException("일치하는 핸들러가 없습니다."));
+                .orElseThrow(() -> new IllegalStateException("일치하는 핸들러가 없습니다."));
     }
 }

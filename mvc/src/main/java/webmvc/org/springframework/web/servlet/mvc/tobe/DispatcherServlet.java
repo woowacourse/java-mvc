@@ -39,10 +39,8 @@ public class DispatcherServlet extends HttpServlet {
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         }
-        catch (NotFoundException e) {
-//            new View(new JspView())
-        }
         catch (Exception e) {
+
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
