@@ -12,16 +12,9 @@ import java.util.Map;
 public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String body = bodyToJson(getBody(model));
+        final String body = bodyToJson(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(body);
-    }
-
-    private Object getBody(final Map<String, ?> model) {
-        if (model.size() == 1) {
-            return model.keySet().toArray()[0];
-        }
-        return model;
     }
 
     private String bodyToJson(final Object body) throws JsonProcessingException {
@@ -30,5 +23,4 @@ public class JsonView implements View {
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(body);
     }
-
 }

@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
 
 public class UserSession {
-
     public static final String SESSION_KEY = "user";
 
     public static Optional<User> getUserFrom(final HttpSession session) {
@@ -18,5 +17,6 @@ public class UserSession {
         return getUserFrom(session).isPresent();
     }
 
-    private UserSession() {}
+    private UserSession() {
+    }
 }
