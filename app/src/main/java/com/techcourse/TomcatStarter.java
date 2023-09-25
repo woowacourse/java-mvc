@@ -40,6 +40,13 @@ public class TomcatStarter {
     public void stop() {
         try {
             tomcat.stop();
+        } catch (LifecycleException e) {
+            throw new UncheckedServletException(e);
+        }
+    }
+
+    public void destroy() {
+        try {
             tomcat.destroy();
         } catch (LifecycleException e) {
             throw new UncheckedServletException(e);
