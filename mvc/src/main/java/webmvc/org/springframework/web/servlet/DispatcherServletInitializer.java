@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
@@ -22,10 +22,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         final var dispatcherServlet = new DispatcherServlet();
 
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
 
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
 
         dispatcherServlet.init();
 
