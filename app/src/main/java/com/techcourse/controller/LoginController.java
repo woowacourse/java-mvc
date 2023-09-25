@@ -21,20 +21,22 @@ public class LoginController {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+                .orElse("redirect:/401.jsp");
+
+        return new ModelAndView(new JspView(viewName));
     }
 
-    private ModelAndView login(final HttpServletRequest request, final User user) {
+    private String login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return "redirect:/index.jsp";
         }
-        return new ModelAndView(new JspView("redirect:/401.jsp"));
+        return "redirect:/401.jsp";
     }
 }

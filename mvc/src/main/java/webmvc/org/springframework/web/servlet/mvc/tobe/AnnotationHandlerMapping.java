@@ -36,7 +36,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         initHandlerExecutions();
-        System.out.println(handlerExecutions);
         log.info("Initialized AnnotationHandlerMapping successfully!");
     }
 
