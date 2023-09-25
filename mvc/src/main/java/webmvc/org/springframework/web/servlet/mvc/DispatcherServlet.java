@@ -26,6 +26,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        handlerMappings.initialize();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {

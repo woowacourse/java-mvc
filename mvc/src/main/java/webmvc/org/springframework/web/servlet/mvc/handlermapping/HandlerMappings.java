@@ -19,7 +19,6 @@ public class HandlerMappings {
     }
 
     public void add(HandlerMapping handlerMapping) {
-        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
 
@@ -31,5 +30,9 @@ public class HandlerMappings {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("요청에 맞는 Handler 를 찾지 못하였습니다"));
+    }
+
+    public void initialize() {
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 }
