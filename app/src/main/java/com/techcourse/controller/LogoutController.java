@@ -11,7 +11,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class LogoutController {
 
-    @RequestMapping(value = "/logout/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final var session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
