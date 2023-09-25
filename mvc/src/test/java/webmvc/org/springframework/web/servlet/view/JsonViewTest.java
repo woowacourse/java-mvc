@@ -66,7 +66,7 @@ class JsonViewTest {
         // then
         then(printWriter)
                 .should(times(1))
-                .write("{\"test\":\"value\"}");
+                .write("\"value\"");
     }
 
     @Test
