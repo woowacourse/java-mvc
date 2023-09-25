@@ -19,22 +19,22 @@ public class LoginController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest req,
-                              final HttpServletResponse res) {
-        final String path = execute(req, res);
+    public ModelAndView login(final HttpServletRequest request,
+                              final HttpServletResponse response) {
+        final String path = execute(request, response);
         return new ModelAndView(new JspView(path));
     }
 
-    private String execute(final HttpServletRequest req,
-                           final HttpServletResponse res) {
-        if (UserSession.isLoggedIn(req.getSession())) {
+    private String execute(final HttpServletRequest request,
+                           final HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return login(req, user);
+                    return login(request, user);
                 })
                 .orElse("redirect:/401.jsp");
     }

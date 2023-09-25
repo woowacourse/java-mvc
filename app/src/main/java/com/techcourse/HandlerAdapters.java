@@ -20,5 +20,6 @@ public class HandlerAdapters {
                 .filter(adapter -> adapter.supports(handler))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("핸들러 어뎁터를 찾지 못했습니다.: " + handler));
+
     }
 }

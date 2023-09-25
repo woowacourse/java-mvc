@@ -41,9 +41,9 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void render(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse res) throws Exception {
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
         final View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), req, res);
+        view.render(modelAndView.getModel(), request, response);
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
