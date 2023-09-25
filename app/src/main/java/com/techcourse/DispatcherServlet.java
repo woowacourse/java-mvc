@@ -14,8 +14,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -30,12 +28,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping(ANNOTATION_BASE_PACKAGE));
         handlerMappings.forEach(HandlerMapping::initialize);
 
         handlerAdapters.add(new AnnotationHandlerAdapter());
-        handlerAdapters.add(new ManualHandlerAdapter());
     }
 
     @Override
@@ -48,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             ModelAndView modelAndView = execute(request, response);
             View view = modelAndView.getView();
-            view.render(modelAndView.getModel(),request,response);
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
