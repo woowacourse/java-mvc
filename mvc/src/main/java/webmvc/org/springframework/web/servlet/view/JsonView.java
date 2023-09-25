@@ -1,6 +1,5 @@
 package webmvc.org.springframework.web.servlet.view;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,28 +19,21 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String json = getResponseBody(model);
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.getWriter().write(json);
-    }
-
-    private String getResponseBody(final Map<String, ?> model) {
         try {
-            if (model.size() == 1) {
-                return objectMapper.writeValueAsString(getOneModel(model));
-            }
+            final String json = objectMapper.writeValueAsString(getResponseBody(model));
 
-            return objectMapper.writeValueAsString(model);
-        } catch (JsonProcessingException e) {
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.getWriter().write(json);
+        } catch (Exception e) {
             log.warn("Model\\[ {} \\] 을 Json으로 파싱하던 도중에 오류가 발생하였습니다.", model, e);
             throw new ViewException("[ERROR] Model을 Json으로 파싱하던 도중에 오류가 발생하였습니다.");
         }
     }
 
-    private Map.Entry<String, ?> getOneModel(final Map<String, ?> model) {
-        return model.entrySet()
-                .stream()
-                .findFirst()
-                .orElse(null);
+    private Object getResponseBody(final Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().toArray()[0];
+        }
+        return model;
     }
 }
