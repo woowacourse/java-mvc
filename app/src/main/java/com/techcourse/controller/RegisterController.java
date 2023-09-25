@@ -10,10 +10,10 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-@Controller(value = "/register")
+@Controller
 public class RegisterController {
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest req, HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
@@ -24,7 +24,7 @@ public class RegisterController {
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
