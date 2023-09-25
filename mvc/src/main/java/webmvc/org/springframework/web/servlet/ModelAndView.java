@@ -1,5 +1,8 @@
 package webmvc.org.springframework.web.servlet;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +29,8 @@ public class ModelAndView {
     public Map<String, Object> getModel() {
         return Collections.unmodifiableMap(model);
     }
-
-    public View getView() {
-        return view;
-    }
-
-    public String getViewName() {
-        return view.getName();
+    
+    public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        view.render(model, request, response);
     }
 }
