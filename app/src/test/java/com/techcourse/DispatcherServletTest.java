@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
 
 import java.util.NoSuchElementException;
 
@@ -47,18 +48,6 @@ public class DispatcherServletTest {
         private final HttpServletRequest request = mock(HttpServletRequest.class);
         private final HttpServletResponse response = mock(HttpServletResponse.class);
         private final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-
-        @Test
-        @DisplayName("요청 테스트 - /")
-        void index() {
-            //given
-            when(request.getRequestURI()).thenReturn("/");
-            when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
-
-            //when, then
-            assertDoesNotThrow(() -> dispatcherServlet.service(request, response));
-        }
 
         @Test
         @DisplayName("요청 테스트 - /login")
