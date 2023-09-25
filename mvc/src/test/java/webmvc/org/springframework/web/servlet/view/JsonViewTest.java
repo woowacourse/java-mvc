@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import samples.TestUser;
 
 import java.io.PrintWriter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class JsonViewTest {
@@ -23,10 +24,10 @@ class JsonViewTest {
         PrintWriter printWriter = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(printWriter);
 
-        final var model = Map.of(
+        final var model = new LinkedHashMap<>(Map.of(
                 "user", new TestUser("a", "1", "a@gmail.com"),
                 "user2", new TestUser("b", "2", "b@gmail.com")
-        );
+        ));
         new JsonView().render(model, request, response);
 
         verify(printWriter).print("{\n" +
