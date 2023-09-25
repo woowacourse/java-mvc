@@ -12,6 +12,9 @@ import webmvc.org.springframework.web.servlet.View;
 public class JsonView implements View {
 
     private static final int SINGLE_JSON_SIZE = 1;
+    private static final int SINGLE_JSON_FIRST_PARAM = 0;
+
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
 
@@ -25,7 +28,7 @@ public class JsonView implements View {
 
     private Object createResult(Map<String, ?> model) {
         if (model.size() == SINGLE_JSON_SIZE) {
-            return model.values();
+            return model.values().toArray()[SINGLE_JSON_FIRST_PARAM].toString();
         }
         return model;
     }
