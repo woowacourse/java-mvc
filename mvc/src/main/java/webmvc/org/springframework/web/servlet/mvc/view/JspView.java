@@ -27,9 +27,4 @@ public class JspView implements View {
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
-
-    @Override
-    public String getViewName() {
-        return viewName;
-    }
 }

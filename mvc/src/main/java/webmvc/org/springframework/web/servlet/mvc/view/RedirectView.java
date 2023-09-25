@@ -16,9 +16,4 @@ public class RedirectView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.sendRedirect(viewName);
     }
-
-    @Override
-    public String getViewName() {
-        return viewName;
-    }
 }

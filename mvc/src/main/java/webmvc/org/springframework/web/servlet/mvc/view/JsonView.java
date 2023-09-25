@@ -23,18 +23,12 @@ public class JsonView implements View {
         writeMultiValue(writer, model);
     }
 
-    private void writeMultiValue(final PrintWriter writer, final Map<String, ?> model) throws JsonProcessingException {
-        writer.write(objectMapper.writeValueAsString(model));
-    }
-
     private void writeSingleValue(final PrintWriter writer, final Map<String, ?> model) {
         final var entry = model.entrySet().iterator().next();
         writer.write(entry.getValue().toString());
     }
 
-
-    @Override
-    public String getViewName() {
-        return null;
+    private void writeMultiValue(final PrintWriter writer, final Map<String, ?> model) throws JsonProcessingException {
+        writer.write(objectMapper.writeValueAsString(model));
     }
 }

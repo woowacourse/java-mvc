@@ -15,8 +15,8 @@ import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMapping;
 public class WebApplicationContext {
 
     private static final String INTERNAL_BASE_PACKAGE = "webmvc.org.springframework.web.servlet.mvc";
-    private static final List<Class<? extends Annotation>> COMPONENT_CLASS_ANNOTATIONS = java.util.List.of(Controller.class);
-    private static final List<Class<?>> WEB_APPLICATION_DEFAULT_SUPER_CLASSES = java.util.List.of(
+    private static final List<Class<? extends Annotation>> COMPONENT_CLASS_ANNOTATIONS = List.of(Controller.class);
+    private static final List<Class<?>> WEB_APPLICATION_DEFAULT_SUPER_CLASSES = List.of(
             HandlerMapping.class,
             HandlerAdapter.class
     );
