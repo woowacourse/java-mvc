@@ -6,19 +6,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.MyController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class IndexController implements MyController {
-
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) {
-        return "index.jsp";
-    }
+public class IndexController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView(execute(req, res)));
+        return new ModelAndView(new JspView("index.jsp"));
     }
 }

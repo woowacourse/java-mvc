@@ -1,4 +1,4 @@
-package com.techcourse.support;
+package webmvc.org.springframework.web.servlet.mvc.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

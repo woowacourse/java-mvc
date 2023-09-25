@@ -1,4 +1,4 @@
-package com.techcourse.support;
+package webmvc.org.springframework.web.servlet.mvc.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.HandlerExceptionResolver;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
-import webmvc.org.springframework.web.servlet.mvc.support.HandlerNotFoundExceptionResolver;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")

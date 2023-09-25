@@ -5,3 +5,6 @@
 - [X] 어노테이션 기반 MVC 프레임워크 구현
 - [X] Legacy MVC, @MVC 통합
 - [X] 예외 핸들러 추가
+- [X] JspView 구현
+- [X] JsonView 구현
+- [X] LegacyMVC 제거
