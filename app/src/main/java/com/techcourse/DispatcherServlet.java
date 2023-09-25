@@ -7,13 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMappings;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -40,21 +40,11 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = handlerMappings.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            final JspView view = (JspView) modelAndView.getView();
-            move(view.getViewName(), request, response);
+            final View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
