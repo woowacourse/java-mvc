@@ -1,48 +1,56 @@
 plugins {
     id "java"
-    id "idea"
+    id "jacoco"
+    id "org.sonarqube" version "4.2.1.3168"
 }
 
-group "nextstep"
-version "1.0-SNAPSHOT"
-
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation "org.reflections:reflections:0.10.2"
-    implementation "org.apache.tomcat.embed:tomcat-embed-core:10.1.13"
-    implementation "org.apache.tomcat.embed:tomcat-embed-jasper:10.1.13"
-    implementation "ch.qos.logback:logback-classic:1.2.12"
-    implementation "org.apache.commons:commons-lang3:3.13.0"
-
-    implementation "org.springframework:spring-context:5.3.29"
-
-    testImplementation "org.assertj:assertj-core:3.24.2"
-    testImplementation "org.mockito:mockito-core:5.4.0"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.7.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
-    testImplementation 'com.h2database:h2:2.2.220'
-}
-
-test {
-    maxParallelForks 3
-    useJUnitPlatform()
-}
-
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir file("src/main/webapp/WEB-INF/classes")
+allprojects {
+    repositories {
+        mavenCentral()
     }
 }
 
-sourceSets {
-    main {
-        java.outputDir = file('src/main/webapp/WEB-INF/classes')
+subprojects {
+    apply plugin: 'org.sonarqube'
+    sonar {
+        properties {
+            property 'sonar.coverage.jacoco.xmlReportPaths', "$projectDir.parentFile.path/build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+        }
+    }
+
+    tasks.withType(Test).configureEach {
+        maxParallelForks 3
+        useJUnitPlatform()
+    }
+}
+
+apply from: "$project.rootDir/sonar.gradle"
+
+// $ ./gradlew test codeCoverageReport
+tasks.register("codeCoverageReport", JacocoReport) {
+    // If a subproject applies the 'jacoco' plugin, add the result it to the report
+    subprojects { subproject ->
+        subproject.plugins.withType(JacocoPlugin).configureEach {
+            subproject.tasks.matching({ t -> t.extensions.findByType(JacocoTaskExtension) }).configureEach { testTask ->
+                //the jacoco extension may be disabled for some projects
+                if (testTask.extensions.getByType(JacocoTaskExtension).isEnabled()) {
+                    sourceSets subproject.sourceSets.main
+                    executionData(testTask)
+                } else {
+                    logger.warn('Jacoco extension is disabled for test task \'{}\' in project \'{}\'. this test task will be excluded from jacoco report.',testTask.getName(),subproject.getName())
+                }
+            }
+
+            subproject.tasks.matching({ t -> t.extensions.findByType(JacocoTaskExtension) }).forEach {
+                rootProject.tasks.codeCoverageReport.dependsOn(it)
+            }
+        }
+    }
+
+    // enable the different report types (html, xml, csv)
+    reports {
+        xml.required = true
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
 }
