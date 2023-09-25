@@ -7,9 +7,6 @@ import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.DispatcherServlet;
 import webmvc.org.springframework.web.servlet.mvc.supports.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.supports.mapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JsonViewResolver;
-import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JspViewResolver;
-import webmvc.org.springframework.web.servlet.mvc.supports.resolver.ViewResolvers;
 
 /**
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
@@ -23,11 +20,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final ViewResolvers resolvers = new ViewResolvers();
-
-        resolvers.addResolvers(new JsonViewResolver())
-                 .addResolvers(new JspViewResolver());
-
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping())
