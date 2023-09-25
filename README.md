@@ -10,7 +10,7 @@
 
 ### 3단계 - JSON View 구현하기
 - [ ] 화면에 대한 책임은 View 클래스가 갖도록 하기
-  - [ ] JspView 클래스를 구현한다
+  - [x] JspView 클래스를 구현한다
   - [ ] JsonView 클래스를 구현한다
     -  [ ] REST API를 지원
 - [ ] Legacy MVC 제거하기
