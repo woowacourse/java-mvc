@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.DispatcherServlet;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
@@ -24,8 +25,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         Set<HandlerMapping> handlerMappings = Set.of(
-                new AnnotationHandlerMapping("com.techcourse.controller"),
-                new ManualHandlerMappingAdapter(new ManualHandlerMapping())
+                new AnnotationHandlerMapping("com.techcourse.controller")
         );
         final var dispatcherServlet = new DispatcherServlet(
                 handlerMappings,
