@@ -1,8 +1,7 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import web.org.springframework.web.exception.HandlerMappingNotFoundException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 import java.util.List;
 
@@ -14,7 +13,12 @@ public class HandlerMappingRegistry {
         this.handlerMappings = handlerMappings;
     }
 
-    public HandlerMapping getHandlerMapping(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
+        HandlerMapping handlerMapping = getHandlerMapping(request);
+        return handlerMapping.getHandler(request);
+    }
+
+    private HandlerMapping getHandlerMapping(HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.supports(request))
                 .findFirst()
