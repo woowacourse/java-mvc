@@ -18,15 +18,15 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("/index.jsp"));
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                                      .map(user -> {
                                          log.info("User : {}", user);
-                                         return login(req, user);
+                                         return login(request, user);
                                      })
                                      .orElse(new ModelAndView(new JspView("/401.jsp")));
     }

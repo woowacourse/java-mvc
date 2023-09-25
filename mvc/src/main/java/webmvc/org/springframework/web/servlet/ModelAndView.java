@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import webmvc.org.springframework.web.servlet.exception.RenderingException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,8 +23,12 @@ public class ModelAndView {
         return this;
     }
 
-    public void render(final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
+    public void render(final HttpServletRequest request, HttpServletResponse response) {
+        try {
+            view.render(model, request, response);
+        } catch (Exception e) {
+            throw new RenderingException("렌더링 중 문제가 발생했습니다.");
+        }
     }
 
     public Object getObject(final String attributeName) {
