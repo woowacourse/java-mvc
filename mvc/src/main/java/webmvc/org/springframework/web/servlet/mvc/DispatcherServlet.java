@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,9 +10,6 @@ import webmvc.org.springframework.web.servlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -22,15 +19,12 @@ public class DispatcherServlet extends HttpServlet {
     private final transient HandlerMappingRegistry handlerMappingRegistry;
     private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse.controller")
-        );
-
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ControllerHandlerAdapter(),
-                new HandlerExecutionHandlerAdapter()
-        );
+    public DispatcherServlet(
+            HandlerMappingRegistry handlerMappingRegistry,
+            HandlerAdapterRegistry handlerAdapterRegistry
+    ) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
@@ -50,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             modelAndView.render(request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
