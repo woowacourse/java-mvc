@@ -2,11 +2,10 @@ package webmvc.org.springframework.web.servlet.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.View;
-
-import java.util.Map;
 
 public class JspView implements View {
 
@@ -29,11 +28,11 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        // todo
-    }
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            return;
+        }
 
-    @Override
-    public String getName() {
-        return viewName;
+        request.getRequestDispatcher(viewName).forward(request, response);
     }
 }

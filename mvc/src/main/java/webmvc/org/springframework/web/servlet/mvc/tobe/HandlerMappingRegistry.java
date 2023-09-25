@@ -23,6 +23,6 @@ public class HandlerMappingRegistry {
                               .map(handler -> handler.getHandler(request))
                               .filter(Objects::nonNull)
                               .findFirst()
-                              .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 URL입니다."));
+                              .orElse(new NotFoundHandler());
     }
 }

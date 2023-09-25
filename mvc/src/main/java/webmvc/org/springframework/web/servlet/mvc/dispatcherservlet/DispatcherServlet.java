@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.dispatcherservlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,7 +10,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.NotFoundHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -20,9 +20,9 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        handlerAdapterRegistry = new HandlerAdapterRegistry(new AnnotationHandlerAdapter(), new ManualHandlerAdapter());
-        handlerMappingRegistry = new HandlerMappingRegistry(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping());
+    public DispatcherServlet(String basePackage, String notFoundViewName) {
+        handlerAdapterRegistry = new HandlerAdapterRegistry(new AnnotationHandlerAdapter(), new NotFoundHandlerAdapter(notFoundViewName));
+        handlerMappingRegistry = new HandlerMappingRegistry(new AnnotationHandlerMapping(basePackage));
     }
 
     @Override
@@ -38,20 +38,10 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappingRegistry.getHandler(request);
             final var modelAndView = handlerAdapterRegistry.handle(handler, request, response);
-            move(modelAndView.getViewName(), request, response);
-        } catch (Throwable e) {
+            modelAndView.render(request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
