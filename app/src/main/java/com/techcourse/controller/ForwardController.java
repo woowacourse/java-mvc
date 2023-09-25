@@ -8,13 +8,15 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.view.RedirectView;
 
-@Controller
-public class LogoutController {
+@Controller(path = "/")
+public class ForwardController{
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
+
+    public ForwardController() {
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new RedirectView("/index.jsp"));
     }
 }

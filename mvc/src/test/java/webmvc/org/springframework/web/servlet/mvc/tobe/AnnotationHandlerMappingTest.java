@@ -1,13 +1,16 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.context.WebApplicationContext;
 
 class AnnotationHandlerMappingTest {
 
@@ -15,7 +18,8 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        final WebApplicationContext samples = WebApplicationContext.createContextForPackage("samples");
+        handlerMapping = new AnnotationHandlerMapping(samples);
         handlerMapping.initialize();
     }
 
