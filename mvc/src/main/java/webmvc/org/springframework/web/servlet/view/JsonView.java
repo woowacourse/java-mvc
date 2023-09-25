@@ -1,7 +1,6 @@
 package webmvc.org.springframework.web.servlet.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -16,12 +15,8 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         if (model.size() > 0) {
-            final ServletOutputStream outputStream = response.getOutputStream();
-
             final String responseBody = getResponseBody(model);
-            final byte[] bytes = responseBody.getBytes();
-            outputStream.write(bytes);
-            response.setContentLength(bytes.length);
+            response.getWriter().write(responseBody);
         }
     }
 
