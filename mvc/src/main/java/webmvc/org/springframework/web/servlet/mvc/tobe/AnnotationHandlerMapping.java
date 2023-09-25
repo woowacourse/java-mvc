@@ -4,17 +4,15 @@ import context.org.springframework.stereotype.Controller;
 import core.org.springframework.util.ReflectionUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -56,11 +54,12 @@ public class AnnotationHandlerMapping {
               .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
 
-        return handlerExecutions.get(handlerKey);
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 
     public Map<Object, Object> getHandlerExecutions() {
