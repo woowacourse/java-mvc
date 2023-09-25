@@ -17,10 +17,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappings handlerMappings;
 
     public DispatcherServlet(ServletContext servletContext) {
-        handlerMappings = (List<HandlerMapping>) servletContext.getAttribute("handlerMappings");
+        List<HandlerMapping> handlerMappings = (List<HandlerMapping>) servletContext.getAttribute("handlerMappings");
+        this.handlerMappings = new HandlerMappings(handlerMappings);
     }
 
     @Override
@@ -34,19 +35,12 @@ public class DispatcherServlet extends HttpServlet {
             throw new ServletException(e.getMessage());
         }
     }
+
     private void handle(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        final HandlerExecution handler = getHandler(request);
+        final HandlerExecution handler = handlerMappings.getHandler(request);
         final ModelAndView modelAndView = handler.handle(request, response);
         modelAndView.render(request, response);
-    }
-
-    private HandlerExecution getHandler(final HttpServletRequest request) throws ServletException {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new ServletException("핸들러를 찾을 수 없습니다."));
     }
 
 }
