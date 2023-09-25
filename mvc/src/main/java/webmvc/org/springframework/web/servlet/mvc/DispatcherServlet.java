@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,9 +10,8 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMappings;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,12 +20,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappings handlerMappings = new HandlerMappings();
     private final HandlerAdapters handlerAdapters = new HandlerAdapters();
-
-    @Override
-    public void init() {
-        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com"));
-        handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
-    }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
@@ -43,5 +36,13 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappings.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.addHandlerAdapter(handlerAdapter);
     }
 }
