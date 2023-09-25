@@ -2,7 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,32 +27,34 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
+
         log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> controllers = getControllers();
+        final Set<Class<?>> controllers = getControllers();
         registerControllers(controllers);
     }
 
     private Set<Class<?>> getControllers() {
-        Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    private void registerControllers(Set<Class<?>> controllers) {
+    private void registerControllers(final Set<Class<?>> controllers) {
+        
         for (Class<?> controller : controllers) {
-            Method[] methods = controller.getMethods();
+            final Method[] methods = controller.getMethods();
             for (Method method : methods) {
                 registerHandler(controller, method);
             }
         }
     }
 
-    private void registerHandler(Class<?> controller, Method method) {
+    private void registerHandler(final Class<?> controller, final Method method) {
         if (!method.isAnnotationPresent(RequestMapping.class)) {
             return;
         }
 
-        Controller controllerAnnotation = controller.getDeclaredAnnotation(Controller.class);
-        RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
+        final Controller controllerAnnotation = controller.getDeclaredAnnotation(Controller.class);
+        final RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
 
         final String url = controllerAnnotation.path() + requestMappingAnnotation.value();
         for (RequestMethod requestMethod : requestMappingAnnotation.method()) {
@@ -67,15 +68,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object executeHandler(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final HandlerExecution handlerExecution = (HandlerExecution) getHandler(request);
-        return handlerExecution.handle(request, response);
-    }
-
-    @Override
-    public boolean isSupport(HttpServletRequest request) {
+    public boolean isSupport(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
-        final String method = request.getMethod();
-        return handlerExecutions.containsKey(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
+        final String requestMethod = request.getMethod();
+        return handlerExecutions.containsKey(new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod)));
     }
 }

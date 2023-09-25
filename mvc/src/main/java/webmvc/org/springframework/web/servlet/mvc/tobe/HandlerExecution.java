@@ -34,7 +34,7 @@ public class HandlerExecution {
             throw new IllegalArgumentException("handler실행에 접근할 수 없습니다.");
         } catch (InvocationTargetException e) {
             log.error("fail to invoke method");
-            throw new IllegalArgumentException("handler 실행 중 오류가 발생했습니다.");
+            throw new IllegalArgumentException(e.getTargetException().getMessage());
         }
     }
 }

@@ -1,30 +1,25 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class HandlerProcessor {
+public class HandlerMappings {
 
-    private static final Set<HandlerMapping> handlerMappings = new HashSet<>();
+    private final Set<HandlerMapping> handlerMappings = new HashSet<>();
 
-    public static void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
-    }
-
-    public HandlerProcessor(HandlerMapping... handlerMappings) {
+    public HandlerMappings(HandlerMapping... handlerMappings) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
             this.handlerMappings.add(handlerMapping);
         }
     }
 
-    public Object handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object getHandler(final HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             if (handlerMapping.isSupport(request)) {
-                return handlerMapping.executeHandler(request, response);
+                return handlerMapping.getHandler(request);
             }
         }
 
