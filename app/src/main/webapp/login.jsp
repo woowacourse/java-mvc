@@ -30,7 +30,7 @@
                                         </form>
                                     </div>
                                     <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="/register/view">아이디가 없나요? 회원가입 하러가기</a></div>
+                                        <div class="small"><a href="/register">아이디가 없나요? 회원가입 하러가기</a></div>
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; Your Website 2021</div>
                             <div>
-                                <a href="/index.jsp">Home</a>
+                                <a href="/">Home</a>
                                 &middot;
                                 <a href="#">Privacy Policy</a>
                                 &middot;

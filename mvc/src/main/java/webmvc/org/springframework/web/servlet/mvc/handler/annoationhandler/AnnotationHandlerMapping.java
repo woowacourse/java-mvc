@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handler.annoationhandler;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.disapatchersevlet.HandlerKey;
-import webmvc.org.springframework.web.servlet.mvc.disapatchersevlet.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerKey;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -84,10 +85,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey matchingHandlerKey = handlerExecutions.keySet().stream()
-                .filter(handlerKey -> handlerKey.isMatching(request))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("404"));
-        return handlerExecutions.get(matchingHandlerKey);
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
     }
 }

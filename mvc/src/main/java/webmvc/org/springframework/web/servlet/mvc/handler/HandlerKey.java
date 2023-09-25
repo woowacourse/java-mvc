@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.disapatchersevlet;
+package webmvc.org.springframework.web.servlet.mvc.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import web.org.springframework.web.bind.annotation.RequestMethod;
