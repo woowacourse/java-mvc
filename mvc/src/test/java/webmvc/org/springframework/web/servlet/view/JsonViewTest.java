@@ -13,6 +13,9 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,54 +34,33 @@ class JsonViewTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-        FakeOutputStream outputStream = new FakeOutputStream();
-        when(response.getOutputStream()).thenReturn(outputStream);
+        FakeWriter writer = new FakeWriter();
+        when(response.getWriter()).thenReturn(writer);
 
         // when
         JsonView jsonView = new JsonView();
         jsonView.render(model, request, response);
 
         // then
-        Map<String, String> content = new ObjectMapper().readValue(outputStream.getContent(), HashMap.class);
+        Map<String, String> content = new ObjectMapper().readValue(writer.getContent(), HashMap.class);
         assertThat(content).isEqualTo(model);
     }
 
-    static class FakeOutputStream extends ServletOutputStream {
+    static class FakeWriter extends PrintWriter {
 
         private String content;
 
+        public FakeWriter() {
+            super(nullWriter());
+        }
+
         @Override
-        public void write(byte[] b) {
-            this.content = new String(b);
+        public void write(String s) {
+            this.content = s;
         }
 
         public String getContent() {
-            return this.content;
-        }
-
-        @Override
-        public void write(int b) {
-            // NO-OP
-        }
-
-        @Override
-        public void flush() {
-            // NO-OP
-        }
-
-        @Override
-        public void close() {
-            // NO-OP
-        }
-
-        @Override
-        public void setWriteListener(WriteListener writeListener) {
-            // NO-OP
-        }
-
-        @Override
-        public boolean isReady() {
-            return false;
+            return content;
         }
     }
 }

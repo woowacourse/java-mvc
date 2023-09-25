@@ -1,12 +1,12 @@
 package webmvc.org.springframework.web.servlet.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.http.MediaType;
 import webmvc.org.springframework.web.servlet.View;
 
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -16,10 +16,10 @@ public class JsonView implements View {
                        final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        final ServletOutputStream outputStream = response.getOutputStream();
-        final String content = new ObjectMapper().writeValueAsString(model);
-
-        outputStream.write(content.getBytes());
+        try (final PrintWriter writer = response.getWriter()) {
+            final String content = new ObjectMapper().writeValueAsString(model);
+            writer.write(content);
+        }
         response.flushBuffer();
     }
 }
