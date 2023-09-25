@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,15 +13,23 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
 
+import static java.util.Objects.requireNonNull;
+
 public class DispatcherServlet extends HttpServlet {
 
+    public static final String HANDLER_MAPPINGS = "handlerMappings";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappings handlerMappings;
+    private HandlerMappings handlerMappings;
 
-    public DispatcherServlet(ServletContext servletContext) {
-        List<HandlerMapping> handlerMappings = (List<HandlerMapping>) servletContext.getAttribute("handlerMappings");
+    public DispatcherServlet() {
+    }
+
+    @Override
+    public void init(final ServletConfig config) {
+        final var servletContext = config.getServletContext();
+        final var handlerMappings = (List<HandlerMapping>) servletContext.getAttribute(HANDLER_MAPPINGS);
         this.handlerMappings = new HandlerMappings(handlerMappings);
     }
 
