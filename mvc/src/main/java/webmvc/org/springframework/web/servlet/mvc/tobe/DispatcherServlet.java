@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,26 +10,22 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private final String basePackage;
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping(getClass().getPackageName()));
+        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
@@ -59,12 +55,6 @@ public class DispatcherServlet extends HttpServlet {
     private ModelAndView getModelAndView(final Object controller, final HttpServletRequest request,
                                          final HttpServletResponse response)
             throws Exception {
-        if (controller instanceof Controller) {
-            Controller handler = (Controller) controller;
-            String viewName = handler.execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        }
-
         if (controller instanceof HandlerExecution) {
             HandlerExecution handler = (HandlerExecution) controller;
             return handler.handle(request, response);
