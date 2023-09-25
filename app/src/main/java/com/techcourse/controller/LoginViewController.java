@@ -1,5 +1,6 @@
-package com.techcourse;
+package com.techcourse.controller;
 
+import com.techcourse.UserSession;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

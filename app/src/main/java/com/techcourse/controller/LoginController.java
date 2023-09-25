@@ -1,5 +1,6 @@
-package com.techcourse;
+package com.techcourse.controller;
 
+import com.techcourse.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
