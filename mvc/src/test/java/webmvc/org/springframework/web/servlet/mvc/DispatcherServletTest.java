@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -13,9 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapper.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.mapper.HandlerMappingRegistry;
 
 class DispatcherServletTest {
 

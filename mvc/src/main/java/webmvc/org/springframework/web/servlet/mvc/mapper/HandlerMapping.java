@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.mapper;
+package webmvc.org.springframework.web.servlet.mvc.mapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 

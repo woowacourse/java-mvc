@@ -1,10 +1,10 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.mapper.AnnotationHandlerMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
