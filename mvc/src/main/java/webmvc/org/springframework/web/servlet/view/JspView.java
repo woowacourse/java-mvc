@@ -19,8 +19,8 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
-    public static JspView redirectTo(final String viewName) {
-        return new JspView(REDIRECT_PREFIX + viewName);
+    public static JspView redirectTo(final String path) {
+        return new JspView(REDIRECT_PREFIX + path);
     }
 
     @Override
