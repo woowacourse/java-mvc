@@ -1,6 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import webmvc.org.springframework.web.servlet.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapping;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;

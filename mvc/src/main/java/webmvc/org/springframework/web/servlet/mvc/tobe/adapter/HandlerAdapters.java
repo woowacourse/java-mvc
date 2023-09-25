@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet;
+package webmvc.org.springframework.web.servlet.mvc.tobe.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
