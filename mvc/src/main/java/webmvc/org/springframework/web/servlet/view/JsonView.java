@@ -3,6 +3,8 @@ package webmvc.org.springframework.web.servlet.view;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.View;
 
 import java.util.Map;
@@ -11,6 +13,7 @@ import static web.org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 
 public class JsonView implements View {
 
+    private static final Logger log = LoggerFactory.getLogger(JsonView.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -22,6 +25,20 @@ public class JsonView implements View {
             return;
         }
 
-        response.getWriter().write(objectMapper.writeValueAsString(model));
+        try {
+            Object responseModel = getResponseModel(model);
+            String responseValue = objectMapper.writeValueAsString(responseModel);
+            response.getWriter().write(responseValue);
+        } catch (Exception e) {
+            log.warn("Json Parsing Error {}", model, e);
+            throw new IllegalStateException("Json으로 파싱하던 도중에 오류가 발생하였습니다.");
+        }
+    }
+
+    private Object getResponseModel(Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().toArray()[0];
+        }
+        return model;
     }
 }
