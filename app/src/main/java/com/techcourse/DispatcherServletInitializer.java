@@ -24,7 +24,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     public void onStartup(final ServletContext servletContext) {
 
         final HandlerMappings handlerMappings = new HandlerMappings();
-        handlerMappings.add(new AnnotationHandlerMapping("com.mvc"));
+        handlerMappings.add(new AnnotationHandlerMapping());
         final HandlerAdapters handlerAdapters = new HandlerAdapters();
         handlerAdapters.add(new AnnotaionHandlerAdapter());
 
