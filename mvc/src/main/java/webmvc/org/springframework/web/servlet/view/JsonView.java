@@ -13,6 +13,7 @@ import webmvc.org.springframework.web.servlet.View;
 public class JsonView implements View {
 
     private static final int ONLY_ONE_DATA = 1;
+    private static final int FIRST_DATA = 0;
 
     private final ObjectMapper objectMapper;
 
@@ -36,7 +37,7 @@ public class JsonView implements View {
     private String makeJsonData(final Map<String, ?> model) throws JsonProcessingException {
         try {
             if (hasOnlyOneData(model)) {
-                final Object firstData = model.values().toArray(Object[]::new)[0];
+                final Object firstData = model.values().toArray(Object[]::new)[FIRST_DATA];
                 return objectMapper.writeValueAsString(firstData);
             }
             return objectMapper.writeValueAsString(model);
