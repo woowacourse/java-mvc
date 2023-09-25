@@ -39,8 +39,4 @@ public class JspView implements View {
         requestDispatcher.forward(request, response);
     }
 
-    @Override
-    public String getName() {
-        return viewName;
-    }
 }
