@@ -16,11 +16,22 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView loginView(final HttpServletRequest req, final HttpServletResponse res) {
+        return UserSession.getUserFrom(req.getSession())
+                          .map(user -> {
+                              log.info("logged in {}", user.getAccount());
+                              return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+                          })
+                          .orElse(new ModelAndView(new JspView("/login.jsp")));
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -35,7 +46,7 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
         }
         return new ModelAndView(new JspView("redirect:/401.jsp"));
     }
