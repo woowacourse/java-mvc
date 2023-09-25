@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -6,15 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.HandlerMappingRegistry;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -24,15 +19,12 @@ public class DispatcherServlet extends HttpServlet {
     private final transient HandlerMappingRegistry handlerMappingRegistry;
     private final transient HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse.controller")
-        );
-
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry(new ControllerHandlerAdapter(),
-                new HandlerExecutionHandlerAdapter()
-        );
+    public DispatcherServlet(
+            HandlerMappingRegistry handlerMappingRegistry,
+            HandlerAdapterRegistry handlerAdapterRegistry
+    ) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
@@ -49,32 +41,14 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(IllegalArgumentException::new);
-
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-
-            move(modelAndView, request, response);
-        } catch (Throwable e) {
+            modelAndView.render(request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(
-            final ModelAndView modelAndView,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws Exception {
-        View view = modelAndView.getView();
-        String viewName = view.getPath();
-
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-    }
 
 }
