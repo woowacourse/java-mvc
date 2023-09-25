@@ -3,6 +3,7 @@ package com.techcourse.controller;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +17,8 @@ public class LoginViewController {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView loginView(final HttpServletRequest request) throws Exception {
-        return UserSession.getUserFrom(request.getSession())
+    public ModelAndView loginView(final HttpSession session) {
+        return UserSession.getUserFrom(session)
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";
