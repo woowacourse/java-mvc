@@ -4,14 +4,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
-public abstract class ReflectionUtils {
+public class ReflectionUtils {
 
     /**
      * Obtain an accessible constructor for the given class and parameters.
@@ -66,5 +68,15 @@ public abstract class ReflectionUtils {
 
     public static <T extends Annotation> T getMethodAnnotation(final Method method, final Class<T> type) {
         return method.getDeclaredAnnotation(type);
+    }
+
+    public Optional<? extends Class<?>> getMethodParameterAnnotatedWith(
+            final Class<? extends Annotation> annotation,
+            final Method method
+    ) {
+        return Arrays.stream(method.getParameters())
+                .filter(it -> it.isAnnotationPresent(annotation))
+                .map(Parameter::getType)
+                .findFirst();
     }
 }

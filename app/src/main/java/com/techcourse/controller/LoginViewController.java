@@ -16,7 +16,7 @@ public class LoginViewController {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView loginView(final HttpServletRequest request) throws Exception {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
