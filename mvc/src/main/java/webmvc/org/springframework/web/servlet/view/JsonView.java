@@ -26,7 +26,7 @@ public class JsonView implements View {
     private String getResponseBody(final Map<String, ?> model) {
         final ObjectMapper objectMapper = new ObjectMapper();
         if (model.size() == 1) {
-            return String.valueOf(model.values().stream().findAny().get());
+            return String.valueOf(model.values().toArray()[0]);
         }
         try {
             return objectMapper.writeValueAsString(model);
