@@ -25,7 +25,6 @@ public class JsonView implements View {
         final PrintWriter writer = response.getWriter();
         final String body = makeBody(model);
         writer.write(body);
-        writer.close();
     }
 
     private String makeBody(final Map<String, ?> model) throws JsonProcessingException {
