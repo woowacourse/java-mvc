@@ -3,7 +3,7 @@ package com.techcourse.support.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 public class HandlerMappings {
 
