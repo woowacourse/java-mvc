@@ -9,7 +9,6 @@ public class HandlerAdapters {
     private final List<HandlerAdapter> adapters = new ArrayList<>();
 
     public void init() {
-        adapters.add(new ManualHandlerAdapter());
         adapters.add(new AnnotationHandlerAdapter());
     }
 

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 class HandlerAdaptersTest {
     private final HandlerAdapters handlerAdaptors = new HandlerAdapters();
@@ -35,20 +34,6 @@ class HandlerAdaptersTest {
 
         //then
         assertThat(handlerAdaptor).isInstanceOf(AnnotationHandlerAdapter.class);
-    }
-
-    @DisplayName("Adapters에서 Controller를 찾아 반환한다.")
-    @Test
-    void findAdapter_Controller() throws ServletException {
-        // given
-        final Controller controller = mock(Controller.class);
-        handlerAdaptors.init();
-
-        //when
-        final HandlerAdapter handlerAdaptor = handlerAdaptors.findAdapter(controller);
-
-        //then
-        assertThat(handlerAdaptor).isInstanceOf(ManualHandlerAdapter.class);
     }
 
     @DisplayName("Adapters에서 원하는 타입을 찾지 못하면 null을 반환한다.")
