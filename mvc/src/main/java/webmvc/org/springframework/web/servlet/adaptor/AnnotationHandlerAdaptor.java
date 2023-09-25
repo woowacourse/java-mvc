@@ -1,4 +1,4 @@
-package com.techcourse.servlet.adaptor;
+package webmvc.org.springframework.web.servlet.adaptor;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;

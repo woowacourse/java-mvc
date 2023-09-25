@@ -1,4 +1,4 @@
-package com.techcourse.servlet.adaptor;
+package webmvc.org.springframework.web.servlet.adaptor;
 
 import jakarta.servlet.ServletException;
 import org.slf4j.Logger;

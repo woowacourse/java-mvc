@@ -1,4 +1,4 @@
-package com.techcourse.servlet.adaptor;
+package webmvc.org.springframework.web.servlet.adaptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -18,4 +18,4 @@
 - [x] JspView 클래스 구현
 - [x] JsonView 클래스 구현
 - [x] Legacy MVC 제거
-- [] Dispathcer servlet을 mvc 패키지로 이동
+- [x] Dispathcer servlet을 mvc 패키지로 이동

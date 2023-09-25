@@ -1,13 +1,13 @@
-package com.techcourse.servlet;
+package webmvc.org.springframework.web.servlet;
 
-import com.techcourse.servlet.adaptor.HandlerAdaptorScanner;
-import com.techcourse.servlet.handler.HandlerScanner;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.adaptor.HandlerAdaptorScanner;
+import webmvc.org.springframework.web.servlet.handler.HandlerScanner;
 
 public class DispatcherServlet extends HttpServlet {
 
