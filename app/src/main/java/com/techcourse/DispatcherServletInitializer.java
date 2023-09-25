@@ -25,14 +25,14 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
+        final var dispatcherServlet = new DispatcherServlet();
+
         InterfaceBasedHandlerMapping.addController("/", new ForwardController("/index.jsp"));
         InterfaceBasedHandlerMapping.addController("/login", new LoginController());
         InterfaceBasedHandlerMapping.addController("/login/view", new LoginViewController());
         InterfaceBasedHandlerMapping.addController("/logout", new LogoutController());
         InterfaceBasedHandlerMapping.addController("/register/view", new RegisterViewController());
         InterfaceBasedHandlerMapping.addController("/register", new RegisterController());
-
-        final var dispatcherServlet = new DispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
