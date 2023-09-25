@@ -1,4 +1,4 @@
-package com.techcourse.controllerv2;
+package com.techcourse.controller;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,13 +11,13 @@ import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LoginViewControllerV2 {
+public class LoginViewController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewControllerV2.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
-    @GetMapping("/v2/login/view")
+    @GetMapping("/login/view")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (UserSessionV2.isLoggedIn(request.getSession())) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             final View view = new JspView("redirect:/index.jsp");
             return new ModelAndView(view).addObject("id", request.getAttribute("id"));
         }

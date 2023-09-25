@@ -1,4 +1,4 @@
-package com.techcourse.controllerv2;
+package com.techcourse.controller;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,9 +8,9 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class RegisterViewControllerV2 {
+public class RegisterViewController {
 
-    @GetMapping("/v2/register/view")
+    @GetMapping("/register/view")
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return new ModelAndView(new JspView("/register.jsp"));
     }
