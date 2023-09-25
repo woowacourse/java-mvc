@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handlermapping;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerKey;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -58,6 +61,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void addHandlerKeyAndExecution(RequestMapping annotation, HandlerExecution handlerExecution) {
+        if (annotation == null) {
+            return;
+        }
         String url = annotation.value();
         for (RequestMethod requestMethod : annotation.method()) {
             handlerExecutions.put(new HandlerKey(url, requestMethod), handlerExecution);

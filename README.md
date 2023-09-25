@@ -12,5 +12,5 @@
 # 3. JSON View 구현하기
 - [x] JspView를 구현한다.
 - [x] JsonView를 구현한다.
-- [ ] Legacy MVC 제거하기
-  - [ ] DispatcherServlet을 mvc 패키지로 옮기기
+- [x] Legacy MVC 제거하기
+  - [x] DispatcherServlet을 mvc 패키지로 옮기기

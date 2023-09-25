@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handleradapter;
 
 public class HandlerAdapterException extends RuntimeException{
 
