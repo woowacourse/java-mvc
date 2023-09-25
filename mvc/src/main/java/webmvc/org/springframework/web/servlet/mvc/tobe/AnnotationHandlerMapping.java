@@ -25,12 +25,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Set<Class<?>> typesAnnotatedWith = ReflectionUtils.getTypesAnnotatedWith(basePackage, Controller.class);
         for (Class<?> type : typesAnnotatedWith) {
             List<Method> handlers = ReflectionUtils.getMethodsAnnotatedWith(type, RequestMapping.class);
             putHandlerExecutions(type, handlers);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void putHandlerExecutions(Class<?> type, List<Method> handlers) {
@@ -48,6 +48,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void putHandlerExecutionOfTypeAnnotatedWithController(Method handler, Object instance) {
         RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(handler, instance);
+
+        log.info("Path: {}, Controller: {}", requestMapping.value(), instance.getClass().getName());
 
         Arrays.stream(requestMapping.method())
               .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))

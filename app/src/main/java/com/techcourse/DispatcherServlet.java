@@ -62,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler.get();
             }
         }
-        throw new IllegalArgumentException("handler를 찾을 수 없습니다.");
+        throw new IllegalArgumentException("handler를 찾을 수 없습니다. uri: " + request.getRequestURI());
     }
 
     private HandlerAdapter findHandlerAdapter(Object handler) {
