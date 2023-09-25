@@ -1,48 +1,27 @@
 package com.techcourse;
 
-import com.techcourse.exception.HandlerFieldException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerAdaptors {
 
-    private static HandlerAdaptors instance;
+    private final List<HandlerAdaptor> adaptors;
 
-    private static List<HandlerAdaptor<?>> handlerAdaptors;
-
-    private HandlerAdaptors() {
-        this.handlerAdaptors = new ArrayList<>();
-        try {
-            final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
-            annotationHandlerMapping.initialize();
-            final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-            manualHandlerMapping.initialize();
-            handlerAdaptors.add(HandlerAdaptor.of(annotationHandlerMapping));
-            handlerAdaptors.add(HandlerAdaptor.of(manualHandlerMapping));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new HandlerFieldException();
-        }
+    public HandlerAdaptors() {
+        this.adaptors = new ArrayList<>();
+        adaptors.add(new ManualHandlerAdaptor());
+        adaptors.add(new AnnotationHandlerAdaptor());
     }
 
-    public static synchronized HandlerAdaptors getInstance() {
-        if (instance == null) {
-            instance = new HandlerAdaptors();
-        }
-        return instance;
-    }
-
-    public HandlerAdaptor getHandler(HttpServletRequest httpServletRequest) {
-        final HandlerKey handlerKey = new HandlerKey(
-                httpServletRequest.getRequestURI(),
-                Enum.valueOf(RequestMethod.class, httpServletRequest.getMethod())
-        );
-        return handlerAdaptors.stream()
-                .filter(handlerAdaptor -> handlerAdaptor.isHandle(handlerKey))
+    public ModelAndView execute(Object handler, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        final HandlerAdaptor handlerAdaptor = adaptors.stream()
+                .filter(adaptor -> adaptor.isHandle(handler))
                 .findFirst()
                 .orElseThrow();
+        return handlerAdaptor.execute(handler, request, response);
     }
 }
