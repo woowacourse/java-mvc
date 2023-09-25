@@ -4,26 +4,22 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionAdapter;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final HandlerMappings handlerMappings = new HandlerMappings();
+    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
 
     @Override
     public void init() {
@@ -40,31 +36,19 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = findHandler(request);
-            final var handlerAdapter = findHandlerAdapter(handler);
-            final var modelAndView = handlerAdapter.handle(handler, request, response);
-            move(modelAndView, request, response);
+            final var optionalHandler = handlerMappings.findHandler(request);
+            if (optionalHandler.isEmpty()) {
+                move(new ModelAndView(new JspView("/404.jsp")), request, response);
+            } else {
+                Handler handler = optionalHandler.get();
+                final var handlerAdapter = handlerAdapters.findHandlerAdapter(handler);
+                final var modelAndView = handlerAdapter.handle(handler, request, response);
+                move(modelAndView, request, response);
+            }
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object findHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Optional<Object> handler = handlerMapping.getHandler(request);
-            if (handler.isPresent()) {
-                return handler.get();
-            }
-        }
-        throw new IllegalArgumentException("handler를 찾을 수 없습니다. uri: " + request.getRequestURI());
-    }
-
-    private HandlerAdapter findHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-                              .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                              .findFirst()
-                              .orElseThrow(() -> new IllegalArgumentException("handlerAdapter를 찾을 수 없습니다."));
     }
 
     private void move(
