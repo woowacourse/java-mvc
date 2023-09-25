@@ -12,7 +12,8 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class IndexController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView index(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView index(final HttpServletRequest req,
+                              final HttpServletResponse res) {
         return new ModelAndView(new JspView("index.jsp"));
     }
 }

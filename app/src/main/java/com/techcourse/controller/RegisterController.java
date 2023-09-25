@@ -14,13 +14,14 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView save(final HttpServletRequest req,
+                             final HttpServletResponse res) {
         final User user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
-        JspView view = new JspView("redirect:/index.jsp");
+        final JspView view = new JspView("redirect:/index.jsp");
         return new ModelAndView(view);
     }
 }

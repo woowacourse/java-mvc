@@ -16,12 +16,14 @@ public class LoginViewController {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView loginView(HttpServletRequest req, HttpServletResponse res) {
-        String path = execute(req, res);
+    public ModelAndView loginView(final HttpServletRequest req,
+                                  final HttpServletResponse res) {
+        final String path = execute(req, res);
         return new ModelAndView(new JspView(path));
     }
 
-    private String execute(HttpServletRequest req, HttpServletResponse res) {
+    private String execute(final HttpServletRequest req,
+                           final HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());

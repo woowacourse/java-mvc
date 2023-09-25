@@ -40,7 +40,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private void createHandlerExecution(final Method[] methods, final Object controllerInstance) {
+    private void createHandlerExecution(final Method[] methods,
+                                        final Object controllerInstance) {
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
@@ -62,7 +63,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private Object getInstance(Class<?> controller) {
+    private Object getInstance(final Class<?> controller) {
         try {
             return controller.getConstructor().newInstance();
         } catch (Exception e) {

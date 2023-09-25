@@ -14,7 +14,8 @@ public class ForwardController implements Controller {
     }
 
     @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
+    public String execute(final HttpServletRequest request,
+                          final HttpServletResponse response) {
         return path;
     }
 }
