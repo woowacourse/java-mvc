@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = handlerMappings.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            render(modelAndView, request, response);
+            modelAndView.render(modelAndView.getModel(), request, response);
         } catch (HandleException e) {
             log.error("HandleException: {}", e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -47,11 +47,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
-        final HttpServletResponse response)
-        throws Exception {
-        modelAndView.render(modelAndView.getModel(), request, response);
     }
 }
