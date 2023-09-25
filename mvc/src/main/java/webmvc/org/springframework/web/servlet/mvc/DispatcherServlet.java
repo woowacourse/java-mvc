@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.frontcontroller;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,10 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMappings;
 import webmvc.org.springframework.web.servlet.view.JspView;
-
-import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 

@@ -4,7 +4,7 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
-import webmvc.org.springframework.web.servlet.mvc.frontcontroller.DispatcherServlet;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
 
 /**
  * Base class for {@link WebApplicationInitializer}

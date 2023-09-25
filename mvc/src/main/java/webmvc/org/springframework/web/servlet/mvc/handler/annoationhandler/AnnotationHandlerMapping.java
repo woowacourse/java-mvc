@@ -9,7 +9,7 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerKey;
-import webmvc.org.springframework.web.servlet.mvc.frontcontroller.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.frontcontroller;
+package webmvc.org.springframework.web.servlet.mvc.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

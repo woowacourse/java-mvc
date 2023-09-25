@@ -3,7 +3,7 @@ package webmvc.org.springframework.web.servlet.mvc.handler.annoationhandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.frontcontroller.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JsonView;
 import webmvc.org.springframework.web.servlet.view.JspView;

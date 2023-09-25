@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.frontcontroller;
+package webmvc.org.springframework.web.servlet.mvc.handler;
 
 import webmvc.org.springframework.web.servlet.mvc.handler.annoationhandler.AnnotationHandlerAdapter;
 
