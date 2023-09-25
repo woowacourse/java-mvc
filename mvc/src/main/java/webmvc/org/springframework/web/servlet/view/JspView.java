@@ -14,10 +14,7 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
-    private final String viewName;
-
     public JspView(final String viewName) {
-        this.viewName = viewName;
     }
 
     @Override
@@ -30,10 +27,5 @@ public class JspView implements View {
         });
 
         // todo
-    }
-
-    @Override
-    public String getViewName() {
-        return viewName;
     }
 }

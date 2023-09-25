@@ -3,6 +3,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
 
@@ -14,11 +15,7 @@ public class HandlerExecution {
         this.instance = instance;
     }
 
-    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return handler.invoke(instance, request, response);
-    }
-
-    public Class<?> getReturnType() {
-        return handler.getReturnType();
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return (ModelAndView) handler.invoke(instance, request, response);
     }
 }
