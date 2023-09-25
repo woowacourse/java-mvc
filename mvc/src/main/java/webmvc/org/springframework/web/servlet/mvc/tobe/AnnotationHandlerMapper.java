@@ -2,12 +2,6 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +9,11 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapper;
 
+import java.lang.reflect.Method;
+import java.util.*;
+
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public class AnnotationHandlerMapper implements HandlerMapper {
 
@@ -31,50 +29,60 @@ public class AnnotationHandlerMapper implements HandlerMapper {
 
     @Override
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-        controllers.forEach(controller -> {
-            Object handler = createHandlerByConstructor(controller);
-            Arrays.stream(controller.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> parseMethod(handler, method));
-        });
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> clazz : classes) {
+            initializeHandler(clazz);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("Handler Key: {}", handlerKey));
     }
 
-    private void parseMethod(Object handler, Method method) {
-        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        final RequestMethod[] httpMethods = annotation.method();
-        final String path = annotation.value();
-        addHandlerExecution(handler, method, httpMethods, path);
+    private void initializeHandler(Class<?> clazz) {
+        Object instance = toInstance(clazz);
+        Set<Method> methods = getAnnotatedMethod(clazz);
+        for (Method method : methods) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            List<HandlerKey> handlerKeys = getHandlerKeys(annotation);
+            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            putHandlerExecution(handlerKeys, handlerExecution);
+        }
     }
 
-    private void addHandlerExecution(Object handler, Method method, RequestMethod[] httpMethods, String path) {
-        final List<HandlerKey> handlerKeys = Arrays.stream(httpMethods)
-                .map(httpMethod -> new HandlerKey(path, httpMethod))
+    private Object toInstance(Class<?> clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private Set<Method> getAnnotatedMethod(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+        return Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(toSet());
+    }
+
+    private List<HandlerKey> getHandlerKeys(RequestMapping annotation) {
+        String url = annotation.value();
+        RequestMethod[] httpMethods = annotation.method();
+        return Arrays.stream(httpMethods)
+                .map(httpMethod -> new HandlerKey(url, httpMethod))
                 .collect(toList());
-        final HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+    }
+
+    private void putHandlerExecution(List<HandlerKey> handlerKeys, HandlerExecution handlerExecution) {
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    private static Object createHandlerByConstructor(Class<?> controller) {
-        try {
-            Object handler = controller.getConstructor().newInstance();
-            return handler;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("해당 컨트롤러의 생성자로 객체를 생성할 수 없습니다." + controller.getSimpleName() + "의 생성자를 다시 확인해주세요.");
-        }
-    }
-
     @Override
-    public Object getHandler(final HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
-        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+    public Object getHandler(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
-
 }

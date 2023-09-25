@@ -1,4 +1,4 @@
-package com.techcourse.support.handler;
+package web.org.springframework.web.support.handler;
 
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
