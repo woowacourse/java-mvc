@@ -23,7 +23,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final HandlerMappings handlerMappings = new HandlerMappings();
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+        handlerMappings.add(new AnnotationHandlerMapping(this.getClass().getPackageName()));
 
         final HandlerAdapters handlerAdapters = new HandlerAdapters();
         handlerAdapters.add(new AnnotationHandlerAdapter());
