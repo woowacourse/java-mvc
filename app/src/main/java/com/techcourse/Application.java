@@ -23,12 +23,6 @@ public class Application {
         final var tomcat = new TomcatStarter(port);
         log.info("configuring app with basedir: {}", TomcatStarter.WEBAPP_DIR_LOCATION);
 
-        InterfaceBasedHandlerMapping.addController("/login", new LoginController());
-        InterfaceBasedHandlerMapping.addController("/login/view", new LoginViewController());
-        InterfaceBasedHandlerMapping.addController("/logout", new LogoutController());
-        InterfaceBasedHandlerMapping.addController("/register/view", new RegisterViewController());
-        InterfaceBasedHandlerMapping.addController("/register", new RegisterController());
-
         tomcat.start();
         stop(tomcat);
     }
