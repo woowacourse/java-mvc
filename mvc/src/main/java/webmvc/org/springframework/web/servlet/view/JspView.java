@@ -22,17 +22,20 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
-
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
-
-        // todo
+        move(name, request, response);
     }
 
-    public String getName() {
-        return name;
+    private void move(final String viewName, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            return;
+        }
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
