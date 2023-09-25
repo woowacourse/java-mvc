@@ -11,9 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.resolver.JsonViewResolver;
+import webmvc.org.springframework.web.servlet.resolver.JspViewResolver;
+import webmvc.org.springframework.web.servlet.resolver.ViewResolver;
+import webmvc.org.springframework.web.servlet.resolver.ViewResolvers;
 import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
@@ -23,6 +28,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMappings handlerMapping;
     private HandlerAdaptors handlerAdaptors;
+    private ViewResolvers viewResolvers;
 
     public DispatcherServlet() {
     }
@@ -35,6 +41,10 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdaptors = new HandlerAdaptors(List.of(
                 new ManualHandlerAdaptor(),
                 new AnnotationHandlerAdaptor()));
+        viewResolvers = new ViewResolvers(List.of(
+                new JspViewResolver(),
+                new JsonViewResolver()
+        ));
         handlerMapping.initialize();
     }
 
@@ -69,7 +79,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var view = modelAndView.getView();
+        final var viewName = modelAndView.getViewName();
+        final ViewResolver viewResolver = viewResolvers.findSupportedViewResolver(viewName)
+                .orElseThrow(() -> new IllegalArgumentException("View Not Supported"));
+        final View view = viewResolver.resolveViewName(viewName);
         view.render(modelAndView.getModel(), request, response);
     }
 }

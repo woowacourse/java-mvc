@@ -19,6 +19,10 @@ public class HandlerExecution {
         final Class<?> declaringClass = method.getDeclaringClass();
         final Constructor<?> constructor = ReflectionUtils.accessibleConstructor(declaringClass);
         final Object instance = constructor.newInstance();
-        return (ModelAndView) method.invoke(instance, request, response);
+        final Object result = method.invoke(instance, request, response);
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+        return new ModelAndView(result);
     }
 }
