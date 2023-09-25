@@ -4,7 +4,7 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler_mapping.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.DispatcherServlet;
 
 /**
@@ -20,7 +20,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet(
-            new ManualHandlerMapping(),
             new AnnotationHandlerMapping(getClass().getPackage().getName())
         );
 
