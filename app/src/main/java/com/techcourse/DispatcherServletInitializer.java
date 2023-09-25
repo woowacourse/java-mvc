@@ -5,11 +5,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.DispatcherServlet;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
-import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 /**
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
@@ -27,9 +27,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final HandlerAdapters handlerAdapters = new HandlerAdapters(
-                Set.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter()));
+                Set.of(new AnnotationHandlerAdapter()));
         final HandlerMappings handlerMappings = new HandlerMappings(
-                Set.of(new ManualHandlerMapping(), new AnnotationHandlerMapping(BASE_PACKAGE)));
+                Set.of(new AnnotationHandlerMapping(BASE_PACKAGE)));
 
         final var dispatcherServlet = new DispatcherServlet(handlerAdapters, handlerMappings);
 

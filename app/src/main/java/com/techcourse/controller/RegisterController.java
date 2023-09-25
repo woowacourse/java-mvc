@@ -13,14 +13,24 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class RegisterController {
 
+    private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String INDEX_PAGE = "index.jsp";
+    private static final String REGISTER_PAGE = "register.jsp";
+    private static final String SLASH = "/";
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
         final var user = new User(2,
                 request.getParameter("account"),
                 request.getParameter("password"),
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(new JspView(REDIRECT_PREFIX + SLASH + INDEX_PAGE));
+    }
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView readRegisterPage(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(SLASH + REGISTER_PAGE));
     }
 }
