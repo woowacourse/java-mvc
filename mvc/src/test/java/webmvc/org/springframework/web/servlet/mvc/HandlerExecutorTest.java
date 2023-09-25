@@ -44,7 +44,7 @@ class HandlerExecutorTest {
         final var view = new JspView("redirect:/test.jsp");
         when(handler.handle(request, response)).thenReturn(new ModelAndView(view));
 
-        handlerExecutor.render(request, response, handler);
+        handlerExecutor.execute(request, response, handler);
 
         verify(handler).handle(request, response);
     }
@@ -54,7 +54,7 @@ class HandlerExecutorTest {
     void execute_controller() throws Exception {
         final var handler = new ForwardController("redirect:/test.jsp");
 
-        handlerExecutor.render(request, response, handler);
+        handlerExecutor.execute(request, response, handler);
 
         verify(response).sendRedirect("/test.jsp");
     }

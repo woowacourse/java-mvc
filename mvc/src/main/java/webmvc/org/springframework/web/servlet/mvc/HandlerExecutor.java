@@ -17,16 +17,14 @@ public class HandlerExecutor {
         this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
-    public void render(final HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public void execute(final HttpServletRequest request, HttpServletResponse response, Object handler) {
         try {
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             if (handlerAdapter.isPresent()) {
                 final var adapter = handlerAdapter.get();
                 final var modelAndView = adapter.handle(request, response, handler);
-                final var model = modelAndView.getModel();
-                final var view = modelAndView.getView();
 
-                view.render(model, request, response);
+                modelAndView.render(request, response);
                 return;
             }
 
@@ -43,7 +41,7 @@ public class HandlerExecutor {
 
     private void executeExceptionHandler(HttpServletRequest request, HttpServletResponse response, Throwable cause) {
         handlerAdapterRegistry.getHandlerAdapter(cause)
-                .ifPresent(exceptionHandlerAdapter -> render(request, response, cause));
+                .ifPresent(exceptionHandlerAdapter -> execute(request, response, cause));
     }
 
 }

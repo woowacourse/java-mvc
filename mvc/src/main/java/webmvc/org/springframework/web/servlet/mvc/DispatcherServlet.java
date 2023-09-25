@@ -61,11 +61,11 @@ public class DispatcherServlet extends HttpServlet {
                 throw new NoSuchElementException("Cannot find handler for request");
             }
 
-            handlerExecutor.render(request, response, handler.get());
+            handlerExecutor.execute(request, response, handler.get());
         } catch (Exception exception) {
             log.error("Exception : {} {}", exception.getMessage(), exception.getStackTrace());
 
-            handlerExecutor.render(request, response, exception);
+            handlerExecutor.execute(request, response, exception);
         }
     }
 
