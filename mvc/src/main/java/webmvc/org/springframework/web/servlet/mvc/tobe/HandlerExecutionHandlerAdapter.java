@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.handler.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
@@ -21,6 +22,15 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
         }
 
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
-        return handlerExecution.handle(request, response);
+        final Object handle = handlerExecution.handle(request, response);
+
+        if (handle instanceof String) {
+            return new ModelAndView(new JspView((String) handle));
+        }
+        if (handle instanceof ModelAndView) {
+            return (ModelAndView) handle;
+        }
+
+        throw new IllegalArgumentException("Handler Return Type Not Supported");
     }
 }

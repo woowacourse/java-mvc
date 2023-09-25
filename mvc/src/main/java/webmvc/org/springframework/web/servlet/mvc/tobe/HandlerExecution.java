@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 
 public class HandlerExecution {
 
@@ -36,7 +35,7 @@ public class HandlerExecution {
         }
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) handlerMethod.invoke(handler, request, response);
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handlerMethod.invoke(handler, request, response);
     }
 }
