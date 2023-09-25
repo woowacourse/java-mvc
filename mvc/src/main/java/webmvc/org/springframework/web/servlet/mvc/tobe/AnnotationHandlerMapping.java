@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
+
         log.info("Initialized AnnotationHandlerMapping!");
         final Set<Class<?>> controllers = getControllers();
         registerControllers(controllers);
@@ -38,6 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerControllers(final Set<Class<?>> controllers) {
+        
         for (Class<?> controller : controllers) {
             final Method[] methods = controller.getMethods();
             for (Method method : methods) {

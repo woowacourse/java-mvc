@@ -14,11 +14,8 @@ import java.util.Map;
 public class JsonView implements View {
 
     private static final int SINGLE_SIZE = 1;
-    private final ObjectMapper mapper;
 
-    public JsonView() {
-        this.mapper = new ObjectMapper();
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
