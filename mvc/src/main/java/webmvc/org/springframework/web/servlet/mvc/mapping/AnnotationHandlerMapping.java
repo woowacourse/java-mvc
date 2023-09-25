@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.mapping;
+package webmvc.org.springframework.web.servlet.mvc.mapping;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
+import webmvc.org.springframework.web.servlet.mvc.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.HandlerKey;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

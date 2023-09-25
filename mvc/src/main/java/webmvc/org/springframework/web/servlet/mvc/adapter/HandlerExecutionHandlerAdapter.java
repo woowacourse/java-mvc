@@ -1,9 +1,9 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.adapter;
+package webmvc.org.springframework.web.servlet.mvc.adapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.HandlerExecution;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter{
     @Override
