@@ -5,6 +5,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.DispatcherServlet;
+import webmvc.org.springframework.web.servlet.mvc.adapter.Adapter;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerExecutionAdapter;
+import webmvc.org.springframework.web.servlet.mvc.mapper.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.mapper.Mapper;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -18,7 +27,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet(handlerMapping(), handlerAdapter());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -30,5 +39,18 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+
+    private HandlerMapping handlerMapping() {
+        List<Mapper> mappers = new ArrayList<>();
+        mappers.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+        return new HandlerMapping(mappers);
+    }
+
+    private HandlerAdapter handlerAdapter() {
+        List<Adapter> adapters = new ArrayList<>();
+        adapters.add(new HandlerExecutionAdapter());
+        return new HandlerAdapter(adapters);
     }
 }
