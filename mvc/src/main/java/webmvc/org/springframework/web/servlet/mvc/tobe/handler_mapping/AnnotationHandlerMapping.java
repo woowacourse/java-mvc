@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler_mapping;
 
 import static java.util.Map.entry;
 
@@ -18,16 +18,22 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.exception.RequestMethodNotValidException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
+import webmvc.org.springframework.web.servlet.mvc.tobe.default_controller.ForwardController;
 
-public class AnnotationHandlerMapping implements HandlerMapping{
+public class AnnotationHandlerMapping implements HandlerMapping {
 
+    private static final String DEFAULT_CONTROLLER_PACKAGE =
+        ForwardController.class.getPackage().getName();
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.basePackage = Stream.of(basePackage, DEFAULT_CONTROLLER_PACKAGE).toArray();
         this.handlerExecutions = new HashMap<>();
     }
 
