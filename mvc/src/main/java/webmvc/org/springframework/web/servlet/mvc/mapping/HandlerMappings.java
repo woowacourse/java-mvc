@@ -1,24 +1,19 @@
-package com.techcourse.support.web.mapping;
+package webmvc.org.springframework.web.servlet.mvc.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappings {
 
     private final List<HandlerMapping> mappings = new ArrayList<>();
 
     public void initialize() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
-        manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
 
-        mappings.add(manualHandlerMapping);
         mappings.add(annotationHandlerMapping);
     }
 

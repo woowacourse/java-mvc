@@ -1,9 +1,8 @@
-package com.techcourse.support.web.adaptor;
+package webmvc.org.springframework.web.servlet.mvc.adaptor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptor;
 
 public class HandlerAdaptors {
 
@@ -11,7 +10,6 @@ public class HandlerAdaptors {
 
     public HandlerAdaptors() {
         adaptors.add(new AnnotationHandlerAdaptor());
-        adaptors.add(new ManualHandlerAdaptor());
     }
 
     public HandlerAdaptor getAdaptor(Object handler) {
