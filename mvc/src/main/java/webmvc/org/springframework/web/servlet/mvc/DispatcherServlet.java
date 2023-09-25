@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerMapper;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.mapper.HandlerMappers;
 
 import java.util.Map;
@@ -53,13 +52,5 @@ public class DispatcherServlet extends HttpServlet {
 
         modelAndView.getView()
                 .render(model, request, response);
-    }
-
-    public void addHandlerMapper(final HandlerMapper handlerMapper) {
-        handlerMappers.addHandlerMapper(handlerMapper);
-    }
-
-    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.addHandlerAdapter(handlerAdapter);
     }
 }
