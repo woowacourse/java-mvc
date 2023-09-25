@@ -7,10 +7,10 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @context.org.springframework.stereotype.Controller
-public class RegisterViewController {
+public class ForwardController {
 
-    @GetMapping("/register/view")
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+    @GetMapping("/")
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
