@@ -20,10 +20,8 @@ public class JsonView implements View {
     }
 
     private void print(final PrintWriter writer, final String contents) {
-        try (writer) {
-            writer.print(contents);
-            writer.flush();
-        }
+        writer.print(contents);
+        writer.flush();
     }
 
 }

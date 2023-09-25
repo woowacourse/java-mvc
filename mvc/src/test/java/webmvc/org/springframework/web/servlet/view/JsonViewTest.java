@@ -42,7 +42,6 @@ class JsonViewTest {
                 "  }\n" +
                 "}");
         verify(printWriter).flush();
-        verify(printWriter).close();
     }
 
 }
