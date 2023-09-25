@@ -7,12 +7,12 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class LogoutController {
+public class ForwardController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return "redirect:/";
+    private static final String PATH = "/index.jsp";
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return PATH;
     }
 }
