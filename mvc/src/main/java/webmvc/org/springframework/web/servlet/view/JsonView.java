@@ -8,6 +8,8 @@ import web.org.springframework.http.MediaType;
 import webmvc.org.springframework.web.servlet.View;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JsonView implements View {

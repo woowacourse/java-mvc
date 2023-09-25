@@ -1,12 +1,11 @@
 package webmvc.org.springframework.web.servlet.mvc.frontcontroller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.handler.tobe.controllerhandler.ControllerHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.handler.asis.ForwardController;
-import webmvc.org.springframework.web.servlet.mvc.handler.tobe.annoationhandler.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.annoationhandler.AnnotationHandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HandlerMappings {
 
@@ -19,20 +18,15 @@ public class HandlerMappings {
 
     public void initialize() {
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
-        final ControllerHandlerMapping controllerHandlerMapping = new ControllerHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
-        controllerHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
-        handlerMappings.add(controllerHandlerMapping);
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            try {
-                return handlerMapping.getHandler(request);
-            } catch (Exception ignored) {
-            }
-        }
-        return new ForwardController("/404.jsp");
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("404"));
     }
 }

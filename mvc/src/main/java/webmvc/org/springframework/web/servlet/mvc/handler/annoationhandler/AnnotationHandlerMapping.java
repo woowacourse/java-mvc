@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handler.tobe.annoationhandler;
+package webmvc.org.springframework.web.servlet.mvc.handler.annoationhandler;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -85,10 +85,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey matchingHandlerKey = handlerExecutions.keySet().stream()
-                .filter(handlerKey -> handlerKey.isMatching(request))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("404"));
-        return handlerExecutions.get(matchingHandlerKey);
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
     }
 }

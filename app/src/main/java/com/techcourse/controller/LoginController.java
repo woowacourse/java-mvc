@@ -48,7 +48,7 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return "redirect:/index.jsp";
+            return "redirect:/";
         }
         return "redirect:/401.jsp";
     }

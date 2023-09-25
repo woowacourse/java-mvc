@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.Map;
 
@@ -40,18 +41,14 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = handlerMappings.getHandler(request);
             final HandlerAdapter adapter = handlerAdapters.getAdapter(handler);
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
-            render(modelAndView, request, response);
+            modelAndView.render(request, response);
+        } catch (IllegalArgumentException e) {
+            final ModelAndView modelAndView = new ModelAndView(new JspView("/404.jsp"));
+            response.setStatus(404);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void render(final ModelAndView modelAndView,
-                        final HttpServletRequest request,
-                        final HttpServletResponse response) throws Exception {
-        final View view = modelAndView.getView();
-        final Map<String, Object> model = modelAndView.getModel();
-        view.render(model, request, response);
     }
 }

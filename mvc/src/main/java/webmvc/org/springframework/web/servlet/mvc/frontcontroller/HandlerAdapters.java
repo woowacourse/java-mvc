@@ -1,7 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.frontcontroller;
 
-import webmvc.org.springframework.web.servlet.mvc.handler.tobe.controllerhandler.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handler.tobe.annoationhandler.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.annoationhandler.AnnotationHandlerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,6 @@ public class HandlerAdapters {
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public void initialize() {
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
