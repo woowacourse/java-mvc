@@ -19,11 +19,11 @@ public class HandlerExecution {
         return (ModelAndView) method.invoke(controller, request, response);
     }
 
-    public String getMethodName() {
-        return method.getName();
-    }
-
-    public String getDeclaringClassName() {
-        return method.getDeclaringClass().getName();
+    @Override
+    public String toString() {
+        return "HandlerExecution{" +
+                "controller=" + controller.getClass() +
+                ", method=" + method.getName() +
+                '}';
     }
 }

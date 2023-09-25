@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
@@ -32,10 +31,7 @@ class HandlerAdaptersTest {
     void 핸들러를_처리할_수_있는_HandlerAdapter를_반환한다() {
         // given
         final HandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
-        final HandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
-        final HandlerAdapters handlerAdapters = new HandlerAdapters(List.of(
-                handlerExecutionHandlerAdapter, controllerHandlerAdapter
-        ));
+        final HandlerAdapters handlerAdapters = new HandlerAdapters(List.of(handlerExecutionHandlerAdapter));
         final HandlerExecution handler = new HandlerExecution(null, null);
 
         // when
