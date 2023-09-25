@@ -1,4 +1,5 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
+
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.*;
 
 import java.util.Map;
 
@@ -25,9 +25,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         try {
-            handlerMappings = new HandlerMappings(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse"));
+            handlerMappings = new HandlerMappings(new AnnotationHandlerMapping("com.techcourse"));
             handlerMappings.initialize();
-            handlerAdapters = new HandlerAdapters(new ManualHandlerAdapter(), new AnnotationHandlerAdapter());
+            handlerAdapters = new HandlerAdapters(new AnnotationHandlerAdapter());
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
@@ -50,5 +50,3 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 }
-
-

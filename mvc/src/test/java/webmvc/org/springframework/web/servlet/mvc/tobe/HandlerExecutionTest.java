@@ -26,7 +26,7 @@ class HandlerExecutionTest {
         mockHandler.setAccessible(true);
 
         //when
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        final ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         //then
         assertThat(modelAndView.getView())

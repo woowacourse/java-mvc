@@ -1,12 +1,8 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.MannualHandler;
@@ -22,11 +18,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        handlers.put("/", new MannualHandler(new ForwardController("/index.jsp")));
-        handlers.put("/login", new MannualHandler(new LoginController()));
-        handlers.put("/login/view", new MannualHandler(new LoginViewController()));
-        handlers.put("/logout", new MannualHandler(new LogoutController()));
-
         log.info("Initialized Handler Mapping!");
         handlers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, handlers.get(path).getController().getClass()));
