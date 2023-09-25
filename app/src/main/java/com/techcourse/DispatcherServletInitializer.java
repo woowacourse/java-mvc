@@ -7,7 +7,6 @@ import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMappings;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
@@ -24,11 +23,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         HandlerMappings handlerMappings = new HandlerMappings()
-                .addHandlerMapping(new ManualHandlerMapping())
                 .addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
 
         HandlerAdapters handlerAdapters = new HandlerAdapters()
-                .addHandlerAdapter(new ControllerHandlerAdapter())
                 .addHandlerAdapter(new HandlerExecutionHandlerAdapter());
 
         final var dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
