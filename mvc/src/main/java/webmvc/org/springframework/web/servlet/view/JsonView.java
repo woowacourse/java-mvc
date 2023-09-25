@@ -11,15 +11,13 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request,
                        final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         final ServletOutputStream outputStream = response.getOutputStream();
-        final String content = objectMapper.writeValueAsString(model);
+        final String content = new ObjectMapper().writeValueAsString(model);
 
         outputStream.write(content.getBytes());
         response.flushBuffer();
