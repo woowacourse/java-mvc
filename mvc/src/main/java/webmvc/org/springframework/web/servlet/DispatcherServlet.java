@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -6,9 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.adapter.Adapter;
-import webmvc.org.springframework.web.servlet.mvc.adapter.ControllerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerExecutionAdapter;
 import webmvc.org.springframework.web.servlet.mvc.mapper.HandlerMapping;
@@ -36,14 +34,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMapping handlerMapping() {
         List<Mapper> mappers = new ArrayList<>();
-        mappers.add(new ManualHandlerMapping());
         mappers.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         return new HandlerMapping(mappers);
     }
 
     private HandlerAdapter handlerAdapter() {
         List<Adapter> adapters = new ArrayList<>();
-        adapters.add(new ControllerAdapter());
         adapters.add(new HandlerExecutionAdapter());
         return new HandlerAdapter(adapters);
     }
@@ -55,7 +51,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = handlerMapping.getHandler(request);
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-            modelAndView.render(request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

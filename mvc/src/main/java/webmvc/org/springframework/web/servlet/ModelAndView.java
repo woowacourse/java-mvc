@@ -22,10 +22,6 @@ public class ModelAndView {
         return this;
     }
 
-    public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
-    }
-
     public Object getObject(final String attributeName) {
         return model.get(attributeName);
     }
