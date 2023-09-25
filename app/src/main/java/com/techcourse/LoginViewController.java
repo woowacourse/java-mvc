@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LoginViewController{
+public class LoginViewController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 

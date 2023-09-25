@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse;
 
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -13,14 +13,14 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LoginController{
+public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView( "redirect:/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))

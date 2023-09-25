@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,10 +9,10 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class HomeController {
+public class RegisterViewController {
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/index.jsp"));
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 }
