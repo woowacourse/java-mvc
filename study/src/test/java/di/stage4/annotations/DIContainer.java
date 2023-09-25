@@ -1,5 +1,7 @@
 package di.stage4.annotations;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Set;
 
 /**
@@ -7,18 +9,41 @@ import java.util.Set;
  */
 class DIContainer {
 
-    private final Set<Object> beans;
+    private final Set<Class<?>> beans;
 
     public DIContainer(final Set<Class<?>> classes) {
-        this.beans = Set.of();
+        this.beans = classes;
     }
 
-    public static DIContainer createContainerForPackage(final String rootPackageName) {
-        return null;
+    public static DIContainer createContainerForPackage(final String rootPackageName) throws Exception {
+        final Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(rootPackageName);
+        return new DIContainer(allClassesInPackage);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getBean(final Class<T> aClass) {
-        return null;
+    public <T> T getBean(final Class<T> aClass) throws Exception {
+        final Class<?> clazz = findBean(aClass);
+        final Object instance = createInstance(clazz);
+        final Field[] fields = clazz.getDeclaredFields();
+        for (final Field field : fields) {
+            final Class<?> parameterClazz = findBean(field.getType());
+            final Object fieldInstance = createInstance(parameterClazz);
+            field.setAccessible(true);
+            field.set(instance, fieldInstance);
+        }
+        return (T) instance;
+    }
+
+    private Object createInstance(final Class<?> clazz) throws Exception {
+        final Constructor<?> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        return constructor.newInstance();
+    }
+
+    private <T> Class<?> findBean(final Class<T> aClass) {
+        return beans.stream()
+                .filter(aClass::isAssignableFrom)
+                .findFirst()
+                .orElseThrow();
     }
 }

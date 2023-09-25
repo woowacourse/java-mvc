@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,9 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handleradapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handlermapping.HandlerMappings;
 
 import java.util.Optional;
 
@@ -28,7 +28,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.init(new ManualHandlerMapping());
+        handlerMappings.init();
         handlerAdapters.init();
     }
 
@@ -43,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             final Object handler = handlerOptional.get();
             final HandlerAdapter handlerAdapter = handlerAdapters.getAdapter(handler)
-                    .orElseThrow(() -> new IllegalStateException("핸들러 어댑터를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new UnsupportedOperationException("핸들러 어댑터를 찾을 수 없습니다."));
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (final Exception e) {
