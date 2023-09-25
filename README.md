@@ -13,7 +13,7 @@
   - [x] JspView 클래스를 구현한다
   - [x] JsonView 클래스를 구현한다
     -  [x] REST API를 지원
-- [ ] Legacy MVC 제거하기
-  - [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
-  - [ ] asis 패키지에 있는 레거시 코드를 삭제
-  - [ ] DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 옮기기
+- [x] Legacy MVC 제거하기
+  - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+  - [x] asis 패키지에 있는 레거시 코드를 삭제
+  - [x] DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 옮기기
