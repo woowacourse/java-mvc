@@ -49,4 +49,22 @@ class DispatcherServletTest {
         // when & then
         assertThatCode(() -> dispatcherServlet.service(request, response)).doesNotThrowAnyException();
     }
+
+    @Test
+    void handler와_adapter를_통해_웹요청을_처리한다2() {
+        // given
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.init();
+
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+
+        given(request.getRequestURI()).willReturn("/register/view");
+        given(request.getMethod()).willReturn("GET");
+        given(request.getRequestDispatcher(any())).willReturn(requestDispatcher);
+
+        // when & then
+        assertThatCode(() -> dispatcherServlet.service(request, response)).doesNotThrowAnyException();
+    }
 }

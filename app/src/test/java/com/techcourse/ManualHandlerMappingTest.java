@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.mock;
 
+import com.techcourse.controller.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("ManualHandlerMapping 테스트")
