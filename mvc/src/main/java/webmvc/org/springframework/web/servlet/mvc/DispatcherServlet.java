@@ -68,19 +68,12 @@ public class DispatcherServlet extends HttpServlet {
             final View view = getView(modelAndView);
             final Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
+        } catch (final HandlerMappingException e) {
+            throw new HandlerMappingException(e.getMessage());
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private View getView(final ModelAndView modelAndView) {
-        final Object view = modelAndView.getView();
-        return viewResolvers.stream()
-                .filter(viewResolver -> viewResolver.supports(view))
-                .findFirst()
-                .map(viewResolver -> viewResolver.resolve(view))
-                .orElseThrow(() -> new ViewResolverException("해당 요청에 대한 view를 처리할 수 없습니다."));
     }
 
     private Object getHandler(final HttpServletRequest request) {
@@ -100,5 +93,14 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         throw new HandlerAdapterException("해당 요청에 대한 핸들러 어댑터가 없습니다.");
+    }
+
+    private View getView(final ModelAndView modelAndView) {
+        final Object view = modelAndView.getView();
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(view))
+                .findFirst()
+                .map(viewResolver -> viewResolver.resolve(view))
+                .orElseThrow(() -> new ViewResolverException("해당 요청에 대한 view를 처리할 수 없습니다."));
     }
 }

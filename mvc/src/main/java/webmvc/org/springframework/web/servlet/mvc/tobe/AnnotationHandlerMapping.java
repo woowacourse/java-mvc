@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import com.sun.jdi.InternalException;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
@@ -84,7 +85,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (final NoSuchMethodException | InstantiationException | IllegalAccessException |
                        InvocationTargetException e) {
-            throw new HandlerMappingException("handler 인스턴스 생성에 실패했습니다.");
+            throw new InternalException("handler 인스턴스 생성에 실패했습니다.");
         }
     }
 
