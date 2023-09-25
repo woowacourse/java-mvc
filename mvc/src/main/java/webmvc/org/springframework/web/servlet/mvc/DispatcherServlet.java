@@ -68,8 +68,8 @@ public class DispatcherServlet extends HttpServlet {
             final View view = getView(modelAndView);
             final Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
-        } catch (final HandlerMappingException e) {
-            throw new HandlerMappingException(e.getMessage());
+        } catch (final HandlerMappingException | ViewResolverException e) {
+            throw e;
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
