@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.handermapping.HandlerMappings;
 import webmvc.org.springframework.web.servlet.mvc.handlerAdaptor.HandlerAdaptors;
-import webmvc.org.springframework.web.servlet.mvc.view.ModelAndView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -39,18 +38,10 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappings.getHandler(request);
             final var modelAndView = handlerAdaptors.execute(handler, request, response);
-            render(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
-                        final HttpServletResponse response) throws Exception {
-        final var view = modelAndView.getView();
-        final var model = modelAndView.getModel();
-
-        view.render(model, request, response);
     }
 }
