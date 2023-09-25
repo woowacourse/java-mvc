@@ -60,7 +60,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private HandlerExecution getHandlerExecutionFor(Method handler) {
-        return new ReflectiveHandlerExecution(
+        if (handler.getReturnType().isAssignableFrom(String.class)) {
+            return new ViewNameHandlerExecution(
+                    safeInstantiate(handler.getDeclaringClass()),
+                    handler
+            );
+        }
+        return new ModelAndViewHandlerExecution(
                 safeInstantiate(handler.getDeclaringClass()),
                 handler
         );

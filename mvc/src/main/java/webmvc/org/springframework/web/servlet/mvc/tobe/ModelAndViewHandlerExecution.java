@@ -6,12 +6,12 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 
 import java.lang.reflect.Method;
 
-public class ReflectiveHandlerExecution implements HandlerExecution {
+public class ModelAndViewHandlerExecution implements HandlerExecution {
 
     private final Object instance;
     private final Method method;
 
-    public ReflectiveHandlerExecution(Object instance, Method method) {
+    public ModelAndViewHandlerExecution(Object instance, Method method) {
         this.instance = instance;
         this.method = method;
     }

@@ -24,8 +24,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         Set<HandlerMapping> handlerMappings = Set.of(
-                new AnnotationHandlerMapping("com.techcourse.controller"),
-                new ManualHandlerMappingAdapter(new ManualHandlerMapping())
+                new AnnotationHandlerMapping("com.techcourse.controller")
         );
         final var dispatcherServlet = new DispatcherServlet(
                 handlerMappings,
