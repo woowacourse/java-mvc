@@ -1,4 +1,6 @@
-package webmvc.org.springframework.web.servlet.view;
+package com.techcourse.controller;
+
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class JspViews {
 
