@@ -8,8 +8,6 @@ import web.org.springframework.http.MediaType;
 import webmvc.org.springframework.web.servlet.View;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -21,7 +19,6 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final String content = parseModelToString(model);
         final PrintWriter writer = response.getWriter();
-        writer.flush();
         writer.write(content);
     }
 
