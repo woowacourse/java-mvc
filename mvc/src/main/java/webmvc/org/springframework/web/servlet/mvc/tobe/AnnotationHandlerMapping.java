@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -88,11 +89,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.valueOf(request.getMethod())
         );
-        return handlerExecutions.get(handlerKey);
+        final HandlerExecution handler = handlerExecutions.get(handlerKey);
+        if (handler == null) {
+            return Optional.empty();
+        }
+        return Optional.of(handler);
     }
 }

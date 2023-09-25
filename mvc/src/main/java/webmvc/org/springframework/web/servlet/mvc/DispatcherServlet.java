@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
@@ -84,9 +85,9 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(final HttpServletRequest request) {
         for (final HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
+            final Optional<Object> handler = handlerMapping.getHandler(request);
+            if (handler.isPresent()) {
+                return handler.get();
             }
         }
         throw new HandlerMappingException("해당 요청에 대한 핸들러가 없습니다.");
