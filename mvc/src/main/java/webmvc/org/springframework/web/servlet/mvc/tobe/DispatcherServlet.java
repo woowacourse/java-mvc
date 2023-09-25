@@ -18,13 +18,13 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMappings handlerMappings;
     private HandlerExecutors handlerExecutors;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackage) {
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        handlerMappings = new HandlerMappings(annotationHandlerMapping);
     }
 
     @Override
     public void init() {
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
-        handlerMappings = new HandlerMappings(annotationHandlerMapping);
         handlerExecutors = new HandlerExecutors(List.of(new AnnotationHandlerExecutor()));
     }
 
