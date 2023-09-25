@@ -17,11 +17,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     @Override
     public void init() {
         handlerMappings.add(new AnnotationHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);
+
+        handlerAdapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
@@ -32,7 +35,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = getHandler(request);
             final var modelAndView = getModelAndView(controller, request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+
+            modelAndView.getView()
+                    .render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -50,11 +55,10 @@ public class DispatcherServlet extends HttpServlet {
     private ModelAndView getModelAndView(final Object controller, final HttpServletRequest request,
                                          final HttpServletResponse response)
             throws Exception {
-        if (controller instanceof HandlerExecution) {
-            HandlerExecution handler = (HandlerExecution) controller;
-            return handler.handle(request, response);
-        }
-
-        throw new IllegalStateException("can't response to this response");
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.canAdapt(controller))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("can't response to this response"))
+                .adapt(controller, request, response);
     }
 }
