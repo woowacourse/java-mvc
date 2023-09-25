@@ -1,21 +1,9 @@
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.techcourse.TomcatStarter;
 import io.restassured.RestAssured;
-import io.restassured.http.Cookie;
-import io.restassured.http.Cookies;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import web.org.springframework.http.MediaType;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -47,12 +35,13 @@ class IntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"/", "/login/view", "/register/view"})
-    void 페이지를_반환할_수_있다(String path)  {
+    void 페이지를_반환할_수_있다(String path) {
         // given, when
         RestAssured.when()
                 .get(path)
                 // then
                 .then()
+                .log().all()
                 .statusCode(200);
     }
 
@@ -66,6 +55,7 @@ class IntegrationTest {
                 .post("/login")
                 // then
                 .then()
+                .log().all()
                 .statusCode(302);
     }
 
@@ -79,6 +69,7 @@ class IntegrationTest {
                 .post("/register")
                 // then
                 .then()
+                .log().all()
                 .statusCode(302);
     }
 
@@ -91,6 +82,7 @@ class IntegrationTest {
                 .get("/logout")
                 // then
                 .then()
+                .log().all()
                 .statusCode(200);
     }
 }
