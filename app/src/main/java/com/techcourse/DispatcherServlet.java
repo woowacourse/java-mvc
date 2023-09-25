@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.techcourse.controlleradapter.ControllerHandlerAdapter;
 import com.techcourse.exception.HandlerAdapterNotFoundException;
 import com.techcourse.exception.HandlerNotFoundException;
 import jakarta.servlet.ServletException;
@@ -29,13 +28,11 @@ public class DispatcherServlet extends HttpServlet {
     );
 
     private List<HandlerMapping> handlerMappings = List.of(
-            new ManualHandlerMapping(),
             new AnnotationHandlerMapping("com/techcourse")
     );
 
     private List<HandlerAdapter> handlerAdapters = List.of(
-            new HandlerExecutionHandlerAdapter(),
-            new ControllerHandlerAdapter()
+            new HandlerExecutionHandlerAdapter()
     );
 
     public DispatcherServlet() {
