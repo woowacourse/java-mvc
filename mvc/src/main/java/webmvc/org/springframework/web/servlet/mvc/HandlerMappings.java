@@ -13,7 +13,7 @@ public class HandlerMappings {
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void initialize() {
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+        handlerMappings.add(new AnnotationHandlerMapping("com"));
 
         handlerMappings.forEach(HandlerMapping::initialize);
     }
