@@ -26,14 +26,22 @@ public class JsonView implements View {
     }
 
     private String getResponseBody(final Map<String, ?> model) {
-        if (model.size() == 1) {
-            return String.valueOf(model.values().toArray()[0]);
-        }
         try {
+            if (model.size() == 1) {
+                return objectMapper.writeValueAsString(getOneModel(model));
+            }
+
             return objectMapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
             log.warn("Model\\[ {} \\] 을 Json으로 파싱하던 도중에 오류가 발생하였습니다.", model, e);
             throw new ViewException("[ERROR] Model을 Json으로 파싱하던 도중에 오류가 발생하였습니다.");
         }
+    }
+
+    private Map.Entry<String, ?> getOneModel(final Map<String, ?> model) {
+        return model.entrySet()
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 }
