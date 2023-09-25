@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +24,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private HandlerExecution notFoundExecution;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -77,14 +79,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    public void setNotFoundModelAndView(final ModelAndView modelAndView) {
+        this.notFoundExecution = new ForwardingExecution(modelAndView);
+    }
+
     @Override
     public boolean isSupport(final HttpServletRequest request) {
+        if (notFoundExecution != null) {
+            return true;
+        }
         return handlerExecutions.containsKey(getHandlerKey(request));
     }
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(getHandlerKey(request));
+        return handlerExecutions.getOrDefault(
+                getHandlerKey(request),
+                notFoundExecution
+        );
     }
 
     private HandlerKey getHandlerKey(final HttpServletRequest request) {
