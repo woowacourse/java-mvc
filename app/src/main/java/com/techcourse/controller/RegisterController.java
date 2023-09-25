@@ -4,8 +4,6 @@ import com.techcourse.domain.User;
 import com.techcourse.dto.RegisterRequest;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.web.bind.annotation.RequestBody;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;

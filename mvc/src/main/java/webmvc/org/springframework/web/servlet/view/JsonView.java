@@ -10,14 +10,15 @@ import webmvc.org.springframework.web.servlet.View;
 public class JsonView implements View {
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         final String deserialize = getDeserializedJson(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().println(deserialize);
     }
 
     private String getDeserializedJson(final Map<String, ?> model) throws Exception {
-        if(model.size() == 1) {
+        if (model.size() == 1) {
             final Object object = model.values().iterator().next();
             return HttpRequestBodyConverter.deserialize(object);
         }

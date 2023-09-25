@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Parameter;
 
-public class HttpServletRequestResolver implements Resolver{
+public class HttpServletRequestResolver implements Resolver {
 
     @Override
     public Object resolveArgument(

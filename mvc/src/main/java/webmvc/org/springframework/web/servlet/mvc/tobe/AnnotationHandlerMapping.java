@@ -34,7 +34,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         final Set<Class<?>> controllers = getClassHasAnnotationWith(CONTROLLER_ANNOTATION, basePackage);
-        final Map<Class<?>, List<Method>> classMethods = getMethodHasAnnotationWith(REQUEST_MAPPING_ANNOTATION, controllers);
+        final Map<Class<?>, List<Method>> classMethods = getMethodHasAnnotationWith(REQUEST_MAPPING_ANNOTATION,
+                controllers);
         addAllMapping(classMethods);
     }
 

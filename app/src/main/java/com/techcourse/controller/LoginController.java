@@ -3,16 +3,13 @@ package com.techcourse.controller;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.apache.catalina.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import web.org.springframework.web.bind.annotation.RequestParam;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
