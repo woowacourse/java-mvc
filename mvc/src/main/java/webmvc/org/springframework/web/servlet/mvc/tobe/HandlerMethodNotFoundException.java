@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 public class HandlerMethodNotFoundException extends RuntimeException {
 

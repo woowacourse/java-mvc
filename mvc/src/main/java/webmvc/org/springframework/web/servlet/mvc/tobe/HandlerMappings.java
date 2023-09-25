@@ -1,9 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.RequestMappingHandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +12,6 @@ public class HandlerMappings {
 
     public void init() {
         mappings = new ArrayList<>();
-        mappings.add(new ManualHandlerMapping());
         mappings.add(new RequestMappingHandlerMapping("com"));
     }
 

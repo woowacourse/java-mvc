@@ -1,7 +1,4 @@
-package com.techcourse;
-
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.RequestMappingHandlerAdapter;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +9,6 @@ public class HandlerAdapters {
 
     public void init() {
         adapters = new ArrayList<>();
-        adapters.add(new ManualHandlerAdapter());
         adapters.add(new RequestMappingHandlerAdapter());
     }
 
