@@ -1,4 +1,4 @@
-package com.techcourse;
+package web.org.springframework.web;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -27,14 +27,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        var manualHandlerMapping = new ManualHandlerMapping();
         var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
         handlerMappings.add(annotationHandlerMapping);
-
-        handlerAdapters.add(new ControllerAdapter());
         handlerAdapters.add(new HandlerExecutionAdapter());
     }
 

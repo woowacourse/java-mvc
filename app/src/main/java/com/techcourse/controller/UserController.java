@@ -5,6 +5,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
@@ -21,16 +22,18 @@ public class UserController {
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
-        if (account == null) {
-            return new ModelAndView(new JspView("/404.jsp"));
-        }
+
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                                                .orElse(null);
+        Optional<User> optionalUser = InMemoryUserRepository.findByAccount(account);
+        if (optionalUser.isEmpty()) {
+            return new ModelAndView(new JspView("/404.jsp"));
+        }
 
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final User user = optionalUser.get();
         modelAndView.addObject("user", user);
+
         return modelAndView;
     }
 }
