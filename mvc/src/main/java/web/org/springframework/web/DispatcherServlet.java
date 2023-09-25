@@ -34,6 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         final Object handler = handlerMappers.getHandler(request);
+
         final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
 
         try {

@@ -5,7 +5,6 @@ import webmvc.org.springframework.web.servlet.mvc.HandlerMapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class HandlerMappers {
 
