@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -8,15 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.exception.AdapterNotFoundException;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.RequestMappingHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.SimpleControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -32,12 +33,10 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings = new ArrayList<>();
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
         handlerMappings.forEach(HandlerMapping::initialize);
 
         handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new SimpleControllerHandlerAdapter());
         handlerAdapters.add(new RequestMappingHandlerAdapter());
     }
 
@@ -46,31 +45,20 @@ public class DispatcherServlet extends HttpServlet {
         final Object handler = handlerMappings.stream()
                 .map(mapping -> mapping.getHandler(request))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 요정입니다."));
+                .orElseThrow(() -> new HandlerNotFoundException("존재하지 않는 요청입니다."));
         final HandlerAdapter handlerAdapter = handlerAdapters.stream()
                 .filter(Adapter -> Adapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 요정입니다."));
+                .orElseThrow(() -> new AdapterNotFoundException("정의하지 않는 요청입니다."));
 
         try {
             final ModelAndView handle = handlerAdapter.handle(request, response, handler);
             final View view = handle.getView();
-            if (view instanceof JspView) {
-                move(((JspView) view).getViewName(), request, response);
-            }
+            final Map<String, Object> model = handle.getModel();
+            view.render(model, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
