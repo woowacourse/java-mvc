@@ -1,14 +1,12 @@
 package com.techcourse;
 
+import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
-
-import java.io.File;
-import webmvc.org.springframework.web.servlet.UncheckedServletException;
 
 public class TomcatStarter {
 

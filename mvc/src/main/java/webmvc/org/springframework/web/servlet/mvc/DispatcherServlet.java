@@ -51,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
         final var handlerAdapter = getHandlerAdapter(handler);
         try {
             final var modelAndView = handlerAdapter.handle(request, response, handler);
-            renderView(modelAndView, request, response);
+            modelAndView.renderView(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -71,10 +71,5 @@ public class DispatcherServlet extends HttpServlet {
                               .filter(adapter -> adapter.supports(handler))
                               .findAny()
                               .orElseThrow(() -> new HandlerNotFoundException("Not found handler adapter for handler : " + handler));
-    }
-
-    private void renderView(final ModelAndView mv, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var view = mv.getView();
-        view.render(mv.getModel(), request, response);
     }
 }
