@@ -1,19 +1,24 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class HandlerAdapters {
 
-	private final Set<HandlerAdapter> handlerAdapters;
+    private final Set<HandlerAdapter> handlerAdapters;
+	
+    public HandlerAdapters() {
+        this.handlerAdapters = new HashSet<>();
+    }
 
-	public HandlerAdapters(final HandlerAdapter... handlerAdapters) {
-		this.handlerAdapters = Set.of(handlerAdapters);
-	}
+    public void add(HandlerAdapter handlerAdapter) {
+        this.handlerAdapters.add(handlerAdapter);
+    }
 
-	public HandlerAdapter getHandlerAdapter(final Object handler) {
-		return handlerAdapters.stream()
-			.filter(handlerAdapter -> handlerAdapter.supports(handler))
-			.findAny()
-			.orElseThrow(() -> new IllegalArgumentException("알맞는 HandlerAdapter가 없습니다."));
-	}
+    public HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+            .filter(handlerAdapter -> handlerAdapter.supports(handler))
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException("알맞는 HandlerAdapter가 없습니다."));
+    }
 }

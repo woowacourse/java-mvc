@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -9,28 +9,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappings handlerMapping;
-    private HandlerAdapters handlerAdapters;
-
-    public DispatcherServlet() {
-    }
+    private final HandlerMappings handlerMappings = new HandlerMappings();
+    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
 
     @Override
     public void init() {
-        handlerMapping = new HandlerMappings(new AnnotationHandlerMapping(getClass().getPackage().getName()));
-        handlerAdapters = new HandlerAdapters(new HandlerExecutionHandlerAdapter());
-        handlerMapping.initialize();
+        handlerMappings.initialize();
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        this.handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        this.handlerAdapters.add(handlerAdapter);
     }
 
     @Override
@@ -38,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = handlerMapping.getHandler(request);
+            Object handler = handlerMappings.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             View view = modelAndView.getView();
