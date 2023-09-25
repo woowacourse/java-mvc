@@ -18,7 +18,7 @@ public class TestController {
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = new ModelAndView(JspView.of(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
@@ -26,7 +26,7 @@ public class TestController {
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = new ModelAndView(JspView.of(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
@@ -34,7 +34,7 @@ public class TestController {
     @RequestMapping(value = "/put-test", method = RequestMethod.PUT)
     public ModelAndView edit() {
         log.info("test controller put method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        final var modelAndView = new ModelAndView(JspView.of(""));
         modelAndView.addObject("id", "gugu");
         return modelAndView;
     }

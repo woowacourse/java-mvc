@@ -1,4 +1,4 @@
-package com.techcourse.controller.annotation;
+package com.techcourse.controller;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,12 +9,12 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class AnnotationHomeController {
+public class HomeController {
 
     private static final String INDEX_JSP = "/index.jsp";
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView display(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView(INDEX_JSP));
+        return new ModelAndView(JspView.of(INDEX_JSP));
     }
 }
