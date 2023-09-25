@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.DispatcherServlet;
 import webmvc.org.springframework.web.servlet.mvc.supports.adapter.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ManualHandlerMappingAdapter;
 import webmvc.org.springframework.web.servlet.mvc.supports.mapping.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JsonViewResolver;
 import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JspViewResolver;
@@ -32,7 +31,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 
         dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping())
-                         .addHandlerAdapter(new ManualHandlerMappingAdapter(resolvers))
                          .addHandlerAdapter(new AnnotationHandlerAdapter());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);

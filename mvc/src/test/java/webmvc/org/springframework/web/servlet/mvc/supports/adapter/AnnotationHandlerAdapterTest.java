@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import samples.TestLegacyController;
+import samples.TestController;
 import webmvc.org.springframework.web.servlet.mvc.supports.mapping.AnnotationHandlerMapping;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -41,7 +41,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     void supports_메서드는_처리할_수_없는_핸들러를_전달하면_false를_반환한다() {
         final AnnotationHandlerAdapter adapter = new AnnotationHandlerAdapter();
-        final Object invalidHandler = new TestLegacyController();
+        final Object invalidHandler = new TestController();
 
         final boolean actual = adapter.supports(invalidHandler);
 
