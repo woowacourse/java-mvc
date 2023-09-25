@@ -30,7 +30,7 @@ class LoginControllerTest {
         LoginController loginController = new LoginController();
         ModelAndView login = loginController.login(request, response);
 
-        Assertions.assertThat(login.getView()).isEqualTo(new JspView("redirect:/index.jsp"));
+        Assertions.assertThat(login.getView()).isEqualTo(JspView.redirect("/index.jsp"));
     }
 
     @Test
@@ -45,7 +45,7 @@ class LoginControllerTest {
         LoginController loginController = new LoginController();
         ModelAndView login = loginController.login(request, response);
 
-        Assertions.assertThat(login.getView()).isEqualTo(new JspView("redirect:/401.jsp"));
+        Assertions.assertThat(login.getView()).isEqualTo(JspView.redirect("/401.jsp"));
     }
 
     @Test
@@ -60,6 +60,6 @@ class LoginControllerTest {
         LoginController loginController = new LoginController();
         ModelAndView login = loginController.login(request, response);
 
-        Assertions.assertThat(login.getView()).isEqualTo(new JspView("redirect:/index.jsp"));
+        Assertions.assertThat(login.getView()).isEqualTo(JspView.redirect("/index.jsp"));
     }
 }

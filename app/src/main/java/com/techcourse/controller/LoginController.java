@@ -15,8 +15,8 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-    private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
-    private static final String REDIRECT_401_JSP = "redirect:/401.jsp";
+    private static final String INDEX_JSP = "/index.jsp";
+    private static final String PAGE_401_JSP = "/401.jsp";
     private static final String LOGIN_JSP = "/login.jsp";
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
@@ -24,15 +24,15 @@ public class LoginController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+                    return new ModelAndView(JspView.redirect(INDEX_JSP));
                 })
-                .orElse(new ModelAndView(new JspView(LOGIN_JSP)));
+                .orElse(new ModelAndView(JspView.of(LOGIN_JSP)));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+            return new ModelAndView(JspView.redirect(INDEX_JSP));
         }
 
         ModelAndView modelAndView = InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -40,7 +40,7 @@ public class LoginController {
                     log.info("User : {}", user);
                     return checkPassword(req, user);
                 })
-                .orElse(new ModelAndView(new JspView(REDIRECT_401_JSP)));
+                .orElse(new ModelAndView(JspView.redirect(PAGE_401_JSP)));
         modelAndView.addObject("id", req.getAttribute("id"));
         return modelAndView;
     }
@@ -49,8 +49,8 @@ public class LoginController {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+            return new ModelAndView(JspView.redirect(INDEX_JSP));
         }
-        return new ModelAndView(new JspView(REDIRECT_401_JSP));
+        return new ModelAndView(JspView.redirect(PAGE_401_JSP));
     }
 }

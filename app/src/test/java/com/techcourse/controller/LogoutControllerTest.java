@@ -29,6 +29,6 @@ class LogoutControllerTest {
         LogoutController logoutController = new LogoutController();
         ModelAndView logout = logoutController.logout(request, response);
 
-        Assertions.assertThat(logout.getView()).isEqualTo(new JspView("redirect:/"));
+        Assertions.assertThat(logout.getView()).isEqualTo(JspView.redirect("/"));
     }
 }

@@ -2,12 +2,11 @@ package webmvc.org.springframework.web.servlet.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.View;
-
-import java.util.Map;
 
 public class JspView implements View {
 
@@ -16,12 +15,21 @@ public class JspView implements View {
     public static final String REDIRECT_PREFIX = "redirect:";
     private final String viewName;
 
-    public JspView(final String viewName) {
+    private JspView(final String viewName) {
         this.viewName = viewName;
     }
 
+    public static JspView of(final String viewName) {
+        return new JspView(viewName);
+    }
+
+    public static JspView redirect(final String viewName) {
+        return new JspView(REDIRECT_PREFIX + viewName);
+    }
+
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;

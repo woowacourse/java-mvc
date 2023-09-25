@@ -15,6 +15,6 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView display(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView(INDEX_JSP));
+        return new ModelAndView(JspView.of(INDEX_JSP));
     }
 }

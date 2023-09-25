@@ -33,7 +33,7 @@ class RegisterControllerTest {
         RegisterController registerController = new RegisterController();
         ModelAndView register = registerController.register(request, response);
 
-        Assertions.assertThat(register.getView()).isEqualTo(new JspView("redirect:/index.jsp"));
+        Assertions.assertThat(register.getView()).isEqualTo(JspView.redirect("/index.jsp"));
         User user = InMemoryUserRepository.findByAccount("power").get();
         Assertions.assertThat(user.checkPassword("password")).isTrue();
     }

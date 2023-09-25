@@ -27,6 +27,6 @@ class RegisterViewControllerTest {
         RegisterController registerController = new RegisterController();
         ModelAndView display = registerController.display(request, response);
 
-        Assertions.assertThat(display.getView()).isEqualTo(new JspView("/register.jsp"));
+        Assertions.assertThat(display.getView()).isEqualTo(JspView.of("/register.jsp"));
     }
 }

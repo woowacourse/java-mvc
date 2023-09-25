@@ -13,11 +13,12 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class RegisterController {
 
-    private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
+    private static final String INDEX_JSP = "/index.jsp";
+    private static final String REGISTER_JSP = "/register.jsp";
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView display(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(JspView.of(REGISTER_JSP));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -28,6 +29,6 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+        return new ModelAndView(JspView.redirect(INDEX_JSP));
     }
 }
