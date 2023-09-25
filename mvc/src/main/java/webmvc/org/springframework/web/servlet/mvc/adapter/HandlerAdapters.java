@@ -1,6 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.adapter;
 
 import java.util.List;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerAdapterException;
 
 public class HandlerAdapters {
 
@@ -16,6 +17,6 @@ public class HandlerAdapters {
         return adapters.stream()
             .filter(adapter -> adapter.supports(handler))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("적합한 핸들러 어댑터가 없습니다."));
+            .orElseThrow(HandlerAdapterException.NotFoundException::new);
     }
 }

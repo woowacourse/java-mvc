@@ -1,6 +1,7 @@
 package com.techcourse.controller;
 
 import com.techcourse.domain.User;
+import com.techcourse.exception.UserNotFoundException;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +25,7 @@ public class UserController {
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = InMemoryUserRepository.findByAccount(account)
-            .orElseThrow();
+            .orElseThrow(UserNotFoundException::new);
 
         modelAndView.addObject("user", user);
         return modelAndView;

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingException;
 
 class HandlerMappingsTest {
 
@@ -42,7 +43,6 @@ class HandlerMappingsTest {
 
         // when, then
         assertThatThrownBy(() -> handlerMappings.getHandler(request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("매칭되는 핸들러가 없습니다.");
+            .isInstanceOf(HandlerMappingException.NotFoundException.class);
     }
 }

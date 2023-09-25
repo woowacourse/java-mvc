@@ -3,6 +3,7 @@ package webmvc.org.springframework.web.servlet.mvc.handlermapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingException;
 
 public class HandlerMappings {
 
@@ -25,6 +26,6 @@ public class HandlerMappings {
             .map(mapping -> mapping.getHandler(request))
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("매칭되는 핸들러가 없습니다."));
+            .orElseThrow(HandlerMappingException.NotFoundException::new);
     }
 }

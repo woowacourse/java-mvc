@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import webmvc.org.springframework.web.servlet.mvc.exception.HandlerAdapterException;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerExecution;
 
 class HandlerAdaptersTest {
@@ -33,7 +34,6 @@ class HandlerAdaptersTest {
 
         // when, then
         assertThatThrownBy(() -> handlerAdapters.getHandlerAdapter(handler))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("적합한 핸들러 어댑터가 없습니다.");
+            .isInstanceOf(HandlerAdapterException.NotFoundException.class);
     }
 }
