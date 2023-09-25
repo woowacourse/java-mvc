@@ -55,8 +55,4 @@ public class JspView implements View {
         }
     }
 
-    @Override
-    public String getViewName() {
-        return viewName;
-    }
 }

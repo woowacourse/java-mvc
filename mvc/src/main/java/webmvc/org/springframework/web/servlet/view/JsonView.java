@@ -4,10 +4,10 @@ import static web.org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.stream.Collectors;
 import webmvc.org.springframework.web.servlet.View;
@@ -20,9 +20,10 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) {
-        try (PrintWriter writer = response.getWriter()) {
-            writer.write(toJson(model));
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
             response.setContentType(APPLICATION_JSON_UTF8_VALUE);
+            outputStream.write(toJson(model).getBytes());
+            response.flushBuffer();
         } catch (IOException e) {
             throw new IllegalArgumentException("Json 렌더링 중 예외가 발생했습니다.", e);
         }
@@ -37,8 +38,4 @@ public class JsonView implements View {
         return OBJECT_MAPPER.writeValueAsString(model);
     }
 
-    @Override
-    public String getViewName() {
-        return null;
-    }
 }
