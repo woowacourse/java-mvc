@@ -1,4 +1,4 @@
-package com.techcourse.controller.annotaion;
+package com.techcourse.controller;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,10 +9,14 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class RegisterViewController {
+public class LogoutController {
 
-    @RequestMapping(value = "/register/view", method = {RequestMethod.GET})
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+
+    @RequestMapping(value = "/logout", method = {RequestMethod.GET})
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
+        final var session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        return new ModelAndView(new JspView("redirect:/"));
     }
+
 }

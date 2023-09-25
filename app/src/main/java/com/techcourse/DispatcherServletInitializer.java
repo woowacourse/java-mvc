@@ -4,10 +4,10 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
-import webmvc.org.springframework.web.servlet.mvc.asis.AnnotationControllerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.InterfaceControllerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationControllerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.DispatcherServlet;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
 
@@ -40,8 +40,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private HandlerMappingRegistry getHandlerMappingRegistry() {
         HandlerMappingRegistry registry = new HandlerMappingRegistry();
         registry.addHandlerMapping(
-            getInitializedHandlerMapping(new ManualHandlerMapping()));
-        registry.addHandlerMapping(
             getInitializedHandlerMapping(new AnnotationHandlerMapping("com")));
         return registry;
     }
@@ -54,7 +52,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private HandlerAdapterRegistry getHandlerAdapterRegistry() {
         HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
         registry.addHandlerAdapter(new AnnotationControllerAdapter());
-        registry.addHandlerAdapter(new InterfaceControllerAdapter());
         return registry;
     }
 }

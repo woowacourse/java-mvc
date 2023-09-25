@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationControllerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
