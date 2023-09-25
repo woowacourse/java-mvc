@@ -36,7 +36,6 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         log.info("Initialized AnnotationBasedHandlerMapping!");
     }
 
@@ -77,7 +76,7 @@ public class AnnotationBasedHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandlerExecution(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (handlerExecution == null) {
