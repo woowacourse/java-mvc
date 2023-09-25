@@ -10,6 +10,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.tobe.NotFoundHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -19,9 +20,9 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        handlerAdapterRegistry = new HandlerAdapterRegistry(new AnnotationHandlerAdapter());
-        handlerMappingRegistry = new HandlerMappingRegistry(new AnnotationHandlerMapping("com.techcourse.controller"));
+    public DispatcherServlet(String basePackage, String notFoundViewName) {
+        handlerAdapterRegistry = new HandlerAdapterRegistry(new AnnotationHandlerAdapter(), new NotFoundHandlerAdapter(notFoundViewName));
+        handlerMappingRegistry = new HandlerMappingRegistry(new AnnotationHandlerMapping(basePackage));
     }
 
     @Override
