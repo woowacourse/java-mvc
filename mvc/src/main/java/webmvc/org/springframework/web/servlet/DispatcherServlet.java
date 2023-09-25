@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -6,12 +6,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.adapter.HandlerAdapters;
+import com.techcourse.ManualHandlerAdapter;
+import webmvc.org.springframework.web.servlet.handlermapping.HandlerMappings;
+import webmvc.org.springframework.web.servlet.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.handlermapping.AnnotationHandlerMapping;
+import com.techcourse.ManualHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.view.View;
 
 public class DispatcherServlet extends HttpServlet {
 

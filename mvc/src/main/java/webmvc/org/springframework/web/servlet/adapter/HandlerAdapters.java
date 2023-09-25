@@ -1,6 +1,4 @@
-package com.techcourse;
-
-import webmvc.org.springframework.web.servlet.HandlerAdapter;
+package webmvc.org.springframework.web.servlet.adapter;
 
 import java.util.HashSet;
 import java.util.Set;

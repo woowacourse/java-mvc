@@ -15,6 +15,7 @@ dependencies {
     implementation "javax.servlet.jsp:javax.servlet.jsp-api:2.3.3"
     implementation "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0"
     implementation "jakarta.annotation:jakarta.annotation-api:2.0.0"
+    implementation project(path: ':app')
     annotationProcessor "jakarta.annotation:jakarta.annotation-api:2.0.0"
 
     implementation "org.reflections:reflections:0.10.2"

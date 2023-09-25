@@ -2,9 +2,9 @@ package com.techcourse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.view.View;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
