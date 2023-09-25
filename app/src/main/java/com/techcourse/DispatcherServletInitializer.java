@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.AnnotationHandlerMapping;
 
 /**
  * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the

@@ -8,6 +8,10 @@ import static org.mockito.Mockito.mock;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerExecution;
 
 class HandlerAdaptersTest {
     private final HandlerAdapters handlerAdaptors = new HandlerAdapters();

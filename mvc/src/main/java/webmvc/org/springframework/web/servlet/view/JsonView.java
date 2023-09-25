@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Map;
 import web.org.springframework.http.MediaType;
-import webmvc.org.springframework.web.servlet.View;
 
 public class JsonView implements View {
 

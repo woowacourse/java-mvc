@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerExecution;
 import webmvc.org.springframework.web.servlet.view.JsonView;
 
 class AnnotationHandlerAdapterTest {

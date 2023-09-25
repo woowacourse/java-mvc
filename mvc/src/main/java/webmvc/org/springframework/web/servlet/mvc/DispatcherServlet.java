@@ -8,11 +8,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerMappings;
+import webmvc.org.springframework.web.servlet.view.View;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapters;
 
 public class DispatcherServlet extends HttpServlet {
 
