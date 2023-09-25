@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import java.util.List;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
@@ -9,6 +9,6 @@ public class HandlerAdaptersFactory {
     }
 
     public static List<HandlerAdaptor> createHandlerAdaptors() {
-        return List.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter());
+        return List.of(new AnnotationHandlerAdapter());
     }
 }

@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import java.util.List;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -9,6 +9,6 @@ public class HandlerMappingsFactory {
     }
 
     public static List<HandlerMapping> createHandlerMappings(final Object... basePackagePath) {
-        return List.of(new AnnotationHandlerMapping(basePackagePath), new ManualHandlerMapping());
+        return List.of(new AnnotationHandlerMapping(basePackagePath));
     }
 }
