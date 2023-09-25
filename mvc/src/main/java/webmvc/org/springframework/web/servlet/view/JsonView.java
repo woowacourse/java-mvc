@@ -3,34 +3,35 @@ package webmvc.org.springframework.web.servlet.view;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import web.org.springframework.http.MediaType;
 import webmvc.org.springframework.web.servlet.View;
 
-import java.util.Map;
-
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper;
+  private static final int SINGLE_VALUE_INDEX = 0;
 
-    public JsonView(final ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+  @Override
+  public void render(
+      final Map<String, ?> model,
+      final HttpServletRequest request,
+      final HttpServletResponse response
+  ) throws Exception {
+    final ObjectMapper objectMapper = new ObjectMapper();
+    final String body = objectMapper.writeValueAsString(model);
+
+    if (hasSingle(model)) {
+      response.setContentType("text/plain");
+
+      response.getWriter().write(String.valueOf(model.values().toArray()[SINGLE_VALUE_INDEX]));
+      return;
     }
 
-    @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String body = objectMapper.writeValueAsString(model);
+    response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    response.getWriter().write(body);
+  }
 
-        if (hasSingle(model)) {
-            response.setContentType("text/html");
-            response.getWriter().write(body);
-            return;
-        }
-
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.getWriter().write(body);
-    }
-
-    private boolean hasSingle(final Map<String, ?> model) {
-        return model.size() == 1;
-    }
+  private boolean hasSingle(final Map<String, ?> model) {
+    return model.size() == 1;
+  }
 }
