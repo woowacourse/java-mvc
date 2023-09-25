@@ -13,17 +13,17 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LoginController {
+public class AuthController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     public static final String INDEX_JSP = "redirect:/index.jsp";
     public static final String REDIRECT_401_JSP = "redirect:/401.jsp";
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView showLoginPage(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView showLoginPage(HttpServletRequest request, HttpServletResponse response) {
 
-        String viewName = UserSession.getUserFrom(req.getSession())
+        String viewName = UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return INDEX_JSP;
@@ -34,7 +34,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(HttpServletRequest request, HttpServletResponse res) {
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView(INDEX_JSP));
         }
