@@ -15,7 +15,7 @@ public class RegisterController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
-        final String view = saveUser(req, res);
+        final String view = saveUser(req);
         final var modelAndView = new ModelAndView(new JspView(view));
         modelAndView.addObject("id", req.getAttribute("id"));
 
@@ -30,12 +30,15 @@ public class RegisterController {
         return modelAndView;
     }
 
-    public String saveUser(final HttpServletRequest req, final HttpServletResponse res) {
+    public String saveUser(final HttpServletRequest req) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
+
+        final var session = req.getSession();
+        session.setAttribute(UserSession.SESSION_KEY, user);
 
         return "redirect:/index.jsp";
     }

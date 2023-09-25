@@ -1,4 +1,4 @@
-package com.techcourse.servlet;
+package webmvc.org.springframework.web.servlet.mvc.asis.servlet;
 
 public class UncheckedServletException extends RuntimeException {
 
