@@ -19,12 +19,5 @@ public class JsonView implements View {
         String body = new ObjectMapper().writeValueAsString(model);
         response.setContentType(APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(body);
-
-//        try (PrintWriter writer = response.getWriter()) {
-//            writer.write(body);
-//            writer.flush();
-//        } catch (Exception e) {
-//            log.debug("JsonView#render 중 예외 발생 !!");
-//        }
     }
 }
