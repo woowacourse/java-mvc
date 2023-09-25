@@ -8,12 +8,10 @@ import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class LogoutController {
+public class IndexController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return ModelAndView.from("redirect:/index.jsp");
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView index(final HttpServletRequest req, final HttpServletResponse res) {
+        return ModelAndView.from("index.jsp");
     }
 }

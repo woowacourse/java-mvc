@@ -7,19 +7,31 @@ public class User {
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
+    public User(final long id, final String account, final String password, final String email) {
         this.id = id;
         this.account = account;
         this.password = password;
         this.email = email;
     }
 
-    public boolean checkPassword(String password) {
+    public boolean checkPassword(final String password) {
         return this.password.equals(password);
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getAccount() {
         return account;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

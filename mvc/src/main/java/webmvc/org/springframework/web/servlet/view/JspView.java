@@ -27,9 +27,9 @@ public class JspView implements View {
             return;
         }
 
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
+        model.forEach((key, value) -> {
+            log.debug("attribute name : {}, value : {}", key, value);
+            request.setAttribute(key, value);
         });
 
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);

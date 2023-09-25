@@ -7,3 +7,9 @@
 ## 2단계 기능 요구 사항
 
 - [x] Legacy MVC와 @MVC 통합하기
+
+## 3단계 기능 요구 사항
+
+- [x] JspView 클래스를 구현한다.
+- [x] JsonView 클래스를 구현한다.
+- [x] Legacy MVC를 제거한다.
