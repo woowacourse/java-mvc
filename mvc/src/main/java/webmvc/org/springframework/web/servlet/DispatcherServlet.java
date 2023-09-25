@@ -13,7 +13,6 @@ import webmvc.org.springframework.web.servlet.handlermapping.HandlerMappings;
 import webmvc.org.springframework.web.servlet.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.handlermapping.AnnotationHandlerMapping;
 import com.techcourse.ManualHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
 import webmvc.org.springframework.web.servlet.view.View;
 
 public class DispatcherServlet extends HttpServlet {
