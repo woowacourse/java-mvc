@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet;
+package com.techcourse;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -6,13 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.adapter.HandlerAdapters;
-import com.techcourse.ManualHandlerAdapter;
 import webmvc.org.springframework.web.servlet.handlermapping.HandlerMappings;
 import webmvc.org.springframework.web.servlet.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.handlermapping.AnnotationHandlerMapping;
-import com.techcourse.ManualHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.View;
 
 public class DispatcherServlet extends HttpServlet {
@@ -34,14 +33,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMappings() {
         final HandlerMappings handlerMappings = new HandlerMappings();
-        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping());
         this.handlerMappings = handlerMappings;
     }
 
     private void initHandlerAdapter() {
         final HandlerAdapters handlerAdapters = new HandlerAdapters();
-        handlerAdapters.addHandlerAdapter(new ManualHandlerAdapter());
         handlerAdapters.addHandlerAdapter(new AnnotationHandlerAdapter());
         this.handlerAdapters = handlerAdapters;
     }

@@ -11,8 +11,8 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class DazzleController {
 
-    @RequestMapping(value = "/dazzle", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView showMyDazzle(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(new JspView("404.jsp"));
+        return new ModelAndView(new JspView("index.jsp"));
     }
 }
