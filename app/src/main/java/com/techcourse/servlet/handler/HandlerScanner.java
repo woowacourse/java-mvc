@@ -18,10 +18,6 @@ public class HandlerScanner {
 
     public HandlerScanner(final Object... basePackages) {
         handlerMappings.add(new AnnotationHandlerMapping(basePackages));
-
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
     }
 
     public Object getHandler(final HttpServletRequest request) throws ServletException {
