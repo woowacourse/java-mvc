@@ -88,8 +88,6 @@ class JsonViewTest {
 
         // then
         String expectedJson = "";
-        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        verify(response).setCharacterEncoding("UTF-8");
         assertThat(actualJson).isEqualTo(expectedJson);
     }
 

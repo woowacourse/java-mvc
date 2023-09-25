@@ -16,24 +16,22 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.setCharacterEncoding("UTF-8");
-
         if (model.isEmpty()) {
             return;
         }
 
-        if (model.size() == SINGLE_MODEL_SIZE) {
-            final Object oneValue = model.values().toArray()[0];
-            writeObjectAsJson(response, oneValue);
-            return;
-        }
+        final Object value = getValueFromModel(model);
+        final String valueAsString = objectMapper.writeValueAsString(value);
 
-        writeObjectAsJson(response, model);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(valueAsString);
     }
 
-    private void writeObjectAsJson(final HttpServletResponse response, final Object value) throws IOException {
-        final String valueAsString = objectMapper.writeValueAsString(value);
-        response.getWriter().write(valueAsString);
+    private Object getValueFromModel(final Map<String, ?> model) {
+        if (model.size() == SINGLE_MODEL_SIZE) {
+            return model.values().toArray()[0];
+        }
+        return model;
     }
 }
