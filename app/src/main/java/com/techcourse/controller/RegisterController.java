@@ -11,7 +11,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class RegisterAnnotationController {
+public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
