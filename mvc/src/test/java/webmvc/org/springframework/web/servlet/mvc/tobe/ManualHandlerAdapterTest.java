@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 class ManualHandlerAdapterTest {
 
@@ -59,7 +58,7 @@ class ManualHandlerAdapterTest {
         final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
         // then
-        assertThat(modelAndView.getView().getClass()).isEqualTo(JspView.class);
+        assertThat(modelAndView.getView()).isEqualTo("test.jsp");
     }
 
     static class TestController implements Controller {

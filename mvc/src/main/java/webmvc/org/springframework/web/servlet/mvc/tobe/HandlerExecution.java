@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JsonView;
 
 public class HandlerExecution {
 
@@ -16,6 +17,13 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(handler, request, response);
+        final Object result = method.invoke(handler, request, response);
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+        if (result == null) {
+            return new ModelAndView(new JsonView());
+        }
+        return new ModelAndView(result);
     }
 }

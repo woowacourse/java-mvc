@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class ManualHandlerAdapter implements HandlerAdapter {
 
@@ -19,6 +18,6 @@ public class ManualHandlerAdapter implements HandlerAdapter {
                                final HttpServletResponse response) throws Exception {
         final Controller controller = (Controller) handler;
         final String viewName = controller.execute(request, response);
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(viewName);
     }
 }

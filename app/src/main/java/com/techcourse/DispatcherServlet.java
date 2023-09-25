@@ -17,7 +17,10 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterException;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ManualHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.tobe.JsonViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.tobe.JspViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ViewResolverException;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -26,6 +29,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<ViewResolver> viewResolvers = new ArrayList<>();
 
     public DispatcherServlet() {
     }
@@ -34,10 +38,10 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         initHandlerMappings();
         initHandlerAdapters();
+        initViewResolvers();
     }
 
     private void initHandlerMappings() {
-        handlerMappings.add(new WrappedManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping(getClass().getPackageName()));
         for (final HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
@@ -45,8 +49,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdapters() {
-        handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
+    }
+
+    private void initViewResolvers() {
+        viewResolvers.add(new JspViewResolver());
+        viewResolvers.add(new JsonViewResolver());
     }
 
     @Override
@@ -59,13 +67,22 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = getHandler(request);
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-            final View view = modelAndView.getView();
+            final View view = getView(modelAndView);
             final Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private View getView(final ModelAndView modelAndView) {
+        final Object view = modelAndView.getView();
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.supports(view))
+                .findFirst()
+                .map(viewResolver -> viewResolver.resolve(view))
+                .orElseThrow(() -> new ViewResolverException("해당 요청에 대한 view를 처리할 수 없습니다."));
     }
 
     private Object getHandler(final HttpServletRequest request) {
