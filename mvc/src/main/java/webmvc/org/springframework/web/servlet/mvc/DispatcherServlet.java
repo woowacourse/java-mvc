@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -8,11 +8,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerMappings;
+import webmvc.org.springframework.web.servlet.view.View;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapters;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -25,10 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.add(new AnnotationHandlerMapping(this.getClass().getPackage().getName()));
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.init();
-        handlerAdapters.init();
     }
 
     @Override
@@ -48,5 +45,13 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 }

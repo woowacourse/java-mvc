@@ -3,6 +3,7 @@ package webmvc.org.springframework.web.servlet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import webmvc.org.springframework.web.servlet.view.View;
 
 public class ModelAndView {
 
@@ -29,9 +30,5 @@ public class ModelAndView {
 
     public View getView() {
         return view;
-    }
-
-    public String getViewName() {
-        return view.getName();
     }
 }

@@ -1,13 +1,17 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapters;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerExecution;
 
 class HandlerAdaptersTest {
     private final HandlerAdapters handlerAdaptors = new HandlerAdapters();
@@ -18,8 +22,8 @@ class HandlerAdaptersTest {
         // when & then
         assertAll(
                 () -> assertThat(handlerAdaptors.getAdapters()).isEmpty(),
-                handlerAdaptors::init,
-                () -> assertThat(handlerAdaptors.getAdapters()).hasSize(2)
+                () -> handlerAdaptors.add(new AnnotationHandlerAdapter()),
+                () -> assertThat(handlerAdaptors.getAdapters()).hasSize(1)
         );
     }
 
@@ -28,7 +32,7 @@ class HandlerAdaptersTest {
     void findAdapter_HandlerExecution() throws ServletException {
         // given
         final HandlerExecution handlerExecution = mock(HandlerExecution.class);
-        handlerAdaptors.init();
+        handlerAdaptors.add(new AnnotationHandlerAdapter());
 
         //when
         final HandlerAdapter handlerAdaptor = handlerAdaptors.findAdapter(handlerExecution);
@@ -37,28 +41,16 @@ class HandlerAdaptersTest {
         assertThat(handlerAdaptor).isInstanceOf(AnnotationHandlerAdapter.class);
     }
 
-    @DisplayName("Adapters에서 Controller를 찾아 반환한다.")
-    @Test
-    void findAdapter_Controller() throws ServletException {
-        // given
-        final Controller controller = mock(Controller.class);
-        handlerAdaptors.init();
-
-        //when
-        final HandlerAdapter handlerAdaptor = handlerAdaptors.findAdapter(controller);
-
-        //then
-        assertThat(handlerAdaptor).isInstanceOf(ManualHandlerAdapter.class);
-    }
-
-    @DisplayName("Adapters에서 원하는 타입을 찾지 못하면 null을 반환한다.")
+    @DisplayName("Adapters에서 원하는 타입을 찾지 못하면 예외 처리한다.")
     @Test
     void findAdapter_NotFoundObject() throws ServletException {
         // given
         final Object object = mock(Object.class);
-        handlerAdaptors.init();
+        handlerAdaptors.add(new AnnotationHandlerAdapter());
 
         //when & then
-        assertThat(handlerAdaptors.findAdapter(object)).isNull();
+        assertThatThrownBy(() -> handlerAdaptors.findAdapter(object))
+                .isInstanceOf(ServletException.class)
+                .hasMessage("No adapters support handler");
     }
 }
