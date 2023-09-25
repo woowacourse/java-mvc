@@ -27,7 +27,7 @@ public class HandlerExecution {
         } catch (Exception e) {
             log.error("Error: {}", e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new IllegalStateException("Handler 처리 과정에서 오류가 발생했습니다.");
+            throw new IllegalArgumentException("Handler 처리 과정에서 오류가 발생했습니다.");
         }
     }
 }
