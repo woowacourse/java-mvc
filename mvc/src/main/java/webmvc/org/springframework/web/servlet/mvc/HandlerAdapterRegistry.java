@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HandlerAdapterRegistry {
 
-    final private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
         handlerAdapters.add(handlerAdapter);

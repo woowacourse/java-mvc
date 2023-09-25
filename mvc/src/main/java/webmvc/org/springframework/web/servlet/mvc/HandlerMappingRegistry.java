@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
-    final private List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void initialize() {
         handlerMappings.forEach(HandlerMapping::initialize);
