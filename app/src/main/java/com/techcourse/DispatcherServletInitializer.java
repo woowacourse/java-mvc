@@ -26,6 +26,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
                     "Check if there is another servlet registered under the same name.");
         }
 
+        registration.setLoadOnStartup(1);
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
