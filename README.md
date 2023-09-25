@@ -20,4 +20,4 @@
 - [x] HandlerAdapter 커스템 예외 추가(HandlerAdapter Not Found) 
 - [x] 예외처리 메세지 명확하게 수정(404페이지 리다이렉션)
 - [x] 불필요한 자원 close 제거
-- [ ] jsonView 테스트 추가
+- [x] jsonView 테스트 추가
