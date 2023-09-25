@@ -29,22 +29,6 @@ public class RegisterController {
         return show("redirect:/index.jsp");
     }
 
-    @RequestMapping(value = "/register-annotated", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
-        final var user = new User(2,
-                request.getParameter("account"),
-                request.getParameter("password"),
-                request.getParameter("email"));
-        InMemoryUserRepository.save(user);
-
-        return show("redirect:/index.jsp");
-    }
-
-    @RequestMapping(value = "/register-annotated", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
-        return show("register.jsp");
-    }
-
     private ModelAndView show(final String viewName) {
         return new ModelAndView(new JspView(viewName));
     }
