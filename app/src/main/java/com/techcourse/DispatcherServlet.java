@@ -19,10 +19,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -32,15 +34,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initializeHandlerMappings() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
         handlerMappingRegistry.initialize();
     }
 
     private void initializeHandlerAdapters() {
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
