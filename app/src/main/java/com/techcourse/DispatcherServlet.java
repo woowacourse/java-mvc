@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
@@ -39,19 +38,11 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = handlerMappingRegistry.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            move(modelAndView, request, response);
+            modelAndView.renderView(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final View view = modelAndView.getView();
-        if (view == null) {
-            throw new IllegalArgumentException();
-        }
-        view.render(modelAndView.getModel(), request, response);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {

@@ -1,11 +1,13 @@
 package webmvc.org.springframework.web.servlet;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
-
     private final View view;
     private final Map<String, Object> model;
 
@@ -21,6 +23,10 @@ public class ModelAndView {
 
     public Object getObject(final String attributeName) {
         return model.get(attributeName);
+    }
+
+    public void renderView(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        view.render(model, request, response);
     }
 
     public Map<String, Object> getModel() {
