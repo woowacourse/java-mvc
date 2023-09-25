@@ -31,4 +31,17 @@ public class JspView implements View {
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
+
+    @Override
+    public boolean isRedirect() {
+        return viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    @Override
+    public String getViewName() {
+        if (isRedirect()) {
+            return viewName.substring(JspView.REDIRECT_PREFIX.length());
+        }
+        return viewName;
+    }
 }
