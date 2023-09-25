@@ -18,9 +18,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.exception.RequestMethodNotValidException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.Handler;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.Handler;
 import webmvc.org.springframework.web.servlet.mvc.tobe.default_controller.ForwardController;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
