@@ -9,13 +9,13 @@ import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.view.JspView;
 
 @Controller
-public class RegisterViewController {
+public class HomeController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView findRegisterForm(
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView findHomePage(
             final HttpServletRequest ignoredRequest,
             final HttpServletResponse ignoredResponse
     ) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

@@ -1,11 +1,12 @@
 package webmvc.org.springframework.web.servlet.mvc.view;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.mvc.View;
 
 public class JspView implements View {
 
@@ -33,12 +34,18 @@ public class JspView implements View {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        // TODO : 이후 미션 단계에서 구현 예정
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+            return ;
+        }
 
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+
+        requestDispatcher.forward(request, response);
     }
 }
