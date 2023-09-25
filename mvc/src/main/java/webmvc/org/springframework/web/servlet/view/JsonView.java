@@ -26,9 +26,8 @@ public class JsonView implements View {
     private String convertModelToJson(Map<String, ?> model) throws JsonProcessingException {
         if (model.size() == 1) {
             return String.valueOf(model.values().iterator().next());
-        } else {
-            return objectMapper.writeValueAsString(model);
         }
+        return objectMapper.writeValueAsString(model);
     }
 
     @Override
