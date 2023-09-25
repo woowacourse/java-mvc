@@ -12,8 +12,8 @@
 
 - [x] 화면에 대한 책임은 View 클래스가 갖도록 구현
     - [x] JspView 클래스를 구현
-    - [ ] JsonView 클래스를 구현
-- [ ] DispatcherServlet이 아닌 뷰에서 JSP를 반환하도록 수정
-- [ ] REST API를 지원할 수 있도록 Json 뷰를 추가
+    - [x] JsonView 클래스를 구현
+- [x] DispatcherServlet이 아닌 뷰에서 JSP를 반환하도록 수정
+- [x] REST API를 지원할 수 있도록 Json 뷰를 추가
 - [ ] Legacy MVC 제거
-- [ ] DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 이ㅌ
+- [ ] DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 이동
