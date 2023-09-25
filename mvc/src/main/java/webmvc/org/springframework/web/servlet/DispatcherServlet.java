@@ -52,7 +52,6 @@ public class DispatcherServlet extends HttpServlet {
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
         final HttpServletResponse response)
         throws Exception {
-        final View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
+        modelAndView.render(modelAndView.getModel(), request, response);
     }
 }
