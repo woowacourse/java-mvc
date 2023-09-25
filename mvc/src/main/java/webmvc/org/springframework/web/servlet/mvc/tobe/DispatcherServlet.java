@@ -7,12 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.asis.HandlerMapping;
 
 import java.util.List;
-import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -47,10 +45,7 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(request, handlerMapping);
             final ModelAndView modelAndView = handlerAdapter.handle(handlerMapping, request, response);
-
-            final Map<String, Object> model = modelAndView.getModel();
-            final View view = modelAndView.getView();
-            view.render(model, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
