@@ -12,13 +12,24 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        Object data = getDataFormModel(model);
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonResult = mapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(model);
+                .writeValueAsString(data);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(jsonResult);
+    }
+
+    private static Object getDataFormModel(final Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values()
+                    .stream()
+                    .findFirst()
+                    .orElseThrow();
+        }
+        return model;
     }
 }
