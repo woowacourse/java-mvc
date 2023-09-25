@@ -32,14 +32,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        for (final Object basePackage : basePackages) {
-            registerHandlerWithAnnotation(basePackage);
-        }
+        registerHandlerWithAnnotation(basePackages);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandlerWithAnnotation(final Object basePackage) {
-        final Set<Class<?>> classes = getClassesByAnnotation(basePackage, Controller.class);
+    private void registerHandlerWithAnnotation(final Object... basePackages) {
+        final Set<Class<?>> classes = getClassesByAnnotation(basePackages, Controller.class);
         for (final Class<?> clazz : classes) {
             final List<Method> methods = getMethodsByAnnotation(clazz, RequestMapping.class);
             for (final Method method : methods) {
@@ -50,9 +48,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private <T extends Annotation> Set<Class<?>> getClassesByAnnotation(final Object basePackage,
+    private <T extends Annotation> Set<Class<?>> getClassesByAnnotation(final Object[] basePackages,
                                                                         final Class<T> annotation) {
-        final Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackages);
         return reflections.getTypesAnnotatedWith(annotation);
     }
 

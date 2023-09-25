@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -31,9 +31,6 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private final List<ViewResolver> viewResolvers = new ArrayList<>();
 
-    public DispatcherServlet() {
-    }
-
     @Override
     public void init() {
         initHandlerMappings();
@@ -42,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMappings() {
-        handlerMappings.add(new AnnotationHandlerMapping(getClass().getPackageName()));
+        handlerMappings.add(new AnnotationHandlerMapping());
         for (final HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
