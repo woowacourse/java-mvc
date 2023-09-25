@@ -15,8 +15,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private HandlerMapper handlerMapper;
-    private HandlerAdapters handlerAdapters;
+    private HandlerMappings handlerMappings;
+    private HandlerExecutors handlerExecutors;
 
     public DispatcherServlet() {
     }
@@ -24,8 +24,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
-        handlerMapper = new HandlerMapper(annotationHandlerMapping);
-        handlerAdapters = new HandlerAdapters(List.of(new AnnotationHandlerAdapter()));
+        handlerMappings = new HandlerMappings(annotationHandlerMapping);
+        handlerExecutors = new HandlerExecutors(List.of(new AnnotationHandlerExecutor()));
     }
 
     @Override
@@ -34,8 +34,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMapper.getHandler(request);
-            final ModelAndView modelAndView = (ModelAndView) handlerAdapters.execute(handler, request, response);
+            final Object handler = handlerMappings.getHandler(request);
+            final ModelAndView modelAndView = (ModelAndView) handlerExecutors.execute(handler, request, response);
 
             final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);

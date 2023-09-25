@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter {
+public class AnnotationHandlerExecutor implements HandlerExecutor {
 
     @Override
     public ModelAndView execute(final Object handler, final HttpServletRequest request, final HttpServletResponse response) {

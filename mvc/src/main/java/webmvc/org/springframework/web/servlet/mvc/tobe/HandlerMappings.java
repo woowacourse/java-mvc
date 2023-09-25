@@ -5,11 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HandlerMapper {
+public class HandlerMappings {
 
     private final Set<HandlerMapping> handlerMappings = new HashSet<>();
 
-    public HandlerMapper(HandlerMapping... handlerMappings) {
+    public HandlerMappings(HandlerMapping... handlerMappings) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
             this.handlerMappings.add(handlerMapping);

@@ -7,18 +7,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class HandlerAdapters {
+public class HandlerExecutors {
 
-    private final Set<HandlerAdapter> handlers = new HashSet<>();
+    private final Set<HandlerExecutor> handlers = new HashSet<>();
 
-    public HandlerAdapters(List<HandlerAdapter> handlerAdapters) {
-        handlers.addAll(handlerAdapters);
+    public HandlerExecutors(List<HandlerExecutor> handlerExecutors) {
+        handlers.addAll(handlerExecutors);
     }
 
     public Object execute(final Object handler, final HttpServletRequest req, final HttpServletResponse res) {
-        for (HandlerAdapter handlerAdapter : handlers) {
-            if (handlerAdapter.isSupport(handler)) {
-                return handlerAdapter.execute(handler, req, res);
+        for (HandlerExecutor handlerExecutor : handlers) {
+            if (handlerExecutor.isSupport(handler)) {
+                return handlerExecutor.execute(handler, req, res);
             }
         }
 
