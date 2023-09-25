@@ -34,14 +34,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView mv = handler.handle(request, response);
-            move(mv, request, response);
+            mv.renderView(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
