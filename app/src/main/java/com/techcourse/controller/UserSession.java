@@ -1,4 +1,4 @@
-package com.techcourse.controller.legacy;
+package com.techcourse.controller;
 
 import com.techcourse.domain.User;
 import jakarta.servlet.http.HttpSession;
@@ -9,6 +9,9 @@ public class UserSession {
 
     public static final String SESSION_KEY = "user";
 
+    private UserSession() {
+    }
+
     public static Optional<User> getUserFrom(final HttpSession session) {
         final var user = (User) session.getAttribute(SESSION_KEY);
         return Optional.ofNullable(user);
@@ -18,5 +21,4 @@ public class UserSession {
         return getUserFrom(session).isPresent();
     }
 
-    private UserSession() {}
 }

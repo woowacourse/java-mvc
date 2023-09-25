@@ -1,17 +1,16 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import webmvc.org.springframework.web.servlet.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.AnnotationHandlerAdapter;
 
 public class HandlerAdapters {
 
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public HandlerAdapters() {
-        handlerAdapters.add(new ManulHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 

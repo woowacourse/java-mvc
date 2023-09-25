@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
