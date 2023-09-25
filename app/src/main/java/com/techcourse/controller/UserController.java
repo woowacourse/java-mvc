@@ -20,7 +20,6 @@ public class UserController {
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
-        System.out.println("account = " + account);
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
