@@ -15,11 +15,13 @@ public class LoginViewController {
 
     @GetMapping("/login/view")
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
-        return UserSession.getUserFrom(req.getSession())
+        final String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return "redirect:/index.jsp";
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse("/login.jsp");
+
+        return new ModelAndView(new JspView(viewName));
     }
 }
