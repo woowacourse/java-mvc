@@ -43,10 +43,13 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Optional<Object> handlerOpt = handlerMappings.findHandlerMapping(request);
-            if (handlerOpt.isPresent()) {
-                final Object handler = handlerOpt.get();
-                handlerAdapters.service(handler, request, response);
+            if (handlerOpt.isEmpty()) {
+                response.setStatus(404);
+                return;
             }
+
+            final Object handler = handlerOpt.get();
+            handlerAdapters.service(handler, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
