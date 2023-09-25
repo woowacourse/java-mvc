@@ -1,6 +1,5 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,10 +22,9 @@ public class UserController {
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        InMemoryUserRepository.findByAccount(account)
+                .ifPresent(u -> modelAndView.addObject("user", u));
 
-        modelAndView.addObject("user", user);
         return modelAndView;
     }
 }
