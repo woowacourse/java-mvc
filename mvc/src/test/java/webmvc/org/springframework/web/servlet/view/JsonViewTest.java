@@ -53,7 +53,6 @@ class JsonViewTest {
         );
     }
 
-
     static class Member {
 
         private final String name;
