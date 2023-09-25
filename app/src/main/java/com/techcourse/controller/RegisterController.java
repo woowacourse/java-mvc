@@ -8,22 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.MvcController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class RegisterController implements MvcController {
-
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
-        InMemoryUserRepository.save(user);
-
-        return "redirect:/index.jsp";
-    }
+public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
