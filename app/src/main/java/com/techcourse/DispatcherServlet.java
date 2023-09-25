@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
                     .orElse(noHandlerFoundHandler);
 
             ModelAndView modelAndView = handlerExecution.handle(request, response);
-            modelAndView.getView().render(new HashMap<>(), request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
