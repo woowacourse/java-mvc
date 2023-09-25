@@ -8,8 +8,8 @@ public class HandlerAdapters {
 
     private final List<HandlerAdapter> adapters = new ArrayList<>();
 
-    public void init() {
-        adapters.add(new AnnotationHandlerAdapter());
+    public void add(final HandlerAdapter handlerAdapter) {
+        adapters.add(handlerAdapter);
     }
 
     public HandlerAdapter findAdapter(final Object handler) throws ServletException {

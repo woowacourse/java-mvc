@@ -26,7 +26,6 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.init();
-        handlerAdapters.init();
     }
 
     @Override
@@ -50,5 +49,9 @@ public class DispatcherServlet extends HttpServlet {
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 }
