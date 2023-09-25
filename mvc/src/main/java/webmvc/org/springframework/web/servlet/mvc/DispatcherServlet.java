@@ -1,15 +1,12 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -30,18 +27,27 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handle = handlerMappingRegistry.getHandler(request);
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handle);
-            final ModelAndView modelAndView = handlerAdapter.handle(handle, request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            final var handle = handlerMappingRegistry.getHandler(request);
+            final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handle);
+            final var modelAndView = handlerAdapter.handle(handle, request, response);
+            modelAndView.render(request, response);
+        } catch (IllegalArgumentException e) {
+            log.error("Exception : {}", e.getMessage(), e);
+
+            final var modelAndView = new ModelAndView(new JspView("/404.jsp"));
+            response.setStatus(404);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+
+            final var modelAndView = new ModelAndView(new JspView("/500.jsp"));
+            response.setStatus(500);
+            modelAndView.render(request, response);
         }
     }
 }
