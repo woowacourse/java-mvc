@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
