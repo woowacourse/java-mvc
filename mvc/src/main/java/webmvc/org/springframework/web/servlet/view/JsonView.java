@@ -20,11 +20,7 @@ public class JsonView implements View {
         objectMapper = new ObjectMapper();
         objectMapper.setVisibility(objectMapper.getSerializationConfig()
                 .getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE)
-                .withIsGetterVisibility(JsonAutoDetect.Visibility.NONE));
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
     }
 
     @Override
