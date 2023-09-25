@@ -1,6 +1,6 @@
 package webmvc.org.springframework.web.servlet.view;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +16,7 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         if (model == null || model.isEmpty()) {
-            response.setStatus(SC_NOT_FOUND);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
             return;
         }
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

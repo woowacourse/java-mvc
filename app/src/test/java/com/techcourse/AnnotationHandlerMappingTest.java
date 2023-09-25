@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 class AnnotationHandlerMappingTest {
 
@@ -36,7 +37,7 @@ class AnnotationHandlerMappingTest {
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getView().getViewName()).isEqualTo("redirect:/index.jsp");
+        assertThat(modelAndView.getView()).usingRecursiveComparison().isEqualTo(new JspView("redirect:/index.jsp"));
     }
 
     @Test
