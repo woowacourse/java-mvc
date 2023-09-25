@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
@@ -38,7 +39,8 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = handlerMappings.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
 
-            handlerAdapter.execute(request, response, handler);
+            final ModelAndView mav = handlerAdapter.execute(request, response, handler);
+            mav.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
