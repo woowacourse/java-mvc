@@ -2,7 +2,7 @@ package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.techcourse.controller.AnnotatedControllerForTest;
+import com.techcourse.controller.LoginController;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
@@ -21,14 +21,14 @@ class HandlerAdapterRegistryTest {
     void 적절한_어댑터를_반환한다() {
         // given
         Object interfaceHandler = (Controller) (req, res) -> null;
-        Object annotatedHandler = new AnnotatedControllerForTest();
+        Object annotatedHandler = new LoginController();
 
         // when
-        HandlerAdapter result1 = registry.getHandlerAdapter(interfaceHandler);
-        HandlerAdapter result2 = registry.getHandlerAdapter(annotatedHandler);
+        HandlerAdapter interfaceResult = registry.getHandlerAdapter(interfaceHandler);
+        HandlerAdapter annotatedResult = registry.getHandlerAdapter(annotatedHandler);
 
         // then
-        assertThat(result1).isInstanceOf(ControllerHandlerAdaptor.class);
-        assertThat(result2).isInstanceOf(HandlerExecutionHandlerAdaptor.class);
+        assertThat(interfaceResult).isInstanceOf(ControllerHandlerAdaptor.class);
+        assertThat(annotatedResult).isInstanceOf(HandlerExecutionHandlerAdaptor.class);
     }
 }
