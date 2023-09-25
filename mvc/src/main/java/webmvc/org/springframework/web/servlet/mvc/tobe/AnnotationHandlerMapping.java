@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.lang.reflect.InvocationTargetException;
@@ -77,10 +76,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
-    }
-
-    public void setNotFoundModelAndView(final ModelAndView modelAndView) {
-        this.notFoundExecution = new ForwardingExecution(modelAndView);
     }
 
     @Override

@@ -24,9 +24,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
-        final AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping(getClass().getPackageName());
-        handlerMapping.setNotFoundModelAndView(new ModelAndView(new JspView("redirect:/404.jsp")));
-        dispatcherServlet.addHandlerMapping(handlerMapping);
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
+        dispatcherServlet.addNotFoundModelAndView(new ModelAndView(new JspView("redirect:/404.jsp")));
         dispatcherServlet.addHandlerAdapterType(HandlerExecution.class, HandlerExecutionAdapter.class);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);

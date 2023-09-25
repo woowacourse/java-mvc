@@ -25,6 +25,10 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(handlerMapping);
     }
 
+    public void addNotFoundModelAndView(final ModelAndView modelAndView) {
+        handlerMappings.addNotFoundHandlerMapping(new SimpleForwardingHandlerMapping(modelAndView));
+    }
+
     public void addHandlerAdapterType(final Class<?> handlerType, final Class<? extends HandlerAdapter> adapterType) {
         handlerAdapterFactory.addAdapterType(handlerType, adapterType);
     }
