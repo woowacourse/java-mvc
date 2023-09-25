@@ -26,8 +26,8 @@ public class UserController {
                 .orElseThrow();
 
         modelAndView.addObject("user1", user);
-        modelAndView.addObject("user2", user);
-        modelAndView.addObject("user3", "user");
+//        modelAndView.addObject("user2", user);
+//        modelAndView.addObject("user3", "user");
         return modelAndView;
     }
 }
