@@ -16,4 +16,4 @@
 - [x] DispatcherServlet이 아닌 뷰에서 JSP를 반환하도록 수정
 - [x] REST API를 지원할 수 있도록 Json 뷰를 추가
 - [x] Legacy MVC 제거
-- [ ] DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 이동
+- [x] DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 이동

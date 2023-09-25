@@ -1,4 +1,4 @@
-package com.techcourse;
+package nextstep.mvc.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -34,7 +34,6 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
 
         handlerAdapters.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
         handlerAdapters.addHandlerAdapter(new ControllerHandlerAdapter());
