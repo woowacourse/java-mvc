@@ -188,6 +188,6 @@ graph RL
 - [x] JsonView 클래스 구현
 - [x] Legacy Mvc 제거
   - [x] 버전1 컨트롤러 (Manual 관련) 삭제
-  - [x]버전2 컨트롤러 클래스명 수정 및 url에 `/v2` 삭제
+  - [x] 버전2 컨트롤러 클래스명 수정 및 url에 `/v2` 삭제
 - [x] UserController 추가 후 동작 확인
 - [x] HomeViewController 추가 
