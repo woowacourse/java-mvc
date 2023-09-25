@@ -43,7 +43,7 @@ public class JsonView implements View {
         return objectMapper.writeValueAsString(model);
     }
 
-    private static void writeResponseBody(final HttpServletResponse response, final String body) throws IOException {
+    private void writeResponseBody(final HttpServletResponse response, final String body) throws IOException {
         final PrintWriter out = response.getWriter();
         out.write(body);
         out.flush();
