@@ -10,7 +10,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RegisterViewController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return ModelAndView.fromJspViewName("/register.jsp");
     }
