@@ -26,7 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet() {
         this(new HandlerMappingRegistry(Set.of(
                         new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping("com"))
+                        new AnnotationHandlerMapping("com.techcourse.controller"))
                 ),
                 new HandlerAdapterRegistry(Set.of(
                         new ControllerHandlerAdaptor(new ViewAdapter()),
