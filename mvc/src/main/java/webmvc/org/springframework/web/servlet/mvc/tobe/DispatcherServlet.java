@@ -15,17 +15,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private final String basePackage;
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public DispatcherServlet(final String basePackage) {
-        this.basePackage = basePackage;
-    }
-
     @Override
     public void init() {
-        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
+        handlerMappings.add(new AnnotationHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
