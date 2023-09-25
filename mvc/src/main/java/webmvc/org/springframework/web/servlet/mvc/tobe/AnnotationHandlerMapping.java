@@ -1,8 +1,6 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,12 +9,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -37,33 +34,24 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.putAll(extractHandler());
     }
 
     private Map<HandlerKey, HandlerExecution> extractHandler() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class).stream()
-            .map(this::extractHandlerFromClass)
+        Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        return controllers.keySet().stream()
+            .map(targetClass -> extractHandlerFromClass(targetClass, controllers.get(targetClass)))
             .reduce(new HashMap<>(), migrateHandler());
     }
 
-    private Map<HandlerKey, HandlerExecution> extractHandlerFromClass(Class<?> targetClass) {
-        Object handler = toInstance(targetClass);
+    private Map<HandlerKey, HandlerExecution> extractHandlerFromClass(Class<?> targetClass, Object handler) {
         return Arrays.stream(targetClass.getMethods())
             .filter(method -> method.isAnnotationPresent(RequestMapping.class))
             .map(method -> extractHandlerFromMethod(method, handler))
             .reduce(new HashMap<>(), migrateHandler());
-    }
-
-    private Object toInstance(Class<?> targetClass) {
-        try {
-            return targetClass.getDeclaredConstructor().newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 
     private Map<HandlerKey, HandlerExecution> extractHandlerFromMethod(Method method, Object handler) {
@@ -96,11 +84,14 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         Optional<HandlerKey> findHandler = handlerExecutions.keySet().stream()
             .filter(handlerKey -> handlerKey.canHandle(request))
             .findAny();
-        return findHandler.map(handlerExecutions::get)
-            .orElseGet(null);
+        if (findHandler.isPresent()) {
+            return Optional.of(handlerExecutions.get(findHandler.get()));
+        }
+        return Optional.empty();
     }
 }
