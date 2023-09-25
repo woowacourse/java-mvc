@@ -9,24 +9,22 @@ import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.web.bind.annotation.RequestMapping;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = GET)
-    public ModelAndView getRegisterPage(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView("/register.jsp"));
+    public String getRegisterPage(HttpServletRequest request, HttpServletResponse response) {
+        return "/register.jsp";
     }
 
     @RequestMapping(value = "/register", method = POST)
-    public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
+    public String register(HttpServletRequest request, HttpServletResponse response) {
         User user = new User(2,
                 request.getParameter("account"),
                 request.getParameter("password"),
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return "redirect:/index.jsp";
     }
 }

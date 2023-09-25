@@ -11,7 +11,8 @@ import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class ControllerHandlerAdaptorTest {
 
-    private final ControllerHandlerAdaptor handlerAdaptor = new ControllerHandlerAdaptor(new ViewAdapter());
+    private final ViewAdapter viewAdapter = new ViewAdapter();
+    private final ControllerHandlerAdaptor handlerAdaptor = new ControllerHandlerAdaptor(viewAdapter);
 
     @Test
     void Controller_인터페이스를_구현한_컨트롤러이면_지원한다() {
@@ -28,7 +29,7 @@ class ControllerHandlerAdaptorTest {
     @Test
     void Controller_인터페이스를_구현한_컨트롤러이면_지원하지_않는다() {
         // given
-        Object handler = new HandlerExecution(null);
+        Object handler = new HandlerExecution(viewAdapter, null);
 
         // when
         boolean result = handlerAdaptor.support(handler);
