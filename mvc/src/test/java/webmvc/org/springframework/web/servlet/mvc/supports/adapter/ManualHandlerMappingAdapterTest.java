@@ -15,6 +15,8 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 import samples.TestLegacyController;
+import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JsonViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JspViewResolver;
 import webmvc.org.springframework.web.servlet.mvc.supports.resolver.ViewResolvers;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -24,7 +26,7 @@ class ManualHandlerMappingAdapterTest {
     @Test
     void 생성자는_유효한_viewResolver를_전달하면_ManualHandlerMappingAdapter를_초기화한다() {
         final ViewResolvers viewResolvers = new ViewResolvers();
-        viewResolvers.initialize();
+        viewResolvers.addResolvers(new JspViewResolver());
 
         assertDoesNotThrow(() -> new ManualHandlerMappingAdapter(viewResolvers));
     }
@@ -41,7 +43,8 @@ class ManualHandlerMappingAdapterTest {
     @Test
     void supports_메서드는_처리할_수_있는_핸들러를_전달하면_true를_반환한다() {
         final ViewResolvers viewResolvers = new ViewResolvers();
-        viewResolvers.initialize();
+        viewResolvers.addResolvers(new JspViewResolver());
+
         final ManualHandlerMappingAdapter adapter = new ManualHandlerMappingAdapter(viewResolvers);
 
         final boolean actual = adapter.supports(new TestLegacyController());
@@ -52,7 +55,8 @@ class ManualHandlerMappingAdapterTest {
     @Test
     void supports_메서드는_처리할_수_없는_핸들러를_전달하면_false를_반환한다() {
         final ViewResolvers viewResolvers = new ViewResolvers();
-        viewResolvers.initialize();
+        viewResolvers.addResolvers(new JsonViewResolver());
+
         final ManualHandlerMappingAdapter adapter = new ManualHandlerMappingAdapter(viewResolvers);
         final Object invalidHandler = new TestController();
 
@@ -64,7 +68,8 @@ class ManualHandlerMappingAdapterTest {
     @Test
     void execute_메서드는_Request_Response_Handler를_전달하면_해당_요청을_처리하고_ModelAndView를_반환한다() throws Exception {
         final ViewResolvers viewResolvers = new ViewResolvers();
-        viewResolvers.initialize();
+        viewResolvers.addResolvers(new JsonViewResolver());
+
         final ManualHandlerMappingAdapter adapter = new ManualHandlerMappingAdapter(viewResolvers);
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpSession session = mock(HttpSession.class);

@@ -8,6 +8,8 @@ import webmvc.org.springframework.web.servlet.DispatcherServlet;
 import webmvc.org.springframework.web.servlet.mvc.supports.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.supports.adapter.ManualHandlerMappingAdapter;
 import webmvc.org.springframework.web.servlet.mvc.supports.mapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JsonViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.supports.resolver.JspViewResolver;
 import webmvc.org.springframework.web.servlet.mvc.supports.resolver.ViewResolvers;
 
 /**
@@ -24,7 +26,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     public void onStartup(final ServletContext servletContext) {
         final ViewResolvers resolvers = new ViewResolvers();
 
-        resolvers.initialize();
+        resolvers.addResolvers(new JsonViewResolver())
+                 .addResolvers(new JspViewResolver());
 
         final DispatcherServlet dispatcherServlet = new DispatcherServlet();
 

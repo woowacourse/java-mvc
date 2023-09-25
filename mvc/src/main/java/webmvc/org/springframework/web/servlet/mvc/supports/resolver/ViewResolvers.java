@@ -10,12 +10,10 @@ public class ViewResolvers {
 
     private final List<ViewResolver> resolvers = new ArrayList<>();
 
-    public void initialize() {
-        final JspViewResolver jspViewResolver = new JspViewResolver();
-        final JsonViewResolver jsonViewResolver = new JsonViewResolver();
+    public ViewResolvers addResolvers(final ViewResolver targetViewResolver) {
+        resolvers.add(targetViewResolver);
 
-        resolvers.add(jspViewResolver);
-        resolvers.add(jsonViewResolver);
+        return this;
     }
 
     public boolean isEmpty() {
