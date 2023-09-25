@@ -11,7 +11,7 @@ import webmvc.org.springframework.web.servlet.View;
 
 public class JsonView implements View {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
