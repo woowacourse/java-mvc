@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.bind.annotation.GetMapping;
 import web.org.springframework.web.bind.annotation.PostMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
@@ -19,7 +18,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @PostMapping("/login")
-    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             final View view = new JspView("redirect:/index.jsp");
             return new ModelAndView(view);

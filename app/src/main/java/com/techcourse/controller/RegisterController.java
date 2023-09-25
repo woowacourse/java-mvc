@@ -14,7 +14,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class RegisterController {
 
     @PostMapping("/register")
-    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),

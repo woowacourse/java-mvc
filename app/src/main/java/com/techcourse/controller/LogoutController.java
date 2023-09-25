@@ -12,7 +12,7 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 public class LogoutController {
 
     @GetMapping("/logout")
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         final View view = new JspView("redirect:/");
