@@ -6,15 +6,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.View;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -76,13 +77,8 @@ public class DispatcherServlet extends HttpServlet {
         final HttpServletRequest request,
         final HttpServletResponse response
     ) throws Exception {
-        String viewName = modelAndView.getView().getViewName();
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        Map<String, Object> model = modelAndView.getModel();
+        View view = modelAndView.getView();
+        view.render(model, request, response);
     }
 }

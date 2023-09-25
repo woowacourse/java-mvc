@@ -27,6 +27,6 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
         if (returnType == String.class) {
             return new ModelAndView(new JspView((String) handledResult));
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("지원하지 않는 반환 타입입니다. " + returnType.getSimpleName());
     }
 }
