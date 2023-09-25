@@ -1,23 +1,29 @@
 package reflection;
 
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Long.MIN_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reflection.examples.JdbcQuestionRepository;
+import reflection.examples.JdbcUserRepository;
+import reflection.examples.QuestionRepository;
+import reflection.examples.UserRepository;
+
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ReflectionTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReflectionTest.class);
@@ -86,7 +92,8 @@ class ReflectionTest {
         final Constructor<?> secondConstructor = questionClass.getDeclaredConstructors()[1];
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(MIN_VALUE, "gugu", "제목2", "내용2", null, MAX_VALUE);
+        final Question secondQuestion = (Question) secondConstructor.newInstance(MIN_VALUE, "gugu", "제목2", "내용2", null,
+                MAX_VALUE);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -148,5 +155,16 @@ class ReflectionTest {
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
+    }
+
+    @Test
+    void 구현체가_맞는지_확인한다() {
+        // given
+        QuestionRepository questionRepository = new JdbcQuestionRepository();
+        UserRepository userRepository = new JdbcUserRepository();
+
+        // expect
+        assertThat(QuestionRepository.class.isAssignableFrom(questionRepository.getClass())).isTrue();
+        assertThat(QuestionRepository.class.isAssignableFrom(userRepository.getClass())).isFalse();
     }
 }

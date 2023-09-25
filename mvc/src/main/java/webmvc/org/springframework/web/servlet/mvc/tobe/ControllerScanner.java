@@ -1,13 +1,12 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
-import org.reflections.Reflections;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.reflections.Reflections;
 
 public class ControllerScanner {
 
@@ -39,7 +38,7 @@ public class ControllerScanner {
             return declaredConstructor.newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Controller 초기화에 실패했습니다.", e);
         }
     }
 }

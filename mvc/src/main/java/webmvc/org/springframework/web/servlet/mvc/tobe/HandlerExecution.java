@@ -20,7 +20,7 @@ public class HandlerExecution {
         try {
             return (ModelAndView) method.invoke(object, request, response);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("메서드 실행에 실패했습니다.", e);
         }
     }
 }
