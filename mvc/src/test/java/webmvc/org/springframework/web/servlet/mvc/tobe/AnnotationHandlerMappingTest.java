@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import context.org.springframework.context.ApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,9 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping();
+        ApplicationContext applicationContext = new ApplicationContext("samples");
+        applicationContext.initialize();
+        handlerMapping = applicationContext.getBeansOfType(AnnotationHandlerMapping.class).get(0);
         handlerMapping.initialize();
     }
 
