@@ -9,7 +9,7 @@ public class JspViewResolver implements ViewResolver {
 
     @Override
     public boolean supports(final String viewName) {
-        return viewName.endsWith(SUFFIX);
+        return viewName != null && viewName.endsWith(SUFFIX);
     }
 
     @Override
