@@ -1,13 +1,25 @@
 package core.org.springframework.util;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class ReflectionUtils {
 
+    public static <T extends AnnotatedElement> Predicate<T> withAnnotation(final Class<? extends Annotation> annotation) {
+        return input -> input != null && input.isAnnotationPresent(annotation);
+    }
+
     /**
      * Obtain an accessible constructor for the given class and parameters.
-     * @param clazz the clazz to check
+     *
+     * @param clazz          the clazz to check
      * @param parameterTypes the parameter types of the desired constructor
      * @return the constructor reference
      * @throws NoSuchMethodException if no such constructor exists
@@ -25,6 +37,7 @@ public abstract class ReflectionUtils {
      * Make the given constructor accessible, explicitly setting it accessible
      * if necessary. The {@code setAccessible(true)} method is only called
      * when actually necessary, to avoid unnecessary conflicts.
+     *
      * @param ctor the constructor to make accessible
      * @see Constructor#setAccessible
      */
@@ -34,5 +47,11 @@ public abstract class ReflectionUtils {
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);
         }
+    }
+
+    public static List<Method> getAllMethods(final Class<?> clazz, final Predicate<AnnotatedElement> annotatedElementPredicate) {
+        return Arrays.stream(clazz.getMethods())
+                .filter(annotatedElementPredicate)
+                .collect(Collectors.toList());
     }
 }

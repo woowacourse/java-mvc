@@ -1,18 +1,19 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -28,24 +29,39 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-        typesAnnotatedWith.stream()
-                .map(Class::getMethods)
-                .flatMap(methods -> List.of(methods).stream())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::generateHandlerMapping);
-        log.info("Initialized AnnotationHandlerMapping!");
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        final Set<Class<?>> controllerClasses = controllers.keySet();
+        Set<Method> methods = getRequestMappingMethods(controllerClasses);
+        methods.forEach(method -> {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
+        });
     }
 
-    private void generateHandlerMapping(final Method method) {
-        final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-        for (final RequestMethod requestMethod : mapping.method()) {
-            final HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(method);
-            handlerExecutions.put(key, handlerExecution);
-        }
+    private void addHandlerExecutions(Map<Class<?>, Object> controllerMapper, final Method method, final RequestMapping requestMapping) {
+        final String requestURI = requestMapping.value();
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestURI, requestMapping.method());
+        handlerKeys.stream()
+                .forEach(handlerKey -> {
+                    final Object instance = controllerMapper.get(method.getDeclaringClass());
+                    handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
+                });
     }
+
+    private List<HandlerKey> mapHandlerKeys(final String requestURI, final RequestMethod[] methods) {
+        return Arrays.stream(methods)
+                .map(method -> new HandlerKey(requestURI, method))
+                .collect(Collectors.toList());
+    }
+
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> controllerClasses) {
+        return controllerClasses.stream()
+                .flatMap(controllerClass -> Arrays.stream(controllerClass.getMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
