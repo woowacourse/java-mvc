@@ -191,3 +191,7 @@ graph RL
   - [x] 버전2 컨트롤러 클래스명 수정 및 url에 `/v2` 삭제
 - [x] UserController 추가 후 동작 확인
 - [x] HomeViewController 추가 
+
+### ViewResolver
+
+- [ ] Accept를 보고 Content-Type을 예측하여 알맞는 View를 실행한다.
