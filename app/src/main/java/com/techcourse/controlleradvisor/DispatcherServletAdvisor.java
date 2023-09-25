@@ -1,7 +1,7 @@
 package com.techcourse.controlleradvisor;
 
-import com.techcourse.exception.HandlerAdapterNotFoundException;
-import com.techcourse.exception.HandlerNotFoundException;
+import webmvc.org.springframework.web.servlet.exception.HandlerAdapterNotFoundException;
+import webmvc.org.springframework.web.servlet.exception.HandlerNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;

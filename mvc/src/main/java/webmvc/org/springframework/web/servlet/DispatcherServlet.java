@@ -1,7 +1,7 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
-import com.techcourse.exception.HandlerAdapterNotFoundException;
-import com.techcourse.exception.HandlerNotFoundException;
+import webmvc.org.springframework.web.servlet.exception.HandlerAdapterNotFoundException;
+import webmvc.org.springframework.web.servlet.exception.HandlerNotFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ExceptionHandlerMapping;
-import webmvc.org.springframework.web.servlet.HandlerMapping;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationExceptionHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
