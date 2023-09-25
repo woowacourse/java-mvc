@@ -13,11 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ExceptionHandlerMapping;
 import webmvc.org.springframework.web.servlet.HandlerMapping;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationExceptionHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -60,8 +60,8 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = findHandler(request);
 
             final HandlerAdapter handlerAdapter = findHandlerAdaptor(handler);
-            final String viewPath = handlerAdapter.invoke(handler, request, response);
-            move(viewPath, request, response);
+            final ModelAndView modelAndView = handlerAdapter.invoke(handler, request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             handleException(request, response, e);
         }
@@ -86,19 +86,8 @@ public class DispatcherServlet extends HttpServlet {
         throw new HandlerAdapterNotFoundException("Handler Adaptor Not found");
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
-    }
-
     private void handleException(final HttpServletRequest request, final HttpServletResponse response, final Throwable e) {
-        try {
-            Object handler = null;
+        try {Object handler = null;
             for (ExceptionHandlerMapping exceptionHandlerMapping : exceptionHandlerMappings) {
                 final Object foundHandler = findExceptionHandler(e, exceptionHandlerMapping);
                 if (Objects.nonNull(foundHandler)) {
@@ -111,8 +100,8 @@ public class DispatcherServlet extends HttpServlet {
                 throw new ServletException("ExceptionHandler Not Found.");
             }
             final HandlerAdapter handlerAdapter = findHandlerAdaptor(handler);
-            final String viewPath = handlerAdapter.invoke(handler, request, response);
-            move(viewPath, request, response);
+            final ModelAndView modelAndView = handlerAdapter.invoke(handler, request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception exception) {
             log.error("Exception caused in ExceptionHandler");
             throw new RuntimeException(e);
