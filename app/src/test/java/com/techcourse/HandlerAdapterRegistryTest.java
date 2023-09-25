@@ -7,14 +7,15 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdaptor;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 
 class HandlerAdapterRegistryTest {
 
     private final HandlerAdapterRegistry registry = new HandlerAdapterRegistry(
-            Set.of(new ControllerHandlerAdaptor(new ViewAdapter()), new HandlerExecutionHandlerAdaptor())
+            Set.of(new ControllerHandlerAdaptor(new ViewAdapter()), new HandlerExecutionHandlerAdapter())
     );
 
     @Test
@@ -29,6 +30,6 @@ class HandlerAdapterRegistryTest {
 
         // then
         assertThat(interfaceResult).isInstanceOf(ControllerHandlerAdaptor.class);
-        assertThat(annotatedResult).isInstanceOf(HandlerExecutionHandlerAdaptor.class);
+        assertThat(annotatedResult).isInstanceOf(HandlerExecutionHandlerAdapter.class);
     }
 }

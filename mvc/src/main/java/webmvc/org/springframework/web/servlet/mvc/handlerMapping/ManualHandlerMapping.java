@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.handlerMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -7,8 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ForwardController;
 
 public class ManualHandlerMapping implements HandlerMapping {
 

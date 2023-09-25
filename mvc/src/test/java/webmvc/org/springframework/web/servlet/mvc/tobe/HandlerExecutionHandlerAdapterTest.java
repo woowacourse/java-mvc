@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerExecutionHandlerAdapter;
 
-class HandlerExecutionHandlerAdaptorTest {
+class HandlerExecutionHandlerAdapterTest {
 
-    private final HandlerExecutionHandlerAdaptor handlerAdaptor = new HandlerExecutionHandlerAdaptor();
+    private final HandlerExecutionHandlerAdapter handlerAdaptor = new HandlerExecutionHandlerAdapter();
 
     @Test
     void Controller_어노테이션을_적용한_컨트롤러이면_지원한다() {

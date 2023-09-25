@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.asis.ForwardController;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.ManualHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ForwardController;
 
 class ManualHandlerMappingTest {
 

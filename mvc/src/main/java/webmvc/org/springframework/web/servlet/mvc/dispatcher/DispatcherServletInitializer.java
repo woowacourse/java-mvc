@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.dispatcher;
 
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;

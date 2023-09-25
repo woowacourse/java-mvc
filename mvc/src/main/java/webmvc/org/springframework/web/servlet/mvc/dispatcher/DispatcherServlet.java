@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.dispatcher;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,9 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdaptor;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.DefaultHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.DefaultHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.ManualHandlerMapping;
 import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 
 public class DispatcherServlet extends HttpServlet {
@@ -26,11 +31,13 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet() {
         this(new HandlerMappingRegistry(Set.of(
                         new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping("com.techcourse.controller"))
+                        new AnnotationHandlerMapping("com.techcourse.controller"),
+                        new DefaultHandlerMapping())
                 ),
                 new HandlerAdapterRegistry(Set.of(
                         new ControllerHandlerAdaptor(new ViewAdapter()),
-                        new HandlerExecutionHandlerAdaptor())
+                        new HandlerExecutionHandlerAdapter(),
+                        new DefaultHandlerAdapter())
                 )
         );
     }

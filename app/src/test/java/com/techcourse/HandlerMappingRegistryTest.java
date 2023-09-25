@@ -13,8 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handlerMapping.ManualHandlerMapping;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class HandlerMappingRegistryTest {

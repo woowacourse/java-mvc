@@ -1,10 +1,10 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handlerAdapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
-public class HandlerExecutionHandlerAdaptor implements HandlerAdapter {
+public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean support(Object handler) {

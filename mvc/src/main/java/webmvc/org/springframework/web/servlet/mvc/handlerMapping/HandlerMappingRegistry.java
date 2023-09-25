@@ -1,10 +1,9 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.handlerMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappingRegistry {
 

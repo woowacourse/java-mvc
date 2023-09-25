@@ -1,8 +1,7 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.handlerAdapter;
 
 import java.util.HashSet;
 import java.util.Set;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 

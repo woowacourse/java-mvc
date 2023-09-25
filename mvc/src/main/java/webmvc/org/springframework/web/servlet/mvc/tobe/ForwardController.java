@@ -1,9 +1,9 @@
-package webmvc.org.springframework.web.servlet.mvc.asis;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
+import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 public class ForwardController implements Controller {
 
