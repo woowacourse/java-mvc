@@ -10,7 +10,6 @@ import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapters;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMappings;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -27,6 +26,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        handlerMappings.initialize();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -47,20 +47,10 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
 
-            move(modelAndView.getViewName(), request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
