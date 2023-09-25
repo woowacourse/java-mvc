@@ -1,7 +1,5 @@
 package webmvc.org.springframework.web.servlet;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,14 +20,6 @@ public class ModelAndView {
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;
-    }
-
-    public void render(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (view.isRedirectView()) {
-            response.sendRedirect(view.getViewName());
-            return;
-        }
-        view.render(model, request, response);
     }
 
     public Object getObject(final String attributeName) {

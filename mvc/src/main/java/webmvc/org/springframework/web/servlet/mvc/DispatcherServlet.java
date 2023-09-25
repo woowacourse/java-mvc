@@ -1,6 +1,5 @@
 package webmvc.org.springframework.web.servlet.mvc;
 
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,25 +11,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-
-import static java.util.Objects.requireNonNull;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
-    public static final String HANDLER_MAPPINGS = "handlerMappings";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappings handlerMappings;
+    private List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet() {
-    }
-
-    @Override
-    public void init(final ServletConfig config) {
-        final var servletContext = config.getServletContext();
-        final var handlerMappings = (List<HandlerMapping>) servletContext.getAttribute(HANDLER_MAPPINGS);
-        this.handlerMappings = new HandlerMappings(handlerMappings);
+    public DispatcherServlet(ServletContext servletContext) {
+        handlerMappings = (List<HandlerMapping>) servletContext.getAttribute("handlerMappings");
     }
 
     @Override
@@ -44,12 +36,29 @@ public class DispatcherServlet extends HttpServlet {
             throw new ServletException(e.getMessage());
         }
     }
-
     private void handle(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        final HandlerExecution handler = handlerMappings.getHandler(request);
+        final HandlerExecution handler = getHandler(request);
         final ModelAndView modelAndView = handler.handle(request, response);
-        modelAndView.render(request, response);
+        render(request, response, modelAndView);
+    }
+
+    private HandlerExecution getHandler(final HttpServletRequest request) throws ServletException {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new ServletException("핸들러를 찾을 수 없습니다."));
+    }
+
+    private void render(final HttpServletRequest request, final HttpServletResponse response,
+                                    final ModelAndView modelAndView) throws Exception {
+        final View view = modelAndView.getView();
+        if (view.isRedirectView()) {
+            response.sendRedirect(view.getViewName());
+            return;
+        }
+        view.render(modelAndView.getModel(), request, response);
     }
 
 }
