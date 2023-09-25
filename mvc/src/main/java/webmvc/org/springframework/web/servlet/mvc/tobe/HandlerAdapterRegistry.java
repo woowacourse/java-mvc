@@ -16,11 +16,9 @@ public class HandlerAdapterRegistry {
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
-        for (HandlerAdapter handlerAdapter : this.handlerAdapters) {
-            if (handlerAdapter.isSupport(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new IllegalArgumentException("해당 handler를 찾을 수 없습니다.");
+        return this.handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.isSupport(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("해당 handler를 찾을 수 없습니다."));
     }
 }
