@@ -24,9 +24,4 @@ public class JsonView implements View {
         final PrintWriter writer = response.getWriter();
         writer.write(body);
     }
-
-    @Override
-    public String getViewName() {
-        return null;
-    }
 }

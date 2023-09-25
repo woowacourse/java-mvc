@@ -36,8 +36,4 @@ public class JspView implements View {
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
-
-    public String getViewName() {
-        return viewName;
-    }
 }
