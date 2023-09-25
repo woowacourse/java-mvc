@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,10 @@ public class ModelAndView {
     public ModelAndView(final View view) {
         this.view = view;
         this.model = new HashMap<>();
+    }
+
+    public static ModelAndView redirectTo(final String url) {
+        return new ModelAndView(JspView.redirect(url));
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {

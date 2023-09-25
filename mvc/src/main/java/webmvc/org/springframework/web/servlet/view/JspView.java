@@ -19,6 +19,10 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
+    public static View redirect(final String url) {
+        return new JspView(REDIRECT_PREFIX + url);
+    }
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (isRedirectCommand()) {
