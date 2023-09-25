@@ -13,9 +13,7 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandleAda
  * implementations that register a {@link DispatcherServlet} in the servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
-
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
-
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
     @Override

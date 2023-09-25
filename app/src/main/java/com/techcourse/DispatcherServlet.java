@@ -31,9 +31,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             final Object handler = handlerMappingRegistry.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
