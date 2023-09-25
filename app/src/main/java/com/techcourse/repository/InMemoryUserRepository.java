@@ -18,11 +18,13 @@ public class InMemoryUserRepository {
         database.put(registerUser.getAccount(), persistUser);
     }
 
-    public static void save(User user) {
-        database.put(user.getAccount(), user);
+    public static void save(final User registerUser) {
+        final User persistUser = new User(userId.incrementAndGet(), registerUser);
+
+        database.put(persistUser.getAccount(), persistUser);
     }
 
-    public static Optional<User> findByAccount(String account) {
+    public static Optional<User> findByAccount(final String account) {
         return Optional.ofNullable(database.get(account));
     }
 
