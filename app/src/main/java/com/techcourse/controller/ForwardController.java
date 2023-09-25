@@ -1,21 +1,21 @@
 package com.techcourse.controller;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.Objects;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class ForwardController implements Controller {
+@Controller
+public class ForwardController {
 
-    private final String path;
+    private static final String INDEX = "/index.jsp";
 
-    public ForwardController(final String path) {
-        this.path = Objects.requireNonNull(path);
-    }
-
-    @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return path;
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView forward(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(INDEX));
     }
 }
