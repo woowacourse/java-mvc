@@ -1,17 +1,13 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
-import com.techcourse.support.web.handler.adaptor.HandlerAdaptors;
-import com.techcourse.support.web.handler.adaptor.ManualHandlerAdaptor;
-import com.techcourse.support.web.handler.adaptor.ManualHandlerMappingWrapped;
-import com.techcourse.support.web.handler.mapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.View;
+import webmvc.org.springframework.web.servlet.handler.adaptor.HandlerAdaptors;
+import webmvc.org.springframework.web.servlet.handler.mapping.HandlerMappings;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdaptor;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -30,16 +26,15 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerAdaptors handlerAdaptors;
     private ViewResolvers viewResolvers;
 
+
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
         handlerMapping = new HandlerMappings(List.of(
-                new ManualHandlerMappingWrapped(),
-                new AnnotationHandlerMapping("com.techcourse")));
+                new AnnotationHandlerMapping()));
         handlerAdaptors = new HandlerAdaptors(List.of(
-                new ManualHandlerAdaptor(),
                 new AnnotationHandlerAdaptor()));
         viewResolvers = new ViewResolvers(List.of(
                 new JspViewResolver(),

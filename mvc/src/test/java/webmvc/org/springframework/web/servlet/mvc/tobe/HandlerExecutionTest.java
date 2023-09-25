@@ -1,5 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -10,7 +12,7 @@ import java.lang.reflect.Method;
 
 class HandlerExecutionTest {
 
-    private static final View VIEW = (model, request1, response1) -> {
+    private static final View VIEW = (model, request, response) -> {
 
     };
 
@@ -29,8 +31,8 @@ class HandlerExecutionTest {
         //when
         final ModelAndView result = handlerExecution.handle(request, response);
 
-        //then
-        result.getView().equals(VIEW);
+        //thenR
+        assertThat(result.getViewName()).isEqualTo(null);
     }
 
     static class TestClass {
