@@ -18,7 +18,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
     private static final String REDIRECT_401_JSP = "redirect:/401.jsp";
-    public static final String LOGIN_JSP = "/login.jsp";
+    private static final String LOGIN_JSP = "/login.jsp";
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView getLoginForm(final HttpServletRequest req, final HttpServletResponse res) {
