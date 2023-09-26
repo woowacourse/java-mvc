@@ -1,21 +1,21 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
@@ -28,41 +28,38 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (final Class<?> controller : controllers) {
-            initializeByController(controller);
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        addHandlerExecutions(controllers);
+    }
+
+    private void addHandlerExecutions(final Map<Class<?>, Object> classes) {
+        final Set<Method> methods = getRequestMappingMethods(classes.keySet());
+        for (final Method method : methods) {
+            final Object declareObject = classes.get(method.getDeclaringClass());
+            final HandlerExecution handlerExecution = new HandlerExecution(declareObject, method);
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            final List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
+            addHandlerExecutionWithKeys(handlerKeys, handlerExecution);
         }
     }
 
-    private void initializeByController(final Class<?> controller) {
-        for (final Method method : controller.getDeclaredMethods()) {
-            initializeByMethod(controller, method);
-        }
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> classes) {
+        return classes.stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
     }
 
-    private void initializeByMethod(final Class<?> controller, final Method method) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (Objects.nonNull(requestMapping)) {
-            addHandlerExecution(controller, method, requestMapping);
-        }
+    private List<HandlerKey> mapHandlerKeys(final String url, final RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .collect(Collectors.toList());
     }
 
-    private void addHandlerExecution(final Class<?> controller, final Method method, final RequestMapping requestMapping) {
-        final RequestMethod requestMethod = requestMapping.method()[0];
-        final String value = requestMapping.value();
-        try {
-            final Object controllerInstance = controller.getConstructor().newInstance();
-            handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(controllerInstance, method));
-        } catch (InstantiationException e) {
-            log.error("{} 클래스는 추상클래스이거나 인터페이스입니다.", controller.getSimpleName());
-        } catch (IllegalAccessException e) {
-            log.error("{} 클래스의 생성자에 접근할 수 없습니다.", controller.getSimpleName());
-        } catch (InvocationTargetException e) {
-            log.error("{} 클래스를 생성할 때 예외가 발생하였습니다.", controller.getSimpleName());
-            log.error("TargetException: {}", e.getTargetException().getMessage());
-        } catch (NoSuchMethodException e) {
-            log.error("{} 클래스의 기본 생성자를 찾을 수 없습니다.", controller.getSimpleName());
+    private void addHandlerExecutionWithKeys(final List<HandlerKey> handlerKeys, final HandlerExecution handlerExecution) {
+        for (final HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
