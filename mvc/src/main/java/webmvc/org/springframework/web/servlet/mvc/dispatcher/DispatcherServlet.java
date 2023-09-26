@@ -31,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet() {
         this(new HandlerMappingRegistry(Set.of(
                         new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping("com.techcourse.controller"),
+                        new AnnotationHandlerMapping("com.techcourse"),
                         new DefaultHandlerMapping())
                 ),
                 new HandlerAdapterRegistry(Set.of(
