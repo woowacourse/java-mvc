@@ -17,6 +17,11 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView render_legacy(final HttpServletRequest request, final HttpServletResponse response) {
+        return render(request, response);
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView render(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/register.jsp"));

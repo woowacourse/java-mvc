@@ -19,7 +19,7 @@ class Stage3Test {
     void stage3() {
         final var user = new User(1L, "gugu");
 
-        final var diContainer = createDIContainer();
+        DIContainer diContainer = createDIContainer();
 
         /**
          * 제어의 역전(IoC)

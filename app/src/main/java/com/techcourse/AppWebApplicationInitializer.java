@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import jakarta.servlet.ServletContext;
+import nextstep.mvc.controller.DispatcherServlet;
 import nextstep.web.WebApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

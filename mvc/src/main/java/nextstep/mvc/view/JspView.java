@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class JspView implements View {
@@ -22,8 +23,7 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (viewName.startsWith(REDIRECT_PREFIX)) {
-            final String redirectURI = viewName.substring(JspView.REDIRECT_PREFIX.length());
-            response.sendRedirect(redirectURI);
+            redirect(response);
             return;
         }
 
@@ -34,5 +34,10 @@ public class JspView implements View {
 
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    private void redirect(final HttpServletResponse response) throws IOException {
+        final String redirectURI = viewName.substring(JspView.REDIRECT_PREFIX.length());
+        response.sendRedirect(redirectURI);
     }
 }
