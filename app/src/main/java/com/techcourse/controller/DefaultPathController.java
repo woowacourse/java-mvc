@@ -9,12 +9,10 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 import webmvc.org.springframework.web.servlet.view.ModelAndView;
 
 @Controller
-public class LogoutController {
+public class DefaultPathController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView getDefaultView(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
