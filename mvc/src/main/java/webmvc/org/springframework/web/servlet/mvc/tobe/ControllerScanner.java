@@ -27,10 +27,10 @@ public class ControllerScanner {
 
     private Map<Class<?>, Object> instantiateClasses(final Set<Class<?>> classes) {
         return classes.stream()
-                .collect(Collectors.toMap(Function.identity(), this::instanticateClazz));
+                .collect(Collectors.toMap(Function.identity(), this::instantiateClazz));
     }
 
-    private Object instanticateClazz(final Class<?> clazz) {
+    private Object instantiateClazz(final Class<?> clazz) {
         try {
             return clazz.getConstructor().newInstance();
         } catch (InstantiationException e) {
