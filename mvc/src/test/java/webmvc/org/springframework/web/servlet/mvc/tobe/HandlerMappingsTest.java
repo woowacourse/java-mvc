@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -29,7 +28,7 @@ class HandlerMappingsTest {
     private HandlerMapping mockHandlerMapping;
 
     @Mock
-    private Controller mockController;
+    private HandlerExecution mockExecution;
 
     @BeforeEach
     void setUp() {
@@ -40,7 +39,7 @@ class HandlerMappingsTest {
     void 요청에_맞는_handler를_반환한다() {
         // given
         given(mockHandlerMapping.getHandler(request))
-                .willReturn(mockController);
+                .willReturn(mockExecution);
         HandlerMappings mappings = new HandlerMappings();
         mappings.add(mockHandlerMapping);
 
@@ -48,7 +47,7 @@ class HandlerMappingsTest {
         Object handler = mappings.getHandler(request);
 
         // then
-        assertThat(Controller.class.isAssignableFrom(handler.getClass())).isTrue();
+        assertThat(HandlerExecution.class.isAssignableFrom(handler.getClass())).isTrue();
     }
 
     @Test

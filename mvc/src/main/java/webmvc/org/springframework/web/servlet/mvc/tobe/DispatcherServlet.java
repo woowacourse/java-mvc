@@ -7,8 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.ManualHandlerAdapter;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -26,7 +24,6 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerAdapters initHandlerAdapters() {
         HandlerAdapters adapters = new HandlerAdapters();
         adapters.add(new AnnotationHandlerAdapter());
-        adapters.add(new ManualHandlerAdapter());
         return adapters;
     }
 
@@ -43,21 +40,10 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMappings.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-            move(modelAndView.getViewName(), request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }

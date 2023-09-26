@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import samples.TestAnnotationController;
-import samples.TestManualController;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 
@@ -61,19 +60,6 @@ class AnnotationHandlerAdapterTest {
     }
 
     @Test
-    void Controller_애노테이션이_설정된_handler는_지원하지_않는다() {
-        // given
-        Object handler = new TestManualController();
-        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-
-        // when
-        boolean expected = annotationHandlerAdapter.supports(handler);
-
-        // then
-        assertThat(expected).isFalse();
-    }
-
-    @Test
     void handler를_다룬다() {
         // given
         Object handler = new HandlerExecution(object, method);
@@ -83,6 +69,6 @@ class AnnotationHandlerAdapterTest {
         ModelAndView modelAndView = annotationHandlerAdapter.handle(handler, request, response);
 
         // then
-        assertThat(modelAndView.getViewName()).isEqualTo("/tests");
+        assertThat(modelAndView).isNotNull();
     }
 }
