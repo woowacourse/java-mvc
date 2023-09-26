@@ -20,6 +20,7 @@ public class JsonView implements View {
             response.setContentType(MediaType.TEXT_PLAIN_UTF8_VALUE);
             final PrintWriter writer = response.getWriter();
             writer.write(objectMapper.writeValueAsString(model.values().toArray()[0]));
+            return;
         }
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final PrintWriter writer = response.getWriter();
