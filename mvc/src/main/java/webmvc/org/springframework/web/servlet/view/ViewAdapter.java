@@ -22,7 +22,7 @@ public class ViewAdapter {
 
         int index = viewName.indexOf('.');
         if (index == -1) {
-            throw new RuntimeException("확장자명이 없습니다.");
+            throw new IllegalArgumentException("확장자명이 없습니다.");
         }
 
         return ViewType.from(viewName.substring(index + 1));
