@@ -1,11 +1,17 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
+import static web.org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class ForwardController implements Controller {
+@Controller
+public class ForwardController {
 
     private final String path;
 
@@ -13,8 +19,8 @@ public class ForwardController implements Controller {
         this.path = Objects.requireNonNull(path);
     }
 
-    @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return path;
+    @RequestMapping(value = "/", method = GET)
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(path));
     }
 }

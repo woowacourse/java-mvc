@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handlerAdapter;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +18,11 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        String viewName = (String) method.invoke(getInstance(), request, response);
+        Object result = method.invoke(getInstance(), request, response);
+        if (result instanceof ModelAndView) {
+            return (ModelAndView) result;
+        }
+        String viewName = (String) result;
         View view = viewAdapter.getView(viewName);
         return new ModelAndView(view);
     }

@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handlerMapping;
+package webmvc.org.springframework.web.servlet.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -14,6 +14,9 @@ public class DefaultHandlerMapping implements HandlerMapping {
 
     @Override
     public Optional<Object> getHandler(HttpServletRequest request) {
-        return Optional.of(controller);
+        if (request.getRequestURI().equals("/")) {
+            return Optional.of(controller);
+        }
+        return Optional.empty();
     }
 }

@@ -1,22 +1,20 @@
-package webmvc.org.springframework.web.servlet.mvc.handlerAdapter;
+package webmvc.org.springframework.web.servlet.mvc.handleradapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.ForwardController;
 
 public class DefaultHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean support(Object handler) {
-        return handler instanceof DefaultHandlerAdapter;
+        return handler instanceof ForwardController;
     }
 
     @Override
     public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Controller controller = (Controller) handler;
-        String viewName = controller.execute(request, response);
-        return new ModelAndView(new JspView(viewName));
+        ForwardController controller = (ForwardController) handler;
+        return controller.execute(request, response);
     }
 }

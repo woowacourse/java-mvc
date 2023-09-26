@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handlerMapping;
+package webmvc.org.springframework.web.servlet.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashSet;

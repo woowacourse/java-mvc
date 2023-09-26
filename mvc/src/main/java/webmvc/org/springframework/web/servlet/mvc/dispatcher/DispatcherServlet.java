@@ -9,16 +9,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdaptor;
-import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.DefaultHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerExecutionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handlerMapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.handlerMapping.DefaultHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.handlerMapping.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.handlerMapping.ManualHandlerMapping;
-import webmvc.org.springframework.web.servlet.view.ViewAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.DefaultHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.DefaultHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -30,12 +27,10 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet() {
         this(new HandlerMappingRegistry(Set.of(
-                        new ManualHandlerMapping(),
                         new AnnotationHandlerMapping("com.techcourse"),
                         new DefaultHandlerMapping())
                 ),
                 new HandlerAdapterRegistry(Set.of(
-                        new ControllerHandlerAdaptor(new ViewAdapter()),
                         new HandlerExecutionHandlerAdapter(),
                         new DefaultHandlerAdapter())
                 )

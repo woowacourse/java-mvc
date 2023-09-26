@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handlerAdapter;
+package webmvc.org.springframework.web.servlet.mvc.handleradapter;
 
 import java.util.HashSet;
 import java.util.Set;

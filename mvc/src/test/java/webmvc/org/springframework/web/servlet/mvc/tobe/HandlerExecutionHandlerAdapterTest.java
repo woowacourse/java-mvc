@@ -1,37 +1,37 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.handlerAdapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMappingRegistry;
 
 class HandlerExecutionHandlerAdapterTest {
 
+    private final HandlerMappingRegistry handlerMapping = new HandlerMappingRegistry(Set.of(
+            new AnnotationHandlerMapping("samples")
+    ));
     private final HandlerExecutionHandlerAdapter handlerAdaptor = new HandlerExecutionHandlerAdapter();
 
     @Test
     void Controller_어노테이션을_적용한_컨트롤러이면_지원한다() {
         // given
-        Object handler = new TestController();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        handlerMapping.initialize();
+        Object handler = handlerMapping.getHandler(request).get();
 
         // when
         boolean result = handlerAdaptor.support(handler);
 
         // then
         assertThat(result).isTrue();
-    }
-
-    @Test
-    void Controller_인터페이스를_구현한_컨트롤러이면_지원한다() {
-        // given
-        Object handler = (Controller) (request, response) -> "Test Controller";
-
-        // when
-        boolean result = handlerAdaptor.support(handler);
-
-        // then
-        assertThat(result).isFalse();
     }
 }
