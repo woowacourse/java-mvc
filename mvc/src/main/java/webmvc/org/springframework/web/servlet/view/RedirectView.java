@@ -22,9 +22,4 @@ public class RedirectView implements View {
         log.debug("redirect to {}", viewName);
         response.sendRedirect(viewName);
     }
-
-    @Override
-    public String getName() {
-        return viewName;
-    }
 }

@@ -14,9 +14,4 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(body);
     }
-
-    @Override
-    public String getName() {
-        return null;
-    }
 }

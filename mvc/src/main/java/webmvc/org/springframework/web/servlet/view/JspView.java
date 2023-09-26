@@ -30,9 +30,4 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
     }
-
-    @Override
-    public String getName() {
-        return viewName;
-    }
 }
