@@ -1,9 +1,10 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.adapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 

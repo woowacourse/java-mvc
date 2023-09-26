@@ -5,6 +5,7 @@ import jakarta.servlet.ServletRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * Base class for {@link WebApplicationInitializer}
