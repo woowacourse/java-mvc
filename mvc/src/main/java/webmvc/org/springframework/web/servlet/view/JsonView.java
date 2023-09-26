@@ -9,9 +9,10 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final ObjectMapper objectMapper = new ObjectMapper();
         final Object modelValue = getModelValue(model);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
