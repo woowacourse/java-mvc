@@ -1,6 +1,4 @@
-package com.techcourse;
-
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
