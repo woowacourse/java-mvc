@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import com.techcourse.handlerMapper.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
