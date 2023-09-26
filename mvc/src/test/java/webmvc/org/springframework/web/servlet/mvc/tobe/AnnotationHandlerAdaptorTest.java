@@ -56,7 +56,7 @@ class AnnotationHandlerAdaptorTest {
 
         //then
         assertAll(
-                () -> assertThat(result.getView()).isInstanceOf(JsonView.class),
+                () -> assertThat(result.getViewName()).isEqualTo(null),
                 () -> assertThat(result).isEqualTo(expected)
         );
     }
