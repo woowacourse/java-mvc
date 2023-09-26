@@ -1,15 +1,15 @@
-package com.techcourse.servlet.adaptor;
+package webmvc.org.springframework.web.servlet.adaptor;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import web.org.springframework.web.bind.annotation.RequestMapping;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
 public class AnnotationHandlerAdaptor implements HandlerAdaptor {
     @Override
     public boolean supports(final Object handler) {
-        return handler.getClass().isAnnotationPresent(RequestMapping.class);
+        return ((HandlerExecution) handler).getController().getClass().isAnnotationPresent(Controller.class);
     }
 
     @Override

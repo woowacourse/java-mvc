@@ -19,30 +19,31 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
+    public static View redirect(final String url) {
+        return new JspView(REDIRECT_PREFIX + url);
+    }
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
+        if (isRedirectCommand()) {
+            response.sendRedirect(getRedirectFilePath());
+            return;
+        }
 
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
-        // todo
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 
-    @Override
-    public String getViewName() {
-        return viewName;
-    }
-
-    @Override
-    public boolean isRedirectCommand() {
+    private boolean isRedirectCommand() {
         return viewName.startsWith(REDIRECT_PREFIX);
     }
 
-    @Override
-    public String getRedirectFilePath() {
+    private String getRedirectFilePath() {
         return viewName.substring(REDIRECT_PREFIX.length());
     }
 }

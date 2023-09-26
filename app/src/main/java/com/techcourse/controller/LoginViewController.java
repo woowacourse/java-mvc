@@ -1,23 +1,26 @@
 package com.techcourse.controller;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.MyController;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class LoginViewMyController implements MyController {
+@Controller
+public class LoginViewController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewMyController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
-    @Override
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(method = RequestMethod.GET, value = "/login/view")
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return ModelAndView.redirectTo("/index.jsp");
                 })
                 .orElse(new ModelAndView(new JspView("/login.jsp")));
 

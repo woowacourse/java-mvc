@@ -14,3 +14,8 @@
   - [x] 인터페이스 기반 Controller 를 등록하는 클래스 구현
   - [x] Adaptor과 HandlerMapping 추가
   - [x] HandlerScanner와 HandlerAdapter 추가
+
+- [x] JspView 클래스 구현
+- [x] JsonView 클래스 구현
+- [x] Legacy MVC 제거
+- [x] Dispathcer servlet을 mvc 패키지로 이동
