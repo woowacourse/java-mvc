@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -8,15 +8,13 @@ import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.exception.HandlerNotFoundException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdaptorFinder;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappings;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapper.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.adapter.HandlerAdaptorFinder;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapper.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.mapper.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -37,13 +35,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMapping() {
         handlerMapping = new HandlerMappings(
-            List.of(new AnnotationHandlerMapping(Application.class.getPackageName() + ".*"),
-                new ManualHandlerMapping()));
+            List.of(new AnnotationHandlerMapping("com")));
         handlerMapping.initialize();
     }
 
     private void initHandlerAdaptorFinder() {
-        handlerAdaptorFinder = new HandlerAdaptorFinder(List.of(new AnnotationHandlerAdapter(), new ManualHandlerAdapter()));
+        handlerAdaptorFinder = new HandlerAdaptorFinder(List.of(new AnnotationHandlerAdapter()));
     }
 
     @Override
@@ -55,24 +52,14 @@ public class DispatcherServlet extends HttpServlet {
             final Object handler = handlerMapping.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdaptorFinder.find(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            move(modelAndView, request, response);
+            final View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (HandlerNotFoundException e) {
             renderNotFoundPage(response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final String viewName = modelAndView.getView().getName();
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 
     private void renderNotFoundPage(final HttpServletResponse response) {

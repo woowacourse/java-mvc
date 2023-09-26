@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handler.mapper;
 
 import java.util.Objects;
 import web.org.springframework.web.bind.annotation.RequestMethod;
