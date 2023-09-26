@@ -1,7 +1,5 @@
 package com.techcourse.controller;
 
-import static com.techcourse.controller.HomeController.REDIRECT_HOME_URL;
-
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,13 +9,17 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LogoutController {
+public class HomeController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
+    public static final String REDIRECT_HOME_URL = "redirect:/";
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView home(final HttpServletRequest req, final HttpServletResponse res) {
+        return new ModelAndView(new JspView("/index.jsp"));
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ModelAndView homeRedirect(final HttpServletRequest req, final HttpServletResponse res) {
         return new ModelAndView(new JspView(REDIRECT_HOME_URL));
     }
 

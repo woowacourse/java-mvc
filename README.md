@@ -41,3 +41,12 @@
             - DispatcherServlet에 두 가지 경우에 대한 단순 분기만 만들면, 이후 변화에도 유연할 수 없다.
             - HandlerMapping을 추상화하고, 같은 형식으로 handle할 수 있게 한다.
         - 예외에 대해 원하는 화면을 내려주도록 app 패키지 영역에서 HandlerMapping을 추가한다.
+
+## 3단계 JSON View 구현하기
+
+- [x] JspView 구현하기
+- [x] JsonView 구현하기
+    - [x] HTTP Request Body로 받은 JSON 타입의 데이터를 처리하기
+    - [x] Json 으로 응답하기
+- [x] Legacy MVC 제거하기
+    - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반으로 변경하기

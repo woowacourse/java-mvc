@@ -2,16 +2,13 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.ComponentScanner;
 import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.exception.HandlerMappingException;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,58 +17,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ComponentScanner componentScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(ComponentScanner componentScanner) {
+        this.componentScanner = componentScanner;
         this.handlerExecutions = new HashMap<>();
     }
 
     @Override
     public void initialize() {
-        final var reflections = new Reflections(basePackage);
-        final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        controllers.forEach(this::addControllerMethods);
+        final var methods = componentScanner.getMethodsAnnotateWithFromTypes(Controller.class, RequestMapping.class);
+        methods.forEach(this::addHandlerExecution);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addControllerMethods(Class<?> clazz) {
-        final var controller = convertToControllerInstance(clazz);
-
-        final var methods = clazz.getMethods();
-        for (Method method : methods) {
-            addAnnotatedWithRequestMapping(controller, method);
-        }
-    }
-
-    private Object convertToControllerInstance(Class<?> clazz) {
-        try {
-            final var constructor = clazz.getDeclaredConstructor();
-
-            return createControllerInstance(constructor);
-        } catch (NoSuchMethodException exception) {
-            throw new HandlerMappingException("Class does not have a default constructor;", exception);
-        }
-    }
-
-    private Object createControllerInstance(Constructor<?> constructor) {
-        try {
-            return constructor.newInstance();
-        } catch (InvocationTargetException exception) {
-            throw new HandlerMappingException("Cannot invoke a constructor;", exception);
-        } catch (InstantiationException exception) {
-            throw new HandlerMappingException("Cannot instantiate an abstract class or interface;", exception);
-        } catch (IllegalAccessException exception) {
-            throw new HandlerMappingException("Cannot access to a constructor;", exception);
-        }
-    }
-
-    private void addAnnotatedWithRequestMapping(Object controller, Method method) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            addHandlerExecution(controller, method);
-        }
-    }
 
     private void addHandlerExecution(Object controller, Method method) {
         final var requestMapping = method.getAnnotation(RequestMapping.class);

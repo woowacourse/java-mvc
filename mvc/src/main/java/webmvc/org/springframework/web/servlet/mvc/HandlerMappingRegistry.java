@@ -3,8 +3,8 @@ package webmvc.org.springframework.web.servlet.mvc;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class HandlerMappingRegistry {
@@ -16,12 +16,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Object matchHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("cannot find handler for request"));
+                .findFirst();
     }
 
 }

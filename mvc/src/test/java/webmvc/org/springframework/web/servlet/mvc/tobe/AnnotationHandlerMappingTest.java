@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import webmvc.org.springframework.web.servlet.mvc.ComponentScanner;
 
 class AnnotationHandlerMappingTest {
 
@@ -15,7 +16,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping(new ComponentScanner("samples"));
         handlerMapping.initialize();
     }
 

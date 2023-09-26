@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JsonView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
@@ -23,11 +24,28 @@ public class TestController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/get-json-test", method = RequestMethod.GET)
+    public ModelAndView findUsers(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller get json method");
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", new TestUser("a", "1", "a@gmail.com"));
+        modelAndView.addObject("user2", new TestUser("b", "2", "b@gmail.com"));
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/post-json-test", method = RequestMethod.POST)
+    public ModelAndView saveUser(final HttpServletRequest request, final HttpServletResponse response, TestUser user) {
+        log.info("test controller post json method");
+        final var modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", user);
         return modelAndView;
     }
 }
