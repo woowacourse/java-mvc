@@ -1,13 +1,7 @@
 package com.techcourse;
 
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.InterfaceBasedHandlerMapping;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -22,12 +16,6 @@ public class Application {
         final int port = defaultPortIfNull(args);
         final var tomcat = new TomcatStarter(port);
         log.info("configuring app with basedir: {}", TomcatStarter.WEBAPP_DIR_LOCATION);
-
-        InterfaceBasedHandlerMapping.addController("/login", new LoginController());
-        InterfaceBasedHandlerMapping.addController("/login/view", new LoginViewController());
-        InterfaceBasedHandlerMapping.addController("/logout", new LogoutController());
-        InterfaceBasedHandlerMapping.addController("/register/view", new RegisterViewController());
-        InterfaceBasedHandlerMapping.addController("/register", new RegisterController());
 
         tomcat.start();
         stop(tomcat);

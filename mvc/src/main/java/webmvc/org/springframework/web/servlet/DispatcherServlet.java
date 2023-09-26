@@ -13,35 +13,30 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private transient HandlerMappings handlerMappings;
+    private final transient HandlerMappings handlerMappings = new HandlerMappings();
 
     @Override
     public void init() {
-        initHandlerMappings();
-    }
-
-    private void initHandlerMappings() {
-        handlerMappings = new HandlerMappings();
         handlerMappings.init();
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        HandlerExecution handler = handlerMappings.findHandler(request);
+        HandlerExecution handler = handlerMappings.findHandlerExecution(request);
 
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
             ModelAndView mv = handler.handle(request, response);
-            move(mv, request, response);
+            mv.renderView(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        modelAndView.getView().render(modelAndView.getModel(), request, response);
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.addHandlerMapping(handlerMapping);
     }
 }

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.WebApplicationInitializer;
 import webmvc.org.springframework.web.servlet.DispatcherServlet;
+import webmvc.org.springframework.web.servlet.mvc.annotation.AnnotationBasedHandlerMapping;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -19,6 +20,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.addHandlerMapping(new AnnotationBasedHandlerMapping(getClass().getPackage().getName()));
+        dispatcherServlet.init();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -26,6 +29,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
                     "Check if there is another servlet registered under the same name.");
         }
 
+        registration.setLoadOnStartup(1);
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");

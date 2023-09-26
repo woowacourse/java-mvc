@@ -7,10 +7,10 @@ import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class RegisterViewController {
+public class ForwardController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public String registerView(final HttpServletRequest req, final HttpServletResponse res) {
-        return "/register.jsp";
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return "/index.jsp";
     }
 }
