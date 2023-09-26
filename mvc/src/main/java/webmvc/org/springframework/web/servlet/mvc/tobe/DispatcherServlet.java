@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,14 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.view.JspView;
+import webmvc.org.springframework.web.servlet.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -35,9 +32,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMappings() {
         this.handlerMappings = new ArrayList<>();
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
 
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
@@ -46,7 +40,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerAdapters() {
         this.handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
@@ -59,7 +52,9 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
 
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            move(modelAndView.getViewName(), request, response);
+            View view = modelAndView.getView();
+            Map<String, Object> model = modelAndView.getModel();
+            view.render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -79,15 +74,5 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(adapter -> adapter.supports(handler))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 있는 핸들러 어댑터가 없습니다."));
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
