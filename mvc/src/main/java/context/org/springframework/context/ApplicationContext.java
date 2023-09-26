@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import webmvc.org.springframework.web.servlet.mvc.handler.mapping.HandlerMapping
 
 public class ApplicationContext {
 
-    private static final String INTERNAL_BASE_PACKAGE = "webmvc.org.springframework.web.servlet";
     private static final List<Class<?>> beanClasses = List.of(
         HandlerMapping.class,
         HandlerAdapter.class,
@@ -29,10 +29,10 @@ public class ApplicationContext {
 
     private final Map<Class<?>, Object> beans;
 
-    public ApplicationContext(final String externalPackage) {
+    public ApplicationContext(final String... basePackages) {
         this.beans = new HashMap<>();
-        registerBeans(INTERNAL_BASE_PACKAGE);
-        registerBeans(externalPackage);
+        Arrays.stream(basePackages)
+            .forEach(this::registerBeans);
         initialize();
     }
 
