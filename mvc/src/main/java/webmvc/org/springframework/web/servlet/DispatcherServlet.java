@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
 
             final HandlerAdapter handlerAdapter = findHandlerAdaptor(handler);
             final ModelAndView modelAndView = handlerAdapter.invoke(handler, request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            modelAndView.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             handleException(request, response, e);
         }
@@ -95,7 +95,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             final HandlerAdapter handlerAdapter = findHandlerAdaptor(handler);
             final ModelAndView modelAndView = handlerAdapter.invoke(handler, request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            modelAndView.render(modelAndView.getModel(), request, response);
         } catch (Exception exception) {
             log.error("Exception caused in ExceptionHandler");
             throw new RuntimeException(e);
