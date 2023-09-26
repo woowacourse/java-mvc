@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationExceptionHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
@@ -24,24 +23,20 @@ public class DispatcherServlet extends HttpServlet {
             new AnnotationExceptionHandlerMapping("com/techcourse")
     );
 
-    private List<HandlerMapping> handlerMappings = List.of(
-            new AnnotationHandlerMapping("com/techcourse")
-    );
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     private List<HandlerAdapter> handlerAdapters = List.of(
             new HandlerExecutionHandlerAdapter()
     );
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
     }
 
     @Override
     public void init() {
         for (ExceptionHandlerMapping exceptionHandlerMapping : exceptionHandlerMappings) {
             exceptionHandlerMapping.initialize();
-        }
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            handlerMapping.initialize();
         }
     }
 
@@ -51,7 +46,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = findHandler(request);
+            final Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new HandlerNotFoundException("핸들러못찾았썹"));
 
             final HandlerAdapter handlerAdapter = findHandlerAdaptor(handler);
             final ModelAndView modelAndView = handlerAdapter.invoke(handler, request, response);
@@ -59,16 +55,6 @@ public class DispatcherServlet extends HttpServlet {
         } catch (Throwable e) {
             handleException(request, response, e);
         }
-    }
-
-    private Object findHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
-            if (Objects.nonNull(handler)) {
-                return handler;
-            }
-        }
-        throw new HandlerNotFoundException("Handler Not found");
     }
 
     private HandlerAdapter findHandlerAdaptor(final Object handler) {
