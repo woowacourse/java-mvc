@@ -8,6 +8,7 @@ import java.util.List;
 public class HandlerMappings {
 
     private final List<HandlerMapping> handlerMappings;
+    private HandlerMapping notFoundHandlerMapping;
 
     public HandlerMappings() {
         this.handlerMappings = new ArrayList<>();
@@ -15,6 +16,10 @@ public class HandlerMappings {
 
     public void add(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+    }
+
+    public void addNotFoundHandlerMapping(final HandlerMapping notFoundHandlerMapping) {
+        this.notFoundHandlerMapping = notFoundHandlerMapping;
     }
 
     public void initialize() {
@@ -27,7 +32,10 @@ public class HandlerMappings {
         final HandlerMapping handlerMapping = handlerMappings.stream()
                 .filter(h -> h.isSupport(request))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException("Could not find supporting hanlder for " + request.getMethod() + " " + request.getRequestURI()));
+                .orElse(notFoundHandlerMapping);
+        if (handlerMapping == null) {
+            throw new RuntimeException("Could not find supporting hanlder for " + request.getMethod() + " " + request.getRequestURI());
+        }
         return handlerMapping.getHandler(request);
     }
 }
