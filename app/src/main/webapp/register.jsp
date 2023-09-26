@@ -64,3 +64,33 @@
         <%@ include file="include/footer.jspf" %>
     </body>
 </html>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector("form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var formData = {
+                account: document.querySelector("#inputLoginId").value,
+                password: document.querySelector("#inputPassword").value,
+                email: document.querySelector("#inputEmail").value
+            };
+
+            fetch("/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8"
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+        });
+    });
+</script>
+

@@ -1,13 +1,14 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
 
@@ -29,7 +30,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = handlerExecution.handle(List.of(request, response).toArray());
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -44,7 +45,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = handlerExecution.handle(List.of(request, response).toArray());
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }

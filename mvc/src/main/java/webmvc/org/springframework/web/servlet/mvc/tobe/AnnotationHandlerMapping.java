@@ -34,7 +34,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         final Set<Class<?>> controllers = getClassHasAnnotationWith(CONTROLLER_ANNOTATION, basePackage);
-        final Map<Class<?>, List<Method>> classMethods = getMethodHasAnnotationWith(REQUEST_MAPPING_ANNOTATION, controllers);
+        final Map<Class<?>, List<Method>> classMethods = getMethodHasAnnotationWith(REQUEST_MAPPING_ANNOTATION,
+                controllers);
         addAllMapping(classMethods);
     }
 
@@ -59,13 +60,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             for (RequestMethod httpMethod : httpMethods) {
                 final HandlerKey handlerKey = new HandlerKey(value, httpMethod);
                 final HandlerExecution handlerExecution = new HandlerExecution(controllerClass, method);
+                log.info("add mapping {}, {}", value, httpMethod);
                 handlerExecutions.put(handlerKey, handlerExecution);
             }
         }
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final String requestPath = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(requestPath, requestMethod));

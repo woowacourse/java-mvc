@@ -4,14 +4,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
-public abstract class ReflectionUtils {
+public class ReflectionUtils {
 
     /**
      * Obtain an accessible constructor for the given class and parameters.
