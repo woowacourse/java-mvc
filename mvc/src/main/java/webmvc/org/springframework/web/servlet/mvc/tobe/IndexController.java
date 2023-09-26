@@ -11,11 +11,11 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class ForwardController {
+public class IndexController {
 
     private final String path;
 
-    public ForwardController(final String path) {
+    public IndexController(final String path) {
         this.path = Objects.requireNonNull(path);
     }
 

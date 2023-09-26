@@ -2,11 +2,11 @@ package webmvc.org.springframework.web.servlet.mvc.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ForwardController;
+import webmvc.org.springframework.web.servlet.mvc.tobe.IndexController;
 
-public class DefaultHandlerMapping implements HandlerMapping {
+public class IndexHandlerMapping implements HandlerMapping {
 
-    private final ForwardController controller = new ForwardController("/index.jsp");
+    private final IndexController controller = new IndexController("/index.jsp");
 
     @Override
     public void initialize() {

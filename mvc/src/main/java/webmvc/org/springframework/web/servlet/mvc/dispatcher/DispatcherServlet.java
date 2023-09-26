@@ -9,13 +9,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.handleradapter.DefaultHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapterRegistry;
 import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.IndexHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.DefaultHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.IndexHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -28,11 +28,11 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet() {
         this(new HandlerMappingRegistry(Set.of(
                         new AnnotationHandlerMapping("com.techcourse"),
-                        new DefaultHandlerMapping())
+                        new IndexHandlerMapping())
                 ),
                 new HandlerAdapterRegistry(Set.of(
                         new HandlerExecutionHandlerAdapter(),
-                        new DefaultHandlerAdapter())
+                        new IndexHandlerAdapter())
                 )
         );
     }

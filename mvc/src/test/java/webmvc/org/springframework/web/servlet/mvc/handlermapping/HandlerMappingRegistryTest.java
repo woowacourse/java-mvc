@@ -22,7 +22,7 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void setUp() {
         this.registry = new HandlerMappingRegistry(Set.of(
-                new AnnotationHandlerMapping("samples"), new DefaultHandlerMapping()
+                new AnnotationHandlerMapping("samples"), new IndexHandlerMapping()
         ));
         registry.initialize();
     }
