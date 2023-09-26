@@ -3,7 +3,6 @@ package webmvc.org.springframework.web.servlet.view;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.util.Map;
 import web.org.springframework.http.MediaType;
 import webmvc.org.springframework.web.servlet.View;
@@ -20,8 +19,7 @@ public class JsonView implements View {
     ) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         String responseBody = objectMapper.writeValueAsString(model);
-        PrintWriter printWriter = new PrintWriter(response.getOutputStream());
-        printWriter.write(responseBody);
+        response.getWriter().write(responseBody);
     }
 
 }
