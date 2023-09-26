@@ -24,6 +24,9 @@ public class HandlerExecution {
         if (result == null) {
             return new ModelAndView(new JsonView());
         }
-        return new ModelAndView(result);
+        if (result instanceof String) {
+            return new ModelAndView(result);
+        }
+        throw new HandlerException("해당 핸들러의 반환타입이 올바르지 않습니다.");
     }
 }
