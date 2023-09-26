@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -7,12 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 import java.util.Optional;
 
@@ -23,34 +17,40 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(Application.class.getPackageName() + ".*"));
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
+    }
+
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         final Optional<Object> nullableHandler = handlerMappingRegistry.getHandler(request);
 
         if (nullableHandler.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            final ModelAndView notFoundModelAndView = handlerExecutor.handleNotFound();
+            render(notFoundModelAndView, request, response);
             return;
         }
 
         final Object handler = nullableHandler.get();
         try {
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final ModelAndView modelAndView = handlerExecutor.handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);

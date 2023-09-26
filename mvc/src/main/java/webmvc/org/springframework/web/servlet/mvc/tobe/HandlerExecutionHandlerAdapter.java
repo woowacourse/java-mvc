@@ -6,6 +6,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
+
     @Override
     public boolean supports(final Object handler) {
         return handler instanceof HandlerExecution;

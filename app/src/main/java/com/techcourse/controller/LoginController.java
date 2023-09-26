@@ -1,6 +1,5 @@
-package com.techcourse.controller.annotation_controller;
+package com.techcourse.controller;
 
-import com.techcourse.controller.UserSession;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import context.org.springframework.stereotype.Controller;
@@ -14,9 +13,9 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LoginAnnotationController {
+public class LoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginAnnotationController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView executePostLogin(final HttpServletRequest req, final HttpServletResponse res) {

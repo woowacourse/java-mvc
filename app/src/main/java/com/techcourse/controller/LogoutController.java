@@ -1,6 +1,5 @@
-package com.techcourse.controller.annotation_controller;
+package com.techcourse.controller;
 
-import com.techcourse.controller.UserSession;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +9,7 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LogoutAnnotationController {
+public class LogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView executeGetLogout(final HttpServletRequest req, final HttpServletResponse res) {
