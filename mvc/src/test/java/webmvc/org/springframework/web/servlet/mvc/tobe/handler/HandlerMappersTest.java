@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe.handler.common;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
