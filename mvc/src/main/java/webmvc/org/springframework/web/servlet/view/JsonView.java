@@ -10,7 +10,7 @@ import webmvc.org.springframework.web.servlet.View;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request,
@@ -22,8 +22,8 @@ public class JsonView implements View {
 
     private String convertModel(final Map<String, ?> model) throws JsonProcessingException {
         if (model.size() == 1) {
-            return objectMapper.writeValueAsString(model.values().toArray()[0]);
+            return OBJECT_MAPPER.writeValueAsString(model.values().toArray()[0]);
         }
-        return objectMapper.writeValueAsString(model);
+        return OBJECT_MAPPER.writeValueAsString(model);
     }
 }
