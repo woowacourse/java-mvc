@@ -56,10 +56,12 @@ class RegisterControllerTest {
         final Optional<User> savedUser = InMemoryUserRepository.findByAccount(account);
         final Optional<User> expectedUser = Optional.of(
             new User(unvalidatedId, account, password, email));
+        final JspView expectedJspView = new JspView("redirect:/index.jsp");
 
         assertAll(
-            () -> assertThat(actual.getView().getViewName())
-                .isEqualTo("redirect:/index.jsp"),
+            () -> assertThat(actual.getView())
+                .usingRecursiveComparison()
+                .isEqualTo(expectedJspView),
             () -> assertThat(savedUser)
                 .usingRecursiveComparison()
                 .ignoringFields("value.id")

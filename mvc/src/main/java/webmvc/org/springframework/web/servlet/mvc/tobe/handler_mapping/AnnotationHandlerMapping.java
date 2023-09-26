@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.tobe.handler_mapping;
 
 import static java.util.Map.entry;
 
@@ -18,9 +18,13 @@ import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.exception.RequestMethodNotValidException;
+import webmvc.org.springframework.web.servlet.mvc.tobe.default_controller.ForwardController;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler.Handler;
 
-public class AnnotationHandlerMapping implements HandlerMapping{
+public class AnnotationHandlerMapping implements HandlerMapping {
 
+    private static final String DEFAULT_CONTROLLER_PACKAGE =
+        ForwardController.class.getPackage().getName();
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
@@ -29,12 +33,17 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        initializeByPackages(DEFAULT_CONTROLLER_PACKAGE);
     }
 
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
+        initializeByPackages(basePackage);
+    }
+
+    private void initializeByPackages(final Object... basePackage) {
         final Set<Class<?>> controllerClazz = new Reflections(basePackage)
             .getTypesAnnotatedWith(Controller.class);
         final Map<HandlerKey, HandlerExecution> handlerExecutions = controllerClazz

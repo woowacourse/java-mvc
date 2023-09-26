@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package webmvc.org.springframework.web.servlet.mvc.tobe.default_controller;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,12 +9,13 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class LogoutController {
+public class ForwardController {
 
-    @RequestMapping(method = RequestMethod.POST, value = "/logout")
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+    private static final String ROOT_DIR = "/index.jsp";
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(final HttpServletRequest request,
+                             final HttpServletResponse response) {
+        return new ModelAndView(new JspView(ROOT_DIR));
     }
 }

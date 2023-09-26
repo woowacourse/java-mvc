@@ -20,8 +20,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.DispatcherServlet;
+import webmvc.org.springframework.web.servlet.mvc.tobe.handler_mapping.AnnotationHandlerMapping;
 
 class DispatcherServletTest {
 
@@ -30,7 +30,6 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         dispatcherServlet = new DispatcherServlet(
-            new ManualHandlerMapping(),
             new AnnotationHandlerMapping(getClass().getPackage().getName())
         );
         dispatcherServlet.init();
@@ -54,6 +53,7 @@ class DispatcherServletTest {
             //given
             final ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
             final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
+            when(request.getRequestURI()).thenReturn("/register/view");
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestDispatcher(argumentCaptor.capture()))
                 .thenReturn(requestDispatcher);
