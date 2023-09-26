@@ -16,6 +16,7 @@ public class AnnotationHandlerAdaptor implements HandlerAdaptor {
     public ModelAndView execute(Object handler, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         HandlerExecution handlerExecution = (HandlerExecution) handler;
-        return handlerExecution.handle(request, response);
+        Object result = handlerExecution.handle(request, response);
+        return ModelAndViewMapper.mapping(result);
     }
 }

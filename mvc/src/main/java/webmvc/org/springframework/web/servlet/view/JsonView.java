@@ -8,12 +8,16 @@ import java.util.Map;
 
 public class JsonView implements View {
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         Writer writer = response.getWriter();
+        if(model.size()==1){
+            writer.write((String) model.values().toArray()[0]);
+            return;
+        }
         objectMapper.writeValue(writer, model);
     }
 
