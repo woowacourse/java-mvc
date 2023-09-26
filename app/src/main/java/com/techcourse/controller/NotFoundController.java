@@ -1,12 +1,18 @@
 package com.techcourse.controller;
 
+import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
+import web.org.springframework.web.bind.annotation.RequestMapping;
+import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.view.JspView;
 
-public class NotFoundController implements Controller {
+@Controller
+public class NotFoundController {
 
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        return "redirect:/404.jsp";
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ModelAndView execute(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView("redirect:/404.jsp"));
     }
 }

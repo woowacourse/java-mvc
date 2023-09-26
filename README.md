@@ -8,3 +8,9 @@
 # 2. Legacy MVC와 @MVC 통합하기
 - [x] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 함께 사용될 수 있다.
   - [x] 컨트롤러의 수정 없이 기능을 구현한다.
+
+# 3. JSON View 구현하기
+- [x] JspView를 구현한다.
+- [x] JsonView를 구현한다.
+- [x] Legacy MVC 제거하기
+  - [x] DispatcherServlet을 mvc 패키지로 옮기기

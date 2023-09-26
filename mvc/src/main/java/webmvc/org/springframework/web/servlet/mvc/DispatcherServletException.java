@@ -1,8 +1,8 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
 import jakarta.servlet.ServletException;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterException;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerException;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapterException;
 
 public class DispatcherServletException extends ServletException {
 
@@ -19,12 +19,12 @@ public class DispatcherServletException extends ServletException {
         }
     }
 
-    public static class CannotHandleException extends ControllerException {
+    public static class NotFoundHandlerException extends HandlerException {
 
-        private static final String CANNOT_HANDLE_CONTROLLER_MESSAGE = "컨트롤러를 동작할 수 없습니다.: ";
+        private static final String CANNOT_FIND_NOT_FOUND_HANDLER_MESSAGE = "핸들러를 찾을 수 없습니다.";
 
-        public CannotHandleException(String controllerName) {
-            super(CANNOT_HANDLE_CONTROLLER_MESSAGE + controllerName);
+        public NotFoundHandlerException() {
+            super(CANNOT_FIND_NOT_FOUND_HANDLER_MESSAGE);
         }
     }
 }

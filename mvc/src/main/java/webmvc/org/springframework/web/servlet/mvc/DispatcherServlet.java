@@ -1,7 +1,5 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
-import com.techcourse.DispatcherServletException.NotFoundHandlerAdapterException;
-import com.techcourse.controller.NotFoundController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,17 +10,17 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServletException.NotFoundHandlerAdapterException;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServletException.NotFoundHandlerException;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final long SERIAL_VERSION_UID = 1L;
+    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final Controller NOT_FOUND_CONTROLLER = new NotFoundController();
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
@@ -32,13 +30,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
-
-        handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
@@ -62,7 +57,7 @@ public class DispatcherServlet extends HttpServlet {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElse(NOT_FOUND_CONTROLLER);
+                .orElseThrow(NotFoundHandlerException::new);
     }
 
     private ModelAndView getModelAndView(HttpServletRequest request, HttpServletResponse response, Object handler) {
