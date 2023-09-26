@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc;
+package webmvc.org.springframework.web.servlet;
 
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.DisplayName;
@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import webmvc.org.springframework.web.servlet.mvc.asis.Controller;
 import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
