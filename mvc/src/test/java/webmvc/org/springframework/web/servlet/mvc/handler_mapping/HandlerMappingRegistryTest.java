@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handlermapping;
+package webmvc.org.springframework.web.servlet.mvc.handler_mapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

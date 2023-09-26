@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handleradapter;
+package webmvc.org.springframework.web.servlet.mvc.handler_adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

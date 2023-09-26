@@ -7,9 +7,9 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerExecutionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.HandlerMappingRegistry;
 
 class HandlerExecutionHandlerAdapterTest {
 

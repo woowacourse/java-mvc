@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.AnnotationHandlerMapping;
 
 class AnnotationHandlerMappingTest {
 

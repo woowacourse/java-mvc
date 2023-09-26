@@ -9,13 +9,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerAdapterRegistry;
-import webmvc.org.springframework.web.servlet.mvc.handleradapter.HandlerExecutionHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handleradapter.IndexHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMappingRegistry;
-import webmvc.org.springframework.web.servlet.mvc.handlermapping.IndexHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.IndexHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.IndexHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 

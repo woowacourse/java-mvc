@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.handlermapping;
+package webmvc.org.springframework.web.servlet.mvc.handler_mapping;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
