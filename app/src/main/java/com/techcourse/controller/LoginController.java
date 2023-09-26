@@ -17,6 +17,17 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView loginView(final HttpSession session) {
+        return UserSession.getUserFrom(session)
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return "redirect:/index.jsp";
+                })
+                .map(it -> new ModelAndView(new JspView(it)))
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(
             final HttpSession session,
