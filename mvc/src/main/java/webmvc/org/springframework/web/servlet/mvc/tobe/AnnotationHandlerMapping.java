@@ -8,6 +8,7 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import web.org.springframework.web.Handler;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.mvc.handlermapping.HandlerMapping;
@@ -25,12 +26,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Set<Class<?>> typesAnnotatedWith = ReflectionUtils.getTypesAnnotatedWith(basePackage, Controller.class);
         for (Class<?> type : typesAnnotatedWith) {
             List<Method> handlers = ReflectionUtils.getMethodsAnnotatedWith(type, RequestMapping.class);
             putHandlerExecutions(type, handlers);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void putHandlerExecutions(Class<?> type, List<Method> handlers) {
@@ -49,13 +50,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(handler, instance);
 
+        log.info("Path: {}, Controller: {}", requestMapping.value(), instance.getClass().getName());
+
         Arrays.stream(requestMapping.method())
               .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))
               .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
     @Override
-    public Optional<Object> getHandler(final HttpServletRequest request) {
+    public Optional<Handler> getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
 
