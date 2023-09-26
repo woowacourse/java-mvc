@@ -69,14 +69,4 @@ public class ReflectionUtils {
     public static <T extends Annotation> T getMethodAnnotation(final Method method, final Class<T> type) {
         return method.getDeclaredAnnotation(type);
     }
-
-    public Optional<? extends Class<?>> getMethodParameterAnnotatedWith(
-            final Class<? extends Annotation> annotation,
-            final Method method
-    ) {
-        return Arrays.stream(method.getParameters())
-                .filter(it -> it.isAnnotationPresent(annotation))
-                .map(Parameter::getType)
-                .findFirst();
-    }
 }
