@@ -23,9 +23,9 @@ public class JsonView implements View {
         final List<?> values = new ArrayList<>(model.values());
         if (values.size() == 1) {
             objectMapper.writeValue(writer, values.get(0));
+            return;
         }
-        if (values.size() > 1) {
-            objectMapper.writeValue(writer, model);
-        }
+
+        objectMapper.writeValue(writer, model);
     }
 }
