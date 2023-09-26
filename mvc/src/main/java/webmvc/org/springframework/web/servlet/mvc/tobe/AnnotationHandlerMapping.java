@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping implements Mapper {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Set<Class<?>> controllerClasses = getControllerClasses();
         for(Class<?> controllerClass : controllerClasses) {
