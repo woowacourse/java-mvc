@@ -12,9 +12,15 @@ import java.util.Map;
 public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String body = bodyToJson(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.getWriter().write(body);
+        response.getWriter().write(bodyToJson(getBody(model)));
+    }
+
+    private Object getBody(final Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().toArray()[0];
+        }
+        return model;
     }
 
     private String bodyToJson(final Object body) throws JsonProcessingException {
