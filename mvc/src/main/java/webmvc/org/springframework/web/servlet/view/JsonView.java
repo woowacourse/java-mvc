@@ -18,8 +18,19 @@ public class JsonView implements View {
             HttpServletResponse response
     ) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        String responseBody = objectMapper.writeValueAsString(model);
+        String responseBody = modelToJson(model);
         response.getWriter().write(responseBody);
+    }
+
+    private String modelToJson(final Map<String, ?> model) throws Exception {
+        if (model.size() == 1) {
+            Object next = model.values()
+                    .iterator()
+                    .next();
+            return objectMapper.writeValueAsString(next);
+        }
+
+        return objectMapper.writeValueAsString(model);
     }
 
 }
