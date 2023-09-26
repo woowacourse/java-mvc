@@ -1,22 +1,22 @@
-package com.techcourse;
+package web.org.springframework.web;
 
+import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.web.WebApplicationInitializer;
+import webmvc.org.springframework.web.servlet.mvc.DispatcherServlet;
 
-/**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
- */
-public class DispatcherServletInitializer implements WebApplicationInitializer {
+import java.util.Set;
+
+public class DispatcherServletInitializer implements ServletContainerInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
     @Override
-    public void onStartup(final ServletContext servletContext) {
+    public void onStartup(final Set<Class<?>> c, final ServletContext servletContext) throws ServletException {
         final var dispatcherServlet = new DispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);

@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handler;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +38,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             controllerMethods.forEach(method -> addHandlerExecutions(method, controller));
         }
 
+        handlerExecutions.keySet().forEach(handlerKey -> log.info("{}", handlerKey));
         log.info("Initialized AnnotationHandlerMapping!");
     }
 

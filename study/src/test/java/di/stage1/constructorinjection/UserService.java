@@ -4,14 +4,14 @@ import di.User;
 
 class UserService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
-    public UserService(UserDao userDao) {
-        this.userDao = userDao;
+    UserService(final UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public User join(User user) {
-        userDao.insert(user);
-        return userDao.findById(user.getId());
+        userRepository.insert(user);
+        return userRepository.findById(user.getId());
     }
 }
