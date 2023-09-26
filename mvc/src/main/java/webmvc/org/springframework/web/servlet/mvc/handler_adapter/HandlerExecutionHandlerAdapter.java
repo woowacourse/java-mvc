@@ -1,15 +1,15 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handler_adapter;
 
-import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
 
-public class HandlerExecutionHandlerAdaptor implements HandlerAdapter {
+public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean support(Object handler) {
-        return handler.getClass().isAnnotationPresent(Controller.class);
+        return handler instanceof HandlerExecution;
     }
 
     @Override

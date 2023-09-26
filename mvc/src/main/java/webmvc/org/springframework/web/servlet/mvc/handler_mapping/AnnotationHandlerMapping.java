@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handler_mapping;
 
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerKey;
+import webmvc.org.springframework.web.servlet.view.ViewAdapter;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -71,7 +74,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addToHandlerExecutions(Method method, RequestMethod[] decidedRequestMethods, String totalRequestUrl) {
         for (RequestMethod requestMethod : decidedRequestMethods) {
             HandlerKey handlerKey = new HandlerKey(totalRequestUrl, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(new ViewAdapter(), method));
         }
     }
 

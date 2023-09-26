@@ -1,4 +1,4 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.dispatcher;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -9,12 +9,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.mvc.asis.ControllerHandlerAdaptor;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
-import webmvc.org.springframework.web.servlet.view.JspView;
-import webmvc.org.springframework.web.servlet.view.ViewAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.HandlerAdapterRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.HandlerExecutionHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_adapter.IndexHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.HandlerMappingRegistry;
+import webmvc.org.springframework.web.servlet.mvc.handler_mapping.IndexHandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -26,12 +27,12 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet() {
         this(new HandlerMappingRegistry(Set.of(
-                        new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping("com"))
+                        new AnnotationHandlerMapping("com.techcourse"),
+                        new IndexHandlerMapping())
                 ),
                 new HandlerAdapterRegistry(Set.of(
-                        new ControllerHandlerAdaptor(new ViewAdapter()),
-                        new HandlerExecutionHandlerAdaptor())
+                        new HandlerExecutionHandlerAdapter(),
+                        new IndexHandlerAdapter())
                 )
         );
     }
@@ -62,19 +63,9 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = this.handlerAdapter.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
-            // TODO: 3단계 View 적용
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             log.debug(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
