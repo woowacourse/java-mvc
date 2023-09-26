@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handler;
 
 import com.sun.jdi.InternalException;
 import context.org.springframework.stereotype.Controller;

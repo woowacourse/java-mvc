@@ -12,16 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.View;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.AnnotationHandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapter;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerAdapterException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMappingException;
-import webmvc.org.springframework.web.servlet.mvc.tobe.JsonViewResolver;
-import webmvc.org.springframework.web.servlet.mvc.tobe.JspViewResolver;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ViewResolver;
-import webmvc.org.springframework.web.servlet.mvc.tobe.ViewResolverException;
+import webmvc.org.springframework.web.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.adapter.HandlerAdapterException;
+import webmvc.org.springframework.web.servlet.mvc.handler.AnnotationHandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMappingException;
+import webmvc.org.springframework.web.servlet.mvc.viewresolver.JsonViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.viewresolver.JspViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.viewresolver.ViewResolver;
+import webmvc.org.springframework.web.servlet.mvc.viewresolver.ViewResolverException;
 
 public class DispatcherServlet extends HttpServlet {
 

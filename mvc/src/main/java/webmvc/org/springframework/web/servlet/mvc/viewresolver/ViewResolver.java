@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.viewresolver;
 
 import webmvc.org.springframework.web.servlet.View;
 
