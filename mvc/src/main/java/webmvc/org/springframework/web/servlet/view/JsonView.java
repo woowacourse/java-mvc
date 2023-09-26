@@ -22,11 +22,15 @@ public class JsonView implements View {
         writer.print(jsonResult);
     }
 
-    private String serialize(final Map<String,?> model) throws JsonProcessingException {
-        if (model.size() <= 1) {
-            for (String key : model.keySet()) {
-                return mapper.writeValueAsString(model.get(key));
-            }
+    private String serialize(final Map<String, ?> model) throws JsonProcessingException {
+        if(model.isEmpty()){
+            return "";
+        }
+
+        if (model.size() == 1) {
+            final Object singleModel = model.values()
+                    .iterator().next();
+            return mapper.writeValueAsString(singleModel);
         }
 
         return mapper.writerWithDefaultPrettyPrinter()
