@@ -9,8 +9,8 @@ public class HandlerMappings {
 
 private final AnnotationHandlerMapping annotationHandlerMapping;
 
-    public HandlerMappings() {
-        this.annotationHandlerMapping = new AnnotationHandlerMapping();
+    public HandlerMappings(final Object... basePackage) {
+        this.annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
     }
 

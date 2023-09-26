@@ -5,8 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import web.org.springframework.http.MediaType;
-import webmvc.org.springframework.web.servlet.View;
 
 public class JspView implements View {
 

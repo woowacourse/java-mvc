@@ -1,4 +1,4 @@
-package webmvc.org.springframework.web.servlet;
+package webmvc.org.springframework.web.servlet.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ public class ModelAndView {
     }
 
     public void render(final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        this.view.render(model,request,response);
+        this.view.render(model, request, response);
     }
 
     public Map<String, Object> getModel() {
