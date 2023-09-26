@@ -4,7 +4,7 @@ public interface HandlerMapping {
 
     void initialize();
 
-    boolean hasMapping(final Request request);
+    boolean support(final Request request);
 
     Object getHandler(final Request request);
 }

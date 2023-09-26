@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
-    public boolean isHandlerAdapter(final Object handler) {
+    public boolean support(final Object handler) {
         return handler instanceof HandlerExecution;
     }
 

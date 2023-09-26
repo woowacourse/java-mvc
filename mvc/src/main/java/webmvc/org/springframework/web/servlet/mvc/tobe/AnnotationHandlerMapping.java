@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public boolean hasMapping(final Request request) {
+    public boolean support(final Request request) {
         return handlerExecutions.containsKey(new HandlerKey(request.getUri(), request.getMethod()));
     }
 

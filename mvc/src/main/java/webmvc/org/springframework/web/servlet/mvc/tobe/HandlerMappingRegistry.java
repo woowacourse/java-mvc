@@ -19,7 +19,7 @@ public class HandlerMappingRegistry {
 
     public Optional<Object> getHandler(final Request request) {
         return handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.hasMapping(request))
+                .filter(handlerMapping -> handlerMapping.support(request))
                 .findFirst()
                 .map(handlerMapping -> handlerMapping.getHandler(request));
     }

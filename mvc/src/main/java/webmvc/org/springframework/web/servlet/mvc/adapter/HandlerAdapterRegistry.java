@@ -22,7 +22,7 @@ public class HandlerAdapterRegistry {
 
     public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) {
         return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.isHandlerAdapter(handler))
+                .filter(handlerAdapter -> handlerAdapter.support(handler))
                 .findFirst()
                 .map(handlerAdapter -> handlerAdapter.handle(handler, request, response))
                 .orElseThrow(HandlerAdapterNotFoundException::new);
