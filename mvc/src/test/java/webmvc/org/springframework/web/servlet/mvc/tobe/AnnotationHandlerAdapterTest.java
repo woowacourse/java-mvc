@@ -7,9 +7,13 @@ import static org.mockito.Mockito.when;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import webmvc.org.springframework.web.servlet.ModelAndView;
+import webmvc.org.springframework.web.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerExecution;
+import webmvc.org.springframework.web.servlet.mvc.handler.HandlerMapping;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 class AnnotationHandlerAdapterTest {
@@ -56,7 +60,7 @@ class AnnotationHandlerAdapterTest {
                 HttpServletResponse.class);
         final HandlerExecution handler = new HandlerExecution(getClass().getDeclaredConstructor().newInstance(),
                 handlerMethod);
-        when(handlerMapping.getHandler(request)).thenReturn(handler);
+        when(handlerMapping.getHandler(request)).thenReturn(Optional.of(handler));
 
         // when
         final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);

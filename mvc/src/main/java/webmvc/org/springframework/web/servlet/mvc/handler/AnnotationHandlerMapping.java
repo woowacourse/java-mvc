@@ -1,5 +1,6 @@
-package webmvc.org.springframework.web.servlet.mvc.tobe;
+package webmvc.org.springframework.web.servlet.mvc.handler;
 
+import com.sun.jdi.InternalException;
 import context.org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -32,14 +34,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        for (final Object basePackage : basePackages) {
-            initHandlerExecution(basePackage);
-        }
+        registerHandlerWithAnnotation(basePackages);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void initHandlerExecution(final Object basePackage) {
-        final Set<Class<?>> classes = getClassesByAnnotation(basePackage, Controller.class);
+    private void registerHandlerWithAnnotation(final Object... basePackages) {
+        final Set<Class<?>> classes = getClassesByAnnotation(basePackages, Controller.class);
         for (final Class<?> clazz : classes) {
             final List<Method> methods = getMethodsByAnnotation(clazz, RequestMapping.class);
             for (final Method method : methods) {
@@ -50,9 +50,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
-    private <T extends Annotation> Set<Class<?>> getClassesByAnnotation(final Object basePackage,
+    private <T extends Annotation> Set<Class<?>> getClassesByAnnotation(final Object[] basePackages,
                                                                         final Class<T> annotation) {
-        final Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackages);
         return reflections.getTypesAnnotatedWith(annotation);
     }
 
@@ -85,16 +85,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (final NoSuchMethodException | InstantiationException | IllegalAccessException |
                        InvocationTargetException e) {
-            throw new HandlerMappingException("handler 인스턴스 생성에 실패했습니다.");
+            throw new InternalException("handler 인스턴스 생성에 실패했습니다.");
         }
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(),
                 RequestMethod.valueOf(request.getMethod())
         );
-        return handlerExecutions.get(handlerKey);
+        final HandlerExecution handler = handlerExecutions.get(handlerKey);
+        if (handler == null) {
+            return Optional.empty();
+        }
+        return Optional.of(handler);
     }
 }
