@@ -13,13 +13,6 @@ import webmvc.org.springframework.web.servlet.view.JspView;
 @Controller
 public class RegisterController {
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
-        final String redirectViewName = "redirect:register.jsp";
-
-        return new ModelAndView(new JspView(redirectViewName));
-    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView registerUser(final HttpServletRequest req, final HttpServletResponse res) {
         final String redirectViewName = "redirect:/index.jsp";
@@ -30,9 +23,9 @@ public class RegisterController {
 
     private void saveUser(final HttpServletRequest request) {
         final var user = new User(
-            request.getParameter("account"),
-            request.getParameter("password"),
-            request.getParameter("email")
+                request.getParameter("account"),
+                request.getParameter("password"),
+                request.getParameter("email")
         );
         InMemoryUserRepository.save(user);
     }

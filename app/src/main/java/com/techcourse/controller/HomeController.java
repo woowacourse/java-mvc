@@ -9,12 +9,12 @@ import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
-public class RegisterViewController {
+public class HomeController {
 
-    private static final JspView REGISTER_PAGE_VIEW = new JspView("/register.jsp");
+    private static final JspView INDEX_PAGE_VIEW = new JspView("/index.jsp");
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView showRegisterPage(final HttpServletRequest req, final HttpServletResponse res) {
-        return new ModelAndView(REGISTER_PAGE_VIEW);
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView home(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(INDEX_PAGE_VIEW);
     }
 }
