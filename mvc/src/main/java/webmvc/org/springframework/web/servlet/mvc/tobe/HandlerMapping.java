@@ -6,6 +6,6 @@ public interface HandlerMapping {
 
     void initialize();
 
-    HandlerExecution getHandler(HttpServletRequest request);
+    Object getHandler(HttpServletRequest request);
 
 }

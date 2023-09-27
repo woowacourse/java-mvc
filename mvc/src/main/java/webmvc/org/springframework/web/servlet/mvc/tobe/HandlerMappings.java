@@ -1,13 +1,10 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerExecution;
-import webmvc.org.springframework.web.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappings {
 
@@ -26,11 +23,12 @@ public class HandlerMappings {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<HandlerExecution> getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
 }

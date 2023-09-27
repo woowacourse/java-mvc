@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 public class HandlerExecution {
 
@@ -16,16 +15,12 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Object resultOfHandle = method.invoke(instance, request, response);
-
-        if (resultOfHandle instanceof ModelAndView) {
-            return (ModelAndView) resultOfHandle;
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            return (ModelAndView) method.invoke(instance, request, response);
+        } catch (Exception exception) {
+            throw new IllegalArgumentException(exception);
         }
-
-        return new ModelAndView(
-                new JspView((String) resultOfHandle)
-        );
     }
 
 }
