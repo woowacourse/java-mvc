@@ -2,6 +2,7 @@ package webmvc.org.springframework.web.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import webmvc.org.springframework.web.servlet.ModelAndView;
 import webmvc.org.springframework.web.servlet.mvc.HandlerAdapter;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
@@ -12,8 +13,8 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public String invoke(final Object handler, final HttpServletRequest request,
+    public ModelAndView invoke(final Object handler, final HttpServletRequest request,
                                final HttpServletResponse response) throws Exception {
-        return (String) ((HandlerExecution) handler).handle(request, response);
+        return ((HandlerExecution) handler).handle(request, response);
     }
 }
