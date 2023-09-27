@@ -27,8 +27,10 @@ class HandlerAdaptersTest {
         HandlerAdapter trueHandlerAdapter = createHandlerAdapter(true);
         HandlerAdapter falseHandlerAdapter1 = createHandlerAdapter(false);
         HandlerAdapter falseHandlerAdapter2 = createHandlerAdapter(false);
-        HandlerAdapters handlerAdapters = new HandlerAdapters(falseHandlerAdapter1, trueHandlerAdapter,
-            falseHandlerAdapter2);
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
+        handlerAdapters.add(trueHandlerAdapter);
+        handlerAdapters.add(falseHandlerAdapter1);
+        handlerAdapters.add(falseHandlerAdapter2);
 
         // when
         HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
@@ -49,7 +51,9 @@ class HandlerAdaptersTest {
         // given
         HandlerAdapter falseHandlerAdapter1 = createHandlerAdapter(false);
         HandlerAdapter falseHandlerAdapter2 = createHandlerAdapter(false);
-        HandlerAdapters handlerAdapters = new HandlerAdapters(falseHandlerAdapter1, falseHandlerAdapter2);
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
+        handlerAdapters.add(falseHandlerAdapter1);
+        handlerAdapters.add(falseHandlerAdapter2);
 
         // when & then
         assertThatThrownBy(() -> handlerAdapters.getHandlerAdapter(handler))
