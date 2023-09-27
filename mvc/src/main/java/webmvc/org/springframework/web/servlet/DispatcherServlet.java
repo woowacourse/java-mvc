@@ -13,7 +13,6 @@ import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterFin
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ExceptionResolver;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapping;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMappingComposite;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -35,8 +34,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerMapping initHandlerMappings() {
-        HandlerMapping handlerMapping = new HandlerMappingComposite(
-            List.of(new AnnotationHandlerMapping("com.techcourse.controller")));
+        HandlerMapping handlerMapping = new AnnotationHandlerMapping("com");
         handlerMapping.initialize();
         return handlerMapping;
     }
