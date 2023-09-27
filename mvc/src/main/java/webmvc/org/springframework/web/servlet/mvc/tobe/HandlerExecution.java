@@ -10,16 +10,14 @@ import java.lang.reflect.Method;
 public class HandlerExecution {
 
     private final Method method;
+    private final Object instance;
 
-    public HandlerExecution(final Method method){
+    public HandlerExecution(final Method method, final Object instance) {
         this.method = method;
+        this.instance = instance;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(getHandlerInstance(), request, response);
-    }
-
-    private Object getHandlerInstance() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return method.getDeclaringClass().getDeclaredConstructor().newInstance();
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws InvocationTargetException, IllegalAccessException {
+        return (ModelAndView) method.invoke(instance, request, response);
     }
 }

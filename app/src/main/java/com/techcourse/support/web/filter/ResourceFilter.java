@@ -45,7 +45,7 @@ public class ResourceFilter implements Filter {
             log.debug("path : {}", path);
             requestDispatcher.forward(request, response);
         } else {
-            chain.doFilter(request, response);
+            doChain(request, response, chain);
         }
     }
 
@@ -56,6 +56,15 @@ public class ResourceFilter implements Filter {
             }
         }
         return false;
+    }
+
+    private void doChain(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new ServletException(e.getMessage());
+        }
     }
 
     @Override
