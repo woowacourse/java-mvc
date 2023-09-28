@@ -4,14 +4,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapter;
 import webmvc.org.springframework.web.servlet.mvc.tobe.adapter.HandlerAdapterFinder;
 import webmvc.org.springframework.web.servlet.mvc.tobe.exception.ExceptionResolver;
-import webmvc.org.springframework.web.servlet.mvc.tobe.handler.AnnotationHandlerMapping;
 import webmvc.org.springframework.web.servlet.mvc.tobe.handler.HandlerMapping;
 
 public class DispatcherServlet extends HttpServlet {
@@ -19,29 +16,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMapping handlerMapping;
-    private HandlerAdapterFinder handlerAdapterFinder;
-    private ExceptionResolver exceptionResolver;
+    private final HandlerMapping handlerMapping;
+    private final HandlerAdapterFinder handlerAdapterFinder;
+    private final ExceptionResolver exceptionResolver;
 
-    public DispatcherServlet() {
-    }
-
-    @Override
-    public void init() {
-        handlerMapping = initHandlerMappings();
-        handlerAdapterFinder = initHandlerAdapterFinder();
-        exceptionResolver = new ExceptionResolver();
-    }
-
-    private HandlerMapping initHandlerMappings() {
-        HandlerMapping handlerMapping = new AnnotationHandlerMapping("com");
-        handlerMapping.initialize();
-        return handlerMapping;
-    }
-
-    private HandlerAdapterFinder initHandlerAdapterFinder() {
-        return new HandlerAdapterFinder(
-            List.of(new AnnotationHandlerAdapter()));
+    public DispatcherServlet(HandlerMapping handlerMapping, HandlerAdapterFinder handlerAdapterFinder,
+                             ExceptionResolver exceptionResolver) {
+        this.handlerMapping = handlerMapping;
+        this.handlerAdapterFinder = handlerAdapterFinder;
+        this.exceptionResolver = exceptionResolver;
     }
 
     @Override
