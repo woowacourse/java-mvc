@@ -1,5 +1,6 @@
 package webmvc.org.springframework.web.servlet.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,16 +12,21 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
+        String body = createJsonBody(model);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write(body);
+    }
+
+    private String createJsonBody(final Map<String, ?> model) throws JsonProcessingException {
+        final ObjectMapper objectMapper = new ObjectMapper();
         String json = "";
         if (model.size() == 1) {
             json = objectMapper.writeValueAsString(model.get(model.keySet().iterator().next()));
         } else {
             json = objectMapper.writeValueAsString(model);
         }
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write(json);
+        return json;
     }
 
     @Override
