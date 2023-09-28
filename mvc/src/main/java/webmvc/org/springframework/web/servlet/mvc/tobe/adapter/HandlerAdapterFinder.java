@@ -1,7 +1,7 @@
 package webmvc.org.springframework.web.servlet.mvc.tobe.adapter;
 
-import com.sun.jdi.InternalException;
 import java.util.List;
+import webmvc.org.springframework.web.servlet.mvc.tobe.exception.HandlerNotFoundException;
 
 public class HandlerAdapterFinder {
 
@@ -15,6 +15,6 @@ public class HandlerAdapterFinder {
         return handlerAdapters.stream()
             .filter(it -> it.supports(handler))
             .findFirst()
-            .orElseThrow(InternalException::new);
+            .orElseThrow(HandlerNotFoundException::new);
     }
 }
