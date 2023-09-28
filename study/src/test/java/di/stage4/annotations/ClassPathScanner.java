@@ -12,7 +12,6 @@ public class ClassPathScanner {
         final Reflections reflections = new Reflections(packageName);
         classes.addAll(reflections.getTypesAnnotatedWith(Repository.class));
         classes.addAll(reflections.getTypesAnnotatedWith(Service.class));
-        classes.addAll(reflections.getTypesAnnotatedWith(Inject.class));
         return classes;
     }
 }

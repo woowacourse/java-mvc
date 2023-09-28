@@ -1,6 +1,7 @@
 package di.stage4.annotations;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,58 +25,64 @@ class DIContainer {
     private Set<Object> instantiateBeans(final Set<Class<?>> classes) {
         final Map<Class<?>, Object> classObjectMap = new HashMap<>();
         final List<Class<?>> sortedClasses = classes.stream()
-                .sorted(Comparator.comparing(a -> a.getConstructors()[0].getParameterCount()))
+                .sorted(Comparator
+                        .comparing(a -> ((Class<?>) a).getDeclaredFields().length)
+                        .reversed()
+                )
                 .collect(Collectors.toList());
         System.out.println("sortedClasses = " + sortedClasses);
-        sortedClasses.forEach(aClass -> {
-            final Constructor<?>[] constructors = aClass.getConstructors();
-            Arrays.stream(constructors).forEachOrdered(constructor -> instantiateBean(aClass, constructor, classObjectMap));
-        });
+        for (final Class<?> sortedClass : sortedClasses) {
+            if (sortedClass.getConstructors().length != 0) {
+                final Constructor<?> defaultConstructor = sortedClass.getConstructors()[0];
+                if (defaultConstructor.getParameterCount() != 0) {
+                    final Class<?>[] parameterTypes = defaultConstructor.getParameterTypes();
+                    final Object[] parameters = new Object[parameterTypes.length];
+                    for (int i = 0; i < parameterTypes.length; i++) {
+                        parameters[i] = classObjectMap.get(parameterTypes[i]);
+                    }
+                    try {
+                        putInterfaceOrClass(sortedClass, classObjectMap, defaultConstructor, parameters);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    final Constructor<?> constructor = sortedClass.getConstructors()[0];
+                    try {
+                        putInterfaceOrClass(sortedClass, classObjectMap, constructor);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            } else if (sortedClass.getDeclaredFields().length != 0) {
+                Arrays.stream(sortedClass.getDeclaredFields())
+                        .filter(field -> field.isAnnotationPresent(Inject.class))
+                        .forEach(field -> {
+                            try {
+                                field.setAccessible(true);
+                                final Constructor<?> declaredConstructor = sortedClass.getDeclaredConstructors()[0];
+                                declaredConstructor.setAccessible(true);
+                                final Object instance = declaredConstructor.newInstance();
+                                field.set(instance, classObjectMap.get(field.getType()));
+                                classObjectMap.put(sortedClass, instance);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+            }
+        }
         return new HashSet<>(classObjectMap.values());
     }
 
-    private static void instantiateBean(final Class<?> aClass, final Constructor<?> constructor, final Map<Class<?>, Object> classObjectMap) {
-        if (constructor.getParameterCount() == 0) {
-            try {
-                putInterfacesToInstanceEntry(aClass, constructor, classObjectMap);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            findDependencyAndInstantiateBean(aClass, constructor, classObjectMap);
+    private static void putInterfaceOrClass(final Class<?> sortedClass, final Map<Class<?>, Object> classObjectMap, final Constructor<?> constructor, final Object... parameters) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        final Class<?>[] interfaces = sortedClass.getInterfaces();
+        for (final Class<?> anInterface : interfaces) {
+            classObjectMap.put(anInterface, constructor.newInstance(parameters));
         }
+        classObjectMap.put(sortedClass, constructor.newInstance(parameters));
     }
 
-    private static void findDependencyAndInstantiateBean(final Class<?> aClass, final Constructor<?> constructor, final Map<Class<?>, Object> classObjectMap) {
-        final Class<?>[] parameterTypes = constructor.getParameterTypes();
-        final Object[] parameters = new Object[parameterTypes.length];
-        for (int i = 0; i < parameterTypes.length; i++) {
-            final Class<?> parameterType = parameterTypes[i];
-            final Object parameter = classObjectMap.get(parameterType);
-            parameters[i] = parameter;
-        }
-        try {
-            putInterfacesToInstanceEntry(aClass, constructor, classObjectMap, parameters);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void putInterfacesToInstanceEntry(final Class<?> aClass, final Constructor<?> constructor, final Map<Class<?>, Object> classObjectMap, final Object... parameters) throws Exception {
-        final Class<?>[] interfaces = aClass.getInterfaces();
-        final Object instance = constructor.newInstance(parameters);
-        if (interfaces.length == 0) {
-            classObjectMap.put(aClass, instance);
-        } else {
-            for (final Class<?> anInterface : interfaces) {
-                classObjectMap.put(anInterface, instance);
-            }
-        }
-    }
-
-    public static DIContainer createContainerForPackage(final String rootPackageName) {
-        final Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(rootPackageName);
-        return new DIContainer(allClassesInPackage);
+    public static DIContainer createContainerForPackage(final String packageName) {
+        return new DIContainer(ClassPathScanner.getAllClassesInPackage(packageName));
     }
 
     @SuppressWarnings("unchecked")
