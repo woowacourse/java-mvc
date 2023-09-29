@@ -18,19 +18,19 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView tryLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
         return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return tryLogin(request, user);
+                    return login(request, user);
                 })
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
-    private ModelAndView tryLogin(final HttpServletRequest request, final User user) {
+    private ModelAndView login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
