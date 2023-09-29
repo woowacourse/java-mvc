@@ -10,11 +10,7 @@ import webmvc.org.springframework.web.servlet.View;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper;
-
-    public JsonView() {
-        objectMapper = new ObjectMapper();
-    }
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void render(
