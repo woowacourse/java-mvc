@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import web.org.springframework.web.bind.annotation.RequestMapping;
 import web.org.springframework.web.bind.annotation.RequestMethod;
 import webmvc.org.springframework.web.servlet.ModelAndView;
-import webmvc.org.springframework.web.servlet.view.JspView;
 
 @Controller
 public class RegisterController {
@@ -21,11 +20,11 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView(JspViews.toIndexPage());
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(JspViews.toRegisterPage());
     }
 }
