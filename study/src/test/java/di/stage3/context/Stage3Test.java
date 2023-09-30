@@ -30,10 +30,14 @@ class Stage3Test {
          * DIContainer가 객체를 생성하고 관계를 설정하도록 구현해보자.
          */
         final var userService = diContainer.getBean(UserService.class);
+        final var interfaceBean = diContainer.getBean(UserDao.class);
+        final var concreateBean = diContainer.getBean(InMemoryUserDao.class);
 
         final var actual = userService.join(user);
 
         assertThat(actual.getAccount()).isEqualTo("gugu");
+        assertThat(interfaceBean).isNotNull();
+        assertThat(interfaceBean).isEqualTo(concreateBean);
     }
 
     /**
