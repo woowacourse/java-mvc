@@ -1,8 +1,6 @@
-package com.techcourse;
+package webmvc.org.springframework.web.servlet.mvc;
 
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
-import webmvc.org.springframework.web.servlet.mvc.HandlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +14,6 @@ public class HandlerMappings {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    @Nonnull
     public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
