@@ -16,12 +16,14 @@ public class JspView implements View {
 
     private final String viewName;
 
-    public JspView(String viewName) {
+    public JspView(final String viewName) {
         this.viewName = viewName;
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model,
+                       final HttpServletRequest request,
+                       final HttpServletResponse response) throws Exception {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));

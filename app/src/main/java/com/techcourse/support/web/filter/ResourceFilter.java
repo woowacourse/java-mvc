@@ -39,8 +39,8 @@ public class ResourceFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
-        final var req = (HttpServletRequest) request;
-        final var path = req.getRequestURI().substring(req.getContextPath().length());
+        final var httpServletRequest = (HttpServletRequest) request;
+        final var path = httpServletRequest.getRequestURI().substring(httpServletRequest.getContextPath().length());
         if (isResourceUrl(path)) {
             log.debug("path : {}", path);
             requestDispatcher.forward(request, response);
