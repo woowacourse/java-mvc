@@ -19,10 +19,10 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model,
                        final HttpServletRequest request,
                        final HttpServletResponse response) throws Exception {
-        final String json = getJsonString(model);
+        final String jsonBody = getJsonString(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final PrintWriter writer = response.getWriter();
-        writer.write(json);
+        writer.write(jsonBody);
         writer.flush();
     }
 
