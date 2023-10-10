@@ -26,7 +26,7 @@ public class JsonView implements View {
         writer.flush();
     }
 
-    private String getJsonString(Map<String, ?> model) {
+    private String getJsonString(final Map<String, ?> model) {
         if (model.size() == 1) {
             return model.values().stream()
                     .map(this::writeValueAsString)
@@ -36,7 +36,7 @@ public class JsonView implements View {
         return writeValueAsString(model);
     }
 
-    private String writeValueAsString(Object object) {
+    private String writeValueAsString(final Object object) {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
