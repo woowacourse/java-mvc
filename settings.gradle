@@ -1,4 +1,4 @@
-rootProject.name = 'jwp-dashboard-mvc'
+rootProject.name = 'java-mvc'
 include 'mvc'
 include 'app'
 include 'study'
