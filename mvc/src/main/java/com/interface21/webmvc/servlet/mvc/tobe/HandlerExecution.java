@@ -14,10 +14,12 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        Class<?> clazz = method.getDeclaringClass();
-        Object controller = clazz.getConstructor().newInstance();
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
+            throws InvocationTargetException, IllegalAccessException {
+
+        SingletonManager manager = SingletonManager.getInstance();
+        Class<?> controllerClass = method.getDeclaringClass();
+        Object controller = manager.get(controllerClass);
         return (ModelAndView) method.invoke(controller, request, response);
     }
 }
