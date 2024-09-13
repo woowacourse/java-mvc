@@ -6,8 +6,6 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +15,13 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackages;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HandlerExecutionRegistry handlerExecutionRegistry;
     private final Reflections reflections;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
         this.basePackages = basePackages;
         this.reflections = new Reflections(basePackages);
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutionRegistry = new HandlerExecutionRegistry();
     }
 
     public void initialize() {
@@ -41,16 +39,13 @@ public class AnnotationHandlerMapping {
     private void registerHandlerExecution(Method handlerMethod) {
         RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
         for (RequestMethod requestMethod : requestMapping.method()) {
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(handlerMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            handlerExecutionRegistry.registerHandler(requestMethod, requestMapping.value(), handlerMethod);
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        return handlerExecutionRegistry.getHandler(requestMethod, requestURI);
     }
 }
