@@ -16,13 +16,13 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
     private final Reflections reflections;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.reflections = new Reflections(basePackage);
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.basePackages = basePackages;
+        this.reflections = new Reflections(basePackages);
         this.handlerExecutions = new HashMap<>();
     }
 
