@@ -1,6 +1,7 @@
 package reflection;
 
-public class Junit3Test {
+public class JUnit3Test {
+
     public void test1() throws Exception {
         System.out.println("Running Test1");
     }
