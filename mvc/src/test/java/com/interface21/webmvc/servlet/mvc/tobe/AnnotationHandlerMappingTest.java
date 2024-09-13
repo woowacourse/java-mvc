@@ -4,10 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
@@ -49,4 +53,28 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Controller
+    static class DummyController {
+        @RequestMapping(value = "/test", method = RequestMethod.GET)
+        public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
+            return null;
+        }
+    }
+
+    @Test
+    @DisplayName("Controller 어노테이션을 찾아, RequestMapping이 존재하는 메서드를 핸들러로 등록한다.")
+    void registerHandler() {
+        String basePackage = "com.interface21.webmvc.servlet.mvc.tobe";
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        annotationHandlerMapping.initialize();
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/test");
+        when(request.getMethod()).thenReturn("GET");
+
+        Object handler = annotationHandlerMapping.getHandler(request);
+        assertThat(handler).isNotNull();
+    }
+
 }
