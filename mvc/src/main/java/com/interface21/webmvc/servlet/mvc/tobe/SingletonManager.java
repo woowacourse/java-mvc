@@ -4,15 +4,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SingletonManager {
 
-    private static final Logger log = LoggerFactory.getLogger(SingletonManager.class);
     private static final SingletonManager instance = new SingletonManager();
 
-    private final Map<Class<?>, Object> instanceContainer = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Object> singletonObjects = new ConcurrentHashMap<>();
 
     private SingletonManager() {
     }
@@ -22,21 +19,28 @@ public class SingletonManager {
     }
 
     public Object get(Class<?> clazz) {
-        if (instanceContainer.containsKey(clazz)) {
-            return instanceContainer.get(clazz);
+        if (singletonObjects.containsKey(clazz)) {
+            return singletonObjects.get(clazz);
         }
+        return createSingleton(clazz);
+    }
+
+    private Object createSingleton(Class<?> clazz) {
         try {
             Constructor<?> constructor = clazz.getConstructor();
             Object classInstance = constructor.newInstance();
-            instanceContainer.putIfAbsent(clazz, classInstance);
+            singletonObjects.putIfAbsent(clazz, classInstance);
             return classInstance;
-        } catch (NoSuchMethodException e) {
-            log.error("No-arg constructor not found for class {}", clazz);
+        } catch (IllegalArgumentException e) {
+            throw new SingletonInstantiationException(clazz, "Arguments mismatch", e);
         } catch (IllegalAccessException e) {
-            log.error("Inaccessible constructor for class {}", clazz);
-        } catch (InstantiationException | InvocationTargetException e) {
-            log.error("Failed to instate class: {}", clazz);
+            throw new SingletonInstantiationException(clazz, "Inaccessible constructor", e);
+        } catch (InstantiationException e) {
+            throw new SingletonInstantiationException(clazz, "Failed to instantiate class", e);
+        } catch (InvocationTargetException e) {
+            throw new SingletonInstantiationException(clazz, "Exception occurred on target class", e);
+        } catch (NoSuchMethodException e) {
+            throw new SingletonInstantiationException(clazz, "No constructor found (interface, array class, ..)", e);
         }
-        return null;
     }
 }
