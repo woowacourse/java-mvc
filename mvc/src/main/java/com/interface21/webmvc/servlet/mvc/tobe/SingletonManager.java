@@ -30,10 +30,13 @@ public class SingletonManager {
             Object classInstance = constructor.newInstance();
             instanceContainer.putIfAbsent(clazz, classInstance);
             return classInstance;
-        } catch (InvocationTargetException | NoSuchMethodException |
-                 InstantiationException | IllegalAccessException e) {
-            log.error("Failed to instantiate instance");
-            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            log.error("No-arg constructor not found for class {}", clazz);
+        } catch (IllegalAccessException e) {
+            log.error("Inaccessible constructor for class {}", clazz);
+        } catch (InstantiationException | InvocationTargetException e) {
+            log.error("Failed to instate class: {}", clazz);
         }
+        return null;
     }
 }
