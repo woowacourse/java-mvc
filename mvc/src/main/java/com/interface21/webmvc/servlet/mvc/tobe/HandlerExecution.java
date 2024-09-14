@@ -7,17 +7,14 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Object object;
     private final Method method;
 
-    public HandlerExecution(Object object, Method method) {
-        this.object = object;
+    public HandlerExecution(Method method) {
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        System.out.println(method.getName());
-
-        return (ModelAndView) method.invoke(object, request, response);
+        Object clazz = method.getDeclaringClass().getConstructor().newInstance();
+        return (ModelAndView) method.invoke(clazz, request, response);
     }
 }

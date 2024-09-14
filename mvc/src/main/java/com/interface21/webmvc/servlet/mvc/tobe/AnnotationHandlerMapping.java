@@ -6,13 +6,11 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
@@ -28,42 +26,43 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Arrays.stream(basePackage)
-                        .forEach(basePackage -> {
-                            Reflections reflections = new Reflections(basePackage);
-                            Set<Class<?>> handlers = reflections.getTypesAnnotatedWith(Controller.class);
-                            handlers.stream()
-                                    .forEach(handler -> {
-                                        Method[] methods = handler.getMethods();
-                                        Arrays.stream(methods)
-                                                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                                                .forEach(method -> {
-                                                    RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-                                                    String url = requestMapping.value();
-                                                    RequestMethod[] requestMethods = requestMapping.method();
-                                                    Arrays.stream(requestMethods)
-                                                            .forEach(requestMethod ->  {
-                                                                HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                                                                HandlerExecution handlerExecution = null;
-                                                                try {
-                                                                    handlerExecution = new HandlerExecution(handler.newInstance(), method);
-                                                                } catch (InstantiationException e) {
-                                                                    throw new RuntimeException(e);
-                                                                } catch (IllegalAccessException e) {
-                                                                    throw new RuntimeException(e);
-                                                                }
-                                                                handlerExecutions.put(handlerKey, handlerExecution);
-                                                            });
-
-                                                });
-                                    });
-                        });
+                .forEach(this::scanHandlers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void scanHandlers(Object basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        reflections.getTypesAnnotatedWith(Controller.class)
+                .forEach(this::addHandlers);
+    }
+
+    private void addHandlers(Class<?> controller) {
+        Method[] methods = controller.getMethods();
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(this::addHandlers);
+    }
+
+    private void addHandlers(Method method) {
+        HandlerExecution handlerExecution = new HandlerExecution(method);
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+
+        Arrays.stream(requestMethods)
+                .forEach(requestMethod -> addHandler(requestMethod, url, handlerExecution));
+    }
+
+    private void addHandler(RequestMethod requestMethod, String url, HandlerExecution handlerExecution) {
+        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("이미 존재하는 RequestMethod 입니다.");
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        String url = request.getRequestURI();
-        String method = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(url, RequestMethod.valueOf(method));
+        HandlerKey handlerKey = HandlerKey.of(request);
         return handlerExecutions.get(handlerKey);
     }
 }
