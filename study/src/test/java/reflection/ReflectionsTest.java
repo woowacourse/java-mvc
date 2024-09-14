@@ -15,11 +15,11 @@ class ReflectionsTest {
     @Test
     void showAnnotationClass() throws Exception {
         Reflections reflections = new Reflections("reflection.examples");
-        reflections.getTypesAnnotatedWith(Controller.class).stream()
+        reflections.getTypesAnnotatedWith(Controller.class)
                 .forEach(clazz -> log.info(clazz.getName()));
-        reflections.getTypesAnnotatedWith(Service.class).stream()
+        reflections.getTypesAnnotatedWith(Service.class)
                 .forEach(clazz -> log.info(clazz.getName()));
-        reflections.getTypesAnnotatedWith(Repository.class).stream()
+        reflections.getTypesAnnotatedWith(Repository.class)
                 .forEach(clazz -> log.info(clazz.getName()));
 
         // TODO 클래스 레벨에 @Controller, @Service, @Repository 애노테이션이 설정되어 모든 클래스 찾아 로그로 출력한다.
