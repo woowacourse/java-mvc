@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,7 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
+        Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : controllerClasses) {
             Method[] methods = clazz.getDeclaredMethods();
@@ -34,8 +33,10 @@ public class AnnotationHandlerMapping {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
                     RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                     String value = requestMapping.value();
-                    RequestMethod requestMethod = requestMapping.method()[0];
-                    handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(method));
+                    RequestMethod[] requestMethods = requestMapping.method();
+                    for (RequestMethod requestMethod : requestMethods) {
+                        handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(method));
+                    }
                 }
             }
         }

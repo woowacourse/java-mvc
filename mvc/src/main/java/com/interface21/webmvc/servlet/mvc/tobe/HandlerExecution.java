@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -14,6 +15,8 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), request, response);
+        Class<?> declaringClass = method.getDeclaringClass();
+        Constructor<?> constructor = declaringClass.getDeclaredConstructor();
+        return (ModelAndView) method.invoke(constructor.newInstance(), request, response);
     }
 }
