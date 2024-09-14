@@ -26,7 +26,6 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("start Initialize AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : controllerClasses) {
@@ -36,7 +35,7 @@ public class AnnotationHandlerMapping {
                     RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                     String value = requestMapping.value();
                     RequestMethod requestMethod = requestMapping.method()[0];
-                    handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution());
+                    handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(method));
                 }
             }
         }
