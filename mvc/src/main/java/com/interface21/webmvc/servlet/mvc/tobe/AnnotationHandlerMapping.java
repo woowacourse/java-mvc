@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +34,8 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        RequestMethod handlerRequestMethod = Arrays.stream(RequestMethod.values())
-                .filter(requestMethod -> requestMethod.name().equals(request.getMethod()))
-                .findAny()
-                .orElseThrow();
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), handlerRequestMethod));
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
 }
