@@ -63,8 +63,4 @@ public class AnnotatedController {
         return Arrays.stream(controller.getClass().getMethods())
                 .toList();
     }
-
-    private boolean isRequestMappingMethod(Method method) {
-        return method.getAnnotation(REQUEST_MAPPING_ANNOTATION) != null;
-    }
 }
