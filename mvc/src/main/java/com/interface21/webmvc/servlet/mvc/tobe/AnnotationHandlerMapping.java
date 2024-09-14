@@ -1,6 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,16 +17,28 @@ public class AnnotationHandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        AnnotatedControllers controllers = AnnotatedControllers.from(basePackage);
+        List<Handler> handlers = controllers.createHandlers();
+
+        for (Handler handler : handlers) {
+            HandlerKey handlerKey = handler.getKey();
+            HandlerExecution handlerExecution = handler.getExecution();
+            handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("Initialized AnnotationHandlerMapping: {} {}", handlerKey, handlerExecution);
+        }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        return null;
+    public Object getHandler(HttpServletRequest request) {
+        RequestMethod handlerRequestMethod = Arrays.stream(RequestMethod.values())
+                .filter(requestMethod -> requestMethod.name().equals(request.getMethod()))
+                .findAny()
+                .orElseThrow();
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), handlerRequestMethod));
     }
 }
