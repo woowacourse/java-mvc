@@ -16,13 +16,15 @@ public class HandlerKeys {
     public static HandlerKeys from(RequestMapping requestMapping) {
         String url = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
-
-        List<HandlerKey> keys = creatKeys(requestMethods, url);
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        List<HandlerKey> keys = createKeys(requestMethods, url);
 
         return new HandlerKeys(keys);
     }
 
-    private static List<HandlerKey> creatKeys(RequestMethod[] requestMethods, String url) {
+    private static List<HandlerKey> createKeys(RequestMethod[] requestMethods, String url) {
         return Arrays.stream(requestMethods)
                 .map(method -> new HandlerKey(url, method))
                 .toList();
