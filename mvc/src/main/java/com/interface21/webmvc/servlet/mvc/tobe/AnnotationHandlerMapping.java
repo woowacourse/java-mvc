@@ -51,10 +51,12 @@ public class AnnotationHandlerMapping {
 
     private void registerHandlerExecution(Method method) {
         RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
+
+        RequestMethod[] methods = requestMappingAnnotation.method();
         String url = requestMappingAnnotation.value();
         HandlerExecution handlerExecution = new HandlerExecution(method);
 
-        registerHandlerExecution(requestMappingAnnotation.method(), url, handlerExecution);
+        registerHandlerExecution(methods, url, handlerExecution);
     }
 
     private void registerHandlerExecution(RequestMethod[] methods, String url, HandlerExecution execution) {
