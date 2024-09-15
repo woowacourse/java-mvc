@@ -35,13 +35,18 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
-            ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
-            Map<String, Object> model = modelAndView.getModel();
-            View view = modelAndView.getView();
-            view.render(model, request, response);
+            move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void move(String viewName, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+        Map<String, Object> model = modelAndView.getModel();
+        View view = modelAndView.getView();
+        view.render(model, request, response);
     }
 }
