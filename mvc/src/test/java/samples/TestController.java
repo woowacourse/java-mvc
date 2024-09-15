@@ -1,5 +1,8 @@
 package samples;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.interface21.context.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,9 +36,9 @@ public class TestController {
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
     public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
-        log.info("test controller not annotation method");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
+        log.info("test controller test method");
+        ModelAndView modelAndView = mock(ModelAndView.class);
+        when(modelAndView.getObject("test")).thenReturn("test");
         return modelAndView;
     }
 }
