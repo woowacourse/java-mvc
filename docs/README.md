@@ -7,7 +7,7 @@
     - [x] base package 리플렉션 이용
     - [x] @Controller 어노테이션 붙은 클래스 찾기
     - [x] @RequestMapping 어노테이션 붙은 메서드 찾기
-    - [x] @Controller의 value와 @RequestMapping의 value를 합쳐서 전체 경로를 url로 사용
+    - [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원
     - [x] HandlerExecution의 handle 메서드를 실행하면 해당 메서드를 실행하도록 구현
     - [x] AnnotationHandlerMapping의 getHandler에서 uri와 method를 통해 HandlerKey를 생성하고, HandlerExecution을 반환하도록 작성
 - [x] AnnotationHandlerMappingTest 테스트 통과

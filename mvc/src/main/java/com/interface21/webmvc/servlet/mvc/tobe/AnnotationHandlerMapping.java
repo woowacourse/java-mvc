@@ -1,10 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
-import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -21,14 +22,15 @@ public class AnnotationHandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
         Set<Class<?>> controllerClasses = scanControllerClasses();
-        registerRequestMappingMethods(controllerClasses);
+        List<Method> requestMappingMethods = scanRequestMappingMethods(controllerClasses);
+        requestMappingMethods.forEach(this::registerHandlerExecution);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -39,45 +41,35 @@ public class AnnotationHandlerMapping {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    private void registerRequestMappingMethods(Set<Class<?>> controllerClasses) {
-        for (Class<?> controllerClass : controllerClasses) {
-            String controllerBasePath = getControllerBasePath(controllerClass);
-            registerMethods(controllerClass, controllerBasePath);
-        }
+    private List<Method> scanRequestMappingMethods(Set<Class<?>> controllerClasses) {
+        return controllerClasses.stream()
+                .map(Class::getDeclaredMethods)
+                .flatMap(Stream::of)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
     }
 
-    private String getControllerBasePath(Class<?> controllerClass) {
-        Controller controllerAnnotation = controllerClass.getAnnotation(Controller.class);
-
-        return controllerAnnotation.value();
-    }
-
-    private void registerMethods(Class<?> controllerClass, String controllerBasePath) {
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                registerRequestMapping(method, controllerBasePath);
-            }
-        }
-    }
-
-    private void registerRequestMapping(Method method, String controllerBasePath) {
+    private void registerHandlerExecution(Method method) {
         RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
-        String methodPath = requestMappingAnnotation.value();
-        String fullPath = Paths.get(controllerBasePath, methodPath).toString();
+        String url = requestMappingAnnotation.value();
         HandlerExecution handlerExecution = new HandlerExecution(method);
 
-        registerHandlerExecution(requestMappingAnnotation.method(), fullPath, handlerExecution);
+        registerHandlerExecution(requestMappingAnnotation.method(), url, handlerExecution);
     }
 
-    private void registerHandlerExecution(RequestMethod[] methods, String fullPath, HandlerExecution execution) {
+    private void registerHandlerExecution(RequestMethod[] methods, String url, HandlerExecution execution) {
+        if (methods.length == 0) {
+            methods = RequestMethod.values();
+        }
+
         for (RequestMethod method : methods) {
-            HandlerKey handlerKey = new HandlerKey(fullPath, method);
+            HandlerKey handlerKey = new HandlerKey(url, method);
 
             handlerExecutions.put(handlerKey, execution);
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
