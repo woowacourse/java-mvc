@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
-import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -25,36 +24,24 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Arrays.stream(basePackage)
-                .forEach(this::scanHandlers);
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private void scanHandlers(Object basePackage) {
         Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class)
-                .forEach(this::addHandlers);
-    }
-
-    private void addHandlers(Class<?> controller) {
-        Method[] methods = controller.getMethods();
-        Arrays.stream(methods)
+        reflections.getTypesAnnotatedWith(Controller.class).stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::addHandlers);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addHandlers(Method method) {
         HandlerExecution handlerExecution = new HandlerExecution(method);
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-        String url = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method();
+        HandlerKeys handlerKeys = HandlerKeys.from(requestMapping);
 
-        Arrays.stream(requestMethods)
-                .forEach(requestMethod -> addHandler(requestMethod, url, handlerExecution));
+        handlerKeys.getKeys()
+                        .forEach(handlerKey -> addHandler(handlerKey, handlerExecution));
     }
 
-    private void addHandler(RequestMethod requestMethod, String url, HandlerExecution handlerExecution) {
-        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+    private void addHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
         if (handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalArgumentException("이미 존재하는 RequestMethod 입니다.");
         }
