@@ -1,13 +1,19 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -48,4 +54,27 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @DisplayName("중복된 url과 method로 handlerMapping에 추가 할 수 없다.")
+    @Test
+    void initialize() {
+        handlerMapping = new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.tobe");
+        assertThatThrownBy(() -> handlerMapping.initialize())
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Controller
+    public static class TestController {
+
+        @RequestMapping(value = "/test", method = RequestMethod.GET)
+        public ModelAndView test1(final HttpServletRequest request, final HttpServletResponse response) {
+            return null;
+        }
+
+        @RequestMapping(value = "/test", method = RequestMethod.GET)
+        public ModelAndView findUserId2(final HttpServletRequest request, final HttpServletResponse response) {
+            return null;
+        }
+    }
+
 }
