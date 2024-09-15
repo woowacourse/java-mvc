@@ -52,18 +52,22 @@ public class AnnotationHandlerMapping {
     private void registerHandlerExecution(Method method) {
         RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
 
-        RequestMethod[] methods = requestMappingAnnotation.method();
+        RequestMethod[] methods = getTargetHttpMethods(requestMappingAnnotation);
         String url = requestMappingAnnotation.value();
         HandlerExecution handlerExecution = new HandlerExecution(method);
 
         registerHandlerExecution(methods, url, handlerExecution);
     }
 
-    private void registerHandlerExecution(RequestMethod[] methods, String url, HandlerExecution execution) {
-        if (methods.length == 0) {
-            methods = RequestMethod.values();
+    private RequestMethod[] getTargetHttpMethods(RequestMapping requestMappingAnnotation) {
+        if (requestMappingAnnotation.method().length == 0) {
+            return RequestMethod.values();
         }
 
+        return requestMappingAnnotation.method();
+    }
+
+    private void registerHandlerExecution(RequestMethod[] methods, String url, HandlerExecution execution) {
         for (RequestMethod method : methods) {
             HandlerKey handlerKey = new HandlerKey(url, method);
 
