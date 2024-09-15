@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -60,6 +62,11 @@ class AnnotationHandlerMappingTest {
         public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
             return null;
         }
+
+        @RequestMapping(value = "/noRequesetMappingValueSet")
+        public ModelAndView noRequestMappingValueSet(HttpServletRequest request, HttpServletResponse response) {
+            return null;
+        }
     }
 
     @Test
@@ -72,6 +79,22 @@ class AnnotationHandlerMappingTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/test");
         when(request.getMethod()).thenReturn("GET");
+
+        Object handler = annotationHandlerMapping.getHandler(request);
+        assertThat(handler).isNotNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(RequestMethod.class)
+    @DisplayName("RequestMapping 어노테이션의 value가 비어있는 경우, 모든 메서드를 등록한다")
+    void registerHandlerWithNoRequestMappingValue(RequestMethod method) {
+        String basePackage = "com.interface21.webmvc.servlet.mvc.tobe";
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        annotationHandlerMapping.initialize();
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/noRequesetMappingValueSet");
+        when(request.getMethod()).thenReturn(method.name());
 
         Object handler = annotationHandlerMapping.getHandler(request);
         assertThat(handler).isNotNull();

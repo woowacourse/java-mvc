@@ -38,9 +38,9 @@ public class AnnotationHandlerMapping {
 
     private void registerHandlerExecution(Method handlerMethod) {
         RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            handlerExecutionRegistry.registerHandler(requestMethod, requestMapping.value(), handlerMethod);
-        }
+        RequestMethod[] methods = requestMapping.method();
+        String requestUri = requestMapping.value();
+        handlerExecutionRegistry.registerHandler(methods, requestUri, handlerMethod);
     }
 
     public Object getHandler(final HttpServletRequest request) {
