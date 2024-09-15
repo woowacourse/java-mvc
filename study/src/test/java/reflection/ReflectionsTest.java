@@ -2,6 +2,7 @@ package reflection;
 
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reflection.annotation.Controller;
@@ -14,7 +15,7 @@ class ReflectionsTest {
 
     @Test
     void showAnnotationClass() throws Exception {
-        Reflections reflections = new Reflections("reflection.examples");
+        Reflections reflections = new Reflections("reflection.examples", Scanners.TypesAnnotated);
 
         reflections.getTypesAnnotatedWith(Controller.class)
                 .forEach(clazz -> log.info("Controller: {}", clazz.getName()));
