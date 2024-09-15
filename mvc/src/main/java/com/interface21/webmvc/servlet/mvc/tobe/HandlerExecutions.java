@@ -30,6 +30,10 @@ public class HandlerExecutions {
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, new HandlerExecution(method)));
     }
 
+    public boolean containsHandlerKey(HandlerKey handlerKey) {
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
     public Object get(HandlerKey handlerKey) {
         return handlerExecutions.get(handlerKey);
     }
