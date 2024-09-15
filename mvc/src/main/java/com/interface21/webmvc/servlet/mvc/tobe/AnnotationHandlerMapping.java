@@ -25,7 +25,7 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClasses.stream()
                 .map(Class::getDeclaredMethods)
-                .forEach(handlerExecutions::addMethods);
+                .forEach(handlerExecutions::addHandlerExecution);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }

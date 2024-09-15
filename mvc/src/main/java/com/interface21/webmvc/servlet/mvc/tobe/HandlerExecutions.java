@@ -15,13 +15,13 @@ public class HandlerExecutions {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void addMethods(Method[] methods) {
+    public void addHandlerExecution(Method[] methods) {
         Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::addMethod);
+                .forEach(this::addHandlerExecution);
     }
 
-    private void addMethod(Method method) {
+    private void addHandlerExecution(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String value = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
