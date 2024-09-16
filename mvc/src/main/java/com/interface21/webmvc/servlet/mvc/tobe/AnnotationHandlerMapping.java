@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping {
         HandlerKeys handlerKeys = HandlerKeys.from(requestMapping);
 
         handlerKeys.getKeys()
-                        .forEach(handlerKey -> addHandler(handlerKey, handlerExecution));
+                .forEach(handlerKey -> addHandler(handlerKey, handlerExecution));
     }
 
     private void addHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
