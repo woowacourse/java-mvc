@@ -1,6 +1,7 @@
 package servlet.com.example;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.annotation.Order;
 import support.HttpUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ServletTest {
 
     private final String WEBAPP_DIR_LOCATION = "src/main/webapp/";
+
 
     @Test
     void testSharedCounter() {
@@ -27,8 +29,7 @@ class ServletTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
-        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +51,6 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
