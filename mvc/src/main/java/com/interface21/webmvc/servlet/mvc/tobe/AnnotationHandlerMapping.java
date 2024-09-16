@@ -44,7 +44,14 @@ public class AnnotationHandlerMapping {
     private void putHandlerExecution(String requestUri, RequestMethod requestMethod, Method method, Class<?> clazz) {
         HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
         HandlerExecution handlerExecution = new HandlerExecution(method, clazz);
+        validateExecutions(handlerKey);
         handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
+    private void validateExecutions(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("Handler already exists.");
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
