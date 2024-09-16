@@ -69,7 +69,14 @@ public class AnnotationHandlerMapping {
 
             Arrays.stream(request.method())
                     .map(httpMethod -> new HandlerKey(request.value(), httpMethod))
-                    .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+                    .forEach(handlerKey -> registerHandlerExecution(handlerKey, handlerExecution));
         }
+    }
+
+    private void registerHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("중복된 url과 http method 입니다.");
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 }
