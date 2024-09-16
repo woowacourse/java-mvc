@@ -62,4 +62,19 @@ class AnnotationHandlerMappingTest {
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
                 .isInstanceOf(NotFoundException.class);
     }
+
+    @DisplayName("method를 지정하지 않을 경우 모든 RequestMethod에 대해서 등록한다")
+    @Test
+    void notExistMethod() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/notExistMethod");
+        when(request.getMethod()).thenReturn("POST");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("notExistMethod")).isEqualTo("notExistMethod");
+    }
 }

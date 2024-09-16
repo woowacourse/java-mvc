@@ -41,4 +41,12 @@ public class TestController {
         when(modelAndView.getObject("test")).thenReturn("test");
         return modelAndView;
     }
+
+    @RequestMapping(value = "/notExistMethod")
+    public ModelAndView notExistMethod(HttpServletRequest request, HttpServletResponse response) {
+        log.info("test controller test method");
+        ModelAndView modelAndView = mock(ModelAndView.class);
+        when(modelAndView.getObject("notExistMethod")).thenReturn("notExistMethod");
+        return modelAndView;
+    }
 }
