@@ -3,11 +3,15 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.lang.reflect.InvocationTargetException;
 
 class AnnotationHandlerMappingTest {
 
@@ -47,5 +51,17 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("요청의 url 을 처리할 수 있는 핸들러가 없으면 예외가 발생한다.")
+    void noHandlerTest() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/not-match");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(NoMatchedHandlerException.class);
     }
 }
