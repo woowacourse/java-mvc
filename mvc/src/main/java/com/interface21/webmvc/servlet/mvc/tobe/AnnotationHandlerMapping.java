@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import com.interface21.context.stereotype.Controller;
@@ -75,11 +76,11 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public HandlerExecution getHandler(HttpServletRequest request) {
+    public Optional<HandlerExecution> getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        return handlerExecutions.get(handlerKey);
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 }
