@@ -1,11 +1,19 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +28,48 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
+
+        for (Class<?> controllerClass : typesAnnotatedWith) {
+            Object controller = createNewInstance(controllerClass);
+            List<Method> methods = getMethodsWithAnnotation(controllerClass);
+            registerHandlerExecutions(methods, controller);
+        }
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private List<Method> getMethodsWithAnnotation(Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+    }
+
+    private Object createNewInstance(Class<?> controllerClass) {
+        try {
+            return controllerClass.getConstructor().newInstance();
+        } catch (InstantiationException | NoSuchMethodException |
+                 InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void registerHandlerExecutions(List<Method> methods, Object controller) {
+        for (Method method : methods) {
+            RequestMapping request = method.getAnnotation(RequestMapping.class);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+            Arrays.stream(request.method())
+                    .map(httpMethod -> new HandlerKey(request.value(), httpMethod))
+                    .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+        }
     }
 }
