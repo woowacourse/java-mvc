@@ -72,6 +72,9 @@ public class AnnotationHandlerMapping {
         for (RequestMethod method : methods) {
             HandlerKey handlerKey = new HandlerKey(url, method);
 
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("Duplicated handler key: " + handlerKey);
+            }
             handlerExecutions.put(handlerKey, execution);
         }
     }
