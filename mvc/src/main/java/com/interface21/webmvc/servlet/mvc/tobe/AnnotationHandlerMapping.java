@@ -55,6 +55,14 @@ public class AnnotationHandlerMapping {
         RequestMethod requestMethod = RequestMethod.from(method);
         HandlerKey handlerKey = new HandlerKey(url, requestMethod);
 
+        validateHandlerKey(handlerKey);
+
         return handlerExecutions.get(handlerKey);
+    }
+
+    private void validateHandlerKey(HandlerKey handlerKey) {
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("지원하지 않는 요청입니다.");
+        }
     }
 }

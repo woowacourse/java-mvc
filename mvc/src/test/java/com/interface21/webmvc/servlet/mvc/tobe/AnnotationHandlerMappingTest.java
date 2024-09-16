@@ -77,4 +77,17 @@ class AnnotationHandlerMappingTest {
         }
     }
 
+    @DisplayName("Handler를 찾을 수 없으면 예외가 발생한다.")
+    @Test
+    void validateHandlerKey() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("DELETE");
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("지원하지 않는 요청입니다.");
+    }
 }
