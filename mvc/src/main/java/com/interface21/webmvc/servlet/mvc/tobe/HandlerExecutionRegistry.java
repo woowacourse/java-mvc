@@ -30,7 +30,7 @@ public class HandlerExecutionRegistry {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
-    public Object getHandler(RequestMethod requestMethod, String requestUri) {
+    public HandlerExecution getHandler(RequestMethod requestMethod, String requestUri) {
         HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
