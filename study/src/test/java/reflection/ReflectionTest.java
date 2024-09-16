@@ -1,18 +1,16 @@
 package reflection;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
@@ -79,8 +77,11 @@ class ReflectionTest {
         assertThat(NoConstructorClass.class.getConstructors()).hasSize(0); // 중첩 클래스의 기본 생성자는 가져오지 못한다.
         assertThat(YesConstructorClass.class.getConstructors()).hasSize(1); // 중첩 클래스에 생성자를 명시했으면 가져온다.
     }
-    static class NoConstructorClass{}
-    static class YesConstructorClass{
+
+    static class NoConstructorClass {
+    }
+
+    static class YesConstructorClass {
         public YesConstructorClass() {
         }
     }
@@ -89,14 +90,15 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<Question> questionClass = Question.class;
 
-        final Constructor<Question> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class); // 매개변수 타입을 이용해 생성자를 조회한다.
+        final Constructor<Question> firstConstructor = questionClass.getConstructor(String.class, String.class,
+                String.class); // 매개변수 타입을 이용해 생성자를 조회한다.
         Class[] allFieldsClass = Arrays.stream(questionClass.getDeclaredFields())
                 .map(Field::getType) // 필드의 실제 클래스를 반환한다.
                 .toList().toArray(new Class[0]);
         final Constructor<Question> secondConstructor = questionClass.getConstructor(allFieldsClass);
 
-        final Question firstQuestion = firstConstructor.newInstance("gugu","제목1","내용1");
-        final Question secondQuestion = secondConstructor.newInstance(1, "gugu","제목2","내용2", new Date(), 1);
+        final Question firstQuestion = firstConstructor.newInstance("gugu", "제목1", "내용1");
+        final Question secondQuestion = secondConstructor.newInstance(1, "gugu", "제목2", "내용2", new Date(), 1);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
