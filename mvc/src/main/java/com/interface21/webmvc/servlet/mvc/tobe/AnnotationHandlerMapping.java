@@ -34,7 +34,7 @@ public class AnnotationHandlerMapping {
 
     private void addHandlers(Method method) {
         HandlerExecution handlerExecution = new HandlerExecution(method);
-        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         HandlerKeys handlerKeys = HandlerKeys.from(requestMapping);
 
         handlerKeys.getKeys()
