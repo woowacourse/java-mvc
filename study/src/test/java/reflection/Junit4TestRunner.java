@@ -20,16 +20,19 @@ class Junit4TestRunner {
     @DisplayName("Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행")
     @Test
     void run() throws Exception {
+        // given
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOutput = System.out;
         System.setOut(new PrintStream(outputStream));
 
+        // when
         try {
             executeTestMethodHasMyTestAnnotation();
         } finally {
             System.setOut(originalOutput);
         }
 
+        // then
         String output = outputStream.toString();
         assertAll(
                 () -> assertThat(output).contains(ONE_METHOD_OUTPUT),
