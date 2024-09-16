@@ -1,13 +1,31 @@
 package reflection;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 
 class Junit3TestRunner {
 
     @Test
-    void run() throws Exception {
-        Class<Junit3Test> clazz = Junit3Test.class;
+    void run() {
+        final Class<Junit3Test> clazz = Junit3Test.class;
+        Stream.of(clazz.getMethods())
+                .filter(this::hasPrefix)
+                .forEach(method -> invokeMethod(clazz, method));
+    }
 
-        // TODO Junit3Test에서 test로 시작하는 메소드 실행
+    private boolean hasPrefix(final Method method) {
+        return method.getName().startsWith("test");
+    }
+
+    private void invokeMethod(final Class<?> clazz, final Method method) {
+        try {
+            final Object instance = clazz.getDeclaredConstructor().newInstance();
+            method.invoke(instance);
+        } catch (final NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,13 +1,31 @@
 package reflection;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
 
     @Test
     void run() throws Exception {
-        Class<Junit4Test> clazz = Junit4Test.class;
+        final Class<Junit4Test> clazz = Junit4Test.class;
+        Stream.of(clazz.getMethods())
+                .filter(this::hasAnnotation)
+                .forEach(method -> invokeMethod(clazz,method));
+    }
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+    private boolean hasAnnotation(final Method method) {
+        return method.isAnnotationPresent(MyTest.class);
+    }
+
+    private void invokeMethod(final Class<?> clazz, final Method method) {
+        try {
+            final Object instance = clazz.getDeclaredConstructor().newInstance();
+            method.invoke(instance);
+        } catch (final NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
