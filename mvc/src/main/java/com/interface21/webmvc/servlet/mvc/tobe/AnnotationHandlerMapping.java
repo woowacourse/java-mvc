@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -49,7 +50,11 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = HandlerKey.of(request);
+        String url = request.getRequestURI();
+        String method = request.getMethod();
+        RequestMethod requestMethod = RequestMethod.from(method);
+        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+
         return handlerExecutions.get(handlerKey);
     }
 }

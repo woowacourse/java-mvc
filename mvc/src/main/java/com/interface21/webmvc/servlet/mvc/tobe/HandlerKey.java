@@ -1,8 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 public class HandlerKey {
@@ -13,12 +11,6 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
-    }
-
-    public static HandlerKey of(HttpServletRequest request) {
-        String url = request.getRequestURI();
-        String method = request.getMethod();
-        return new HandlerKey(url, RequestMethod.valueOf(method));
     }
 
     @Override
