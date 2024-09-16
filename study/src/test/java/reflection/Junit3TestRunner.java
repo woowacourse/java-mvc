@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class Junit3TestRunner {
@@ -22,6 +23,7 @@ class Junit3TestRunner {
     }
 
     @Test
+    @DisplayName("메서드 이릅이 test로 시작하는 메서드 실행")
     void run() throws Exception {
         final Class<Junit3Test> clazz = Junit3Test.class;
 
