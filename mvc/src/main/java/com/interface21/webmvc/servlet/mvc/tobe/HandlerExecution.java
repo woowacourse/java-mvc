@@ -27,7 +27,7 @@ public class HandlerExecution {
                 .toArray();
     }
 
-    private static Object getParameterInstance(HttpServletRequest request, HttpServletResponse response, Class<?> type) {
+    private Object getParameterInstance(HttpServletRequest request, HttpServletResponse response, Class<?> type) {
         if (type.equals(HttpServletRequest.class)) {
             return request;
         }
