@@ -23,15 +23,17 @@ public class HandlerExecution {
 
     private Object[] createParameters(HttpServletRequest request, HttpServletResponse response) {
         return Arrays.stream(handler.getParameterTypes())
-                .map(type -> {
-                    if (type.equals(HttpServletRequest.class)) {
-                        return request;
-                    }
-                    if (type.equals(HttpServletResponse.class)) {
-                        return response;
-                    }
-                    throw new IllegalArgumentException("지원하지 않는 파라미터 입니다.");
-                })
+                .map(type -> getParameterInstance(request, response, type))
                 .toArray();
+    }
+
+    private static Object getParameterInstance(HttpServletRequest request, HttpServletResponse response, Class<?> type) {
+        if (type.equals(HttpServletRequest.class)) {
+            return request;
+        }
+        if (type.equals(HttpServletResponse.class)) {
+            return response;
+        }
+        throw new IllegalArgumentException("지원하지 않는 파라미터 입니다.");
     }
 }
