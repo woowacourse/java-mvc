@@ -24,7 +24,7 @@ class HandlerExecutionRegistryTest {
         Method handlerMethod = RegistryTestController.class.getMethod("testHandler");
         registry.registerHandler(new RequestMethod[]{RequestMethod.GET}, "/test", handlerMethod);
 
-        HandlerExecution handlerExecution = (HandlerExecution) registry.getHandler(RequestMethod.GET, "/test");
+        HandlerExecution handlerExecution = registry.getHandler(RequestMethod.GET, "/test");
         assertThat(handlerExecution).isNotNull();
     }
 
@@ -49,7 +49,7 @@ class HandlerExecutionRegistryTest {
         Method handlerMethod = RegistryTestController.class.getMethod("testHandler");
         registry.registerHandler(new RequestMethod[]{}, "/test", handlerMethod);
 
-        HandlerExecution handlerExecution = (HandlerExecution) registry.getHandler(method, "/test");
+        HandlerExecution handlerExecution = registry.getHandler(method, "/test");
         assertThat(handlerExecution).isNotNull();
     }
 }
