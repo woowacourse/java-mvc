@@ -28,14 +28,14 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         reflections.getTypesAnnotatedWith(Controller.class).stream()
                 .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .filter(handler -> handler.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::addHandlers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlers(Method method) {
-        HandlerExecution handlerExecution = new HandlerExecution(method);
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+    private void addHandlers(Method handler) {
+        HandlerExecution handlerExecution = new HandlerExecution(handler);
+        RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
         HandlerKeys handlerKeys = HandlerKeys.from(requestMapping);
 
         handlerKeys.getKeys()
