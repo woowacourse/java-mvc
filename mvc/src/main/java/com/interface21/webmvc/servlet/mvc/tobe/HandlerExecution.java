@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class HandlerExecution {
 
@@ -15,6 +16,22 @@ public class HandlerExecution {
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object controller = handler.getDeclaringClass().getConstructor().newInstance();
-        return (ModelAndView) handler.invoke(controller, request, response);
+        Object[] parameters = createParameters(request, response);
+
+        return (ModelAndView) handler.invoke(controller, parameters);
+    }
+
+    private Object[] createParameters(HttpServletRequest request, HttpServletResponse response) {
+        return Arrays.stream(handler.getParameterTypes())
+                .map(type -> {
+                    if (type.equals(HttpServletRequest.class)) {
+                        return request;
+                    }
+                    if (type.equals(HttpServletResponse.class)) {
+                        return response;
+                    }
+                    throw new IllegalArgumentException("지원하지 않는 파라미터 입니다.");
+                })
+                .toArray();
     }
 }
