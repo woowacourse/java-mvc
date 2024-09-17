@@ -24,6 +24,9 @@ public class Handler {
 
     public RequestMethod[] getRequestMethods() {
         RequestMapping requestMapping = handler.getDeclaredAnnotation(RequestMapping.class);
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
         return requestMapping.method();
     }
 

@@ -22,8 +22,7 @@ class HandlerTest {
     @Test
     void constructTest() throws Exception {
         // given
-        Method targetMethod = getClass().getDeclaredMethod(
-            "testMethod", HttpServletRequest.class, HttpServletResponse.class);
+        Method targetMethod = getTargetMethod("testMethod");
 
         // when
         Handler handler = new Handler(targetMethod, new HandlerTest());
@@ -33,6 +32,23 @@ class HandlerTest {
             () -> assertThat(handler.getUri()).isEqualTo("/hello-cloud"),
             () -> assertThat(handler.getRequestMethods()).containsExactlyInAnyOrder(
                 RequestMethod.GET, RequestMethod.DELETE)
+        );
+    }
+
+    @DisplayName("맵핑되는 요청 메서드가 없으면, 모든 요청을 처리할 수 있다.")
+    @Test
+    void constructTest1() throws Exception {
+        // given
+        Method targetMethod = getTargetMethod("noRequestMethod");
+
+        // when
+        Handler handler = new Handler(targetMethod, new HandlerTest());
+
+        // then
+        assertAll(
+            () -> assertThat(handler.getUri()).isEqualTo("/hello-mangcho"),
+            () -> assertThat(handler.getRequestMethods()).containsExactlyInAnyOrder(
+                RequestMethod.values())
         );
     }
 
@@ -47,8 +63,7 @@ class HandlerTest {
         when(request.getRequestURI()).thenReturn("/hello-cloud");
         when(request.getMethod()).thenReturn("GET");
 
-        Method targetMethod = getClass().getDeclaredMethod(
-            "testMethod", HttpServletRequest.class, HttpServletResponse.class);
+        Method targetMethod = getTargetMethod("testMethod");
         HandlerTest instance = spy(new HandlerTest());
         Handler handler = new Handler(targetMethod, instance);
 
@@ -59,8 +74,18 @@ class HandlerTest {
         verify(instance).testMethod(any(), any());
     }
 
+    private Method getTargetMethod(String methodName) throws NoSuchMethodException {
+        return getClass().getDeclaredMethod(
+            methodName, HttpServletRequest.class, HttpServletResponse.class);
+    }
+
     @RequestMapping(value = "/hello-cloud", method = {RequestMethod.GET, RequestMethod.DELETE})
     void testMethod(HttpServletRequest request, HttpServletResponse response) {
+        // nothing
+    }
+
+    @RequestMapping(value = "/hello-mangcho")
+    void noRequestMethod(HttpServletRequest request, HttpServletResponse response) {
         // nothing
     }
 }
