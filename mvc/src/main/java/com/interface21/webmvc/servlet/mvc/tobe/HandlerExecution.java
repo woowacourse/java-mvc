@@ -2,13 +2,10 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.view.JsonView;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +34,8 @@ public class HandlerExecution {
             view.render(model, request, response);
         } catch (IllegalArgumentException e) {
             log.error("Error rendering view: {}", e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while rendering the view.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "An error occurred while rendering the view.");
         }
         return modelAndView;
     }

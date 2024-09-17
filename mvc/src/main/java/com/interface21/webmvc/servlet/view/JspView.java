@@ -6,10 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class JspView implements View {
 
@@ -23,8 +22,10 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        log.debug("Rendering view: {} | Method: {} | Request URI: {}", viewName, request.getMethod(), request.getRequestURI());
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        log.debug("Rendering view: {} | Method: {} | Request URI: {}", viewName, request.getMethod(),
+                request.getRequestURI());
 
         setAttributes(model, request);
         if (isRedirect()) {
