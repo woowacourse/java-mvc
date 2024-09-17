@@ -2,6 +2,7 @@ package reflection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,13 +19,19 @@ public class OutputCapture {
         System.setOut(originalOut);
     }
 
-    public void assertDoseNotContain(String... unexpectedOutput) {
+    public void assertDoseNotContain(String... unexpectedOutputs) {
         assertThat(outContent.toString())
-                .doesNotContain(unexpectedOutput);
+                .doesNotContain(normalizeOutputs(unexpectedOutputs));
     }
 
-    public void assertContains(String... expectedOutput) {
+    public void assertContains(String... expectedOutputs) {
         assertThat(outContent.toString())
-                .contains(expectedOutput);
+                .contains(normalizeOutputs(expectedOutputs));
+    }
+
+    public String[] normalizeOutputs(String... outputs) {
+        return Arrays.stream(outputs)
+                .map(output -> output.replace("\n", System.lineSeparator()))
+                .toArray(String[]::new);
     }
 }
