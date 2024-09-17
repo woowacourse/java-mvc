@@ -10,10 +10,12 @@ public class RegisterController implements Controller {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var user = new User(2,
+        final var user = new User(
+                2,
                 req.getParameter("account"),
                 req.getParameter("password"),
-                req.getParameter("email"));
+                req.getParameter("email")
+        );
         InMemoryUserRepository.save(user);
 
         return "redirect:/index.jsp";
