@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +29,7 @@ class AnnotationHandlerMappingTest {
 
     //TODO 예외 제거하기
     @BeforeEach
-    void setUp() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
