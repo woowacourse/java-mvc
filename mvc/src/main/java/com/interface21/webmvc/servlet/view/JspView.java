@@ -2,8 +2,10 @@ package com.interface21.webmvc.servlet.view;
 
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,29 +24,40 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+        log.debug("Rendering view: {} | Method: {} | Request URI: {}", viewName, request.getMethod(), request.getRequestURI());
 
-        // 모델 데이터를 요청 속성으로 설정
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
-
-        // 리디렉션 처리
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            log.debug("Redirecting to: {}", viewName);
-            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+        setAttributes(model, request);
+        if (isRedirect()) {
+            handleRedirect(response);
             return;
         }
+        forwardToView(request, response);
 
-        // JSP 페이지로 포워딩
+        throw new IllegalArgumentException("RequestDispatcher is null for viewName: " + viewName);
+    }
+
+    private void forwardToView(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         if (requestDispatcher != null) {
             log.debug("Forwarding to view: {}", viewName);
             requestDispatcher.forward(request, response);
         }
+    }
 
-        log.error("RequestDispatcher is null for viewName: {}", viewName);
-        throw new IllegalArgumentException("RequestDispatcher is null for viewName: " + viewName);
+    private void handleRedirect(HttpServletResponse response) throws IOException {
+        log.debug("Redirecting to: {}", viewName);
+        response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+    }
+
+    private boolean isRedirect() {
+        return viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    private void setAttributes(Map<String, ?> model, HttpServletRequest request) {
+        model.keySet().forEach(key -> {
+            log.debug("attribute name : {}, value : {}", key, model.get(key));
+            request.setAttribute(key, model.get(key));
+        });
     }
 }
