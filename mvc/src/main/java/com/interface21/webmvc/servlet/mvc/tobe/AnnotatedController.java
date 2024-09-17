@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMapping;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -46,18 +47,24 @@ public class AnnotatedController {
     }
 
     public List<Handler> createHandlers() {
-        return getMethods().stream()
-                .map(this::createHandlers)
+        return getRequestMappingMethods().stream()
+                .map(this::createHandlersForMethod)
                 .flatMap(Collection::stream)
                 .toList();
     }
 
-    private List<Handler> createHandlers(Method method) {
-        return Handler.createHandlers(method, controller);
+    private List<Method> getRequestMappingMethods() {
+        return Arrays.stream(controller.getClass().getMethods())
+                .filter(this::isRequestMappingMethod)
+                .toList();
     }
 
-    private List<Method> getMethods() {
-        return Arrays.stream(controller.getClass().getMethods())
-                .toList();
+    private boolean isRequestMappingMethod(Method method) {
+        return method.isAnnotationPresent(RequestMapping.class);
+    }
+
+    private List<Handler> createHandlersForMethod(Method method) {
+        RequestMappingMethod requestMappingMethod = new RequestMappingMethod(method);
+        return requestMappingMethod.createHandlers(controller);
     }
 }
