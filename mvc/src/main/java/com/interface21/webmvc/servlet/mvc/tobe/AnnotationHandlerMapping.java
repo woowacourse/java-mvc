@@ -44,8 +44,8 @@ public class AnnotationHandlerMapping {
 
     private void addHandler(final Class<?> aClass, final Method method) {
         final RequestMapping request = method.getAnnotation(RequestMapping.class);
-        final RequestMethod[] requestMethods = request.method();
-        for (final RequestMethod requestMethod : requestMethods) {
+        final var requestMethods = request.method().length == 0 ? RequestMethod.values() : request.method();
+        for (final var requestMethod : requestMethods) {
             final var key = new HandlerKey(request.value(), requestMethod);
             validateDuplicate(key);
             final var handler = ConstructorGenerator.generate(aClass);

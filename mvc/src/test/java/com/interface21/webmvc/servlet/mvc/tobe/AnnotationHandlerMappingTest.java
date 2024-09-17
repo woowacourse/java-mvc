@@ -109,11 +109,32 @@ class AnnotationHandlerMappingTest {
     @Test
     @DisplayName("중복된 매핑 정보가 있는 경우 예외가 발생한다.")
     void failInit() {
+        //given
         handlerMapping = new AnnotationHandlerMapping("duplicate");
 
+        //when && then
         assertThatThrownBy(() -> handlerMapping.initialize())
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("중복된 매핑 요청입니다.");
 
+    }
+
+    @Test
+    @DisplayName("method 설정이 되어 있지 않으면 모든 HTTP method를 지원한다.")
+    void provideAllMethod() {
+        //given
+        handlerMapping = new AnnotationHandlerMapping("all");
+        handlerMapping.initialize();
+
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/all");
+        when(request.getMethod()).thenReturn("GET", "HEAD", "POST", "PUT", "PATCH",
+                "DELETE", "OPTIONS", "TRACE");
+
+        //when && then
+        for (int i = 0; i < RequestMethod.values().length; i++) {
+            assertThat(handlerMapping.getHandler(request)).isNotNull();
+        }
     }
 }

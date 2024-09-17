@@ -6,4 +6,5 @@
 * [x] 메서드에서 @RequestMapping이 붙은 메서드 가져오기
 * [x] HTTP 메서드와 URL을 매핑 조건으로 설정하기
 * [x] jspView 책임 재설정
-* [ ] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원하기
+* [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원하기
+* [ ] jspView 테스트 보완
