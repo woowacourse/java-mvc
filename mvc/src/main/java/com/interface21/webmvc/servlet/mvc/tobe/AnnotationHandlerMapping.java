@@ -29,10 +29,12 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Arrays.stream(basePackage).forEach(base -> {
+            Reflections reflections = new Reflections(base);
+            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        controllers.forEach(this::reflect);
+            controllers.forEach(this::reflect);
+        });
     }
 
     private void reflect(Class<?> controller) {
@@ -56,6 +58,7 @@ public class AnnotationHandlerMapping {
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
+        log.info("uri = {}, method = {} 등록!", uri, requestMethods);
 
         HandlerExecution handlerExecution = new HandlerExecution(handlerInstance, handlerMethod);
 
