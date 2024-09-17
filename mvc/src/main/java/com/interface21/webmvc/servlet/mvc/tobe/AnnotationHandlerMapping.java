@@ -1,5 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +29,10 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
+    public void initialize()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        final var handlerExecution = new HandlerExecution();
 
         for (final Class<?> aClass : classes) {
             final Method[] declaredMethods = aClass.getDeclaredMethods();
@@ -38,7 +40,12 @@ public class AnnotationHandlerMapping {
                 final RequestMapping request = declaredMethod.getAnnotation(RequestMapping.class);
                 final RequestMethod[] requestMethods = request.method();
                 for (final RequestMethod requestMethod : requestMethods) {
-                    handlerExecutions.put(new HandlerKey(request.value(), requestMethod), handlerExecution);
+                    //TODO 생성자 찾는거 다른 객체에게 책임 넘기기
+                    final Constructor<?> declaredConstructor = aClass.getDeclaredConstructor();
+                    final Object handler = declaredConstructor.newInstance();
+                    //TODO 중복 검사
+                    handlerExecutions.put(new HandlerKey(request.value(), requestMethod),
+                            new HandlerExecution(handler, declaredMethod));
                 }
             }
         }
