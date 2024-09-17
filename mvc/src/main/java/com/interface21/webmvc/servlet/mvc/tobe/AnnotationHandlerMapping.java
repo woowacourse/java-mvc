@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +17,11 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HandlerExecutions handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = new HandlerExecutions();
     }
 
     public void initialize() {
@@ -59,13 +56,14 @@ public class AnnotationHandlerMapping {
         String url = requestMapping.value();
         RequestMethod[] methods = requestMapping.method();
         for (RequestMethod requestMethod : methods) {
-            handlerExecutions.put(new HandlerKey(url, requestMethod),
-                    new HandlerExecution(controller, method));
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.save(handlerKey, handlerExecution);
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return Objects.requireNonNull(handlerExecutions.get(
-                new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()))));
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+        return handlerExecutions.find(handlerKey);
     }
 }
