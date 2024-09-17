@@ -11,7 +11,7 @@ import samples.TestController;
 
 class AnnotationClassScannerTest {
 
-    @DisplayName("특정 주석이 달린 클래스를 반환한다.")
+    @DisplayName("특정 Annotation이 달린 클래스를 반환한다.")
     @Test
     void scan() {
         AnnotationClassScanner classScanner = new AnnotationClassScanner("samples");
