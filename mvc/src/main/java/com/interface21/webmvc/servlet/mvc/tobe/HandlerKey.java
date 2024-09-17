@@ -2,6 +2,8 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 
 public class HandlerKey {
@@ -10,8 +12,17 @@ public class HandlerKey {
     private final RequestMethod requestMethod;
 
     public HandlerKey(final String url, final RequestMethod requestMethod) {
+        validateUrlForm(url);
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    private void validateUrlForm(String url) {
+        try {
+            new URL(url);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("잘못된 형식의 url 입니다. url 양식 [%s]".formatted(url));
+        }
     }
 
     @Override
