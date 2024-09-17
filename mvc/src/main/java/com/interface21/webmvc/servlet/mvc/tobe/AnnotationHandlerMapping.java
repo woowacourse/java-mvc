@@ -31,7 +31,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         // handlerExecutions reflection 이용해서 초기화한다.
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class); // Controller 애너테이션이 붙은 컨트롤러들을 전부 꺼낸다.
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(
+                Controller.class); // Controller 애너테이션이 붙은 컨트롤러들을 전부 꺼낸다.
         controllers.forEach(this::processController); // 컨트롤러들을 전부 순회한다.
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -61,15 +62,17 @@ public class AnnotationHandlerMapping {
         createHandlerKeyAndExecution(requestMapping, requestMethod, method);
     }
 
-    private void createHandlerKeyAndExecution(RequestMapping requestMapping, RequestMethod requestMethod, Method method) {
+    private void createHandlerKeyAndExecution(RequestMapping requestMapping, RequestMethod requestMethod,
+                                              Method method) {
         String url = requestMapping.value(); // RequestMapping 의 url 을 꺼낸다.
         HandlerKey handlerKey = new HandlerKey(url, requestMethod); // url, method 를 HandlerKey 로 만든다.
         log.debug("requestMapping = {}", requestMapping);
         log.debug("handlerKey = {}\n", handlerKey);
         try {
-            HandlerExecution handlerExecution = new HandlerExecution(method.getDeclaringClass(), method); // HandlerExecution 을 만든다.
+            HandlerExecution handlerExecution = new HandlerExecution(method); // HandlerExecution 을 만든다.
             handlerExecutions.put(handlerKey, handlerExecution); // HandlerKey 에 해당하는 HandlerExecution 을 맵에 저장한다.
-        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }
