@@ -38,7 +38,7 @@ public class AnnotationHandlerMapping {
         RequestMapping annotation = handler.getAnnotation(RequestMapping.class);
         String uri = annotation.value();
         List<RequestMethod> methods = Arrays.asList(annotation.method());
-        if(methods.isEmpty()) {
+        if (methods.isEmpty()) {
             addHandlerForAllRequestMethods(handler, uri);
         }
         methods.forEach(method -> addHandlerForRequestMethod(handler, method, uri));
@@ -51,7 +51,7 @@ public class AnnotationHandlerMapping {
 
     private void addHandlerForRequestMethod(final Method handler, final RequestMethod method, final String uri) {
         HandlerKey handlerKey = new HandlerKey(uri, method);
-        if(handlerExecutions.containsKey(handlerKey)) {
+        if (handlerExecutions.containsKey(handlerKey)) {
             throw new HandlingException("같은 요청을 처리할 메서드가 두 개 이상 존재합니다.");
         }
         handlerExecutions.put(handlerKey, new HandlerExecution(handler));
