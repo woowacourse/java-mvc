@@ -33,26 +33,6 @@ public class JspView implements View {
             return;
         }
         forwardToView(request, response);
-
-        throw new IllegalArgumentException("RequestDispatcher is null for viewName: " + viewName);
-    }
-
-    private void forwardToView(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        if (requestDispatcher != null) {
-            log.debug("Forwarding to view: {}", viewName);
-            requestDispatcher.forward(request, response);
-        }
-    }
-
-    private void handleRedirect(HttpServletResponse response) throws IOException {
-        log.debug("Redirecting to: {}", viewName);
-        response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
-    }
-
-    private boolean isRedirect() {
-        return viewName.startsWith(REDIRECT_PREFIX);
     }
 
     private void setAttributes(Map<String, ?> model, HttpServletRequest request) {
@@ -60,5 +40,24 @@ public class JspView implements View {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+    }
+
+    private boolean isRedirect() {
+        return viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    private void handleRedirect(HttpServletResponse response) throws IOException {
+        log.debug("Redirecting to: {}", viewName);
+        response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+    }
+
+    private void forwardToView(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        if (requestDispatcher == null) {
+            throw new IllegalArgumentException("RequestDispatcher is null for viewName: " + viewName);
+        }
+        log.debug("Forwarding to view: {}", viewName);
+        requestDispatcher.forward(request, response);
     }
 }
