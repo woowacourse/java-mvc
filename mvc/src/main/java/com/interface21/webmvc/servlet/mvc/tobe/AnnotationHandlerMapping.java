@@ -5,7 +5,9 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,37 +32,47 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        controllers.forEach(this::addHandlerExecution);
+        controllers.forEach(this::reflect);
     }
 
-    private void addHandlerExecution(Class<?> controller) {
-        Method[] controllerMethods = controller.getDeclaredMethods();
+    private void reflect(Class<?> controller) {
+        try {
+            Object instance = controller.getConstructor().newInstance();
+            Method[] methods = controller.getDeclaredMethods();
 
-        for (Method controllerMethod : controllerMethods) {
-            Annotation annotation = controllerMethod.getAnnotation(RequestMapping.class);
-            try {
-                Method value = annotation.getClass().getDeclaredMethod("value");
-                Method method = annotation.getClass().getDeclaredMethod("method");
+            Arrays.stream(methods).forEach(method -> addHandlerExecution(instance, method));
 
-                String uri = (String) value.invoke(annotation);
-                RequestMethod[] requestMethods = (RequestMethod[]) method.invoke(annotation);
-                log.info("value = {}, method = {}", uri, requestMethods);
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
+            throw new RuntimeException("controller 리플렉션 중 실패");
+        }
+    }
 
-                if (requestMethods.length == 0) {
-                    requestMethods = RequestMethod.values();
-                }
+    private void addHandlerExecution(Object handlerInstance, Method handlerMethod) {
 
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-                    HandlerExecution handlerExecution = new HandlerExecution(controllerMethod);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
+        String uri = (String) executeMethod("value", handlerMethod);
+        RequestMethod[] requestMethods = (RequestMethod[]) executeMethod("method", handlerMethod);
 
-            } catch (NoSuchMethodException e) {
-                log.error("@RequestMapping 리플렉션 에러 발생");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+
+        HandlerExecution handlerExecution = new HandlerExecution(handlerInstance, handlerMethod);
+
+        Arrays.stream(requestMethods).forEach(requestMethod -> {
+            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        });
+    }
+
+    private Object executeMethod(String methodName, Method method) {
+        try {
+            Annotation annotation = method.getAnnotation(RequestMapping.class);
+            return annotation.getClass()
+                    .getDeclaredMethod(methodName)
+                    .invoke(annotation);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("controller method 리플렉션 중 실패");
         }
     }
 

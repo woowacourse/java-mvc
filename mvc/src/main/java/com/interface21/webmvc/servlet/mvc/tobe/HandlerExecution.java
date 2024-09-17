@@ -10,9 +10,8 @@ public class HandlerExecution {
     private final Object handlerInstance;
     private final Method method;
 
-    public HandlerExecution(Method method) throws Exception {
-        Class<?> clazz = method.getDeclaringClass();
-        this.handlerInstance = clazz.getConstructor().newInstance();
+    public HandlerExecution(Object handlerInstance, Method method) {
+        this.handlerInstance = handlerInstance;
         this.method = method;
     }
 
