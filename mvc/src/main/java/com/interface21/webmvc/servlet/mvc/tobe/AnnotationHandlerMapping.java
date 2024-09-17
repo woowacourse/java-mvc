@@ -34,7 +34,7 @@ public class AnnotationHandlerMapping {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder
                 .setUrls(ClasspathHelper.forPackage("samples"))
-                .setScanners(new MethodAnnotationsScanner()); // TODO: deprecated
+                .setScanners(new MethodAnnotationsScanner());
 
         Reflections reflections = new Reflections(configurationBuilder);
         Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
@@ -42,7 +42,7 @@ public class AnnotationHandlerMapping {
                 .filter(method -> method.getAnnotation(RequestMapping.class).value().equals(request.getRequestURI()))
                 .filter(method -> method.getAnnotation(RequestMapping.class).method()[0].name()
                         .equals(request.getMethod()))
-                .findFirst() // TODO: 상수화
+                .findFirst()
                 .orElseThrow(() -> new NotFoundException("No resource found"));
 
         Object controller;

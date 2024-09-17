@@ -21,6 +21,5 @@ class Junit4TestRunner {
                         throw new RuntimeException(e);
                     }
                 });
-                // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
     }
 }

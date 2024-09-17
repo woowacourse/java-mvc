@@ -21,9 +21,5 @@ class Junit3TestRunner {
                         throw new RuntimeException(e);
                     }
                 });
-
-        // TODO Junit3Test에서 test로 시작하는 메소드 실행 - 이게 최선?
-        // 1. 생성자를 reflection으로 만들어서 객체 만들기
-        // try catch 없앨 수 없는지 알아보기
     }
 }
