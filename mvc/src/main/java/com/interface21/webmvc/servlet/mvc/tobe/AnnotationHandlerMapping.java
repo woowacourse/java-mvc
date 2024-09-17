@@ -27,15 +27,30 @@ public class AnnotationHandlerMapping {
 
         for (Handler handler : handlers) {
             HandlerKey handlerKey = handler.key();
+            validateHandlerKey(handlerKey);
             HandlerExecution handlerExecution = handler.execution();
             handlerExecutions.put(handlerKey, handlerExecution);
             log.info("Initialized AnnotationHandlerMapping: {} {}", handlerKey, handlerExecution);
         }
     }
 
+    private void validateHandlerKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            log.error("HandlerKey collision detected for: {}. This key is already in use.", handlerKey);
+            throw new IllegalArgumentException("Duplicate handlerExecution mappings are not allowed.");
+        }
+    }
+
     public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+
+        if (handlerExecutions.containsKey(handlerKey)) {
+            return handlerExecutions.get(handlerKey);
+        }
+
+        log.error("No handler found for the request: {}", request);
+        throw new IllegalArgumentException("No handler found for the request");
     }
 }
