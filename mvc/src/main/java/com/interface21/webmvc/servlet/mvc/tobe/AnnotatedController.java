@@ -42,7 +42,7 @@ public class AnnotatedController {
             return constructor.newInstance();
         } catch (ReflectiveOperationException e) {
             log.error("Failed to instantiate controller using constructor: {}", constructor, e);
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
