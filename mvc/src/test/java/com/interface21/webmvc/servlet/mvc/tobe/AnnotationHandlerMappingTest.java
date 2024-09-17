@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +28,6 @@ class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
-    //TODO 예외 제거하기
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
@@ -104,5 +104,16 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("중복된 매핑 정보가 있는 경우 예외가 발생한다.")
+    void failInit() {
+        handlerMapping = new AnnotationHandlerMapping("duplicate");
+
+        assertThatThrownBy(() -> handlerMapping.initialize())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("중복된 매핑 요청입니다.");
+
     }
 }

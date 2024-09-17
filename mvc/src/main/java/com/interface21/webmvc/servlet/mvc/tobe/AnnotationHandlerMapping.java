@@ -30,23 +30,33 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-
+        //TODO 원뎁스로 어케 줄이지
         for (final Class<?> aClass : classes) {
             final Method[] declaredMethods = aClass.getDeclaredMethods();
             for (final Method declaredMethod : declaredMethods) {
                 if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-                    final RequestMapping request = declaredMethod.getAnnotation(RequestMapping.class);
-                    final RequestMethod[] requestMethods = request.method();
-                    for (final RequestMethod requestMethod : requestMethods) {
-                        final var handler = ConstructorGenerator.generate(aClass);
-                        //TODO 중복 검사
-                        handlerExecutions.put(new HandlerKey(request.value(), requestMethod),
-                                new HandlerExecution(handler, declaredMethod));
-                    }
+                    addHandler(aClass, declaredMethod);
                 }
             }
         }
         log.info("init handlerExecutions: {}", handlerExecutions);
+    }
+
+    private void addHandler(final Class<?> aClass, final Method method) {
+        final RequestMapping request = method.getAnnotation(RequestMapping.class);
+        final RequestMethod[] requestMethods = request.method();
+        for (final RequestMethod requestMethod : requestMethods) {
+            final var key = new HandlerKey(request.value(), requestMethod);
+            validateDuplicate(key);
+            final var handler = ConstructorGenerator.generate(aClass);
+            handlerExecutions.put(key, new HandlerExecution(handler, method));
+        }
+    }
+
+    private void validateDuplicate(final HandlerKey key) {
+        if (handlerExecutions.containsKey(key)) {
+            throw new IllegalStateException("중복된 매핑 요청입니다.");
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
