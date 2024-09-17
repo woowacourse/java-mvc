@@ -6,7 +6,16 @@ import java.util.Map;
 
 public class InstancePool {
 
+    private static final InstancePool INSTANCE = new InstancePool();
+
     private final Map<String, Object> instancePool = new HashMap<>();
+
+    private InstancePool() {
+    }
+
+    public static InstancePool getSingleton() {
+        return INSTANCE;
+    }
 
     public Object getInstance(Class<?> clazz) {
         try {

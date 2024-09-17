@@ -7,15 +7,14 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Object instance;
     private final Method method;
 
-    public HandlerExecution(Object instance, Method method) {
-        this.instance = instance;
+    public HandlerExecution(Method method) {
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        Object instance = InstancePool.getSingleton().getInstance(method.getDeclaringClass());
         return (ModelAndView) method.invoke(instance, request, response);
     }
 }

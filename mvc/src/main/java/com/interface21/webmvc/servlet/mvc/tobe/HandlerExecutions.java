@@ -14,19 +14,18 @@ public class HandlerExecutions {
 
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
-
     public void setHandlerExecutions(Object controller) {
         Arrays.stream(controller.getClass().getMethods())
                 .filter(method -> method.isAnnotationPresent(HANDLER_ANNOTATION))
                 .toList()
-                .forEach(method -> setHandlerExecutions(controller, method));
+                .forEach(this::setHandlerExecutions);
     }
 
-    private void setHandlerExecutions(Object controller, Method method) {
+    private void setHandlerExecutions(Method method) {
         RequestMapping requestMapping = method.getAnnotation(HANDLER_ANNOTATION);
         String url = requestMapping.value();
         RequestMethod[] methods = requestMapping.method();
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        HandlerExecution handlerExecution = new HandlerExecution(method);
         for (RequestMethod requestMethod : methods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);

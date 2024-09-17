@@ -15,23 +15,20 @@ public class AnnotationHandlerMapping {
 
     private final Object[] basePackage;
     private final HandlerExecutions handlerExecutions;
-    private final InstancePool instancePool;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HandlerExecutions();
-        this.instancePool = new InstancePool();
     }
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         List<Object> controllers = reflections.getTypesAnnotatedWith(CONTROLLER_ANNOTATION).stream()
-                .map(instancePool::getInstance)
+                .map(clazz -> InstancePool.getSingleton().getInstance(clazz))
                 .toList();
         controllers.forEach(handlerExecutions::setHandlerExecutions);
         log.info("Initialized AnnotationHandlerMapping!");
     }
-
 
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.findByUrlAndMethod(request.getRequestURI(), RequestMethod.from(request.getMethod()));

@@ -9,7 +9,7 @@ import samples.TestController;
 
 class InstancePoolTest {
 
-    private final InstancePool instancePool = new InstancePool();
+    private final InstancePool instancePool = InstancePool.getSingleton();
 
     @DisplayName("한번 생성한 인스턴스는 동일한 인스턴스를 반환한다.")
     @Test
