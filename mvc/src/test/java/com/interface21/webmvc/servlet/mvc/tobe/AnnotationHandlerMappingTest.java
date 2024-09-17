@@ -1,13 +1,27 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
+
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+
+import samples.TestController;
 
 class AnnotationHandlerMappingTest {
 
@@ -17,6 +31,48 @@ class AnnotationHandlerMappingTest {
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+    }
+
+    @Test
+    @DisplayName("특정 패키지 하위에 @Controller 붙은 클래스 추출")
+    void getTypesAnnotatedWithController() {
+        //given
+        final Object[] basePackage = new Object[]{"samples"};
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> expected = Set.of(TestController.class);
+
+        //when
+        final Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
+
+        //then
+        assertThat(typesAnnotatedWith).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("클래스에서 @RequestMapping 붙은 메서드에서 정보 추출")
+    void getValueRequestMapping() {
+        final Object[] basePackage = new Object[]{"samples"};
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+
+        final Map<String, RequestMethod> expected = Map.of("/get-test", RequestMethod.GET,
+                "/post-test", RequestMethod.POST);
+        final Map<String, RequestMethod> findMethod = new HashMap<>();
+
+        //when
+        for (final Class<?> aClass : classes) {
+            final Method[] declaredMethods = aClass.getDeclaredMethods();
+            for (final Method declaredMethod : declaredMethods) {
+                final RequestMapping request = declaredMethod.getAnnotation(RequestMapping.class);
+                final RequestMethod[] requestMethods = request.method();
+                for (final RequestMethod requestMethod : requestMethods) {
+                    findMethod.put(request.value(), requestMethod);
+                }
+            }
+        }
+
+        //then
+        assertThat(findMethod).isEqualTo(expected);
     }
 
     @Test
