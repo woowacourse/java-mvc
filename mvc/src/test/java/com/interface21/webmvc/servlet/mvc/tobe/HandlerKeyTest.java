@@ -19,7 +19,7 @@ class HandlerKeyTest {
         Method method = clazz.getDeclaredMethod("testMethod");
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         RequestMethod requestMethod = annotation.method()[0];
-        HandlerKey expected = new HandlerKey("/test/url", RequestMethod.GET);
+        HandlerKey expected = new HandlerKey("/test/post-url", RequestMethod.GET);
 
         // when
         HandlerKey actual = new HandlerKey(annotation.value(), requestMethod);
@@ -28,7 +28,7 @@ class HandlerKeyTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    @DisplayName("url 형태가 잘못되면 예외를 발생시킨다")
+    @DisplayName("uri 형태가 잘못되면 예외를 발생시킨다")
     @Test
     void failCreateWhenInvalidUrlFormat() throws NoSuchMethodException {
         // given
@@ -45,7 +45,7 @@ class HandlerKeyTest {
 
     private static class TestClass {
 
-        @RequestMapping(value = "/test/url", method = {RequestMethod.GET})
+        @RequestMapping(value = "/test/post-url", method = {RequestMethod.GET})
         void testMethod() {
 
         }
