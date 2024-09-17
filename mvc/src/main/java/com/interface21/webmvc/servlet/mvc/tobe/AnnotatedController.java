@@ -1,7 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.web.bind.annotation.RequestMapping;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -12,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 public class AnnotatedController {
 
-    private static final Class<? extends Annotation> REQUEST_MAPPING_ANNOTATION = RequestMapping.class;
     private static final Logger log = LoggerFactory.getLogger(AnnotatedController.class);
 
     private final Object controller;
