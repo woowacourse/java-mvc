@@ -26,8 +26,8 @@ public class AnnotationHandlerMapping {
         List<Handler> handlers = controllers.createHandlers();
 
         for (Handler handler : handlers) {
-            HandlerKey handlerKey = handler.getKey();
-            HandlerExecution handlerExecution = handler.getExecution();
+            HandlerKey handlerKey = handler.key();
+            HandlerExecution handlerExecution = handler.execution();
             handlerExecutions.put(handlerKey, handlerExecution);
             log.info("Initialized AnnotationHandlerMapping: {} {}", handlerKey, handlerExecution);
         }
