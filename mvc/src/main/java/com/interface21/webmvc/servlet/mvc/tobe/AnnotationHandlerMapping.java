@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +39,17 @@ public class AnnotationHandlerMapping {
         String uri = annotation.value();
         List<RequestMethod> methods = Arrays.asList(annotation.method());
         if(methods.isEmpty()) {
-            Arrays.stream(RequestMethod.values())
-                    .forEach(method -> addHandler(handler, method, uri));
+            addHandlerForAllRequestMethods(handler, uri);
         }
-        methods.forEach(method -> addHandler(handler, method, uri));
+        methods.forEach(method -> addHandlerForRequestMethod(handler, method, uri));
     }
 
-    private void addHandler(final Method handler, final RequestMethod method, final String uri) {
+    private void addHandlerForAllRequestMethods(final Method handler, final String uri) {
+        Arrays.stream(RequestMethod.values())
+                .forEach(method -> addHandlerForRequestMethod(handler, method, uri));
+    }
+
+    private void addHandlerForRequestMethod(final Method handler, final RequestMethod method, final String uri) {
         HandlerKey handlerKey = new HandlerKey(uri, method);
         if(handlerExecutions.containsKey(handlerKey)) {
             throw new HandlingException("같은 요청을 처리할 메서드가 두 개 이상 존재합니다.");
