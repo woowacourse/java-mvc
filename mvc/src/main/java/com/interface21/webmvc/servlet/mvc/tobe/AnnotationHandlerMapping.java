@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping {
     private Map<HandlerKey, HandlerExecution> createHandlerExecutions(Class<?> controller, List<Method> mappedMethods) {
         return mappedMethods.stream()
                 .flatMap(method -> createHandlerKeys(method).stream()
-                        .map(mapper -> Map.entry(mapper, method)))
+                        .map(handlerKey -> Map.entry(handlerKey, method)))
                 .collect(Collectors.toMap(
                         Entry::getKey,
                         entry -> createHandlerExecution(controller, entry.getValue())));
