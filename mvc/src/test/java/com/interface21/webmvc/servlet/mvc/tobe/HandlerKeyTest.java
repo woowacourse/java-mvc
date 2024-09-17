@@ -45,12 +45,12 @@ class HandlerKeyTest {
 
     private static class TestClass {
 
-        @RequestMapping(value = "/test/post-url", method = {RequestMethod.GET})
+        @RequestMapping(value = "/test/post-url", method = RequestMethod.GET)
         void testMethod() {
 
         }
 
-        @RequestMapping(value = "invalidUrlFormat", method = {RequestMethod.GET, RequestMethod.POST})
+        @RequestMapping(value = "invalidUrlFormat", method = RequestMethod.POST)
         void invalidUrlFormat() {
 
         }
