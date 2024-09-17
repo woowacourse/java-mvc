@@ -4,7 +4,6 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -18,30 +17,21 @@ public class AnnotationHandlerMapping {
 
     private final Object[] basePackage;
     private final HandlerExecutions handlerExecutions;
+    private final InstancePool instancePool;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HandlerExecutions();
+        this.instancePool = new InstancePool();
     }
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         List<Object> controllers = reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .map(this::getControllerInstance)
+                .map(instancePool::getInstance)
                 .toList();
         controllers.forEach(this::setHandlerExecutions);
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private Object getControllerInstance(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException |
-                 IllegalAccessException |
-                 InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void setHandlerExecutions(Object controller) {
