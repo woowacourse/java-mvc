@@ -26,7 +26,15 @@ public class AnnotatedControllerTest {
                 .containsExactlyInAnyOrder(
                         createHandler("/get-test", RequestMethod.DELETE, instance, "method1"),
                         createHandler("/get-test", RequestMethod.GET, instance, "method1"),
-                        createHandler("/test", RequestMethod.POST, instance, "method2")
+                        createHandler("/test", RequestMethod.POST, instance, "method2"),
+                        createHandler("/all", RequestMethod.GET, instance, "method4"),
+                        createHandler("/all", RequestMethod.HEAD, instance, "method4"),
+                        createHandler("/all", RequestMethod.POST, instance, "method4"),
+                        createHandler("/all", RequestMethod.PUT, instance, "method4"),
+                        createHandler("/all", RequestMethod.PATCH, instance, "method4"),
+                        createHandler("/all", RequestMethod.DELETE, instance, "method4"),
+                        createHandler("/all", RequestMethod.OPTIONS, instance, "method4"),
+                        createHandler("/all", RequestMethod.TRACE, instance, "method4")
                 );
     }
 

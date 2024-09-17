@@ -24,6 +24,11 @@ public class ExampleController {
         return new ModelAndView(new JspView(""));
     }
 
+    @RequestMapping(value = "/all")
+    public ModelAndView method4(HttpServletRequest request, HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
