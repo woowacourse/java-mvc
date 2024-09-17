@@ -28,7 +28,7 @@ class Junit4TestRunner {
 
         // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
         List<Method> annotatedMethods = Arrays.stream(clazz.getMethods())
-                .filter(method -> method.getAnnotation(MyTest.class) != null)
+                .filter(method -> method.isAnnotationPresent(MyTest.class))
                 .toList();
 
         for (Method method : annotatedMethods) {
