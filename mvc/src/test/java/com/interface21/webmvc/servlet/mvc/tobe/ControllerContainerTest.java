@@ -31,7 +31,7 @@ class ControllerContainerTest {
     @Test
     @DisplayName("없는 인스턴스 찾을 시, 예외를 발생합니다.")
     void throw_exception_when_not_exist_instance() {
-        assertThatThrownBy(() -> container.getController((Class<?>) null))
+        assertThatThrownBy(() -> container.getController((String) null))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> container.getController(""))
                 .isInstanceOf(IllegalArgumentException.class);
