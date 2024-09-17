@@ -4,9 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Field;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
@@ -47,5 +51,24 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("initialize 메서드를 실행하면 basePackage 의 컨트롤러를 전부 읽어서 handlerKey와 handlerExecution을 등록한다.")
+    @Test
+    void initialize() throws NoSuchFieldException, IllegalAccessException {
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+
+        annotationHandlerMapping.initialize();
+
+        Field field = annotationHandlerMapping.getClass().getDeclaredField("handlerExecutions");
+        field.setAccessible(true);
+        Map<HandlerKey, HandlerExecution> handlerExecutions =
+                (Map<HandlerKey, HandlerExecution>) field
+                        .get(annotationHandlerMapping);
+
+        assertThat(handlerExecutions).containsKey(new HandlerKey("/get-test", RequestMethod.GET));
+        assertThat(handlerExecutions).containsKey(new HandlerKey("/post-test", RequestMethod.POST));
+        assertThat(handlerExecutions.get(new HandlerKey("/get-test", RequestMethod.GET))).isNotNull();
+        assertThat(handlerExecutions.get(new HandlerKey("/post-test", RequestMethod.POST))).isNotNull();
     }
 }
