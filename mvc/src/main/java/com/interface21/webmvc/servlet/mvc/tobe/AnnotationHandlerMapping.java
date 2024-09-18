@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -23,7 +26,14 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    public void addHandler(final HandlerKey key, final HandlerExecution value) {
+        handlerExecutions.put(key, value);
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
+
+        return Optional.ofNullable(handlerExecutions.get(handlerKey))
+                .orElseThrow(() -> new IllegalArgumentException("적절하지 않은 요청입니다."));
     }
 }
