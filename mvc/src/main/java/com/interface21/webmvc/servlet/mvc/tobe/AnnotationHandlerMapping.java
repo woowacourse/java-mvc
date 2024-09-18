@@ -44,9 +44,9 @@ public class AnnotationHandlerMapping {
                 .forEach(method -> makeHandleKey(instance, method));
     }
 
-    private Constructor<?> getConstructor(final Class<?> controllerType) {
+    private Constructor<?> getConstructor(final Class<?> classType) {
         try {
-            return controllerType.getDeclaredConstructor();
+            return classType.getDeclaredConstructor();
         } catch (final NoSuchMethodException e) {
             throw new IllegalArgumentException("생성자 생성 실패");
         }
