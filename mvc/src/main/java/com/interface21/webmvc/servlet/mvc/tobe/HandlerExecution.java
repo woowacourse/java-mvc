@@ -26,7 +26,7 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // request 의 uri, method 를 처리하는 TestController 메서드 실행
+        // request 의 uri, method 를 처리하는 Controller 메서드 실행
         ModelAndView modelAndView = (ModelAndView) method.invoke(controllerInstance, request, response);
         Map<String, Object> model = modelAndView.getModel();
         View view = modelAndView.getView();
