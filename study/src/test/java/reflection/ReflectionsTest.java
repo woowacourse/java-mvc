@@ -18,23 +18,25 @@ class ReflectionsTest {
     private static final Logger log = LoggerFactory.getLogger(ReflectionsTest.class);
 
     @Test
-    void showAnnotationClass() throws Exception {
+    void showAnnotationClass() {
         Reflections reflections = new Reflections("reflection.examples");
 
-        List<Class<? extends Annotation>> annotationClasses = List.of(Controller.class, Service.class, Repository.class);
+        List<Class<? extends Annotation>> annotationClasses = List.of(Controller.class,
+            Service.class, Repository.class);
 
         int count = annotationClasses.stream()
-                .mapToInt(annotation -> logAnnotatedClasses(reflections, annotation))
-                .sum();
-
+            .mapToInt(annotation -> logAnnotatedClasses(reflections, annotation))
+            .sum();
 
         assertThat(count).isEqualTo(4);
     }
 
-    private int logAnnotatedClasses(Reflections reflections, Class<? extends Annotation> annotation) {
+    private int logAnnotatedClasses(Reflections reflections,
+        Class<? extends Annotation> annotation) {
         Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(annotation);
 
-        annotatedClasses.forEach(clazz -> log.info("@{}: {}", annotation.getSimpleName(), clazz.getName()));
+        annotatedClasses.forEach(
+            clazz -> log.info("@{}: {}", annotation.getSimpleName(), clazz.getName()));
 
         return annotatedClasses.size();
     }
