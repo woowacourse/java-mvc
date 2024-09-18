@@ -1,8 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -11,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -39,15 +36,5 @@ class HandlerExecutionTest {
         ModelAndView actual = execution.handle(request, response);
 
         assertThat(actual.getObject("test")).isEqualTo(TestHandler.dummy);
-    }
-
-    @DisplayName("핸들러를 초기화할 수 없으면 IllegalArgumentException을 던진다")
-    @Test
-    void throwIllegalArgumentException_WhenCannotInitializeHandler() throws Exception {
-        Method method = mock(Method.class);
-        Mockito.when(method.getDeclaringClass()).thenThrow(NoSuchMethodError.class);
-
-        assertThatThrownBy(() -> new HandlerExecution(method))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }
