@@ -17,7 +17,7 @@ public class Handler {
         this.instance = instance;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         return (ModelAndView) handler.invoke(instance, request, response);
     }

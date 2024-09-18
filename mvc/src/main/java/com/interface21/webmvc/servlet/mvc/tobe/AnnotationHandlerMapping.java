@@ -18,7 +18,7 @@ public class AnnotationHandlerMapping {
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
     private final AnnotationHandlerFinder handlerFinder;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
         this.handlerFinder = new AnnotationHandlerFinder(basePackage);
@@ -46,7 +46,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = createHandlerKey(request);
         return findHandler(handlerKey);
     }
