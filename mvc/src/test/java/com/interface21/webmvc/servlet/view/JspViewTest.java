@@ -28,4 +28,34 @@ class JspViewTest {
         // then
         assertThat(request.getAttribute("hello")).isSameAs("test");
     }
+
+    @Test
+    @DisplayName("redirect: prefix가 붙어있다면, 302 redirect한다.")
+    void redirect_when_it_has_redirect_prefix() throws Exception {
+        // given
+        final JspView jspView = new JspView("redirect:/");
+        final HttpServletRequest request = new MockHttpServletRequest();
+        final HttpServletResponse response = new MockHttpServletResponse();
+
+        // when
+        jspView.render(Map.of(), request, response);
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(302);
+    }
+
+    @Test
+    @DisplayName("redirect: prefix가 붙어있다면, 그뒤 suffix path로 redirect한다.")
+    void redirect_specific_path_when_it_has_redirect_prefix() throws Exception {
+        // given
+        final JspView jspView = new JspView("redirect:/index.html");
+        final HttpServletRequest request = new MockHttpServletRequest();
+        final HttpServletResponse response = new MockHttpServletResponse();
+
+        // when
+        jspView.render(Map.of(), request, response);
+
+        // then
+        assertThat(response.getHeader("Location")).isEqualTo("/index.html");
+    }
 }
