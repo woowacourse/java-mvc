@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,41 +26,73 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() { // TODO refactor
-        for (Object object : basePackage) {
-            Reflections reflections = new Reflections(object);
-            reflections.getMethodsAnnotatedWith(RequestMapping.class);
-            Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-            for (Class<?> aClass : typesAnnotatedWith) {
-                Method[] methods = aClass.getMethods();
-                for (Method method : methods) {
-                    addHandlerExecution(aClass, method);
-                }
-            }
+    public void initialize() {
+        if (isBasePackageInvalid()) {
+            log.warn("base 패키지가 유효하지 않습니다.");
+            return;
         }
-        log.info("Initialized AnnotationHandlerMapping!");
+        processBasePackages();
+        log.info("AnnotationHandlerMapping 초기화 완료");
     }
 
-    private void addHandlerExecution(Class<?> aClass, Method method) { // TODO refactor
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        Object controller = null;
-        if (annotation == null) {
+    private boolean isBasePackageInvalid() {
+        return basePackage == null || basePackage.length == 0;
+    }
+
+    private void processBasePackages() {
+        Arrays.stream(basePackage)
+                .forEach(this::scanAndInitializeHandlers);
+    }
+
+    private void scanAndInitializeHandlers(Object packageObject) {
+        Reflections reflections = new Reflections(packageObject);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+
+        controllerClasses
+                .forEach(this::registerControllerMethods);
+    }
+
+    private void registerControllerMethods(Class<?> controllerClass) {
+        Arrays.stream(controllerClass.getMethods())
+                .filter(this::isRequestMappingAnnotated)
+                .forEach(method -> registerHandler(controllerClass, method));
+    }
+
+    private boolean isRequestMappingAnnotated(Method method) {
+        return method.getAnnotation(RequestMapping.class) != null;
+    }
+
+    private void registerHandler(Class<?> controllerClass, Method method) {
+        Object controllerInstance = createControllerInstance(controllerClass);
+        if (controllerInstance == null) {
             return;
         }
+
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestMethods = extractRequestMethods(requestMapping);
+
+        Arrays.stream(requestMethods)
+                .forEach(requestMethod -> {
+                    HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                    handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+                });
+    }
+
+    private Object createControllerInstance(Class<?> controllerClass) {
         try {
-             controller = aClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                 InvocationTargetException e) {
-            return;
+            return controllerClass.getConstructor().newInstance();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            log.error("생성자를 호출할 수 없습니다. " + controllerClass.getName(), e);
+            return null;
         }
-        RequestMethod[] requestMethods = annotation.method();
-        if (requestMethods == null) {
-            requestMethods = RequestMethod.values();
+    }
+
+    private RequestMethod[] extractRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods == null || requestMethods.length == 0) {
+            return RequestMethod.values();
         }
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
-        }
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
