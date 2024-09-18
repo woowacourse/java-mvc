@@ -9,16 +9,16 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Class<?> aClass;
+    private final Class<?> clazz;
     private final Method method;
 
-    public HandlerExecution(Class<?> aClass, Method method) {
-        this.aClass = aClass;
+    public HandlerExecution(Class<?> clazz, Method method) {
+        this.clazz = clazz;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Constructor<?> constructor = aClass.getConstructor();
+        Constructor<?> constructor = clazz.getConstructor();
         Object controller = constructor.newInstance();
         return (ModelAndView) method.invoke(controller, request, response);
     }
