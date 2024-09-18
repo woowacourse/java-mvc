@@ -18,15 +18,16 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import samples.TestController;
 
 public class HandlerExecutionTest {
+    private static final String METHOD_FIND_USER_ID = "findUserId";
 
-    @DisplayName("컨트롤러 메서드를 실행한다.")
+    @DisplayName("컨트롤러 메서드를 실행한다. (findUserId)")
     @Test
     void handleTest() throws Exception {
         // given
         final var controller = mock(TestController.class);
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final Method method = TestController.class.getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+        final Method method = TestController.class.getDeclaredMethod(METHOD_FIND_USER_ID, HttpServletRequest.class, HttpServletResponse.class);
         final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
         final ModelAndView expected = new ModelAndView(null);

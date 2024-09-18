@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
     private static final String BASE_PACKAGE = "samples";
+    private static final String KEY = "id";
+    private static final String VALUE = "id";
     private static final String REQUEST_URI_GET_TEST = "/get-test";
     private static final String REQUEST_URI_WRONG = "/get-example";
     private static final String REQUEST_URI_POST_TEST = "/post-test";
@@ -33,14 +35,14 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getAttribute(KEY)).thenReturn(VALUE);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
         when(request.getMethod()).thenReturn(METHOD_GET);
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject(KEY)).isEqualTo(VALUE);
     }
 
     @Test
@@ -48,14 +50,14 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getAttribute(KEY)).thenReturn(VALUE);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_POST_TEST);
         when(request.getMethod()).thenReturn(METHOD_POST);
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject(KEY)).isEqualTo(VALUE);
     }
 
     @DisplayName("HttpServletRequest로 HandlerExecution를 찾을 수 있다.")
