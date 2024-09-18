@@ -26,18 +26,20 @@ public class JspView implements View {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
-
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
+        setRequestAttribute(model, request);
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         if (requestDispatcher == null) {
             response.sendRedirect(NOT_FOUND_JSP_PAGE);
             return;
         }
-
         requestDispatcher.forward(request, response);
+    }
+
+    private void setRequestAttribute(Map<String, ?> model, HttpServletRequest request) {
+        model.keySet().forEach(key -> {
+            log.debug("attribute name : {}, value : {}", key, model.get(key));
+            request.setAttribute(key, model.get(key));
+        });
     }
 }
