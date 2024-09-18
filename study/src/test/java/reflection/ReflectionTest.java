@@ -23,7 +23,6 @@ class ReflectionTest {
 
         assertThat(clazz.getSimpleName()).isEqualTo("Question");
         assertThat(clazz.getName()).isEqualTo("reflection.Question");
-        // 내부 클래스의 경우 $로 구분하여 표기한다.
         assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
     }
 
