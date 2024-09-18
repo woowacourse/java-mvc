@@ -54,6 +54,9 @@ public class AnnotationHandlerMapping {
     private void addHandlerExecutions(Class<?> clazz, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
         Arrays.stream(requestMethods).forEach(requestMethod -> {
             String uri = requestMapping.value();
             addHandlerExecution(clazz, method, uri, requestMethod);

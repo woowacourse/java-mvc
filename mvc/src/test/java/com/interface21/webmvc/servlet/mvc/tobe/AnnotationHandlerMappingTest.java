@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,5 +54,18 @@ class AnnotationHandlerMappingTest {
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("메서드를 지정하지 않으면 모든 메서드에 대해 handler를 지원한다.")
+    @Test
+    void all() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/all-test");
+        when(request.getMethod()).thenReturn("HEAD");
+
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        assertThatNoException().isThrownBy(() -> handlerExecution.handle(request, response));
     }
 }
