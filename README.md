@@ -20,5 +20,5 @@
 2. [Servlet](study/src/test/java/servlet)
 
 ### 1단계 - @MVC 프레임워크 구현하기
-- [ ] @MVC Framework 테스트 통과
+- [x] @MVC Framework 테스트 통과
 - [ ] JspView 클래스를 구현
