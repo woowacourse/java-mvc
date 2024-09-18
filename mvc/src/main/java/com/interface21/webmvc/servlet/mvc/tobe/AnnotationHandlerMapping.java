@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class AnnotationHandlerMapping {
     }
 
     private Set<Class<?>> findControllerClasses() {
-        Reflections reflections = new Reflections(basePackage);
+        Reflections reflections = new Reflections(basePackage, Scanners.TypesAnnotated);
 
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
