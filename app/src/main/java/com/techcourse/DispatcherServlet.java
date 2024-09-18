@@ -2,8 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.HandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.asis.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
