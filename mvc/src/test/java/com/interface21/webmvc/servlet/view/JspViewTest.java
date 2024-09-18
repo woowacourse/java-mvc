@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.view;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,8 +51,10 @@ class JspViewTest {
         jspView.render(model, request, response);
 
         // then
-        verify(request).setAttribute("key", "value");
-        verify(request).setAttribute("key2", "value2");
-        verify(requestDispatcher).forward(request, response);
+        assertAll(
+                () -> verify(request).setAttribute("key", "value"),
+                () -> verify(request).setAttribute("key2", "value2"),
+                () -> verify(requestDispatcher).forward(request, response)
+        );
     }
 }
