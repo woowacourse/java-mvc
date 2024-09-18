@@ -1,5 +1,10 @@
 package reflection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
@@ -8,6 +13,22 @@ class Junit4TestRunner {
     void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        PrintStream originalOut = System.out;
+
+        System.setOut(printStream);
+
+        try {
+            for (Method method : clazz.getMethods()) {
+                if (method.isAnnotationPresent(MyTest.class)) {
+                    method.invoke(clazz.getConstructor().newInstance());
+                }
+            }
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        assertThat(outputStream.toString()).isEqualTo("Running Test1\nRunning Test2\n");
     }
 }
