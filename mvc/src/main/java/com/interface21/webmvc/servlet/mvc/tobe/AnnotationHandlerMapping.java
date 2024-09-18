@@ -32,15 +32,23 @@ public class AnnotationHandlerMapping {
 
     private void scanRequestMappings() {
         Arrays.stream(basePackage)
-                .forEach(obj -> {
-                    Reflections reflections = new Reflections(obj);
-                    Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-                    for (Class<?> clazz : classes) {
-                        Arrays.stream(clazz.getMethods())
-                                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                                .forEach(this::addHandlerExecution);
-                    }
-                });
+                .forEach(this::scanControllerBy);
+    }
+
+    private void scanControllerBy(Object packageName) {
+        Reflections reflections = new Reflections(packageName);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClasses.forEach(this::scanRequestMappingMethod);
+    }
+
+    private void scanRequestMappingMethod(Class<?> clazz) {
+        Arrays.stream(clazz.getMethods())
+                .filter(this::isRequestMappingMethod)
+                .forEach(this::addHandlerExecution);
+    }
+
+    private boolean isRequestMappingMethod(Method method) {
+        return method.isAnnotationPresent(RequestMapping.class);
     }
 
     private void addHandlerExecution(Method method) {
