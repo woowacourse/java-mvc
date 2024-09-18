@@ -1,7 +1,7 @@
 package com.interface21.web.bind.annotation;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
@@ -30,10 +30,8 @@ class RequestMethodTest {
         String invalidMethod = "INVALID";
 
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            RequestMethod.of(invalidMethod);
-        });
-
-        assertEquals("Invalid HTTP method: INVALID", exception.getMessage());
+        assertThatCode(() -> RequestMethod.of(invalidMethod))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid HTTP method: INVALID");
     }
 }
