@@ -18,3 +18,11 @@
 ## 학습 테스트
 1. [Reflection API](study/src/test/java/reflection)
 2. [Servlet](study/src/test/java/servlet)
+
+## 기능 구현 목록
+
+### 1단계 - @MVC 프레임워크 구현하기
+- [x] @MVC Framework 테스트 통과하기
+  - [x] AnnotationHandlerMapping.initialize() 및 getHandler() 구현
+  - [x] HandlerExecution.handle() 구현
+- [ ] JspView 클래스 구현
