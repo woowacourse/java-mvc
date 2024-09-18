@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.ExampleController;
 
-class RequestMappingMethodTest {
+class ControllerMethodTest {
 
     @DisplayName("메서드에 @RequestMapping 어노테이션이 없는 경우 예외가 발생한다.")
     @Test
@@ -20,7 +20,7 @@ class RequestMappingMethodTest {
         Method method = ExampleController.class.getMethod("method3",
                 HttpServletRequest.class, HttpServletResponse.class);
 
-        assertThatThrownBy(() -> new RequestMappingMethod(method))
+        assertThatThrownBy(() -> new ControllerMethod(method))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Method must be annotated with @RequestMapping");
     }
@@ -30,9 +30,9 @@ class RequestMappingMethodTest {
     void createHandlerKeys() throws Exception {
         Method method = getMethod("method1");
         ExampleController instance = new ExampleController();
-        RequestMappingMethod requestMappingMethod = new RequestMappingMethod(method);
+        ControllerMethod controllerMethod = new ControllerMethod(method);
 
-        List<Handler> handlers = requestMappingMethod.createHandlers(instance);
+        List<Handler> handlers = controllerMethod.createHandlers(instance);
 
         assertThat(handlers)
                 .containsExactlyInAnyOrder(
@@ -46,9 +46,9 @@ class RequestMappingMethodTest {
     void createHandlersWithAllMethod() throws Exception {
         Method method = getMethod("method4");
         ExampleController instance = new ExampleController();
-        RequestMappingMethod requestMappingMethod = new RequestMappingMethod(method);
+        ControllerMethod controllerMethod = new ControllerMethod(method);
 
-        List<Handler> handlers = requestMappingMethod.createHandlers(instance);
+        List<Handler> handlers = controllerMethod.createHandlers(instance);
 
         assertThat(handlers)
                 .containsExactlyInAnyOrder(
