@@ -63,6 +63,11 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+        HandlerExecution handler = handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+        if (handler == null) {
+            String invalidRequestInfo = String.join(" ", requestMethod.name(), requestURI);
+            throw new IllegalArgumentException("해당 요청을 처리할 수 있는 핸들러가 존재하지 않습니다. : " + invalidRequestInfo);
+        }
+        return handler;
     }
 }
