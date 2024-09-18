@@ -1,13 +1,12 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +36,12 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
 
-            Map<String, Object> model = mapModel(request);
             JspView jspView = new JspView(viewName);
-            jspView.render(model, request, response);
+            ModelAndView modelAndView = new ModelAndView(jspView);
+            jspView.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Map<String, Object> mapModel(HttpServletRequest request) {
-        return Collections.list(request.getAttributeNames())
-                .stream()
-                .collect(Collectors.toMap(attributeName -> attributeName, request::getAttribute));
     }
 }
