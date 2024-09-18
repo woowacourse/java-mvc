@@ -60,7 +60,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    @DisplayName("HttpServletRequest로 적절한 HandlerExecution을 반환한다.")
+    @DisplayName("HttpServletRequest로 HandlerExecution를 찾을 수 있다.")
     @Test
     void getHandlerTest() {
         // given
@@ -68,17 +68,11 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
         when(request.getMethod()).thenReturn(METHOD_GET);
 
-        final HandlerKey handlerKey = new HandlerKey(REQUEST_URI_GET_TEST, RequestMethod.of(METHOD_GET));
-        final HandlerExecution handlerExecution = new HandlerExecution(null, null);
-        handlerMapping.addHandler(handlerKey, handlerExecution);
-
         // when
-        final HandlerExecution actual = (HandlerExecution) handlerMapping.getHandler(request);
+        final Object handler = handlerMapping.getHandler(request);
 
         // then
-        final HandlerExecution expected = handlerExecution;
-
-        assertThat(actual).isEqualTo(expected);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("HttpServletRequest로 HandlerExecution을 찾지 못하면 IllegalArgumentException을 던진다.")
@@ -86,7 +80,6 @@ class AnnotationHandlerMappingTest {
     void getHandlerTestThrowExceptionWhenNotFound() {
         // given
         final var request = mock(HttpServletRequest.class);
-
         when(request.getRequestURI()).thenReturn(REQUEST_URI_WRONG);
         when(request.getMethod()).thenReturn(METHOD_GET);
 

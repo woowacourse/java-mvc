@@ -59,10 +59,6 @@ public class AnnotationHandlerMapping {
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
-    public void addHandler(final HandlerKey key, final HandlerExecution value) {
-        handlerExecutions.put(key, value);
-    }
-
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
 
