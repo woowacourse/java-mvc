@@ -27,6 +27,7 @@ class AnnotationHandlerMappingTest {
     @DisplayName("GET 메서드에 매핑된 handler를 실행한다.")
     @Test
     void get() throws Exception {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -34,15 +35,18 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
+        // when
         HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @DisplayName("POST 메서드에 매핑된 handler를 실행한다.")
     @Test
     void post() throws Exception {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -50,21 +54,25 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
+        // when
         HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @DisplayName("메서드를 지정하지 않으면 모든 메서드에 대해 handler를 지원한다.")
     @Test
     void all() {
+        // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/all-test");
         when(request.getMethod()).thenReturn("HEAD");
 
+        // when & then
         HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         assertThatNoException().isThrownBy(() -> handlerExecution.handle(request, response));
     }
