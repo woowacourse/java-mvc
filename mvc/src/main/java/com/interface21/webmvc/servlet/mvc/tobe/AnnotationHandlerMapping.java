@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,15 +31,10 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        //TODO 원뎁스로 어케 줄이지
-        for (final Class<?> aClass : classes) {
-            final Method[] declaredMethods = aClass.getDeclaredMethods();
-            for (final Method declaredMethod : declaredMethods) {
-                if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-                    addHandler(aClass, declaredMethod);
-                }
-            }
-        }
+        classes.forEach(aClass ->
+                Arrays.stream(aClass.getDeclaredMethods())
+                        .filter(declaredMethod -> declaredMethod.isAnnotationPresent(RequestMapping.class))
+                        .forEach(declaredMethod -> addHandler(aClass, declaredMethod)));
         log.info("init handlerExecutions: {}", handlerExecutions);
     }
 
