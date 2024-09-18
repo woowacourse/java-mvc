@@ -74,9 +74,55 @@ class HandlerTest {
         verify(instance).testMethod(any(), any());
     }
 
+    @DisplayName("메서드 직접 실행과 method.invoke()의 성능 차이를 비교한다.")
+    @Test
+    void speedTestBetweenDirectCallAndMethodInvoke() throws Exception {
+        int METHOD_CALL_COUNT = 1_000_000;
+
+        // given
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/hello-cloud");
+        when(request.getMethod()).thenReturn("GET");
+
+        Method targetMethod = getTargetMethod("testMethod");
+        HandlerTest instance = spy(new HandlerTest());
+        Handler handler = new Handler(targetMethod, instance);
+
+        // when
+        long methodReflectionInvokeTime = speedMeasure(() -> {
+            for (int i = 0; i < METHOD_CALL_COUNT; i++) {
+                try {
+                    handler.handle(request, response);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        long methodDirectCallTime = speedMeasure(() -> {
+            HandlerTest handlerTest = new HandlerTest();
+            for (int i = 0; i < METHOD_CALL_COUNT; i++) {
+                handlerTest.testMethod(request, response);
+            }
+        });
+
+        // then
+        assertThat(methodDirectCallTime).isLessThan(methodReflectionInvokeTime);
+    }
+
     private Method getTargetMethod(String methodName) throws NoSuchMethodException {
         return getClass().getDeclaredMethod(
             methodName, HttpServletRequest.class, HttpServletResponse.class);
+    }
+
+    private long speedMeasure(Runnable runnable) {
+        long startTime = System.currentTimeMillis();
+        runnable.run();
+        long endTime = System.currentTimeMillis();
+        return endTime - startTime;
     }
 
     @RequestMapping(value = "/hello-cloud", method = {RequestMethod.GET, RequestMethod.DELETE})
