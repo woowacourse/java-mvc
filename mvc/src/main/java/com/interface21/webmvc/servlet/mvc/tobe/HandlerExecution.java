@@ -18,11 +18,11 @@ public class HandlerExecution {
     private final Object controllerInstance;
     private final Method method;
 
-    public HandlerExecution(Method method)
+    public HandlerExecution(Class<?> controller, Method method)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        this.controller = controller;
         this.method = method;
-        this.controller = method.getDeclaringClass();
-        this.controllerInstance = controller.getDeclaredConstructor().newInstance();
+        this.controllerInstance = this.controller.getDeclaredConstructor().newInstance();
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {

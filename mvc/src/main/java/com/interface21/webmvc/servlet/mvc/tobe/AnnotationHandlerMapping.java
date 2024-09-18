@@ -40,36 +40,37 @@ public class AnnotationHandlerMapping {
     private void processController(Class<?> controller) {
         log.debug("Controller = {}\n", controller);
         Method[] methods = controller.getDeclaredMethods(); // 컨트롤러에 선언된 모든 메서드들을 꺼낸다.
-        Arrays.stream(methods).forEach(this::processMethod); // 컨트롤러의 모든 메서드들을 순회한다.
+        Arrays.stream(methods).forEach(method -> processMethod(controller, method)); // 컨트롤러의 모든 메서드들을 순회한다.
     }
 
-    private void processMethod(Method method) {
+    private void processMethod(Class<?> controller, Method method) {
         log.debug("Method = {}\n", method);
         Annotation[] annotations = method.getAnnotations(); // 컨트롤러의 메서드에 선언된 모든 애너테이션을 꺼낸다.
         Arrays.stream(annotations) // 컨트롤러의 메서드에 선언된 모든 애너테이션을 순회한다.
                 .filter(annotation -> annotation instanceof RequestMapping)
                 .map(annotation -> (RequestMapping) annotation) // 애너테이션이 RequestMapping 이면 형변환한다.
-                .forEach(requestMapping -> processRequestMapping(requestMapping, method));
+                .forEach(requestMapping -> processRequestMapping(requestMapping, controller, method));
     }
 
-    private void processRequestMapping(RequestMapping requestMapping, Method method) {
+    private void processRequestMapping(RequestMapping requestMapping, Class<?> controller, Method method) {
         if (requestMapping.method().length == 0) { // RequestMapping 에 RequestMethod 가 없으면
             Arrays.stream(RequestMethod.values()) // 모든 RequestMethod 를 지원한다.
-                    .forEach(requestMethod -> createHandlerKeyAndExecution(requestMapping, requestMethod, method));
+                    .forEach(requestMethod -> createHandlerKeyAndExecution(requestMapping, requestMethod, controller,
+                            method));
             return;
         }
         RequestMethod requestMethod = requestMapping.method()[0]; // RequestMapping 의 method 를 꺼낸다.
-        createHandlerKeyAndExecution(requestMapping, requestMethod, method);
+        createHandlerKeyAndExecution(requestMapping, requestMethod, controller, method);
     }
 
     private void createHandlerKeyAndExecution(RequestMapping requestMapping, RequestMethod requestMethod,
-                                              Method method) {
+                                              Class<?> controller, Method method) {
         String url = requestMapping.value(); // RequestMapping 의 url 을 꺼낸다.
         HandlerKey handlerKey = new HandlerKey(url, requestMethod); // url, method 를 HandlerKey 로 만든다.
         log.debug("requestMapping = {}", requestMapping);
         log.debug("handlerKey = {}\n", handlerKey);
         try {
-            HandlerExecution handlerExecution = new HandlerExecution(method); // HandlerExecution 을 만든다.
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method); // HandlerExecution 을 만든다.
             handlerExecutions.put(handlerKey, handlerExecution); // HandlerKey 에 해당하는 HandlerExecution 을 맵에 저장한다.
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException |
                  IllegalAccessException e) {
