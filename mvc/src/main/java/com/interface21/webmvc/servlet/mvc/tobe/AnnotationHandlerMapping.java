@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,21 +43,26 @@ public class AnnotationHandlerMapping {
     }
 
     private void scanRequestMappingMethod(Class<?> clazz) {
-        Arrays.stream(clazz.getMethods())
-                .filter(this::isRequestMappingMethod)
-                .forEach(this::addHandlerExecution);
+        try {
+            Object controller = clazz.getDeclaredConstructor().newInstance();
+            Arrays.stream(clazz.getMethods())
+                    .filter(this::isRequestMappingMethod)
+                    .forEach(method -> addHandlerExecution(controller, method));
+        } catch (Exception e) {
+            log.error(clazz.getName() + " 컨트롤러를 생성하지 못했습니다. ", e);
+        }
     }
 
     private boolean isRequestMappingMethod(Method method) {
         return method.isAnnotationPresent(RequestMapping.class);
     }
 
-    private void addHandlerExecution(Method method) {
+    private void addHandlerExecution(Object controller, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = annotation.method();
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
     }
 
