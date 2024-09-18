@@ -21,8 +21,8 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             return (ModelAndView) method.invoke(instance, request, response);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new UnsupportedOperationException("잘못된 handling.");
+        } catch (final IllegalAccessException | InvocationTargetException e) {
+            throw new UnsupportedOperationException("handling 과정 예외 발생");
         }
     }
 }
