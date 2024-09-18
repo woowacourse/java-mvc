@@ -31,8 +31,7 @@ class HandlerAdaptorsTest {
         }
 
         @Override
-        public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
-                throws Exception {
+        public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
             return null;
         }
     }
@@ -45,8 +44,7 @@ class HandlerAdaptorsTest {
         }
 
         @Override
-        public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
-                throws Exception {
+        public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
             return null;
         }
     }
