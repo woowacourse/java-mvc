@@ -1,11 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +25,35 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        final Reflections reflections = new Reflections(basePackage);
+        reflections.getTypesAnnotatedWith(Controller.class)
+                .stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(this::addHandlerExecution);
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void addHandlerExecution(final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final HandlerKey handlerKey = HandlerKey.from(requestMapping);
+        final HandlerExecution handlerExecution = HandlerExecution.from(method);
+
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("이미 존재하는 요청 매핑입니다.");
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final HandlerKey handlerKey = getHandlerKey(request);
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private HandlerKey getHandlerKey(final HttpServletRequest request) {
+        final String requestUri = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        return new HandlerKey(requestUri, requestMethod);
     }
 }
