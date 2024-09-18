@@ -13,7 +13,7 @@ public class Handler {
 
     private final Method method;
     private final Object instance;
-    private RequestMethod[] requestMethods;
+    private RequestMapping requestMapping;
 
     public Handler(Method method, Object instance) {
         this.method = method;
@@ -26,18 +26,23 @@ public class Handler {
     }
 
     public RequestMethod[] getRequestMethods() {
-        if (requestMethods != null) {
-            return requestMethods;
+        if (requestMapping == null) {
+            requestMapping = getRequestMapping();
         }
-        RequestMapping requestMapping = method.getDeclaredAnnotation(REQUEST_MAPPING_ANNOTATION);
         if (requestMapping.method().length == 0) {
             return RequestMethod.values();
         }
-        return requestMethods = requestMapping.method();
+        return requestMapping.method();
     }
 
     public String getUri() {
-        RequestMapping requestMapping = method.getDeclaredAnnotation(REQUEST_MAPPING_ANNOTATION);
+        if (requestMapping == null) {
+            requestMapping = getRequestMapping();
+        }
         return requestMapping.value();
+    }
+
+    private RequestMapping getRequestMapping() {
+        return method.getDeclaredAnnotation(REQUEST_MAPPING_ANNOTATION);
     }
 }
