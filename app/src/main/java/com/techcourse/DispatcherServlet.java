@@ -2,14 +2,16 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.HandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.asis.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdaptor;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,20 +21,31 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdaptor> handlerAdaptors;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        initHandlerMappings();
+        initHandlerAdaptors();
+    }
+
+    private void initHandlerMappings() {
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
 
         String packageName = getClass().getPackageName();
-        annotationHandlerMapping = new AnnotationHandlerMapping(packageName);
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(packageName);
         annotationHandlerMapping.initialize();
+
+        handlerMappings = List.of(annotationHandlerMapping, manualHandlerMapping);
+    }
+
+    private void initHandlerAdaptors() {
+        handlerAdaptors = List.of(new HandlerExecutionHandlerAdaptor(), new ControllerHandlerAdaptor());
     }
 
     @Override
@@ -40,8 +53,9 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = getHandler(request);
-            ModelAndView modelAndView = handle(handler, request, response);
+            Object handler = findHandler(request);
+            HandlerAdaptor handlerAdaptor = findHandlerAdaptor(handler);
+            ModelAndView modelAndView = handlerAdaptor.handle(request, response, handler);
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -49,26 +63,23 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object getHandler(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        try {
-            return annotationHandlerMapping.getHandler(request);
-        } catch (IllegalArgumentException e) {
-            log.info("annotationHandlerMapping에 존재하지 않는 요청 : {} {}", request.getMethod(), requestURI);
+    private Object findHandler(HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            try {
+                return handlerMapping.getHandler(request);
+            } catch (IllegalArgumentException e) {
+                log.info("{} 에 존재하지 않는 요청 : {} {}", handlerMapping.getClass().getName(),
+                        request.getMethod(), request.getRequestURI());
+            }
         }
-        return manualHandlerMapping.getHandler(requestURI);
+        throw new IllegalArgumentException("지원하는 handlerMapping 이 없습니다.");
     }
 
-    private ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        if (handler instanceof HandlerExecution handlerExecution) {
-            return handlerExecution.handle(request, response);
-        }
-        if (handler instanceof Controller controller) {
-            String viewName = controller.execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        }
-        throw new IllegalArgumentException("지원하지 않는 handler 입니다.");
+    private HandlerAdaptor findHandlerAdaptor(Object handler) {
+        return handlerAdaptors.stream()
+                .filter(handlerAdaptor -> handlerAdaptor.support(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("지원하는 handlerAdaptor 가 없습니다."));
     }
 
     private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
