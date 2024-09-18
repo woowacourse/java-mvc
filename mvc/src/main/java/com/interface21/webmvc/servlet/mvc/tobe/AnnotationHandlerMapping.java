@@ -1,6 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +28,34 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controller : controllers) {
+            Arrays.stream(controller.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(this::putHandlerExecutions);
+        }
+    }
+
+    private void putHandlerExecutions(Method method) {
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        String value = requestMapping.value();
+        RequestMethod[] requestedMethods = getRequestMethods(requestMapping);
+        for (RequestMethod requestMethod : requestedMethods) {
+            handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(method));
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] requestedMethods = requestMapping.method();
+        if (requestedMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestedMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
     }
 }
