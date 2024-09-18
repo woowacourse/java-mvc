@@ -1,11 +1,12 @@
 package reflection;
 
-import static java.util.Arrays.stream;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
+import static java.util.Arrays.stream;
 
 class Junit4TestRunner {
 
