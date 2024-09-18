@@ -12,21 +12,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
 
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
     }
 
     @Test
     void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
@@ -39,9 +42,6 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
@@ -57,16 +57,13 @@ class AnnotationHandlerMappingTest {
     @ValueSource(strings = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"})
     void supplyAllMethods(String methodName) throws Exception {
         // given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/all-method");
         when(request.getMethod()).thenReturn(methodName);
 
         // when
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
