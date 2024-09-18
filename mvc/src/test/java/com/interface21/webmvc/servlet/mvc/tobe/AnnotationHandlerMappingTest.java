@@ -68,7 +68,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn(METHOD_GET);
 
         final HandlerKey handlerKey = new HandlerKey(REQUEST_URI_GET_TEST, RequestMethod.of(METHOD_GET));
-        final HandlerExecution handlerExecution = new HandlerExecution();
+        final HandlerExecution handlerExecution = new HandlerExecution(null, null);
         handlerMapping.addHandler(handlerKey, handlerExecution);
 
         // when
