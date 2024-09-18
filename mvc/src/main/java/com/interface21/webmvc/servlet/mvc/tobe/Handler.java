@@ -9,8 +9,11 @@ import java.lang.reflect.Method;
 
 public class Handler {
 
+    private static final Class<RequestMapping> REQUEST_MAPPING_ANNOTATION = RequestMapping.class;
+
     private final Method method;
     private final Object instance;
+    private RequestMethod[] requestMethods;
 
     public Handler(Method method, Object instance) {
         this.method = method;
@@ -23,15 +26,18 @@ public class Handler {
     }
 
     public RequestMethod[] getRequestMethods() {
-        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        if (requestMethods != null) {
+            return requestMethods;
+        }
+        RequestMapping requestMapping = method.getDeclaredAnnotation(REQUEST_MAPPING_ANNOTATION);
         if (requestMapping.method().length == 0) {
             return RequestMethod.values();
         }
-        return requestMapping.method();
+        return requestMethods = requestMapping.method();
     }
 
     public String getUri() {
-        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        RequestMapping requestMapping = method.getDeclaredAnnotation(REQUEST_MAPPING_ANNOTATION);
         return requestMapping.value();
     }
 }

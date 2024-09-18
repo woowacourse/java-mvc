@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import org.reflections.Reflections;
 public class AnnotationHandlerFinder {
 
     private static final Class<? extends Annotation> HANDLER_CLASS_ANNOTATION = Controller.class;
+    private static final Class<? extends Annotation> HANDLER_METHOD_ANNOTATION = RequestMapping.class;
 
     private final Reflections reflections;
     private final Map<Class<?>, Object> handlerInstanceContainer;
@@ -21,8 +23,8 @@ public class AnnotationHandlerFinder {
         this.handlerInstanceContainer = new HashMap<>();
     }
 
-    public List<Handler> findHandlers(Class<? extends Annotation> annotation) {
-        List<Method> methods = findAnnotatedMethods(annotation);
+    public List<Handler> findHandlers() {
+        List<Method> methods = findAnnotatedMethods(HANDLER_METHOD_ANNOTATION);
         return createHandlers(methods);
     }
 

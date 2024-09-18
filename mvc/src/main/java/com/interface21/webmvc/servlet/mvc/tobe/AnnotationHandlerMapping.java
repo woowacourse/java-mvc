@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        List<Handler> handlers = handlerFinder.findHandlers(RequestMapping.class);
+        List<Handler> handlers = handlerFinder.findHandlers();
         handlers.forEach(this::registerHandler);
         log.info("Initialized AnnotationHandlerMapping!");
     }
