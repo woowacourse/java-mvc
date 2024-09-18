@@ -28,7 +28,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
@@ -36,10 +37,7 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
 
-            Map<String, Object> model = Collections.list(request.getAttributeNames())
-                    .stream()
-                    .collect(Collectors.toMap(attributeName -> attributeName, request::getAttribute));
-
+            Map<String, Object> model = mapModel(request);
             JspView jspView = new JspView(viewName);
             jspView.render(model, request, response);
         } catch (Throwable e) {
@@ -48,4 +46,9 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    private Map<String, Object> mapModel(HttpServletRequest request) {
+        return Collections.list(request.getAttributeNames())
+                .stream()
+                .collect(Collectors.toMap(attributeName -> attributeName, request::getAttribute));
+    }
 }

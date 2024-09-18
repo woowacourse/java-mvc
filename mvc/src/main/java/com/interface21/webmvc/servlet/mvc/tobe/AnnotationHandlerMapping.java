@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import javassist.NotFoundException;
 import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
@@ -31,26 +31,31 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) throws NotFoundException {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder
-                .setUrls(ClasspathHelper.forPackage("samples"))
-                .setScanners(new MethodAnnotationsScanner());
+        Method method = findMethod(request);
+        Object controller = createControllerInstance(method);
 
-        Reflections reflections = new Reflections(configurationBuilder);
+        return new HandlerExecution(controller, method);
+    }
+
+    private Method findMethod(HttpServletRequest request) throws NotFoundException {
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(""))
+                .setScanners(Scanners.MethodsAnnotated));
+
         Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
-        Method targetMethod = methods.stream()
+        return methods.stream()
                 .filter(method -> method.getAnnotation(RequestMapping.class).value().equals(request.getRequestURI()))
                 .filter(method -> method.getAnnotation(RequestMapping.class).method()[0].name()
                         .equals(request.getMethod()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("No resource found"));
+    }
 
-        Object controller;
+    private Object createControllerInstance(Method method) {
         try {
-            controller = targetMethod.getDeclaringClass().getDeclaredConstructor().newInstance();
+            return method.getDeclaringClass().getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Internal error: Failed to create controller instance", e);
+            throw new IllegalStateException("Internal error: Failed to create controller instance");
         }
-        return new HandlerExecution(controller, targetMethod);
     }
 }
