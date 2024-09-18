@@ -43,9 +43,17 @@ public class AnnotationHandlerMapping {
 
     private void putHandlerExecution(String requestUri, RequestMethod requestMethod, Method method, Class<?> clazz) {
         HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-        HandlerExecution handlerExecution = new HandlerExecution(method, clazz);
+        HandlerExecution handlerExecution = findHandlerExecution(method, clazz);
         validateExecutions(handlerKey);
         handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
+    private HandlerExecution findHandlerExecution(Method method, Class<?> clazz) {
+        try {
+            return new HandlerExecution(method, clazz);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Handler find error.");
+        }
     }
 
     private void validateExecutions(HandlerKey handlerKey) {
