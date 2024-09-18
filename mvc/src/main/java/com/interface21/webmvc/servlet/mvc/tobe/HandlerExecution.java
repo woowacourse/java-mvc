@@ -9,15 +9,14 @@ import com.interface21.webmvc.servlet.ModelAndView;
 
 public class HandlerExecution {
     private final Method method;
-    private final Class<?> clazz;
+    private final Object instance;
 
-    public HandlerExecution(Method method, Class<?> clazz) {
+    public HandlerExecution(Method method, Object instance) {
         this.method = method;
-        this.clazz = clazz;
+        this.instance = instance;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Object controller = clazz.getDeclaredConstructor().newInstance();
-        return (ModelAndView) method.invoke(controller, request, response);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return (ModelAndView) method.invoke(instance, request, response);
     }
 }

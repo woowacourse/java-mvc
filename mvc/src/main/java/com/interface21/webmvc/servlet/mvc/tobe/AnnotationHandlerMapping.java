@@ -23,10 +23,12 @@ public class AnnotationHandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<Class<?>, Object> handlerInstances;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        this.handlerInstances = new HashMap<>();
     }
 
     public void initialize() {
@@ -60,8 +62,21 @@ public class AnnotationHandlerMapping {
 
     private void addHandlerExecution(Class<?> clazz, Method method, String uri, RequestMethod requestMethod) {
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-        HandlerExecution handlerExecution = new HandlerExecution(method, clazz);
+        Object handlerInstance = createHandlerInstance(clazz);
+        HandlerExecution handlerExecution = new HandlerExecution(method, handlerInstance);
         handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
+    private Object createHandlerInstance(Class<?> clazz) {
+        if (handlerInstances.containsKey(clazz)) {
+            return handlerInstances.get(clazz);
+        }
+        try {
+            handlerInstances.put(clazz, clazz.getConstructor().newInstance());
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot create instance for class: " + clazz.getName());
+        }
+        return handlerInstances.get(clazz);
     }
 
     public Object getHandler(final HttpServletRequest request) {
