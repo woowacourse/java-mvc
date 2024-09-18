@@ -1,5 +1,6 @@
 package reflection;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
@@ -12,10 +13,15 @@ class Junit3TestRunner {
         Junit3Test testInstance = clazz.getDeclaredConstructor().newInstance();
 
         // TODO Junit3Test에서 test로 시작하는 메소드 실행
-        Method test1 = clazz.getMethod("test1");
-        Method test2 = clazz.getMethod("test2");
+        for (Method method : clazz.getDeclaredMethods()) {
+            invokeTestMethods(method, testInstance);
+        }
+    }
 
-        test1.invoke(testInstance);
-        test2.invoke(testInstance);
+    private static void invokeTestMethods(Method method, Junit3Test testInstance)
+            throws IllegalAccessException, InvocationTargetException {
+        if (method.getName().startsWith("test")) {
+            method.invoke(testInstance);
+        }
     }
 }
