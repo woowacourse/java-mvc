@@ -9,21 +9,21 @@ import java.lang.reflect.Method;
 
 public class Handler {
 
-    private final Method handler;
+    private final Method method;
     private final Object instance;
 
-    public Handler(Method handler, Object instance) {
-        this.handler = handler;
+    public Handler(Method method, Object instance) {
+        this.method = method;
         this.instance = instance;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
         throws Exception {
-        return (ModelAndView) handler.invoke(instance, request, response);
+        return (ModelAndView) method.invoke(instance, request, response);
     }
 
     public RequestMethod[] getRequestMethods() {
-        RequestMapping requestMapping = handler.getDeclaredAnnotation(RequestMapping.class);
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         if (requestMapping.method().length == 0) {
             return RequestMethod.values();
         }
@@ -31,7 +31,7 @@ public class Handler {
     }
 
     public String getUri() {
-        RequestMapping requestMapping = handler.getDeclaredAnnotation(RequestMapping.class);
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         return requestMapping.value();
     }
 }

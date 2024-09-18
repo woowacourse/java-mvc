@@ -27,7 +27,24 @@ class AnnotationHandlerFinderTest {
         // then
         Method[] expected = TestController.class.getDeclaredMethods();
         assertThat(handlers).hasSize(expected.length)
-            .extracting("handler")
+            .extracting("method")
             .containsExactlyInAnyOrderElementsOf(Arrays.asList(expected));
+    }
+
+    @DisplayName("같은 클래스의 핸들러들은 동일한 인스턴스를 참조한다.")
+    @Test
+    void findHandlersTest1() {
+        // given
+        String[] basePackage = {"samples"};
+        AnnotationHandlerFinder annotationHandlerFinder = new AnnotationHandlerFinder(basePackage);
+
+        // when
+        Class<? extends Annotation> targetAnnotation = RequestMapping.class;
+        List<Handler> handlers = annotationHandlerFinder.findHandlers(targetAnnotation);
+
+        // then
+        assertThat(handlers)
+            .extracting("instance")
+            .satisfies(instances -> assertThat(instances.stream().distinct().count()).isEqualTo(1));
     }
 }
