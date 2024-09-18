@@ -7,4 +7,3 @@
 * [x] HTTP 메서드와 URL을 매핑 조건으로 설정하기
 * [x] jspView 책임 재설정
 * [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원하기
-* [ ] jspView 테스트 보완
