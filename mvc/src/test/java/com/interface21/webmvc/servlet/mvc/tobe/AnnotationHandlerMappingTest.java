@@ -53,7 +53,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = RequestMethod.class)
+    @EnumSource(RequestMethod.class)
     void method_설정이_없으면_모든_HTTP_method를_지원한다(RequestMethod requestMethod) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
