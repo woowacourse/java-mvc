@@ -9,13 +9,13 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 class HandlerExecutionTest {
@@ -44,7 +44,7 @@ class HandlerExecutionTest {
 
         HandlerExecution handlerExecution = new HandlerExecution(method);
 
-        MockHttpServletRequest request = mock(MockHttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         given(request.getAttribute("id")).willReturn("gugu");
