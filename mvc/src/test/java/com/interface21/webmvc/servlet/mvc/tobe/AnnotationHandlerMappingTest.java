@@ -15,6 +15,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.sun.net.httpserver.Request;
 
 class AnnotationHandlerMappingTest {
+    private static final String BASE_PACKAGE = "samples";
     private static final String REQUEST_URI_GET_TEST = "/get-test";
     private static final String REQUEST_URI_WRONG = "/get-example";
     private static final String REQUEST_URI_POST_TEST = "/post-test";
@@ -25,7 +26,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         handlerMapping.initialize();
     }
 
