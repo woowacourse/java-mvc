@@ -30,5 +30,4 @@ class HandlerKeyTest {
         // when&then
         assertThat(handlerKey1).isEqualTo(handlerKey2);
     }
-
 }
