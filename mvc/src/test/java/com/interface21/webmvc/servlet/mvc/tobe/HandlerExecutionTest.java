@@ -5,8 +5,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JsonView;
+import com.interface21.webmvc.servlet.view.JspView;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
@@ -32,6 +34,11 @@ class HandlerExecutionTest {
         Method[] methods = controller.getDeclaredMethods();
 
         Method method = Arrays.stream(methods)
+                .filter(m -> {
+                    RequestMapping requestMapping = m.getAnnotation(RequestMapping.class);
+                    return requestMapping != null && Arrays.stream(requestMapping.method())
+                            .anyMatch(requestMethod -> requestMethod == RequestMethod.GET);
+                })
                 .findAny()
                 .orElseThrow();
 
@@ -48,6 +55,6 @@ class HandlerExecutionTest {
 
         assertThat(modelAndView).isNotNull();
         assertThat((String) modelAndView.getObject("id")).isEqualTo("gugu");
-        assertThat(modelAndView.getView()).isInstanceOf(JsonView.class);
+        assertThat(modelAndView.getView()).isInstanceOf(JspView.class);
     }
 }
