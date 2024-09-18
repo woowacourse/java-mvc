@@ -32,7 +32,7 @@ public class ControllerContainer {
     }
 
     private void init(final Class<?> controller) {
-        final String name = controller.getSimpleName();
+        final String name = controller.getName();
         final Object instance = getInstance(controller);
         container.put(name, instance);
     }
@@ -59,7 +59,7 @@ public class ControllerContainer {
     }
 
     public Object getController(final Class<?> controller) {
-        return getController(controller.getSimpleName());
+        return getController(controller.getName());
     }
 
     public Object getController(final String name) {
