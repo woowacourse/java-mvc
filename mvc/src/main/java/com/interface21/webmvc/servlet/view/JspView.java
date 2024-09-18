@@ -27,11 +27,11 @@ public class JspView implements View {
         log.debug("Rendering view: {} | Method: {} | Request URI: {}", viewName, request.getMethod(),
                 request.getRequestURI());
 
-        setAttributes(model, request);
         if (isRedirect()) {
             handleRedirect(response);
             return;
         }
+        setAttributes(model, request);
         forwardToView(request, response);
     }
 
