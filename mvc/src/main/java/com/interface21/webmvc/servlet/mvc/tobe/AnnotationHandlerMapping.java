@@ -64,10 +64,20 @@ public class AnnotationHandlerMapping {
         final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         final RequestMethod[] requestMethods = annotation.method();
         final String url = annotation.value();
-        final List<HandlerKey> keys = Stream.of(requestMethods)
+        final List<HandlerKey> keys = createRequestMethod(requestMethods, url);
+        keys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(instance, method)));
+    }
+
+    private List<HandlerKey> createRequestMethod(final RequestMethod[] requestMethods, final String url) {
+        if (requestMethods.length == 0) {
+            return Stream.of(RequestMethod.values())
+                    .map(requestMethod -> new HandlerKey(url, requestMethod))
+                    .toList();
+        }
+
+        return Stream.of(requestMethods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .toList();
-        keys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(instance, method)));
     }
 
     public Object getHandler(final HttpServletRequest request) {
