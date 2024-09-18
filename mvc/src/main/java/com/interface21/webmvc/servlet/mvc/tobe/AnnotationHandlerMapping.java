@@ -53,14 +53,19 @@ public class AnnotationHandlerMapping {
 
     private void addHandlerExecutions(Class<?> clazz, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == 0) {
-            requestMethods = RequestMethod.values();
-        }
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
         Arrays.stream(requestMethods).forEach(requestMethod -> {
             String uri = requestMapping.value();
             addHandlerExecution(clazz, method, uri, requestMethod);
         });
+    }
+
+    private static RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     private void addHandlerExecution(Class<?> clazz, Method method, String uri, RequestMethod requestMethod) {
