@@ -30,13 +30,8 @@ public class HandlerExecution {
         ModelAndView modelAndView = (ModelAndView) method.invoke(controllerInstance, request, response);
         Map<String, Object> model = modelAndView.getModel();
         View view = modelAndView.getView();
-        try {
-            view.render(model, request, response);
-        } catch (IllegalArgumentException e) {
-            log.error("Error rendering view: {}", e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "An error occurred while rendering the view.");
-        }
+        view.render(model, request, response);
+
         return modelAndView;
     }
 }

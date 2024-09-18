@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
+    private static final String RESOURCE_NOT_FOUND_PAGE = "/404.jsp";
     public static final String REDIRECT_PREFIX = "redirect:";
 
     private final String viewName;
@@ -31,8 +32,20 @@ public class JspView implements View {
             handleRedirect(response);
             return;
         }
+
+        forward(model, request, response);
+    }
+
+    private void forward(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         setAttributes(model, request);
-        forwardToView(request, response);
+
+        try {
+            forwardToView(request, response);
+        } catch (IllegalArgumentException e) {
+            log.error("Error forwarding to view: {}", viewName, e);
+            response.sendRedirect(RESOURCE_NOT_FOUND_PAGE);
+        }
     }
 
     private void setAttributes(Map<String, ?> model, HttpServletRequest request) {
