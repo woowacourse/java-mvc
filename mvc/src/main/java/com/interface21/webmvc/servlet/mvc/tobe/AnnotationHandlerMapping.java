@@ -1,7 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,27 +33,42 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : controllerClasses) {
-            Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> {
-                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                        String uri = requestMapping.value();
-                        Arrays.stream(requestMapping.method())
-                                .forEach(requestMethod -> {
-                                    HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-                                    HandlerExecution handlerExecution = new HandlerExecution(method, clazz);
-                                    handlerExecutions.put(handlerKey, handlerExecution);
-                                });
-                    });
+        for (Class<?> controllerClass : controllerClasses) {
+            registerHandlers(controllerClass);
         }
+    }
 
+    private void registerHandlers(Class<?> clazz) {
+        List<Method> methods = findMethodsWithRequestMapping(clazz);
+        methods.forEach(method -> addHandlerExecutions(clazz, method));
+    }
+
+    private static List<Method> findMethodsWithRequestMapping(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+    }
+
+    private void addHandlerExecutions(Class<?> clazz, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestMethods = requestMapping.method();
+        Arrays.stream(requestMethods).forEach(requestMethod -> {
+            String uri = requestMapping.value();
+            addHandlerExecution(clazz, method, uri, requestMethod);
+        });
+    }
+
+    private void addHandlerExecution(Class<?> clazz, Method method, String uri, RequestMethod requestMethod) {
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        HandlerExecution handlerExecution = new HandlerExecution(method, clazz);
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.find(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(uri, method);
+
         return handlerExecutions.get(handlerKey);
     }
 }
