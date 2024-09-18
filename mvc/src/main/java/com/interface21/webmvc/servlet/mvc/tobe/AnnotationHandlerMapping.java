@@ -1,11 +1,21 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +31,67 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Set<Class<?>> controllerClasses = findControllerClasses();
+        for (Class<?> controllerClass : controllerClasses) {
+            Object controller = getInstance(controllerClass);
+            Set<Method> methods = findRequestMappingMethods(controllerClass);
+            methods.forEach(method -> addHandlerExecution(controller, method));
+        }
+    }
+
+    private Set<Class<?>> findControllerClasses() {
+        Reflections reflections = new Reflections(basePackage);
+
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private Object getInstance(Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Class의 인스턴스를 생성하는데 실패했습니다. Class = " + clazz.getName());
+        }
+    }
+
+    private Set<Method> findRequestMappingMethods(Class<?> controllerClass) {
+        return Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
+    private void addHandlerExecution(Object controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String url = getUrl(requestMapping, method.getName());
+        for (RequestMethod requestMethod : getRequestMethods(requestMapping)) {
+            handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution(controller, method));
+        }
+    }
+
+    private String getUrl(RequestMapping requestMapping, String methodName) {
+        String url = requestMapping.value();
+        if (url.isBlank()) {
+            throw new IllegalStateException("@RequestMapping의 value값이 지정되어 있지 않습니다. methodName = " + methodName);
+        }
+        return url;
+    }
+
+    private Set<RequestMethod> getRequestMethods(RequestMapping requestMapping) {
+        Set<RequestMethod> methods = Arrays.stream(requestMapping.method())
+                .collect(Collectors.toSet());
+
+        if (methods.isEmpty()) {
+            Set<RequestMethod> allRequestMethods = Arrays.stream(RequestMethod.values())
+                    .collect(Collectors.toSet());
+            return allRequestMethods;
+        }
+        return methods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.getMethod(request.getMethod()));
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("HttpServletRequest에 대응하는 handlerKey가 등록되어 있지 않습니다. " + handlerKey);
+        }
+        return handlerExecutions.get(handlerKey);
     }
 }
