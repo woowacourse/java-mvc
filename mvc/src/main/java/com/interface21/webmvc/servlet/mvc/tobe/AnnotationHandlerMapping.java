@@ -30,7 +30,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) throws NotFoundException {
+    public Object getHandler(final HttpServletRequest request) throws NotFoundException, ReflectiveOperationException {
         Method method = findMethod(request);
         Object controller = createControllerInstance(method);
 
@@ -48,14 +48,14 @@ public class AnnotationHandlerMapping {
                 .filter(method -> method.getAnnotation(RequestMapping.class).method()[0].name()
                         .equals(request.getMethod()))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("No resource found"));
+                .orElseThrow(() -> new NotFoundException("Resource not found"));
     }
 
-    private Object createControllerInstance(Method method) {
+    private Object createControllerInstance(Method method) throws ReflectiveOperationException {
         try {
             return method.getDeclaringClass().getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Internal error: Failed to create controller instance");
+        } catch (ReflectiveOperationException e) {
+            throw new ReflectiveOperationException("Internal error: Failed to create controller instance");
         }
     }
 }
