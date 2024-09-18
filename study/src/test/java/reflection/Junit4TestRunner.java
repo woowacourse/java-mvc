@@ -12,7 +12,6 @@ class Junit4TestRunner {
     @Test
     void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
-        Junit4Test junit4Test = new Junit4Test();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
@@ -22,8 +21,8 @@ class Junit4TestRunner {
 
         try {
             for (Method method : clazz.getMethods()) {
-                if (method.getDeclaredAnnotation(MyTest.class) != null) {
-                    method.invoke(junit4Test);
+                if (method.isAnnotationPresent(MyTest.class)) {
+                    method.invoke(clazz.getConstructor().newInstance());
                 }
             }
         } finally {
