@@ -13,12 +13,12 @@ public class RequestMethodTest {
     @DisplayName("문자열과 일치하는 RequestMethod를 반환한다.")
     @EnumSource(RequestMethod.class)
     @ParameterizedTest
-    void ofTest(RequestMethod expected) {
+    void ofTest(final RequestMethod expected) {
         // given
-        String methodName = expected.name();
+        final String methodName = expected.name();
 
         // when
-        RequestMethod actual = RequestMethod.of(methodName);
+        final RequestMethod actual = RequestMethod.of(methodName);
 
         // then
         assertThat(actual).isEqualTo(expected);
@@ -28,7 +28,7 @@ public class RequestMethodTest {
     @Test
     void ofTestThrowExceptionWhenNotFound() {
         // given
-        String methodName = "EXAMPLE";
+        final String methodName = "EXAMPLE";
 
         // when & then
         assertThatThrownBy(() -> RequestMethod.of(methodName))
