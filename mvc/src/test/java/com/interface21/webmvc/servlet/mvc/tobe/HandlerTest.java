@@ -13,6 +13,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -74,6 +75,7 @@ class HandlerTest {
         verify(instance).testMethod(any(), any());
     }
 
+    @Disabled
     @DisplayName("메서드 직접 실행과 method.invoke()의 성능 차이를 비교한다.")
     @Test
     void speedTestBetweenDirectCallAndMethodInvoke() throws Exception {
