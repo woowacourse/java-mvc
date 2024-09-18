@@ -65,7 +65,7 @@ public class AnnotationHandlerMapping {
         final RequestMethod[] requestMethods = annotation.method();
         final String url = annotation.value();
         final List<HandlerKey> keys = createRequestMethod(requestMethods, url);
-        keys.forEach(key -> handlerExecutions.put(key, new HandlerExecution(instance, method)));
+        keys.forEach(key -> appendHandlerMapping(instance, method, key));
     }
 
     private List<HandlerKey> createRequestMethod(final RequestMethod[] requestMethods, final String url) {
@@ -74,10 +74,16 @@ public class AnnotationHandlerMapping {
                     .map(requestMethod -> new HandlerKey(url, requestMethod))
                     .toList();
         }
-
         return Stream.of(requestMethods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .toList();
+    }
+
+    private void appendHandlerMapping(final Object instance, final Method method, final HandlerKey key) {
+        if (handlerExecutions.containsKey(key)) {
+            throw new IllegalArgumentException("이미 존재하는 메서드 와 URL");
+        }
+        handlerExecutions.put(key, new HandlerExecution(instance, method));
     }
 
     public Object getHandler(final HttpServletRequest request) {
