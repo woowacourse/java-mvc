@@ -28,14 +28,14 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
 
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
-            for (Method method : clazz.getDeclaredMethods()) {
-                addHandlerExecution(clazz, method);
+        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+            for (Method method : controllerClass.getDeclaredMethods()) {
+                addHandlerExecution(controllerClass, method);
             }
         }
     }
 
-    private void addHandlerExecution(Class<?> clazz, Method method) {
+    private void addHandlerExecution(Class<?> controllerClass, Method method) {
         if (!method.isAnnotationPresent(RequestMapping.class)) {
             return;
         }
@@ -45,7 +45,7 @@ public class AnnotationHandlerMapping {
         RequestMethod requestMethod = requestMapping.method()[0];
         HandlerKey handlerKey = new HandlerKey(mappedUrl, requestMethod);
 
-        handlerExecutions.put(handlerKey, new HandlerExecution(clazz, method));
+        handlerExecutions.put(handlerKey, new HandlerExecution(controllerClass, method));
     }
 
     public Object getHandler(final HttpServletRequest request) {
