@@ -59,8 +59,10 @@ public class AnnotationHandlerMapping {
             Constructor<?> firstConstructor = controller.getDeclaredConstructor();
             Object executionTarget = firstConstructor.newInstance();
             return new HandlerExecution(executionTarget, targetMethod);
+        } catch(NoSuchMethodException e) {
+            throw new IllegalArgumentException("default constructor가 존재하지 않습니다 %s".formatted(controller.getCanonicalName()));
         } catch (Exception e) {
-            throw new IllegalArgumentException("메서드 타입이 다른 controller로 초기화 했습니다.");
+            throw new IllegalArgumentException("HandlerMapping을 초기화 하는데 실패했습니다.");
         }
     }
 
