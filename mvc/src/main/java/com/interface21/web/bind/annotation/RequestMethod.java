@@ -17,6 +17,6 @@ public enum RequestMethod {
         return Arrays.stream(RequestMethod.values())
                 .filter(method -> method.name().equals(name))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(name + "에 해당하는 HTTP method가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(name + "에 해당하는 HTTP 메서드가 없습니다."));
     }
 }
