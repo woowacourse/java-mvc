@@ -149,6 +149,7 @@ class ReflectionTest {
         field.set(student, 99);
 
         assertThat(field.getInt(student)).isEqualTo(99);
+        field.setAccessible(false);  // 한 번 제어를 변경한 경우 계속 상태가 유지되므로, 사용 후 복구시켜 줌
         assertThat(student.getAge()).isEqualTo(99);
     }
 }
