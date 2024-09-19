@@ -32,8 +32,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final Optional<HandlerExecution> handlerExecution = handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.get().handle(request, response);
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -47,8 +47,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final Optional<HandlerExecution> handlerExecution = handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.get().handle(request, response);
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -63,8 +63,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/all-test");
         when(request.getMethod()).thenReturn(requestMethod.name());
 
-        final Optional<HandlerExecution> handlerExecution = handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.get().handle(request, response);
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
