@@ -28,5 +28,5 @@
 - AnnotationHandlerMappingTest 통과 시키기
   - [x] AnnotationHandlerMapping initialize : 핸들러 매핑의 초기화 작업
   - [x] AnnotationHandlerMapping getHandler : 요청에 적합한 핸들러 조회
-  - [ ] HandlerExecution handle : 요청 처리
+  - [x] HandlerExecution handle : 요청 처리
 - JspView 클래스 구현
