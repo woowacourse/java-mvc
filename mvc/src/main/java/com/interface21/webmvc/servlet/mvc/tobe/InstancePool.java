@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.exception.UncheckedReflectiveOperationException;
 
 public class InstancePool {
 
@@ -18,19 +19,23 @@ public class InstancePool {
     }
 
     public Object getInstance(Class<?> clazz) {
+        String instanceKey = toKey(clazz);
+        if (instancePool.containsKey(instanceKey)) {
+            return instancePool.get(instanceKey);
+        }
+        Object instance = createNewInstance(clazz);
+        instancePool.put(instanceKey, instance);
+        return instance;
+    }
+
+    private Object createNewInstance(Class<?> clazz) {
         try {
-            String instanceKey = toKey(clazz);
-            if (instancePool.containsKey(instanceKey)) {
-                return instancePool.get(instanceKey);
-            }
-            Object instance = clazz.getDeclaredConstructor().newInstance();
-            instancePool.put(instanceKey, instance);
-            return instance;
+            return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException |
-                 IllegalAccessException |
                  InvocationTargetException |
+                 IllegalAccessException |
                  NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedReflectiveOperationException(e);
         }
     }
 
