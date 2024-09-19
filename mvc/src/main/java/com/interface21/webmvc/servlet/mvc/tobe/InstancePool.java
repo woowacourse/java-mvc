@@ -1,15 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.exception.UncheckedReflectiveOperationException;
 
 public class InstancePool {
 
     private static final InstancePool INSTANCE = new InstancePool();
 
-    private final Map<String, Object> instancePool = new HashMap<>();
+    private final Map<String, Object> instancePool = new ConcurrentHashMap<>();
 
     private InstancePool() {
     }
