@@ -15,14 +15,16 @@ class Junit3TestRunner {
         Class<Junit3Test> clazz = Junit3Test.class;
         Object instance = clazz.getDeclaredConstructor().newInstance();
         //public getMethod -> public 만 가져옴
-        Arrays.stream(clazz.getMethods())
+        List<Method> methods = Arrays.stream(clazz.getMethods())
                 .filter(method -> method.getName().startsWith("test"))
-                .forEach(testMethod-> {
-                    try {
-                        testMethod.invoke(instance);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                .toList();
+
+        for (Method method : methods) {
+            try {
+                method.invoke(instance);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
