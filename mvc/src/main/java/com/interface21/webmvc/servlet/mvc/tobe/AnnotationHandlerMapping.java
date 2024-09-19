@@ -40,10 +40,14 @@ public class AnnotationHandlerMapping {
     private void putHandlerExecutions(Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
         String value = requestMapping.value();
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            HandlerExecution handlerExecution = new HandlerExecution(method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
