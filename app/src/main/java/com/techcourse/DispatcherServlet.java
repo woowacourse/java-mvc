@@ -7,7 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +43,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
-        for (String name : Collections.list(request.getAttributeNames())) {
-            modelAndView.addObject(name, request.getAttribute(name));
-        }
-
         View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
     }
