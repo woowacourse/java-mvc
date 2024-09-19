@@ -5,6 +5,7 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,5 +42,22 @@ public class JspView implements View {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof JspView jspView)) {
+            return false;
+        }
+
+        return Objects.equals(viewName, jspView.viewName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(viewName);
     }
 }
