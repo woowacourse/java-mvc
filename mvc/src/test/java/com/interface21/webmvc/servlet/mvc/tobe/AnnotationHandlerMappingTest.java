@@ -12,7 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 
 class AnnotationHandlerMappingTest {
     private static final String BASE_PACKAGE = "samples";
@@ -64,15 +67,15 @@ class AnnotationHandlerMappingTest {
     }
 
     @DisplayName("RequestMapping에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원한다.")
-    @ValueSource(strings = {METHOD_GET, METHOD_POST})
+    @EnumSource(RequestMethod.class)
     @ParameterizedTest
-    void executeMethodWithNoRequestMethod(String requestMethod) throws Exception {
+    void executeMethodWithNoRequestMethod(RequestMethod requestMethod) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute(KEY)).thenReturn(VALUE);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_NO_REQUEST_METHOD);
-        when(request.getMethod()).thenReturn(requestMethod);
+        when(request.getMethod()).thenReturn(requestMethod.name());
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
