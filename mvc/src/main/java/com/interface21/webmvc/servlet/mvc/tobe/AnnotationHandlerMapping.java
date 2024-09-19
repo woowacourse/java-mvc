@@ -35,13 +35,17 @@ public class AnnotationHandlerMapping {
 
     private void assignHandlerByClass(Class<?> clazz) {
         RequestMapping annotation = clazz.getAnnotation(RequestMapping.class);
-        String path = Optional.ofNullable(annotation)
-                .map(RequestMapping::value)
-                .orElse(DEFAULT_PATH);
+        String path = extractPath(annotation);
 
         for (Method method : clazz.getMethods()) {
             assignHandlerByMethod(clazz, method, path);
         }
+    }
+
+    private String extractPath(RequestMapping annotation) {
+        return Optional.ofNullable(annotation)
+                .map(RequestMapping::value)
+                .orElse(DEFAULT_PATH);
     }
 
     private void assignHandlerByMethod(Class<?> clazz, Method method, String basePath) {
@@ -49,9 +53,7 @@ public class AnnotationHandlerMapping {
         if (annotation == null) {
             return;
         }
-        String subPath = Optional.of(annotation.value()).orElse(DEFAULT_PATH);
-        String path = String.join(DELIMITER_PATH, DELIMITER_PATH, basePath, subPath)
-                .replaceAll(REGEX_MANY_PATH_DELIMITER, DELIMITER_PATH);
+        String path = generateEndpoint(basePath, extractPath(annotation));
 
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(path, requestMethod);
@@ -59,6 +61,11 @@ public class AnnotationHandlerMapping {
             HandlerExecution handlerExecution = findHandlerExecution(clazz, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
+    }
+
+    private String generateEndpoint(String basePath, String subPath) {
+        return String.join(DELIMITER_PATH, DELIMITER_PATH, basePath, subPath)
+                .replaceAll(REGEX_MANY_PATH_DELIMITER, DELIMITER_PATH);
     }
 
     private void validateDuplicated(HandlerKey handlerKey) {
