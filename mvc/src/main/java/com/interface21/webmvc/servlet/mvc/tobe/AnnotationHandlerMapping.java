@@ -70,6 +70,10 @@ public class AnnotationHandlerMapping {
         RequestMethod[] requestMethods = annotation.method();
         String uri = annotation.value();
 
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             handlerExecutions.put(handlerKey, createHandlerExecution(mapperMethod, controllerInstance));
