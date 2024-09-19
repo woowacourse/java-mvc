@@ -1,12 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
@@ -20,32 +23,52 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("핸들러를 통해 GET 요청을 하고 모델에 속성 id 를 조회한다.")
     void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        // when
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @Test
+    @DisplayName("핸들러를 통해 POST 요청을 하고 모델에 속성 id 를 조회한다.")
     void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        // when
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("동일한 요청을 처리하는 2개의 핸들러 등록 시 예외가 발생한다.")
+    void assignHandlerDuplicated() {
+        // given
+        AnnotationHandlerMapping mapping = new AnnotationHandlerMapping("com.interface21.webmvc.servlet.samples");
+
+        // when & then
+        assertThatCode(mapping::initialize)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("HandlerKey exists");
     }
 }
