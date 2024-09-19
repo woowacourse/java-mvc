@@ -39,19 +39,10 @@ public class AnnotationHandlerMapping {
 
     private void putHandlerExecutions(Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-        String value = requestMapping.value();
-        RequestMethod[] requestedMethods = getRequestMethods(requestMapping);
-        for (RequestMethod requestMethod : requestedMethods) {
-            handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(method));
+        HandlerKeys handlerKeys = new HandlerKeys(requestMapping);
+        for (HandlerKey handlerKey : handlerKeys.getHandlerKeys()) {
+            handlerExecutions.put(handlerKey, new HandlerExecution(method));
         }
-    }
-
-    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
-        RequestMethod[] requestedMethods = requestMapping.method();
-        if (requestedMethods.length == 0) {
-            return RequestMethod.values();
-        }
-        return requestedMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
