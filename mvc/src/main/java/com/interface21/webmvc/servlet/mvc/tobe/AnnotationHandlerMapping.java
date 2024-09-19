@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping {
 
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (handlerExecution == null) {
-            throw new UnsupportedOperationException("처리할 수 없는 요청입니다.");
+            throw new IllegalArgumentException("처리할 수 없는 요청입니다.");
         }
         return handlerExecution;
     }
