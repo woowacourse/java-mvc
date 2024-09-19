@@ -5,7 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
 @Controller
-public class DuplicateController {
+public class DuplicatedRequestController {
 
     @RequestMapping(value = "/api/test", method = RequestMethod.GET)
     public void test1() {
