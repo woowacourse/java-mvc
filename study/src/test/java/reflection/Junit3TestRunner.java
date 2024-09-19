@@ -7,6 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class Junit3TestRunner {
@@ -22,11 +24,13 @@ class Junit3TestRunner {
         Class<Junit3Test> classObj = Junit3Test.class;
 
         // when
-        Method test1 = classObj.getDeclaredMethod("test1");
-        Method test2 = classObj.getDeclaredMethod("test2");
+        List<Method> targetMethods = Arrays.stream(classObj.getDeclaredMethods())
+                .filter(method -> method.getName().startsWith("test"))
+                .toList();
 
-        test1.invoke(obj); // obj.test1();
-        test2.invoke(obj); // obj.test2();
+        for(Method method : targetMethods) {
+            method.invoke(obj);
+        }
 
         String actual = outputStream.toString();
 
