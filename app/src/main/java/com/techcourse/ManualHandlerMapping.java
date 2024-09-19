@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.context.stereotype.Component;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);

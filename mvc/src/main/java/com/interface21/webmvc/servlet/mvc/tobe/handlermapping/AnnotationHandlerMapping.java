@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe.handlermapping;
 
+import com.interface21.container.BeanContainer;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -12,7 +13,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,19 +20,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping() {
         this.handlerExecutions = new HashMap<>();
     }
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
+        BeanContainer beanContainer = BeanContainer.getInstance();
+
+        beanContainer.getAnnotatedBeans(Controller.class)
+                .stream()
+                .flatMap(bean -> Arrays.stream(bean.getClass().getMethods()))
                 .filter(handler -> handler.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::addHandlers);
         log.info("Initialized AnnotationHandlerMapping!");

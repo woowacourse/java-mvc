@@ -2,10 +2,12 @@ package com.interface21.webmvc.servlet.mvc.tobe.handlermapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.interface21.container.BeanContainer;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -13,11 +15,15 @@ import samples.TestController;
 
 class HandlerMappingsTest {
 
+    @BeforeEach
+    void setUp() {
+        BeanContainer.getInstance().clear();
+    }
+
     @DisplayName("요청을 처리할 수 있는 HandlerMapping 을 찾는다.")
     @Test
     void findHandler() {
-        HandlerMappings handlerMappings = new HandlerMappings(
-                new TestFailHandlerMappings(), new TestSuccessHandlerMappings());
+        HandlerMappings handlerMappings = new HandlerMappings();
         HttpServletRequest request = new MockHttpServletRequest();
         Object handler = handlerMappings.findHandler(request);
 

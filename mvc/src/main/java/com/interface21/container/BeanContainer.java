@@ -1,7 +1,7 @@
 package com.interface21.container;
 
-import com.interface21.core.util.ReflectionUtils;
-import java.lang.reflect.Constructor;
+import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,21 +16,42 @@ public class BeanContainer {
         return SingletonHelper.INSTANCE;
     }
 
-    public <T> Object getBean(Class<T> clazz) throws Exception {
-        String name = clazz.getName();
-        if (container.containsKey(name)) {
-            return container.get(name);
+    public void registerBean(List<Object> beans) {
+        for (Object bean : beans) {
+            String name = bean.getClass().getSimpleName();
+            if (container.containsKey(name)) {
+                throw new IllegalArgumentException(String.format("%s은 이미 등록된 빈입니다.", name));
+            }
+            container.put(name, bean);
         }
+    }
 
-        Constructor<T> constructor = ReflectionUtils.accessibleConstructor(clazz);
-        Object bean = constructor.newInstance();
+    public <T> Object getBean(Class<T> clazz) {
+        String name = clazz.getSimpleName();
+        if (!container.containsKey(name)) {
+            throw new IllegalArgumentException(String.format("%s는 존재하지 않는 빈입니다.", name));
+        }
+        return container.get(name);
+    }
 
-        container.put(name, bean);
-        return bean;
+    public List<Object> getAnnotatedBeans(Class<? extends Annotation> annotation) {
+        return container.values().stream()
+                .filter(bean -> bean.getClass().isAnnotationPresent(annotation))
+                .toList();
+    }
+
+    public <T> List<T> getSubTypeBeansOf(Class<T> clazz) {
+        return container.values().stream()
+                .filter(clazz::isInstance)
+                .map(clazz::cast)
+                .toList();
+    }
+
+    public void clear() {
+        container.clear();
     }
 
     private static class SingletonHelper {
         private static final BeanContainer INSTANCE = new BeanContainer();
     }
-
 }
