@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -31,12 +30,11 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        List<Method> methods = classes.stream()
-                .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(RequestMapping.class)))
-                .toList();
 
-        methods.forEach(this::putHandlerExecutions);
+        classes.stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(this::putHandlerExecutions);
     }
 
     private void putHandlerExecutions(Method method) {
