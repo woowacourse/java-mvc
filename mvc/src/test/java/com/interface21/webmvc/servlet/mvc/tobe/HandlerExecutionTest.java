@@ -14,7 +14,7 @@ class HandlerExecutionTest {
 
     @DisplayName("인자로 넘겨준 메소드를 실행한다")
     @Test
-    void handle() throws Exception {
+    void handle() throws NoSuchMethodException {
         Method method = TestController.class.getDeclaredMethod(
                 "test",
                 HttpServletRequest.class,

@@ -22,7 +22,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void get() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -37,7 +37,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void post() throws Exception {
+    void post() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -65,7 +65,7 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("method를 지정하지 않을 경우 모든 RequestMethod에 대해서 등록한다")
     @Test
-    void notExistMethod() throws Exception {
+    void notExistMethod() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
