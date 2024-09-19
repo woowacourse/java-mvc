@@ -5,6 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class HandlerExecution {
 
@@ -18,6 +21,18 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(controllerInstance, request, response);
+        List<Object> preparedArgs = List.of(request, response);
+        List<? extends Class<?>> requiredParameterClasses = Stream.of(method.getParameters())
+                .map(Parameter::getType)
+                .toList();
+
+        List<Object> passingArgs = requiredParameterClasses.stream()
+                .map(param -> preparedArgs.stream()
+                        .filter(arg -> param.isAssignableFrom(arg.getClass()))
+                        .findAny()
+                        .orElse(null))
+                .toList();
+
+        return (ModelAndView) method.invoke(controllerInstance, passingArgs.toArray());
     }
 }
