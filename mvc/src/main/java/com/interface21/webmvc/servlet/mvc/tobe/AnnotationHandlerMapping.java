@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +24,9 @@ public class AnnotationHandlerMapping {
         List<Handler> handlers = handlerFinder.findHandlers();
         handlers.forEach(this::registerHandler);
         log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet().forEach(
+            handlerKey -> log.info("Path : {}, Method : {}", handlerKey.getUrl(),
+                handlerKey.getRequestMethod()));
     }
 
     private void registerHandler(Handler handler) {
@@ -44,21 +46,9 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        HandlerKey handlerKey = createHandlerKey(request);
-        return findHandler(handlerKey);
-    }
-
-    private HandlerKey createHandlerKey(HttpServletRequest request) {
         String uri = request.getRequestURI();
         String method = request.getMethod();
-        return new HandlerKey(uri, RequestMethod.valueOf(method));
-    }
-
-    private HandlerExecution findHandler(HandlerKey handlerKey) {
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-        throw new NoSuchElementException(String.format("핸들러를 찾을 수 없습니다. URI: %s, Method: %s",
-            handlerKey.getUrl(), handlerKey.getRequestMethod()));
+        HandlerKey handlerKey = new HandlerKey(uri, RequestMethod.valueOf(method));
+        return handlerExecutions.get(handlerKey);
     }
 }
