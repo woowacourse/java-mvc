@@ -71,8 +71,6 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        //long questionId, String writer, String title, String contents, Date createdDate,
-        //                    int countOfComment
         final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
         final Constructor<?> secondConstructor = questionClass.getConstructor(
                 long.class, String.class, String.class, String.class, Date.class, int.class
@@ -96,7 +94,7 @@ class ReflectionTest {
         final Class<?> questionClass = Question.class;
         final Field[] fields = questionClass.getFields();
 
-        assertThat(fields).hasSize(0);
+        assertThat(fields).isEmpty();
     }
 
     @Test
@@ -130,7 +128,6 @@ class ReflectionTest {
         final Student student = (Student) studentClass.getConstructor().newInstance();
         final Field field = studentClass.getDeclaredField("age");
 
-        // todo field에 접근 할 수 있도록 만든다.
         field.setAccessible(true);
 
         assertThat(field.getInt(student)).isZero();
