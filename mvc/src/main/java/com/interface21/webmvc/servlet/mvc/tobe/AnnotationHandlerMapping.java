@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,19 +28,10 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = createReflections();
+        Reflections reflections = new Reflections(basePackage);
         reflections.getTypesAnnotatedWith(Controller.class)
                 .stream()
                 .forEach(this::addHandlerExecution);
-    }
-
-    private Reflections createReflections() {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        for (String packageName : basePackage) {
-            configurationBuilder.setUrls(ClasspathHelper.forPackage(packageName))
-                    .filterInputsBy(new FilterBuilder().includePackage(packageName));
-        }
-        return new Reflections(basePackage);
     }
 
     private void addHandlerExecution(Class clazz) {
