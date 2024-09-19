@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -21,6 +21,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         AnnotatedControllers controllers = AnnotatedControllers.from(basePackage);
         List<Handler> handlers = controllers.createHandlers();
@@ -41,16 +42,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-
-        log.error("No handler found for the request: {}", request);
-        throw new IllegalArgumentException("No handler found for the request");
+        return handlerExecutions.get(handlerKey);
     }
 }
