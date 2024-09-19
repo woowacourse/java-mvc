@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("GET /get-test 요청 처리 핸들러 조회")
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -35,6 +37,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("POST /post-test 요청 처리 핸들러 조회")
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
