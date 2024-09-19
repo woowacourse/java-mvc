@@ -88,7 +88,6 @@ public class AnnotationHandlerMapping {
         try {
             requestMethod = RequestMethod.valueOf(request.getMethod());
         } catch (IllegalArgumentException e) {
-            log.error("Failed to get HandlerExecution");
             return null;
         }
 

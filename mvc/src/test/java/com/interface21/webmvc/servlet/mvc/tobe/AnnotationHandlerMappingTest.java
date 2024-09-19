@@ -74,6 +74,40 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("정의되지 않은 HTTP 메서드로 요청 시 핸들러를 찾을 수 없다.")
+    void requestWithInvalidMethod() throws Exception {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("CONNECT");
+
+        // when
+        Object handlerExecution = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handlerExecution).isNull();
+    }
+
+    @Test
+    @DisplayName("등록되지 않은 엔드포인트로 요청 시 핸들러를 찾을 수 없다.")
+    void requestWithUnassignedEndpoint() throws Exception {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/unknown-endpoint");
+        when(request.getMethod()).thenReturn("GET");
+
+        // when
+        Object handlerExecution = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handlerExecution).isNull();
+    }
+
+    @Test
     @DisplayName("컨트롤러의 메서드가 요구하는 파라미터를 동적으로 대응하여 의존성을 주입한다.")
     void passArgumentsWithRequiredParameters() throws Exception {
         joinPathOfControllerAndMethod();

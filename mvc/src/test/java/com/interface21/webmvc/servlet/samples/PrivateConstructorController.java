@@ -5,13 +5,12 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
 @Controller
-public class DuplicatedRequestController {
+public class PrivateConstructorController {
 
-    @RequestMapping(value = "/api/duplicated", method = RequestMethod.GET)
-    public void test1() {
+    private PrivateConstructorController() {
     }
 
-    @RequestMapping(value = "/api/duplicated", method = RequestMethod.GET)
-    public void test2() {
+    @RequestMapping(value = "/api/private", method = RequestMethod.GET)
+    public void test() {
     }
 }
