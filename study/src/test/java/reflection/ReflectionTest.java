@@ -32,11 +32,16 @@ class ReflectionTest {
 
     @Test
     void givenClassName_whenCreatesObject_thenCorrect() throws ClassNotFoundException {
-        final Class<?> clazz = Class.forName("reflection.Question");
-
-        assertThat(clazz.getSimpleName()).isEqualTo("Question");
-        assertThat(clazz.getName()).isEqualTo("reflection.Question");
-        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
+        final Class<?> clazz = reflection.Question.class;
+        final Class<?> innerClazz = Question.class;
+        assertAll(
+                () -> assertThat(clazz.getSimpleName()).isEqualTo("Question"),
+                () -> assertThat(clazz.getName()).isEqualTo("reflection.Question"),
+                () -> assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question"),
+                () -> assertThat(innerClazz.getSimpleName()).isEqualTo("Question"),
+                () -> assertThat(innerClazz.getName()).isEqualTo("reflection.ReflectionTest$1Question"),
+                () -> assertThat(innerClazz.getCanonicalName()).isEqualTo("reflection.ReflectionTest.Question")
+        );
     }
 
     @Test
@@ -73,14 +78,14 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
-        final Class<?> questionClass = Question.class;
+        final Class<?> questionClass = Class.forName("reflection.Question");
 
         List<Constructor<?>> declaredConstructors = List.of(questionClass.getDeclaredConstructors());
         final Constructor<?> firstConstructor = declaredConstructors.get(0);
         final Constructor<?> secondConstructor = declaredConstructors.get(1);
 
-        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu","제목1","내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(1,"gugu","제목2","내용2", new Date(), 0);
+        final reflection.Question firstQuestion = (reflection.Question) firstConstructor.newInstance("gugu","제목1","내용1");
+        final reflection.Question secondQuestion = (reflection.Question) secondConstructor.newInstance(1,"gugu","제목2","내용2", new Date(), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -141,4 +146,6 @@ class ReflectionTest {
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
     }
+
+    class Question {}
 }
