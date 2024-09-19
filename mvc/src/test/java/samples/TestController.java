@@ -30,4 +30,12 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/only-url-no-method")
+    public ModelAndView onlyUrlNoMethod(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller only url no method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
 }
