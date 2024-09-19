@@ -8,15 +8,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
@@ -34,61 +32,45 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for(Class<?> controller : controllerClasses) {
-            searchHandlerExceptions(controller);
+            addAnnotatedHandlerExecutions(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void searchHandlerExceptions(Class<?> controller){
-        List<Method> mappedMethods = Arrays.stream(controller.getDeclaredMethods())
+    private void addAnnotatedHandlerExecutions(Class<?> controller){
+        List<Method> annotatedMethods = searchRequestMappingAnnotation(controller);
+        annotatedMethods
+                .forEach(method -> addHandlerExecutions(controller, method));
+    }
+
+    private List<Method> searchRequestMappingAnnotation(Class<?> controller) {
+        return Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
-        handlerExecutions.putAll(createHandlerExecutions(controller, mappedMethods));
     }
 
-    private Map<HandlerKey, HandlerExecution> createHandlerExecutions(Class<?> controller, List<Method> mappedMethods) {
-        return mappedMethods.stream()
-                .flatMap(method -> createHandlerKeys(method).stream()
-                        .map(handlerKey -> Map.entry(handlerKey, method)))
-                .collect(Collectors.toMap(
-                        Entry::getKey,
-                        entry -> createHandlerExecution(controller, entry.getValue())));
+    private void addHandlerExecutions(Class<?> controller, Method method) {
+        HandlerExecution handlerExecution = constructHandlerExecution(controller, method);
+        List<HandlerKey> handlerKeys = constructHandlerKey(method);
+        handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
-    private List<HandlerKey> createHandlerKeys(Method method) {
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        String uri = annotation.value();
-        RequestMethod[] requestMethods = annotation.method();
-        if(requestMethods.length == 0) {
-            return generateFromAllRequestMethods(uri);
-        }
-        return generateFromRequestMethod(uri,requestMethods);
-    }
-
-    private HandlerExecution createHandlerExecution(Class<?> controller, Method targetMethod) {
+    private HandlerExecution constructHandlerExecution(Class<?> controller, Method targetMethod) {
         try {
             Constructor<?> firstConstructor = controller.getDeclaredConstructor();
             Object executionTarget = firstConstructor.newInstance();
-            return new HandlerExecution(executionTarget,targetMethod);
+            return new HandlerExecution(executionTarget, targetMethod);
         } catch (Exception e) {
             throw new IllegalArgumentException("메서드 타입이 다른 controller로 초기화 했습니다.");
         }
     }
 
-    private List<HandlerKey> generateFromAllRequestMethods(String uri) {
-        return Arrays.stream(RequestMethod.values())
-                .map(requestMethod -> new HandlerKey(uri, requestMethod))
-                .toList();
-    }
-
-    private List<HandlerKey> generateFromRequestMethod(String uri, RequestMethod[] requestMethods) {
-        return Arrays.stream(requestMethods)
-                .map(requestMethod -> new HandlerKey(uri,requestMethod))
-                .toList();
+    private List<HandlerKey> constructHandlerKey(Method method) {
+        return HandlerKeyGenerator.fromAnnotatedMethod(method);
     }
 
     public Object getHandler(HttpServletRequest request) {
-        HandlerKey key = new HandlerKey(request.getRequestURI().toString(),
+        HandlerKey key = new HandlerKey(request.getRequestURI(),
                 RequestMethod.findMethod(request.getMethod()));
         return handlerExecutions.get(key);
     }
