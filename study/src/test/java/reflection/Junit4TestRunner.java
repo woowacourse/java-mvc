@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,8 @@ class Junit4TestRunner {
         System.setOut(printStream);
 
         // given
-        Junit4Test obj = new Junit4Test();
+        Constructor<Junit4Test> defaultConstructor = Junit4Test.class.getDeclaredConstructor();
+        Junit4Test obj = defaultConstructor.newInstance();
         Class<Junit4Test> clazz = Junit4Test.class;
 
         // when
