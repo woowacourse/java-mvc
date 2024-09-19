@@ -27,32 +27,28 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        if (isBasePackageInvalid()) {
+        if (isInvalidBasePackage()) {
             log.warn("base 패키지가 유효하지 않습니다.");
             return;
         }
-        processBasePackages();
+        Arrays.stream(basePackage)
+                .forEach(this::initializeHandlers);
         log.info("AnnotationHandlerMapping 초기화 완료");
     }
 
-    private boolean isBasePackageInvalid() {
+    private boolean isInvalidBasePackage() {
         return basePackage == null || basePackage.length == 0;
     }
 
-    private void processBasePackages() {
-        Arrays.stream(basePackage)
-                .forEach(this::scanAndInitializeHandlers);
-    }
-
-    private void scanAndInitializeHandlers(Object packageObject) {
+    private void initializeHandlers(Object packageObject) {
         Reflections reflections = new Reflections(packageObject);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         controllerClasses
-                .forEach(this::registerControllerMethods);
+                .forEach(this::registerMethods);
     }
 
-    private void registerControllerMethods(Class<?> controllerClass) {
+    private void registerMethods(Class<?> controllerClass) {
         Arrays.stream(controllerClass.getMethods())
                 .filter(this::isRequestMappingAnnotated)
                 .forEach(method -> registerHandler(controllerClass, method));
