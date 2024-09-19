@@ -14,7 +14,7 @@ class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
