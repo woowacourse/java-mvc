@@ -7,14 +7,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
 
 public class AnnotationHandlerMapping {
 
@@ -31,13 +30,13 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for(Class<?> controller : controllerClasses) {
+        for (Class<?> controller : controllerClasses) {
             addAnnotatedHandlerExecutions(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addAnnotatedHandlerExecutions(Class<?> controller){
+    private void addAnnotatedHandlerExecutions(Class<?> controller) {
         List<Method> annotatedMethods = searchRequestMappingAnnotation(controller);
         annotatedMethods
                 .forEach(method -> addHandlerExecutions(controller, method));
