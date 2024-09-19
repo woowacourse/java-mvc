@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -54,7 +55,12 @@ public class AnnotationHandlerMapping {
         final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-        Arrays.stream(requestMapping.method())
+        List<RequestMethod> requestMethods = List.of(requestMapping.method());
+        if (requestMethods.isEmpty()) {
+            requestMethods = List.of(RequestMethod.values());
+        }
+
+        requestMethods.stream()
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
