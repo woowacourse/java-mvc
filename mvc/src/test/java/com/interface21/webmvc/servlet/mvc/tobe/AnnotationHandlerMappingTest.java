@@ -63,6 +63,6 @@ class AnnotationHandlerMappingTest {
 
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
                 .isInstanceOf(NoHandlerFoundException.class)
-                .hasMessage("url(/invalid-url)에 매핑된 핸들러가 존재하지 않습니다.");
+                .hasMessage("[GET /invalid-url]에 매핑된 핸들러가 존재하지 않습니다.");
     }
 }

@@ -52,7 +52,9 @@ public class AnnotationHandlerMapping {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (handlerExecution == null) {
-            throw new NoHandlerFoundException("url(%s)에 매핑된 핸들러가 존재하지 않습니다.".formatted(request.getRequestURI()));
+            throw new NoHandlerFoundException(
+                    "[%s %s]에 매핑된 핸들러가 존재하지 않습니다.".formatted(request.getMethod(), request.getRequestURI())
+            );
         }
         return handlerExecution;
     }
