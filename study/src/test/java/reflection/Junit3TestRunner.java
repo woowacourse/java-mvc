@@ -1,5 +1,10 @@
 package reflection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -19,6 +24,8 @@ class Junit3TestRunner {
                 .filter(method -> method.getName().startsWith("test"))
                 .toList();
 
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
         for (Method method : methods) {
             try {
                 method.invoke(instance);
@@ -26,5 +33,13 @@ class Junit3TestRunner {
                 throw new RuntimeException(e);
             }
         }
+        System.setOut(System.out);
+        
+        String actual = outputStream.toString();
+
+        assertAll(
+                () -> assertThat(actual).contains("Running Test1"),
+                () -> assertThat(actual).contains("Running Test2")
+        );
     }
 }
