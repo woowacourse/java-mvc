@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import samples.SampleController;
 import samples.TestController;
 
 class HandlerExecutionTest {
@@ -43,6 +44,22 @@ class HandlerExecutionTest {
         final Method method = objects.getClass()
                 .getDeclaredMethod("size");
         final HandlerExecution handlerExecution = new HandlerExecution(objects, method);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // when & then
+        assertThatThrownBy(() -> handlerExecution.handle(request, response))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("invoke할 method와 대상 인스턴스가 다를 시 예외를 발생시킨다.")
+    void throw_exception_when_instance_and_method_target_is_different() throws NoSuchMethodException {
+        // given
+        final SampleController sampleController = new SampleController();
+        final Method method = TestController.class
+                .getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+        final HandlerExecution handlerExecution = new HandlerExecution(sampleController, method);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
