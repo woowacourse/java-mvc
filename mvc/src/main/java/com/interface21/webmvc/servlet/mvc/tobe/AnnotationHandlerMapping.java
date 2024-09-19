@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -29,19 +30,36 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controller : controllers) {
-            initializeHandlerExecutions(controller);
+            initializeByController(controller);
         }
     }
 
-    private void initializeHandlerExecutions(Class<?> controller) throws Exception {
+    private void initializeByController(Class<?> controller) throws Exception {
         Method[] methods = controller.getDeclaredMethods();
         Object baseInstance = controller.getDeclaredConstructors()[0].newInstance();
 
         for (Method method : methods) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-            handlerExecutions.put(handlerKey, new HandlerExecution(baseInstance, method));
+            initializeByMethod(method, baseInstance);
         }
+    }
+
+    private void initializeByMethod(Method method, Object baseInstance) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        RequestMethod[] mappingMethods = getMappingMethods(requestMapping);
+
+        for (RequestMethod requestMethod : mappingMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            HandlerExecution execution = new HandlerExecution(baseInstance, method);
+            handlerExecutions.put(handlerKey, execution);
+        }
+    }
+
+    private RequestMethod[] getMappingMethods(RequestMapping requestMapping) {
+        RequestMethod[] mappingMethods = requestMapping.method();
+        if (mappingMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return mappingMethods;
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
