@@ -1,18 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -25,59 +18,27 @@ public class AnnotationHandlerMapping {
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = new ConcurrentHashMap<>();
     }
 
     public void initialize() {
         Stream.of(basePackage)
-                .map(Reflections::new)
-                .map(reflections -> reflections.getTypesAnnotatedWith(Controller.class))
-                .flatMap(Collection::stream)
-                .forEach(this::scan);
+                .forEach(this::initializeByPackage);
     }
 
-    private void scan(final Class<?> classType) {
-        final Constructor<?> constructor = getConstructor(classType);
-        final Object instance = getInstance(constructor);
-        final Reflections reflections = new Reflections(classType, Scanners.MethodsAnnotated);
-        reflections.getMethodsAnnotatedWith(RequestMapping.class)
-                .forEach(method -> makeHandleKey(instance, method));
-    }
-
-    private Constructor<?> getConstructor(final Class<?> classType) {
-        try {
-            return classType.getDeclaredConstructor();
-        } catch (final NoSuchMethodException e) {
-            throw new IllegalArgumentException("생성자 생성 실패");
-        }
-    }
-
-    private Object getInstance(final Constructor<?> constructor) {
-        try {
-            return constructor.newInstance();
-        } catch (final InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            throw new IllegalArgumentException("인스턴스화 실패");
-        }
+    private void initializeByPackage(final Object basePackage) {
+        final AnnotatedHandlerRegistry registry = new AnnotatedHandlerRegistry(basePackage);
+        registry.initialize(Controller.class, RequestMapping.class);
+        registry.getMethods()
+                .forEach(method -> makeHandleKey(registry.getInstance(method), method));
     }
 
     private void makeHandleKey(final Object instance, final Method method) {
-        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        final RequestMethod[] requestMethods = annotation.method();
-        final String url = annotation.value();
-        final List<HandlerKey> keys = createRequestMethod(requestMethods, url);
-        keys.forEach(key -> appendHandlerMapping(instance, method, key));
+        final HandlerKeyCreator handlerKeyCreator = new HandlerKeyCreator(method);
+        handlerKeyCreator.create()
+                .forEach(handlerKey -> appendHandlerMapping(instance, method, handlerKey));
     }
 
-    private List<HandlerKey> createRequestMethod(final RequestMethod[] requestMethods, final String url) {
-        if (requestMethods.length == 0) {
-            return Stream.of(RequestMethod.values())
-                    .map(requestMethod -> new HandlerKey(url, requestMethod))
-                    .toList();
-        }
-        return Stream.of(requestMethods)
-                .map(requestMethod -> new HandlerKey(url, requestMethod))
-                .toList();
-    }
 
     private void appendHandlerMapping(final Object instance, final Method method, final HandlerKey key) {
         if (handlerExecutions.containsKey(key)) {
