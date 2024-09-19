@@ -1,5 +1,21 @@
 package com.interface21.web.bind.annotation;
 
 public enum RequestMethod {
-    GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+    GET,
+    HEAD,
+    POST,
+    PUT,
+    PATCH,
+    DELETE,
+    OPTIONS,
+    TRACE,
+    ;
+
+    public static RequestMethod of(String method) {
+        try {
+            return RequestMethod.valueOf(method.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid HTTP method: " + method);
+        }
+    }
 }

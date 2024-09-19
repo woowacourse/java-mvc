@@ -1,14 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+@DisplayName("핸들러 매핑 테스트")
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
@@ -19,6 +22,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("get 요청 테스트")
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -34,6 +38,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("post 요청 테스트")
     @Test
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -47,5 +52,16 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("중복된 핸들러 등록 시, 예외 발생")
+    @Test
+    void duplicateHandler() {
+        // given
+        handlerMapping = new AnnotationHandlerMapping("com.interface21.webmvc.servlet.util");
+
+        // when&then
+        assertThatThrownBy(() -> handlerMapping.initialize()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Handler already exists.");
     }
 }
