@@ -25,13 +25,13 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> c : classes) {
             scanClass(c);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void scanClass(Class<?> c) {
@@ -43,12 +43,20 @@ public class AnnotationHandlerMapping {
     private void registerRequestMappingHandlerExecution(Class<?> c, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method();
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+
         for (RequestMethod requestMethod : requestMethods) {
             handlerExecutions.put(
                     new HandlerKey(url, requestMethod), new HandlerExecution(c, method)
             );
         }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMapping.method();
     }
 
     public Object getHandler(final HttpServletRequest request) {
