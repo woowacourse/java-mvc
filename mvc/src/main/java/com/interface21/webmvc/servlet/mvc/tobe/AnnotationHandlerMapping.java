@@ -35,6 +35,7 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         Set<Method> handlers = controllers.stream()
                 .flatMap(controller -> Arrays.stream(controller.getDeclaredMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toSet());
         handlers.forEach(this::addHandlerExecution);
     }
