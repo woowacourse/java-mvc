@@ -71,4 +71,22 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("HandlerKey exists");
     }
+
+    @Test
+    @DisplayName("컨트롤러와 메서드의 경로를 합쳐서 엔드포인트로 요청 경로를 결정한다.")
+    void joinPathOfControllerAndMethod() throws Exception {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/api/join-paths");
+        when(request.getMethod()).thenReturn("GET");
+
+        // when
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
+
+        // then
+        assertThat(modelAndView.getObject("message")).isEqualTo("Paths joined");
+    }
 }
