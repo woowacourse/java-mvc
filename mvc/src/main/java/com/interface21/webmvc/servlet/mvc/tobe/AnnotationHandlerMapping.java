@@ -33,18 +33,20 @@ public class AnnotationHandlerMapping {
         // handlerExecutions reflection 이용해서 초기화한다.
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(
                 Controller.class); // Controller 애너테이션이 붙은 컨트롤러들을 전부 꺼낸다.
+        log.info("Found Controllers: {}", controllers); // 로그 추가
         controllers.forEach(this::processController); // 컨트롤러들을 전부 순회한다.
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void processController(Class<?> controller) {
-        log.debug("Controller = {}\n", controller);
+        log.info("Controller = {}", controller);
+        log.info("ControllerName = {}", controller.getName());
         Method[] methods = controller.getDeclaredMethods(); // 컨트롤러에 선언된 모든 메서드들을 꺼낸다.
         Arrays.stream(methods).forEach(this::processMethod); // 컨트롤러의 모든 메서드들을 순회한다.
     }
 
     private void processMethod(Method method) {
-        log.debug("Method = {}\n", method);
+        log.info("Method = {}", method);
         Annotation[] annotations = method.getAnnotations(); // 컨트롤러의 메서드에 선언된 모든 애너테이션을 꺼낸다.
         Arrays.stream(annotations) // 컨트롤러의 메서드에 선언된 모든 애너테이션을 순회한다.
                 .filter(annotation -> annotation instanceof RequestMapping)
@@ -67,8 +69,8 @@ public class AnnotationHandlerMapping {
                                               Method method) {
         String url = requestMapping.value(); // RequestMapping 의 url 을 꺼낸다.
         HandlerKey handlerKey = new HandlerKey(url, requestMethod); // url, method 를 HandlerKey 로 만든다.
-        log.debug("requestMapping = {}", requestMapping);
-        log.debug("handlerKey = {}\n", handlerKey);
+        log.info("requestMapping = {}", requestMapping);
+        log.info("handlerKey = {}", handlerKey);
         try {
             HandlerExecution handlerExecution = new HandlerExecution(method); // HandlerExecution 을 만든다.
             handlerExecutions.put(handlerKey, handlerExecution); // HandlerKey 에 해당하는 HandlerExecution 을 맵에 저장한다.
@@ -83,7 +85,6 @@ public class AnnotationHandlerMapping {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        log.debug("handlerKey = {}", handlerKey);
 
         return handlerExecutions.get(handlerKey);
     }
