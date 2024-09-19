@@ -30,4 +30,20 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/multiple-method", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView multipleMethod(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller multiple method (GET, POST)");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/all-method")
+    public ModelAndView allMethod(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller all method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
 }
