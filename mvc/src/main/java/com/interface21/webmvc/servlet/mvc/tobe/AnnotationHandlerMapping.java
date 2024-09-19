@@ -1,11 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +25,63 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        for (Object basePackage : basePackage) {
+            Reflections reflections = new Reflections((String) basePackage);
+            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+            try {
+                initializeControllers(controllers);
+            } catch (Exception e) {
+
+            }
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void initializeControllers(Set<Class<?>> controllers) {
+        for (Class<?> controller : controllers) {
+            try {
+                initializeMethods(controller.getDeclaredConstructor().newInstance(), controller.getMethods());
+            } catch (Exception e) {
+                log.error("Handler의 Method를 매핑하는 과정에서 오류가 발생했습니다.", e);
+            }
+        }
+    }
+
+    private void initializeMethods(Object controller, Method[] methods) {
+        for (Method method : methods) {
+            initializeMethod(controller, method);
+        }
+    }
+
+    private void initializeMethod(Object controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return;
+        }
+
+        RequestMethod[] requestMethods = requestMapping.method();
+        String url = requestMapping.value();
+
+        if (requestMethods.length == 1) {
+            addHandlerExecution(controller, method, url, requestMethods[0]);
+            return;
+        }
+        for (RequestMethod requestMethod : RequestMethod.values()) {
+            addHandlerExecution(controller, method, url, requestMethod);
+        }
+    }
+
+    private void addHandlerExecution(Object controller, Method method, String url, RequestMethod requestMethod) {
+        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+
+        return handlerExecutions.get(handlerKey);
     }
 }
