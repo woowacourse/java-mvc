@@ -61,11 +61,15 @@ public class AnnotationHandlerMapping {
 
         RequestMethod[] requestMethods = requestMapping.method();
         String url = requestMapping.value();
+        initializeHandlerExecution(controller, method, requestMethods, url);
+    }
 
+    private void initializeHandlerExecution(Object controller, Method method, RequestMethod[] requestMethods, String url) {
         if (requestMethods.length == 1) {
             addHandlerExecution(controller, method, url, requestMethods[0]);
             return;
         }
+
         for (RequestMethod requestMethod : RequestMethod.values()) {
             addHandlerExecution(controller, method, url, requestMethod);
         }
