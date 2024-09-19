@@ -55,8 +55,15 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : annotation.method()) {
             HandlerKey handlerKey = new HandlerKey(path, requestMethod);
+            validateDuplicated(handlerKey);
             HandlerExecution handlerExecution = findHandlerExecution(clazz, method);
             handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private void validateDuplicated(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("HandlerKey exists: " + handlerKey.toString());
         }
     }
 
