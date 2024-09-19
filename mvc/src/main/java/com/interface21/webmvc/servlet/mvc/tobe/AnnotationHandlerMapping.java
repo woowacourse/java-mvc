@@ -55,7 +55,7 @@ public class AnnotationHandlerMapping {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
 
         String value = annotation.value();
-        RequestMethod[] requestMethods = annotation.method();
+        RequestMethod[] requestMethods = getRequestMethods(annotation);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
         for (RequestMethod requestMethod : requestMethods) {
@@ -63,7 +63,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    // TODO method 설정이 되어 있지 않으면 모든 HTTP Method를 지원한다.
+    private RequestMethod[] getRequestMethods(RequestMapping annotation) {
+        if (annotation.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return annotation.method();
+    }
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
