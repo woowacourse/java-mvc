@@ -58,8 +58,8 @@ public class AnnotationHandlerMapping {
                     .forEach(requestMethod -> createHandlerKeyAndExecution(requestMapping, requestMethod, method));
             return;
         }
-        RequestMethod requestMethod = requestMapping.method()[0]; // RequestMapping 의 method 를 꺼낸다.
-        createHandlerKeyAndExecution(requestMapping, requestMethod, method);
+        Arrays.stream(requestMapping.method())
+                .forEach(requestMethod -> createHandlerKeyAndExecution(requestMapping, requestMethod, method));
     }
 
     private void createHandlerKeyAndExecution(RequestMapping requestMapping,
