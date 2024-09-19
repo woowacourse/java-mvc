@@ -35,4 +35,13 @@ public class HandlerExecution {
 
         return modelAndView;
     }
+
+    @Override
+    public String toString() {
+        return "HandlerExecution{" +
+                "controller=" + controller +
+                ", controllerInstance=" + controllerInstance +
+                ", method=" + method +
+                '}';
+    }
 }
