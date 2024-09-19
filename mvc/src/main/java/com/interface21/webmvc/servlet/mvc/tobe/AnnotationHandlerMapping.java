@@ -27,7 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
+    public void initialize() throws ReflectiveOperationException {
         log.info("Initialized AnnotationHandlerMapping!");
         Set<Class<?>> controllerClasses = getControllerClasses();
         List<Method> methods = getRequestMappingMethods(controllerClasses);
@@ -49,10 +49,11 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void addHandlerExecutions(Method method) throws Exception {
+    private void addHandlerExecutions(Method method) throws ReflectiveOperationException {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-        Object instance = method.getDeclaringClass().getDeclaredConstructor().newInstance();
+        Class<?> declaringClass = method.getDeclaringClass();
+        Object instance = BeanFactory.getInstance(declaringClass);
         HandlerExecution handlerExecution = new HandlerExecution(instance, method);
 
         List<HandlerKey> handlerKeys = HandlerKey.of(requestMapping.value(), requestMapping.method());
