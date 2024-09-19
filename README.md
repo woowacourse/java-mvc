@@ -25,4 +25,4 @@
 - [x] @MVC Framework 테스트 통과하기
   - [x] AnnotationHandlerMapping.initialize() 및 getHandler() 구현
   - [x] HandlerExecution.handle() 구현
-- [ ] JspView 클래스 구현
+- [x] JspView 클래스 구현
