@@ -57,7 +57,10 @@ public class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = getHandlerKey(request);
-        return handlerExecutions.get(handlerKey);
+        return handlerExecutions.computeIfAbsent(handlerKey, key -> {
+            log.error("handler key: {}", key);
+            throw new IllegalArgumentException("잘못된 요청입니다.");
+        });
     }
 
     private HandlerKey getHandlerKey(final HttpServletRequest request) {
