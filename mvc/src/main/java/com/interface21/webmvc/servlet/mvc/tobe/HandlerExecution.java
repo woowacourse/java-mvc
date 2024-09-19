@@ -18,10 +18,10 @@ public class HandlerExecution {
     private final Object controllerInstance;
     private final Method method;
 
-    public HandlerExecution(Class<?> controller, Method method)
+    public HandlerExecution(Method method)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        this.controller = controller;
         this.method = method;
+        this.controller = method.getDeclaringClass();
         this.controllerInstance = this.controller.getDeclaredConstructor().newInstance();
     }
 
@@ -31,6 +31,7 @@ public class HandlerExecution {
         Map<String, Object> model = modelAndView.getModel();
         View view = modelAndView.getView();
         view.render(model, request, response);
+        log.info("view = {}", view);
 
         return modelAndView;
     }

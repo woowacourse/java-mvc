@@ -42,7 +42,7 @@ class HandlerExecutionTest {
                 .findAny()
                 .orElseThrow();
 
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        HandlerExecution handlerExecution = new HandlerExecution(method);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         MockHttpServletResponse response = new MockHttpServletResponse();
