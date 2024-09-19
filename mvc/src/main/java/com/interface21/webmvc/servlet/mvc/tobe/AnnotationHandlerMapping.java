@@ -8,7 +8,6 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class AnnotationHandlerMapping {
 
     private void putHandlerExecutions(Class<?> clazz, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String requestMappingUrl = requestMapping.value();
+        String mappingUrl = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
 
         if (requestMethods.length == 0) {
@@ -51,19 +50,21 @@ public class AnnotationHandlerMapping {
         }
 
         Arrays.stream(requestMethods)
-                .forEach(requestMethod -> {
-                    HandlerKey handlerKey = new HandlerKey(requestMappingUrl, requestMethod);
-                    HandlerExecution handlerExecution = (request, response) -> {
-                        try {
-                            Object instance = clazz.getDeclaredConstructor().newInstance();
-                            return (ModelAndView) method.invoke(instance, request, response);
-                        } catch (IllegalAccessException | InvocationTargetException |
-                                 NoSuchMethodException | InstantiationException e) {
-                            throw new RuntimeException(e);
-                        }
-                    };
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                });
+                .forEach(requestMethod -> putHandlerExecution(mappingUrl, requestMethod, clazz, method));
+    }
+
+    private void putHandlerExecution(String mappingUrl, RequestMethod requestMethod, Class<?> clazz, Method method) {
+        HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
+        HandlerExecution handlerExecution = (request, response) -> {
+            try {
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+                return (ModelAndView) method.invoke(instance, request, response);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
