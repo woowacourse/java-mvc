@@ -64,7 +64,8 @@ class AnnotationHandlerMappingTest {
     @DisplayName("동일한 요청을 처리하는 2개의 핸들러 등록 시 예외가 발생한다.")
     void assignHandlerDuplicated() {
         // given
-        AnnotationHandlerMapping mapping = new AnnotationHandlerMapping("com.interface21.webmvc.servlet.samples");
+        String basePackage = "com.interface21.webmvc.servlet.samples";
+        AnnotationHandlerMapping mapping = new AnnotationHandlerMapping(basePackage);
 
         // when & then
         assertThatCode(mapping::initialize)
