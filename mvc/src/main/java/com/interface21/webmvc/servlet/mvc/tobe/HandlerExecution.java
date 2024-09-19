@@ -27,12 +27,16 @@ public class HandlerExecution {
                 .toList();
 
         List<Object> passingArgs = requiredParameterClasses.stream()
-                .map(param -> preparedArgs.stream()
-                        .filter(arg -> param.isAssignableFrom(arg.getClass()))
-                        .findAny()
-                        .orElse(null))
+                .map(param -> decideArgumentByParameter(param, preparedArgs))
                 .toList();
 
         return (ModelAndView) method.invoke(controllerInstance, passingArgs.toArray());
+    }
+
+    private Object decideArgumentByParameter(Class<?> param, List<Object> preparedArgs) {
+        return preparedArgs.stream()
+                .filter(arg -> param.isAssignableFrom(arg.getClass()))
+                .findAny()
+                .orElse(null);
     }
 }
