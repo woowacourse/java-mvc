@@ -30,6 +30,7 @@ public class AnnotationHandlerMapping {
         reflections.getTypesAnnotatedWith(Controller.class)
                 .stream()
                 .flatMap(type -> Arrays.stream(type.getDeclaredMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::addHandler);
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -64,7 +65,7 @@ public class AnnotationHandlerMapping {
 
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (handlerExecution == null) {
-            throw new HandlingException("요청을 처리할 메서드가 존재하지 않습니다.");
+            throw new HandlingException("요청을 처리할 핸들러가 존재하지 않습니다.");
         }
         return handlerExecution;
     }
