@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.webmvc.servlet.UncheckedServletException;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,12 +11,14 @@ public class BeanFactory {
     private BeanFactory() {
     }
 
-    public static synchronized Object getInstance(Class<?> clazz) throws ReflectiveOperationException {
-        if (instances.containsKey(clazz)) {
-            return instances.get(clazz);
-        }
-        Constructor<?> constructor = clazz.getDeclaredConstructor();
-        Object instance = constructor.newInstance();
-        return instances.put(clazz, instance);
+    public static Object getInstance(Class<?> clazz) {
+        return instances.computeIfAbsent(clazz, key -> {
+            try {
+                Constructor<?> constructor = clazz.getDeclaredConstructor();
+                return constructor.newInstance();
+            } catch (ReflectiveOperationException e) {
+                throw new UncheckedServletException(e);
+            }
+        });
     }
 }
