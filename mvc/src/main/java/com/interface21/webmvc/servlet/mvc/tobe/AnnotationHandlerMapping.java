@@ -8,6 +8,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -32,17 +33,27 @@ public class AnnotationHandlerMapping {
 
     private void findMethodWithAnnotation(Class<?> controllerClass) {
         Method[] declaredMethods = controllerClass.getDeclaredMethods();
+        Object controller = getController(controllerClass);
         Arrays.stream(declaredMethods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::registerHandlerExecution);
+                .forEach(method -> registerHandlerExecution(controller, method));
     }
 
-    private void registerHandlerExecution(Method method) {
+    private static Object getController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void registerHandlerExecution(Object clazz, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String value = requestMapping.value();
         RequestMethod[] methods = findRequestMethods(requestMapping);
         Arrays.stream(methods).forEach(requestMethod ->
-                handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(method)));
+                handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(clazz, method)));
     }
 
     private RequestMethod[] findRequestMethods(RequestMapping requestMapping) {
