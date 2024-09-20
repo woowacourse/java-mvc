@@ -17,6 +17,7 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
+    private static final int EMPTY_REQUEST_METHODS = 0;
     private static final String VIEW_EXTENSION = ".jsp";
 
     private final Object[] basePackage;
@@ -45,7 +46,10 @@ public class AnnotationHandlerMapping {
 
     private void addMapper(RequestMapping requestMapping) {
         String uri = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method(); // TODO: method가 설정되어있지 않으면 모든 method 매퍼 지원!
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == EMPTY_REQUEST_METHODS) {
+            requestMethods = RequestMethod.values();
+        }
         Arrays.stream(requestMethods)
                 .forEach(requestMethod -> addHandlerExecution(requestMethod, uri));
     }
