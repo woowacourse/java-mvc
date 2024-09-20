@@ -77,10 +77,12 @@ public class AnnotationHandlerMapping {
     private Object createControllerInstance(Class<?> controllerClass) {
         try {
             return controllerClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            log.error("생성자를 호출할 수 없습니다. " + controllerClass.getName(), e);
-            return null;
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            log.error("생성자를 호출할 수 없습니다. " + controllerClass.getName());
+        } catch (InstantiationException e) {
+            log.error("인스턴스화 할 수 없습니다. " + controllerClass.getName());
         }
+        return null;
     }
 
     private RequestMethod[] extractRequestMethods(RequestMapping requestMapping) {
