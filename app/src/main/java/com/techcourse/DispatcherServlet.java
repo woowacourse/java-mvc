@@ -36,9 +36,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMappings() {
+        String basePackage = getClass().getPackageName();
         this.mappings = new HandlerMappings(
                 new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse")
+                new AnnotationHandlerMapping(basePackage)
         );
         mappings.initialize();
     }
