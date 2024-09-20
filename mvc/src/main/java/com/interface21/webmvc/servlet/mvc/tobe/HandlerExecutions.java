@@ -19,7 +19,6 @@ public class HandlerExecutions {
 
     public void registerController(Class<?> controller) throws Exception {
         Constructor<?> constructor = controller.getDeclaredConstructor();
-        constructor.setAccessible(true);
         Object instance = constructor.newInstance();
 
         List<Method> methods = findRequestMappingMethods(controller);

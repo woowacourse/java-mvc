@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.util.Arrays;
 import java.util.Set;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -24,18 +23,16 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        Arrays.stream(basePackage)
-                .flatMap(basePackage -> findControllers(basePackage).stream())
-                .forEach(controller -> {
-                    try {
-                        handlerExecutions.registerController(controller);
-                    } catch (Exception e) {
-                        log.error("controller register 실패: {}", controller.getName(), e);
-                    }
-                });
+        findControllers(basePackage).forEach(controller -> {
+            try {
+                handlerExecutions.registerController(controller);
+            } catch (Exception e) {
+                log.error("controller register 실패: {}", controller.getName(), e);
+            }
+        });
     }
 
-    private Set<Class<?>> findControllers(Object basePackage) {
+    private Set<Class<?>> findControllers(Object[] basePackage) {
         Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
