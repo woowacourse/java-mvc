@@ -1,13 +1,12 @@
 package com.techcourse;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappings;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -21,27 +20,23 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerAdapter> adapters = new ArrayList<>();
-    private final List<HandlerMapping> mappings = new ArrayList<>();
+    private final HandlerAdapters adapters;
+    private final HandlerMappings mappings;
 
     public DispatcherServlet() {
-        initHandlerAdapters();
-        initHandlerMappings();
-    }
-
-    private void initHandlerMappings() {
-        mappings.add(new ManualHandlerMapping());
-        mappings.add(new AnnotationHandlerMapping("com.techcourse"));
-    }
-
-    private void initHandlerAdapters() {
-        adapters.add(new ManualHandlerAdapter());
-        adapters.add(new AnnotationHandlerAdapter());
+        this.adapters = new HandlerAdapters(
+                new ManualHandlerAdapter(),
+                new AnnotationHandlerAdapter()
+        );
+        this.mappings = new HandlerMappings(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.techcourse")
+        );
     }
 
     @Override
     public void init() {
-        mappings.forEach(HandlerMapping::initialize);
+        mappings.initialize();
     }
 
     @Override
@@ -52,10 +47,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", method, requestURI);
 
         try {
-            Object handler = getHandler(request);
+            Object handler = mappings.getHandler(request);
             if (handlerNotFound(request, response, handler)) return;
 
-            HandlerAdapter adapter = getHandlerAdapter(handler);
+            HandlerAdapter adapter = adapters.getHandlerAdapter(handler);
             ModelAndView mv = adapter.handle(request, response, handler);
 
             mv.render(request, response);
@@ -73,26 +68,5 @@ public class DispatcherServlet extends HttpServlet {
             return true;
         }
         return false;
-    }
-
-    private Object getHandler(HttpServletRequest request) throws Exception {
-        for (HandlerMapping mapping : mappings) {
-            Object handler = mapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-
-        return null;
-    }
-
-    private HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
-        for (HandlerAdapter adapter : adapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
-            }
-        }
-
-        throw new ServletException("HandlerAdapter not found");
     }
 }
