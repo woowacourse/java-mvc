@@ -49,7 +49,6 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecution(Object handlerInstance, Method handlerMethod) {
-
         String uri = (String) executeMethod("value", handlerMethod);
         RequestMethod[] requestMethods = (RequestMethod[]) executeMethod("method", handlerMethod);
 
