@@ -6,7 +6,9 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.NoHandlerFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -39,14 +41,22 @@ public class AnnotationHandlerMapping {
         if (!method.isAnnotationPresent(RequestMapping.class)) {
             return;
         }
-
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String mappedUrl = requestMapping.value();
-        RequestMethod requestMethod = requestMapping.method()[0];
-        HandlerKey handlerKey = new HandlerKey(mappedUrl, requestMethod);
+        RequestMethod[] requestMethods = requestMapping.method();
 
-        handlerExecutions.put(handlerKey, new HandlerExecution(controllerClass, method));
+        List<HandlerKey> handlerKeys = createHandlerKeys(mappedUrl, requestMethods);
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, new HandlerExecution(controllerClass, method));
+        }
     }
+
+    private List<HandlerKey> createHandlerKeys(String mappedUrl, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(mappedUrl, requestMethod))
+                .toList();
+    }
+
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
