@@ -29,12 +29,13 @@ public class HandlerAdapters {
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
             return (HandlerAdapter) instance;
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ModelAndView getMAV(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         HandlerAdapter handlerAdapter = handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))

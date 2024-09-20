@@ -28,7 +28,8 @@ public class HandlerMappings {
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
             return (HandlerMapping) instance;
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

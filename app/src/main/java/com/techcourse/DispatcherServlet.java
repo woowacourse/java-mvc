@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.getHandler(request);
-            ModelAndView modelAndView = handlerAdapters.getMAV(request, response, handler);
+            ModelAndView modelAndView = handlerAdapters.handle(request, response, handler);
             Map<String, Object> model = modelAndView.getModel();
             View view = modelAndView.getView();
             view.render(model, request, response);
