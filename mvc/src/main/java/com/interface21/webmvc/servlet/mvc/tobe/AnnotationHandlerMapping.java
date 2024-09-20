@@ -28,8 +28,8 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         registerHandlers(getControllers());
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private Set<Class<?>> getControllers() {
@@ -70,8 +70,8 @@ public class AnnotationHandlerMapping {
         return annotation.method();
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+    public Object getHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
 }
