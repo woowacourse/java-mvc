@@ -20,7 +20,8 @@ class Junit3TestRunner {
         // "test"로 시작하는 메소드 실행
         for (Method method : methods) {
             if (method.getName().startsWith("test")) {
-                method.invoke(instance);  // 메소드 실행
+                final String returnValue = (String) method.invoke(instance);// 메소드 실행
+                System.out.println(returnValue);
             }
         }
     }
