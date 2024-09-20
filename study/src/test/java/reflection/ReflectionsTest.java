@@ -1,8 +1,8 @@
 package reflection;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,21 +26,14 @@ class ReflectionsTest {
     void showAnnotationClass() throws Exception {
         Reflections reflections = new Reflections("reflection.examples");
 
-        Set<Class<?>> classes = new HashSet<>();
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> serviceClasses = reflections.getTypesAnnotatedWith(Service.class);
+        Set<Class<?>> repositoryClasses = reflections.getTypesAnnotatedWith(Repository.class);
 
-        classes.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-        classes.addAll(reflections.getTypesAnnotatedWith(Service.class));
-        classes.addAll(reflections.getTypesAnnotatedWith(Repository.class));
-
-        classes.forEach(classInfo -> log.info("className : {} ", classInfo.getSimpleName()));
-
-        assertThat(classes).containsOnly(
-                JdbcQuestionRepository.class,
-                JdbcUserRepository.class,
-                MyQnaService.class,
-                QnaController.class
+        assertAll(
+                () -> assertThat(controllerClasses).containsOnly(QnaController.class),
+                () -> assertThat(serviceClasses).containsOnly(MyQnaService.class),
+                () -> assertThat(repositoryClasses).containsOnly(JdbcQuestionRepository.class, JdbcUserRepository.class)
         );
-
-
     }
 }
