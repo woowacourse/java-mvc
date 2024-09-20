@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
@@ -34,13 +35,30 @@ class ReflectionTest {
         );
     }
 
+    @DisplayName("inner 클래스의 경우, Name은 $로, CanonicalName은 .로 구분한다")
+    @Test
+    void givenObject_whenGetsInnerClassName_thenCorrect() {
+        final Class<Question.QuestionInnerClass> clazz = Question.QuestionInnerClass.class;
+
+        String expectedSimpleName = "QuestionInnerClass";  // 느슨하게 식별(unique 보장 x)
+        String expectedName = "reflection.Question$QuestionInnerClass"; // ClassLoader scope에서 동적 로드 시 사용가능한 name unique 보장
+        String expectedCanonicalName = "reflection.Question.QuestionInnerClass"; // import문 포함
+
+        assertAll(
+                () -> assertThat(clazz.getSimpleName()).isEqualTo(expectedSimpleName),
+                () -> assertThat(clazz.getName()).isEqualTo(expectedName),
+                () -> assertThat(clazz.getCanonicalName()).isEqualTo(expectedCanonicalName)
+        );
+    }
+
     @DisplayName("Class.forName : 클래스명 기반 클래스 객체를 찾음")
     @Test
     void givenClassName_whenCreatesObject_thenCorrect()
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         final Class<?> clazz = Class.forName("reflection.Question");
 
-        Object object = clazz.newInstance();
+        Object object = clazz.getDeclaredConstructor(String.class, String.class, String.class)
+                .newInstance("testWriter", "testTitle", "testContent");
 
         String expectedSimpleName = object.getClass().getSimpleName();
         String expectedName = object.getClass().getName();
@@ -93,8 +111,19 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructors()[0];
-        final Constructor<?> secondConstructor = questionClass.getConstructors()[1];
+        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(
+                String.class,
+                String.class,
+                String.class
+        );
+        final Constructor<?> secondConstructor = questionClass.getConstructor(
+                long.class,
+                String.class,
+                String.class,
+                String.class,
+                Date.class,
+                int.class
+        );
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
         final Question secondQuestion = (Question) secondConstructor.newInstance(1, "gugu", "제목2", "내용2", new Date(), 0);
@@ -148,8 +177,8 @@ class ReflectionTest {
     @DisplayName("setAccessible : private 필드 접근을 허용한다")
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
-        final Class<?> studentClass = Student.class;
-        final Student student = (Student) studentClass.newInstance();
+        final Class<Student> studentClass = Student.class;
+        final Student student = studentClass.getDeclaredConstructor().newInstance();
         final Field field = studentClass.getDeclaredField("age");
 
         // todo field에 접근 할 수 있도록 만든다.
