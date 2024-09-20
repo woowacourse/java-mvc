@@ -19,15 +19,19 @@ public class HandlerAdapters {
 
     public void initialize() {
         Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
-        reflections.getSubTypesOf(HandlerAdapter.class)
-                .forEach(handlerAdapter -> {
-                    try {
-                        handlerAdapters.add(handlerAdapter.getDeclaredConstructor().newInstance());
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                             NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<HandlerAdapter> objects = reflections.getSubTypesOf(HandlerAdapter.class).stream()
+                .map(this::createHandlerAdapter)
+                .toList();
+        handlerAdapters.addAll(objects);
+    }
+
+    private HandlerAdapter createHandlerAdapter(Class<?> clazz) {
+        try {
+            Object instance = clazz.getDeclaredConstructor().newInstance();
+            return (HandlerAdapter) instance;
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ModelAndView getMAV(HttpServletRequest request, HttpServletResponse response, Object handler)

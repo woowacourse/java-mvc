@@ -18,15 +18,19 @@ public class HandlerMappings {
 
     public void initialize() {
         Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
-        reflections.getSubTypesOf(HandlerMapping.class)
-                .forEach(handlerMapping -> {
-                    try {
-                        handlerMappings.add(handlerMapping.getDeclaredConstructor().newInstance());
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                             NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<HandlerMapping> objects = reflections.getSubTypesOf(HandlerMapping.class).stream()
+                .map(this::createHandlerMapping)
+                .toList();
+        handlerMappings.addAll(objects);
+    }
+
+    private HandlerMapping createHandlerMapping(Class<?> clazz) {
+        try {
+            Object instance = clazz.getDeclaredConstructor().newInstance();
+            return (HandlerMapping) instance;
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Object getHandler(HttpServletRequest request) {
