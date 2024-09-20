@@ -28,24 +28,27 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
 
+        Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerTypeClass = reflections.getTypesAnnotatedWith(Controller.class);
         log.info("Controller type class count : {}", controllerTypeClass.size());
 
-        try {
-            mapControllerToHandler(controllerTypeClass);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new HandlerMappingException(e.getMessage());
+        for (Class<?> controllerClass : controllerTypeClass) {
+            mapControllerToHandler(controllerClass);
         }
     }
 
-    private void mapControllerToHandler(Set<Class<?>> controllerTypeClass)
-            throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        for (Class<?> controllerClass : controllerTypeClass) {
-            Object controller = controllerClass.getDeclaredConstructor().newInstance();
-            mapControllerExecutionMethod(controller);
+    private void mapControllerToHandler(Class<?> controllerClass) {
+        Object controller = createControllerInstance(controllerClass);
+        mapControllerExecutionMethod(controller);
+    }
+
+    private Object createControllerInstance(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            throw new HandlerMappingException(e.getMessage());
         }
     }
 
