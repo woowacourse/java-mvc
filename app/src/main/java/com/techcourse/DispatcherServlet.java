@@ -1,13 +1,14 @@
 package com.techcourse;
 
 import java.util.Map;
+import com.interface21.webmvc.servlet.view.JspView;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -42,5 +43,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         new JspView(viewName).render(Map.of(), request, response);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
