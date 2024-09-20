@@ -5,21 +5,25 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HandlerExecutions {
 
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+
+    public HandlerExecutions() {
+        this.handlerExecutions = new HashMap<>();
+    }
 
     public void mappingHandler(Class<?> controller, Method method, RequestMapping requestMapping) {
         String url = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
     public HandlerExecution get(HttpServletRequest request) {
