@@ -36,7 +36,8 @@ public class AnnotationHandlerMapping {
 
     private void initializeByController(Class<?> controller) throws Exception {
         Method[] methods = controller.getDeclaredMethods();
-        Object baseInstance = controller.getDeclaredConstructors()[0].newInstance();
+        Object baseInstance = controller.getDeclaredConstructor()
+                .newInstance();
 
         for (Method method : methods) {
             initializeByMethod(method, baseInstance);
