@@ -1,20 +1,21 @@
 package com.interface21.web;
 
-import com.interface21.core.util.ReflectionUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.HandlesTypes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.interface21.core.util.ReflectionUtils;
 
 @HandlesTypes(WebApplicationInitializer.class)
 public class SpringServletContainerInitializer implements ServletContainerInitializer {
 
     @Override
-    public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
+    public void onStartup(final Set<Class<?>> webAppInitializerClasses, final ServletContext servletContext)
             throws ServletException {
         final List<WebApplicationInitializer> initializers = new ArrayList<>();
 
@@ -23,7 +24,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
                 try {
                     initializers.add((WebApplicationInitializer)
                             ReflectionUtils.accessibleConstructor(waiClass).newInstance());
-                } catch (Throwable ex) {
+                } catch (final Exception ex) {
                     throw new ServletException("Failed to instantiate WebApplicationInitializer class", ex);
                 }
             }
@@ -34,7 +35,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
             return;
         }
 
-        for (WebApplicationInitializer initializer : initializers) {
+        for (final WebApplicationInitializer initializer : initializers) {
             initializer.onStartup(servletContext);
         }
     }
