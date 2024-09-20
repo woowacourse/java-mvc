@@ -82,8 +82,15 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        validateDuplicateHanderKey(handlerKey);
         handlerExecutions.put(handlerKey, handlerExecution);
         log.info("Mapped {} to {}", handlerKey, handlerExecution);
+    }
+
+    private void validateDuplicateHanderKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("중복된 핸들러 매핑 정보입니다.");
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -92,6 +99,13 @@ public class AnnotationHandlerMapping {
         RequestMethod requestMethod = RequestMethod.valueOf(rawMethod.toUpperCase());
 
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        validateNotFoundHandlerKey(handlerKey);
         return handlerExecutions.get(handlerKey);
+    }
+
+    private void validateNotFoundHandlerKey(HandlerKey handlerKey) {
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("처리할 컨트롤러가 없는 요청입니다.");
+        }
     }
 }

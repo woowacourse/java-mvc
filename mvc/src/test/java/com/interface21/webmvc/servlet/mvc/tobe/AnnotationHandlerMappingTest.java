@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -65,5 +66,26 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void duplicateMapping() {
+        handlerMapping = new AnnotationHandlerMapping("mapping.error.samples");
+        assertThatThrownBy(() -> handlerMapping.initialize())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("중복된 핸들러 매핑 정보입니다.");
+    }
+
+    @Test
+    void mappingNotFound() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/invalid-url");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("처리할 컨트롤러가 없는 요청입니다.");
     }
 }
