@@ -23,7 +23,14 @@ public class HandlerExecutions {
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
-                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+                .forEach(handlerKey -> mappingHandler(handlerKey, handlerExecution));
+    }
+
+    private void mappingHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("Handler key is Duplicated.");
+        }
+        handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
     }
 
     public HandlerExecution get(HttpServletRequest request) {
