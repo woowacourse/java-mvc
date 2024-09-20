@@ -7,7 +7,7 @@ public enum RequestMethod {
 
     public static RequestMethod find(String method) {
         return Arrays.stream(values())
-                .filter(value -> value.name().equalsIgnoreCase(method))
+                .filter(value -> value.name().equals(method))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find method: " + method));
     }
