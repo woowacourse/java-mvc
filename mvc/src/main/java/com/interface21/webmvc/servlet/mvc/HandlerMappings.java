@@ -34,10 +34,10 @@ public class HandlerMappings {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        HandlerMapping handlerMapping1 = handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.supports(request))
+        HandlerMapping handlerMapping = handlerMappings.stream()
+                .filter(mapping -> mapping.supports(request))
                 .findAny()
                 .orElseThrow();
-        return handlerMapping1.getHandler(request);
+        return handlerMapping.getHandler(request);
     }
 }

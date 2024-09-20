@@ -36,10 +36,10 @@ public class HandlerAdapters {
 
     public ModelAndView getMAV(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        HandlerAdapter handlerAdapter1 = handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+        HandlerAdapter handlerAdapter = handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
                 .findAny()
                 .orElseThrow();
-        return handlerAdapter1.handle(request, response, handler);
+        return handlerAdapter.handle(request, response, handler);
     }
 }
