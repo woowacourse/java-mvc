@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,13 +46,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            View jspView = new JspView(viewName);
-            jspView.render(Map.of(), request, response);
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        JspView jspView = new JspView(viewName);
+        jspView.render(Collections.emptyMap(), request, response);
     }
 }
