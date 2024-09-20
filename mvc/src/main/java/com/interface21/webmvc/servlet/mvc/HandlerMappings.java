@@ -20,7 +20,6 @@ public class HandlerMappings {
         Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
         reflections.getSubTypesOf(HandlerMapping.class)
                 .forEach(handlerMapping -> {
-                    System.out.println(handlerMapping.getName());
                     try {
                         handlerMappings.add(handlerMapping.getDeclaredConstructor().newInstance());
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
