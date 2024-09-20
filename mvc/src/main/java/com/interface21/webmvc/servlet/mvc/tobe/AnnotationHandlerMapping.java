@@ -14,8 +14,6 @@ import java.util.*;
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private static final Class<Controller> CONTROLLER_CLASS = Controller.class;
-    private static final Class<RequestMapping> REQUEST_MAPPING_CLASS = RequestMapping.class;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -28,19 +26,19 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(CONTROLLER_CLASS);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClasses.forEach(this::findMethodWithAnnotation);
     }
 
     private void findMethodWithAnnotation(Class<?> controllerClass) {
         Method[] declaredMethods = controllerClass.getDeclaredMethods();
         Arrays.stream(declaredMethods)
-                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_CLASS))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(this::registerHandlerExecution);
     }
 
     private void registerHandlerExecution(Method method) {
-        RequestMapping requestMapping = method.getAnnotation(REQUEST_MAPPING_CLASS);
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String value = requestMapping.value();
         RequestMethod[] methods = findRequestMethods(requestMapping);
         Arrays.stream(methods).forEach(requestMethod ->
