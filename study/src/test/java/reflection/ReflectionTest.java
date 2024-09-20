@@ -1,8 +1,6 @@
 package reflection;
 
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -11,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
@@ -83,7 +83,7 @@ class ReflectionTest {
     /**
      * Reflection을 사용할 때, newInstance() 메서드 자체는 인자의 타입과 개수에 맞는 값을 직접 제공해야한다.
      * Java의 Reflection API는 newInstance()를 호출할 때 인자 개수나 타입을 유추하지 않으며, 사용자가 직접 정확한 값을 전달해야한다.
-     *
+     * <p>
      * 생성자의 파라미터 타입을 Reflection을 통해 확인할 수는 있다.
      * Constructor.getParameterTypes()를 사용하면, 해당 생성자가 어떤 타입의 인자를 받는지 알 수 있다.
      */
@@ -91,11 +91,11 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructors()[0];
-        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructors()[1];
+        final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
+        final Constructor<?> secondConstructor = questionClass.getConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
 
-        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu","제목1","내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu","제목2","내용2",new Date(), 0);
+        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
