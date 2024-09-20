@@ -1,17 +1,25 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.web.bind.annotation.RequestMethod;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
+import com.interface21.web.bind.annotation.RequestMethod;
+
 public class HandlerKey {
+    private static Map<String, HandlerKey> instances = new HashMap<>();
 
     private final String url;
     private final RequestMethod requestMethod;
 
-    public HandlerKey(final String url, final RequestMethod requestMethod) {
+    private HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public static HandlerKey of(String uri, RequestMethod requestMethod) {
+        String key = uri + requestMethod.name();
+        return instances.computeIfAbsent(key, k -> new HandlerKey(uri, requestMethod));
     }
 
     @Override

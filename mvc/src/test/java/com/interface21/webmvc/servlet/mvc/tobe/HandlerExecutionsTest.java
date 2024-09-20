@@ -34,7 +34,7 @@ class HandlerMappingsTest {
         HandlerMappings handlerMappings = new HandlerMappings();
         Method method = TestController.class.getDeclaredMethod("any", HttpServletRequest.class, HttpServletResponse.class);
         handlerMappings.addHandler(method, "/all-test", RequestMethod.GET);
-        HandlerKey handlerKey = new HandlerKey("/all-test", RequestMethod.GET);
+        HandlerKey handlerKey = HandlerKey.of("/all-test", RequestMethod.GET);
 
         // when & then
         assertThatThrownBy(() -> handlerMappings.addHandler(method, "/all-test", RequestMethod.GET))
