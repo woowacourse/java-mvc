@@ -3,6 +3,7 @@ package com.interface21.web.bind.annotation;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public enum RequestMethod {
     GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD, TRACE;
@@ -11,7 +12,7 @@ public enum RequestMethod {
 
     static {
         cache = Arrays.stream(values())
-                .collect(java.util.stream.Collectors.toMap(RequestMethod::name, e -> e));
+                .collect(Collectors.toMap(RequestMethod::name, e -> e));
     }
 
     public static RequestMethod from(String methodName) {
