@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +56,9 @@ public class AnnotationHandlerMapping {
 
     private void processController(Object controller) {
         Method[] methods = controller.getClass().getDeclaredMethods();
-
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                processMethod(controller, method);
-            }
-        }
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> processMethod(controller, method));
     }
 
     private void processMethod(Object controller, Method method) {
