@@ -1,23 +1,28 @@
 package reflection;
 
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Date;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReflectionTest.class);
+
+    private static List<String> getFieldNames(Field[] studentDeclaredFields) {
+        return Arrays.stream(studentDeclaredFields)
+                .map(Field::getName)
+                .toList();
+    }
 
     @Test
     void givenObject_whenGetsClassName_thenCorrect() {
@@ -47,12 +52,21 @@ class ReflectionTest {
     @Test
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
         final Object student = new Student();
-        final Field[] fields = student.getClass().getDeclaredFields();
-        final List<String> actualFieldNames = Arrays.stream(fields)
-                .map(Field::getName)
-                .toList();
+        final Object subStudent = new SubStudent();
 
-        assertThat(actualFieldNames).contains("name", "age");
+        final Field[] studentDeclaredFields = student.getClass().getDeclaredFields();
+        final Field[] subStudentFields = subStudent.getClass().getFields();
+        final Field[] subStudentDeclaredFields = subStudent.getClass().getDeclaredFields();
+
+        final List<String> studentDeclaredFieldNames = getFieldNames(studentDeclaredFields);
+        final List<String> subStudentFieldNames = getFieldNames(subStudentFields);
+        final List<String> subStudentDeclaredFieldNames = getFieldNames(subStudentDeclaredFields);
+
+        assertAll(
+                () -> assertThat(studentDeclaredFieldNames).contains("name", "age", "subjectCount"),
+                () -> assertThat(subStudentFieldNames).contains("subjectCount"),
+                () -> assertThat(subStudentDeclaredFieldNames).contains("degree")
+        );
     }
 
     @Test
@@ -84,8 +98,10 @@ class ReflectionTest {
         final Constructor<?> firstConstructor = declaredConstructors.get(0);
         final Constructor<?> secondConstructor = declaredConstructors.get(1);
 
-        final reflection.Question firstQuestion = (reflection.Question) firstConstructor.newInstance("gugu","제목1","내용1");
-        final reflection.Question secondQuestion = (reflection.Question) secondConstructor.newInstance(1,"gugu","제목2","내용2", new Date(), 0);
+        final reflection.Question firstQuestion = (reflection.Question) firstConstructor.newInstance("gugu", "제목1",
+                "내용1");
+        final reflection.Question secondQuestion = (reflection.Question) secondConstructor.newInstance(1, "gugu", "제목2",
+                "내용2", new Date(), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -141,11 +157,16 @@ class ReflectionTest {
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
 
-        field.set(student,99);
+        field.set(student, 99);
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
     }
 
-    class Question {}
+    class Question {
+    }
+
+    class SubStudent extends Student {
+        private int degree;
+    }
 }
