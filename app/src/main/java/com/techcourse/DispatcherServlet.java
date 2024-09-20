@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ManualHandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.RequestHandler;
@@ -17,16 +18,16 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMapping handlerMapping;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        handlerMapping = new ManualHandlerMapping();
         try {
-            manualHandlerMapping.initialize("");
+            handlerMapping.initialize("");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -40,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", method, requestURI);
 
         try {
-            RequestHandler handler = manualHandlerMapping.getHandler(method, requestURI);
+            RequestHandler handler = handlerMapping.getHandler(method, requestURI);
             ModelAndView modelAndView = handler.handle(request, response);
             move(modelAndView, request, response);
         } catch (Throwable e) {

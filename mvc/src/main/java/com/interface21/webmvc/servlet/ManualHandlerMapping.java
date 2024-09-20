@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.util.FileUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import java.io.File;
@@ -17,12 +18,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ManualHandlerMapping {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
     private final Map<ControllerKey, RequestHandler> controllers = new HashMap<>();
 
+    @Override
     public void initialize(String basePackage) throws ReflectiveOperationException, FileNotFoundException {
         log.info("Initializing Handler Mapping!");
         List<Class<?>> controllerClasses = getClassesInPackage(basePackage).stream()
@@ -56,27 +58,20 @@ public class ManualHandlerMapping {
         return new RequestHandlerImpl(bean, method);
     }
 
-    public List<Method> getMethodsHaveAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    private List<Method> getMethodsHaveAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         return Arrays.stream(clazz.getMethods())
                 .filter(method -> method.isAnnotationPresent(annotationClass))
                 .collect(Collectors.toList());
     }
 
-    public List<Class<?>> getClassesInPackage(String packageName)
+    private List<Class<?>> getClassesInPackage(String packageName)
             throws ReflectiveOperationException, FileNotFoundException {
         List<Class<?>> classes = new ArrayList<>();
         URL packageURL = getPackageURL(packageName);
-        processDirectory(getPackageDirectory(packageURL), packageName, classes);
+        processDirectory(FileUtils.getPackageDirectory(packageURL), packageName, classes);
         return classes;
     }
 
-    public File getPackageDirectory(URL directoryURL) throws FileNotFoundException {
-        File packageDirectory = new File(directoryURL.getFile());
-        if (!packageDirectory.exists()) {
-            throw new FileNotFoundException("디렉토리를 가져오는데 실패하였습니다");
-        }
-        return packageDirectory;
-    }
 
     private URL getPackageURL(String packageName) throws FileNotFoundException {
         String packagePath = packageName.replace(".", "/");
@@ -142,6 +137,7 @@ public class ManualHandlerMapping {
         return !annotationType.getPackage().getName().equals("java.lang.annotation");
     }
 
+    @Override
     public RequestHandler getHandler(final String requestMethod, final String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(new ControllerKey(requestURI, RequestMethod.of(requestMethod)));
