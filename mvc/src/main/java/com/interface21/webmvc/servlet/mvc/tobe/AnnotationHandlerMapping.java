@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class AnnotationHandlerMapping {
 
@@ -45,9 +42,17 @@ public class AnnotationHandlerMapping {
     private void registerHandlerExecution(Method method) {
         RequestMapping requestMapping = method.getAnnotation(REQUEST_MAPPING_CLASS);
         String value = requestMapping.value();
-        RequestMethod[] methods = requestMapping.method();
+        RequestMethod[] methods = findRequestMethods(requestMapping);
         Arrays.stream(methods).forEach(requestMethod ->
                 handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(method)));
+    }
+
+    private RequestMethod[] findRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] methods = requestMapping.method();
+        if (methods == null || methods.length == 0) {
+            return RequestMethod.values();
+        }
+        return methods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
