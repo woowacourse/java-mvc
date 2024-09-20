@@ -18,11 +18,11 @@ public class BeanRegister {
     }
 
     private static void registerInternalBean(BeanContainer beanContainer) {
-        register(beanContainer, HandlerAdaptor.class);
-        register(beanContainer, HandlerMapping.class);
+        registerSubTypeBean(beanContainer, HandlerAdaptor.class);
+        registerSubTypeBean(beanContainer, HandlerMapping.class);
     }
 
-    private static void register(BeanContainer beanContainer, Class<?> clazz) {
+    private static void registerSubTypeBean(BeanContainer beanContainer, Class<?> clazz) {
         List<Object> beans = BeanScanner.subTypeScan(clazz, clazz.getPackageName());
         beanContainer.registerBeans(beans);
     }
