@@ -2,7 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -17,15 +18,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappingRegistry.initialize();
+    }
+
+    public void addHandlerMapping(HandlerMapping mapping) {
+        handlerMappingRegistry.addHandlerMapping(mapping);
     }
 
     @Override
@@ -34,7 +39,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
+            Object controller = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new IllegalArgumentException("요청에 일치하는 핸들러를 찾을 수 없습니다."));
             String viewName = controller.execute(request, response);
 
             View view = viewResolver(viewName);
