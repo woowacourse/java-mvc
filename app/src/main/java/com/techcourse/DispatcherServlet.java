@@ -45,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView modelAndView = createModelAndView(request, response);
-            modelAndView.render(request, response);
+            modelAndView.renderView(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
