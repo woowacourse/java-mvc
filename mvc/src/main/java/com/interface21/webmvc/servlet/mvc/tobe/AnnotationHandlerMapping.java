@@ -25,7 +25,6 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Arrays.stream(basePackage)
-                .map(Object::toString)
                 .flatMap(basePackage -> findControllers(basePackage).stream())
                 .forEach(controller -> {
                     try {
@@ -36,7 +35,7 @@ public class AnnotationHandlerMapping {
                 });
     }
 
-    private Set<Class<?>> findControllers(String basePackage) {
+    private Set<Class<?>> findControllers(Object basePackage) {
         Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
