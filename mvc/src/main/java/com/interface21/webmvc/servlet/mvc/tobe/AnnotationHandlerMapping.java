@@ -1,15 +1,23 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+
+    private static final String VIEW_EXTENSION = ".jsp";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -21,8 +29,32 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        handlerExecutions.put(new HandlerKey("/get-test", RequestMethod.GET), new HandlerExecution("/get-test.jsp"));
-        handlerExecutions.put(new HandlerKey("/post-test", RequestMethod.POST), new HandlerExecution("/post-test.jsp"));
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        controllers.stream()
+                .map(Class::getDeclaredMethods)
+                .forEach(this::mapHandlerToExecution);
+    }
+
+    private void mapHandlerToExecution(Method[] handlers) {
+        Arrays.stream(handlers)
+                .filter(handler -> handler.isAnnotationPresent(RequestMapping.class))
+                .map(handler -> handler.getAnnotation(RequestMapping.class))
+                .forEach(this::addMapper);
+    }
+
+    private void addMapper(RequestMapping requestMapping) {
+        String uri = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method(); // TODO: method가 설정되어있지 않으면 모든 method 매퍼 지원!
+        Arrays.stream(requestMethods)
+                .forEach(requestMethod -> addHandlerExecution(requestMethod, uri));
+    }
+
+    private void addHandlerExecution(RequestMethod requestMethod, String uri) {
+        String viewName = uri + VIEW_EXTENSION;
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        HandlerExecution handlerExecution = new HandlerExecution(viewName);
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
