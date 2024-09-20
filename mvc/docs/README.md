@@ -1,5 +1,5 @@
 # 1단계 요구사항
-- [ ] @MVC Framework 테스트 통과하기
+- [x] @MVC Framework 테스트 통과하기
   - URL을 컨트롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등)도 매핑 조건에 포함시킨다.
   - `@RequestMapping()`에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원한다.
 - [ ] JspView 클래스 구현하기
