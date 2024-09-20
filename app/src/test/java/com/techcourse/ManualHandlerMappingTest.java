@@ -1,13 +1,13 @@
-package com.interface21.webmvc.servlet;
+package com.techcourse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+import com.interface21.webmvc.servlet.RequestHandler;
+import com.interface21.webmvc.servlet.RequestHandlerImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 
 @DisplayName("핸들러 매핑 테스트")
 class ManualHandlerMappingTest {
@@ -61,3 +61,4 @@ class ManualHandlerMappingTest {
         assertNull(handler, "Handler should be null for unmapped requests");
     }
 }
+

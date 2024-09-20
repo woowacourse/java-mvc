@@ -5,5 +5,5 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface RequestHandler {
 
-    ModelAndView handle(HttpServletRequest httpRequest, HttpServletResponse httpResponse);
+    ModelAndView handle(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception;
 }

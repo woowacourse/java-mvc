@@ -1,9 +1,18 @@
-package com.interface21.webmvc.servlet;
+package com.techcourse;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.util.FileUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ControllerKey;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.LegacyRequestHandlerImpl;
+import com.interface21.webmvc.servlet.RequestHandler;
+import com.interface21.webmvc.servlet.RequestHandlerImpl;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -50,6 +59,18 @@ public class ManualHandlerMapping implements HandlerMapping {
                 log.error("Failed to initialize controller: {}", controllerClass.getName(), e);
             }
         }
+        registerLegacyControllers();
+    }
+
+    private void registerLegacyControllers() {
+        controllers.put(new ControllerKey("/", RequestMethod.GET),
+                new LegacyRequestHandlerImpl(new ForwardController("/index.jsp")));
+        controllers.put(new ControllerKey("/login", RequestMethod.GET),
+                new LegacyRequestHandlerImpl(new LoginController()));
+        controllers.put(new ControllerKey("/login/view", RequestMethod.GET),
+                new LegacyRequestHandlerImpl(new LoginViewController()));
+        controllers.put(new ControllerKey("/logout", RequestMethod.GET),
+                new LegacyRequestHandlerImpl(new LogoutController()));
     }
 
     private RequestHandler getRequestHandler(Class<?> beanClass, Method method) throws ReflectiveOperationException {
