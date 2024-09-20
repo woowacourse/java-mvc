@@ -16,7 +16,9 @@ class Junit3TestRunner {
         // TODO Junit3Test에서 test로 시작하는 메소드 실행
         Method[] declaredMethods = clazz.getDeclaredMethods();
         for (Method declaredMethod : declaredMethods) {
-            declaredMethod.invoke(junit3Test);
+            if(declaredMethod.getName().startsWith("test")){
+                declaredMethod.invoke(junit3Test);
+            }
         }
     }
 }
