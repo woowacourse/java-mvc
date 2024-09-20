@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
@@ -17,14 +18,12 @@ public class HandlerExecutions {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void registerController(Class<?> controller) throws Exception {
-        Constructor<?> constructor = controller.getDeclaredConstructor();
-        Object instance = constructor.newInstance();
-
-        List<Method> methods = findRequestMappingMethods(controller);
-        for (Method method : methods) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            registerMethod(instance, method, requestMapping);
+    public void registerController(Set<Class<?>> controllers) throws Exception {
+        for (Class<?> controller : controllers) {
+            Constructor<?> constructor = controller.getDeclaredConstructor();
+            Object instance = constructor.newInstance();
+            List<Method> methods = findRequestMappingMethods(controller);
+            registerRequestMappingMethod(methods, instance);
         }
     }
 
@@ -32,6 +31,13 @@ public class HandlerExecutions {
         return Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
+    }
+
+    private void registerRequestMappingMethod(List<Method> methods, Object instance) {
+        methods.forEach(method -> {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            registerMethod(instance, method, requestMapping);
+        });
     }
 
     private void registerMethod(Object instance, Method method, RequestMapping requestMapping) {

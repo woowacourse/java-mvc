@@ -20,16 +20,11 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HandlerExecutions();
     }
 
-    public void initialize() {
+    public void initialize() throws Exception {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        findControllers(basePackage).forEach(controller -> {
-            try {
-                handlerExecutions.registerController(controller);
-            } catch (Exception e) {
-                log.error("controller register 실패: {}", controller.getName(), e);
-            }
-        });
+        Set<Class<?>> controllers = findControllers(basePackage);
+        handlerExecutions.registerController(controllers);
     }
 
     private Set<Class<?>> findControllers(Object[] basePackage) {
