@@ -8,7 +8,7 @@ public class HandlerKey {
     private final String url;
     private final RequestMethod requestMethod;
 
-    public  HandlerKey(final String url, final RequestMethod requestMethod) {
+    public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
     }
