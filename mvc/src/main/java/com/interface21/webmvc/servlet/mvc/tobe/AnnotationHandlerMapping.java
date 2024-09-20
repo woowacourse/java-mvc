@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping {
                 .forEach(requestMethod -> handlerMappings.addHandler(method, requestMapping.value(), requestMethod));
     }
 
-    private static RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
             return RequestMethod.values();
