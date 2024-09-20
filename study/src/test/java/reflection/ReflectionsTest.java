@@ -1,5 +1,8 @@
 package reflection;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -7,10 +10,6 @@ import org.slf4j.LoggerFactory;
 import reflection.annotation.Controller;
 import reflection.annotation.Repository;
 import reflection.annotation.Service;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Set;
 
 class ReflectionsTest {
 

@@ -1,14 +1,13 @@
 package servlet.com.example;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @WebFilter("/*")
 public class CharacterEncodingFilter implements Filter {
