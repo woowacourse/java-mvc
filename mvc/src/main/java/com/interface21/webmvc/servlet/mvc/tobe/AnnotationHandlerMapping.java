@@ -28,14 +28,14 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        List<Object> controllerInstances = getControllerInstances(basePackage);
+        List<Object> controllerInstances = getControllerInstances();
 
         for (Object controller : controllerInstances) {
             processController(controller);
         }
     }
 
-    private List<Object> getControllerInstances(Object basePackage) {
+    private List<Object> getControllerInstances() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
