@@ -1,6 +1,7 @@
 package reflection;
 
 import java.util.Arrays;
+import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,11 +67,13 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class, String.class, String.class);
-        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructor(String.class, String.class, String.class);
+        Constructor<?>[] constructors = questionClass.getConstructors();
+
+        final Constructor<?> firstConstructor = constructors[0];
+        final Constructor<?> secondConstructor = constructors[1];
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance("gugu", "제목2", "내용2");
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1, "gugu", "제목2", "내용2", new Date(), 0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
