@@ -65,7 +65,8 @@ public class AnnotationHandlerMapping {
         HandlerKey handlerKey = createHandlerKey(request);
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (handlerExecution == null) {
-            throw new IllegalArgumentException("해당 요청에 대응하는 핸들러가 없습니다.");
+            throw new IllegalArgumentException(
+                    String.format("해당 요청에 대응하는 핸들러가 없습니다: %s %s", request.getMethod(), request.getRequestURI()));
         }
         return handlerExecution;
     }

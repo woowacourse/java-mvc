@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,8 +23,9 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("해당 uri와 method get에 매핑되는 핸들러를 찾아 실행한다.")
     @Test
-    void get() throws Exception { // todo: displayName
+    void should_handleHandler_when_getRequest() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -37,8 +39,9 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("해당 uri와 method post에 매핑되는 핸들러를 찾아 실행한다.")
     @Test
-    void post() throws Exception {
+    void should_handleHandler_when_postRequest() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -52,7 +55,19 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    // todo 다중 method
+    @DisplayName("해당 uri와 method에 매핑되는 핸들러가 없는 경우 예외가 발생한다.")
+    @Test
+    void should_throwException_when_givenInvalidRequest() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 요청에 대응하는 핸들러가 없습니다: POST /get-test");
+    }
 
     @DisplayName("핸들러에 http method가 선언되지 않은 경우 모든 method가 매핑되도록 한다.")
     @ParameterizedTest
