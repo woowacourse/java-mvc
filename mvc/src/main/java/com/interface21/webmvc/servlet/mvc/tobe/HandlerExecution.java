@@ -4,6 +4,8 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HandlerExecution {
     private final Object controller;
@@ -16,17 +18,17 @@ public class HandlerExecution {
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        Object[] args = new Object[parameterTypes.length];
+        List<Object> args = new ArrayList<>();
 
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (parameterTypes[i].isAssignableFrom(HttpServletRequest.class)) {
-                args[i] = request;
+        for (Class<?> parameterType : parameterTypes) {
+            if (parameterType.isAssignableFrom(HttpServletRequest.class)) {
+                args.add(request);
             }
-            if (parameterTypes[i].isAssignableFrom(HttpServletResponse.class)) {
-                args[i] = response;
+            if (parameterType.isAssignableFrom(HttpServletResponse.class)) {
+                args.add(response);
             }
         }
 
-        return (ModelAndView) method.invoke(controller, args);
+        return (ModelAndView) method.invoke(controller, args.toArray());
     }
 }
