@@ -18,7 +18,6 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private static final int EMPTY_REQUEST_METHODS = 0;
-    private static final String VIEW_EXTENSION = ".jsp";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -40,25 +39,20 @@ public class AnnotationHandlerMapping {
     private void mapHandlerToExecution(Method[] handlers) {
         Arrays.stream(handlers)
                 .filter(handler -> handler.isAnnotationPresent(RequestMapping.class))
-                .map(handler -> handler.getAnnotation(RequestMapping.class))
-                .forEach(this::addMapper);
+                .forEach(handler -> {
+                    HandlerExecution handlerExecution = new HandlerExecution(handler);
+                    addMapper(handler.getAnnotation(RequestMapping.class), handlerExecution);
+                });
     }
 
-    private void addMapper(RequestMapping requestMapping) {
+    private void addMapper(RequestMapping requestMapping, HandlerExecution handlerExecution) {
         String uri = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == EMPTY_REQUEST_METHODS) {
             requestMethods = RequestMethod.values();
         }
         Arrays.stream(requestMethods)
-                .forEach(requestMethod -> addHandlerExecution(requestMethod, uri));
-    }
-
-    private void addHandlerExecution(RequestMethod requestMethod, String uri) {
-        String viewName = uri + VIEW_EXTENSION;
-        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-        HandlerExecution handlerExecution = new HandlerExecution(viewName);
-        handlerExecutions.put(handlerKey, handlerExecution);
+                .forEach(requestMethod -> handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution));
     }
 
     public Object getHandler(final HttpServletRequest request) {
