@@ -7,6 +7,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ class HandlerAdaptersTest {
     @DisplayName("Handler 를 처리할 수 있는 HandlerAdaptor 를 찾는다.")
     @Test
     void findHandlerAdaptor() {
+        BeanContainer beanContainer = BeanContainer.getInstance();
+        beanContainer.registerBeans(List.of(new TestFailHandlerAdapter(), new TestSuccessHandlerAdapter()));
+
         HandlerAdapters handlerAdapters = new HandlerAdapters();
 
         HandlerAdapter handlerAdapter = handlerAdapters.findHandlerAdaptor("abc");

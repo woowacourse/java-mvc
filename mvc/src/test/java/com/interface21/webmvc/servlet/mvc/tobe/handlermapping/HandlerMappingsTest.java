@@ -7,6 +7,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,9 @@ class HandlerMappingsTest {
     @DisplayName("요청을 처리할 수 있는 HandlerMapping 을 찾는다.")
     @Test
     void findHandler() {
+        BeanContainer beanContainer = BeanContainer.getInstance();
+        beanContainer.registerBeans(List.of(new TestFailHandlerMappings(), new TestSuccessHandlerMappings()));
+
         HandlerMappings handlerMappings = new HandlerMappings();
         HttpServletRequest request = new MockHttpServletRequest();
         Object handler = handlerMappings.findHandler(request);

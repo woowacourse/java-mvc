@@ -17,7 +17,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 class ControllerHandlerAdapterTest {
 
-    @DisplayName("Controller의 반환값 String을 이름으로 하는  JspView로 변환시킨다.")
+    @DisplayName("Controller의 반환값 String을 이름으로 하는 JspView로 변환시킨다.")
     @Test
     void test() throws Exception {
         HandlerAdapter adaptor = new ControllerHandlerAdapter();
@@ -36,4 +36,32 @@ class ControllerHandlerAdapterTest {
 
     }
 
+    @DisplayName("Controller 인터페이스 구현체를 지원한다.")
+    @Test
+    void supportTrue() {
+        Object testController = new TestController();
+
+        ControllerHandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
+        boolean support = handlerAdapter.support(testController);
+
+        assertThat(support).isTrue();
+    }
+
+    @DisplayName("Controller 인터페이스 구현체가 아니면 지원하지 않는다.")
+    @Test
+    void supportFalse() {
+        Object testController = new Object();
+
+        ControllerHandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
+        boolean support = handlerAdapter.support(testController);
+
+        assertThat(support).isFalse();
+    }
+
+    private static class TestController implements Controller {
+        @Override
+        public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+            return "";
+        }
+    }
 }

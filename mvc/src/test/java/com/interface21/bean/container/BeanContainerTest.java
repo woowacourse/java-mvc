@@ -1,9 +1,8 @@
-package com.interface21.container;
+package com.interface21.bean.container;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.interface21.bean.container.BeanContainer;
 import com.interface21.context.stereotype.Controller;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,14 +1,13 @@
-package com.interface21.scanner;
+package com.interface21.bean.scanner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.interface21.bean.scanner.BeanScanner;
 import com.interface21.context.stereotype.Component;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class BeanScannerTest {
+public class BeanScannerTest {
 
     @DisplayName("@Component가 붙은 클래스를 스캔하여 인스턴스르 생성한다.")
     @Test
@@ -31,13 +30,13 @@ class BeanScannerTest {
     }
 
     @Component
-    private static class TestController1 {
+    public static class TestController1 {
     }
 
     @Component
-    private static class TestController2 extends TestController1 {
+    public static class TestController2 extends TestController1 {
     }
 
-    private static class TestController3 extends TestController1 {
+    public static class TestController3 extends TestController1 {
     }
 }
