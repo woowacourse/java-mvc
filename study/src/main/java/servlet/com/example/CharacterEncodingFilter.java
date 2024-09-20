@@ -10,6 +10,8 @@ public class CharacterEncodingFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        request.getServletContext().log("Response에 코리안 패치 적용");
+        response.setCharacterEncoding("UTF-8");
         request.getServletContext().log("doFilter() 호출");
         chain.doFilter(request, response);
     }
