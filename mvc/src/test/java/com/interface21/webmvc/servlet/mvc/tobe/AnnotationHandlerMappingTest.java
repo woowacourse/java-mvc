@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.container.BeanContainer;
+import com.interface21.bean.container.BeanContainer;
 import com.interface21.context.stereotype.Component;
 import com.interface21.context.stereotype.Controller;
-import com.interface21.scanner.BeanScanner;
+import com.interface21.bean.scanner.BeanScanner;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -28,7 +28,7 @@ class AnnotationHandlerMappingTest {
     void setUp() {
         BeanContainer beanContainer = BeanContainer.getInstance();
         beanContainer.clear();
-        beanContainer.registerBean(List.of(new samples.TestController()));
+        beanContainer.registerBeans(List.of(new samples.TestController()));
         handlerMapping = new AnnotationHandlerMapping();
         handlerMapping.initialize();
     }
@@ -68,7 +68,7 @@ class AnnotationHandlerMappingTest {
     void initialize() {
         BeanContainer beanContainer = BeanContainer.getInstance();
         List<Object> beans = BeanScanner.componentScan("com.interface21.webmvc.servlet.mvc.tobe");
-        beanContainer.registerBean(beans);
+        beanContainer.registerBeans(beans);
         handlerMapping = new AnnotationHandlerMapping();
         assertThatThrownBy(() -> handlerMapping.initialize())
                 .isInstanceOf(IllegalArgumentException.class);

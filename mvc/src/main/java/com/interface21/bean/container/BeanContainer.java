@@ -1,4 +1,4 @@
-package com.interface21.container;
+package com.interface21.bean.container;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -16,7 +16,7 @@ public class BeanContainer {
         return SingletonHelper.INSTANCE;
     }
 
-    public void registerBean(List<Object> beans) {
+    public void registerBeans(List<Object> beans) {
         for (Object bean : beans) {
             String name = bean.getClass().getSimpleName();
             if (container.containsKey(name)) {

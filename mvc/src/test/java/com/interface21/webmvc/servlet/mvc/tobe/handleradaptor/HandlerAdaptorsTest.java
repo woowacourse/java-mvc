@@ -2,7 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe.handleradaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.interface21.container.BeanContainer;
+import com.interface21.bean.container.BeanContainer;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdaptor;
 import jakarta.servlet.http.HttpServletRequest;

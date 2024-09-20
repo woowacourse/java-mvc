@@ -2,6 +2,7 @@ package com.interface21.scanner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.interface21.bean.scanner.BeanScanner;
 import com.interface21.context.stereotype.Component;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

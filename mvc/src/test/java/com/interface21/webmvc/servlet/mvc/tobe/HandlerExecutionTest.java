@@ -3,7 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.interface21.container.BeanContainer;
+import com.interface21.bean.container.BeanContainer;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ class HandlerExecutionTest {
     void setUp() {
         BeanContainer beanContainer = BeanContainer.getInstance();
         beanContainer.clear();
-        beanContainer.registerBean(List.of(new TestHandlerExecution()));
+        beanContainer.registerBeans(List.of(new TestHandlerExecution()));
     }
 
     @DisplayName("Method를 handle로 실행시킨다.")

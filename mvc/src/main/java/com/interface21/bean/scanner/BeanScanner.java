@@ -1,6 +1,5 @@
-package com.interface21.scanner;
+package com.interface21.bean.scanner;
 
-import com.interface21.container.BeanCreationException;
 import com.interface21.context.stereotype.Component;
 import com.interface21.core.util.ReflectionUtils;
 import java.lang.reflect.InvocationTargetException;

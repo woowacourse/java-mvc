@@ -1,4 +1,4 @@
-package com.interface21.container;
+package com.interface21.bean.scanner;
 
 public class BeanCreationException extends RuntimeException {
 

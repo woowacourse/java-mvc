@@ -1,9 +1,7 @@
 package com.techcourse;
 
-import com.interface21.container.BeanContainer;
-import com.interface21.scanner.BeanScanner;
+import com.interface21.bean.BeanRegister;
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +13,7 @@ public class Application {
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(final String[] args) throws Exception {
-        String packageName = Application.class.getPackageName();
-        List<Object> beans = BeanScanner.componentScan(packageName);
-        BeanContainer beanContainer = BeanContainer.getInstance();
-        beanContainer.registerBean(beans);
+        BeanRegister.run(Application.class);
 
         final int port = defaultPortIfNull(args);
         final var tomcat = new TomcatStarter(port);

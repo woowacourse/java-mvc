@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe.handlermapping;
 
-import com.interface21.container.BeanContainer;
-import com.interface21.scanner.BeanScanner;
+import com.interface21.bean.container.BeanContainer;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -15,9 +14,7 @@ public class HandlerMappings {
     private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappings() {
-        List<Object> beans = BeanScanner.subTypeScan(HandlerMapping.class, getClass().getPackageName());
         BeanContainer beanContainer = BeanContainer.getInstance();
-        beanContainer.registerBean(beans);
         this.handlerMappings = beanContainer.getSubTypeBeansOf(HandlerMapping.class);
     }
 
