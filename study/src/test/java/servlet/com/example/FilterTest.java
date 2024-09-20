@@ -22,6 +22,7 @@ class FilterTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // 테스트가 통과하도록 CharacterEncodingFilter 클래스를 수정해보자.
+        // 답: CharacterEncodingFilter 클래스의 doFilter 메서드에서 response.setCharacterEncoding("UTF-8");을 추가한다.
         assertThat(response.body()).isEqualTo(인코딩);
     }
 }
