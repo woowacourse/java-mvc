@@ -1,7 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe.handler.adapter;
 
 import jakarta.servlet.ServletException;
-import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,10 +9,10 @@ public class HandlerAdapters {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerAdapters.class);
 
-    private final List<HandlerAdapter> values;
+    private final Set<HandlerAdapter> values;
 
     public HandlerAdapters(HandlerAdapter... handlerAdapters) {
-        this.values = List.of(handlerAdapters);
+        this.values = Set.of(handlerAdapters);
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
