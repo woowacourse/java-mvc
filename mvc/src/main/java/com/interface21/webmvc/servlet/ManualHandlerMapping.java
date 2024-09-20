@@ -4,7 +4,6 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.util.FileUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -67,57 +66,13 @@ public class ManualHandlerMapping implements HandlerMapping {
     private List<Class<?>> getClassesInPackage(String packageName)
             throws ReflectiveOperationException, FileNotFoundException {
         List<Class<?>> classes = new ArrayList<>();
-        URL packageURL = getPackageURL(packageName);
-        processDirectory(FileUtils.getPackageDirectory(packageURL), packageName, classes);
+        URL packageURL = FileUtils.getPackageURL(packageName);
+        FileUtils.processDirectory(FileUtils.getPackageDirectory(packageURL), packageName, classes);
         return classes;
     }
 
-
-    private URL getPackageURL(String packageName) throws FileNotFoundException {
-        String packagePath = packageName.replace(".", "/");
-        URL packageURL = Thread.currentThread().getContextClassLoader().getResource(packagePath);
-        if (packageURL == null) {
-            throw new FileNotFoundException("패키지 URL을 가져오는데 실패하였습니다");
-        }
-        return packageURL;
-    }
-
-    private void processDirectory(
-            File directory,
-            String packageName,
-            List<Class<?>> classes) throws FileNotFoundException, ClassNotFoundException {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new FileNotFoundException("패키지 디렉토리를 나열할 수 없습니다");
-        }
-        for (File file : files) {
-            if (file.isDirectory()) {
-                String temp = packageName.isBlank() ? file.getName() : packageName + "." + file.getName();
-                processDirectory(file, temp, classes);
-                continue;
-            }
-
-            if (file.isFile()) {
-                getClassFromFile(packageName, classes, file);
-            }
-        }
-    }
-
-    private void getClassFromFile(String packageName, List<Class<?>> classes, File file) throws ClassNotFoundException {
-        String fileName = file.getName();
-        if (!fileName.endsWith(".class")) {
-            return;
-        }
-
-        String className = packageName + "." + fileName.substring(0, fileName.length() - 6);
-        Class<?> clazz = Class.forName(className);
-        classes.add(clazz);
-    }
-
-
     private boolean classHasAnnotation(Class<?> clazz, Class<? extends Annotation> targetAnnotation) {
-        List<? extends Class<? extends Annotation>> annotations =
-                getClassesHasCustomAnnotation(clazz);
+        List<? extends Class<? extends Annotation>> annotations = getClassesHasCustomAnnotation(clazz);
         if (annotations.contains(targetAnnotation)) {
             return true;
         }
