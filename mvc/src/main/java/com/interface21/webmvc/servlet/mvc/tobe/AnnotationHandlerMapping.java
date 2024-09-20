@@ -64,13 +64,21 @@ public class AnnotationHandlerMapping {
     private void processMethod(Object controller, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();  // 가정: value는 url 패턴을 반환
-        RequestMethod[] requestMethods = requestMapping.method();  // method는 RequestMethod 배열을 반환
+        RequestMethod[] requestMethods = getRequestMethodsOrAll(requestMapping);
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             addHandlerExecution(handlerKey, handlerExecution);
         }
+    }
+
+    private static RequestMethod[] getRequestMethodsOrAll(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();  // method는 RequestMethod 배열을 반환
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     private void addHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
