@@ -45,7 +45,7 @@ class Junit3TestRunner {
                                 .startsWith("test"))
                 .forEach(method -> {
                     try {
-                        method.invoke(instance, (Object[]) null);
+                        method.invoke(instance, null);
                     } catch (final IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }

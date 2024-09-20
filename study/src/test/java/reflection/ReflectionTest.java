@@ -113,11 +113,10 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = Arrays.stream(questionClass.getDeclaredFields())
-                .filter(field -> Modifier.isPublic(field.getModifiers()))
+        final Field[] fields = Arrays.stream(questionClass.getFields())
                 .toArray(Field[]::new);
 
-        assertThat(fields).hasSize(0);
+        assertThat(fields).isEmpty();
     }
 
     @Test
@@ -152,12 +151,11 @@ class ReflectionTest {
         final Field field = studentClass.getDeclaredField("age");
         field.setAccessible(true);
 
-        // todo field에 접근 할 수 있도록 만든다.
-
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
 
         field.set(student,99);
+        field.setAccessible(false);
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);

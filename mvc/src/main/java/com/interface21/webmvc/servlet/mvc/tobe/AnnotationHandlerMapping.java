@@ -32,8 +32,7 @@ public class AnnotationHandlerMapping {
         controllerContainer.initialize();
         final Reflections reflections = new Reflections(basePackage);
         final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        controllers.stream()
-                .forEach(this::init);
+        controllers.forEach(this::init);
     }
 
     private void init(final Class<?> controller) {
@@ -43,7 +42,7 @@ public class AnnotationHandlerMapping {
     }
 
     private boolean hasRequestMapping(final Method method) {
-        return method.getAnnotation(RequestMapping.class) != null;
+        return method.isAnnotationPresent(RequestMapping.class);
     }
 
     private void initialize(final Method method) {
