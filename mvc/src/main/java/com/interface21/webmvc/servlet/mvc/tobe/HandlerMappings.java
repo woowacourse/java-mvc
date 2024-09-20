@@ -15,8 +15,7 @@ public class HandlerMappings {
     private final List<HandlerMapping> values;
 
     public HandlerMappings(HandlerMapping... handlerMappings) {
-        this.values = Arrays.stream(handlerMappings)
-                .toList();
+        this.values = List.of(handlerMappings);
     }
 
     public Object getHandler(HttpServletRequest request) throws ServletException {

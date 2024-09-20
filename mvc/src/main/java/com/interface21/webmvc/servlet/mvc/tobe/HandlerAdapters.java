@@ -13,8 +13,7 @@ public class HandlerAdapters {
     private final List<HandlerAdapter> values;
 
     public HandlerAdapters(HandlerAdapter... handlerAdapters) {
-        this.values = Arrays.stream(handlerAdapters)
-                .toList();
+        this.values = List.of(handlerAdapters);
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
