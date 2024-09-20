@@ -8,6 +8,9 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.TestController1;
+import samples.TestController2;
+import samples.TestController3;
 
 class BeanContainerTest {
 
@@ -28,23 +31,23 @@ class BeanContainerTest {
     @DisplayName("특정 애너테이션이 포함된 빈을 찾을 수 있다.")
     @Test
     void getAnnotatedBeans() {
-        beanContainer.registerBeans(List.of(new TestBean1(), new TestBean2(), new TestBean3()));
+        beanContainer.registerBeans(List.of(new TestController1(), new TestController2(), new TestController3()));
         List<Object> annotatedBeans = beanContainer.getAnnotatedBeans(Controller.class);
 
         assertThat(annotatedBeans).hasSize(2)
                 .extracting(bean -> bean.getClass().getSimpleName())
-                .containsExactlyInAnyOrder("TestBean1", "TestBean2");
+                .containsExactlyInAnyOrder("TestController1", "TestController2");
     }
 
     @DisplayName("특정 클래스를 구현한 빈을 찾을 수 있다.")
     @Test
     void getSubTypeBeansOf() {
-        beanContainer.registerBeans(List.of(new TestBean1(), new TestBean2(), new TestBean3()));
-        List<TestBean2> annotatedBeans = beanContainer.getSubTypeBeansOf(TestBean2.class);
+        beanContainer.registerBeans(List.of(new TestController1(), new TestController2(), new TestController3()));
+        List<TestController2> annotatedBeans = beanContainer.getSubTypeBeansOf(TestController2.class);
 
         assertThat(annotatedBeans).hasSize(2)
                 .extracting(bean -> bean.getClass().getSimpleName())
-                .containsExactlyInAnyOrder("TestBean2", "TestBean3");
+                .containsExactlyInAnyOrder("TestController2", "TestController3");
     }
 
     @DisplayName("컨테이너는 객체를 싱글톤으로 관리한다.")
@@ -55,16 +58,5 @@ class BeanContainerTest {
         Object bean2 = beanContainer.getBean(BeanContainerTest.class);
 
         assertThat(bean1).isEqualTo(bean2);
-    }
-
-    @Controller
-    private static class TestBean1 {
-    }
-
-    @Controller
-    private static class TestBean2 extends TestBean1 {
-    }
-
-    private static class TestBean3 extends TestBean2 {
     }
 }

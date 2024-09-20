@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.bean.BeanRegister;
 import com.interface21.bean.container.BeanContainer;
+import com.interface21.bean.scanner.ComponentScanner;
 import com.interface21.context.stereotype.Component;
 import com.interface21.context.stereotype.Controller;
-import com.interface21.bean.scanner.BeanScanner;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -67,7 +68,9 @@ class AnnotationHandlerMappingTest {
     @Test
     void initialize() {
         BeanContainer beanContainer = BeanContainer.getInstance();
-        List<Object> beans = BeanScanner.componentScan("com.interface21.webmvc.servlet.mvc.tobe");
+        List<Object> beans = ComponentScanner.componentScan("com.interface21.webmvc.servlet.mvc.tobe").stream()
+                .map(BeanRegister::createBean)
+                .toList();
         beanContainer.registerBeans(beans);
         handlerMapping = new AnnotationHandlerMapping();
         assertThatThrownBy(() -> handlerMapping.initialize())
