@@ -2,7 +2,9 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -15,13 +17,14 @@ import com.interface21.web.bind.annotation.RequestMethod;
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Map<Class<?>, Object> instances = new HashMap<>();
 
     private final ClassScanner classScanner;
-    private final HandlerMappings handlerMappings;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.classScanner = new ClassScanner(basePackage);
-        this.handlerMappings = new HandlerMappings();
+        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
@@ -34,7 +37,7 @@ public class AnnotationHandlerMapping {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = getRequestMethods(requestMapping);
         Arrays.stream(requestMethods)
-                .forEach(requestMethod -> handlerMappings.addHandler(method, requestMapping.value(), requestMethod));
+                .forEach(requestMethod -> addHandlerExecution(method, requestMapping.value(), requestMethod));
     }
 
     private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
@@ -45,11 +48,37 @@ public class AnnotationHandlerMapping {
         return requestMethods;
     }
 
+    private void addHandlerExecution(Method method, String uri, RequestMethod requestMethod) {
+        Object handlerInstance = createHandlerInstance(method.getDeclaringClass());
+        HandlerKey handlerKey = HandlerKey.of(uri, requestMethod);
+        validateHandlerKey(handlerKey);
+        HandlerExecution handlerExecution = new HandlerExecution(method, handlerInstance);
+        handlerExecutions.put(handlerKey, handlerExecution);
+    }
+
+    private Object createHandlerInstance(Class<?> clazz) {
+        if (instances.containsKey(clazz)) {
+            return instances.get(clazz);
+        }
+        try {
+            instances.put(clazz, clazz.getConstructor().newInstance());
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot create instance for class: " + clazz.getName());
+        }
+        return instances.get(clazz);
+    }
+
+    private void validateHandlerKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("HandlerExecution mappings already exists with handler key: " + handlerKey.toString());
+        }
+    }
+
     public Object getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod method = RequestMethod.find(request.getMethod());
         HandlerKey handlerKey = HandlerKey.of(uri, method);
 
-        return handlerMappings.getHandler(handlerKey);
+        return handlerExecutions.get(handlerKey);
     }
 }
