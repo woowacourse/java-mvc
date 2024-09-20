@@ -21,7 +21,7 @@ class ReflectionTest {
 
     @Test
     void givenObject_whenGetsClassName_thenCorrect() {
-        final Class<Question> clazz = Question.class;
+        final Class<reflection.Question> clazz = reflection.Question.class;
 
         assertAll(
                 () -> assertThat(clazz.getSimpleName()).isEqualTo("Question"),
@@ -39,7 +39,7 @@ class ReflectionTest {
                 () -> assertThat(clazz.getName()).isEqualTo("reflection.Question"),
                 () -> assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question"),
                 () -> assertThat(innerClazz.getSimpleName()).isEqualTo("Question"),
-                () -> assertThat(innerClazz.getName()).isEqualTo("reflection.ReflectionTest$1Question"),
+                () -> assertThat(innerClazz.getName()).isEqualTo("reflection.ReflectionTest$Question"),
                 () -> assertThat(innerClazz.getCanonicalName()).isEqualTo("reflection.ReflectionTest.Question")
         );
     }
@@ -70,7 +70,7 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenGetsAllConstructors_thenCorrect() {
-        final Class<?> questionClass = Question.class;
+        final Class<?> questionClass = reflection.Question.class;
         final Constructor<?>[] constructors = questionClass.getDeclaredConstructors();
 
         assertThat(constructors).hasSize(2);
@@ -97,7 +97,7 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
-        final Class<?> questionClass = Question.class;
+        final Class<?> questionClass = reflection.Question.class;
         List<Field> fields = Arrays.stream(getClass().getDeclaredFields())
                 .filter(field -> field.getModifiers() == Modifier.PUBLIC)
                 .toList();
@@ -107,7 +107,7 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenGetsDeclaredFields_thenCorrect() {
-        final Class<?> questionClass = Question.class;
+        final Class<?> questionClass = reflection.Question.class;
         final Field[] fields = questionClass.getDeclaredFields();
 
         assertThat(fields).hasSize(6);
@@ -116,7 +116,7 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenGetsFieldsByName_thenCorrect() throws Exception {
-        final Class<?> questionClass = Question.class;
+        final Class<?> questionClass = reflection.Question.class;
         final Field field = questionClass.getDeclaredField("questionId");
 
         assertThat(field.getName()).isEqualTo("questionId");
@@ -124,7 +124,7 @@ class ReflectionTest {
 
     @Test
     void givenClassField_whenGetsType_thenCorrect() throws Exception {
-        final Field field = Question.class.getDeclaredField("questionId");
+        final Field field = reflection.Question.class.getDeclaredField("questionId");
         final Class<?> fieldClass = field.getType();
 
         assertThat(fieldClass.getSimpleName()).isEqualTo("long");
