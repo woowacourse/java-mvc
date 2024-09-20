@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
@@ -33,8 +34,10 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var result = handlerExecution.execute(request, response);
+        ModelAndView modelAndView = (ModelAndView) result;
 
+        assertThat(result).isInstanceOf(ModelAndView.class);
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
@@ -48,7 +51,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) handlerExecution.execute(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
