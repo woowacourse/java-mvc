@@ -53,7 +53,7 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOfName(requestMethod));
+        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
         if (!handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalArgumentException("No handler found for requestURI: " + requestURI + ", method: " + requestMethod);
         }
