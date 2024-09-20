@@ -1,22 +1,39 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+    }
+
+    @DisplayName("@RequestMapping에 HttpMethod를 명시하지 않을 경우 모든 HttpMethod를 지원한다.")
+    @Test
+    void allMethods() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        String[] methods = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"};
+
+        when(request.getRequestURI()).thenReturn("/all-methods-test");
+
+        for (String method : methods) {
+            when(request.getMethod()).thenReturn(method);
+            HandlerExecution handler = (HandlerExecution) handlerMapping.getHandler(request);
+            assertThat(handler).isNotNull();
+        }
     }
 
     @Test
