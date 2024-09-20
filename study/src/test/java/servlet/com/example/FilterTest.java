@@ -22,6 +22,10 @@ class FilterTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // 테스트가 통과하도록 CharacterEncodingFilter 클래스를 수정해보자.
+
+        // 1. KoreanServlet init()
+        // 2. CharacterEncodingFiler doFilter() <- 문자 인코딩을 설정해 준다
+        // 3. KoreanServlet service()
         assertThat(response.body()).isEqualTo(인코딩);
     }
 }
