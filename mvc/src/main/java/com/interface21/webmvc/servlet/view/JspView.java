@@ -28,12 +28,13 @@ public class JspView implements View {
         }
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
 
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+
+        requestDispatcher.forward(request, response);
     }
 
     private boolean canRedirect() {
