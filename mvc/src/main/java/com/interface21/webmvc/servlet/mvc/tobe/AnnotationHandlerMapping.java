@@ -45,10 +45,10 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         controllerClasses
-                .forEach(this::registerMethods);
+                .forEach(this::initializeHandler);
     }
 
-    private void registerMethods(Class<?> controllerClass) {
+    private void initializeHandler(Class<?> controllerClass) {
         Arrays.stream(controllerClass.getMethods())
                 .filter(this::isRequestMappingAnnotated)
                 .forEach(method -> registerHandler(controllerClass, method));
