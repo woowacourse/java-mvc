@@ -30,10 +30,6 @@ public class HandlerAdapters {
                 });
     }
 
-    public void add(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
-    }
-
     public ModelAndView getMAV(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         HandlerAdapter handlerAdapter1 = handlerAdapters.stream()

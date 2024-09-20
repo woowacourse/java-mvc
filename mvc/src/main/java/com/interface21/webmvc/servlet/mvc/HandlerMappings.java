@@ -29,10 +29,6 @@ public class HandlerMappings {
                 });
     }
 
-    public void add(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
-    }
-
     public Object getHandler(HttpServletRequest request) {
         HandlerMapping handlerMapping1 = handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.supports(request))
