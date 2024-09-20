@@ -43,14 +43,6 @@ public class AnnotationHandlerMapping {
         });
     }
 
-    private Object getControllerInstance(Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("컨트롤러 인스턴스 생성에 실패했습니다.");
-        }
-    }
-
     private void handlerMapping(final Object instance, Method method) {
         final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
@@ -63,6 +55,14 @@ public class AnnotationHandlerMapping {
         requestMethods.stream()
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+    }
+
+    private Object getControllerInstance(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("컨트롤러 인스턴스 생성에 실패했습니다.");
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
