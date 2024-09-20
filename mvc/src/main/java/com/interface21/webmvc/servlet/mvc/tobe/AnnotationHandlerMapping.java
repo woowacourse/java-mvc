@@ -59,6 +59,6 @@ public class AnnotationHandlerMapping {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         return Stream.of(annotation.method())
                 .map(requestMethod -> new HandlerKey(annotation.value(), requestMethod))
-                .anyMatch(key-> key.equals(requestKey));
+                .anyMatch(key -> key.equals(requestKey));
     }
 }
