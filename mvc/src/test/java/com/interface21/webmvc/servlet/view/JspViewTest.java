@@ -41,7 +41,7 @@ class JspViewTest {
         JspView jspView = new JspView("redirect:/");
 
         // when
-        jspView.render(null, request, response);
+        jspView.render(new HashMap<>(), request, response);
 
         // then
         verify(response).sendRedirect("/");
