@@ -61,7 +61,7 @@ public class AnnotationHandlerMapping {
         String path = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
 
-        if (explicitHttpMethodNotExist(requestMethods)) {
+        if (hasNoHttpMethods(requestMethods)) {
             requestMethods = RequestMethod.values();
         }
 
@@ -71,7 +71,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private boolean explicitHttpMethodNotExist(RequestMethod[] requestMethods) {
+    private boolean hasNoHttpMethods(RequestMethod[] requestMethods) {
         return requestMethods.length == 0;
     }
 
