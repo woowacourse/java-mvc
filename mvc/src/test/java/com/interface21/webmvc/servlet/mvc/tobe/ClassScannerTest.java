@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import com.interface21.web.bind.annotation.RequestMapping;
 
 class ClassScannerTest {
     private ClassScanner classScanner;
@@ -24,6 +27,10 @@ class ClassScannerTest {
         List<Method> handlingMethods = classScanner.findHandlingMethods();
 
         // then
-        assertThat(handlingMethods).hasSize(3);
+        assertAll(
+                () -> assertThat(handlingMethods).hasSize(3),
+                () -> handlingMethods.forEach(method ->
+                        assertThat(method.isAnnotationPresent(RequestMapping.class)).isTrue())
+        );
     }
 }
