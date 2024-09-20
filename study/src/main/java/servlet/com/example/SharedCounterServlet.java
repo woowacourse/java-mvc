@@ -38,19 +38,19 @@ public class SharedCounterServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        getServletContext().log("init() 호출");
+        getServletContext().log("Shared init() 호출");
         sharedCounter = 0;
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        getServletContext().log("service() 호출");
+        getServletContext().log("Shared service() 호출");
         sharedCounter++;
         response.getWriter().write(String.valueOf(sharedCounter));
     }
 
     @Override
     public void destroy() {
-        getServletContext().log("destroy() 호출");
+        getServletContext().log("Shared destroy() 호출");
     }
 }
