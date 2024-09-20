@@ -27,7 +27,7 @@ public class HandlerExecutions {
         return handlerExecutions.containsKey(handlerKey);
     }
 
-    public Object get(HandlerKey handlerKey) {
+    public HandlerExecution get(HandlerKey handlerKey) {
         return handlerExecutions.get(handlerKey);
     }
 }

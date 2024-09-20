@@ -6,10 +6,11 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Set;
 import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -22,8 +23,8 @@ public class AnnotationHandlerMapping {
         initialize();
     }
 
-    private void initialize() {
-        Reflections reflections = new Reflections(basePackage);
+    public void initialize() {
+        Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClasses.stream()
                 .map(Class::getDeclaredMethods)
@@ -32,7 +33,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
