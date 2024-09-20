@@ -22,15 +22,24 @@ public class HandlerExecution {
     private void validateMethodForm(Method targetMethod) {
         Class<?> returnType = targetMethod.getReturnType();
         Class<?>[] parameterTypes = targetMethod.getParameterTypes();
+        validateReturnType(returnType);
+        validateParameterType(parameterTypes);
+        validateParameters(parameterTypes);
+    }
 
+    private void validateReturnType(Class<?> returnType) {
         if (!returnType.equals(ModelAndView.class)) {
             throw new IllegalArgumentException("return type 이 다른 메서드를 Mapping 했습니다.");
         }
+    }
 
+    private void validateParameterType(Class<?>[] parameterTypes) {
         if (parameterTypes.length != 2) {
             throw new IllegalArgumentException("파리미터 개수가 다릅니다.");
         }
+    }
 
+    private void validateParameters(Class<?>[] parameterTypes) {
         for (Class<?> parameterType : parameterTypes) {
             validateParameter(parameterType);
         }
