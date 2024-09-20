@@ -51,7 +51,7 @@ class JspViewTest {
         // given
         HttpServletRequest request = new MockHttpServletRequest();
         HttpServletResponse response = new MockHttpServletResponse();
-        JspView view = new JspView("redirect:index.jsp");
+        JspView view = new JspView("index.jsp");
         String name = "atom";
         int age = 25;
 
