@@ -2,8 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradaptor.HandlerAdaptors;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradaptor.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,14 +19,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
-    private HandlerAdaptors handlerAdaptors;
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerAdaptors = new HandlerAdaptors();
+        handlerAdapters = new HandlerAdapters();
         handlerMappings = new HandlerMappings();
         handlerMappings.initialize();
     }
@@ -37,8 +37,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             Object handler = handlerMappings.findHandler(request);
-            HandlerAdaptor handlerAdaptor = handlerAdaptors.findHandlerAdaptor(handler);
-            ModelAndView modelAndView = handlerAdaptor.handle(request, response, handler);
+            HandlerAdapter handlerAdapter = handlerAdapters.findHandlerAdaptor(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

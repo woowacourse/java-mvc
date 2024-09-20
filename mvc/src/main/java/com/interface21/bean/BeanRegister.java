@@ -2,7 +2,7 @@ package com.interface21.bean;
 
 import com.interface21.bean.container.BeanContainer;
 import com.interface21.bean.scanner.BeanScanner;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class BeanRegister {
     }
 
     private static void registerInternalBean(BeanContainer beanContainer) {
-        registerSubTypeBean(beanContainer, HandlerAdaptor.class);
+        registerSubTypeBean(beanContainer, HandlerAdapter.class);
         registerSubTypeBean(beanContainer, HandlerMapping.class);
     }
 
