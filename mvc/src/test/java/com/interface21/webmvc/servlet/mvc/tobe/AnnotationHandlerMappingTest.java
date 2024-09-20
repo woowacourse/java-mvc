@@ -11,7 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 
 class AnnotationHandlerMappingTest {
@@ -63,14 +66,15 @@ class AnnotationHandlerMappingTest {
     }
 
     @DisplayName("메서드를 지정하지 않으면 모든 메서드에 대해 handler를 지원한다.")
-    @Test
-    void all() {
+    @ParameterizedTest
+    @EnumSource(RequestMethod.class)
+    void all(RequestMethod requestMethod) {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/all-test");
-        when(request.getMethod()).thenReturn("HEAD");
+        when(request.getMethod()).thenReturn(requestMethod.name());
 
         // when & then
         HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
