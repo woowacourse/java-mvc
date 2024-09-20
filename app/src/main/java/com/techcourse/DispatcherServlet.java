@@ -7,7 +7,6 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappings;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +52,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = mappings.getHandler(request);
-            if (handlerNotFound(request, response, handler)) return;
+            if (handler == null) {
+                throw new IllegalStateException("Not found handler for request URI : " + requestURI);
+            }
 
             HandlerAdapter adapter = adapters.getHandlerAdapter(handler);
             ModelAndView mv = adapter.handle(request, response, handler);
@@ -63,15 +64,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private boolean handlerNotFound(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (handler == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            ModelAndView mv = new ModelAndView(new JspView("/404.jsp"));
-            mv.render(request, response);
-            return true;
-        }
-        return false;
     }
 }

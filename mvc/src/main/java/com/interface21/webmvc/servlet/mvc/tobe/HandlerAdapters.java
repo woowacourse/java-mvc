@@ -19,6 +19,6 @@ public class HandlerAdapters {
             }
         }
 
-        throw new IllegalArgumentException("Unsupported handler type: " + handler);
+        throw new IllegalStateException("Unsupported handler type: " + handler);
     }
 }
