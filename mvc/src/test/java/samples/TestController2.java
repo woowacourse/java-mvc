@@ -15,7 +15,6 @@ public class TestController2 {
 
     private static final Logger log = LoggerFactory.getLogger(TestController2.class);
 
-
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getParentPath(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller2 parent path invoked");
@@ -24,7 +23,7 @@ public class TestController2 {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/world")
+    @RequestMapping(value = "/world", method = RequestMethod.GET)
     public ModelAndView getCombinedPath(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller2 combined path invoked");
         final var modelAndView = new ModelAndView(new JspView(""));
