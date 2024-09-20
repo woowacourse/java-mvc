@@ -42,12 +42,19 @@ public class HandlerExecutions {
 
     private void registerMethod(Object instance, Method method, RequestMapping requestMapping) {
         String uri = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method();
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(instance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMapping.method();
     }
 
     public HandlerExecution getHandlerExecution(HandlerKey handlerKey) {
