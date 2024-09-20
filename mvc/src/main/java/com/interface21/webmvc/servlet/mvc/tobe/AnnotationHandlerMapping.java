@@ -34,10 +34,10 @@ public class AnnotationHandlerMapping {
                 .forEach(this::addHandlerExecution);
     }
 
-    private void addHandlerExecution(Class clazz) {
-        Arrays.stream(clazz.getDeclaredMethods())
+    private void addHandlerExecution(Class controllerClass) {
+        Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> addHandlerExecution(clazz, method));
+                .forEach(method -> addHandlerExecution(controllerClass, method));
     }
 
     private void addHandlerExecution(Class clazz, Method method) {
