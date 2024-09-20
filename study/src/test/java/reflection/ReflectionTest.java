@@ -75,7 +75,7 @@ class ReflectionTest {
         final Constructor<?> secondConstructor = questionClass.getDeclaredConstructors()[1];
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", Date.from(
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1, "gugu", "제목2", "내용2", Date.from(
                 Instant.now()), 1);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
