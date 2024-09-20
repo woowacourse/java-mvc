@@ -1,5 +1,9 @@
 package reflection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +13,7 @@ class Junit3TestRunner {
 
     @Test
     void run() throws Exception {
+        ByteArrayOutputStream systemOutputStream = getSystemOutputStream();
         Class<Junit3Test> clazz = Junit3Test.class;
 
         // TODO Junit3Test에서 test로 시작하는 메소드 실행
@@ -21,5 +26,16 @@ class Junit3TestRunner {
         for (Method method : testMethods) {
             method.invoke(junit3Test); // 메서드를 실행한다. 첫번째 매개변수는 메서드를 실행할 객체를 넘겨준다.
         }
+
+        String printedString = systemOutputStream.toString();
+        assertThat(printedString)
+                .contains("Running Test1", "Running Test2");
+    }
+
+    private ByteArrayOutputStream getSystemOutputStream() {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(byteArrayOutputStream);
+        System.setOut(printStream);
+        return byteArrayOutputStream;
     }
 }
