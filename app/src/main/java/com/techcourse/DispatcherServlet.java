@@ -1,8 +1,5 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,14 +13,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private AnnotationHandlerMapping manualHandlerMapping;
+    private ManualHandlerMapping manualHandlerMapping;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new AnnotationHandlerMapping("com.techcource");
+        manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
     }
 
@@ -33,10 +30,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(request);
-            final var modelAndView = ((HandlerExecution) controller).handle(request, response);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var viewName = controller.execute(request, response);
+            move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
