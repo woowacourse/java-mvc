@@ -16,25 +16,25 @@ public class TestController {
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
-    public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller get method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        ModelAndView modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
-    public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller post method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        ModelAndView modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
 
     @RequestMapping(value = "/patch-test")
-    public ModelAndView updateUserId(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView updateUserId(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller patch method");
-        final var modelAndView = new ModelAndView(new JspView(""));
+        ModelAndView modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }

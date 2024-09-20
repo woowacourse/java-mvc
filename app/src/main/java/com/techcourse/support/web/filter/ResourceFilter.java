@@ -37,10 +37,10 @@ public class ResourceFilter implements Filter {
     }
 
     @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        final var req = (HttpServletRequest) request;
-        final var path = req.getRequestURI().substring(req.getContextPath().length());
+        HttpServletRequest req = (HttpServletRequest) request;
+        String path = req.getRequestURI().substring(req.getContextPath().length());
         if (isResourceUrl(path)) {
             log.debug("path : {}", path);
             requestDispatcher.forward(request, response);
@@ -49,8 +49,8 @@ public class ResourceFilter implements Filter {
         }
     }
 
-    private boolean isResourceUrl(final String url) {
-        for (final var prefix : resourcePrefixs) {
+    private boolean isResourceUrl(String url) {
+        for (String prefix : resourcePrefixs) {
             if (url.startsWith(prefix)) {
                 return true;
             }

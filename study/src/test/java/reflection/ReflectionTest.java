@@ -19,7 +19,7 @@ class ReflectionTest {
 
     @Test
     void givenObject_whenGetsClassName_thenCorrect() {
-        final Class<Question> clazz = Question.class;
+        Class<Question> clazz = Question.class;
 
         /*
         getName() : 클래스의 패키지 이름을 포함한 전체 경로를 반환한다.
@@ -33,7 +33,7 @@ class ReflectionTest {
     @Test
     void givenClassName_whenCreatesObject_thenCorrect() throws ClassNotFoundException {
         // 물리적인 클래스 파일명을 인자로 넣어주면 이에 해당하는 클래스를 반환해준다.
-        final Class<?> clazz = Class.forName("reflection.Question");
+        Class<?> clazz = Class.forName("reflection.Question");
 
         assertThat(clazz.getSimpleName()).isEqualTo("Question");
         assertThat(clazz.getName()).isEqualTo("reflection.Question");
@@ -42,9 +42,9 @@ class ReflectionTest {
 
     @Test
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
-        final Object student = new Student();
-        final Field[] fields = student.getClass().getDeclaredFields();
-        final List<String> actualFieldNames = Arrays.stream(fields)
+        Object student = new Student();
+        Field[] fields = student.getClass().getDeclaredFields();
+        List<String> actualFieldNames = Arrays.stream(fields)
                 .map(Field::getName)
                 .toList();
 
@@ -53,9 +53,9 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenGetsMethods_thenCorrect() {
-        final Class<?> animalClass = Student.class;
-        final Method[] methods = animalClass.getDeclaredMethods();
-        final List<String> actualMethods = Arrays.stream(methods)
+        Class<?> animalClass = Student.class;
+        Method[] methods = animalClass.getDeclaredMethods();
+        List<String> actualMethods = Arrays.stream(methods)
                 .map(Method::getName)
                 .toList();
 
@@ -74,15 +74,15 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
-        final Class<?> questionClass = Question.class;
+        Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
-        final Constructor<?> secondConstructor = questionClass.getConstructor(long.class, String.class,
+        Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
+        Constructor<?> secondConstructor = questionClass.getConstructor(long.class, String.class,
                 String.class, String.class,
                 Date.class, int.class);
 
-        final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(2, "gugu",
+        Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
+        Question secondQuestion = (Question) secondConstructor.newInstance(2, "gugu",
                 "제목2", "내용2",
                 new Date(), 2);
 
@@ -96,16 +96,16 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
-        final Class<?> questionClass = Question.class;
-        final Field[] fields = questionClass.getFields();
+        Class<?> questionClass = Question.class;
+        Field[] fields = questionClass.getFields();
 
         assertThat(fields).hasSize(0);
     }
 
     @Test
     void givenClass_whenGetsDeclaredFields_thenCorrect() {
-        final Class<?> questionClass = Question.class;
-        final Field[] fields = questionClass.getDeclaredFields();
+        Class<?> questionClass = Question.class;
+        Field[] fields = questionClass.getDeclaredFields();
 
         assertThat(fields).hasSize(6);
         assertThat(fields[0].getName()).isEqualTo("questionId");
@@ -113,25 +113,25 @@ class ReflectionTest {
 
     @Test
     void givenClass_whenGetsFieldsByName_thenCorrect() throws Exception {
-        final Class<?> questionClass = Question.class;
-        final Field field = questionClass.getDeclaredField("questionId"); //getDeclaredField가 private 피드에 접근할 수 있다.
+        Class<?> questionClass = Question.class;
+        Field field = questionClass.getDeclaredField("questionId"); //getDeclaredField가 private 피드에 접근할 수 있다.
 
         assertThat(field.getName()).isEqualTo("questionId");
     }
 
     @Test
     void givenClassField_whenGetsType_thenCorrect() throws Exception {
-        final Field field = Question.class.getDeclaredField("questionId");
-        final Class<?> fieldClass = field.getType();
+        Field field = Question.class.getDeclaredField("questionId");
+        Class<?> fieldClass = field.getType();
 
         assertThat(fieldClass.getSimpleName()).isEqualTo("long");
     }
 
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
-        final Class<?> studentClass = Student.class;
-        final Student student = new Student();
-        final Field field = studentClass.getDeclaredField("age");
+        Class<?> studentClass = Student.class;
+        Student student = new Student();
+        Field field = studentClass.getDeclaredField("age");
 
         // todo field에 접근 할 수 있도록 만든다.
         field.setAccessible(true); // field에 접근할 수 있게 만든다.

@@ -23,8 +23,8 @@ public class TomcatStarter {
         this.tomcat = new Tomcat();
         tomcat.setConnector(createConnector());
 
-        final var docBase = new File(webappDirLocation).getAbsolutePath();
-        final var context = (StandardContext) tomcat.addWebapp("", docBase);
+        String docBase = new File(webappDirLocation).getAbsolutePath();
+        StandardContext context = (StandardContext) tomcat.addWebapp("", docBase);
         skipJarScan(context);
         skipClearReferences(context);
     }

@@ -1,6 +1,8 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,13 +28,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
+            Controller controller = manualHandlerMapping.getHandler(requestURI);
+            String viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -40,13 +42,13 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
         JspView jspView = new JspView(viewName);
         ModelAndView modelAndView = new ModelAndView(jspView);
 
         jspView.render(modelAndView.getModel(), request, response);
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
 }
