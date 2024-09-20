@@ -8,7 +8,7 @@ public enum RequestMethod {
     public static RequestMethod of(String method) {
         return Arrays.stream(RequestMethod.values())
                 .filter(requestMethod -> requestMethod.name().equals(method))
-                .findFirst()
+                .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 HTTP Method 입니다."));
     }
 }
