@@ -15,7 +15,7 @@ class Junit3TestRunner {
         Junit3Test junit3Test = clazz.getDeclaredConstructor().newInstance(); // 클래스로부터 생성자를 가져오고, 객체를 생성한다.
         Method[] methods = clazz.getMethods(); // 객체의 메서드를 가져온다. 상속된 메서드도 포함한다.
         List<Method> testMethods = Arrays.stream(methods)
-                .filter(method -> method.getName().contains("test"))
+                .filter(method -> method.getName().startsWith("test"))
                 .toList();
 
         for (Method method : testMethods) {
