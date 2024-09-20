@@ -33,18 +33,23 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
         try {
             Object handler = handlerMappings.getHandler(request);
             ModelAndView modelAndView = handlerAdapters.handle(request, response, handler);
-            Map<String, Object> model = modelAndView.getModel();
-            View view = modelAndView.getView();
-            view.render(model, request, response);
+            move(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void move(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView)
+            throws Exception {
+        Map<String, Object> model = modelAndView.getModel();
+        View view = modelAndView.getView();
+        view.render(model, request, response);
     }
 }
