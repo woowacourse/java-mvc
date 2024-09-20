@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,28 +23,33 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        try {
+            manualHandlerMapping.initialize("");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
         final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        final String method = request.getMethod();
+        log.debug("Method : {}, Request URI : {}", method, requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            RequestHandler handler = manualHandlerMapping.getHandler(method, requestURI);
+            ModelAndView modelAndView = handler.handle(request, response);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
+    private void move(
+            final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
         Map<String, Object> model = modelAndView.getModel();
         View view = modelAndView.getView();
         view.render(model, request, response);

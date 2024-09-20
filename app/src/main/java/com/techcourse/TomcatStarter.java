@@ -1,13 +1,12 @@
 package com.techcourse;
 
+import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
-
-import java.io.File;
 
 public class TomcatStarter {
 
@@ -27,23 +26,6 @@ public class TomcatStarter {
         final var context = (StandardContext) tomcat.addWebapp("", docBase);
         skipJarScan(context);
         skipClearReferences(context);
-    }
-
-    public void start() {
-        try {
-            tomcat.start();
-        } catch (LifecycleException e) {
-            throw new UncheckedServletException(e);
-        }
-    }
-
-    public void stop() {
-        try {
-            tomcat.stop();
-            tomcat.destroy();
-        } catch (LifecycleException e) {
-            throw new UncheckedServletException(e);
-        }
     }
 
     private Connector createConnector(final int port) {
@@ -79,5 +61,22 @@ public class TomcatStarter {
         context.setClearReferencesObjectStreamClassCaches(false);
         context.setClearReferencesRmiTargets(false);
         context.setClearReferencesThreadLocals(false);
+    }
+
+    public void start() {
+        try {
+            tomcat.start();
+        } catch (LifecycleException e) {
+            throw new UncheckedServletException(e);
+        }
+    }
+
+    public void stop() {
+        try {
+            tomcat.stop();
+            tomcat.destroy();
+        } catch (LifecycleException e) {
+            throw new UncheckedServletException(e);
+        }
     }
 }
