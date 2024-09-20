@@ -1,17 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class HandlerMappings {
 
-    private final List<HandlerMapping> mappings;
+    private final Set<HandlerMapping> mappings;
 
     public HandlerMappings(HandlerMapping... handlerMappings) {
-        this.mappings = new ArrayList<>(List.of(handlerMappings));
+        this.mappings = new HashSet<>(List.of(handlerMappings));
     }
 
     public void initialize() {
