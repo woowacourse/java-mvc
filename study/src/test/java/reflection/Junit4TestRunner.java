@@ -1,13 +1,37 @@
 package reflection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
 
     @Test
     void run() throws Exception {
+        OutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+
+        // given
+        Constructor<Junit4Test> defaultConstructor = Junit4Test.class.getDeclaredConstructor();
+        Junit4Test obj = defaultConstructor.newInstance();
         Class<Junit4Test> clazz = Junit4Test.class;
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        // when
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(MyTest.class)) {
+                method.invoke(obj);
+            }
+        }
+        String actual = outputStream.toString();
+
+        // then
+        assertThat(actual).contains("Running Test1", "Running Test2");
     }
 }
