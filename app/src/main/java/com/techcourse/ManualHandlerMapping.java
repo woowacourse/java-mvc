@@ -1,16 +1,16 @@
 package com.techcourse;
 
-import com.interface21.NotFoundException;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.controller.*;
-import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -22,6 +22,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         initialize();
     }
 
+    @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
@@ -33,11 +34,14 @@ public class ManualHandlerMapping implements HandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
+    @Override
+    public boolean supports(HttpServletRequest request) {
+        return controllers.containsKey(request.getRequestURI());
+    }
+
+    @Override
     public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        if (!controllers.containsKey(requestURI)) {
-            throw new NotFoundException("일치하는 uri가 없습니다");
-        }
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }

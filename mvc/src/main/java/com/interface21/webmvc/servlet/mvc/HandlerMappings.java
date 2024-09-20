@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.NotFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -19,13 +18,10 @@ public class HandlerMappings {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            try {
-                return handlerMapping.getHandler(request);
-            } catch (NotFoundException e) {
-                System.out.println("해당하는 mappings아님");
-            }
-        }
-        return handlerMappings;
+        HandlerMapping handlerMapping1 = handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.supports(request))
+                .findAny()
+                .orElseThrow();
+        return handlerMapping1.getHandler(request);
     }
 }
