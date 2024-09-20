@@ -69,14 +69,10 @@ public class AnnotationHandlerMapping {
 
     private void initializeHandlerExecution(Object controller, Method method, RequestMethod[] requestMethods, String url) {
         for (RequestMethod requestMethod : requestMethods) {
-            addHandlerExecution(controller, method, url, requestMethod);
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
-    }
-
-    private void addHandlerExecution(Object controller, Method method, String url, RequestMethod requestMethod) {
-        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
