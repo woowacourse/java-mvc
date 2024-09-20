@@ -1,13 +1,20 @@
 package servlet.com.example;
 
-import org.junit.jupiter.api.Test;
-import support.HttpUtils;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
 import static servlet.com.example.KoreanServlet.인코딩;
+
+import org.junit.jupiter.api.Test;
+
+import support.HttpUtils;
 
 class FilterTest {
 
+    /**
+     * Filter는 Java 웹 애플리케이션에서 모든 요청과 응답을 가로챈다.
+     *
+     * @WebFilter로 필터가 적용될 URL을 지정할 수 있다.
+     */
     @Test
     void testFilter() {
         // 톰캣 서버 시작
