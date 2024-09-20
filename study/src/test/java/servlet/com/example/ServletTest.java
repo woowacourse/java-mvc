@@ -28,7 +28,11 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+//        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        /**
+         * 인스턴스 변수에 3번 증감 메서드를 실행했기에 3이 나온다.
+         */
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +54,10 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+//        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        /**
+         * 지역 변수에 3번 증감 메서드를 실행해서 1이 나온다.
+         */
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
