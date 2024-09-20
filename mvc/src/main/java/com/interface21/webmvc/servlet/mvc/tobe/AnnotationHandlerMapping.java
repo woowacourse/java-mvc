@@ -32,11 +32,7 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        try {
-            Arrays.stream(basePackage).forEach(this::reflectControllers);
-        } catch (Exception e) {
-
-        }
+        Arrays.stream(basePackage).forEach(this::reflectControllers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
