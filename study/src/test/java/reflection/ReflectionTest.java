@@ -122,8 +122,8 @@ class ReflectionTest {
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         final Class<?> studentClass = Student.class;
-        final Student student = (Student) studentClass.cast(new Student());
         final Field field = studentClass.getDeclaredField("age");
+        final Student student = (Student) studentClass.getConstructor().newInstance();
 
         // todo field에 접근 할 수 있도록 만든다.
         field.setAccessible(true);

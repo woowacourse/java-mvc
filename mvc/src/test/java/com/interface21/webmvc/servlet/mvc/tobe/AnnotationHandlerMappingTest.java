@@ -56,6 +56,23 @@ class AnnotationHandlerMappingTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST"})
+    @DisplayName("@RequestMapping의 method 옵션에 지정된 모든 메소드와 매핑된다.")
+    void multipleMethods(final String method) throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/all-test");
+        when(request.getMethod()).thenReturn(method);
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"})
     @DisplayName("@RequestMapping의 method 옵션을 지정하지 않으면 모든 메소드에 매핑된다.")
     void all(final String method) throws Exception {
