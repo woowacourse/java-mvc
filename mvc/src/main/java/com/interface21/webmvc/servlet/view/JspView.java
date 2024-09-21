@@ -13,14 +13,25 @@ import com.interface21.webmvc.servlet.View;
 
 public class JspView implements View {
 
-    private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     private static final String REDIRECT_PREFIX = "redirect:";
+    private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     private final String viewName;
 
     public JspView(final String viewName) {
         this.viewName = viewName;
+    }
+
+    public static boolean isRedirectView(String viewName) {
+        return viewName != null && viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    public static String getRedirectUrl(String viewName) {
+        if (!isRedirectView(viewName)) {
+            throw new IllegalArgumentException("redirect를 사용하지 않은 viewName입니다.");
+        }
+
+        return viewName.substring(REDIRECT_PREFIX.length());
     }
 
     @Override
