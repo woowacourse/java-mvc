@@ -33,7 +33,7 @@ public final class ComponentScanner {
 				return;
 			}
 			String value = method.getAnnotation(RequestMapping.class).value();
-			extractMethodOfRequestMapping(executions, Class clazz, value, method);
+			extractMethodOfRequestMapping(executions, clazz, value, method);
 		}
 	}
 

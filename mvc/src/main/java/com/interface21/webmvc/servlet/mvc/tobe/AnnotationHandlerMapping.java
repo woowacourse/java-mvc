@@ -1,11 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.interface21.web.bind.annotation.RequestMethod;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class AnnotationHandlerMapping {
 
@@ -15,8 +17,9 @@ public class AnnotationHandlerMapping {
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+		this.basePackage = basePackage;
+        this.handlerExecutions = ComponentScanner.scan();
+
     }
 
     public void initialize() {
@@ -24,6 +27,6 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.find(request.getMethod())));
     }
 }
