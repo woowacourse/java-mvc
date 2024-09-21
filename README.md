@@ -25,9 +25,9 @@
 ### 구현할 기능 목록
 ### 1단계 - @MVC 프레임워크 구현하기
 
-- [ ] [AnnotationHandlerMapping](mvc/src/test/java/com/interface21/webmvc/servlet/mvc/tobe/AnnotationHandlerMappingTest.java) 테스트 통과하기
-  - [ ] URL을 컨틀롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등) 을 매핑 조건에 포함시킨다. 
-  - [ ] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원해야 한다. 
-  - [ ] @Controller 가 붙은 클래스 AnnotationHandlerMapping에 등록한다. 
+- [x] [AnnotationHandlerMapping](mvc/src/test/java/com/interface21/webmvc/servlet/mvc/tobe/AnnotationHandlerMappingTest.java) 테스트 통과하기
+  - [x] URL을 컨틀롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등) 을 매핑 조건에 포함시킨다. 
+  - [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원해야 한다. 
+  - [x] @Controller 가 붙은 클래스 AnnotationHandlerMapping에 등록한다. 
 - [ ] [JspView 클래스](mvc/src/main/java/com/interface21/webmvc/servlet/view/JspView.java) 구현하기
   - [ ] DispatchServlet 클래스의 service 메서드에서 뷰를 처리하는 부분을 JspView 클래스로 옮긴다.
