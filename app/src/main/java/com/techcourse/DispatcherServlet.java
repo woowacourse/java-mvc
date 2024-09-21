@@ -1,29 +1,35 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.Execution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
+    public static final String CONTROLLER_PACKAGE = "com.techcourse.controller";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappings = new HandlerMappings(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping(CONTROLLER_PACKAGE)
+        );
+
+        handlerMappings.initialize();
     }
 
     @Override
@@ -33,19 +39,12 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            render(request, response, viewName);
+            final Execution handler = handlerMappings.getHandler(request);
+            final ModelAndView modelAndView = handler.handle(request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void render(HttpServletRequest request, HttpServletResponse response, String viewName)
-            throws Exception {
-        final Map<String, ?> model = new HashMap<>();
-        final JspView jspView = new JspView(viewName);
-        jspView.render(model, request, response);
     }
 }
