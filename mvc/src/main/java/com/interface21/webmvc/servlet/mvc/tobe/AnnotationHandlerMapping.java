@@ -37,15 +37,16 @@ public class AnnotationHandlerMapping {
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
 
-        requestMappings.forEach(method -> registerHandler(controller, method));
+        Object controllerInstance = ClassInstantiator.Instantiate(controller);
+        requestMappings.forEach(method -> registerHandler(controllerInstance, method));
     }
 
-    private void registerHandler(Class<?> controller, Method method) {
+    private void registerHandler(Object controllerInstance, Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         List<HandlerKey> handlerKeys = generateHandlerKeys(annotation);
 
         handlerKeys.forEach(key -> {
-            HandlerExecution execution = new HandlerExecution(controller, method);
+            HandlerExecution execution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(key, execution);
         });
     }

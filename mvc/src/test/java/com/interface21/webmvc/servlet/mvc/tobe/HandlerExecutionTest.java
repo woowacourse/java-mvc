@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import samples.TestController;
+
 class HandlerExecutionTest {
 
     private HttpServletRequest request;
@@ -34,7 +36,7 @@ class HandlerExecutionTest {
         when(request.getMethod()).thenReturn("GET");
 
         final HandlerExecution handlerExecution = new HandlerExecution(
-                testController,
+                new TestController(),
                 testController.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class)
         );
 
