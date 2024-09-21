@@ -18,3 +18,15 @@
 ## 학습 테스트
 1. [Reflection API](study/src/test/java/reflection)
 2. [Servlet](study/src/test/java/servlet)
+
+
+---
+
+### 구현할 기능 목록
+### 1단계 - @MVC 프레임워크 구현하기
+
+- [ ] [AnnotationHandlerMapping](mvc/src/test/java/com/interface21/webmvc/servlet/mvc/tobe/AnnotationHandlerMappingTest.java) 테스트 통과하기
+  - [ ] URL을 컨틀롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등) 을 매핑 조건에 포함시킨다. 
+  - [ ] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원해야 한다. 
+  - [ ] @Controller 가 붙은 클래스 AnnotationHandlerMapping에 등록한다. 
+- [ ] [JspView 클래스](mvc/src/main/java/com/interface21/webmvc/servlet/view/JspView.java) 구현하기
