@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,20 +34,12 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            View jspView = new JspView(viewName);
+            ModelAndView modelAndView = new ModelAndView(jspView);
+            jspView.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
