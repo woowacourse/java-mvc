@@ -1,13 +1,11 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.NotFoundException;
+import com.interface21.SingletonManager;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
 
 public class HandlerMappings {
 
@@ -18,23 +16,11 @@ public class HandlerMappings {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
-        List<HandlerMapping> objects = reflections.getSubTypesOf(HandlerMapping.class).stream()
-                .map(this::createHandlerMapping)
-                .toList();
-        objects.forEach(HandlerMapping::initialize);
-        handlerMappings.addAll(objects);
-    }
-
-    private HandlerMapping createHandlerMapping(Class<?> clazz) {
-        try {
-            Object instance = clazz.getDeclaredConstructor().newInstance();
-            return (HandlerMapping) instance;
-        } catch (NoSuchMethodException e) {
-            throw new NotFoundException("기본 생성자가 존재하지 않습니다");
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        SingletonManager instance = SingletonManager.getInstance();
+        instance.registerHandler(HandlerMapping.class);
+        List<HandlerMapping> subTypesOf = instance.getSubTypesOf(HandlerMapping.class);
+        subTypesOf.forEach(HandlerMapping::initialize);
+        handlerMappings.addAll(subTypesOf);
     }
 
     public Object getHandler(HttpServletRequest request) {
