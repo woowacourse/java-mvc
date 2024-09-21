@@ -65,7 +65,8 @@ class HandlerExecutionTest {
     @Test
     @DisplayName("존재하지 않는 생성자로 인해 에러 발생")
     void testNoSuchMethodException() throws Exception {
-        Method abstractMethod = NoneConstructorController.class.getMethod("abstractHandler", HttpServletRequest.class, HttpServletResponse.class);
+        Method abstractMethod = NoneConstructorController.class.getMethod("abstractHandler", HttpServletRequest.class,
+                HttpServletResponse.class);
         handlerExecution = new HandlerExecution(abstractMethod);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -78,6 +79,7 @@ class HandlerExecutionTest {
 
     @Controller
     static class ExceptionThrowingController {
+
         public ExceptionThrowingController() {
         }
 
@@ -87,6 +89,7 @@ class HandlerExecutionTest {
     }
 
     abstract static class NoneConstructorController {
+
         public abstract ModelAndView abstractHandler(HttpServletRequest request, HttpServletResponse response);
     }
 }
