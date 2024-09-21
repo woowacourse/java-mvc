@@ -17,7 +17,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -88,15 +88,11 @@ public class AnnotationHandlerMapping {
                 .orElseThrow(() -> new HandlingException("해당 메서드를 실행할 컨트롤러가 존재하지 않습니다."));
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new HandlingException("요청을 처리할 핸들러가 존재하지 않습니다.");
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }
