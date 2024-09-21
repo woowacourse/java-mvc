@@ -24,7 +24,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void get() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -39,7 +39,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void post() throws Exception {
+    void post() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -56,7 +56,7 @@ class AnnotationHandlerMappingTest {
     @DisplayName("RequestMethod가 비어있으면, 모든 Method를 지원한다.")
     @EnumSource(RequestMethod.class)
     @ParameterizedTest
-    void methodName(RequestMethod method) throws Exception {
+    void methodName(RequestMethod method) {
         // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
