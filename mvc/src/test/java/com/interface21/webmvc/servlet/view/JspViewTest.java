@@ -27,7 +27,7 @@ class JspViewTest {
         assertThat(response.getHeader("Location")).isEqualTo("/hello");
     }
 
-    @DisplayName("redirect: 로 시작하는 view의 경우 응답 location에 view가 저장된다.")
+    @DisplayName("redirect: 로 시작하지 않는 view의 경우 view로 포워딩한다.")
     @Test
     void givenStartsWithoutRedirect_whenRender_thenForwardedUrlSameAsView() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
