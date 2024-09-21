@@ -21,11 +21,14 @@ class ReflectionsTest {
         Reflections reflections = new Reflections("reflection.examples");
 
         // TODO 클래스 레벨에 @Controller, @Service, @Repository 애노테이션이 설정되어 모든 클래스 찾아 로그로 출력한다.
-
         List<Class<? extends Annotation>> target = List.of(Controller.class, Service.class, Repository.class);
         target.forEach(it -> {
             Set<Class<?>> results = reflections.getTypesAnnotatedWith(it);
-            results.forEach(result -> log.info("annotation : {} / result = {}", it.getSimpleName(), result.getSimpleName()));
+            logAllClassAnnotation(it, results);
         });
+    }
+
+    private void logAllClassAnnotation(Class<? extends Annotation> annotation, Set<Class<?>> results) {
+        results.forEach(result -> log.info("annotation : {} / result = {}", annotation.getSimpleName(), result.getSimpleName()));
     }
 }
