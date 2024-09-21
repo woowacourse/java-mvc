@@ -58,7 +58,7 @@ class AnnotationHandlerMappingTest {
 
     @ParameterizedTest
     @EnumSource(value = RequestMethod.class)
-    @DisplayName("url만 매팽된 요청의 핸들러 조회: 모든 메서드 허용")
+    @DisplayName("url만 매핑된 요청의 핸들러 조회: 모든 메서드 허용")
     void onlyUrl_noMethod(final RequestMethod requestMethod) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
