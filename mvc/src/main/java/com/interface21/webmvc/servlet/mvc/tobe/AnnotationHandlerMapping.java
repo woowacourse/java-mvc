@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.NotFoundException;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public AnnotationHandlerMapping() {
         this.handlerExecutions = new HandlerExecutions();
-        initialize();
     }
 
     @Override
@@ -32,18 +32,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public boolean supports(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        String requestMethod = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
-        return handlerExecutions.containsHandlerKey(handlerKey);
-    }
-
-    @Override
     public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
-        return handlerExecutions.get(handlerKey);
+        if (handlerExecutions.containsHandlerKey(handlerKey)) {
+            return handlerExecutions.get(handlerKey);
+        }
+        throw new NotFoundException("일치하는 handlerkey가 없습니다");
     }
 }

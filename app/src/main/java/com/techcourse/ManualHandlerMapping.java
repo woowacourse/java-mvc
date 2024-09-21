@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.NotFoundException;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
@@ -19,7 +20,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     private static final Map<String, Controller> controllers = new HashMap<>();
 
     public ManualHandlerMapping() {
-        initialize();
     }
 
     @Override
@@ -35,14 +35,12 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public boolean supports(HttpServletRequest request) {
-        return controllers.containsKey(request.getRequestURI());
-    }
-
-    @Override
     public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        if (controllers.containsKey(requestURI)) {
+            return controllers.get(requestURI);
+        }
+        throw new NotFoundException("일치하는 uri가 없습니다");
     }
 }

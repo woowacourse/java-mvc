@@ -6,7 +6,5 @@ public interface HandlerMapping {
 
     void initialize();
 
-    boolean supports(HttpServletRequest request);
-
     Object getHandler(HttpServletRequest request);
 }
