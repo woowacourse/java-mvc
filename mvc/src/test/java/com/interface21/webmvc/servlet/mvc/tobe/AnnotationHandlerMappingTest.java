@@ -1,13 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.interface21.web.bind.annotation.RequestMethod;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 class AnnotationHandlerMappingTest {
 
@@ -19,6 +22,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET 메서드에 대한 요청을 처리한다.")
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -34,6 +38,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("POST 메서드에 대한 요청을 처리한다.")
     @Test
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
@@ -47,5 +52,24 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("메서드가 지정되지 않은 경우 모든 메서드에 대해 요청을 처리한다.")
+    @Test
+    void all() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/all-test");
+
+        for(RequestMethod requestMethod : RequestMethod.values()) {
+            when(request.getMethod()).thenReturn(requestMethod.name());
+
+            final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+            final var modelAndView = handlerExecution.handle(request, response);
+
+            assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        }
     }
 }
