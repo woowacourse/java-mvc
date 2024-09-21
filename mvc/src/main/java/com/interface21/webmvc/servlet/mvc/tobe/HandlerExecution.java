@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class HandlerExecution {
@@ -21,7 +22,9 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        List<Object> preparedArgs = List.of(request, response);
+        List<Object> preparedArgs = Stream.of(request, response)
+                .filter(Objects::nonNull)
+                .toList();
         List<? extends Class<?>> requiredParameterClasses = Stream.of(method.getParameters())
                 .map(Parameter::getType)
                 .toList();

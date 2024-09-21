@@ -121,12 +121,6 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    @DisplayName("컨트롤러의 메서드가 요구하는 파라미터를 동적으로 대응하여 의존성을 주입한다.")
-    void passArgumentsWithRequiredParameters() throws Exception {
-        joinPathOfControllerAndMethod();
-    }
-
-    @Test
     @DisplayName("컨트롤러와 메서드의 경로를 합쳐서 엔드포인트로 요청 경로를 결정한다.")
     void joinPathOfControllerAndMethod() throws Exception {
         // given
