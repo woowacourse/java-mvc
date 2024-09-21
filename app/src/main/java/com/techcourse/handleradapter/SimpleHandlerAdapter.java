@@ -1,7 +1,7 @@
-package com.techcourse;
+package com.techcourse.handleradapter;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.techcourse.HandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,12 +15,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
     @Override
     public Object handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Controller controller = (Controller) handler;
-        Object result = controller.execute(request, response);
-
-        if (result instanceof ModelAndView) {
-            return (ModelAndView) result;
-        }
-        return result;
+        return controller.execute(request, response);
     }
 }
 

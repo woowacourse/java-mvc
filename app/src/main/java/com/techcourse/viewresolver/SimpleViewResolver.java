@@ -1,8 +1,9 @@
-package com.techcourse;
+package com.techcourse.viewresolver;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.view.JspView;
+import com.techcourse.ViewResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
