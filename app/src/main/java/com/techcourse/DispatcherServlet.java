@@ -36,14 +36,14 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
-            render(request, response, viewName);
+            move(request, response, viewName);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException("예기치 못한 오류가 발생했습니다.");
         }
     }
 
-    private void render(final HttpServletRequest request, final HttpServletResponse response, final String viewName)
+    private void move(final HttpServletRequest request, final HttpServletResponse response, final String viewName)
             throws Exception {
         final JspView jspView = new JspView(viewName);
         final ModelAndView modelAndView = new ModelAndView(jspView);
