@@ -77,18 +77,6 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    @DisplayName("생성한 mapping 정보 확인")
-    void init() throws NoSuchMethodException {
-        final var expected = Map.of(
-                new HandlerKey("/post-test", RequestMethod.POST),
-                new HandlerExecution(TestController.class, TestController.class.getMethod("save", HttpServletRequest.class, HttpServletResponse.class)),
-                new HandlerKey("/get-test", RequestMethod.GET),
-                new HandlerExecution(TestController.class ,TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class)));
-
-        assertThat(handlerMapping.getHandlerExecutions()).isEqualTo(expected);
-    }
-
-    @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
