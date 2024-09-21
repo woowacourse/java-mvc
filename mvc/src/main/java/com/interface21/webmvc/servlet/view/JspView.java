@@ -13,7 +13,7 @@ public class JspView implements View {
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     protected static final String REDIRECT_PREFIX = "redirect:";
 
-    private String viewName;
+    private final String viewName;
 
     public JspView(final String viewName) {
         this.viewName = viewName;
