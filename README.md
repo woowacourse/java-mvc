@@ -30,3 +30,4 @@
   - [ ] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원해야 한다. 
   - [ ] @Controller 가 붙은 클래스 AnnotationHandlerMapping에 등록한다. 
 - [ ] [JspView 클래스](mvc/src/main/java/com/interface21/webmvc/servlet/view/JspView.java) 구현하기
+  - [ ] DispatchServlet 클래스의 service 메서드에서 뷰를 처리하는 부분을 JspView 클래스로 옮긴다.
