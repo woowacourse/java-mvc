@@ -2,22 +2,20 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.AbstractHandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ManualHandlerAdapter implements HandlerAdapter {
+public class ManualHandlerAdapter extends AbstractHandlerAdapter<Controller> {
 
-    @Override
-    public boolean supports(Object handler) {
-        return handler instanceof Controller;
+    public ManualHandlerAdapter() {
+        super(Controller.class);
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Controller handler)
             throws Exception {
-        Controller controller = (Controller) handler;
-        String viewName = controller.execute(request, response);
+        String viewName = handler.execute(request, response);
 
         return ModelAndView.createWithJspView(viewName);
     }

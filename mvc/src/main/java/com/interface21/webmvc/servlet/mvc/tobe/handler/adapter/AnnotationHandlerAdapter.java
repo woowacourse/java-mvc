@@ -5,17 +5,15 @@ import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter {
+public class AnnotationHandlerAdapter extends AbstractHandlerAdapter<HandlerExecution> {
 
-    @Override
-    public boolean supports(Object handler) {
-        return handler instanceof HandlerExecution;
+    public AnnotationHandlerAdapter() {
+        super(HandlerExecution.class);
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, HandlerExecution handler)
             throws Exception {
-        HandlerExecution handlerExecution = (HandlerExecution) handler;
-        return handlerExecution.handle(request, response);
+        return handler.handle(request, response);
     }
 }
