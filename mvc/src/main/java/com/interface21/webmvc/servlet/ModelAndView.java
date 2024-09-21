@@ -16,7 +16,7 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
-    public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void renderView(HttpServletRequest request, HttpServletResponse response) throws Exception {
         view.render(model, request, response);
     }
 
