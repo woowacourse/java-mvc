@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,7 +69,8 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(
-                new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return Optional.ofNullable(handlerExecutions.get(handlerKey))
+                .orElseThrow(() -> new IllegalArgumentException("해당 요청을 처리할 수 있는 핸들러가 없습니다."));
     }
 }
