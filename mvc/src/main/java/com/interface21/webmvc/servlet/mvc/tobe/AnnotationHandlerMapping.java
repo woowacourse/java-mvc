@@ -19,6 +19,9 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
+    private static final Class<RequestMapping> REQUEST_MAPPING = RequestMapping.class;
+    private static final Class<Controller> CONTROLLER = Controller.class;
+
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
@@ -30,13 +33,13 @@ public class AnnotationHandlerMapping {
 
     private void initialize() {
         Reflections typesAnnotatedReflections = new Reflections(basePackage, Scanners.TypesAnnotated);
-        Set<Class<?>> controllers = typesAnnotatedReflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllers = typesAnnotatedReflections.getTypesAnnotatedWith(CONTROLLER);
         controllers.forEach(this::mapRequestMappingToHandler);
     }
 
     private void mapRequestMappingToHandler(Class<?> controller) {
         List<Method> requestMappings = Arrays.stream(controller.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING))
                 .toList();
 
         Object controllerInstance = ClassInstantiator.Instantiate(controller);
@@ -44,7 +47,7 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandler(Object controllerInstance, Method method) {
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        RequestMapping annotation = method.getAnnotation(REQUEST_MAPPING);
         List<HandlerKey> handlerKeys = generateHandlerKeys(annotation);
 
         handlerKeys.forEach(key -> {
