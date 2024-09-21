@@ -15,10 +15,14 @@ class Junit3TestRunner {
         Junit3Test junit3Test = clazz.getDeclaredConstructor().newInstance();
 
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
-            String methodName = declaredMethod.getName();
-            if (methodName.startsWith("test")) {
-                declaredMethod.invoke(junit3Test);
-            }
+            invokeIfMethodNameStartWithTest(declaredMethod, junit3Test);
+        }
+    }
+
+    private void invokeIfMethodNameStartWithTest(Method declaredMethod, Junit3Test junit3Test) throws Exception {
+        String methodName = declaredMethod.getName();
+        if (methodName.startsWith("test")) {
+            declaredMethod.invoke(junit3Test);
         }
     }
 
