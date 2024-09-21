@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,13 +26,7 @@ public class HandlerExecution implements Controller {
     @Override
     public Object execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         // request 의 uri, method 를 처리하는 Controller 메서드 실행
-        ModelAndView modelAndView = (ModelAndView) method.invoke(controllerInstance, request, response);
-//        Map<String, Object> model = modelAndView.getModel();
-//        View view = modelAndView.getView();
-//        view.render(model, request, response);
-//        log.info("view = {}", view);
-
-        return modelAndView;
+        return method.invoke(controllerInstance, request, response);
     }
 
     @Override
