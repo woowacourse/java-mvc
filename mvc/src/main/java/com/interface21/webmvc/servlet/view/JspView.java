@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
-    private static final String NOT_FOUND_JSP_PAGE = "/404.jsp";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     private final String viewName;
 
@@ -28,12 +27,7 @@ public class JspView implements View {
             return;
         }
         setRequestAttribute(model, request);
-
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        if (requestDispatcher == null) {
-            response.sendRedirect(NOT_FOUND_JSP_PAGE);
-            return;
-        }
         requestDispatcher.forward(request, response);
     }
 
