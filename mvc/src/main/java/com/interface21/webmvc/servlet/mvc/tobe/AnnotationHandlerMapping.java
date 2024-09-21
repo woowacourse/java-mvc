@@ -51,8 +51,8 @@ public class AnnotationHandlerMapping {
     private void processController(Class<?> controller) throws Exception {
         Object runnerInstance = controller.getDeclaredConstructor().newInstance();
 
-        for (Method method : findHandlerMethods(controller)) {
-            appendRequestMapping(method, runnerInstance);
+        for (Method handlerMethod : findHandlerMethods(controller)) {
+            appendRequestMapping(handlerMethod, runnerInstance);
         }
     }
 
@@ -62,15 +62,15 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void appendRequestMapping(Method method, Object runnerInstance) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+    private void appendRequestMapping(Method handlerMethod, Object runnerInstance) {
+        RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = requestMapping.method();
         if (isRequestMethodEmpty(requestMethods)) {
-            putHandlerExecutions(method, runnerInstance, requestMapping.value(), RequestMethod.values());
+            putHandlerExecutions(handlerMethod, runnerInstance, requestMapping.value(), RequestMethod.values());
             return;
         }
 
-        putHandlerExecutions(method, runnerInstance, requestMapping.value(), requestMapping.method());
+        putHandlerExecutions(handlerMethod, runnerInstance, requestMapping.value(), requestMapping.method());
     }
 
     private boolean isRequestMethodEmpty(RequestMethod[] requestMethods) {
@@ -78,14 +78,14 @@ public class AnnotationHandlerMapping {
     }
 
     private void putHandlerExecutions(
-            Method method,
+            Method handlerMethod,
             Object runnerInstance,
             String path,
             RequestMethod[] requestMethods
     ) {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(path, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(runnerInstance, method);
+            HandlerExecution handlerExecution = new HandlerExecution(runnerInstance, handlerMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
