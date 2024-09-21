@@ -17,12 +17,14 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
-    public static HandlerKey from(final RequestMapping requestMapping) {
-        return new HandlerKey(requestMapping.value(), requestMapping.method()[FIRST_INDEX]);
+    public static List<HandlerKey> buildFrom(final RequestMapping requestMapping) {
+        return Arrays.stream(requestMapping.method())
+                .map(method -> new HandlerKey(requestMapping.value(), method))
+                .toList();
     }
 
-    public static List<HandlerKey> listOf(RequestMapping requestMapping, RequestMethod[] methods) {
-        return Arrays.stream(methods)
+    public static List<HandlerKey> buildWithAllMethodsFrom(RequestMapping requestMapping) {
+        return Arrays.stream(RequestMethod.values())
                 .map(method -> new HandlerKey(requestMapping.value(), method))
                 .toList();
     }
