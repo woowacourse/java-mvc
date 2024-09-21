@@ -1,13 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -47,5 +51,18 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("@RequestMapping에 메서드 변수가 없다면 모든 HTTP method에 대하여 매핑한다.")
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD", "TRACE"})
+    void withoutMethodVariableInAnnotation(String httpMethod) {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/home");
+        when(request.getMethod()).thenReturn(httpMethod);
+
+        assertThatCode(() -> handlerMapping.getHandler(request))
+                .doesNotThrowAnyException();
     }
 }
