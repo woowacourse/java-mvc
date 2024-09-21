@@ -38,9 +38,9 @@ public class AnnotationHandlerMapping {
         Object controllerInstance = instantiateController(controllerClass);
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = getRequestMappingMethod(requestMapping);
+        HandlerExecution handlerExecution = new HandlerExecution(method, controllerInstance);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(method, controllerInstance);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
