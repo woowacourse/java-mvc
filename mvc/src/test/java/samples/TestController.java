@@ -30,4 +30,12 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/all-test")
+    public ModelAndView handleAll(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller all method");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("inputMethod", request.getAttribute("inputMethod"));
+        return modelAndView;
+    }
 }

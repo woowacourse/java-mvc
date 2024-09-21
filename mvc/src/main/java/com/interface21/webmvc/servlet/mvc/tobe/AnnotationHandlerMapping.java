@@ -64,9 +64,27 @@ public class AnnotationHandlerMapping {
 
     private void appendRequestMapping(Method method, Object runnerInstance) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (isRequestMethodEmpty(requestMethods)) {
+            putHandlerExecutions(method, runnerInstance, requestMapping.value(), RequestMethod.values());
+            return;
+        }
 
-        for (RequestMethod requestMethod : requestMapping.method()) {
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+        putHandlerExecutions(method, runnerInstance, requestMapping.value(), requestMapping.method());
+    }
+
+    private boolean isRequestMethodEmpty(RequestMethod[] requestMethods) {
+        return requestMethods.length == 0;
+    }
+
+    private void putHandlerExecutions(
+            Method method,
+            Object runnerInstance,
+            String path,
+            RequestMethod[] requestMethods
+    ) {
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(path, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(runnerInstance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
