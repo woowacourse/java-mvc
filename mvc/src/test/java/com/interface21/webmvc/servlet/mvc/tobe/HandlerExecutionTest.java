@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.valid.TestController;
 
 class HandlerExecutionTest {
 
@@ -22,8 +22,6 @@ class HandlerExecutionTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
 
         TestController testController = new TestController();
         Method findUserId = testController.getClass()

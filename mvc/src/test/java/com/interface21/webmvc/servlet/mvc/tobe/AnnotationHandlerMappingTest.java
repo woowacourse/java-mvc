@@ -43,6 +43,23 @@ class AnnotationHandlerMappingTest {
                 .hasMessage("해당 컨트롤러의 기본 생성자로 인스턴스를 생성할 수 없습니다.");
     }
 
+    @DisplayName("요청을 처리할 핸들러가 없으면 null을 반환한다.")
+    @Test
+    void getHandler_notFound() {
+        // given
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/invalid");
+        when(request.getMethod()).thenReturn("GET");
+
+        // when
+        HandlerExecution handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isNull();
+    }
+
     @Test
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
