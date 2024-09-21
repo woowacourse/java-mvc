@@ -1,6 +1,7 @@
 package reflection;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -24,9 +25,11 @@ class ReflectionTest {
         log.info("clazz.getSimpleName()={}, clazz.getName()={}, clazz.getCanonicalName()={}",
                 clazz.getSimpleName(), clazz.getName(), clazz.getCanonicalName());
 
-        assertThat(clazz.getSimpleName()).isEqualTo("Question");
-        assertThat(clazz.getName()).isEqualTo("reflection.Question");
-        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
+        assertAll(
+                () -> assertThat(clazz.getSimpleName()).isEqualTo("Question"),
+                () -> assertThat(clazz.getName()).isEqualTo("reflection.Question"),
+                () -> assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question")
+        );
     }
 
     @Test
@@ -36,9 +39,11 @@ class ReflectionTest {
         log.info("clazz.getSimpleName()={}, clazz.getName()={}, clazz.getCanonicalName()={}",
                 clazz.getSimpleName(), clazz.getName(), clazz.getCanonicalName());
 
-        assertThat(clazz.getSimpleName()).isEqualTo("Question");
-        assertThat(clazz.getName()).isEqualTo("reflection.Question");
-        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
+        assertAll(
+                () -> assertThat(clazz.getSimpleName()).isEqualTo("Question"),
+                () -> assertThat(clazz.getName()).isEqualTo("reflection.Question"),
+                () -> assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question")
+        );
     }
 
     @Test
@@ -85,12 +90,14 @@ class ReflectionTest {
         final Question secondQuestion = (Question) secondConstructor.newInstance(
                 1L, "gugu", "제목2", "내용2", Date.from(Instant.now()), 1);
 
-        assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
-        assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
-        assertThat(firstQuestion.getContents()).isEqualTo("내용1");
-        assertThat(secondQuestion.getWriter()).isEqualTo("gugu");
-        assertThat(secondQuestion.getTitle()).isEqualTo("제목2");
-        assertThat(secondQuestion.getContents()).isEqualTo("내용2");
+        assertAll(
+                () -> assertThat(firstQuestion.getWriter()).isEqualTo("gugu"),
+                () -> assertThat(firstQuestion.getTitle()).isEqualTo("제목1"),
+                () -> assertThat(firstQuestion.getContents()).isEqualTo("내용1"),
+                () -> assertThat(secondQuestion.getWriter()).isEqualTo("gugu"),
+                () -> assertThat(secondQuestion.getTitle()).isEqualTo("제목2"),
+                () -> assertThat(secondQuestion.getContents()).isEqualTo("내용2")
+        );
     }
 
     @Test
