@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    public static final int EMPTY = 0;
+    private static final int EMPTY = 0;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -38,13 +39,21 @@ public class AnnotationHandlerMapping {
 
     private void mappingHandlerExecutions(final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (requestMapping.method().length == EMPTY) {
-            HandlerKey.listOf(requestMapping, RequestMethod.values())
-                    .forEach(handlerKey -> addHandlerExecution(method, handlerKey));
+        if (isMethodEmpty(requestMapping)) {
+            addHandlerExecutions(method, HandlerKey.buildWithAllMethodsFrom(requestMapping));
             return;
         }
-        final HandlerKey handlerKey = HandlerKey.from(requestMapping);
-        addHandlerExecution(method, handlerKey);
+        addHandlerExecutions(method, HandlerKey.buildFrom(requestMapping));
+    }
+
+    private boolean isMethodEmpty(RequestMapping requestMapping) {
+        return requestMapping.method().length == EMPTY;
+    }
+
+    private void addHandlerExecutions(final Method method, final List<HandlerKey> handlerKeys) {
+        for (final HandlerKey handlerKey : handlerKeys) {
+            addHandlerExecution(method, handlerKey);
+        }
     }
 
     private void addHandlerExecution(final Method method, final HandlerKey handlerKey) {
