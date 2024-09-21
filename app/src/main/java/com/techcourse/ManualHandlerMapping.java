@@ -16,7 +16,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final Map<String, Controller> controllers = new HashMap<>();
 
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));

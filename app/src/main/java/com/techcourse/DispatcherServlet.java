@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
     private Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
             .map(handlerMapping -> handlerMapping.getHandler(request))
-            .filter(Objects::isNull)
+            .filter(Objects::nonNull)
             .findFirst()
             .orElseThrow(() -> new NoSuchElementException("처리할 수 있는 핸들러가 없습니다."));
     }
