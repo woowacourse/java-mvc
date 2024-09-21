@@ -45,14 +45,6 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private RequestMethod[] getRequestMappingMethod(RequestMapping requestMapping) {
-        RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == 0) {
-            return RequestMethod.values();
-        }
-        return requestMethods;
-    }
-
     private Object instantiateController(Class<?> controllerClass) {
         try {
             return controllerClass.getDeclaredConstructor().newInstance();
@@ -61,6 +53,14 @@ public class AnnotationHandlerMapping {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("컨트롤러를 인스턴스화할 수 없습니다: " + controllerClass.getName(), e);
         }
+    }
+
+    private RequestMethod[] getRequestMappingMethod(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
