@@ -18,3 +18,7 @@
 ## 학습 테스트
 1. [Reflection API](study/src/test/java/reflection)
 2. [Servlet](study/src/test/java/servlet)
+
+### 1단계 - @MVC 프레임워크 구현하기
+- [x] @MVC Framework 테스트 통과
+- [x] JspView 클래스를 구현

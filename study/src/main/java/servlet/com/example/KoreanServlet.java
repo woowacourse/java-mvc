@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 @WebServlet(name = "koreanServlet", urlPatterns = "/korean")
@@ -23,6 +22,7 @@ public class KoreanServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         getServletContext().log("service() 호출");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().write(인코딩);
     }
 

@@ -1,11 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.NoHandlerFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +28,44 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Reflections reflections = new Reflections(basePackage);
+
+        for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
+            for (Method method : controllerClass.getDeclaredMethods()) {
+                addHandlerExecution(controllerClass, method);
+            }
+        }
     }
 
+    private void addHandlerExecution(Class<?> controllerClass, Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String mappedUrl = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+
+        List<HandlerKey> handlerKeys = createHandlerKeys(mappedUrl, requestMethods);
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, new HandlerExecution(controllerClass, method));
+        }
+    }
+
+    private List<HandlerKey> createHandlerKeys(String mappedUrl, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(mappedUrl, requestMethod))
+                .toList();
+    }
+
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        if (handlerExecution == null) {
+            throw new NoHandlerFoundException(
+                    "[%s %s]에 매핑된 핸들러가 존재하지 않습니다.".formatted(request.getMethod(), request.getRequestURI())
+            );
+        }
+        return handlerExecution;
     }
 }
