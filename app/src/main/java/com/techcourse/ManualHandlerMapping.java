@@ -18,6 +18,8 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    private static final int LOWEST_PRIORITY = Integer.MAX_VALUE;
+
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
@@ -41,6 +43,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return LOWEST_PRIORITY;
     }
 }

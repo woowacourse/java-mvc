@@ -23,6 +23,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
+    private static final int HIGHEST_PRIORITY = 1;
+
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
@@ -84,6 +86,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public int getOrder() {
-        return 1;
+        return HIGHEST_PRIORITY;
     }
 }
