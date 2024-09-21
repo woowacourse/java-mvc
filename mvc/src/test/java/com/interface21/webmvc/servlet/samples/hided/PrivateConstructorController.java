@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.samples;
+package com.interface21.webmvc.servlet.samples.hided;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;

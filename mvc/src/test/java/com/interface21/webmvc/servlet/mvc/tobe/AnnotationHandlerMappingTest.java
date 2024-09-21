@@ -64,13 +64,26 @@ class AnnotationHandlerMappingTest {
     @DisplayName("동일한 요청을 처리하는 2개의 핸들러 등록 시 예외가 발생한다.")
     void assignHandlerDuplicated() {
         // given
-        String basePackage = "com.interface21.webmvc.servlet.samples";
+        String basePackage = "com.interface21.webmvc.servlet.samples.duplicated";
         AnnotationHandlerMapping mapping = new AnnotationHandlerMapping(basePackage);
 
         // when & then
         assertThatCode(mapping::initialize)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("HandlerKey exists");
+    }
+
+    @Test
+    @DisplayName("생성자가 가려진 컨트롤러 등록 시 예외가 발생한다.")
+    void assignHandlerPrivate() {
+        // given
+        String basePackage = "com.interface21.webmvc.servlet.samples.hided";
+        AnnotationHandlerMapping mapping = new AnnotationHandlerMapping(basePackage);
+
+        // when & then
+        assertThatCode(mapping::initialize)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Public constructor not found");
     }
 
     @Test

@@ -77,10 +77,12 @@ public class AnnotationHandlerMapping {
     private HandlerExecution findHandlerExecution(Class<?> clazz, Method method) {
         try {
             return new HandlerExecution(method, clazz);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Public constructor not found: {}" + clazz);
         } catch (Exception e) {
             log.error("Failed to find HandlerExecution for class {}", clazz, e);
-            return null;
         }
+        return null;
     }
 
     public Object getHandler(final HttpServletRequest request) {
