@@ -60,6 +60,14 @@ class AnnotationHandlerMappingTest {
         handlerMappingTest("/post-test", POST);
     }
 
+    @EnumSource(RequestMethod.class)
+    @ParameterizedTest
+    @DisplayName("/all-test 엔드포인트로 RequestMethod 클래스가 지원하는 메소드 요청이 들어왔을 때 기대값을 반환한다.")
+    void all(RequestMethod requestMethod) throws Exception {
+        //given, when, then
+        handlerMappingTest("/all-test", requestMethod.name());
+    }
+
     @Test
     @DisplayName("지원하지 않는 엔드포인트로 GET 요청이 들어왔을 때 예외를 반환한다.")
     void get_invalidEndpoint() {
@@ -77,13 +85,5 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasCauseExactlyInstanceOf(UnsupportedMethodException.class);
 
-    }
-
-    @EnumSource(RequestMethod.class)
-    @ParameterizedTest
-    @DisplayName("/all-test 엔드포인트로 RequestMethod 클래스가 지원하는 메소드 요청이 들어왔을 때 기대값을 반환한다.")
-    void all(RequestMethod requestMethod) throws Exception {
-        //given, when, then
-        handlerMappingTest("/all-test", requestMethod.name());
     }
 }
