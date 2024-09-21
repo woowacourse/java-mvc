@@ -59,4 +59,8 @@ public class AnnotationHandlerMapping {
         final var handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.getByValue(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
+
+    public Map<HandlerKey, HandlerExecution> getHandlerExecutions() {
+        return handlerExecutions;
+    }
 }
