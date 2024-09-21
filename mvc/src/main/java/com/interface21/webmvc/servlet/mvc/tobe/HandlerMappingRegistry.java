@@ -16,6 +16,7 @@ public class HandlerMappingRegistry {
 
     public void initialize() {
         handlerMappings.add(new AnnotationHandlerMapping());
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public void addHandlerMapping(HandlerMapping mapping) {
