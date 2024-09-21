@@ -20,9 +20,9 @@
 2. [Servlet](study/src/test/java/servlet)
 
 ### 기능 요구 사항
-- [ ] 어노테이션 기반 MVC 프레임워크로 개선
-  - [ ] URL 매핑(value)
-  - [ ] HTTP 메서드 매핑(method)
-    - [ ] 없으면 모든 HTTP method 지원
-- [ ] @MVC Framework 테스트 통과하기
+- [x] 어노테이션 기반 MVC 프레임워크로 개선
+  - [x] URL 매핑(value)
+  - [x] HTTP 메서드 매핑(method)
+    - [x] 없으면 모든 HTTP method 지원
+- [x] @MVC Framework 테스트 통과하기
 - [ ] JspView 클래스 구현 : DispatcherServlet, service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮기기
