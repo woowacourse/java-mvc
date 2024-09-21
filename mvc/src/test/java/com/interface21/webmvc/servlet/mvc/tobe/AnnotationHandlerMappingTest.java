@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -50,20 +52,19 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    @Test
-    void requestSupportsAllMethods() throws Exception {
+    @ParameterizedTest
+    @EnumSource(RequestMethod.class)
+    void requestSupportsAllMethods(RequestMethod method) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/test");
+        when(request.getMethod()).thenReturn(method.name());
 
-        for (RequestMethod method : RequestMethod.values()) {
-            when(request.getMethod()).thenReturn(method.name());
-            final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-            final var modelAndView = handlerExecution.handle(request, response);
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
 
-            assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-        }
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 }
