@@ -31,7 +31,7 @@ public class HandlerAdapters {
             return (HandlerAdapter) instance;
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 

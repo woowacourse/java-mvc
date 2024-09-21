@@ -32,7 +32,7 @@ public class HandlerMappings {
             return (HandlerMapping) instance;
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 
