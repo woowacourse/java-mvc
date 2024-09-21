@@ -1,9 +1,9 @@
 package servlet.com.example;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletTest {
 
@@ -28,7 +28,8 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // init 시점에 0이 되어 서블릿 객체가 생성되고 이후 요청에서 같은 객체를 사용하기 때문에 3번의 요청에서 각각 1이 증가된다
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +51,7 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // 메서드 내부에서 값을 정하니까 매번 0으로 처기화한 뒤 1을 증가시켜 1이 된다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }

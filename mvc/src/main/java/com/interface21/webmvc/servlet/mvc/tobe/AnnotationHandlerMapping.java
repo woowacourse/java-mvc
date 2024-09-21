@@ -1,11 +1,19 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +29,83 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        List<Object> controllerInstances = getControllerInstances();
+
+        for (Object controller : controllerInstances) {
+            processController(controller);
+        }
+    }
+
+    private List<Object> getControllerInstances() {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+
+        return controllers.stream()
+                .map(this::makeControllerInstance)
+                .toList();
+    }
+
+    private Object makeControllerInstance(Class<?> controller) {
+        try {
+            return controller.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void processController(Object controller) {
+        Method[] methods = controller.getClass().getDeclaredMethods();
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> processMethod(controller, method));
+    }
+
+    private void processMethod(Object controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();  // 가정: value는 url 패턴을 반환
+        RequestMethod[] requestMethods = getRequestMethodsOrAll(requestMapping);
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            addHandlerExecution(handlerKey, handlerExecution);
+        }
+    }
+
+    private static RequestMethod[] getRequestMethodsOrAll(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();  // method는 RequestMethod 배열을 반환
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        return requestMethods;
+    }
+
+    private void addHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        validateDuplicateHanderKey(handlerKey);
+        handlerExecutions.put(handlerKey, handlerExecution);
+        log.info("Mapped {} to {}", handlerKey, handlerExecution);
+    }
+
+    private void validateDuplicateHanderKey(HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("중복된 핸들러 매핑 정보입니다.");
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        String rawMethod = request.getMethod();
+        RequestMethod requestMethod = RequestMethod.valueOf(rawMethod.toUpperCase());
+
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        validateNotFoundHandlerKey(handlerKey);
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private void validateNotFoundHandlerKey(HandlerKey handlerKey) {
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("처리할 컨트롤러가 없는 요청입니다.");
+        }
     }
 }
