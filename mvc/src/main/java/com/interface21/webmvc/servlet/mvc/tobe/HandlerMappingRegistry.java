@@ -20,7 +20,6 @@ public class HandlerMappingRegistry {
     }
 
     public void addHandlerMapping(HandlerMapping mapping) {
-        mapping.initialize();
         handlerMappings.add(mapping);
     }
 

@@ -67,11 +67,11 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(HttpServletRequest request) {
         return handlerMappingRegistry.getHandler(request)
-                .orElseThrow(() -> new IllegalArgumentException("요청에 일치하는 핸들러를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("요청을 처리할 수 있는 핸들러가 존재하지 않습니다."));
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapterRegistry.getHandlerAdapter(handler)
-                .orElseThrow(() -> new IllegalStateException("핸들러와 일치하는 어댑터가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalStateException("핸들러를 처리할 수 있는 어댑터가 존재하지 않습니다."));
     }
 }

@@ -19,6 +19,7 @@ class HandlerMappingRegistryTest {
     void setUp() {
         registry = new HandlerMappingRegistry();
         registry.addHandlerMapping(new FakeHandlerMapping());
+        registry.initialize();
     }
 
     @DisplayName("요청과 매핑되는 핸들러를 반환한다.")
