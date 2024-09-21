@@ -2,6 +2,30 @@
 
 ## @MVC 구현하기
 
+### 1단계 요구사항
+
+- [x] 학습 테스트 진행하기
+    - [x] [Junit3TestRunner](study/src/test/java/reflection/Junit3TestRunner.java)
+    - [x] [Junit4TestRunner](study/src/test/java/reflection/Junit4TestRunner.java)
+    - [x] [ReflectionTest](study/src/test/java/reflection/ReflectionTest.java)
+    - [x] [ReflectionsTest](study/src/test/java/reflection/ReflectionsTest.java)
+
+    <br>
+
+- [x] @MVC 프레임워크 테스트 통과하기
+    - [x] AnnotationHandlerMappingTest get(), post() 통과하기
+
+    <br>
+
+- [ ] JSPView 클래스 구현하기
+
+    <br>
+
+- [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원하기
+- [x] 예외 처리
+    - [x] 존재하지 않는 엔드포인트로 메서드 요청이 들어오면 예외를 반환한다.
+    - [x] 지원하지 않는 메서드 요청이 들어오면 예외를 반환한다.
+  
 ### 학습목표
 
 - @MVC를 구현하면서 MVC 구조와 MVC의 각 역할을 이해한다.

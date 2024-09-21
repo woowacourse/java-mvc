@@ -1,14 +1,14 @@
 package samples;
 
 import com.interface21.context.stereotype.Controller;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class TestController {
@@ -29,5 +29,18 @@ public class TestController {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/all-test")
+    public ModelAndView byUserId(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller all method");
+        ModelAndView modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/get-view-test", method = RequestMethod.GET)
+    public ModelAndView getView(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("test-view"));
     }
 }
