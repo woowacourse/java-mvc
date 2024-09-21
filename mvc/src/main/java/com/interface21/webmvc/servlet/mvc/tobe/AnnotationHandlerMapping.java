@@ -27,8 +27,8 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage, Scanners.TypesAnnotated, Scanners.MethodsAnnotated);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        Reflections typesAnnotatedReflections = new Reflections(basePackage, Scanners.TypesAnnotated);
+        Set<Class<?>> controllers = typesAnnotatedReflections.getTypesAnnotatedWith(Controller.class);
         controllers.forEach(this::mapRequestMappingToHandler);
     }
 
