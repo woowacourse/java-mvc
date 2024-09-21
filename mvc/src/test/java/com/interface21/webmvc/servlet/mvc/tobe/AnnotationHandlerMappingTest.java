@@ -72,4 +72,17 @@ class AnnotationHandlerMappingTest {
             assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
         }
     }
+
+    @DisplayName("지원하지 않는 메서드에 대한 요청이 들어오면 예외를 반환한다.")
+    @Test
+    void invalidMethod() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
 }
