@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,5 +64,19 @@ class AnnotationHandlerMappingTest {
         ModelAndView modelAndView = handler.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void handlerNotExist() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/no-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        Assertions.assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("핸들러가 존재하지 않습니다.");
     }
 }

@@ -34,11 +34,20 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), getRequestMethod(request));
+        Handler handler = handlerExecutions.get(handlerKey);
+
+        if (handler == null) {
+            throw new IllegalArgumentException("핸들러가 존재하지 않습니다.");
+        }
+
+        return handler;
+    }
+
+    private RequestMethod getRequestMethod(HttpServletRequest request) {
         try {
-            HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-            return handlerExecutions.get(handlerKey);
+            return RequestMethod.valueOf(request.getMethod());
         } catch (IllegalArgumentException exception) {
-            log.error("잘못된 HTTP 메서드입니다.");
             throw new IllegalArgumentException("잘못된 HTTP 메서드입니다.");
         }
     }
