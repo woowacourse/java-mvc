@@ -1,29 +1,40 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.util.Set;
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HandlerExecutions handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = new HandlerExecutions();
     }
 
-    public void initialize() {
+    public void initialize() throws Exception {
         log.info("Initialized AnnotationHandlerMapping!");
+
+        Set<Class<?>> controllers = findControllers(basePackage);
+        handlerExecutions.registerController(controllers);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        return null;
+    private Set<Class<?>> findControllers(Object[] basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    public Object getHandler(HttpServletRequest request) {
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+        return handlerExecutions.getHandlerExecution(handlerKey);
     }
 }
