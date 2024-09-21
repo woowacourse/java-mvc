@@ -47,8 +47,13 @@ public class HandlerExecution {
 
     private boolean isMatchingRequest(HttpServletRequest request, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        return requestMapping.value().startsWith(request.getRequestURI()) &&
-                requestMapping.method()[0].equals(RequestMethod.valueOf(request.getMethod()));
+        boolean isMatchURI = requestMapping.value().startsWith(request.getRequestURI());
+        if (requestMapping.method() == null) {
+            return isMatchURI;
+        }
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        boolean isMatchMethod = Arrays.asList(requestMapping.method()).contains(requestMethod);
+        return isMatchURI && isMatchMethod;
     }
 
     private ModelAndView invokeMethod(Method method, Object controller, HttpServletRequest request, HttpServletResponse response) {
