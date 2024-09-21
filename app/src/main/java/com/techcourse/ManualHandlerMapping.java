@@ -38,4 +38,9 @@ public class ManualHandlerMapping implements HandlerMapping {
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
+
+    @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE;
+    }
 }

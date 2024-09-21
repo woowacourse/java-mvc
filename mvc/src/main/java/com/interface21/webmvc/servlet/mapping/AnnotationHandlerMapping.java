@@ -81,4 +81,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
+
+    @Override
+    public int getOrder() {
+        return 1;
+    }
 }

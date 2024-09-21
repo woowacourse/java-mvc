@@ -39,6 +39,11 @@ class DispatcherServletTest {
             String requestURI = request.getRequestURI();
             return controllers.get(requestURI);
         }
+
+        @Override
+        public int getOrder() {
+            return 1;
+        }
     }
 
     @DisplayName("요청을 처리할 수 있는 핸들러를 찾지 못하면 예외를 발생시킨다.")

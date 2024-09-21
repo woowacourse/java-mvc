@@ -7,4 +7,6 @@ public interface HandlerMapping {
     void initialize();
 
     Object getHandler(HttpServletRequest request);
+
+    int getOrder();
 }

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FakeHandlerMapping implements HandlerMapping {
+public class LastOrderHandlerMapping implements HandlerMapping {
 
     private static final Map<String, String> controllers = new HashMap<>();
 
@@ -18,5 +18,10 @@ public class FakeHandlerMapping implements HandlerMapping {
     public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         return controllers.get(requestURI);
+    }
+
+    @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE;
     }
 }

@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.fake.FakeHandlerMapping;
+import com.interface21.webmvc.servlet.fake.FirstOrderHandlerMapping;
+import com.interface21.webmvc.servlet.fake.LastOrderHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,8 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void setUp() {
         registry = new HandlerMappingRegistry();
-        registry.addHandlerMapping(new FakeHandlerMapping());
+        registry.addHandlerMapping(new LastOrderHandlerMapping());
+        registry.addHandlerMapping(new FirstOrderHandlerMapping());
         registry.initialize();
     }
 
@@ -47,5 +49,19 @@ class HandlerMappingRegistryTest {
         Optional<Object> handler = registry.getHandler(request);
 
         assertThat(handler).isEmpty();
+    }
+
+    @DisplayName("핸들러 매핑 우선순위 순서대로 핸들러를 찾는다.")
+    @Test
+    void handlerMappingOrderTest() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/jazz");
+        when(request.getMethod()).thenReturn("GET");
+
+        Optional<Object> handler = registry.getHandler(request);
+
+        assertThat(handler).isPresent();
+        assertThat(handler.get()).isEqualTo(1130);
     }
 }

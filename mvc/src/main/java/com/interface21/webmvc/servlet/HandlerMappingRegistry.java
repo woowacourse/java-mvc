@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet;
 import com.interface21.webmvc.servlet.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,6 +18,7 @@ public class HandlerMappingRegistry {
 
     public void initialize() {
         handlerMappings.add(new AnnotationHandlerMapping());
+        handlerMappings.sort(Comparator.comparingInt(HandlerMapping::getOrder));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
