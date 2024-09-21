@@ -57,7 +57,7 @@ class ServletTest {
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
 
         // localCounter는 로컬 변수로 다른 스레드와 공유되지 않기 때문에,
-        // 세 번 호출되었어도 ++ 연산이 한 번만 적용된 값인 1ㅇ르 결과로 반환합니다.
+        // 세 번 호출되었어도 ++ 연산이 한 번만 적용된 값인 1을 결과로 반환합니다.
         assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
