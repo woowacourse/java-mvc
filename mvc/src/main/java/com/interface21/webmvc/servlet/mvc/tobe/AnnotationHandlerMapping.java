@@ -51,15 +51,19 @@ public class AnnotationHandlerMapping {
     }
 
     private List<HandlerKey> generateHandlerKeys(final RequestMapping requestMapping) {
-        RequestMethod[] methods = requestMapping.method();
+        RequestMethod[] methods = getHttpMethods(requestMapping);
+        return Arrays.stream(methods)
+                .map(method -> new HandlerKey(requestMapping.value(), method))
+                .toList();
+    }
 
+    private RequestMethod[] getHttpMethods(final RequestMapping requestMapping) {
+        RequestMethod[] methods = requestMapping.method();
         if (methods.length == 0) {
             methods = RequestMethod.values();
         }
 
-        return Arrays.stream(methods)
-                .map(method -> new HandlerKey(requestMapping.value(), method))
-                .toList();
+        return methods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
