@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
@@ -16,6 +17,7 @@ class HandlerExecutionsTest {
 
     private final HandlerExecutions handlerExecutions = new HandlerExecutions();
 
+    @DisplayName("uri와 method의 정보를 key로 특정 클래스와 메서드를 매핑한다.")
     @Test
     void mappingHandler() {
         final Method method = mock(Method.class);

@@ -114,8 +114,10 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructors()[0];
-        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructors()[1];
+        // Constructor<?>[] declaredConstructors = questionClass.getDeclaredConstructors();
+        // 순서 보장되지 않음
+        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class, String.class, String.class);
+        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
 
         log.info("getParameterTypes()={}", Arrays.stream(firstConstructor.getParameterTypes()).toList());
         log.info("getGenericParameterTypes()={}", Arrays.stream(firstConstructor.getGenericParameterTypes()).toList());
@@ -148,9 +150,12 @@ class ReflectionTest {
         final Class<?> questionClass = Question.class;
         final Field[] fields = questionClass.getDeclaredFields();
 
+        List<String> fieldsNames = Arrays.stream(fields)
+                .map(Field::getName)
+                .toList();
         assertAll(
                 () -> assertThat(fields).hasSize(6),
-                () -> assertThat(fields[0].getName()).isEqualTo("questionId")
+                () -> assertThat(fieldsNames).contains("questionId", "writer", "title", "contents", "createdDate", "countOfComment")
         );
     }
 
