@@ -1,8 +1,7 @@
 package reflection;
 
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -12,12 +11,49 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import reflection.ReflectionTest.Alpaca.InnerAlpaca;
 
 class ReflectionTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReflectionTest.class);
+
+    public static class Alpaca {
+        public static class InnerAlpaca {
+        }
+    }
+
+    @Test
+    void givenInnerClass_whenGetsClassName_thenCorrect() {
+        final Class<InnerAlpaca> clazz = InnerAlpaca.class;
+
+        assertAll(
+                () -> assertThat(clazz.getSimpleName()).isEqualTo("InnerAlpaca"),
+                () -> assertThat(clazz.getName()).isEqualTo("reflection.ReflectionTest$Alpaca$InnerAlpaca"),
+                () -> assertThat(clazz.getCanonicalName()).isEqualTo("reflection.ReflectionTest.Alpaca.InnerAlpaca")
+        );
+    }
+
+    @Test
+    void givenRunnable_whenGets_thenCorrect() {
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                log.info("running");
+            }
+        };
+
+        Class<? extends Runnable> clazz = runnable.getClass();
+
+        assertAll(
+                () -> assertThat(clazz.getSimpleName()).isEqualTo(""),
+                () -> assertThat(clazz.getName()).isEqualTo("reflection.ReflectionTest$1"),
+                () -> assertThat(clazz.getCanonicalName()).isNull()
+        );
+    }
 
     @Test
     void givenObject_whenGetsClassName_thenCorrect() {
