@@ -1,29 +1,103 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Object[] basePackages;
+    private final HandlerExecutions handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        validateBasePackages(basePackages);
+        this.basePackages = basePackages;
+        this.handlerExecutions = new HandlerExecutions();
+    }
+
+    private void validateBasePackages(final Object[] basePackages) {
+        Arrays.stream(basePackages)
+                .map(String::valueOf)
+                .forEach(this::validateBasePackageIsNullOrBlank);
+    }
+
+    private void validateBasePackageIsNullOrBlank(final Object basePackage) {
+        if (basePackage == null || String.valueOf(basePackage).isBlank()) {
+            throw new IllegalArgumentException("패키지 명은 null 혹은 공백일 수 없습니다. - " + basePackage);
+        }
     }
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Arrays.stream(basePackages).forEach(this::registerHandlers);
+    }
+
+    private void registerHandlers(final Object basePackage) {
+        parseControllerClasses(basePackage).forEach(this::registerHandlers);
+    }
+
+    private Set<Class<?>> parseControllerClasses(final Object basePackage) {
+        final String basePackageValue = String.valueOf(basePackage);
+        Reflections reflections = new Reflections(basePackageValue);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private void registerHandlers(final Class<?> clazz) {
+        parseHandlers(clazz).forEach(method -> registerHandler(clazz, method));
+    }
+
+    private Set<Method> parseHandlers(final Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
+    private void registerHandler(final Class<?> clazz, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final HandlerExecution handlerExecution = new HandlerExecution(clazz, method);
+        final List<HandlerKey> handlerKeys = generateHandlerKeys(requestMapping);
+
+        handlerKeys.forEach(handlerKey -> handlerExecutions.add(handlerKey, handlerExecution));
+    }
+
+    private List<HandlerKey> generateHandlerKeys(final RequestMapping requestMapping) {
+        final String requestUrl = requestMapping.value();
+        final List<RequestMethod> requestMethods = parseRequestMethods(requestMapping);
+        return requestMethods.stream()
+                .map(requestMethod -> new HandlerKey(requestUrl, requestMethod))
+                .toList();
+    }
+
+    private List<RequestMethod> parseRequestMethods(final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return Arrays.stream(RequestMethod.values()).toList();
+        }
+
+        return Arrays.asList(requestMethods);
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final String requestUri = request.getRequestURI();
+        final String requestMethod = request.getMethod().toUpperCase();
+        final HandlerKey handlerKey = new HandlerKey(requestUri, RequestMethod.valueOf(requestMethod));
+        return handlerExecutions.findHandlerExecution(handlerKey)
+                .orElseThrow(() -> new NoSuchElementException(
+                        "해당 요청을 처리할 핸들러가 존재하지 않습니다. - " + requestUri + " " + requestMethod));
     }
 }
