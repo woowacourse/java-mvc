@@ -52,10 +52,10 @@ public class AnnotationHandlerMapping {
     }
 
     private List<HandlerKey> getHandlerKeys(Class<?> handlerType, Method method) {
-        Controller controller = handlerType.getAnnotation(Controller.class);
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String path = combinePath(controller.value(), requestMapping.value());
-        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+        Controller controllerAnnotation = handlerType.getAnnotation(Controller.class);
+        RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
+        String path = combinePath(controllerAnnotation.value(), requestMappingAnnotation.value());
+        RequestMethod[] requestMethods = getRequestMethods(requestMappingAnnotation);
         return createHandlerKeys(path, requestMethods);
     }
 
