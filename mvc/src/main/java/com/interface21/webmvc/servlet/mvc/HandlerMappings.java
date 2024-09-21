@@ -30,8 +30,9 @@ public class HandlerMappings {
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
             return (HandlerMapping) instance;
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
+            throw new NotFoundException("기본 생성자가 존재하지 않습니다");
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }

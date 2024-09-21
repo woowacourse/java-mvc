@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc;
 
+import com.interface21.NotFoundException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,8 +30,9 @@ public class HandlerAdapters {
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
             return (HandlerAdapter) instance;
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
+            throw new NotFoundException("기본 생성자가 존재하지 않습니다");
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
