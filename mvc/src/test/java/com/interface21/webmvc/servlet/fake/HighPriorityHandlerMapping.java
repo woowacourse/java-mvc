@@ -5,13 +5,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LastOrderHandlerMapping implements HandlerMapping {
+public class HighPriorityHandlerMapping implements HandlerMapping {
 
-    private static final Map<String, String> controllers = new HashMap<>();
+    private static final Map<String, Integer> controllers = new HashMap<>();
 
     @Override
     public void initialize() {
-        controllers.put("/jazz", "jazz");
+        controllers.put("/jazz", 1130);
     }
 
     @Override
@@ -22,6 +22,6 @@ public class LastOrderHandlerMapping implements HandlerMapping {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return 1;
     }
 }

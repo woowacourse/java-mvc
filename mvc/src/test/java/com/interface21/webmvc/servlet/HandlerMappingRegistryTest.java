@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.fake.FirstOrderHandlerMapping;
-import com.interface21.webmvc.servlet.fake.LastOrderHandlerMapping;
+import com.interface21.webmvc.servlet.fake.HighPriorityHandlerMapping;
+import com.interface21.webmvc.servlet.fake.LowPriorityHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +19,8 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void setUp() {
         registry = new HandlerMappingRegistry();
-        registry.addHandlerMapping(new LastOrderHandlerMapping());
-        registry.addHandlerMapping(new FirstOrderHandlerMapping());
+        registry.addHandlerMapping(new LowPriorityHandlerMapping());
+        registry.addHandlerMapping(new HighPriorityHandlerMapping());
         registry.initialize();
     }
 
