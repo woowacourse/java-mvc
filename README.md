@@ -25,4 +25,4 @@
   - [x] HTTP 메서드 매핑(method)
     - [x] 없으면 모든 HTTP method 지원
 - [x] @MVC Framework 테스트 통과하기
-- [ ] JspView 클래스 구현 : DispatcherServlet, service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮기기
+- [x] JspView 클래스 구현 : DispatcherServlet, service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮기기
