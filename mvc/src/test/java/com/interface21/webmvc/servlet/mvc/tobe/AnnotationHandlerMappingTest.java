@@ -3,7 +3,10 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -47,5 +50,20 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("매핑 method가 없다면 모든 method에 대해 매핑한다.")
+    @ValueSource(strings = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"})
+    @ParameterizedTest
+    void givenMethodAbsent_whenMapping_thenAllMethod(String requestMethod) throws Exception {
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/without-method");
+        when(request.getMethod()).thenReturn(requestMethod);
+
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+
+        assertThat(handlerExecution.handle(request, response)).isNotNull();
     }
 }

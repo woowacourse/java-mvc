@@ -30,4 +30,9 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/without-method")
+    public ModelAndView test(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
 }
