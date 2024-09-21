@@ -30,5 +30,5 @@
     - [x] HandlerExecution 클래스 handle 구현
     - [ ] AnnotationHandlerMapping 클래스 initialize 구현
     - [ ] AnnotationHandlerMapping 클래스 getHandler 구현
-- [ ] JspView 클래스 구현
-    - [ ] JspView 클래스 render 구현
+- [x] JspView 클래스 구현
+    - [x] JspView 클래스 render 구현
