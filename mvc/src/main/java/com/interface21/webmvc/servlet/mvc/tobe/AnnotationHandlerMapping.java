@@ -84,7 +84,7 @@ public class AnnotationHandlerMapping {
         // request 에 따라서 HandlerExecution 을 반환해야함.
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
+        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.from(method));
 
         return handlerExecutions.get(handlerKey);
     }
