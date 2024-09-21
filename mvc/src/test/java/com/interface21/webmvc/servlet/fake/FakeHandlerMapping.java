@@ -1,6 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.fake;
+package com.interface21.webmvc.servlet.fake;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;

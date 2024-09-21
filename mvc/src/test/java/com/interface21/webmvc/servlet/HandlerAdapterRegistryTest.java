@@ -1,8 +1,8 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.interface21.webmvc.servlet.mvc.fake.FakeHandlerAdapter;
+import com.interface21.webmvc.servlet.fake.FakeHandlerAdapter;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
