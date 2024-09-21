@@ -48,7 +48,7 @@ class DispatcherServletTest {
 
     @DisplayName("요청을 처리할 수 있는 핸들러를 찾지 못하면 예외를 발생시킨다.")
     @Test
-    void test() {
+    void handlerNotFound() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -62,7 +62,7 @@ class DispatcherServletTest {
 
     @DisplayName("핸들러를 처리할 수 있는 어댑터를 찾지 못하면 예외를 발생시킨다.")
     @Test
-    void test1() {
+    void adapterNotFound() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
