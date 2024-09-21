@@ -34,12 +34,15 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Controller controller = manualHandlerMapping.getHandler(requestURI);
+            if (controller == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             final String viewName = controller.execute(request, response);
-
-            JspView jspView = new JspView(viewName);
-            ModelAndView modelAndView = new ModelAndView(jspView);
+            final JspView jspView = new JspView(viewName);
+            final ModelAndView modelAndView = new ModelAndView(jspView);
             jspView.render(modelAndView.getModel(), request, response);
-
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
