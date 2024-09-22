@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping {
             requestMethods = RequestMethod.values();
         }
         Arrays.stream(requestMethods)
-                .forEach(requestMethod -> handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution));
+                .forEach(requestMethod -> handlerExecutions.put(HandlerKey.from(uri, requestMethod), handlerExecution));
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -68,6 +68,6 @@ public class AnnotationHandlerMapping {
     private HandlerKey createHandlerKey(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.find(request.getMethod());
-        return new HandlerKey(requestURI, requestMethod);
+        return HandlerKey.from(requestURI, requestMethod);
     }
 }
