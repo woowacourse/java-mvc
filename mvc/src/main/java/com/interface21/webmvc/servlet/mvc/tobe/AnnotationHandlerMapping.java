@@ -55,14 +55,10 @@ public class AnnotationHandlerMapping {
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
-        log.info("uri = {}, method = {} 등록!", uri, requestMethods);
-
         HandlerExecution handlerExecution = new HandlerExecution(handlerInstance, handlerMethod);
+        Arrays.stream(requestMethods).forEach(requestMethod -> add(requestMethod, uri, handlerExecution));
 
-        Arrays.stream(requestMethods).forEach(requestMethod -> {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        });
+        log.info("uri = {}, method = {} 등록!", uri, requestMethods);
     }
 
     private Object executeMethod(String methodName, Method method) {
@@ -74,6 +70,11 @@ public class AnnotationHandlerMapping {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("controller method 리플렉션 중 실패");
         }
+    }
+
+    private void add(RequestMethod requestMethod, String uri, HandlerExecution handlerExecution) {
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
