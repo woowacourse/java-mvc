@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +24,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Controllers controllers = new Controllers(basePackage);
-        RequestMappingMethods methods = new RequestMappingMethods(controllers);
-        for (Method method : methods.getMethods()) {
+        Set<Method> methods = controllers.getAnnotationMethods(RequestMapping.class);
+        for (Method method : methods) {
             Object controller = controllers.getController(method.getDeclaringClass());
             addHandlers(controller, method);
         }
