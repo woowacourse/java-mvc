@@ -1,13 +1,8 @@
 package com.techcourse;
 
-import static com.interface21.webmvc.servlet.view.JspView.REDIRECT_PREFIX;
-
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.Handler;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,36 +38,19 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Controller handler = getHandler(request);
-            final var viewName = handler.execute(request, response);
-            move(viewName, request, response);
+            Handler handler = getHandler(request);
+            handler.handle(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Controller getHandler(HttpServletRequest request) {
-        return (Controller) handlerMappings.stream()
+    private Handler getHandler(HttpServletRequest request) {
+        return (Handler) handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.canHandle(request))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Not found handler mapping"))
                 .getHandler(request);
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        View view = resolveView(viewName);
-        ModelAndView modelAndView = new ModelAndView(view);
-        view.render(modelAndView.getModel(), request, response);
-    }
-
-    private View resolveView(String viewName) {
-        return new JspView(viewName);
     }
 }

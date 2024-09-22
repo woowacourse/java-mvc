@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.Handler;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,15 +15,15 @@ import org.junit.jupiter.api.Test;
 
 class ManualHandlerMappingTest {
 
-    private Controller testController;
-    private ConcurrentMap<String, Controller> controllers;
+    private ManualHandler testHandler;
+    private ConcurrentMap<String, ManualHandler> handlers;
     private ManualHandlerMapping manualHandlerMapping;
 
     @BeforeEach
     void setUp() {
-        testController = (req, res) -> "test-get";
-        controllers = new ConcurrentHashMap<String, Controller>(Map.of("/get-test", testController));
-        manualHandlerMapping = new ManualHandlerMapping(controllers);
+        testHandler = new ManualHandler((req, res) -> "test-get");
+        handlers = new ConcurrentHashMap<>(Map.of("/get-test", testHandler));
+        manualHandlerMapping = new ManualHandlerMapping(handlers);
     }
 
     @Test
@@ -33,9 +33,9 @@ class ManualHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Object actual = manualHandlerMapping.getHandler(request);
+        Handler actual = manualHandlerMapping.getHandler(request);
 
-        assertThat(actual).isEqualTo(testController);
+        assertThat(actual).isEqualTo(testHandler);
     }
 
     @Test
@@ -45,7 +45,7 @@ class ManualHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/no-controller");
         when(request.getMethod()).thenReturn("GET");
 
-        Object actual = manualHandlerMapping.getHandler(request);
+        Handler actual = manualHandlerMapping.getHandler(request);
 
         assertThat(actual).isNull();
     }
