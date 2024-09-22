@@ -48,4 +48,49 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @Test
+    void 정의되지_않은_method_get() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/none-method-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 정의되지_않은_method_post() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/none-method-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void 정의되지_않은_method_delete() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/none-method-test");
+        when(request.getMethod()).thenReturn("DELETE");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
 }
