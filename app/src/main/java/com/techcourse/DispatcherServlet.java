@@ -4,11 +4,13 @@ import static com.interface21.webmvc.servlet.view.JspView.REDIRECT_PREFIX;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        manualHandlerMapping = new ManualHandlerMapping(new ConcurrentHashMap<>());
         manualHandlerMapping.initialize();
     }
 
@@ -35,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = (Controller) manualHandlerMapping.getHandler(request);
             final var viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
