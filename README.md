@@ -25,7 +25,7 @@
 1. @MVC Framework 테스트 통과하기
 
 - [ ] URL을 컨트롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등)도 매핑 조건에 포함
-- [ ] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method 지원
+- [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method 지원
 - [ ] HTTP 메서드와 URL를 매핑 조건으로 하는 어노테이션 기반의 MVC 프레임워크 구현
     - 기존의 Controller 인터페이스를 활용한 MVC 프레임워크를 어노테이션 기반의 MVC 프레임워크로 개선
     - Tomcat 구현하기 미션에서 적용한 Controller 인터페이스는 2단계 미션에서 통합할 예정
