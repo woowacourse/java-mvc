@@ -1,14 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,33 +22,37 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class).stream()
-                .flatMap(clazz -> Arrays.stream(clazz.getMethods()))
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::addHandlers);
+        Controllers controllers = new Controllers(basePackage);
+        RequestMappingMethods methods = new RequestMappingMethods(controllers);
+        for (Method method : methods.getMethods()) {
+            Object controller = controllers.getController(method.getDeclaringClass());
+            addHandlers(controller, method);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlers(Method method) {
+    private void addHandlers(Object controller, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
-            addHandler(method, url, requestMethod);
+            HandlerKey key = new HandlerKey(url, requestMethod);
+            HandlerExecution execution = new HandlerExecution(controller, method);
+            addHandler(key, execution);
         }
     }
 
-    private void addHandler(Method method, String url, RequestMethod requestMethod) {
-        HandlerKey key = new HandlerKey(url, requestMethod);
+    private void addHandler(HandlerKey key, HandlerExecution execution) {
         if (handlerExecutions.containsKey(key)) {
-            throw new IllegalArgumentException("이미 등록된 URL과 HTTP 메서드 조합입니다: " + requestMethod + " " + url);
+            throw new IllegalArgumentException("이미 등록된 URL과 HTTP 메서드 조합입니다: " + key);
         }
-        HandlerExecution execution = new HandlerExecution(method.getDeclaringClass(), method);
         handlerExecutions.put(key, execution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String url = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey key = new HandlerKey(url, requestMethod);
+        return handlerExecutions.get(key);
     }
 }
