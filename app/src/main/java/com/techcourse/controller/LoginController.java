@@ -17,9 +17,7 @@ public class LoginController implements Controller {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
-        if (req.getParameter("account") == null) {
-            return "redirect:/login.jsp";
-        }
+
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
