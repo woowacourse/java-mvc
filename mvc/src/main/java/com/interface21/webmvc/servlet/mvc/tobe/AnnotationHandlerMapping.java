@@ -17,10 +17,10 @@ import com.interface21.web.bind.annotation.RequestMethod;
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private static final Map<Class<?>, Object> instances = new HashMap<>();
 
     private final ClassScanner classScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<Class<?>, Object> instances = new HashMap<>();
 
     public AnnotationHandlerMapping(Object... basePackage) {
         this.classScanner = new ClassScanner(basePackage);
