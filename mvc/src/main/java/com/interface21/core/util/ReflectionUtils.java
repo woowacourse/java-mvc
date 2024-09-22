@@ -25,6 +25,7 @@ public abstract class ReflectionUtils {
      * Make the given constructor accessible, explicitly setting it accessible
      * if necessary. The {@code setAccessible(true)} method is only called
      * when actually necessary, to avoid unnecessary conflicts.
+     *
      * @param ctor the constructor to make accessible
      * @see Constructor#setAccessible
      */
