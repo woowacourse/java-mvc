@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -50,7 +51,9 @@ public class AnnotationHandlerMapping {
 
     private Object getControllerInstance(Class<?> controller) {
         try {
-            return controller.getDeclaredConstructor().newInstance();
+            Constructor<?> constructor = controller.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException e) {
             log.error(e.getMessage(), e);
