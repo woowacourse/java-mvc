@@ -47,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Handler getHandler(HttpServletRequest request) {
-        return (Handler) handlerMappings.stream()
+        return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.canHandle(request))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Not found handler mapping"))

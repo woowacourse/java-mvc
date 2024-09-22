@@ -19,12 +19,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final ConcurrentMap<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ConcurrentMap<HandlerKey, AnnotationHandler> handlers;
     private final Object[] basePackage;
 
-    public AnnotationHandlerMapping(ConcurrentMap<HandlerKey, HandlerExecution> handlerExecutions,
+    public AnnotationHandlerMapping(ConcurrentMap<HandlerKey, AnnotationHandler> handlers,
                                     final Object... basePackage) {
-        this.handlerExecutions = handlerExecutions;
+        this.handlers = handlers;
         this.basePackage = basePackage;
     }
 
@@ -43,11 +43,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public AnnotationHandler getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        return handlers.get(handlerKey);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.containsKey(handlerKey);
+        return handlers.containsKey(handlerKey);
     }
 
     private List<Method> getMethodsWithAnnotation(Class<?> controllerClass) {
@@ -77,10 +77,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Method method : methods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            AnnotationHandler handler = new AnnotationHandler(handlerExecution);
 
             Arrays.stream(getRequestMethods(requestMapping))
                     .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))
-                    .forEach(handlerKey -> registerHandlerExecution(handlerKey, handlerExecution));
+                    .forEach(handlerKey -> registerHandler(handlerKey, handler));
         }
     }
 
@@ -92,10 +93,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return httpMethods;
     }
 
-    private void registerHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
-        if (handlerExecutions.containsKey(handlerKey)) {
+    private void registerHandler(HandlerKey handlerKey, AnnotationHandler handler) {
+        if (handlers.containsKey(handlerKey)) {
             throw new IllegalArgumentException("중복된 url과 http method 입니다.");
         }
-        handlerExecutions.put(handlerKey, handlerExecution);
+        handlers.put(handlerKey, handler);
     }
 }
