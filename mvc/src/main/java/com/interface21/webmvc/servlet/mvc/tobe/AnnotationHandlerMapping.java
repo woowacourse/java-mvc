@@ -29,7 +29,7 @@ public class AnnotationHandlerMapping {
 
 	public void initialize() {
 		Stream.of(basePackage)
-			.map(p -> new Reflections((String)p))
+			.map(basePackage -> new Reflections((String)basePackage))
 			.flatMap(reflection -> reflection.getTypesAnnotatedWith(Controller.class).stream())
 			.forEach(this::initializeWithEachController);
 
