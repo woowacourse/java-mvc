@@ -7,16 +7,16 @@
 1. Reflection API
 
 - [x] Junit3TestRunner, Junit4TestRunner 클래스의 테스트 성공
-- [ ] ReflectionTest, ReflectionsTest 클래스의 테스트 성공
+- [x] ReflectionTest, ReflectionsTest 클래스의 테스트 성공
     - 리플렉션으로 어떤 작업을 할 수 있는지 파악
     - 라이브러리, 프레임워크에서 어떻게 활용할 수 있는지 파악
 
 2. Servlet과 Servlet Container
 
-- [ ] ServletTest 클래스의 테스트 성공
+- [x] ServletTest 클래스의 테스트 성공
     - SharedCounterServlet, LocalCounterServlet 클래스의 차이점
     - init, service, destroy 메서드가 각각 언제 실행되는지 콘솔 로그에서 확인
-- [ ] FilterTest 클래스의 테스트 성공
+- [x] FilterTest 클래스의 테스트 성공
     - doFilter 메서드는 어느 시점에 실행될까?
     - 왜 인코딩을 따로 설정해줘야 할까?
 
