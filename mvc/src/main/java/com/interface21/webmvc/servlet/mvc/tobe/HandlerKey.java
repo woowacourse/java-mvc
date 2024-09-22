@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.interface21.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
+
     private static Map<String, HandlerKey> instances = new HashMap<>();
 
     private final String url;
