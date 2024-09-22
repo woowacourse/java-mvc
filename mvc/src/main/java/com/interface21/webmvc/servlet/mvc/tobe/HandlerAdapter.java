@@ -4,7 +4,9 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public interface Execution {
+public interface HandlerAdapter<T> {
 
-    ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    Class<T> getSupportedClass();
+
+    ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception;
 }

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
-public class HandlerExecution implements Execution {
+public class HandlerExecution {
 
     private final Object controller;
     private final Method handler;

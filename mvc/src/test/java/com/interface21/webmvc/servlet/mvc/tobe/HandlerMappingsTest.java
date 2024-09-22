@@ -26,7 +26,6 @@ class HandlerMappingsTest {
     void getHandler() {
         // given
         final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/invalid");
