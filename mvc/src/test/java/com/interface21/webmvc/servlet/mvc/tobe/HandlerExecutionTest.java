@@ -77,22 +77,6 @@ class HandlerExecutionTest {
                 .hasMessageContaining("핸들러 메소드의 반환 타입이 ModelAndView 타입이 아닙니다.");
     }
 
-    @Test
-    void handleWhenInvalidInvokeResult() throws Exception {
-        Method method = TestController.class.getMethod(
-                "invalidInvokeResult",
-                HttpServletRequest.class,
-                HttpServletResponse.class
-        );
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-
-        assertThatThrownBy(
-                () -> handlerExecution.handle(mock(HttpServletRequest.class), mock(HttpServletResponse.class)))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("핸들러 메소드가 ModelAndView 타입을 반환하지 않았습니다.");
-    }
-
-
     static class TestController {
 
         public ModelAndView validParametersAndReturn(HttpServletRequest request, HttpServletResponse response) {
@@ -110,10 +94,6 @@ class HandlerExecutionTest {
 
         public String invalidReturnType(HttpServletRequest request, HttpServletResponse response) {
             return "invalid";
-        }
-
-        public ModelAndView invalidInvokeResult(HttpServletRequest request, HttpServletResponse response) {
-            return null;
         }
     }
 }

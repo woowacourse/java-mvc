@@ -27,7 +27,6 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
             throws IllegalAccessException, InvocationTargetException {
         Object invokeResult = method.invoke(handler, request, response);
-        validateInvokeResult(invokeResult);
 
         return (ModelAndView) invokeResult;
     }
@@ -59,12 +58,6 @@ public class HandlerExecution {
     private void validateReturnType(Class<?> returnType) {
         if (returnType != ModelAndView.class) {
             throw new IllegalArgumentException("핸들러 메소드의 반환 타입이 ModelAndView 타입이 아닙니다.");
-        }
-    }
-
-    private void validateInvokeResult(Object invokeResult) {
-        if (!(invokeResult instanceof ModelAndView)) {
-            throw new IllegalStateException("핸들러 메소드가 ModelAndView 타입을 반환하지 않았습니다.");
         }
     }
 }
