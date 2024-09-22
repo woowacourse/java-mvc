@@ -1,9 +1,8 @@
 package com.interface21;
 
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,7 @@ public class HandlerManager {
     private static final Logger log = LoggerFactory.getLogger(HandlerManager.class);
     private static final Map<String, Object> singletons = new ConcurrentHashMap<>();
 
-    private final List<Class<?>> handlerClasses = List.of(HandlerMapping.class, HandlerAdapter.class);
+    private final Set<Class<?>> handlerClasses = HandlerScanner.scanHandlerHelper();
 
     private HandlerManager() {
 
