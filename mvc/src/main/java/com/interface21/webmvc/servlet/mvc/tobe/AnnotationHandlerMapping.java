@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -45,15 +45,17 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandlerMethods(Class<?> controllerClass) {
-        Object controllerInstance = createControllerInstance(controllerClass);
 
-        Map<HandlerKey, HandlerExecution> newHandlerExecutions = Arrays.stream(controllerClass.getMethods())
+        List<Method> newHandlerExecutions = Arrays.stream(controllerClass.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toMap(
-                        this::createHandlerKey,
-                        method -> new HandlerExecution(controllerInstance, method)
-                ));
-        handlerExecutions.putAll(newHandlerExecutions);
+                .toList();
+
+        Object controllerInstance = createControllerInstance(controllerClass);
+        for (Method method : newHandlerExecutions) {
+            List<HandlerKey> handlerKeys = createHandlerKeys(method);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+        }
     }
 
     private Object createControllerInstance(Class<?> controllerClass) {
@@ -66,9 +68,11 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private HandlerKey createHandlerKey(Method method) {
+    private List<HandlerKey> createHandlerKeys(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        return new HandlerKey(requestMapping.value(), requestMapping.method());
+        return Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .toList();
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
