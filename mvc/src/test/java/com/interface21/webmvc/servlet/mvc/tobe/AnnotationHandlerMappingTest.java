@@ -70,4 +70,23 @@ class AnnotationHandlerMappingTest {
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
+
+    @DisplayName("basePackage를 지정하지 않으면 전체 클래스 패스를 검사한다.")
+    @Test
+    void findAllClassPath() throws Exception {
+        // given
+        handlerMapping = new AnnotationHandlerMapping();
+        handlerMapping.initialize();
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        // when
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        // then
+        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
 }

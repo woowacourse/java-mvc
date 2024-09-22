@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,8 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
+    private static final String ALL_CLASS_PATH = "";
+    private static final int NO_BASE_PACKAGE = 0;
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
@@ -41,9 +44,20 @@ public class AnnotationHandlerMapping {
     }
 
     private Set<Class<?>> findControllerClasses() {
-        Reflections reflections = new Reflections(basePackage, Scanners.TypesAnnotated);
+        Reflections reflections = getReflections();
 
         return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private Reflections getReflections() {
+        if (basePackage.length == NO_BASE_PACKAGE) {
+            ConfigurationBuilder builder = new ConfigurationBuilder();
+            builder.forPackages(ALL_CLASS_PATH)
+                    .addScanners(Scanners.TypesAnnotated);
+
+            return new Reflections(builder);
+        }
+        return new Reflections(basePackage, Scanners.TypesAnnotated);
     }
 
     private Object getInstance(Class<?> clazz) {
