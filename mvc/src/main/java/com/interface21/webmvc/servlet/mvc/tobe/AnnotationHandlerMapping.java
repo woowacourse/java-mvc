@@ -31,7 +31,7 @@ public class AnnotationHandlerMapping {
             try {
                 initializeControllers(controllers);
             } catch (Exception e) {
-
+                log.error("Fail to initialized AnnotationHandlerMapping", e);
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
