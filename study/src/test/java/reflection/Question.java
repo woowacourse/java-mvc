@@ -65,6 +65,25 @@ public class Question {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Question)) {
+            return false;
+        }
+        Question question = (Question) o;
+        return questionId == question.questionId && countOfComment == question.countOfComment && Objects.equals(writer,
+                question.writer) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents)
+                && Objects.equals(createdDate, question.createdDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(questionId, writer, title, contents, createdDate, countOfComment);
+    }
+
+    @Override
     public String toString() {
         return "Question{" +
                 "questionId=" + questionId +
@@ -74,18 +93,5 @@ public class Question {
                 ", createdDate=" + createdDate +
                 ", countOfComment=" + countOfComment +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Question)) return false;
-        Question question = (Question) o;
-        return questionId == question.questionId && countOfComment == question.countOfComment && Objects.equals(writer, question.writer) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(createdDate, question.createdDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(questionId, writer, title, contents, createdDate, countOfComment);
     }
 }
