@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -26,11 +25,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> c : classes) {
-            scanClass(c);
-        }
+        reflections.getTypesAnnotatedWith(Controller.class)
+                .forEach(this::scanClass);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
