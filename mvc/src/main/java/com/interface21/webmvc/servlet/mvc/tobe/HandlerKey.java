@@ -14,6 +14,10 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
+    public HandlerKey(String url, String requestMethod) {
+        this(url, RequestMethod.findByName(requestMethod.toUpperCase()));
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +

@@ -1,9 +1,9 @@
 package servlet.com.example;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletTest {
 
@@ -28,7 +28,8 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // Servlet은 한 번 생성되고 재사용하기 떄문에 인스턴스 변수를 사용하면 스레드 간섭이 일어날 수 있다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +51,7 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // Servlet은 한 번 생성되고 재사용하더라도 service()는 호출마다 불리므로 지역 변수를 사용하면 스레드 당 변화가 일어난다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
