@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.view.type;
 
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +13,7 @@ public class JspView implements View {
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     public static final String REDIRECT_PREFIX = "redirect:";
 
-    private final String viewName;
+    private String viewName;
 
     public JspView(final String viewName) {
         this.viewName = viewName;

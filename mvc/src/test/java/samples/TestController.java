@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.type.JspView;
 
 @Controller
 public class TestController {
