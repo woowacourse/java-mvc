@@ -40,8 +40,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        if (JspView.isRedirectView(viewName)) {
+            response.sendRedirect(JspView.getRedirectUrl(viewName));
             return;
         }
 
