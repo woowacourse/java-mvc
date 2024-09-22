@@ -3,17 +3,27 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.interface21.bean.container.BeanContainer;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 class HandlerExecutionTest {
+
+    @BeforeEach
+    void setUp() {
+        BeanContainer beanContainer = BeanContainer.getInstance();
+        beanContainer.clear();
+        beanContainer.registerBeans(List.of(new TestHandlerExecution()));
+    }
 
     @DisplayName("Method를 handle로 실행시킨다.")
     @Test

@@ -5,12 +5,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.bean.BeanRegister;
+import com.interface21.bean.container.BeanContainer;
+import com.interface21.bean.scanner.ComponentScanner;
+import com.interface21.context.stereotype.Component;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +27,10 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        BeanContainer beanContainer = BeanContainer.getInstance();
+        beanContainer.clear();
+        beanContainer.registerBeans(List.of(new samples.TestController()));
+        handlerMapping = new AnnotationHandlerMapping();
         handlerMapping.initialize();
     }
 
@@ -58,13 +67,19 @@ class AnnotationHandlerMappingTest {
     @DisplayName("중복된 url과 method로 handlerMapping에 추가 할 수 없다.")
     @Test
     void initialize() {
-        handlerMapping = new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.tobe");
+        BeanContainer beanContainer = BeanContainer.getInstance();
+        List<Object> beans = ComponentScanner.componentScan("com.interface21.webmvc.servlet.mvc.tobe").stream()
+                .map(BeanRegister::createBean)
+                .toList();
+        beanContainer.registerBeans(beans);
+        handlerMapping = new AnnotationHandlerMapping();
         assertThatThrownBy(() -> handlerMapping.initialize())
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Component
     @Controller
-    public static class TestController {
+    public static class TestController1 {
 
         @RequestMapping(value = "/test", method = RequestMethod.GET)
         public ModelAndView test1(final HttpServletRequest request, final HttpServletResponse response) {

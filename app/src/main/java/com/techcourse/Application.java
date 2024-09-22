@@ -1,10 +1,10 @@
 package com.techcourse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.interface21.bean.BeanRegister;
 import java.io.IOException;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Application {
 
@@ -12,7 +12,9 @@ public class Application {
 
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) {
+        BeanRegister.run(Application.class);
+
         final int port = defaultPortIfNull(args);
         final var tomcat = new TomcatStarter(port);
         log.info("configuring app with basedir: {}", TomcatStarter.WEBAPP_DIR_LOCATION);

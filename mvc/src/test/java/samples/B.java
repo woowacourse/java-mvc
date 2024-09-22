@@ -1,4 +1,4 @@
-package com.interface21.context.stereotype;
+package samples;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,9 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Component
-public @interface Controller {
-    String value() default "";
-
-    String path() default "";
+@A
+public @interface B {
 }
