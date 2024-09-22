@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,16 +28,16 @@ class AnnotationHandlerMappingTest {
     @Test
     void get() throws Exception {
         //given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
         //when
-        final var handlerExecution = (HandlerExecution) handlerMapping.findHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        HandlerExecution handlerExecution = handlerMapping.findHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -45,16 +46,16 @@ class AnnotationHandlerMappingTest {
     @Test
     void post() throws Exception {
         //given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
         //when
-        final var handlerExecution = (HandlerExecution) handlerMapping.findHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        HandlerExecution handlerExecution = handlerMapping.findHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -64,16 +65,16 @@ class AnnotationHandlerMappingTest {
     @EnumSource(value = RequestMethod.class)
     void noMethod(RequestMethod requestMethod) throws Exception {
         //given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/no-method-test");
         when(request.getMethod()).thenReturn(requestMethod.name());
 
         //when
-        final var handlerExecution = (HandlerExecution) handlerMapping.findHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        HandlerExecution handlerExecution = handlerMapping.findHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);;
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");

@@ -16,7 +16,7 @@ public class AnnotationHandlerMapping {
     private final Object[] basePackage;
     private final HandlerExecutions handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HandlerExecutions();
     }

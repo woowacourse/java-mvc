@@ -28,7 +28,7 @@ public class ManualHandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public Controller getHandler(final String requestURI) {
+    public Controller getHandler(String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
