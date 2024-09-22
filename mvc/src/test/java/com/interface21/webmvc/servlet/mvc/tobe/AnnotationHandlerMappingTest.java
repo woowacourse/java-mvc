@@ -25,6 +25,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET 요청을 처리하는 핸들러 매핑 성공")
     @Test
     void get() throws Exception {
         //given
@@ -43,6 +44,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("POST 요청을 처리하는 핸들러 매핑 성공")
     @Test
     void post() throws Exception {
         //given
@@ -61,6 +63,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("method 설정이 없는 경우 모든 Http method를 지원")
     @ParameterizedTest
     @EnumSource(value = RequestMethod.class)
     void noMethod(RequestMethod requestMethod) throws Exception {
@@ -74,7 +77,7 @@ class AnnotationHandlerMappingTest {
 
         //when
         HandlerExecution handlerExecution = handlerMapping.findHandler(request);
-        ModelAndView modelAndView = handlerExecution.handle(request, response);;
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
