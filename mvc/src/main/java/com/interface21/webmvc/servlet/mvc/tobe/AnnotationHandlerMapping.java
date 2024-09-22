@@ -64,11 +64,11 @@ public class AnnotationHandlerMapping {
 
     private void registerHandlerExecutions(List<Method> methods, Object controller) {
         for (Method method : methods) {
-            RequestMapping request = method.getAnnotation(RequestMapping.class);
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
-            Arrays.stream(request.method())
-                    .map(httpMethod -> new HandlerKey(request.value(), httpMethod))
+            Arrays.stream(requestMapping.method())
+                    .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))
                     .forEach(handlerKey -> registerHandlerExecution(handlerKey, handlerExecution));
         }
     }
