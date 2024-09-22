@@ -8,8 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -19,10 +19,11 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ConcurrentMap<HandlerKey, HandlerExecution> handlerExecutions;
     private final Object[] basePackage;
 
-    public AnnotationHandlerMapping(Map<HandlerKey, HandlerExecution> handlerExecutions, final Object... basePackage) {
+    public AnnotationHandlerMapping(ConcurrentMap<HandlerKey, HandlerExecution> handlerExecutions,
+                                    final Object... basePackage) {
         this.handlerExecutions = handlerExecutions;
         this.basePackage = basePackage;
     }
