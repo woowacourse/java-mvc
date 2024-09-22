@@ -33,7 +33,6 @@ public class AnnotationHandlerMapping {
 
         Reflections reflections = new Reflections(basePackage);
         reflections.get(SubTypes.of(TypesAnnotated.with(Controller.class)).asClass())
-                .stream()
                 .forEach(clazz -> Arrays.stream(clazz.getMethods())
                         .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                         .forEach(method -> putHandlerExecutions(clazz, method))
