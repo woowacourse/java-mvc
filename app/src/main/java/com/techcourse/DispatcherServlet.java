@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import java.util.HashMap;
+import java.util.Map;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
@@ -36,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
             final var viewName = controller.execute(request, response);
 
             View jspView = new JspView(viewName);
-            jspView.render(new HashMap<>(), request, response);
+            jspView.render(Map.of(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
