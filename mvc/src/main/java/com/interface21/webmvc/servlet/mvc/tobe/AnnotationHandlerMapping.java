@@ -4,12 +4,9 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -20,11 +17,11 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HandlerExecutions handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = new HandlerExecutions();
     }
 
     public void initialize() {
@@ -39,35 +36,13 @@ public class AnnotationHandlerMapping {
     private void addAnnotatedHandlerExecutions(Class<?> controller) {
         List<Method> annotatedMethods = searchRequestMappingAnnotation(controller);
         annotatedMethods
-                .forEach(method -> addHandlerExecutions(controller, method));
+                .forEach(method -> handlerExecutions.addHandlerExecution(controller, method));
     }
 
     private List<Method> searchRequestMappingAnnotation(Class<?> controller) {
         return Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
-    }
-
-    private void addHandlerExecutions(Class<?> controller, Method method) {
-        HandlerExecution handlerExecution = constructHandlerExecution(controller, method);
-        List<HandlerKey> handlerKeys = constructHandlerKey(method);
-        handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
-    }
-
-    private HandlerExecution constructHandlerExecution(Class<?> controller, Method targetMethod) {
-        try {
-            Constructor<?> firstConstructor = controller.getDeclaredConstructor();
-            Object executionTarget = firstConstructor.newInstance();
-            return new HandlerExecution(executionTarget, targetMethod);
-        } catch(NoSuchMethodException e) {
-            throw new IllegalArgumentException("default constructor가 존재하지 않습니다 %s".formatted(controller.getCanonicalName()));
-        } catch (Exception e) {
-            throw new IllegalArgumentException("HandlerMapping을 초기화 하는데 실패했습니다.");
-        }
-    }
-
-    private List<HandlerKey> constructHandlerKey(Method method) {
-        return HandlerKeyGenerator.fromAnnotatedMethod(method);
     }
 
     public Object getHandler(HttpServletRequest request) {
