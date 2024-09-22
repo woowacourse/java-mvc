@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class AnnotationHandlerMapping {
 
@@ -33,10 +30,7 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controller : controllers) {
-            registerControllerMethods(controller);
-        }
+        controllers.forEach(this::registerControllerMethods);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -51,16 +45,21 @@ public class AnnotationHandlerMapping {
 
     private void registerHandlerMapping(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        RequestMethod[] requestMethods = requestMapping.method();
-
-        if (requestMethods.length == REQUEST_METHOD_ARRAY_EMPTY) {
-            requestMethods = RequestMethod.values();
-        }
+        RequestMethod[] requestMethods = determineRequestMethods(requestMapping);
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(method));
         }
+    }
+
+    private RequestMethod[] determineRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+
+        if (requestMethods.length == REQUEST_METHOD_ARRAY_EMPTY) {
+            requestMethods = RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
