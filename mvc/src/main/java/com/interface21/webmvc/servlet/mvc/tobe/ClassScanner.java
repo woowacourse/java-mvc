@@ -18,7 +18,7 @@ public class ClassScanner {
     }
 
     public List<Method> findHandlingMethods() {
-        return  reflections.getTypesAnnotatedWith(Controller.class).stream()
+        return reflections.getTypesAnnotatedWith(Controller.class).stream()
                 .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
