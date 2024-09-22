@@ -53,13 +53,9 @@ public class AnnotationHandlerMapping {
     }
 
     private List<Method> getRequestMethods(Class<?> clazz) {
-        List<Method> methods = new ArrayList<>();
-        for (Method method : clazz.getMethods()) {
-            if (method.getAnnotation(RequestMapping.class) != null) {
-                methods.add(method);
-            }
-        }
-        return methods;
+        return Arrays.stream(clazz.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
     }
 
     private void addHandlers(Object instance, List<Method> methods) {
