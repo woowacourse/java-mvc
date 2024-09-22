@@ -73,7 +73,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void checkAlreadyHasHandlerKey(HandlerKey handlerKey) {
+    protected void checkAlreadyHasHandlerKey(HandlerKey handlerKey) {
         if (handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalArgumentException("동일한 URL에 대해 같은 HTTP 메서드를 사용할 수 없습니다.");
         }

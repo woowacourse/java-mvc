@@ -1,15 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -65,5 +67,42 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @DisplayName("@RequestMapping이 존재하는 URL, Method 세트가 있다면 HandlerExecution을 반환한다.")
+    @Test
+    void getHandler() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThat(handlerMapping.getHandler(request)).isInstanceOf(HandlerExecution.class);
+    }
+
+    @DisplayName("@RequestMapping에 존재하는 URL이지만 존재하지 않는 Method라면 예외가 발생한다.")
+    @Test
+    void getHandlerWhenInvalidMethod() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("POST");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> handlerMapping.getHandler(request))
+                .withMessage("No handler found for request uri: " + request.getRequestURI());
+    }
+
+    @DisplayName("@RequestMapping에 존재하지 않는 URL이라면 예외가 발생한다.")
+    @Test
+    void getHandlerWhenInvalidURL() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/invalid-url");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> handlerMapping.getHandler(request))
+                .withMessage("No handler found for request uri: " + request.getRequestURI());
     }
 }
