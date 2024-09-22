@@ -72,11 +72,14 @@ class ReflectionTest {
     void givenClass_whenInstantiatesObjectsAtRuntime_thenCorrect() throws Exception {
         final Class<?> questionClass = Question.class;
 
-        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructors()[0];
-        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructors()[1];
+        final Constructor<?> firstConstructor = questionClass.getDeclaredConstructor(String.class, String.class,
+                String.class);
+        final Constructor<?> secondConstructor = questionClass.getDeclaredConstructor(long.class, String.class,
+                String.class, String.class, Date.class, int.class);
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(1, "gugu", "제목2", "내용2", new Date(), 1);
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1, "gugu", "제목2", "내용2", new Date(),
+                1);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
