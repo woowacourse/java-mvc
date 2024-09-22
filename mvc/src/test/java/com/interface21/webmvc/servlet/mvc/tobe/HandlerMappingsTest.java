@@ -18,7 +18,6 @@ class HandlerMappingsTest {
     @BeforeEach
     void setUp() {
         handlerMappings = new HandlerMappings(new AnnotationHandlerMapping("samples.valid"));
-        handlerMappings.initialize();
     }
 
     @DisplayName("요청을 처리할 Handler가 존재하지 않으면 예외가 발생한다.")

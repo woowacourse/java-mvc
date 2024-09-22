@@ -13,9 +13,10 @@ public class HandlerMappings {
 
     public HandlerMappings(HandlerMapping... handlerMappings) {
         this.handlerMappings = Set.of(handlerMappings);
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
