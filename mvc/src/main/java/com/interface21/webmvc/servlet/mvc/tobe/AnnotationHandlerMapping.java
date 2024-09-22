@@ -6,11 +6,8 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.reflections.Reflections;
@@ -73,7 +70,7 @@ public class AnnotationHandlerMapping {
     private HandlerExecution findHandler(String requestURI, String method) {
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        
+
         if (handlerExecution == null) {
             return findHandlerWithoutMethod(requestURI);
         }
