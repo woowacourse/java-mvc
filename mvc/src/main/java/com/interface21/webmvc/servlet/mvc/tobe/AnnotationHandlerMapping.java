@@ -35,7 +35,7 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
-            Object instance = getInstance(controller);
+            Object instance = createInstance(controller);
             List<Method> methods = getRequestMethods(controller);
             addHandlers(instance, methods);
         }
@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private Object getInstance(Class<?> clazz) {
+    private Object createInstance(Class<?> clazz) {
         try {
             Constructor<?> constructor = clazz.getConstructor();
             return constructor.newInstance();
