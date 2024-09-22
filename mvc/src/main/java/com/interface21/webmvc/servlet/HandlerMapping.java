@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 
 public interface HandlerMapping {
 
-    void initialize(String basePackage) throws ReflectiveOperationException, FileNotFoundException;
+    void initialize() throws ReflectiveOperationException, FileNotFoundException;
 
     RequestHandler getHandler(final String requestMethod, final String requestURI);
 }

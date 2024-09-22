@@ -3,7 +3,7 @@ package com.techcourse;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.interface21.webmvc.servlet.RequestHandler;
-import com.interface21.webmvc.servlet.RequestHandlerImpl;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualRequestHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,35 +24,35 @@ class ManualHandlerMappingTest {
     @Test
     void shouldCorrectlyMapControllers() throws Exception {
         // given
-        handlerMapping.initialize(basePackage);
+        handlerMapping.initialize();
 
         // when
         RequestHandler handler = handlerMapping.getHandler("GET", "/test");
 
         // then
         assertNotNull(handler);
-        assertTrue(handler.getClass().isAssignableFrom(RequestHandlerImpl.class));
+        assertTrue(handler.getClass().isAssignableFrom(ManualRequestHandler.class));
     }
 
     @DisplayName("POST 요청의 핸들러 반환")
     @Test
     void shouldReturnCorrectHandler() throws Exception {
         // given
-        handlerMapping.initialize(basePackage);
+        handlerMapping.initialize();
 
         // when
         RequestHandler handler = handlerMapping.getHandler("POST", "/submit");
 
         // then
         assertNotNull(handler);
-        assertEquals(RequestHandlerImpl.class, handler.getClass());
+        assertEquals(ManualRequestHandler.class, handler.getClass());
     }
 
     @DisplayName("존재하지 않는 핸들러 요청의 핸들러 반환")
     @Test
     void shouldReturnNullForUnmappedRequest() throws Exception {
         // given
-        handlerMapping.initialize(basePackage);
+        handlerMapping.initialize();
 
         // when
         RequestHandler handler = handlerMapping.getHandler("GET", "/unmapped");

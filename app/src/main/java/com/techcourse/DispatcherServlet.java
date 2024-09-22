@@ -1,13 +1,16 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.RequestHandler;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.RequestHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,20 +19,27 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String BASE_PACKAGE = "";
 
-    private HandlerMapping handlerMapping;
+    private HandlerAdapter handlerAdapter;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMapping = new ManualHandlerMapping();
-        try {
-            handlerMapping.initialize("");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        List<HandlerMapping> handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping(BASE_PACKAGE)
+        );
+        handlerMappings.forEach(mapping -> {
+            try {
+                mapping.initialize();
+            } catch (Exception e) {
+                log.error("Error during handler mapping initialization", e);
+            }
+        });
+        handlerAdapter = new RequestHandlerAdapter(handlerMappings);
     }
 
     @Override
@@ -40,8 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", method, requestURI);
 
         try {
-            RequestHandler handler = handlerMapping.getHandler(method, requestURI);
-            ModelAndView modelAndView = handler.handle(request, response);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response);
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

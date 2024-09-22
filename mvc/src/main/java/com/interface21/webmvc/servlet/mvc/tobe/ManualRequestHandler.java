@@ -1,15 +1,17 @@
-package com.interface21.webmvc.servlet;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.RequestHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
-public class RequestHandlerImpl implements RequestHandler {
+public class ManualRequestHandler implements RequestHandler {
 
     private final Object controller;
     private final Method method;
 
-    public RequestHandlerImpl(Object controller, Method method) {
+    public ManualRequestHandler(Object controller, Method method) {
         this.controller = controller;
         this.method = method;
     }
