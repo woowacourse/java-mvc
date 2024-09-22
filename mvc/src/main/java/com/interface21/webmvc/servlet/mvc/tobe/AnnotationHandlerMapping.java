@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,9 @@ public class AnnotationHandlerMapping {
         String path = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
 
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(path, requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
@@ -63,35 +67,26 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        if (method.isEmpty()) {
-            return findHandlerWithoutMethod(requestURI);
-        }
-        return findHandlerWithMethod(requestURI, method);
+        return findHandler(requestURI, method);
     }
 
-    private HandlerExecution findHandlerWithMethod(String requestURI, String method) {
+    private HandlerExecution findHandler(String requestURI, String method) {
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         
         if (handlerExecution == null) {
-            throw new IllegalArgumentException("요청에 맞는 Handler를 찾을 수 없습니다");
+            return findHandlerWithoutMethod(requestURI);
         }
         return handlerExecution;
     }
 
-    private Object findHandlerWithoutMethod(String requestURI) {
-        List<HandlerExecution> list = handlerExecutions.entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().containsUrl(requestURI))
-                .map(Entry::getValue)
-                .toList();
+    private HandlerExecution findHandlerWithoutMethod(String requestURI) {
+        HandlerKey handlerKey = new HandlerKey(requestURI, null);
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
 
-        if (list.isEmpty()) {
+        if (handlerExecution == null) {
             throw new IllegalArgumentException("요청에 맞는 Handler를 찾을 수 없습니다");
         }
-        if (list.size() > 1) {
-            throw new IllegalArgumentException("요청에 맞는 Handler가 여러 개입니다");
-        }
-        return list.get(0);
+        return handlerExecution;
     }
 }

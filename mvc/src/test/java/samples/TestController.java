@@ -25,15 +25,15 @@ public class TestController {
 
     @RequestMapping(value = "/post-test", method = RequestMethod.POST)
     public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("test controller post with post method");
+        log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
 
-    @RequestMapping(value = "/post-test", method = RequestMethod.GET)
-    public ModelAndView getToPostTest(final HttpServletRequest request, final HttpServletResponse response) {
-        log.info("test controller post with get method");
+    @RequestMapping(value = "/without-method-test")
+    public ModelAndView withoutMethod(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller without method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
