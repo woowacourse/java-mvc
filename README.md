@@ -37,4 +37,4 @@
 - [x] URL을 컨트롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등)도 매핑 조건에 포함
 - [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원
 - [x] [AnnotationHandlerMappingTest](mvc%2Fsrc%2Ftest%2Fjava%2Fcom%2Finterface21%2Fwebmvc%2Fservlet%2Fmvc%2Ftobe%2FAnnotationHandlerMappingTest.java) 테스트 통과
-- [ ] JspView 클래스 구현
+- [x] JspView 클래스 구현
