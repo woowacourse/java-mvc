@@ -54,7 +54,7 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         String method = request.getMethod();
         String requestUri = request.getRequestURI();
-        HandlerKey handlerKey = new HandlerKey(requestUri, RequestMethod.valueOf(method));
+        HandlerKey handlerKey = new HandlerKey(requestUri, RequestMethod.from(method));
         return handlerExecutions.get(handlerKey);
     }
 }
