@@ -8,19 +8,17 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HandlerExecutions handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = new HandlerExecutions();
     }
 
     public void initialize() {
@@ -42,7 +40,7 @@ public class AnnotationHandlerMapping {
         RequestMethod[] requestMethods = getRequestMethods(requestMapping);
 
         for (RequestMethod requestMethod : requestMethods) {
-            handlerExecutions.put(
+            handlerExecutions.add(
                     new HandlerKey(url, requestMethod), new HandlerExecution(c, method)
             );
         }
@@ -55,9 +53,8 @@ public class AnnotationHandlerMapping {
         return requestMapping.method();
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(
-                new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))
-        );
+    public HandlerExecution findHandler(HttpServletRequest request) {
+        return handlerExecutions.findHandler(request)
+                .orElseThrow(() -> new IllegalArgumentException("No handler found for request: " + request.getRequestURI()));
     }
 }

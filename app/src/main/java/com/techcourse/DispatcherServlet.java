@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Controller controller = manualHandlerMapping.getHandler(requestURI);
             String viewName = controller.execute(request, response);
-            HandlerExecution handler = annotationHandlerMapping.getHandler(request);
+            HandlerExecution handler = annotationHandlerMapping.findHandler(request);
             ModelAndView modelAndView = handler.handle(request, response);
             JspView view = new JspView(viewName);
             view.render(modelAndView.getModel(), request, response);
