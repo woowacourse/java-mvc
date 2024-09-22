@@ -48,7 +48,7 @@ public class AnnotationHandlerMapping {
             Constructor<?> constructor = clazz.getConstructor();
             return constructor.newInstance();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Can't create instance of class : " + clazz.getName(), e);
         }
     }
 
