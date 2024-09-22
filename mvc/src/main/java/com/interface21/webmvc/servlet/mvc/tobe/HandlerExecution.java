@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -23,7 +24,8 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+            throws IllegalAccessException, InvocationTargetException {
         Object invokeResult = method.invoke(handler, request, response);
         validateInvokeResult(invokeResult);
 
