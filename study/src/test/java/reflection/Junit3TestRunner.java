@@ -17,9 +17,9 @@ class Junit3TestRunner {
                 .forEach(this::invokeJunit3TestMethod);
     }
 
-    @DisplayName("클래스에서 test로 시작하는 메서드를 모두 실행한다")
+    @DisplayName("test로 시작하는 메서드를 모두 실행한다")
     @Test
-    void runGeneralTestMethods() {
+    void runTestMethods() {
         Class<Junit3Test> clazz = Junit3Test.class;
 
         Arrays.stream(clazz.getMethods())
