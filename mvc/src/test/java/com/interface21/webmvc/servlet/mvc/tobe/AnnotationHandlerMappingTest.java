@@ -1,17 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -71,14 +72,14 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("핸들러에 http method가 선언되지 않은 경우 모든 method가 매핑되도록 한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"})
-    void should_mapAllMethods_when_declaredMethodEmpty(String method) throws Exception {
+    @EnumSource(value = RequestMethod.class)
+    void should_mapAllMethods_when_declaredMethodEmpty(RequestMethod method) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/all-test");
-        when(request.getMethod()).thenReturn(method);
+        when(request.getMethod()).thenReturn(method.name());
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
