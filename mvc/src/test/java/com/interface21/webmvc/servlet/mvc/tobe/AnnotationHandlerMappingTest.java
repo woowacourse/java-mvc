@@ -73,6 +73,30 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("요청을 처리할 수 있는지 확인한다.")
+    void canHandle() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        boolean actual = handlerMapping.canHandle(request);
+
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    @DisplayName("등록되지 않은 url에 대한 요청을 처리할 수 없다.")
+    void canNotHandle() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/not-found");
+        when(request.getMethod()).thenReturn("GET");
+
+        boolean actual = handlerMapping.canHandle(request);
+
+        assertThat(actual).isFalse();
+    }
+
+    @Test
     @DisplayName("중복된 url과 http method를 등록할 수 없다.")
     void initializeWithDuplicateUrlAndMethod() {
         handlerMapping = new AnnotationHandlerMapping(handlerExecutions, "com.interface21.webmvc.servlet.mvc.tobe");

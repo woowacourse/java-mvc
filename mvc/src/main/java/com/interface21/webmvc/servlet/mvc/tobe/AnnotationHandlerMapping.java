@@ -15,7 +15,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,6 +28,7 @@ public class AnnotationHandlerMapping {
         this.basePackage = basePackage;
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
@@ -41,11 +42,20 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        return handlerExecutions.containsKey(handlerKey);
     }
 
     private List<Method> getMethodsWithAnnotation(Class<?> controllerClass) {
