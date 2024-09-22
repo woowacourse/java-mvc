@@ -17,7 +17,7 @@ public class ModelAndView {
     }
 
     public void render(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
+        view.render(getModel(), request, response);
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {

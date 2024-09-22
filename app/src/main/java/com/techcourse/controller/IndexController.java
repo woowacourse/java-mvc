@@ -7,16 +7,12 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class LogoutController {
+public class IndexController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
-        HttpSession session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

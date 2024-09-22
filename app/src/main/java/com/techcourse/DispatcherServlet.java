@@ -1,8 +1,8 @@
 package com.techcourse;
 
+import java.util.Optional;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
@@ -29,18 +29,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdapters() {
-        this.adapters = new HandlerAdapters(
-                new ManualHandlerAdapter(),
-                new AnnotationHandlerAdapter()
-        );
+        this.adapters = new HandlerAdapters(new AnnotationHandlerAdapter());
     }
 
     private void initHandlerMappings() {
         String basePackage = getClass().getPackageName();
-        this.mappings = new HandlerMappings(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping(basePackage)
-        );
+        this.mappings = new HandlerMappings(new AnnotationHandlerMapping(basePackage));
         mappings.initialize();
     }
 
@@ -52,13 +46,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", method, requestURI);
 
         try {
-            Object handler = mappings.getHandler(request);
-            if (handler == null) {
-                throw new IllegalStateException("Not found handler for request URI : " + requestURI);
+            Optional<Object> handler = mappings.getHandler(request);
+            if (handler.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
 
-            HandlerAdapter adapter = adapters.getHandlerAdapter(handler);
-            ModelAndView mv = adapter.handle(request, response, handler);
+            HandlerAdapter adapter = adapters.getHandlerAdapter(handler.get());
+            ModelAndView mv = adapter.handle(request, response, handler.get());
 
             mv.render(request, response);
         } catch (Throwable e) {
