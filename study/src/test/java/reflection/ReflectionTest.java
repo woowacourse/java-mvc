@@ -1,18 +1,17 @@
 package reflection;
 
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
@@ -73,10 +72,12 @@ class ReflectionTest {
         final Class<?> questionClass = Question.class;
 
         final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
-        final Constructor<?> secondConstructor = questionClass.getConstructor(long.class, String.class, String.class, String.class, Date.class, int.class);
+        final Constructor<?> secondConstructor = questionClass.getConstructor(long.class, String.class, String.class,
+                String.class, Date.class, int.class);
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(), 0);
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1L, "gugu", "제목2", "내용2", new Date(),
+                0);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");

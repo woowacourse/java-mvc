@@ -14,8 +14,8 @@ class Junit3TestRunner {
 
         Method[] methods = clazz.getDeclaredMethods();
 
-        for(Method method : methods) {
-            if(method.getName().startsWith("test")) {
+        for (Method method : methods) {
+            if (method.getName().startsWith("test")) {
                 method.invoke(junit3Test);
             }
         }

@@ -31,6 +31,16 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    private static Object getValueFromAnnotationMethod(Annotation annotation, String method) {
+        try {
+            return annotation.getClass()
+                    .getMethod(method)
+                    .invoke(annotation);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Reflect Annotation Error");
+        }
+    }
+
     public void initialize() {
         Arrays.stream(basePackage).forEach(this::reflect);
         log.info("Initialized AnnotationHandlerMapping!");
@@ -56,16 +66,6 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private static Object getValueFromAnnotationMethod(Annotation annotation, String method) {
-        try {
-            return annotation.getClass()
-                    .getMethod(method)
-                    .invoke(annotation);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Reflect Annotation Error");
         }
     }
 

@@ -1,6 +1,5 @@
 package reflection;
 
-import java.beans.ConstructorProperties;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -22,19 +21,19 @@ class ReflectionsTest {
 
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         log.info("Controllers:");
-        for(Class<?> controller : controllers) {
+        for (Class<?> controller : controllers) {
             log.info(controller.getName());
         }
 
         Set<Class<?>> services = reflections.getTypesAnnotatedWith(Service.class);
         log.info("Services:");
-        for(Class<?> service : services) {
+        for (Class<?> service : services) {
             log.info(service.getName());
         }
 
         Set<Class<?>> repositories = reflections.getTypesAnnotatedWith(Repository.class);
         log.info("Repositories:");
-        for(Class<?> repository : repositories) {
+        for (Class<?> repository : repositories) {
             log.info(repository.getName());
         }
 
