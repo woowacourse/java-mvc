@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 public class HandlerExecution {
 
     private final Class<?> controller;
-
     private final Method method;
 
     public HandlerExecution(Class<?> controller, Method method) {
