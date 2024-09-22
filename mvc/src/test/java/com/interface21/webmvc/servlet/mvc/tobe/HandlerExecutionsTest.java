@@ -13,7 +13,7 @@ class HandlerExecutionsTest {
 
     @DisplayName("핸들러를 성공적으로 등록하고 조회한다.")
     @Test
-    void registerHandler() throws Exception {
+    void registerHandler() {
         HandlerExecutions handlerExecutions = new HandlerExecutions();
         Method[] methods = TestController.class.getDeclaredMethods();
         handlerExecutions.addHandlerExecution(methods);

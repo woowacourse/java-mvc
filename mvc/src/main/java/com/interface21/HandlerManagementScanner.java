@@ -14,7 +14,7 @@ public class HandlerManagementScanner {
 
     public static Set<Class<?>> scanHandlerHelper() {
         Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
-        return reflections.getTypesAnnotatedWith(HandlerManagement.class);
+        return reflections.getTypesAnnotatedWith(HandlerManagement.class, true);
     }
 
     public static <T> List<T> scanSubTypeOf(Class<?> clazz, Class<T> type) {

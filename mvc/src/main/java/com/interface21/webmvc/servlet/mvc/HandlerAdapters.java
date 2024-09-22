@@ -26,7 +26,7 @@ public class HandlerAdapters {
         HandlerAdapter handlerAdapter = handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("일치하는 HandlerAdapter가 없습니다"));
         return handlerAdapter.handle(request, response, handler);
     }
 }
