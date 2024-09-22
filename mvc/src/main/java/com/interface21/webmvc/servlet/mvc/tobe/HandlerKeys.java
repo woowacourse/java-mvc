@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HandlerKeys {
 
-    private static final List<HandlerKey> handlerKeys = new ArrayList<>();
+    private final List<HandlerKey> handlerKeys = new ArrayList<>();
 
     public HandlerKeys(RequestMapping requestMapping) {
         String value = requestMapping.value();
@@ -26,6 +26,6 @@ public class HandlerKeys {
     }
 
     public List<HandlerKey> getHandlerKeys() {
-        return handlerKeys;
+        return new ArrayList<>(handlerKeys);
     }
 }
