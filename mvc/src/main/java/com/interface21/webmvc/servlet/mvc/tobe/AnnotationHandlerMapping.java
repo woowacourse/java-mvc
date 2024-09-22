@@ -32,11 +32,11 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Arrays.stream(basePackage).forEach(this::reflectControllers);
+        Arrays.stream(basePackage).forEach(this::reflect);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void reflectControllers(Object basePackage) {
+    private void reflect(Object basePackage) {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         List<Method> handlers = classes.stream()
