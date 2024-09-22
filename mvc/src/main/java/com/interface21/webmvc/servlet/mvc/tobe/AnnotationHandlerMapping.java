@@ -62,10 +62,10 @@ public class AnnotationHandlerMapping {
         }
         try {
             instances.put(clazz, clazz.getConstructor().newInstance());
+            return instances.get(clazz);
         } catch (Exception e) {
             throw new RuntimeException("Cannot create instance for class: " + clazz.getName());
         }
-        return instances.get(clazz);
     }
 
     private void validateHandlerKey(HandlerKey handlerKey) {
