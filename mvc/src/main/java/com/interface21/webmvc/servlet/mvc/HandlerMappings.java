@@ -1,7 +1,7 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.NotFoundException;
-import com.interface21.SingletonManager;
+import com.interface21.HandlerManager;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -16,11 +16,10 @@ public class HandlerMappings {
     }
 
     public void initialize() {
-        SingletonManager instance = SingletonManager.getInstance();
-        instance.registerHandler(HandlerMapping.class);
-        List<HandlerMapping> subTypesOf = instance.getSubTypesOf(HandlerMapping.class);
-        subTypesOf.forEach(HandlerMapping::initialize);
-        handlerMappings.addAll(subTypesOf);
+        HandlerManager handlerManager = HandlerManager.getInstance();
+        List<HandlerMapping> mappings = handlerManager.getHandler(HandlerMapping.class);
+        mappings.forEach(HandlerMapping::initialize);
+        handlerMappings.addAll(mappings);
     }
 
     public Object getHandler(HttpServletRequest request) {

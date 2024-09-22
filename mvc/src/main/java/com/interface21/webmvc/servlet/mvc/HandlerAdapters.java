@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.SingletonManager;
+import com.interface21.HandlerManager;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,10 +16,9 @@ public class HandlerAdapters {
     }
 
     public void initialize() {
-        SingletonManager instance = SingletonManager.getInstance();
-        instance.registerHandler(HandlerAdapter.class);
-        List<HandlerAdapter> subTypesOf = instance.getSubTypesOf(HandlerAdapter.class);
-        handlerAdapters.addAll(subTypesOf);
+        HandlerManager handlerManager = HandlerManager.getInstance();
+        List<HandlerAdapter> adapters = handlerManager.getHandler(HandlerAdapter.class);
+        handlerAdapters.addAll(adapters);
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
