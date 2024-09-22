@@ -50,7 +50,7 @@ public class AnnotationHandlerMapping {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException("Class의 인스턴스를 생성하는데 실패했습니다. Class = " + clazz.getName());
+            throw new IllegalStateException("Class의 인스턴스를 생성하는데 실패했습니다. Class = " + clazz.getCanonicalName());
         }
     }
 
