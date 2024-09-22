@@ -1,11 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +26,51 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClasses.forEach(this::findMethodWithAnnotation);
+    }
+
+    private void findMethodWithAnnotation(Class<?> controllerClass) {
+        Method[] declaredMethods = controllerClass.getDeclaredMethods();
+        Object controller = getController(controllerClass);
+        Arrays.stream(declaredMethods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerHandlerExecution(controller, method));
+    }
+
+    private static Object getController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void registerHandlerExecution(Object clazz, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String value = requestMapping.value();
+        RequestMethod[] methods = findRequestMethods(requestMapping);
+        Arrays.stream(methods).forEach(requestMethod ->
+                handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(clazz, method)));
+    }
+
+    private RequestMethod[] findRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] methods = requestMapping.method();
+        if (methods == null || methods.length == 0) {
+            return RequestMethod.values();
+        }
+        return methods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        String requestMethod = request.getMethod();
+        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("No handler found for requestURI: " + requestURI + ", method: " + requestMethod);
+        }
+        return handlerExecutions.get(handlerKey);
     }
 }
