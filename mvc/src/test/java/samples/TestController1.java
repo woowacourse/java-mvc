@@ -18,16 +18,12 @@ public class TestController1 {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView root(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller1 root path invoked");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
+        return new ModelAndView(new JspView("/"));
     }
 
     @RequestMapping(value = "/all-method")
     public ModelAndView all(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller1 all method invoked");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
+        return new ModelAndView(new JspView("/all-method"));
     }
 }

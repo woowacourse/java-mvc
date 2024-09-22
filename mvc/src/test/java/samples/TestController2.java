@@ -18,16 +18,12 @@ public class TestController2 {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getParentPath(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller2 parent path invoked");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
+        return new ModelAndView(new JspView("/hello"));
     }
 
     @RequestMapping(value = "/world", method = RequestMethod.GET)
     public ModelAndView getCombinedPath(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller2 combined path invoked");
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
+        return new ModelAndView(new JspView("/hello/world"));
     }
 }
