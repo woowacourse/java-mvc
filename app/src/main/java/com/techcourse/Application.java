@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.interface21.HandlerManager;
+import com.interface21.HandlerManagementManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +14,8 @@ public class Application {
     private static final int DEFAULT_PORT = 8080;
 
     public static void main(final String[] args) throws Exception {
-        HandlerManager handlerManager = HandlerManager.getInstance();
-        handlerManager.initialize(Application.class);
+        HandlerManagementManager handlerManagementManager = HandlerManagementManager.getInstance();
+        handlerManagementManager.registerHandler(Application.class);
 
         final int port = defaultPortIfNull(args);
         final var tomcat = new TomcatStarter(port);

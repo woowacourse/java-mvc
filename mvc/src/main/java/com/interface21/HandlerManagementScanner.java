@@ -1,23 +1,25 @@
 package com.interface21;
 
-import com.interface21.context.stereotype.Register;
+import com.interface21.context.stereotype.HandlerManagement;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 
-public class HandlerScanner {
+public class HandlerManagementScanner {
+
+    private HandlerManagementScanner() {}
 
     public static Set<Class<?>> scanHandlerHelper() {
         Reflections reflections = new Reflections(ClasspathHelper.forJavaClassPath());
-        return reflections.getTypesAnnotatedWith(Register.class);
+        return reflections.getTypesAnnotatedWith(HandlerManagement.class);
     }
 
     public static <T> List<T> scanSubTypeOf(Class<?> clazz, Class<T> type) {
         Reflections reflections = new Reflections(clazz.getPackageName());
         return reflections.getSubTypesOf(type).stream()
-                .map(HandlerScanner::createObject)
+                .map(HandlerManagementScanner::createObject)
                 .map(type::cast)
                 .toList();
     }
