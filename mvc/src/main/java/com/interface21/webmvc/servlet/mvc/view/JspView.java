@@ -1,7 +1,6 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.mvc.view;
 
 import java.util.Map;
-import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,12 +1,12 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.Optional;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappings;
+import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappings;
+import com.interface21.webmvc.servlet.mvc.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,22 +19,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerAdapters adapters;
-    private HandlerMappings mappings;
+    private final HandlerAdapters adapters = new HandlerAdapters();
+    private final HandlerMappings mappings = new HandlerMappings();
 
     @Override
     public void init() {
-        initHandlerAdapters();
-        initHandlerMappings();
-    }
-
-    private void initHandlerAdapters() {
-        this.adapters = new HandlerAdapters(new AnnotationHandlerAdapter());
-    }
-
-    private void initHandlerMappings() {
-        String basePackage = getClass().getPackageName();
-        this.mappings = new HandlerMappings(new AnnotationHandlerMapping(basePackage));
         mappings.initialize();
     }
 
@@ -60,5 +49,13 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    public void addHandlerMapping(AnnotationHandlerMapping annotationHandlerMapping) {
+        mappings.addHandlerMapping(annotationHandlerMapping);
+    }
+
+    public void addHandlerAdapter(AnnotationHandlerAdapter annotationHandlerAdapter) {
+        adapters.addHandlerAdapter(annotationHandlerAdapter);
     }
 }

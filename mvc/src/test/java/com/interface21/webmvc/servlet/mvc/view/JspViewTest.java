@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.mvc.view;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;

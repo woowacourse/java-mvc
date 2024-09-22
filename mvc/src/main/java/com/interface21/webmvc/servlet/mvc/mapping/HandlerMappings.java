@@ -1,11 +1,9 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class HandlerMappings {
@@ -28,5 +26,9 @@ public class HandlerMappings {
             }
         }
         return Optional.empty();
+    }
+
+    public void addHandlerMapping(AnnotationHandlerMapping mapping) {
+        mappings.add(mapping);
     }
 }

@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet;
+package com.interface21.webmvc.servlet.mvc.view;
 
 import java.util.Collections;
 import java.util.HashMap;
