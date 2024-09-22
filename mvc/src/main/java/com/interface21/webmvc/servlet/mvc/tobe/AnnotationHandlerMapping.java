@@ -60,11 +60,17 @@ public class AnnotationHandlerMapping {
         }
 
         String url = requestMapping.value();
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+        initializeHandlerExecution(controller, method, requestMethods, url);
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
         if(requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
-        initializeHandlerExecution(controller, method, requestMethods, url);
+
+        return requestMethods;
     }
 
     private void initializeHandlerExecution(Object controller, Method method, RequestMethod[] requestMethods, String url) {
