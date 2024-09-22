@@ -28,7 +28,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String method = request.getMethod();
         String requestURI = request.getRequestURI();
 
@@ -51,11 +51,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    public void addHandlerMapping(AnnotationHandlerMapping annotationHandlerMapping) {
-        mappings.addHandlerMapping(annotationHandlerMapping);
+    public void addHandlerMapping(AnnotationHandlerMapping mapping) {
+        mappings.addHandlerMapping(mapping);
     }
 
-    public void addHandlerAdapter(AnnotationHandlerAdapter annotationHandlerAdapter) {
-        adapters.addHandlerAdapter(annotationHandlerAdapter);
+    public void addHandlerAdapter(AnnotationHandlerAdapter adapter) {
+        adapters.addHandlerAdapter(adapter);
     }
 }
