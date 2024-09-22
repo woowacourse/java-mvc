@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
@@ -41,9 +43,13 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
         ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
+        Map<String, Object> model = modelAndView.getModel();
+        if (!model.isEmpty()) {
+            View view = modelAndView.getView();
+            view.render(model, request, response);
+        }
     }
 }
