@@ -28,5 +28,14 @@ class ReflectionsTest {
         assertThat(controllers.size()).isEqualTo(1);
         assertThat(services.size()).isEqualTo(1);
         assertThat(repositories.size()).isEqualTo(2);
+
+        controllers.forEach(controller -> log.info("controller: " + controller.getName()));
+        System.out.println();
+
+        services.forEach(service -> log.info("service: " + service.getName()));
+        System.out.println();
+
+        repositories.forEach(repository -> log.info("repo: " + repository.getName()));
+        System.out.println();
     }
 }
