@@ -35,31 +35,45 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize(String basePackage) throws ReflectiveOperationException, FileNotFoundException {
         log.info("Initializing Handler Mapping!");
-        List<Class<?>> controllerClasses = getClassesInPackage(basePackage).stream()
+        registerControllers(basePackage);
+        registerLegacyControllers();
+    }
+
+    private void registerControllers(String basePackage) throws ReflectiveOperationException, FileNotFoundException {
+        List<Class<?>> controllerClasses = getControllerClasses(basePackage);
+        for (Class<?> controllerClass : controllerClasses) {
+            initializeController(controllerClass);
+        }
+    }
+
+    private List<Class<?>> getControllerClasses(String basePackage)
+            throws ReflectiveOperationException, FileNotFoundException {
+        return getClassesInPackage(basePackage).stream()
                 .filter(clazz -> classHasAnnotation(clazz, Controller.class) && !clazz.isAnnotation())
                 .toList();
+    }
 
-        for (Class<?> controllerClass : controllerClasses) {
-            try {
-                Controller classMapping = controllerClass.getAnnotation(Controller.class);
-                String baseUri = classMapping.value();
-                List<Method> methods = getMethodsHaveAnnotation(controllerClass, RequestMapping.class);
+    private void initializeController(Class<?> controllerClass) {
+        try {
+            Controller classMapping = controllerClass.getAnnotation(Controller.class);
+            String baseUri = classMapping.value();
+            List<Method> methods = getMethodsHaveAnnotation(controllerClass, RequestMapping.class);
 
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
-                        String fullUri = baseUri + methodMapping.value();
-                        for (RequestMethod requestMethod : methodMapping.method()) {
-                            controllers.put(new ControllerKey(fullUri, requestMethod),
-                                    getRequestHandler(controllerClass, method));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Failed to initialize controller: {}", controllerClass.getName(), e);
+            for (Method method : methods) {
+                registerControllerMethod(baseUri, controllerClass, method);
             }
+        } catch (Exception e) {
+            log.error("Failed to initialize controller: {}", controllerClass.getName(), e);
         }
-        registerLegacyControllers();
+    }
+
+    private void registerControllerMethod(String baseUri, Class<?> controllerClass, Method method)
+            throws ReflectiveOperationException {
+        RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
+        String fullUri = baseUri + methodMapping.value();
+        for (RequestMethod requestMethod : methodMapping.method()) {
+            controllers.put(new ControllerKey(fullUri, requestMethod), getRequestHandler(controllerClass, method));
+        }
     }
 
     private void registerLegacyControllers() {

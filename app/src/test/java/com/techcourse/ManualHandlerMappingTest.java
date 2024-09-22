@@ -61,4 +61,3 @@ class ManualHandlerMappingTest {
         assertNull(handler, "Handler should be null for unmapped requests");
     }
 }
-
