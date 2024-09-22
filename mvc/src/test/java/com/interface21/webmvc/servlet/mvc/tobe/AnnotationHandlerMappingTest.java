@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,11 +27,12 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
     }
 
     private void handlerMappingTest(String requestURI, String method) throws Exception {
         //given
+        handlerMapping.initialize();
+
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -44,6 +46,13 @@ class AnnotationHandlerMappingTest {
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("컨트롤러에 RequestMapping 어노테이션이 없는 메서드가 있어도 NullPointerException을 반환하지 않는다.")
+    void initialize() {
+        //when, then
+        assertDoesNotThrow(() -> handlerMapping.initialize());
     }
 
     @Test

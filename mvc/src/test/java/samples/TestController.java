@@ -43,4 +43,8 @@ public class TestController {
     public ModelAndView getView(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("test-view"));
     }
+
+    public ModelAndView isNotRequestMapping(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("isNotRequestMapping"));
+    }
 }

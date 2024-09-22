@@ -44,9 +44,9 @@ public class AnnotationHandlerMapping {
     private void registerControllerMethods(Class<?> controller) {
         Method[] methods = controller.getDeclaredMethods();
 
-        for (Method method : methods) {
-            registerHandlerMapping(method);
-        }
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(this::registerHandlerMapping);
     }
 
     private void registerHandlerMapping(Method method) {
