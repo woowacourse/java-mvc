@@ -16,7 +16,7 @@ class ReflectionsTest {
     private static final Logger log = LoggerFactory.getLogger(ReflectionsTest.class);
 
     @Test
-    void showAnnotationClass() throws Exception {
+    void showAnnotationClass() {
         Reflections reflections = new Reflections("reflection.examples");
 
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
