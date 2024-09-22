@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.interface21.NotFoundException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,7 +46,7 @@ class HandlerExecutionTest {
         );
 
         assertThatThrownBy(() -> new HandlerExecution(method))
-                .isInstanceOf(NotFoundException.class)
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("기본 생성자가 존재하지 않습니다");
     }
 }

@@ -13,9 +13,7 @@ public class HandlerManagementManager {
     private static final Map<String, Object> MANAGERS = new ConcurrentHashMap<>();
     private static final Set<Class<?>> HANDLER_CLASSES = HandlerManagementScanner.scanHandlerHelper();
 
-    private HandlerManagementManager() {
-        registerHandler(this.getClass());
-    }
+    private HandlerManagementManager() {}
 
     private static class Singleton {
         private static final HandlerManagementManager INSTANCE = new HandlerManagementManager();
@@ -23,6 +21,11 @@ public class HandlerManagementManager {
 
     public static HandlerManagementManager getInstance() {
         return Singleton.INSTANCE;
+    }
+
+    public void initialize(Class<?> clazz) {
+        registerHandler(clazz);
+        registerHandler(this.getClass());
     }
 
     public void registerHandler(Class<?> clazz) {

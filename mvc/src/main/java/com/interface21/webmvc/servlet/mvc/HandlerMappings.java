@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.NotFoundException;
 import com.interface21.HandlerManagementManager;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +25,8 @@ public class HandlerMappings {
         for (HandlerMapping handlerMapping : handlerMappings) {
             try {
                 return handlerMapping.getHandler(request);
-            } catch (NotFoundException e) {}
+            } catch (IllegalArgumentException e) {}
         }
-        throw new NotFoundException("일치하는 handler가 없습니다");
+        throw new IllegalArgumentException("일치하는 handler가 없습니다");
     }
 }

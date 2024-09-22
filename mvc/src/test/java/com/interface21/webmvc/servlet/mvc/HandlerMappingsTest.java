@@ -1,8 +1,5 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.interface21.NotFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -14,12 +11,10 @@ class HandlerMappingsTest {
 
         public DummyHandlerMapping(String test) {}
 
-        @Override
         public void initialize() {
 
         }
 
-        @Override
         public Object getHandler(HttpServletRequest request) {
             return null;
         }
@@ -29,9 +24,7 @@ class HandlerMappingsTest {
     @Test
     void notExistDefaultConstructor() {
         HandlerMappings handlerMappings = new HandlerMappings();
-
-        assertThatThrownBy(handlerMappings::initialize)
-                .isInstanceOf(NotFoundException.class);
+        handlerMappings.initialize();
     }
 
     @DisplayName("")

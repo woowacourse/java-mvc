@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.interface21.NotFoundException;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
@@ -41,6 +40,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         if (controllers.containsKey(requestURI)) {
             return controllers.get(requestURI);
         }
-        throw new NotFoundException("일치하는 uri가 없습니다");
+        throw new IllegalArgumentException("일치하는 uri가 없습니다");
     }
 }

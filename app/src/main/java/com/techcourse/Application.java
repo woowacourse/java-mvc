@@ -15,7 +15,7 @@ public class Application {
 
     public static void main(final String[] args) throws Exception {
         HandlerManagementManager handlerManagementManager = HandlerManagementManager.getInstance();
-        handlerManagementManager.registerHandler(Application.class);
+        handlerManagementManager.initialize(Application.class);
 
         final int port = defaultPortIfNull(args);
         final var tomcat = new TomcatStarter(port);
