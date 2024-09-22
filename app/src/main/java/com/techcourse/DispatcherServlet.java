@@ -5,11 +5,15 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +31,29 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = new HandlerMappings(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping(CONTROLLER_PACKAGE)
-        );
+        Set<HandlerMapping> mappings = getCustomMappings();
+        mappings.add(new AnnotationHandlerMapping(CONTROLLER_PACKAGE));
+        handlerMappings = new HandlerMappings(mappings);
         handlerAdapters = new HandlerAdapters(
                 new ManualHandlerAdapter(),
                 new AnnotationHandlerAdapter()
         );
+    }
+
+    private Set<HandlerMapping> getCustomMappings() {
+        Reflections reflections = new Reflections("com.techcourse");
+        return reflections.getSubTypesOf(HandlerMapping.class)
+                .stream()
+                .map(DispatcherServlet::createInstance)
+                .collect(Collectors.toSet());
+    }
+
+    private static HandlerMapping createInstance(Class<? extends HandlerMapping> mappingClass) {
+        try {
+            return mappingClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

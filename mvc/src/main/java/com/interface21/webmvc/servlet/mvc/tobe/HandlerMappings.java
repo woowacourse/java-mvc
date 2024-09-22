@@ -11,8 +11,8 @@ public class HandlerMappings {
 
     private final Set<HandlerMapping> handlerMappings;
 
-    public HandlerMappings(HandlerMapping... handlerMappings) {
-        this.handlerMappings = Set.of(handlerMappings);
+    public HandlerMappings(Set<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
         initialize();
     }
 
