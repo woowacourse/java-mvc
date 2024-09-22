@@ -11,17 +11,22 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
 
+    private ConcurrentHashMap<HandlerKey, HandlerExecution> handlerExecutions;
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerExecutions = new ConcurrentHashMap<>();
+        handlerMapping = new AnnotationHandlerMapping(handlerExecutions, "samples");
         handlerMapping.initialize();
     }
 
@@ -58,14 +63,23 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("RequestMapping 어노테이션에 http method가 없는 경우 모든 http method에 대해 핸들러를 등록한다.")
+    void initializeWithNoHttpMethod() {
+        List<HandlerKey> expected = Arrays.stream(RequestMethod.getRequestMethods())
+                .map(requestMethod -> new HandlerKey("/no-method-test", requestMethod))
+                .toList();
+
+        assertThat(handlerExecutions.keySet()).containsAll(expected);
+    }
+
+    @Test
     @DisplayName("중복된 url과 http method를 등록할 수 없다.")
     void initializeWithDuplicateUrlAndMethod() {
-        handlerMapping = new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.tobe");
+        handlerMapping = new AnnotationHandlerMapping(handlerExecutions, "com.interface21.webmvc.servlet.mvc.tobe");
         assertThatThrownBy(() -> handlerMapping.initialize())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("중복된 url과 http method 입니다.");
     }
-
 
     @Controller
     public static class TestController {

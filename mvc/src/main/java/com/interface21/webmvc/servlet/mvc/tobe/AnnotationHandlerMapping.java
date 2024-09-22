@@ -7,10 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.ArrayUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +19,12 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Object[] basePackage;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Map<HandlerKey, HandlerExecution> handlerExecutions, final Object... basePackage) {
+        this.handlerExecutions = handlerExecutions;
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
@@ -67,10 +67,18 @@ public class AnnotationHandlerMapping {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
-            Arrays.stream(requestMapping.method())
+            Arrays.stream(getRequestMethods(requestMapping))
                     .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))
                     .forEach(handlerKey -> registerHandlerExecution(handlerKey, handlerExecution));
         }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] httpMethods = requestMapping.method();
+        if (ArrayUtils.isEmpty(httpMethods)) {
+            return RequestMethod.getRequestMethods();
+        }
+        return httpMethods;
     }
 
     private void registerHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
