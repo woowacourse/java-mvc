@@ -1,13 +1,16 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-
 import java.util.HashMap;
 import java.util.Map;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManualHandlerMapping {
 

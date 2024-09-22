@@ -1,13 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -47,5 +49,21 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"POST", "GET", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"})
+    void handleAllMethod(String source) throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("inputMethod")).thenReturn(source);
+        when(request.getRequestURI()).thenReturn("/all-test");
+        when(request.getMethod()).thenReturn(source);
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("inputMethod")).isEqualTo(source);
     }
 }

@@ -1,14 +1,13 @@
 package com.interface21.web;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import com.interface21.core.util.ReflectionUtils;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.HandlesTypes;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @HandlesTypes(WebApplicationInitializer.class)
 public class SpringServletContainerInitializer implements ServletContainerInitializer {

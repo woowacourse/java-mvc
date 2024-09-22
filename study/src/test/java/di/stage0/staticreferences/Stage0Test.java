@@ -1,9 +1,9 @@
 package di.stage0.staticreferences;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import di.User;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage0Test {
 

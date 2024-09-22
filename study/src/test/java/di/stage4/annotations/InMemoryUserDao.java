@@ -1,13 +1,12 @@
 package di.stage4.annotations;
 
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import di.User;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Repository
 class InMemoryUserDao implements UserDao {
