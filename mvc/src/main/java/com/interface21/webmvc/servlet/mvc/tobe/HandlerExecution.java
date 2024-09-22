@@ -8,9 +8,10 @@ import java.lang.reflect.Parameter;
 
 public class HandlerExecution {
 
-    public static final int VALID_PARAMETER_LENGTH = 2;
-    public static final int REQUEST_PARAMETER_INDEX = 0;
-    public static final int RESPONSE_PARAMETER_INDEX = 1;
+    private static final int VALID_PARAMETER_LENGTH = 2;
+    private static final int REQUEST_PARAMETER_INDEX = 0;
+    private static final int RESPONSE_PARAMETER_INDEX = 1;
+
     private final Object handler;
     private final Method method;
 
