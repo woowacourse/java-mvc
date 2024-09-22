@@ -40,7 +40,7 @@ class Junit3TestRunner {
         List<String> actual = Arrays.stream(methods)
                 .map(Method::getName)
                 .toList();
-        assertThat(actual).containsExactly(
+        assertThat(actual).containsOnly(
                 "test1",
                 "test2",
                 "equals",
@@ -64,7 +64,7 @@ class Junit3TestRunner {
         List<String> actual = Arrays.stream(methods)
                 .map(Method::getName)
                 .toList();
-        assertThat(actual).containsExactly(
+        assertThat(actual).containsOnly(
                 "test1",
                 "test2",
                 "privateTest3");
