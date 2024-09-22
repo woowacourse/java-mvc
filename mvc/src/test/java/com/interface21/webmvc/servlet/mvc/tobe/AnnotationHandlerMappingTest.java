@@ -1,25 +1,37 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 class AnnotationHandlerMappingTest {
 
+    private ConcurrentHashMap<HandlerKey, HandlerExecution> handlerExecutions;
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerExecutions = new ConcurrentHashMap<>();
+        handlerMapping = new AnnotationHandlerMapping(handlerExecutions, "samples");
         handlerMapping.initialize();
     }
 
     @Test
+    @DisplayName("GET 요청에 대한 핸들러를 찾아 ModelAndView를 반환한다.")
     void get() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -35,6 +47,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
+    @DisplayName("POST 요청에 대한 핸들러를 찾아 ModelAndView를 반환한다.")
     void post() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -47,5 +60,40 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    @DisplayName("RequestMapping 어노테이션에 http method가 없는 경우 모든 http method에 대해 핸들러를 등록한다.")
+    void initializeWithNoHttpMethod() {
+        List<HandlerKey> expected = Arrays.stream(RequestMethod.getRequestMethods())
+                .map(requestMethod -> new HandlerKey("/no-method-test", requestMethod))
+                .toList();
+
+        assertThat(handlerExecutions.keySet()).containsAll(expected);
+    }
+
+    @Test
+    @DisplayName("중복된 url과 http method를 등록할 수 없다.")
+    void initializeWithDuplicateUrlAndMethod() {
+        handlerMapping = new AnnotationHandlerMapping(handlerExecutions, "com.interface21.webmvc.servlet.mvc.tobe");
+        assertThatThrownBy(() -> handlerMapping.initialize())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("중복된 url과 http method 입니다.");
+    }
+
+    @Controller
+    public static class TestController {
+
+        @RequestMapping(value = "/test", method = RequestMethod.GET)
+        public ModelAndView duplicatedUrlAndHttpMethod(final HttpServletRequest request,
+                                                       final HttpServletResponse response) {
+            return null;
+        }
+
+        @RequestMapping(value = "/test", method = RequestMethod.GET)
+        public ModelAndView duplicatedUrlAndHttpMethod2(final HttpServletRequest request,
+                                                        final HttpServletResponse response) {
+            return null;
+        }
     }
 }
