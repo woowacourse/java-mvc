@@ -92,6 +92,6 @@ class AnnotationHandlerMappingTest {
 		assertThat(executions.size()).isEqualTo(2);
 		assertThat(executions.keySet())
 			.extracting("url")
-			.containsExactly("/get-test", "/post-test");
+			.containsExactlyInAnyOrder("/get-test", "/post-test");
 	}
 }

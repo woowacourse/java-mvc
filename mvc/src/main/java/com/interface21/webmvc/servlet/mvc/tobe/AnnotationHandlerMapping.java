@@ -1,10 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.reflections.Reflections;
@@ -30,12 +28,10 @@ public class AnnotationHandlerMapping {
 	}
 
 	public void initialize() {
-		for (Object packageName : basePackage) {
-			Reflections reflections = new Reflections((String)packageName);
-			Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-			controllers.forEach(this::initializeWithEachController);
-		}
+		Stream.of(basePackage)
+			.map(p -> new Reflections((String)p))
+			.flatMap(reflection -> reflection.getTypesAnnotatedWith(Controller.class).stream())
+			.forEach(this::initializeWithEachController);
 
 		log.info("Initialized AnnotationHandlerMapping!");
 	}
