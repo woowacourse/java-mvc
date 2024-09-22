@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerKeyTest { // TODO: 캐시 테스트 더 좋은 방식 없나? 질문하기
+class HandlerKeyTest {
 
     @BeforeEach
     void setUp() {
