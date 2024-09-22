@@ -1,11 +1,20 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +29,34 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
+        classes.forEach(aClass ->
+                Arrays.stream(aClass.getDeclaredMethods())
+                        .filter(declaredMethod -> declaredMethod.isAnnotationPresent(RequestMapping.class))
+                        .forEach(declaredMethod -> addHandler(aClass, declaredMethod)));
+        log.info("init handlerExecutions: {}", handlerExecutions);
+    }
+
+    private void addHandler(final Class<?> aClass, final Method method) {
+        final RequestMapping request = method.getAnnotation(RequestMapping.class);
+        final var requestMethods = request.method().length == 0 ? RequestMethod.values() : request.method();
+        for (final var requestMethod : requestMethods) {
+            final var key = new HandlerKey(request.value(), requestMethod);
+            validateDuplicate(key);
+            final var handler = ConstructorGenerator.generate(aClass);
+            handlerExecutions.put(key, new HandlerExecution(handler, method));
+        }
+    }
+
+    private void validateDuplicate(final HandlerKey key) {
+        if (handlerExecutions.containsKey(key)) {
+            throw new IllegalStateException("중복된 매핑 요청입니다.");
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final var handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.getByValue(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
     }
 }
