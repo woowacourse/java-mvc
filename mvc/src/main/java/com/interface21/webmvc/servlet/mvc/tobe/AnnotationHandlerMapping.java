@@ -66,14 +66,15 @@ public class AnnotationHandlerMapping {
 
     private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
-        if(requestMethods.length == 0) {
+        if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
 
         return requestMethods;
     }
 
-    private void initializeHandlerExecution(Object controller, Method method, RequestMethod[] requestMethods, String url) {
+    private void initializeHandlerExecution(Object controller, Method method, RequestMethod[] requestMethods,
+                                            String url) {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
@@ -86,6 +87,11 @@ public class AnnotationHandlerMapping {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        return handlerExecutions.get(handlerKey);
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        if (handlerExecution == null) {
+            throw new IllegalArgumentException("handlerKey에 매핑되는 handlerExecution이 존재하지 않습니다. (handlerKey: %s)"
+                    .formatted(handlerKey));
+        }
+        return handlerKey;
     }
 }
