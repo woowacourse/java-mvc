@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    public static final String CONTROLLER_PACKAGE = "com.techcourse.controller";
+    private static final String CONTROLLER_PACKAGE = "com.techcourse.controller";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
