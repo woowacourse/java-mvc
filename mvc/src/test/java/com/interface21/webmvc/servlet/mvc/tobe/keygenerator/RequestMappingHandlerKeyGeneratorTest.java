@@ -12,12 +12,12 @@ import java.lang.reflect.Method;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class RequestMappingKeyMakerTest {
+class RequestMappingHandlerKeyGeneratorTest {
 
     @Test
     @DisplayName("RequestMethod가 없는 경우 모든 RequestMethod를 매핑하여 저장한다.")
     void makeKeys_WhenNoRequestMethod() throws NoSuchMethodException {
-        RequestMappingKeyMaker requestMappingKeyMaker = new RequestMappingKeyMaker();
+        RequestMappingHandlerKeyGenerator requestMappingKeyMaker = new RequestMappingHandlerKeyGenerator();
         Class<?> clazz = TestController.class;
         Method method = clazz.getDeclaredMethod("findUserName", HttpServletRequest.class, HttpServletResponse.class);
 

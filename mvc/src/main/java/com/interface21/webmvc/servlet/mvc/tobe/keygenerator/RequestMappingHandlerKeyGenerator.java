@@ -7,7 +7,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class RequestMappingKeyMaker implements KeyMaker {
+public class RequestMappingHandlerKeyGenerator implements HandlerKeyGenerator {
 
     public static final int EMPTY_METHOD_LENGTH = 0;
 

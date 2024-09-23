@@ -4,7 +4,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 
 import java.lang.reflect.Method;
 
-public interface KeyMaker {
+public interface HandlerKeyGenerator {
 
     boolean hasAnnotation(Method method);
 

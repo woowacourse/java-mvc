@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class HandlerKeyMakerMappingTest {
+class HandlerKeyGeneratorMappingTest {
 
     @Test
     @DisplayName("Handler Key를 만들수 있는 메이커가 없는 경우 에러를 발생한다.")
@@ -16,7 +16,7 @@ class HandlerKeyMakerMappingTest {
         Class<?> clazz = TestController.class;
         Method method = clazz.getDeclaredMethod("noAnnotationMethod");
 
-        assertThatThrownBy(() -> new HandlerKeyMakerMapping().match(method))
+        assertThatThrownBy(() -> new HandlerKeyGeneratorMapping().match(method))
                 .isInstanceOf(IllegalStateException.class);
     }
 }

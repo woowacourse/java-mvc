@@ -2,8 +2,8 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.HandlerKeyMakerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.KeyMaker;
+import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.HandlerKeyGenerator;
+import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.HandlerKeyGeneratorMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -45,11 +45,11 @@ public class AnnotationHandlerMapping {
     }
 
     private void initMethodMapping(Method method) {
-        KeyMaker keyMaker = new HandlerKeyMakerMapping().match(method);
-        if (keyMaker == null) {
+        HandlerKeyGenerator handlerKeyGenerator = new HandlerKeyGeneratorMapping().match(method);
+        if (handlerKeyGenerator == null) {
             return;
         }
-        HandlerKey[] handlerKeys = keyMaker.makeKeys(method);
+        HandlerKey[] handlerKeys = handlerKeyGenerator.makeKeys(method);
 
         for (HandlerKey handlerKey : handlerKeys) {
             validateNoDuplicateHandler(handlerKey);
