@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import java.util.Map;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
             View jspView = new JspView(viewName);
-            jspView.render(null, request, response);
+            jspView.render(Map.of(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
