@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.asis.NotFoundController;
 import com.techcourse.controller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,11 @@ public class ManualHandlerMapping {
 
     public Controller getHandler(final String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+
+        if (controllers.containsKey(requestURI)) {
+            return controllers.get(requestURI);
+        }
+
+        return new NotFoundController();
     }
 }

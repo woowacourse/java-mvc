@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import jakarta.el.MethodNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final String NOT_FOUND_HANDLER_NAME = "handleNotFound";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -40,7 +42,25 @@ public class AnnotationHandlerMapping {
         String uri = request.getRequestURI();
 
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-        return handlerExecutions.get(handlerKey);
+
+        if (handlerExecutions.containsKey(handlerKey)) {
+            return handlerExecutions.get(handlerKey);
+        }
+
+        return createNotFoundHandlerExecution();
+    }
+
+    private HandlerExecution createNotFoundHandlerExecution() {
+        try {
+            DefaultController defaultController = DefaultController.getInstance();
+            Method notFoundMethod = Arrays.stream(defaultController.getClass().getDeclaredMethods())
+                    .filter(method -> method.getName().equals(NOT_FOUND_HANDLER_NAME))
+                    .findAny()
+                    .orElseThrow(MethodNotFoundException::new);
+            return new HandlerExecution(notFoundMethod, defaultController);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private Set<Class<?>> findControllerClasses() {
