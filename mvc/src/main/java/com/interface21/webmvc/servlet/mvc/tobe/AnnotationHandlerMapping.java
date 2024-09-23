@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
-        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.of(requestMethod));
+        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (Objects.isNull(handlerExecution)) {
             log.warn("No handler found for request URI: {} and method: {}", requestURI, requestMethod);
