@@ -49,9 +49,7 @@ public class AnnotationHandlerMapping {
     }
 
     private void initializeHandlerExecutions(Class<?> controllerClass) {
-        List<Method> mapperMethods = findMapperMethods(controllerClass);
-
-        for (Method mapperMethod : mapperMethods) {
+        for (Method mapperMethod : findMapperMethods(controllerClass)) {
             addMappings(mapperMethod);
         }
     }
