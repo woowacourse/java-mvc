@@ -4,7 +4,6 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+
         Reflections reflections = new Reflections(basePackage, Scanners.TypesAnnotated);
         reflections.getTypesAnnotatedWith(Controller.class)
                 .forEach(controller -> {
@@ -35,28 +35,30 @@ public class AnnotationHandlerMapping {
                         registerControllerHandlers(controller);
                     } catch (Exception e) {
                         log.error("Failed to register controller handlers", e);
-                        throw new RuntimeException(e);
                     }
                 });
     }
 
-    private void registerControllerHandlers(Class<?> controllerClass) throws Exception {
-        for (Method method : controllerClass.getMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                Object controller = createControllerInstance(controllerClass);
-                registerHandlerExecutions(controller, method, requestMapping);
-            }
+    private void registerControllerHandlers(Class<?> controllerClass) {
+        Method[] methods = controllerClass.getMethods();
+
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerHandlerExecutions(
+                        createControllerInstance(controllerClass), method
+                ));
+    }
+
+    private Object createControllerInstance(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to create controller instance", e);
         }
     }
 
-    private Object createControllerInstance(Class<?> controllerClass) throws Exception {
-        Constructor<?> constructor = controllerClass.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        return constructor.newInstance();
-    }
-
-    private void registerHandlerExecutions(Object controller, Method method, RequestMapping requestMapping) {
+    private void registerHandlerExecutions(Object controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String url = requestMapping.value();
 
         RequestMethod[] requestMethods = requestMapping.method();
@@ -65,7 +67,7 @@ public class AnnotationHandlerMapping {
         }
 
         Arrays.stream(requestMethods)
-                    .forEach(requestMethod -> registerHandlerExecution(url, requestMethod, controller, method));
+                .forEach(requestMethod -> registerHandlerExecution(url, requestMethod, controller, method));
     }
 
     private void registerHandlerExecution(String url, RequestMethod requestMethod, Object controller, Method method) {

@@ -19,13 +19,13 @@ public class HandlerExecution {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Object[] args = Arrays.stream(parameterTypes)
-                .map(parameterType -> getArgument(request, response, parameterType))
+                .map(parameterType -> resolveArgument(request, response, parameterType))
                 .toArray();
 
         return (ModelAndView) method.invoke(controller, args);
     }
 
-    private Object getArgument(HttpServletRequest request, HttpServletResponse response, Class<?> parameterType) {
+    private Object resolveArgument(HttpServletRequest request, HttpServletResponse response, Class<?> parameterType) {
         if (parameterType.isAssignableFrom(HttpServletRequest.class)) {
             return request;
         }
