@@ -15,7 +15,7 @@ import java.util.*;
 
 public class AnnotationHandlerMapping {
 
-    private static final int REQUEST_METHOD_ARRAY_EMPTY = 0;
+    private static final int EMPTY_REQUEST_METHOD_SIZE = 0;
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -56,7 +56,7 @@ public class AnnotationHandlerMapping {
     private RequestMethod[] determineRequestMethods(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
 
-        if (requestMethods.length == REQUEST_METHOD_ARRAY_EMPTY) {
+        if (requestMethods.length == EMPTY_REQUEST_METHOD_SIZE) {
             requestMethods = RequestMethod.values();
         }
         return requestMethods;
