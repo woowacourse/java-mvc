@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,7 @@ class HandlerMappingsTest {
 
     @BeforeEach
     void setUp() {
-        handlerMappings = new HandlerMappings(Set.of(new AnnotationHandlerMapping("samples.valid")));
+        handlerMappings = new HandlerMappings(List.of(new AnnotationHandlerMapping("samples.valid")));
     }
 
     @DisplayName("요청을 처리할 Handler가 존재하지 않으면 예외가 발생한다.")

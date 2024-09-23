@@ -11,8 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +29,17 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet() {
     }
 
+    private static HandlerMapping createInstance(Class<? extends HandlerMapping> mappingClass) {
+        try {
+            return mappingClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void init() {
-        Set<HandlerMapping> mappings = getCustomMappings();
+        List<HandlerMapping> mappings = new ArrayList<>(getCustomMappings());
         mappings.add(new AnnotationHandlerMapping(CONTROLLER_PACKAGE));
         handlerMappings = new HandlerMappings(mappings);
         handlerAdapters = new HandlerAdapters(
@@ -40,20 +48,12 @@ public class DispatcherServlet extends HttpServlet {
         );
     }
 
-    private Set<HandlerMapping> getCustomMappings() {
+    private List<HandlerMapping> getCustomMappings() {
         Reflections reflections = new Reflections("com.techcourse");
         return reflections.getSubTypesOf(HandlerMapping.class)
                 .stream()
                 .map(DispatcherServlet::createInstance)
-                .collect(Collectors.toSet());
-    }
-
-    private static HandlerMapping createInstance(Class<? extends HandlerMapping> mappingClass) {
-        try {
-            return mappingClass.getConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+                .toList();
     }
 
     @Override
