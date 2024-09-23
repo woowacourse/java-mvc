@@ -29,15 +29,18 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+        logRequest(request);
         try {
             final Controller controller = manualHandlerMapping.getHandler(request.getRequestURI());
             final String viewName = controller.execute(request, response);
             renderView(viewName, request, response);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            handleException(e);
         }
+    }
+
+    private void logRequest(final HttpServletRequest request) {
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
     }
 
     private void renderView(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
@@ -45,5 +48,10 @@ public class DispatcherServlet extends HttpServlet {
         final JspView jspView = new JspView(viewName);
         final ModelAndView modelAndView = new ModelAndView(jspView);
         jspView.render(modelAndView.getModel(), request, response);
+    }
+
+    private void handleException(final Throwable e) throws ServletException {
+        log.error("Exception : {}", e.getMessage(), e);
+        throw new ServletException(e.getMessage(), e);
     }
 }
