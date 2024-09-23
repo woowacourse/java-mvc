@@ -1,10 +1,9 @@
 package com.interface21.webmvc.servlet.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.interface21.webmvc.servlet.exception.NotFoundHandlerException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,9 +26,9 @@ class HandlerMappingRegistryTest {
         registry.addHandlerMapping(new StringHandlerMapping());
         registry.addHandlerMapping(new NeverHandlerMapping());
 
-        Object actual = registry.getHandler(request);
+        Optional<Object> actual = registry.getHandler(request);
 
-        assertThat(actual).isEqualTo(HANDLER);
+        assertThat(actual).contains(HANDLER);
     }
 
     @Test
@@ -38,8 +37,9 @@ class HandlerMappingRegistryTest {
         registry.addHandlerMapping(new NeverHandlerMapping());
         registry.addHandlerMapping(new NeverHandlerMapping());
 
-        assertThatThrownBy(() -> registry.getHandler(request))
-                .isInstanceOf(NotFoundHandlerException.class);
+        Optional<Object> actual = registry.getHandler(request);
+
+        assertThat(actual).isEmpty();
     }
 
     private static class StringHandlerMapping implements HandlerMapping {
