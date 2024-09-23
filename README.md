@@ -28,4 +28,4 @@
 - [x] handlerExecutions 초기화
   - [x] basepackage sample 중복 삭제
   - [x] mapping 범위 컨트롤러로 축소
-- [ ] reflection test runner 스트림을 for문으로 변경
+- [x] reflection test runner 스트림을 for문으로 변경
