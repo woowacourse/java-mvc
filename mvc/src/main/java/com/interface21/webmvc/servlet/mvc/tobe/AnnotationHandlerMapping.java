@@ -6,7 +6,9 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -36,14 +38,14 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerRequestMappings(Class<?> controllerClass) throws Exception {
-        Method[] methods = controllerClass.getDeclaredMethods();
+        List<Method> methods = Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
         for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                String url = requestMapping.value();
-                RequestMethod[] requestMethods = requestMapping.method();
-                registerHandlerExecutions(controllerClass, method, url, requestMethods);
-            }
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            String url = requestMapping.value();
+            RequestMethod[] requestMethods = requestMapping.method();
+            registerHandlerExecutions(controllerClass, method, url, requestMethods);
         }
     }
 
