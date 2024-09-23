@@ -12,7 +12,7 @@ class Junit4TestRunner {
 
         for (Method method : clazz.getMethods()) {
             if (method.isAnnotationPresent(MyTest.class)) {
-                method.invoke(clazz.newInstance());
+                method.invoke(clazz.getDeclaredConstructor().newInstance());
             }
         }
     }

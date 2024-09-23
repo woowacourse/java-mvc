@@ -40,7 +40,9 @@ class ReflectionTest {
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
         final Object student = new Student();
         final Field[] fields = student.getClass().getDeclaredFields();
-        final List<String> actualFieldNames = Arrays.stream(fields).map(Field::getName).toList();
+        final List<String> actualFieldNames = Arrays.stream(fields)
+                .map(Field::getName)
+                .toList();
 
         assertThat(actualFieldNames).contains("name", "age");
     }
@@ -49,7 +51,9 @@ class ReflectionTest {
     void givenClass_whenGetsMethods_thenCorrect() {
         final Class<?> animalClass = Student.class;
         final Method[] methods = animalClass.getDeclaredMethods();
-        final List<String> actualMethods = Arrays.stream(methods).map(method -> method.getName()).toList();
+        final List<String> actualMethods = Arrays.stream(methods)
+                .map(Method::getName)
+                .toList();
 
         assertThat(actualMethods)
                 .hasSize(3)
@@ -120,8 +124,8 @@ class ReflectionTest {
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         final Class<?> studentClass = Student.class;
-        final Student student = (Student) studentClass.newInstance();
-        final Field field = student.getClass().getDeclaredField("age");
+        final Student student = (Student) studentClass.getDeclaredConstructor().newInstance();
+        final Field field = studentClass.getDeclaredField("age");
 
         field.setAccessible(true);
 

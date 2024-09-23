@@ -11,7 +11,7 @@ class Junit3TestRunner {
         Class<Junit3Test> clazz = Junit3Test.class;
         for (Method method : clazz.getMethods()) {
             if (method.getName().startsWith("test")) {
-                method.invoke(clazz.newInstance());
+                method.invoke(clazz.getDeclaredConstructor().newInstance());
             }
         }
     }
