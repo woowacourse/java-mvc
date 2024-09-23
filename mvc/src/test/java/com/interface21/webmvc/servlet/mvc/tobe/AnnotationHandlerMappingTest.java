@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
@@ -31,12 +31,9 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
+        final HttpServletRequest request = new MockHttpServletRequest("GET", "/get-test");
+        request.setAttribute("id", "gugu");
         final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
@@ -46,12 +43,9 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
+        final HttpServletRequest request = new MockHttpServletRequest("POST", "/post-test");
+        request.setAttribute("id", "gugu");
         final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
@@ -63,11 +57,8 @@ class AnnotationHandlerMappingTest {
     @EnumSource(value = RequestMethod.class)
     @ParameterizedTest
     void givenMethodAbsent_whenMapping_thenAllMethod(RequestMethod requestMethod) throws Exception {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletRequest request = new MockHttpServletRequest(requestMethod.name(), "/without-method");
         final HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/without-method");
-        when(request.getMethod()).thenReturn(requestMethod.name());
 
         final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
 

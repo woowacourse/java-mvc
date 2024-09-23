@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import samples.TestController;
 
 import java.lang.reflect.Method;
@@ -22,12 +23,10 @@ class HandlerExecutionsTest {
     void mappingHandler() {
         final Method method = mock(Method.class);
         final RequestMapping requestMapping = mock(RequestMapping.class);
-        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletRequest request = new MockHttpServletRequest("GET", "/get-test");
 
         when(requestMapping.value()).thenReturn("/get-test");
         when(requestMapping.method()).thenReturn(new RequestMethod[]{RequestMethod.GET});
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
 
         handlerExecutions.mappingHandler(TestController.class, method, requestMapping);
 
