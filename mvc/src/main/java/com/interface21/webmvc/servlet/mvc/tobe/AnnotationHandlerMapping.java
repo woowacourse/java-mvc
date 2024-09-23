@@ -21,13 +21,13 @@ public class AnnotationHandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) throws Exception {
+    public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
         initialize();
     }
 
-    public void initialize() throws Exception {
+    public void initialize() {
         for (Class<?> controllerClass : findControllerClasses()) {
             initializeHandlerExecutions(controllerClass);
         }
@@ -48,12 +48,11 @@ public class AnnotationHandlerMapping {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
-    private void initializeHandlerExecutions(Class<?> controllerClass) throws Exception {
+    private void initializeHandlerExecutions(Class<?> controllerClass) {
         List<Method> mapperMethods = findMapperMethods(controllerClass);
-        Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
 
         for (Method mapperMethod : mapperMethods) {
-            addMappings(mapperMethod, controllerInstance);
+            addMappings(mapperMethod);
         }
     }
 
@@ -63,8 +62,10 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void addMappings(Method mapperMethod, Object controllerInstance) {
+    private void addMappings(Method mapperMethod) {
         RequestMapping annotation = mapperMethod.getAnnotation(RequestMapping.class);
+        Object controllerInstance = getControllerInstance(mapperMethod);
+
         String uri = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
 
@@ -72,6 +73,16 @@ public class AnnotationHandlerMapping {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(mapperMethod, controllerInstance);
             handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private Object getControllerInstance(Method method) {
+        try {
+            return method.getDeclaringClass()
+                    .getDeclaredConstructor()
+                    .newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("해당 method의 인스턴스를 생성할 수 없습니다.");
         }
     }
 }
