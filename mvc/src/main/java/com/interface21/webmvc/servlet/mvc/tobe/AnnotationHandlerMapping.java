@@ -38,10 +38,10 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String url = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.from(request.getMethod());
+        String uri = request.getRequestURI();
 
-        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
 
