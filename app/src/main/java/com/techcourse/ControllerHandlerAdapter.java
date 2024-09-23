@@ -7,7 +7,7 @@ import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ManualHandlerAdapter implements HandlerAdapter<Controller> {
+public class ControllerHandlerAdapter implements HandlerAdapter<Controller> {
 
     @Override
     public Class<Controller> getSupportedClass() {
