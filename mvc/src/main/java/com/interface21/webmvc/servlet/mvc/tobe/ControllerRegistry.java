@@ -13,6 +13,9 @@ public class ControllerRegistry {
     private static final Logger log = LoggerFactory.getLogger(ControllerRegistry.class);
     private static final Map<Class<?>, Object> controllers = new HashMap<>();
 
+    private ControllerRegistry() {
+    }
+
     public static Object getOrCreateController(Class<?> controller) {
         if (controllers.containsKey(controller)) {
             return controllers.get(controller);
