@@ -41,6 +41,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("HandlerKey : {}", handlerKey));
     }
 
     private Object instantiate(Class<?> clazz) {
