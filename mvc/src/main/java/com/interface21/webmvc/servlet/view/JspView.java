@@ -12,6 +12,8 @@ public class JspView implements View {
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     public static final String REDIRECT_PREFIX = "redirect:";
+    private static final String RESOURCE_PATH = "/META-INF/jsp/";
+    private static final String FILE_EXTENSION = ".jsp";
 
     private final String viewName;
 
@@ -29,7 +31,7 @@ public class JspView implements View {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
-        String jspPath = "/META-INF/jsp/" + viewName + ".jsp";
+        String jspPath = RESOURCE_PATH + viewName + FILE_EXTENSION;
         request.getRequestDispatcher(jspPath).forward(request, response);
     }
 }
