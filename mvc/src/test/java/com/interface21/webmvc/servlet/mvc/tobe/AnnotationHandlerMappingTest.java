@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -72,5 +73,21 @@ class AnnotationHandlerMappingTest {
 
         assertThat(handlerExecution).isNotNull();
         assertThat(modelAndView).isNotNull();
+    }
+
+    @DisplayName("Request URI에 해당하는 핸들러를 찾지 못할 경우 예외가 발생한다.")
+    @Test
+    void throwExceptionWhenHandlerNotFoundForRequestURI() {
+        // given
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        String requestURI = "/not-found-handler";
+        String method = "GET";
+
+        when(request.getRequestURI()).thenReturn(requestURI);
+        when(request.getMethod()).thenReturn(method);
+
+        // when & then
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
