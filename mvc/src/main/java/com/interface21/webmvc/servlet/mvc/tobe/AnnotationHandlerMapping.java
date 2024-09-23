@@ -56,13 +56,21 @@ public class AnnotationHandlerMapping {
     private void registerHandlerByMethod(final Class<?> controller, final Method method)
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        final String uri = requestMapping.value();
+        String uri = resolveUri(requestMapping);
         RequestMethod[] requestMethods = requestMapping.method();
 
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
         registerHandler(controller, method, requestMethods, uri);
+    }
+
+    private String resolveUri(final RequestMapping requestMapping) {
+        String uri = requestMapping.value();
+        if (uri.isEmpty()) {
+            return "/";
+        }
+        return uri;
     }
 
     private void registerHandler(final Class<?> controller, final Method method, final RequestMethod[] requestMethods,
