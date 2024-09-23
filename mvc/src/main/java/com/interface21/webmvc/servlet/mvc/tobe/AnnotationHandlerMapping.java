@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
@@ -36,16 +37,16 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (Objects.isNull(handlerExecution)) {
             log.warn("No handler found for request URI: {} and method: {}", requestURI, requestMethod);
-            return null;
+            return Optional.empty();
         }
-        return handlerExecution;
+        return Optional.of(handlerExecution);
     }
 
     private void register(final Class<?> controllerClass) {
@@ -53,7 +54,6 @@ public class AnnotationHandlerMapping {
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(method -> assignHandlerExecution(controllerClass, method));
     }
-
 
     private void assignHandlerExecution(Class<?> controllerClass, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);

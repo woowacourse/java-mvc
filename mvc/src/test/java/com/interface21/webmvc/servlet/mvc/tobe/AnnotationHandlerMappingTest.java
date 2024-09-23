@@ -57,8 +57,12 @@ class AnnotationHandlerMappingTest {
     }
 
     private void handleRequestAndAssert(HttpServletRequest request, HttpServletResponse response, String expectedId) throws Exception {
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-        assertThat(modelAndView.getObject("id")).isEqualTo(expectedId);
+        if (handlerMapping.getHandler(request).isPresent()) {
+            final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request).get();
+            final var modelAndView = handlerExecution.handle(request, response);
+            assertThat(modelAndView.getObject("id")).isEqualTo(expectedId);
+            return;
+        }
+        throw new RuntimeException();
     }
 }
