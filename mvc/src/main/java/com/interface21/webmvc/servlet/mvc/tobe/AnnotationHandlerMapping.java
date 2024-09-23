@@ -70,7 +70,7 @@ public class AnnotationHandlerMapping {
                     try {
                         return handleUnsupportedMethods(request, handlerKey);
                     } catch (UnsupportedMethodException | UnsupportedRequestURIException e) {
-                        throw new IllegalArgumentException("오류", e);
+                        throw new IllegalArgumentException("오류 - " + e.getMessage(), e);
                     }
                 });
     }

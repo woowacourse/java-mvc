@@ -79,11 +79,15 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("지원하지 않는 엔드포인트로 GET 요청이 들어왔을 때 예외를 반환한다.")
-    void get_invalidEndpoint() {
+    void get_invalidEndpoint() throws Exception {
         //given, when, then
         assertThatThrownBy(() -> handlerMappingTest("/error", GET))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasCauseExactlyInstanceOf(UnsupportedRequestURIException.class);
+                .hasCauseExactlyInstanceOf(UnsupportedRequestURIException.class)
+                .extracting(Throwable::getCause)
+                .extracting(Throwable::getMessage)
+                .asString()
+                .contains("requestURI");
     }
 
     @Test
@@ -93,6 +97,5 @@ class AnnotationHandlerMappingTest {
         assertThatThrownBy(() -> handlerMappingTest("/get-test", POST))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasCauseExactlyInstanceOf(UnsupportedMethodException.class);
-
     }
 }
