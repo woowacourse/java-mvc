@@ -62,7 +62,7 @@ public class AnnotationHandlerMapping {
 
     private void addMappings(Method mapperMethod) {
         RequestMapping annotation = mapperMethod.getAnnotation(RequestMapping.class);
-        Object controllerInstance = getControllerInstance(mapperMethod);
+        Object controllerInstance = findControllerInstance(mapperMethod);
 
         String uri = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
@@ -74,7 +74,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Object getControllerInstance(Method method) {
+    private Object findControllerInstance(Method method) {
         try {
             return method.getDeclaringClass()
                     .getDeclaredConstructor()
