@@ -28,12 +28,10 @@ public class AnnotationHandlerMapping {
     public void initialize() throws Exception {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        for (Object basePackage : basePackage) {
-            Reflections reflections = new Reflections(basePackage.toString());
-            Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            for (Class<?> controllerClass : controllerClasses) {
-                registerRequestMappings(controllerClass);
-            }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controllerClass : controllerClasses) {
+            registerRequestMappings(controllerClass);
         }
     }
 
