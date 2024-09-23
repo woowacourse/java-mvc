@@ -38,9 +38,9 @@ public class AnnotationHandlerMapping {
     private void reflect(Class<?> controller) {
         try {
             Object instance = controller.getConstructor().newInstance();
-            Method[] methods = controller.getDeclaredMethods();
-
-            Arrays.stream(methods).forEach(method -> addHandlerExecution(instance, method));
+            Arrays.stream(controller.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> addHandlerExecution(instance, method));
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
