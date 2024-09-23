@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
@@ -10,15 +9,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
+
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private static final Class<Controller> CONTROLLER_TYPE = Controller.class;
     private static final Class<RequestMapping> REQUEST_MAPPING_MARKER = RequestMapping.class;
 
     private final Object[] basePackage;
@@ -31,26 +30,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CONTROLLER_TYPE);
+        Reflections reflections = new Reflections(basePackage, Scanners.TypesAnnotated);
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Class<?> clazz : classes) {
-            Object instance = instantiate(clazz);
-            List<Method> handlerMethods = getRequestMappingMethods(clazz);
+        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Object instance = entry.getValue();
+            List<Method> handlerMethods = getRequestMappingMethods(entry.getKey());
             handlerMethods.forEach(method -> putAllMatchedHandlerExecutionOf(instance, method));
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet()
                 .forEach(handlerKey -> log.info("HandlerKey : {}", handlerKey));
-    }
-
-    private Object instantiate(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("컨트롤러를 인스턴스화 할 수 없습니다.: " + clazz, e);
-        }
     }
 
     private List<Method> getRequestMappingMethods(Class<?> clazz) {
