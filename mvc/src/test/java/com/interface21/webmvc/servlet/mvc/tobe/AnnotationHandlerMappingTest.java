@@ -79,6 +79,22 @@ class AnnotationHandlerMappingTest {
 		assertThat(handlerExecution).isNull();
 	}
 
+	@DisplayName("RequestMapping에 메서드를 지정하지 않아도 처리할 수 있다.")
+	@Test
+	void noRequestMethod() throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
+
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/no-request-method");
+		when(request.getMethod()).thenReturn("GET");
+
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+		final var modelAndView = handlerExecution.handle(request, response);
+
+		assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+	}
+
 	@DisplayName("핸들러의 정상 등록을 확인한다.")
 	@Test
 	void initialize() throws Exception {
