@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 class JsonViewTest {
 
     private final JsonView jsonView = new JsonView();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @DisplayName("model에 데이터가 1개이면 해당 값의 객체만 Json으로 변환하여 반환한다.")
     @Test
@@ -52,7 +54,9 @@ class JsonViewTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(outputStream).print(captor.capture());
 
-        assertThat(captor.getValue()).isEqualTo("{\"account\":\"gugu\",\"password\":\"1234\"}");
+        Map<String, Object> actualMap = objectMapper.readValue(captor.getValue(), Map.class);
+        Map<String, Object> expectedMap = objectMapper.readValue("{\"account\":\"gugu\",\"password\":\"1234\"}", Map.class);
+        assertThat(actualMap).isEqualTo(expectedMap);
     }
 
     private static class User {
