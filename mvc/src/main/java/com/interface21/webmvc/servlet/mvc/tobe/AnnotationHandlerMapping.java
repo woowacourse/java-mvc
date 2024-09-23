@@ -19,8 +19,11 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
+
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HashMap<Method, Object> cache = new HashMap<>();
+
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -71,7 +74,10 @@ public class AnnotationHandlerMapping {
 
     private HandlerExecution createHandlerExecution(Method method) {
         try {
-            return new HandlerExecution(method.getDeclaringClass().getConstructor().newInstance(), method);
+            if (!cache.containsKey(method)) {
+                cache.put(method, method.getDeclaringClass().getConstructor().newInstance());
+            }
+            return new HandlerExecution(cache.get(method), method);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
