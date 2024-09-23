@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.keymaker;
+package com.interface21.webmvc.servlet.mvc.tobe.keygenerator;
 
 import java.lang.reflect.Method;
 import java.util.List;

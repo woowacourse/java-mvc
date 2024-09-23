@@ -2,8 +2,8 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.tobe.keymaker.HandlerKeyMakerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.keymaker.KeyMaker;
+import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.HandlerKeyMakerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.KeyMaker;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;

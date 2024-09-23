@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.keymaker;
+package com.interface21.webmvc.servlet.mvc.tobe.keygenerator;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
