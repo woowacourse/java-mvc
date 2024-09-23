@@ -20,7 +20,7 @@ class HandlerExecutionTest {
     private static final Logger log = LoggerFactory.getLogger(HandlerExecutionTest.class);
     private static final JspView jspView = new JspView("test");
 
-    static class TestViewController {
+    public static class TestViewController {
 
         public TestViewController() {
         }
