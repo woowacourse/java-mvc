@@ -3,19 +3,19 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final Class<Controller> CONTROLLER_TYPE = Controller.class;
@@ -29,6 +29,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CONTROLLER_TYPE);
@@ -75,9 +76,10 @@ public class AnnotationHandlerMapping {
         return requestMethods.length == 0;
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        log.debug("(Annotation) Request Mapping Uri : {}", request.getRequestURI());
         HandlerKey handlerKey = HandlerKey.from(request);
-        return Optional.ofNullable(handlerExecutions.get(handlerKey))
-                .orElseThrow(() -> new IllegalArgumentException(handlerKey + "과(와) 매칭되는 핸들러를 찾을 수 없습니다."));
+        return handlerExecutions.get(handlerKey);
     }
 }
