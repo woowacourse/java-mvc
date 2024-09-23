@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -60,14 +60,14 @@ class AnnotationHandlerMappingTest {
     }
 
     @DisplayName("매핑 method가 없다면 모든 method에 대해 매핑한다.")
-    @ValueSource(strings = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"})
+    @EnumSource(value = RequestMethod.class)
     @ParameterizedTest
-    void givenMethodAbsent_whenMapping_thenAllMethod(String requestMethod) throws Exception {
+    void givenMethodAbsent_whenMapping_thenAllMethod(RequestMethod requestMethod) throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/without-method");
-        when(request.getMethod()).thenReturn(requestMethod);
+        when(request.getMethod()).thenReturn(requestMethod.name());
 
         final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
 
