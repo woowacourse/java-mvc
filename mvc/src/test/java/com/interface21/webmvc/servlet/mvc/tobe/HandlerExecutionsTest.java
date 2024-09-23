@@ -7,11 +7,11 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.AnnotationController;
 
 class HandlerExecutionsTest {
 
-    private final TestController controller = new TestController();
+    private final AnnotationController controller = new AnnotationController();
 
     @DisplayName("컨트롤러에 존재하는 handler 를 저장한다.")
     @Test

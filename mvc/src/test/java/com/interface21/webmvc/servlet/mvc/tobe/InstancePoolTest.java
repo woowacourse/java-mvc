@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import samples.AnnotationController;
 
 class InstancePoolTest {
 
@@ -14,7 +14,7 @@ class InstancePoolTest {
     @DisplayName("한번 생성한 인스턴스는 동일한 인스턴스를 반환한다.")
     @Test
     void getInstance() {
-        Class<?> clazz = TestController.class;
+        Class<?> clazz = AnnotationController.class;
 
         Object instance1 = instancePool.getInstance(clazz);
         Object instance2 = instancePool.getInstance(clazz);
