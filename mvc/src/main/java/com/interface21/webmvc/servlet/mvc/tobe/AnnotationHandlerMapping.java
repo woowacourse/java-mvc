@@ -55,8 +55,11 @@ public class AnnotationHandlerMapping {
     private void registerHandlerExecution(Object controllerInstance, Method method) {
         HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        HandlerKey.createHandlerKeys(requestMapping.value(), requestMapping.method())
-                .forEach(handlerKey -> registerHandlerExecution(handlerKey, handlerExecution));
+        String url = requestMapping.value();
+
+        Arrays.stream(requestMapping.method())
+                .forEach(requestMethod ->
+                        registerHandlerExecution(new HandlerKey(url, requestMethod), handlerExecution));
     }
 
     private void registerHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {

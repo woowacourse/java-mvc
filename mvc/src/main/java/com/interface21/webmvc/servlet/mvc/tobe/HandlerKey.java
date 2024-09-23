@@ -1,8 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class HandlerKey {
@@ -13,12 +11,6 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
-    }
-
-    public static List<HandlerKey> createHandlerKeys(String url, RequestMethod[] requestMethods) {
-        return Arrays.stream(requestMethods)
-                .map(requestMethod -> new HandlerKey(url, requestMethod))
-                .toList();
     }
 
     @Override
