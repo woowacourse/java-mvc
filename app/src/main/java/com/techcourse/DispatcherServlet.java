@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String method = request.getMethod();
         String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", method, requestURI);
@@ -69,5 +69,13 @@ public class DispatcherServlet extends HttpServlet {
                 .filter(adapter -> adapter.canHandle(handler))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("요청에 해당하는 핸들러 어댑터를 찾을 수 없습니다."));
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 }
