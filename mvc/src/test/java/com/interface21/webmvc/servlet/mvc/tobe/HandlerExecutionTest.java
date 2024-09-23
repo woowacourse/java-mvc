@@ -34,7 +34,7 @@ class HandlerExecutionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("gugu")).isEqualTo("haha");
     }
@@ -48,7 +48,7 @@ class HandlerExecutionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("gugu")).isEqualTo("haha");
     }
@@ -62,7 +62,7 @@ class HandlerExecutionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("gugu")).isEqualTo("haha");
     }
@@ -76,7 +76,7 @@ class HandlerExecutionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("gugu")).isEqualTo("haha");
     }
@@ -89,7 +89,7 @@ class HandlerExecutionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("gugu")).isEqualTo("haha");
     }

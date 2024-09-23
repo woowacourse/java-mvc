@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.bean.container.BeanContainer;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -15,12 +14,12 @@ public class HandlerExecution {
         this.handler = handler;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Class<?> clazz = handler.getDeclaringClass();
         Object controller = BeanContainer.getInstance().getBean(clazz);
         Object[] parameters = createParameters(request, response);
 
-        return (ModelAndView) handler.invoke(controller, parameters);
+        return handler.invoke(controller, parameters);
     }
 
     private Object[] createParameters(HttpServletRequest request, HttpServletResponse response) {
