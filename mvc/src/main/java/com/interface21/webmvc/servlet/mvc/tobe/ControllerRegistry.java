@@ -20,12 +20,17 @@ public class ControllerRegistry {
         if (controllers.containsKey(controller)) {
             return controllers.get(controller);
         }
+        Object controllerInstance = makeControllerInstance(controller);
+        controllers.put(controller, controllerInstance);
 
+        return controllerInstance;
+    }
+
+    private static Object makeControllerInstance(Class<?> controller) {
         try {
             Constructor<?> constructor = controller.getConstructor();
             Object controllerInstance = constructor.newInstance();
 
-            controllers.put(controller, controllerInstance);
             return controllerInstance;
         } catch (NoSuchMethodException e) {
             log.error("메서드를 찾지 못했습니다. {}", e.getStackTrace()[0]);
