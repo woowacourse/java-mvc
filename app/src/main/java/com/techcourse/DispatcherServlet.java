@@ -1,8 +1,6 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.HandlerMappings;
@@ -15,22 +13,15 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        handlerMappings = new HandlerMappings(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping(BASE_PACKAGE)
-        );
-        handlerAdapters = new HandlerAdapters(
-                new ManualHandlerAdapter(),
-                new AnnotationHandlerAdapter()
-        );
+    public DispatcherServlet(HandlerMappings handlerMappings, HandlerAdapters handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
