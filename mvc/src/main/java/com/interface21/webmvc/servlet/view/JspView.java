@@ -26,8 +26,8 @@ public class JspView implements View {
 	@Override
 	public void render(final Map<String, ?> model, final HttpServletRequest request,
 		final HttpServletResponse response) throws Exception {
-		if (url.startsWith(JspView.REDIRECT_PREFIX)) {
-			response.sendRedirect(url.substring(JspView.REDIRECT_PREFIX.length()));
+		if (url.startsWith(REDIRECT_PREFIX)) {
+			response.sendRedirect(url.substring(REDIRECT_PREFIX.length()));
 			return;
 		}
 
