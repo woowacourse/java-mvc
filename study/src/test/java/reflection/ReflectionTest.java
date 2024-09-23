@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -90,9 +89,7 @@ class ReflectionTest {
     @Test
     void givenClass_whenGetsPublicFields_thenCorrect() {
         final Class<?> questionClass = Question.class;
-        final Field[] fields = Arrays.stream(questionClass.getDeclaredFields())
-                .filter(field -> Modifier.isPublic(field.getModifiers()))
-                .toArray(Field[]::new);
+        final Field[] fields = questionClass.getFields();
 
         assertThat(fields).hasSize(0);
     }
