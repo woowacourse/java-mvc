@@ -10,10 +10,10 @@ class ControllerRegistryTest {
 
     @Test
     @DisplayName("인스턴스를 저장한 후 호출하면 저장된 인스턴스를 가져온다.")
-    void getOrCreateController() throws Exception {
+    void getOrCreateController() {
         Object controller = ControllerRegistry.getOrCreateController(TestController.class);
         Object afterSaveController = ControllerRegistry.getOrCreateController(TestController.class);
 
-        assertThat(controller.hashCode()).isEqualTo(afterSaveController.hashCode());
+        assertThat(controller).hasSameHashCodeAs(afterSaveController);
     }
 }
