@@ -44,6 +44,10 @@ class HandlerMappingRegistryTest {
 
     private static class StringHandlerMapping implements HandlerMapping {
 
+        @Override
+        public void initialize() {
+        }
+
         @Nullable
         @Override
         public Object getHandler(HttpServletRequest request) {
@@ -52,6 +56,10 @@ class HandlerMappingRegistryTest {
     }
 
     private static class NeverHandlerMapping implements HandlerMapping {
+
+        @Override
+        public void initialize() {
+        }
 
         @Nullable
         @Override

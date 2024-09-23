@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 
 public interface HandlerMapping {
 
+    void initialize();
+
     @Nullable
     Object getHandler(HttpServletRequest request);
 }
