@@ -34,11 +34,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
-            Object instance = entry.getValue();
-            List<Method> handlerMethods = getRequestMappingMethods(entry.getKey());
-            handlerMethods.forEach(method -> putAllMatchedHandlerExecutionOf(instance, method));
-        }
+        controllers.forEach((clazz, instance) -> {
+            List<Method> handlerMethods = getRequestMappingMethods(clazz);
+            registerAllHandlerMethods(instance, handlerMethods);
+        });
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet()
@@ -49,6 +48,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(REQUEST_MAPPING_MARKER))
                 .toList();
+    }
+
+    private void registerAllHandlerMethods(Object instance, List<Method> handlerMethods) {
+        handlerMethods.forEach(method -> putAllMatchedHandlerExecutionOf(instance, method));
     }
 
     private void putAllMatchedHandlerExecutionOf(Object instance, Method method) {
