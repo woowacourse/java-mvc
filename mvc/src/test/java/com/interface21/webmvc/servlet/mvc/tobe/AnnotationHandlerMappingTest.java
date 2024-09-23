@@ -3,7 +3,10 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -20,7 +23,8 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    @DisplayName("GET 요청에 따라 적절한 핸들러를 찾고 실행시킬 수 있다.")
+    void getHandlerAndHandle() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -34,8 +38,26 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "POST", "PUT"})
+    @DisplayName("일치하는 Method가 없는 Handler의 경우 모든 Method가 가능하다.")
+    void handleNoMethodHandler(String method) throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("name")).thenReturn("polla");
+        when(request.getRequestURI()).thenReturn("/no-method-test");
+        when(request.getMethod()).thenReturn(method);
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertThat(modelAndView.getObject("name")).isEqualTo("polla");
+    }
+
     @Test
-    void post() throws Exception {
+    @DisplayName("POST 요청에 따라 적절한 핸들러를 찾고 실행시킬 수 있다.")
+    void postHandlerAndHandle() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
