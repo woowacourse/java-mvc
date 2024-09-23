@@ -33,7 +33,7 @@
 
 2. JspView 클래스를 구현한다
 
-- [ ] DispatcherServlet 클래스의 service 메서드에서 뷰에 대한 처리 하는 부분을 JspView 클래스로 이동
+- [x] DispatcherServlet 클래스의 service 메서드에서 뷰에 대한 처리 하는 부분을 JspView 클래스로 이동
 
 ### 2단계 - 점진적인 리팩터링
 
