@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.Handler;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -12,7 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.ExampleController;
 
-class RequestMappingMethodTest {
+class ControllerMethodTest {
 
     @DisplayName("메서드에 @RequestMapping 어노테이션이 없는 경우 예외가 발생한다.")
     @Test
@@ -20,7 +23,7 @@ class RequestMappingMethodTest {
         Method method = ExampleController.class.getMethod("method3",
                 HttpServletRequest.class, HttpServletResponse.class);
 
-        assertThatThrownBy(() -> new RequestMappingMethod(method))
+        assertThatThrownBy(() -> new ControllerMethod(method))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Method must be annotated with @RequestMapping");
     }
@@ -30,9 +33,9 @@ class RequestMappingMethodTest {
     void createHandlerKeys() throws Exception {
         Method method = getMethod("method1");
         ExampleController instance = new ExampleController();
-        RequestMappingMethod requestMappingMethod = new RequestMappingMethod(method);
+        ControllerMethod controllerMethod = new ControllerMethod(method);
 
-        List<Handler> handlers = requestMappingMethod.createHandlers(instance);
+        List<Handler> handlers = controllerMethod.createHandlers(instance);
 
         assertThat(handlers)
                 .containsExactlyInAnyOrder(
@@ -46,9 +49,9 @@ class RequestMappingMethodTest {
     void createHandlersWithAllMethod() throws Exception {
         Method method = getMethod("method4");
         ExampleController instance = new ExampleController();
-        RequestMappingMethod requestMappingMethod = new RequestMappingMethod(method);
+        ControllerMethod controllerMethod = new ControllerMethod(method);
 
-        List<Handler> handlers = requestMappingMethod.createHandlers(instance);
+        List<Handler> handlers = controllerMethod.createHandlers(instance);
 
         assertThat(handlers)
                 .containsExactlyInAnyOrder(

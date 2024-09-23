@@ -2,19 +2,20 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.Handler;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerKey;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-public class RequestMappingMethod {
+public class ControllerMethod {
     
-    private final Method method;
-    private final RequestMapping requestMapping;
+    private final Method controllerMethod;
 
-    public RequestMappingMethod(Method method) {
-        validateMethod(method);
-        this.method = method;
-        this.requestMapping = method.getAnnotation(RequestMapping.class);
+    public ControllerMethod(Method controllerMethod) {
+        validateMethod(controllerMethod);
+        this.controllerMethod = controllerMethod;
     }
 
     private static void validateMethod(Method method) {
@@ -24,7 +25,7 @@ public class RequestMappingMethod {
     }
 
     public List<Handler> createHandlers(Object controller) {
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        HandlerExecution handlerExecution = new HandlerExecution(controller, controllerMethod);
 
         return createHandlerKeys().stream()
                 .map(handlerKey -> new Handler(handlerKey, handlerExecution))
@@ -32,17 +33,16 @@ public class RequestMappingMethod {
     }
 
     private List<HandlerKey> createHandlerKeys() {
-        return Arrays.stream(getRequestMethods())
-                .map(this::createHandlerKey)
+        RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+        String url = requestMapping.value();
+
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .toList();
     }
 
-    private HandlerKey createHandlerKey(RequestMethod requestMethod) {
-        String url = requestMapping.value();
-        return new HandlerKey(url, requestMethod);
-    }
-
-    private RequestMethod[] getRequestMethods() {
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
             return RequestMethod.values();

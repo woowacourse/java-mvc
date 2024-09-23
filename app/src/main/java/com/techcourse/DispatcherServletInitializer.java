@@ -1,5 +1,9 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.HandlerMappings;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +20,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
     @Override
-    public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+    public void onStartup(ServletContext servletContext) {
+        DispatcherServlet dispatcherServlet = createDispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +33,21 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet createDispatcherServlet() {
+        HandlerMappings handlerMappings = new HandlerMappings(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping(getClass().getPackageName())
+        );
+        HandlerAdapters handlerAdapters = new HandlerAdapters(
+                new ManualHandlerAdapter(),
+                new AnnotationHandlerAdapter()
+        );
+
+        return new DispatcherServlet(
+                handlerMappings,
+                handlerAdapters
+        );
     }
 }
