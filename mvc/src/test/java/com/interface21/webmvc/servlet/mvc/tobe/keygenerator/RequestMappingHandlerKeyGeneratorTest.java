@@ -23,8 +23,7 @@ class RequestMappingHandlerKeyGeneratorTest {
 
         assertAll(
                 () -> assertThat(requestMappingKeyMaker.hasAnnotation(method)).isTrue(),
-                () -> assertThat(requestMappingKeyMaker.makeKeys(method).length)
-                        .isEqualTo(RequestMethod.values().length)
+                () -> assertThat(requestMappingKeyMaker.makeKeys(method)).hasSize(RequestMethod.values().length)
         );
     }
 }
