@@ -32,4 +32,24 @@ class HandlerExecutionTest {
         // then
         assertThat(modelAndView.getObject("id")).isEqualTo("mia");
     }
+
+    @Test
+    void switchRequestMappingMethodParameterOrder() throws Exception {
+        // given
+        TestController testController = new TestController();
+        Method method = testController.getClass()
+                .getDeclaredMethod("switchMethodParameterOrder", HttpServletResponse.class, HttpServletRequest.class);
+        HandlerExecution handlerExecution = new HandlerExecution(new TestController(), method);
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getAttribute("id")).thenReturn("mia");
+
+        // when
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
+
+        // then
+        assertThat(modelAndView.getObject("id")).isEqualTo("mia");
+    }
 }

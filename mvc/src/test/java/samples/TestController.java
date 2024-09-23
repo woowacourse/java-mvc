@@ -38,4 +38,12 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/switch-parameter-order", method = RequestMethod.GET)
+    public ModelAndView switchMethodParameterOrder(final HttpServletResponse response, final HttpServletRequest request) {
+        log.info("test controller switched parameter order");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
 }

@@ -21,14 +21,20 @@ public class HandlerExecution {
         List<Object> args = new ArrayList<>();
 
         for (Class<?> parameterType : parameterTypes) {
-            if (parameterType.isAssignableFrom(HttpServletRequest.class)) {
-                args.add(request);
-            }
-            if (parameterType.isAssignableFrom(HttpServletResponse.class)) {
-                args.add(response);
-            }
+            Object argument = resolveArgument(parameterType, request, response);
+            args.add(argument);
         }
 
         return (ModelAndView) method.invoke(controller, args.toArray());
+    }
+
+    private Object resolveArgument(Class<?> parameterType, HttpServletRequest request, HttpServletResponse response) {
+        if (parameterType.isAssignableFrom(HttpServletRequest.class)) {
+            return request;
+        }
+        if (parameterType.isAssignableFrom(HttpServletResponse.class)) {
+            return response;
+        }
+        return null;
     }
 }
