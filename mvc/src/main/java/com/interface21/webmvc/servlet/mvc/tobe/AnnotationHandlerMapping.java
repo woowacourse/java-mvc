@@ -41,7 +41,7 @@ public class AnnotationHandlerMapping {
 			Object instance = controller.getDeclaredConstructor().newInstance();
 			Method[] methods = controller.getMethods();
 
-			registerHandlerExecutions(instance, methods);
+			putAllHandlerExecutions(instance, methods);
 		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
 			log.error("Error instantiating controller class: {}", controller.getSimpleName(), e);
 		} catch (Exception e) {
@@ -49,20 +49,20 @@ public class AnnotationHandlerMapping {
 		}
 	}
 
-	private void registerHandlerExecutions(Object instance, Method[] methods) {
+	private void putAllHandlerExecutions(Object instance, Method[] methods) {
 		Stream.of(methods)
 			.filter(method -> method.isAnnotationPresent(RequestMapping.class))
-			.forEach(method -> registerHandlerExecution(instance, method));
+			.forEach(method -> putHandlerExecution(instance, method));
 	}
 
-	private void registerHandlerExecution(Object instance, Method method) {
+	private void putHandlerExecution(Object instance, Method method) {
 		HandlerExecution handlerExecution = new HandlerExecution(instance, method);
 		RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-		registerByRequestMapping(requestMapping, handlerExecution);
+		putHandlerExecutionByRequest(requestMapping, handlerExecution);
 	}
 
-	private void registerByRequestMapping(RequestMapping requestMapping, HandlerExecution handlerExecution) {
+	private void putHandlerExecutionByRequest(RequestMapping requestMapping, HandlerExecution handlerExecution) {
 		String url = requestMapping.value();
 		RequestMethod[] requestMethods = getRequestMethods(requestMapping);
 
