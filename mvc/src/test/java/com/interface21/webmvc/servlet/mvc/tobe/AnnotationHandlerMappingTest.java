@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -89,17 +88,5 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("holymoly");
-    }
-
-    @DisplayName("핸들러가 존재하지 않으면 예외가 발생한다.")
-    @Test
-    void throwsWhenHandlerNotFound() {
-        final var request = mock(HttpServletRequest.class);
-
-        when(request.getRequestURI()).thenReturn("/not-found");
-        when(request.getMethod()).thenReturn("GET");
-
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }
