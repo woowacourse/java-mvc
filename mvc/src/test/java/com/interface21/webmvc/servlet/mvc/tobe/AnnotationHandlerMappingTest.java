@@ -24,7 +24,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("GET 요청에 따라 적절한 핸들러를 찾고 실행시킬 수 있다.")
-    void getHandlerAndHandle() throws Exception {
+    void getHandlerAndHandle() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -41,7 +41,7 @@ class AnnotationHandlerMappingTest {
     @ParameterizedTest
     @ValueSource(strings = {"GET", "POST", "PUT"})
     @DisplayName("일치하는 Method가 없는 Handler의 경우 모든 Method가 가능하다.")
-    void handleNoMethodHandler(String method) throws Exception {
+    void handleNoMethodHandler(String method) {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -57,7 +57,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("POST 요청에 따라 적절한 핸들러를 찾고 실행시킬 수 있다.")
-    void postHandlerAndHandle() throws Exception {
+    void postHandlerAndHandle() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
