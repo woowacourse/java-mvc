@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -70,17 +71,23 @@ class ReflectionTest {
         final Class<?> questionClass = Question.class;
 
         final Constructor<?> firstConstructor = questionClass.getConstructor(String.class, String.class, String.class);
-        final Constructor<?> secondConstructor = questionClass.getConstructor(String.class, String.class, String.class);
+        final Constructor<?> secondConstructor = questionClass.getConstructor(
+                long.class, String.class, String.class, String.class, Date.class, int.class
+        );
 
         final Question firstQuestion = (Question) firstConstructor.newInstance("gugu", "제목1", "내용1");
-        final Question secondQuestion = (Question) firstConstructor.newInstance("gugu", "제목2", "내용2");
+        final Question secondQuestion = (Question) secondConstructor.newInstance(1, "gugu", "제목2", "내용2"
+                , new Date(1), 1);
 
         assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
         assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
         assertThat(firstQuestion.getContents()).isEqualTo("내용1");
+        assertThat(secondQuestion.getQuestionId()).isEqualTo(1);
         assertThat(secondQuestion.getWriter()).isEqualTo("gugu");
         assertThat(secondQuestion.getTitle()).isEqualTo("제목2");
         assertThat(secondQuestion.getContents()).isEqualTo("내용2");
+        assertThat(secondQuestion.getCreatedDate()).isEqualTo(new Date(1));
+        assertThat(secondQuestion.getCountOfComment()).isEqualTo(1);
     }
 
     @Test
