@@ -14,6 +14,9 @@ import static org.mockito.Mockito.*;
 
 class JspViewTest {
 
+    private static final String REDIRECT = "/redirect";
+    private static final String TEST_VIEW_NAME = "forward";
+
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private RequestDispatcher mockDispatcher;
@@ -30,13 +33,13 @@ class JspViewTest {
     void render_redirect() throws Exception {
         //given
         Map<String, ?> model = new HashMap<>();
-        JspView jspView = new JspView(JspView.REDIRECT_PREFIX + "/redirect");
+        JspView jspView = new JspView(JspView.REDIRECT_PREFIX + REDIRECT);
 
         //when
         jspView.render(model, mockRequest, mockResponse);
 
         //then
-        verify(mockResponse).sendRedirect("/redirect");
+        verify(mockResponse).sendRedirect(REDIRECT);
         verify(mockDispatcher, never()).forward(mockRequest, mockResponse);
     }
 
@@ -47,9 +50,9 @@ class JspViewTest {
         Map<String, Object> model = new HashMap<>();
         model.put("id", "gugu");
 
-        JspView jspView = new JspView("forward");
+        JspView jspView = new JspView(TEST_VIEW_NAME);
 
-        when(mockRequest.getRequestDispatcher(jspView.getViewName())).thenReturn(mockDispatcher);
+        when(mockRequest.getRequestDispatcher(TEST_VIEW_NAME)).thenReturn(mockDispatcher);
 
         //when
         jspView.render(model, mockRequest, mockResponse);

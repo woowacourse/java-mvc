@@ -21,10 +21,6 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
-    public String getViewName() {
-        return viewName;
-    }
-
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (viewName.startsWith(REDIRECT_PREFIX)) {
