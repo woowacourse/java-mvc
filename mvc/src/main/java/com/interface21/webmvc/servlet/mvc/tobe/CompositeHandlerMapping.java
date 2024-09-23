@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class CompositeHandlerMapping implements HandlerMapping {
 
@@ -25,12 +26,18 @@ public class CompositeHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerAdaptor getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            try {
-                return handlerMapping.getHandler(request);
-            } catch (Exception ignored) {
-            }
+        return handlerMappings.stream()
+                .map(handlerMapping -> getHandler(handlerMapping, request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("처리할 수 없는 요청입니다."));
+    }
+
+    private HandlerAdaptor getHandler(HandlerMapping handlerMapping, HttpServletRequest request) {
+        try {
+            return handlerMapping.getHandler(request);
+        } catch (Exception e) {
+            return null;
         }
-        throw new RuntimeException("처리할 수 없는 요청입니다.");
     }
 }
