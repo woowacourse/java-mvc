@@ -20,6 +20,6 @@
 `Controller`는 `String`을 리턴하고, 어노테이션 기반 메서드는 `ModelAndView`를 리턴해야 하니 간극이 생긴다.
 
 - [x] `ManualHandlerMapping`과 `AnnotationHandlerMapping`을 모두 고려할 수 있도록 추상화한다.
-- [ ] `RegisterController`를 어노테이션 기반으로 수정한다.
+- [x] `RegisterController`를 어노테이션 기반으로 수정한다. (작동하지는 않는다)
 - [ ] `RegisterController`가 어노테이션 기반으로 작동하도록 구조를 변경한다.
   - [ ] Package 기반으로 스캔한다.
