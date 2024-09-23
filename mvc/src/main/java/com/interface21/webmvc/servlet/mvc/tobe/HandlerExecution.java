@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -14,10 +15,16 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         Class<?> clazz = method.getDeclaringClass();
         Object controller = ControllerRegistry.getOrCreateController(clazz);
 
-        return (ModelAndView) method.invoke(controller, request, response);
+        try {
+            return (ModelAndView) method.invoke(controller, request, response);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException("메서드를 실행하던 도중 에러가 발생했습니다.");
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("해당하는 메서드에 접근할 수 없습니다.");
+        }
     }
 }
