@@ -11,7 +11,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 public class JspViewTest {
 
-    private JspView jspView;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
 
@@ -22,32 +21,32 @@ public class JspViewTest {
     }
 
     @Test
-    void testRenderRedirect() throws Exception {
-        // Given
+    void 뷰_이름에_redirect가_붙어있으면_리다이렉트한다() throws Exception {
+        // given
         String redirectViewName = "redirect:/home";
-        jspView = new JspView(redirectViewName);
+        JspView jspView = new JspView(redirectViewName);
 
-        // When
+        // when
         jspView.render(new HashMap<>(), request, response);
 
-        // Then
+        // then
         assertEquals("/home", response.getRedirectedUrl());
     }
 
     @Test
-    void testSetRequestAttributes() throws Exception {
-        // Given
-        String forwardViewName = "/WEB-INF/views/home.jsp";
-        jspView = new JspView(forwardViewName);
+    void request에_attribute를_추가해_jsp가_값을_받아갈_수_있게한다() throws Exception {
+        // given
+        String forwardViewName = "/WEB-INF/index.jsp";
+        JspView jspView = new JspView(forwardViewName);
         Map<String, Object> model = new HashMap<>();
-        model.put("user", "John");
+        model.put("user", "Dora");
         model.put("role", "admin");
 
-        // When
+        // when
         jspView.render(model, request, response);
 
-        // Then
-        assertEquals("John", request.getAttribute("user"));
+        // then
+        assertEquals("Dora", request.getAttribute("user"));
         assertEquals("admin", request.getAttribute("role"));
     }
 }
