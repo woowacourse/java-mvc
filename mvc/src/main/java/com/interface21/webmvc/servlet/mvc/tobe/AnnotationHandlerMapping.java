@@ -49,6 +49,9 @@ public class AnnotationHandlerMapping {
 
     private void registerHandlerExecutions(Class<?> controllerClass, Method method, String url,
                                            RequestMethod[] requestMethods) throws Exception {
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             Constructor<?> constructor = controllerClass.getDeclaredConstructor();
