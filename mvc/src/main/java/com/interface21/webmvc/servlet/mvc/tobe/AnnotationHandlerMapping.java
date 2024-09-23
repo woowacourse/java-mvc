@@ -33,12 +33,10 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlers(Object controller, Method method) {
+        HandlerExecution execution = new HandlerExecution(controller, method);
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String url = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method();
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey key = new HandlerKey(url, requestMethod);
-            HandlerExecution execution = new HandlerExecution(controller, method);
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
             addHandler(key, execution);
         }
     }
