@@ -22,3 +22,9 @@
 ## 기능 구현 목록
 - [x] 핸들러 매핑 구현
 - [x] jsp view 구현
+
+## 리팩토링 목록
+- [ ] reflectionTest 생성자 테스트 수정
+- [ ] handlerExecutions 초기화
+- [ ] basepackage sample 중복 삭제
+- [ ] mapping 범위 컨트롤러로 축소
