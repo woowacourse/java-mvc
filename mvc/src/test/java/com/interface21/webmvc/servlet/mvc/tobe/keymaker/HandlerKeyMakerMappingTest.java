@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.keyMaker;
+package com.interface21.webmvc.servlet.mvc.tobe.keymaker;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

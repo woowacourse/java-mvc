@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.keyMaker;
+package com.interface21.webmvc.servlet.mvc.tobe.keymaker;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 
