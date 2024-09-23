@@ -41,6 +41,7 @@ public class AnnotationHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.findMethod(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+
         return handlerExecutions.get(handlerKey);
     }
 
@@ -49,8 +50,12 @@ public class AnnotationHandlerMapping {
         if (handlerKeyGenerator == null) {
             return;
         }
-        HandlerKey[] handlerKeys = handlerKeyGenerator.makeKeys(method);
 
+        HandlerKey[] handlerKeys = handlerKeyGenerator.makeKeys(method);
+        saveHandlerKeys(handlerKeys, method);
+    }
+
+    private void saveHandlerKeys(HandlerKey[] handlerKeys, Method method) {
         for (HandlerKey handlerKey : handlerKeys) {
             validateNoDuplicateHandler(handlerKey);
             handlerExecutions.put(handlerKey, new HandlerExecution(method));
