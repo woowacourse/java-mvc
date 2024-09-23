@@ -1,14 +1,19 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.handler.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.handler.HandlerAdapter;
+import com.interface21.webmvc.servlet.handler.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.handler.HandlerExecutor;
+import com.interface21.webmvc.servlet.handler.HandlerMapping;
+import com.interface21.webmvc.servlet.handler.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +22,25 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private static final int NOT_FOUND_STATUS = 404;
+    private static final List<HandlerAdapter> DEFAULT_HANDLER_ADAPTERS =
+            List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerExecutor handlerExecutor;
     private ManualHandlerMapping manualHandlerMapping;
 
     public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerExecutor = new HandlerExecutor(DEFAULT_HANDLER_ADAPTERS);
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     @Override
@@ -35,18 +50,25 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
-            String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+            if (handler.isEmpty()) {
+                response.setStatus(NOT_FOUND_STATUS);
+                return;
+            }
+            ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        JspView jspView = new JspView(viewName);
-        jspView.render(Collections.emptyMap(), request, response);
+    private void move(final ModelAndView modelAndView,
+                      final HttpServletRequest request,
+                      final HttpServletResponse response) throws Exception {
+        View view = modelAndView.getView();
+        var model = modelAndView.getModel();
+
+        view.render(model, request, response);
     }
 }

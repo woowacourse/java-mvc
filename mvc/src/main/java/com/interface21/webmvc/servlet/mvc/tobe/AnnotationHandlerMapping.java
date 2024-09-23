@@ -48,6 +48,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             RequestMethod[] requestMethods = requestMapping.method();
             Object instance = clazz.getDeclaredConstructor().newInstance();
             HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            log.info("Path : {}, Method : {}, Controller : {}", paths, Arrays.toString(requestMethods),
+                    method.getName());
 
             Arrays.stream(requestMethods)
                     .map(requestMethod -> new HandlerKey(paths, requestMethod))

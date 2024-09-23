@@ -11,7 +11,7 @@ public class HandlerExecutor {
     private final List<HandlerAdapter> handlerAdapters;
 
     public HandlerExecutor(List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+        this.handlerAdapters = List.copyOf(handlerAdapters);
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
