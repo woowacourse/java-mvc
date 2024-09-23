@@ -15,19 +15,20 @@ public class KoreanServlet extends HttpServlet {
     public static final String 인코딩 = "인코딩";
 
     @Override
-    public void init(final ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        getServletContext().log("init() 호출");
+        getServletContext().log("korean init() 호출");
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        getServletContext().log("service() 호출");
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        getServletContext().log("korean service() 호출");
+        response.setCharacterEncoding("utf-8");
         response.getWriter().write(인코딩);
     }
 
     @Override
     public void destroy() {
-        getServletContext().log("destroy() 호출");
+        getServletContext().log("korean destroy() 호출");
     }
 }

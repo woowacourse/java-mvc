@@ -16,12 +16,12 @@ class Stage2Test {
      */
     @Test
     void stage2() {
-        final var user = new User(1L, "gugu");
+        User user = new User(1L, "gugu");
 
-        final UserDao userDao = new InMemoryUserDao();
-        final var userService = new UserService(userDao);
+        UserDao userDao = new InMemoryUserDao();
+        UserService userService = new UserService(userDao);
 
-        final var actual = userService.join(user);
+        User actual = userService.join(user);
 
         assertThat(actual.getAccount()).isEqualTo("gugu");
     }
@@ -29,7 +29,7 @@ class Stage2Test {
     @Test
     void testAnonymousClass() {
         // given
-        final var userDao = new UserDao() {
+        UserDao userDao = new UserDao() {
             private User user;
 
             @Override
@@ -42,11 +42,11 @@ class Stage2Test {
                 return user;
             }
         };
-        final var userService = new UserService(userDao);
-        final var user = new User(1L, "gugu");
+        UserService userService = new UserService(userDao);
+        User user = new User(1L, "gugu");
 
         // when
-        final var actual = userService.join(user);
+        User actual = userService.join(user);
 
         // then
         assertThat(actual.getAccount()).isEqualTo("gugu");

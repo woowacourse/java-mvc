@@ -12,23 +12,23 @@ public class Application {
 
     private static final int DEFAULT_PORT = 8080;
 
-    public static void main(final String[] args) throws Exception {
-        final int port = defaultPortIfNull(args);
-        final var tomcat = new TomcatStarter(port);
+    public static void main(String[] args) throws Exception {
+        int port = defaultPortIfNull(args);
+        TomcatStarter tomcat = new TomcatStarter(port);
         log.info("configuring app with basedir: {}", TomcatStarter.WEBAPP_DIR_LOCATION);
 
         tomcat.start();
         stop(tomcat);
     }
 
-    private static int defaultPortIfNull(final String[] args) {
+    private static int defaultPortIfNull(String[] args) {
         return Stream.of(args)
                 .findFirst()
                 .map(Integer::parseInt)
                 .orElse(DEFAULT_PORT);
     }
 
-    private static void stop(final TomcatStarter tomcat) {
+    private static void stop(TomcatStarter tomcat) {
         try {
             // make the application wait until we press any key.
             System.in.read();
