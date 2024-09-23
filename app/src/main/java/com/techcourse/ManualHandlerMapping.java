@@ -30,6 +30,10 @@ public class ManualHandlerMapping {
 
     public Controller getHandler(final String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        Controller controller = controllers.get(requestURI);
+        if (controller == null) {
+            throw new IllegalArgumentException("URI에 대한 핸들러를 찾을 수 없습니다: " + requestURI);
+        }
+        return controller;
     }
 }
