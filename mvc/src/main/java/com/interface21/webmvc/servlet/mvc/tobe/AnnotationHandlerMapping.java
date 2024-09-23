@@ -3,9 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -72,16 +70,8 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            handlerExecutions.put(handlerKey, createHandlerExecution(mapperMethod, controllerInstance));
+            HandlerExecution handlerExecution = new HandlerExecution(mapperMethod, controllerInstance);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
-    }
-
-    private HandlerExecution createHandlerExecution(Method mapperMethod, Object controllerInstance) {
-        return new HandlerExecution() {
-            @Override
-            public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-                return (ModelAndView) mapperMethod.invoke(controllerInstance, request, response);
-            }
-        };
     }
 }
