@@ -29,9 +29,13 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackages);
         reflections.getTypesAnnotatedWith(Controller.class)
-                .forEach(controllerClass -> Arrays.stream(controllerClass.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                        .forEach(method -> registerHandler(method, controllerClass)));
+                .forEach(this::registerHandlers);
+    }
+
+    private void registerHandlers(Class<?> controllerClass) {
+        Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerHandler(method, controllerClass));
     }
 
     private void registerHandler(Method method, Class<?> controllerClass) {
