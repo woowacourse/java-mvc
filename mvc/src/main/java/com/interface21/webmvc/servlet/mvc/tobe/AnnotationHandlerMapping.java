@@ -58,7 +58,7 @@ public class AnnotationHandlerMapping {
         HandlerExecution handlerExecution = new HandlerExecution(handlerInstance, handlerMethod);
         Arrays.stream(requestMethods).forEach(requestMethod -> add(requestMethod, uri, handlerExecution));
 
-        log.info("uri = {}, method = {} 등록!", uri, requestMethods);
+        log.info("Path : {}, Method : {}", uri, requestMethods);
     }
 
     private Object executeMethod(String methodName, Method method) {
@@ -77,14 +77,17 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public boolean contains(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-        throw new UnsupportedOperationException("지원하지 않는 요청입니다.");
+        return handlerExecutions.get(handlerKey);
     }
 }
