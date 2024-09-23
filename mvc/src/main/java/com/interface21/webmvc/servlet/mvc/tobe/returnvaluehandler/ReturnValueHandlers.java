@@ -14,7 +14,7 @@ public class ReturnValueHandlers {
         this.returnValueHandlers = beanContainer.getSubTypeBeansOf(ReturnValueHandler.class);
     }
 
-    public ModelAndView handler(Object returnValue) {
+    public ModelAndView handle(Object returnValue) {
         ReturnValueHandler handler = returnValueHandlers.stream()
                 .filter(returnValueHandler -> returnValueHandler.support(returnValue))
                 .findFirst()

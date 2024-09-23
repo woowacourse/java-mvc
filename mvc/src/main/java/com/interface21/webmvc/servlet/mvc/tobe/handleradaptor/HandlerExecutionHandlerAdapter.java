@@ -20,6 +20,6 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         Object returnValue = ((HandlerExecution) handler).handle(request, response);
-        return returnvalueHandlers.handler(returnValue);
+        return returnvalueHandlers.handle(returnValue);
     }
 }
