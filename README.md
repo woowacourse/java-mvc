@@ -25,6 +25,7 @@
 
 ## 리팩토링 목록
 - [x] reflectionTest 생성자 테스트 수정
-- [ ] handlerExecutions 초기화
-- [ ] basepackage sample 중복 삭제
-- [ ] mapping 범위 컨트롤러로 축소
+- [x] handlerExecutions 초기화
+  - [x] basepackage sample 중복 삭제
+  - [x] mapping 범위 컨트롤러로 축소
+- [ ] reflection test runner 스트림을 for문으로 변경

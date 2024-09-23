@@ -1,6 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -8,9 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import javassist.NotFoundException;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,34 +27,44 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    public Object getHandler(final HttpServletRequest request) throws NotFoundException, ReflectiveOperationException {
-        Method method = findMethod(request);
-        Object controller = createControllerInstance(method);
-
-        return new HandlerExecution(controller, method);
-    }
-
-    private Method findMethod(HttpServletRequest request) throws NotFoundException {
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(""))
-                .setScanners(Scanners.MethodsAnnotated));
-
-        Set<Method> methods = reflections.getMethodsAnnotatedWith(RequestMapping.class);
-        return methods.stream()
-                .filter(method -> method.getAnnotation(RequestMapping.class).value().equals(request.getRequestURI()))
-                .filter(method -> method.getAnnotation(RequestMapping.class).method()[0].name()
-                        .equals(request.getMethod()))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Resource not found"));
-    }
-
-    private Object createControllerInstance(Method method) throws ReflectiveOperationException {
         try {
-            return method.getDeclaringClass().getDeclaredConstructor().newInstance();
+            initializeHandlerExecutions();
         } catch (ReflectiveOperationException e) {
-            throw new ReflectiveOperationException("Internal error: Failed to create controller instance");
+            throw new InternalError("Internal error: Failed to initialize handler mapping");
         }
+    }
+
+    private void initializeHandlerExecutions() throws ReflectiveOperationException {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controllerClass : controllerClasses) {
+            initializeWithController(controllerClass);
+        }
+    }
+
+    private void initializeWithController(Class<?> controllerClass) throws ReflectiveOperationException {
+        Method[] methods = controllerClass.getDeclaredMethods();
+        for (Method method : methods) {
+            initializeWithRequestMapping(method, controllerClass.getDeclaredConstructor().newInstance());
+        }
+    }
+
+    private void initializeWithRequestMapping(Method method, Object controllerClass) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerClass, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    public Object getHandler(final HttpServletRequest request) throws NotFoundException {
+        HandlerKey handlerKey = new HandlerKey(
+                request.getRequestURI(), RequestMethod.valueOf(request.getMethod())
+        );
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new NotFoundException("Resource not found");
+        }
+        return handlerExecutions.get(handlerKey);
     }
 }
