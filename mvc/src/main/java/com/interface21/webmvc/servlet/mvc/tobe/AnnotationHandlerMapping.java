@@ -70,9 +70,16 @@ public class AnnotationHandlerMapping {
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (final RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            checkDuplicatedHandlerKey(handlerKey);
             final Object instance = controller.getDeclaredConstructor().newInstance();
             final HandlerExecution handlerExecution = new HandlerExecution(method, instance);
             handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private void checkDuplicatedHandlerKey(final HandlerKey handlerKey) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("중복된 handlerKey가 존재합니다");
         }
     }
 
