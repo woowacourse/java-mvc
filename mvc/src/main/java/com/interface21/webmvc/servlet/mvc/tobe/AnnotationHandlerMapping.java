@@ -3,7 +3,9 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +14,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements Handler {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HandlerExecutions();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -49,5 +52,17 @@ public class AnnotationHandlerMapping {
         HandlerKey key = new HandlerKey(request.getRequestURI(),
                 RequestMethod.findMethod(request.getMethod()));
         return handlerExecutions.get(key);
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        return getHandler(request) != null;
+    }
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HandlerExecution handler = (HandlerExecution) getHandler(request);
+        ModelAndView modelAndView = handler.handle(request, response);
+        modelAndView.render(request, response);
     }
 }

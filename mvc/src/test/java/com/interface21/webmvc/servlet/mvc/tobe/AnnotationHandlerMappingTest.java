@@ -63,4 +63,16 @@ class AnnotationHandlerMappingTest {
                 // then
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("해당 URI을 처리할 수 있는 핸들러가 없을 경우 null을 반환한다.")
+    @Test
+    void notRegisteredHandler() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/not-registered-url");
+        when(request.getMethod()).thenReturn("GET");
+
+        // 핸들러를 못 찾으면 어떻게 처리 해야 할까?
+        assertThat(handlerMapping.getHandler(request)).isNull();
+    }
 }
