@@ -2,7 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe.handler.adapter;
 
 import java.util.Objects;
 
-public abstract class AbstractHandlerAdapter<T> implements HandlerAdapter<T> {
+public abstract class AbstractHandlerAdapter<T> implements HandlerAdapter {
 
     private final Class<T> handlerClass;
 
@@ -13,6 +13,10 @@ public abstract class AbstractHandlerAdapter<T> implements HandlerAdapter<T> {
     @Override
     public boolean supports(Object handler) {
         return handlerClass.isInstance(handler);
+    }
+
+    protected T castHandler(Object handler) {
+        return handlerClass.cast(handler);
     }
 
     @Override

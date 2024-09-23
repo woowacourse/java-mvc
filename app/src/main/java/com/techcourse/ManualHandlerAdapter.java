@@ -13,9 +13,10 @@ public class ManualHandlerAdapter extends AbstractHandlerAdapter<Controller> {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Controller handler)
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        String viewName = handler.execute(request, response);
+        Controller controller = castHandler(handler);
+        String viewName = controller.execute(request, response);
 
         return ModelAndView.createWithJspView(viewName);
     }

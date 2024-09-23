@@ -11,13 +11,13 @@ public class HandlerAdapters {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerAdapters.class);
 
-    private final Set<HandlerAdapter<?>> values;
+    private final Set<HandlerAdapter> values;
 
-    public HandlerAdapters(HandlerAdapter<?>... handlerAdapters) {
+    public HandlerAdapters(HandlerAdapter... handlerAdapters) {
         this.values = new LinkedHashSet<>(Arrays.asList(handlerAdapters));
     }
 
-    public HandlerAdapter<?> getHandlerAdapter(Object handler) throws ServletException {
+    public HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
         return values.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()

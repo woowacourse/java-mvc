@@ -12,8 +12,9 @@ public class AnnotationHandlerAdapter extends AbstractHandlerAdapter<HandlerExec
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, HandlerExecution handler)
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        return handler.handle(request, response);
+        HandlerExecution handlerExecution = castHandler(handler);
+        return handlerExecution.handle(request, response);
     }
 }
