@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.view.type;
 
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
