@@ -32,8 +32,7 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage,
-                Scanners.TypesAnnotated, Scanners.MethodsAnnotated);
+        Reflections reflections = new Reflections(basePackage);
         for (var controller : reflections.getTypesAnnotatedWith(Controller.class)) {
             putController(controller);
         }
