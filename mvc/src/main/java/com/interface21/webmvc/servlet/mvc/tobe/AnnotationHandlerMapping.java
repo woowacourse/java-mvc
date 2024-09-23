@@ -42,9 +42,14 @@ public class AnnotationHandlerMapping {
     private void registerHandlerByMethods(final Class<?> controller, final Method[] methods)
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                registerHandlerByMethod(controller, method);
-            }
+            registerIfRequestMappingPresent(controller, method);
+        }
+    }
+
+    private void registerIfRequestMappingPresent(final Class<?> controller, final Method method)
+            throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            registerHandlerByMethod(controller, method);
         }
     }
 
