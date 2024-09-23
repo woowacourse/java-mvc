@@ -22,8 +22,8 @@ public class JspView implements View {
             final HttpServletRequest request,
             final HttpServletResponse response) throws Exception {
 
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
 
