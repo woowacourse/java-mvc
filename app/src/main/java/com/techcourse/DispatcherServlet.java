@@ -3,16 +3,11 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,23 +15,20 @@ public class DispatcherServlet extends HttpServlet {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final String ANNOTATION_BASED_CONTROLLER_BASE = "com.techcourse.controller";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping(ANNOTATION_BASED_CONTROLLER_BASE));
-        handlerMappings.forEach(HandlerMapping::initialize);
-
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        handlerMappingRegistry.initialize();
+        handlerAdapterRegistry.initialize();
     }
 
     @Override
@@ -57,25 +49,20 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object findHandlerOf(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
+        return handlerMappingRegistry.getHandler(request)
                 .orElseThrow(() -> new IllegalArgumentException("요청에 해당하는 핸들러를 찾을 수 없습니다."));
     }
 
     private HandlerAdapter findHandlerAdapterOf(Object handler) {
-        return handlerAdapters.stream()
-                .filter(adapter -> adapter.canHandle(handler))
-                .findFirst()
+        return handlerAdapterRegistry.getHandlerAdapter(handler)
                 .orElseThrow(() -> new IllegalArgumentException("요청에 해당하는 핸들러 어댑터를 찾을 수 없습니다."));
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 }
