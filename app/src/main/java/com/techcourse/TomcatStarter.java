@@ -15,16 +15,16 @@ public class TomcatStarter {
 
     private final Tomcat tomcat;
 
-    public TomcatStarter(final int port) {
+    public TomcatStarter(int port) {
         this(WEBAPP_DIR_LOCATION, port);
     }
 
-    public TomcatStarter(final String webappDirLocation, final int port) {
+    public TomcatStarter(String webappDirLocation, int port) {
         this.tomcat = new Tomcat();
         tomcat.setConnector(createConnector(port));
 
-        final var docBase = new File(webappDirLocation).getAbsolutePath();
-        final var context = (StandardContext) tomcat.addWebapp("", docBase);
+        String docBase = new File(webappDirLocation).getAbsolutePath();
+        StandardContext context = (StandardContext) tomcat.addWebapp("", docBase);
         skipJarScan(context);
         skipClearReferences(context);
     }
@@ -46,18 +46,18 @@ public class TomcatStarter {
         }
     }
 
-    private Connector createConnector(final int port) {
-        final var connector = new Connector();
+    private Connector createConnector(int port) {
+        Connector connector = new Connector();
         connector.setPort(port);
         return connector;
     }
 
-    private void skipJarScan(final Context context) {
-        final var jarScanner = (StandardJarScanner) context.getJarScanner();
+    private void skipJarScan(Context context) {
+        StandardJarScanner jarScanner = (StandardJarScanner) context.getJarScanner();
         jarScanner.setScanClassPath(false);
     }
 
-    private void skipClearReferences(final StandardContext context) {
+    private void skipClearReferences(StandardContext context) {
         /**
          * https://tomcat.apache.org/tomcat-10.1-doc/config/context.html
          *

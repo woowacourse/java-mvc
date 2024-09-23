@@ -16,7 +16,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
     @Override
     public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
             throws ServletException {
-        final List<WebApplicationInitializer> initializers = new ArrayList<>();
+        List<WebApplicationInitializer> initializers = new ArrayList<>();
 
         if (webAppInitializerClasses != null) {
             for (Class<?> waiClass : webAppInitializerClasses) {
