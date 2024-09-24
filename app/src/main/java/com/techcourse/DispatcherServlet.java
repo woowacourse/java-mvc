@@ -29,7 +29,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappingList = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        handlerMappingList = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse"));
         handlerMappingList.forEach(HandlerMapping::initialize);
     }
 
