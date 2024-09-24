@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.handler;
+package com.interface21.context;
 
 public interface ApplicationContext {
 
