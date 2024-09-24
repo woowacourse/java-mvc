@@ -12,7 +12,6 @@ class Junit3TestRunner {
 
         for (Method method : clazz.getMethods()) {
             if (method.getName().startsWith("test")) {
-                method.setAccessible(true);
                 method.invoke(testInstance);
             }
         }
