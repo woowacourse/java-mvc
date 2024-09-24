@@ -33,7 +33,7 @@
 
 ### 2단계
 
-- [ ] login 로직 @MVC 사용으로 변경
+- [x] login 로직 @MVC 사용으로 변경
 
 - handler 인터페이스 구현 
   - 구현체: AnnotationHandlerMapping, ManualHandlerMapping 
