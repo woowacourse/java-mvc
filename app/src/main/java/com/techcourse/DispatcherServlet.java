@@ -21,7 +21,10 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappings handlerMappings;
 
     public DispatcherServlet() {
-        List<HandlerMapping> handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        List<HandlerMapping> handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping()
+        );
         this.handlerMappings = new HandlerMappings(handlerMappings);
     }
 
@@ -31,10 +34,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             if (!handlerMappings.hasHandler(request)) {
