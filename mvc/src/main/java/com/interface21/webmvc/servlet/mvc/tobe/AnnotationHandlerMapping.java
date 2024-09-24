@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
-import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
@@ -61,19 +59,8 @@ public class AnnotationHandlerMapping {
         RequestMethod[] requestMethods = getRequestMethods(requestMapping);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            Object instance = createInstance(controllerClass);
-            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerClass, method);
             handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private Object createInstance(Class<?> controllerClass) {
-        try {
-            return ReflectionUtils.accessibleConstructor(controllerClass).newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            log.error("Failed to create instance of class: {}", controllerClass.getName(), e);
-            throw new RuntimeException(e);
         }
     }
 
