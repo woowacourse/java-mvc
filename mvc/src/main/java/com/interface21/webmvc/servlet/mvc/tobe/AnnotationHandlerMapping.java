@@ -45,8 +45,8 @@ public class AnnotationHandlerMapping {
     private void addHandlerExecutionByController(Class<?> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
         Object controller = getController(clazz);
-        Arrays.stream(methods).forEach(method ->
-                addHandlerExecutionByMethod(controller, method));
+        Arrays.stream(methods)
+                .forEach(method -> addHandlerExecutionByMethod(controller, method));
     }
 
     private Object getController(Class<?> clazz) {
@@ -69,10 +69,11 @@ public class AnnotationHandlerMapping {
         String url = requestMapping.value();
         RequestMethod[] requestMethods = getMethods(requestMapping);
 
-        Arrays.stream(requestMethods).forEach(requestMethod -> {
-            HandlerKey key = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(key, handlerExecution);
-        });
+        Arrays.stream(requestMethods)
+                .forEach(requestMethod -> {
+                    HandlerKey key = new HandlerKey(url, requestMethod);
+                    handlerExecutions.put(key, handlerExecution);
+                });
     }
 
     private RequestMethod[] getMethods(RequestMapping requestMapping) {
