@@ -28,16 +28,13 @@
 
 `AnnotatedHandlerMapping`을 활용하여 어노테이션이 붙은 컨트롤러를 등록해야 한다.
 
-## 소스 분석
+## 흐름 분석
 
-1. Tomcat.start() 시장
-2. HandlerTypes 어노테이션이 붙은 클래스를 찾음
+1. Tomcat.start() 시작
+2. tomcat이 HandlerTypes 어노테이션이 붙은 클래스를 찾음
 3. 찾은 클래스(mvc 내 com.interface21.web.SpringServletContainerInitializer)를 찾은 후 onStartUp() 실행
-4. HandlerTypes 어노테이션 안에 있는 인터페이스(WebApplicationInitializer) 구현체 (DispatchServletInitializer)를 찾아서 onStartUp(
-   servletContext) 실행
+4. HandlerTypes 어노테이션 안에 있는 인터페이스 구현체 (DispatchServletInitializer)를 찾아서 onStartUp(servletContext) 실행
 5. DispatchServletInitializer에서 초기화 한 DispatchServlet을 ServletContext에 등록함
 6. 등록 이후 registration에서 addUrlMapping("/")를 하는데 이는 모든 하위 URL을 이 서블릿에서 처리한다는 뜻이다.[^1]
 7. 모든 요청과 처리가 DispatcherServlet에서 이루어지기 때문에 `service`를 메서드를 이용해서 점진적 리팩터링하면 될 것 같다.
    [^1]: https://javaee.github.io/servlet-spec/downloads/servlet-4.0/servlet-4_0_FINAL.pdf
-
-//HandlesTypes 와 ServletContainerInitializer가 있기 때문에 tomcat 실행시 자동으로 Initializer가 실행 되는 것 같다.
