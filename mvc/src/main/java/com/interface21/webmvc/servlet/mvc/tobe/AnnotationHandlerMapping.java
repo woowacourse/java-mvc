@@ -19,15 +19,24 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
+    private static final String ROOT_PACKAGE_NAME = "com";
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackages;
     private final HandlerExecutions handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
-        validateBasePackages(basePackages);
-        this.basePackages = basePackages;
+        this.basePackages = setBasePackages(basePackages);
         this.handlerExecutions = new HandlerExecutions();
+    }
+
+    private Object[] setBasePackages(final Object... basePackages) {
+        if (basePackages.length == 0) {
+            return new Object[]{ROOT_PACKAGE_NAME};
+        }
+
+        validateBasePackages(basePackages);
+        return basePackages;
     }
 
     private void validateBasePackages(final Object[] basePackages) {
