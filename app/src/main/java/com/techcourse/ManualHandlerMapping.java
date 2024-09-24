@@ -1,16 +1,19 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.techcourse.controller.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -42,8 +45,11 @@ public class ManualHandlerMapping implements HandlerMapping {
     public Controller getHandler(final HttpServletRequest httpServletRequest) {
         String requestURI = httpServletRequest.getRequestURI();
         log.debug("Request URI : {}", requestURI);
-        return controllers.computeIfAbsent(requestURI, key -> {
-            throw new IllegalStateException("ManualHandlerMapping 에 요청을 처리할 수 있는 핸들러가 없습니다. 핸들러를 등록해주세요.");
-        });
+
+        if (controllers.containsKey(requestURI)) {
+            return controllers.get(requestURI);
+        }
+
+        throw new IllegalArgumentException("해당 요청을 처리할 수 있는 핸들러가 없습니다.");
     }
 }
