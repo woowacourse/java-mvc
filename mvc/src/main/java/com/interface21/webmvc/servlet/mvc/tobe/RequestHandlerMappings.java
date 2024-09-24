@@ -1,20 +1,34 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.exception.UncheckedReflectiveOperationException;
 import org.reflections.Reflections;
 
 public class RequestHandlerMappings {
 
-    private final String[] basePackage;
+    private final Object[] basePackage;
     private final Set<RequestHandlerMapping> mappings;
 
-    public RequestHandlerMappings(final String... basePackage) {
-        this.basePackage = basePackage;
+    public RequestHandlerMappings(final Object... basePackage) {
+        this.basePackage = getBasePackage(basePackage);
         this.mappings = new HashSet<>();
+    }
+
+    private Object[] getBasePackage(final Object... basePackage) {
+        if (ArrayUtils.isEmpty(basePackage)) {
+            return new Object[]{getClass().getPackageName()};
+        }
+        Object[] basePackages = Arrays.copyOf(basePackage, basePackage.length + 1);
+        basePackages[basePackages.length - 1] = getClass().getPackageName();
+        return basePackages;
     }
 
     public void initialize() {
@@ -24,9 +38,10 @@ public class RequestHandlerMappings {
                 .map(this::getInstance)
                 .collect(Collectors.toUnmodifiableSet());
         mappings.addAll(requestHandlerMappings);
+        mappings.forEach(RequestHandlerMapping::initialize);
     }
 
-    private RequestHandlerMapping getInstance(Class<?> clazz) {
+    private RequestHandlerMapping getInstance(final Class<?> clazz) {
         try {
             return (RequestHandlerMapping) clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException |
@@ -35,5 +50,13 @@ public class RequestHandlerMappings {
                  NoSuchMethodException e) {
             throw new UncheckedReflectiveOperationException(e);
         }
+    }
+
+    public Object getHandler(final HttpServletRequest request) {
+        return mappings.stream()
+                .map(requestHandlerMapping -> requestHandlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("유효한 핸들러를 찾지 못했습니다."));
     }
 }
