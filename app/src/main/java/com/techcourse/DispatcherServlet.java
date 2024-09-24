@@ -22,10 +22,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        ServletRequestHandler annotationServletRequestHandlerMapping = new AnnotationHandlerMapping(
-                Application.class);
-        ServletRequestHandler manualServletRequestHandlerMapping = new ManualHandlerMapping();
-        handlerManager = new HandlerManager(annotationServletRequestHandlerMapping, manualServletRequestHandlerMapping);
+        ServletRequestHandler annotationHandlerMapping = new AnnotationHandlerMapping(Application.class);
+        ServletRequestHandler manualHandlerMapping = new ManualHandlerMapping();
+        handlerManager = new HandlerManager(annotationHandlerMapping, manualHandlerMapping);
         handlerManager.initialize();
     }
 
