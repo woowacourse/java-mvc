@@ -78,7 +78,7 @@ class ReflectionTest {
 		final Constructor<?> secondConstructor = questionClass.getConstructor(String.class, String.class, String.class);
 
 		final Question firstQuestion = (Question)firstConstructor.newInstance("gugu", "제목1", "내용1");
-		final Question secondQuestion = (Question)firstConstructor.newInstance("gugu", "제목2", "내용2");
+		final Question secondQuestion = (Question)secondConstructor.newInstance("gugu", "제목2", "내용2");
 
 		assertThat(firstQuestion.getWriter()).isEqualTo("gugu");
 		assertThat(firstQuestion.getTitle()).isEqualTo("제목1");
@@ -128,7 +128,6 @@ class ReflectionTest {
 		final Field field = studentClass.getDeclaredField("age");
 
 		field.setAccessible(true);
-		// todo field에 접근 할 수 있도록 만든다.
 
 		assertThat(field.getInt(student)).isZero();
 		assertThat(student.getAge()).isZero();
