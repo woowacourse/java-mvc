@@ -20,11 +20,11 @@ public class HandlerExecution {
 
     public static HandlerExecution from(final Method method) {
         try {
-            Object instance = method.getDeclaringClass()
+            final Object instance = method.getDeclaringClass()
                     .getDeclaredConstructor()
                     .newInstance();
             return new HandlerExecution(method, instance);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

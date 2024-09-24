@@ -29,16 +29,16 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
+        final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
+        for (final Class<?> controller : controllers) {
             final Method[] methods = controller.getMethods();
             registerHandlerByMethods(methods);
         }
     }
 
     private void registerHandlerByMethods(final Method[] methods) {
-        for (Method method : methods) {
+        for (final Method method : methods) {
             registerIfRequestMappingPresent(method);
         }
     }
@@ -51,7 +51,7 @@ public class AnnotationHandlerMapping {
 
     private void registerHandlerByMethod(final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String uri = resolveUri(requestMapping);
+        final String uri = resolveUri(requestMapping);
         RequestMethod[] requestMethods = requestMapping.method();
 
         if (requestMethods.length == 0) {
@@ -61,7 +61,7 @@ public class AnnotationHandlerMapping {
     }
 
     private String resolveUri(final RequestMapping requestMapping) {
-        String uri = requestMapping.value();
+        final String uri = requestMapping.value();
         if (uri.isEmpty()) {
             return "/";
         }
@@ -70,7 +70,7 @@ public class AnnotationHandlerMapping {
 
     private void registerHandler(final Method method, final RequestMethod[] requestMethods, final String uri) {
         for (final RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             checkDuplicatedHandlerKey(handlerKey);
             final HandlerExecution handlerExecution = HandlerExecution.from(method);
             handlerExecutions.put(handlerKey, handlerExecution);
