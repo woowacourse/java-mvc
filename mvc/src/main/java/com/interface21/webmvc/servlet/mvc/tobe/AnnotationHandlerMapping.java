@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    public static final int EMPTY = 0;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -27,12 +28,10 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (Object pack : basePackage) {
-            Reflections reflections = new Reflections(pack);
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            for (Class<?> controller : controllers) {
-                initializeHandlerExecutions(controller);
-            }
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controller : controllers) {
+            initializeHandlerExecutions(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -55,7 +54,7 @@ public class AnnotationHandlerMapping {
     private void setHandlerExecutions(Class<?> controller, Method method, RequestMapping annotation) {
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
-        if (requestMethods.length == 0) {
+        if (requestMethods.length == EMPTY) {
             requestMethods = RequestMethod.values();
         }
 
