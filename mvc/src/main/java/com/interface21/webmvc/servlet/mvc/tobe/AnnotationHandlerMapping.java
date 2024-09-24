@@ -13,7 +13,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping<HttpServletRequest, HandlerExecution> {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final Class<? extends RequestMapping> MAPPING_ANNOTATION = RequestMapping.class;
@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
@@ -56,11 +57,21 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+    @Override
+    public boolean hasHandler(HttpServletRequest request) {
+        HandlerKey handlerKey = makeHandlerKeyByRequest(request);
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        HandlerKey handlerKey = makeHandlerKeyByRequest(request);
         if (!handlerExecutions.containsKey(handlerKey)) {
             throw new NoSuchElementException(handlerKey + "와 일치하는 핸들러 메소드가 없습니다");
         }
         return handlerExecutions.get(handlerKey);
+    }
+
+    private HandlerKey makeHandlerKeyByRequest(HttpServletRequest request) {
+        return new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
     }
 }
