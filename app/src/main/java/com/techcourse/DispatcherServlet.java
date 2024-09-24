@@ -44,11 +44,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = findHandler(request, requestURI);
+            Object handler = findHandler(request);
             HandlerAdapter adapter = findHandlerAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(request, response, handler);
@@ -59,8 +57,8 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private Object findHandler(HttpServletRequest request, String requestURI) {
-        Object handler = manualHandlerMapping.getHandler(requestURI);
+    private Object findHandler(HttpServletRequest request) {
+        Object handler = manualHandlerMapping.getHandler(request.getRequestURI());
         if (handler == null) {
             return annotationHandlerMapping.getHandler(request);
         }
