@@ -32,7 +32,6 @@ public class HandlerAdapterContainer {
             }
         }
         return newHandlerAdapters;
-
     }
 
     public HandlerAdapter findHandlerAdapter(Object handler) {
