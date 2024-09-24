@@ -49,11 +49,19 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void initializeWithRequestMapping(Method method, Object controllerClass) {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
-            HandlerExecution handlerExecution = new HandlerExecution(controllerClass, method);
+    private void initializeWithRequestMapping(Method targetMethod, Object controllerClass) {
+        if (!targetMethod.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+
+        RequestMapping requestMapping = targetMethod.getAnnotation(RequestMapping.class);
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMapping.method().length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerClass, targetMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }

@@ -29,3 +29,4 @@
   - [x] basepackage sample 중복 삭제
   - [x] mapping 범위 컨트롤러로 축소
 - [x] reflection test runner 스트림을 for문으로 변경
+- [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method 지원
