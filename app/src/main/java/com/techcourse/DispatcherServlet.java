@@ -1,7 +1,10 @@
 package com.techcourse;
 
-import com.techcourse.handleradapter.SimpleHandlerAdapter;
-import com.techcourse.handlermapping.CombinedHandlerMapping;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.techcourse.handleradapter.ControllerHandlerAdapter;
+import com.techcourse.handleradapter.HandlerExecutionHandlerAdapter;
+import com.techcourse.handlermapping.ManualHandlerMapping;
 import com.techcourse.viewresolver.SimpleViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,38 +19,47 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
 
-    private HandlerMapping handlerMapping;
-    private HandlerAdapter handlerAdapter;
-    private ViewResolver viewResolver;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final ViewResolver viewResolver;
+
+    public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.viewResolver = new SimpleViewResolver();
+    }
 
     @Override
     public void init() {
-        handlerMapping = new CombinedHandlerMapping(CONTROLLER_BASE_PACKAGE);
+        addHandlerMapping(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE));
+        addHandlerMapping(new ManualHandlerMapping());
+        addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        addHandlerAdapter(new ControllerHandlerAdapter());
+
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMapping.initialize();
-        handlerAdapter = new SimpleHandlerAdapter();
-        viewResolver = new SimpleViewResolver();
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
         log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
-        Object handler = handlerMapping.getHandler(request);
-        if (handler == null || !handlerAdapter.supports(handler)) {
-            throw new ServletException("No handler for " + request.getRequestURI());
-        }
-
         try {
-            handle(request, response, handler);
-        } catch (Exception e) {
+            log.info("handlerMappingRegistry = {}", handlerMappingRegistry);
+            Object controller = handlerMappingRegistry.getHandler(request).orElseThrow();
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
+            viewResolver.resolveView(modelAndView, request, response);
+        } catch (Throwable e) {
             log.error("Error while handling request: {}", e.getMessage(), e);
             throw new ServletException("Error while processing request", e);
         }
-    }
-
-    private void handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Object mv = handlerAdapter.handle(request, response, handler);
-        viewResolver.resolveView(mv, request, response);
     }
 }

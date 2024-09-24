@@ -51,7 +51,7 @@ class HandlerExecutionTest {
         given(request.getRequestURI()).willReturn("/get-test");
         given(request.getMethod()).willReturn("GET");
 
-        ModelAndView modelAndView = (ModelAndView) handlerExecution.execute(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView).isNotNull();
         assertThat((String) modelAndView.getObject("id")).isEqualTo("gugu");

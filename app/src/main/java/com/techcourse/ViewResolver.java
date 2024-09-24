@@ -5,5 +5,5 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface ViewResolver {
 
-    void resolveView(Object mv, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    void resolveView(Object modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception;
 }

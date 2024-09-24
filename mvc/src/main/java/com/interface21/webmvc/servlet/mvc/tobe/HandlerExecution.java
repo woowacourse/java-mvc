@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HandlerExecution implements Controller {
+public class HandlerExecution {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
 
@@ -23,10 +23,9 @@ public class HandlerExecution implements Controller {
         this.controllerInstance = this.controller.getDeclaredConstructor().newInstance();
     }
 
-    @Override
-    public Object execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         // request 의 uri, method 를 처리하는 Controller 메서드 실행
-        return method.invoke(controllerInstance, request, response);
+        return (ModelAndView) method.invoke(controllerInstance, request, response);
     }
 
     @Override
