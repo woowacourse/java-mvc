@@ -6,21 +6,21 @@ import java.util.List;
 
 public class HandlerManager {
 
-    List<Handler> handlers;
+    List<ServletRequestHandler> servletRequestHandlers;
 
-    public HandlerManager(List<Handler> handlers) {
-        this.handlers = handlers;
+    public HandlerManager(ServletRequestHandler... servletRequestHandlers) {
+        this.servletRequestHandlers = List.of(servletRequestHandlers);
     }
 
     public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        handlers.stream()
-                .filter(handler -> handler.canHandle(request))
+        servletRequestHandlers.stream()
+                .filter(servletRequestHandler -> servletRequestHandler.canHandle(request))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("처리할 수 있는 핸들러가 존재하지 않습니다."))
                 .handle(request, response);
     }
 
     public void initialize() {
-        handlers.forEach(Handler::initialize);
+        servletRequestHandlers.forEach(ServletRequestHandler::initialize);
     }
 }

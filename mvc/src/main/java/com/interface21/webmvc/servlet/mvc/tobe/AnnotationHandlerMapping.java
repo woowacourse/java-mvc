@@ -14,7 +14,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping implements Handler {
+public class AnnotationHandlerMapping implements ServletRequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 

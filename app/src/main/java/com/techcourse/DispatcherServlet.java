@@ -2,11 +2,11 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerManager;
+import com.interface21.webmvc.servlet.mvc.tobe.ServletRequestHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +22,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerManager = new HandlerManager(
-                List.of(new AnnotationHandlerMapping(Application.class),
-                        new ManualHandlerMapping()
-                ));
+        ServletRequestHandler annotationServletRequestHandlerMapping = new AnnotationHandlerMapping(
+                Application.class);
+        ServletRequestHandler manualServletRequestHandlerMapping = new ManualHandlerMapping();
+        handlerManager = new HandlerManager(annotationServletRequestHandlerMapping, manualServletRequestHandlerMapping);
         handlerManager.initialize();
     }
 

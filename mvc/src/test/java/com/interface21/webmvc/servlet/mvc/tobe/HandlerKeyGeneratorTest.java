@@ -12,17 +12,6 @@ import org.junit.jupiter.api.Test;
 
 class HandlerKeyGeneratorTest {
 
-    class TestClass {
-
-        @RequestMapping("/generate-all-http-request-method")
-        void generateAllHttpRequestMethod() {}
-
-        @RequestMapping(value = "/generate-get-http-request-method", method = RequestMethod.GET)
-        void generateGetHttpRequestMethod() {}
-
-        void exceptionOccurred() {}
-    }
-
     @DisplayName("Method에 RequestMapping 어노테이션이 붙지 않으면 예외가 발생한다.")
     @Test
     void exceptionWhenRequestMappingNotExist() throws NoSuchMethodException {
@@ -34,17 +23,18 @@ class HandlerKeyGeneratorTest {
                 // then
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
     @DisplayName("RequestMapping에 기입되어 있는 RequestMethod로 HandlerKey 생성한다.")
     @Test
     void generateGetHttpRequestMethod() throws NoSuchMethodException {
         // given
         Method method = TestClass.class.getDeclaredMethod("generateGetHttpRequestMethod");
-        HandlerKey expected = new HandlerKey("/generate-get-http-request-method",RequestMethod.GET);
+        HandlerKey expected = new HandlerKey("/generate-get-http-request-method", RequestMethod.GET);
 
         // when
         List<HandlerKey> handlerKeys = HandlerKeyGenerator.fromAnnotatedMethod(method);
         HandlerKey actual = handlerKeys.stream()
-                .filter(handlerKey ->  handlerKey.equals(expected))
+                .filter(handlerKey -> handlerKey.equals(expected))
                 .findFirst()
                 .get();
 
@@ -65,5 +55,19 @@ class HandlerKeyGeneratorTest {
 
         // then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    class TestClass {
+
+        @RequestMapping("/generate-all-http-request-method")
+        void generateAllHttpRequestMethod() {
+        }
+
+        @RequestMapping(value = "/generate-get-http-request-method", method = RequestMethod.GET)
+        void generateGetHttpRequestMethod() {
+        }
+
+        void exceptionOccurred() {
+        }
     }
 }
