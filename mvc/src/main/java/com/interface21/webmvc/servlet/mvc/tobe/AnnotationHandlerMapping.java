@@ -30,23 +30,21 @@ public class AnnotationHandlerMapping {
 
         Reflections reflections = new Reflections(basePackage, Scanners.TypesAnnotated);
         reflections.getTypesAnnotatedWith(Controller.class)
-                .forEach(controller -> {
-                    try {
-                        registerControllerHandlers(controller);
-                    } catch (Exception e) {
-                        log.error("Failed to register controller handlers", e);
-                    }
-                });
+                .forEach(this::registerControllerHandlers);
     }
 
     private void registerControllerHandlers(Class<?> controllerClass) {
-        Method[] methods = controllerClass.getMethods();
+        try {
+            Method[] methods = controllerClass.getMethods();
 
-        Arrays.stream(methods)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> registerHandlerExecutions(
-                        createControllerInstance(controllerClass), method
-                ));
+            Arrays.stream(methods)
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .forEach(method -> registerHandlerExecutions(
+                            createControllerInstance(controllerClass), method
+                    ));
+        } catch (Exception e) {
+            log.error("Failed to register controller handlers", e);
+        }
     }
 
     private Object createControllerInstance(Class<?> controllerClass) {
