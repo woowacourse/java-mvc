@@ -49,7 +49,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Method handlerMethod : handlerMethods) {
             List<HandlerKey> handlerKeys = getHandlerKeys(handlerType, handlerMethod);
-            handlerKeys.forEach(handlerKey -> register(handlerKey, handlerMethod));
+            HandlerExecution handlerExecution = getHandlerExecution(handlerType, handlerMethod);
+            handlerKeys.forEach(handlerKey -> register(handlerKey, handlerExecution));
         }
     }
 
@@ -85,12 +86,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .toList();
     }
 
-    private void register(HandlerKey handlerKey, Method method) {
+    private HandlerExecution getHandlerExecution(Class<?> handlerType, Method handlerMethod) {
+        try {
+            Object handler = handlerType.getDeclaredConstructor().newInstance();
+            return new HandlerExecution(handler, handlerMethod);
+        } catch (Throwable ex) {
+            throw new HandlerCreationException(handlerType.getName(), ex);
+        }
+    }
+
+    private void register(HandlerKey handlerKey, HandlerExecution handlerExecution) {
         if (handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalStateException("Duplicated handler key : %s".formatted(handlerKey));
         }
         log.trace("register handler key: {}", handlerKey);
-        handlerExecutions.put(handlerKey, new HandlerExecution(method));
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     @Override
