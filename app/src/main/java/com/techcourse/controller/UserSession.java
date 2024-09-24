@@ -1,9 +1,10 @@
 package com.techcourse.controller;
 
-import com.techcourse.domain.User;
+import java.util.Optional;
+
 import jakarta.servlet.http.HttpSession;
 
-import java.util.Optional;
+import com.techcourse.domain.User;
 
 public class UserSession {
 

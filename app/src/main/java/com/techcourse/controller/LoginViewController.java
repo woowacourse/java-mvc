@@ -11,15 +11,17 @@ import com.interface21.webmvc.servlet.mvc.asis.Controller;
 public class LoginViewController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
+    private static final String LOGIN_JSP = "/login.jsp";
+    private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
+                    return REDIRECT_INDEX_JSP;
                 })
-                .orElse("/login.jsp");
+                .orElse(LOGIN_JSP);
     }
 }
 
