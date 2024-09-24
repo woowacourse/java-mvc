@@ -50,12 +50,19 @@ public class DispatcherServlet extends HttpServlet {
                 log.info("Handler not found for path: {}, method: {}", request.getRequestURI(), request.getMethod());
                 return;
             }
-            ModelAndView mav = handlerAdapterRegistry.handle(request, response, handler.get());
-            View view = mav.getView();
-            view.render(mav.getModel(), request, response);
+            handleRequest(request, response, handler.get());
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void handleRequest(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        ModelAndView mav = handlerAdapterRegistry.handle(request, response, handler);
+        if (mav != null) {
+            View view = mav.getView();
+            view.render(mav.getModel(), request, response);
         }
     }
 }
