@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,8 +18,7 @@ class AnnotationHandlerMappingTest {
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
-    void setUp()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
@@ -43,7 +41,7 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("Post 메서드타입을 지원할 수 있다.")
     @Test
-    void post() throws Exception {
+    void post() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -60,7 +58,7 @@ class AnnotationHandlerMappingTest {
     @DisplayName("메서드 타입이 없을 경우 모든 타입을 지원한다.")
     @ParameterizedTest
     @ValueSource(strings = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"})
-    void noMethodType(String methodType) throws Exception {
+    void noMethodType(String methodType) {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 

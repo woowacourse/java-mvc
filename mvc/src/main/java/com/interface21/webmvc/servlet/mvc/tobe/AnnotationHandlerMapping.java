@@ -27,10 +27,14 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-        initializeMappingInformation(reflections);
+        try {
+            initializeMappingInformation(reflections);
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
