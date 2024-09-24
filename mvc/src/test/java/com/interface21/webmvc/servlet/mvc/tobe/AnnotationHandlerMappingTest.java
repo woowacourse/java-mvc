@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,5 +69,17 @@ class AnnotationHandlerMappingTest {
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("pororo");
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"/invalid-test, GET", "/post-test, GET"})
+    @DisplayName("요청 URI 또는 method와 일치하는 핸들러가 없다면 예외가 발생한다.")
+    void invalidRequest(String requestURI, String method) {
+        when(request.getAttribute("id")).thenReturn("pororo");
+        when(request.getRequestURI()).thenReturn(requestURI);
+        when(request.getMethod()).thenReturn(method);
+
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

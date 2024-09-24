@@ -74,13 +74,18 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        RequestMethod requestMethod = RequestMethod.from(method);
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
+        HandlerKey handlerKey = createHandlerKey(requestURI, method);
 
         if (handlerExecutions.containsKey(handlerKey)) {
             return handlerExecutions.get(handlerKey);
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException(
+                String.format("요청 URI 또는 method와 일치하는 핸들러를 찾을 수 없습니다. 요청된 URI: \"%s\", method: \"%s\"", requestURI, method));
+    }
+
+    private HandlerKey createHandlerKey(String requestURI, String method) {
+        return new HandlerKey(requestURI, RequestMethod.from(method));
     }
 }
