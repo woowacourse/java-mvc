@@ -2,10 +2,13 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,5 +50,23 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+    }
+
+    @Test
+    void missingRequestMapping() throws Exception {
+        Class<TestController> controllerClass = TestController.class;
+
+        Method findUserId = controllerClass
+                .getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
+        Method save = controllerClass
+                .getDeclaredMethod("save", HttpServletRequest.class, HttpServletResponse.class);
+        Method annotationNotExist = controllerClass
+                .getDeclaredMethod("annotationNotExist", HttpServletRequest.class, HttpServletResponse.class);
+
+        assertAll(
+                () -> assertThat(handlerMapping.isMethodRegistered(findUserId)).isTrue(),
+                () -> assertThat(handlerMapping.isMethodRegistered(save)).isTrue(),
+                () -> assertThat(handlerMapping.isMethodRegistered(annotationNotExist)).isFalse()
+        );
     }
 }

@@ -18,4 +18,8 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return (ModelAndView) method.invoke(controller, request, response);
     }
+
+    boolean hasMethod(Method method) {
+        return this.method.equals(method);
+    }
 }

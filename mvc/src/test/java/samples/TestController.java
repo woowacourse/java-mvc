@@ -30,4 +30,9 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    public ModelAndView annotationNotExist(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller annotation not exist method");
+        return new ModelAndView(new JspView(""));
+    }
 }

@@ -63,6 +63,11 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecutionByMethod(Object controller, Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            log.info("RequestMapping이 존재하지 않는 메서드: {}", method.getName());
+            return;
+        }
+
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
@@ -82,5 +87,10 @@ public class AnnotationHandlerMapping {
             return RequestMethod.values();
         }
         return methods;
+    }
+
+    boolean isMethodRegistered(Method method) {
+        return handlerExecutions.values().stream()
+                .anyMatch(handlerExecution -> handlerExecution.hasMethod(method));
     }
 }
