@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
@@ -36,7 +37,6 @@ public class HandlerMappingContainer {
         return newHandlerAdapters;
     }
 
-
     public void initialize() {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
@@ -46,6 +46,6 @@ public class HandlerMappingContainer {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NoSuchElementException("해당 요청을 지원하는 HandlerMapping을 찾을 수 없습니다: " + request));
     }
 }
