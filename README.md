@@ -30,3 +30,29 @@
   - [x] AnnotationHandlerMapping getHandler : 요청에 적합한 핸들러 조회
   - [x] HandlerExecution handle : 요청 처리
 - [x] JspView 클래스 구현
+
+### 2단계
+
+- [ ] login 로직 @MVC 사용으로 변경
+
+- handler 인터페이스 구현 
+  - 구현체: AnnotationHandlerMapping, ManualHandlerMapping 
+
+- DispatcherServlet 수정
+  - [ ] handler 리스트 갖도록 수정
+  - [ ] service 로직에서 handler 모두 실행해서 매핑 정보 가져옴
+
+- Legacy MVC를 따르는 컨트롤러 정상 동작
+  - [ ] GET / -> /index.jsp
+  - [ ] GET /register/view -> /register.js
+  - [ ] POST /register 회원가입 성공 -> /index.jsp
+  - [ ] GET /logout -> 세션 정보 삭제
+
+- @MVC 따르는 컨트롤러 정상 동작
+  - [ ] GET /login/view -> /login.jsp
+  - [ ] POST /login 로그인 성공 -> /index.jsp
+  - [ ] POST /login 로그인 실패 -> /401.jsp
+
+- 처리 추가
+  - [ ] /login, /register 시 request에 param이 잘못된 경우 -> /400.jsp
+  - [ ] request 매핑이 중복되는 경우 예외 처리
