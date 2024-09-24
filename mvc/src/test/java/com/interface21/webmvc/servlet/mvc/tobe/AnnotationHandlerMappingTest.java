@@ -1,16 +1,19 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import samples.TestController;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.interface21.web.bind.annotation.RequestMethod;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import samples.TestController;
 
 class AnnotationHandlerMappingTest {
 
@@ -52,6 +55,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
+    @DisplayName("어노테이션이 존재하지 않는 메서드는 등록하지 않고 무시한다.")
     @Test
     void missingRequestMapping() throws Exception {
         Class<TestController> controllerClass = TestController.class;
@@ -68,5 +72,35 @@ class AnnotationHandlerMappingTest {
                 () -> assertThat(handlerMapping.isMethodRegistered(save)).isTrue(),
                 () -> assertThat(handlerMapping.isMethodRegistered(annotationNotExist)).isFalse()
         );
+    }
+
+    @DisplayName("등록되지 않은 URL 요청시 핸들러가 존재하지 않는다.")
+    @Test
+    void handlerNotFoundForUnknownUrl() {
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        when(mockRequest.getRequestURI()).thenReturn("/unknown-url");
+        when(mockRequest.getMethod()).thenReturn("GET");
+
+        HandlerExecution handlerExecution = handlerMapping.getHandler(mockRequest);
+
+        assertThat(handlerExecution).isNull();
+    }
+
+    @DisplayName("method 설정이 되어 있지 않으면 모든 HTTP method를 지원한다.")
+    @Test
+    void handlerWithoutHttpMethodSpecifiedShouldHandleAllHttpMethods() {
+        Arrays.stream(RequestMethod.values()).forEach(requestMethod -> {
+            try {
+                HttpServletRequest request = mock(HttpServletRequest.class);
+                when(request.getRequestURI()).thenReturn("/no-method-test");
+                when(request.getMethod()).thenReturn(requestMethod.name());
+
+                HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+
+                assertThat(handlerExecution).isNotNull();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
