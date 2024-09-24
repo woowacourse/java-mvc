@@ -27,7 +27,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("핸들러 조회 성공: GET /get-test 요청")
-    void get() throws Exception {
+    void get() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -43,7 +43,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("핸들러 조회 성공: POST /post-test 요청")
-    void post() throws Exception {
+    void post() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -60,7 +60,7 @@ class AnnotationHandlerMappingTest {
     @ParameterizedTest
     @EnumSource(value = RequestMethod.class)
     @DisplayName("핸들러 조회 성공: url만 매핑된 요청인 경우 모든 메서드 허용")
-    void onlyUrl_noMethod(final RequestMethod requestMethod) throws Exception {
+    void onlyUrl_noMethod(final RequestMethod requestMethod) {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
