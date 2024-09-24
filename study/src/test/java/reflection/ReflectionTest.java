@@ -120,7 +120,7 @@ class ReflectionTest {
     @Test
     void givenClassField_whenSetsAndGetsValue_thenCorrect() throws Exception {
         final Class<?> studentClass = Student.class;
-        final Student student = new Student();
+        final Student student = (Student) studentClass.getConstructor().newInstance();
         final Field field = student.getClass().getDeclaredField("age");
 
         // todo field에 접근 할 수 있도록 만든다.
