@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +17,11 @@ class ComponentScannerTest {
 	void scan() {
 		Map<HandlerKey, HandlerExecution> scan = ComponentScanner.scan();
 
-		assertThat(scan).hasSize(2);
+		assertThat(scan).hasSize(10);
 		assertThat(scan.get(new HandlerKey("/get-test", RequestMethod.GET))).isNotNull();
 		assertThat(scan.get(new HandlerKey("/post-test", RequestMethod.POST))).isNotNull();
+
+		Arrays.stream(RequestMethod.values())
+			.forEach(method -> assertThat(scan.get(new HandlerKey("/all-test", method))).isNotNull());
 	}
 }
