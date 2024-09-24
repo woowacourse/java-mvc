@@ -8,13 +8,13 @@ public class HandlerKey {
     private final String url;
     private final RequestMethod requestMethod;
 
+    public HandlerKey(final String url, final String requestMethod) {
+        this(url, RequestMethod.of(requestMethod));
+    }
+
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
-    }
-
-    public HandlerKey(final String url, final String requestMethod) {
-        this(url, RequestMethod.of(requestMethod));
     }
 
     @Override
