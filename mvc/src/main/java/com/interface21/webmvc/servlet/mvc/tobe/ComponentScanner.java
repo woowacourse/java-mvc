@@ -21,20 +21,19 @@ public final class ComponentScanner {
 			.addScanners(Scanners.TypesAnnotated));
 
 		Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
-		for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
-			scanRequestMappingForMethods(executions, clazz);
-		}
+		reflections.getTypesAnnotatedWith(Controller.class)
+			.stream()
+			.forEach(clazz -> scanRequestMappingForMethods(executions, clazz));
 		return executions;
 	}
 
 	private static void scanRequestMappingForMethods(Map<HandlerKey, HandlerExecution> executions, Class clazz) {
-		for (Method method : clazz.getDeclaredMethods()) {
-			if(!method.isAnnotationPresent(RequestMapping.class)) {
-				return;
-			}
-			String value = method.getAnnotation(RequestMapping.class).value();
-			extractMethodOfRequestMapping(executions, clazz, value, method);
-		}
+		Arrays.stream(clazz.getDeclaredMethods())
+			.filter(method -> method.isAnnotationPresent(RequestMapping.class))
+			.forEach(method -> {
+				String value = method.getAnnotation(RequestMapping.class).value();
+				extractMethodOfRequestMapping(executions, clazz, value, method);
+			});
 	}
 
 	private static void extractMethodOfRequestMapping(Map<HandlerKey, HandlerExecution> executions, Class clazz, String value, Method method) {
