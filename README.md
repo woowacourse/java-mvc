@@ -18,3 +18,15 @@
 ## 학습 테스트
 1. [Reflection API](study/src/test/java/reflection)
 2. [Servlet](study/src/test/java/servlet)
+
+---
+
+## 기능 구현 목록
+
+### 1단계
+
+- AnnotationHandlerMappingTest 통과 시키기
+  - [x] AnnotationHandlerMapping initialize : 핸들러 매핑의 초기화 작업
+  - [x] AnnotationHandlerMapping getHandler : 요청에 적합한 핸들러 조회
+  - [x] HandlerExecution handle : 요청 처리
+- [x] JspView 클래스 구현
