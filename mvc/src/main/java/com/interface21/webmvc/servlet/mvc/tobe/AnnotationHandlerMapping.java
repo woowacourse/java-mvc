@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.NoHandlerFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -14,7 +15,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
@@ -57,8 +59,15 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
+    @Override
+    public boolean support(String requestUrl, RequestMethod method) {
+        HandlerKey handlerKey = new HandlerKey(requestUrl, method);
+        return handlerExecutions.containsKey(handlerKey);
+    }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Object getHandler(final Object httpServletRequest) {
+        HttpServletRequest request = (HttpServletRequest) httpServletRequest;
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         if (handlerExecution == null) {
