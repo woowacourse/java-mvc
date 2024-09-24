@@ -1,11 +1,9 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import java.util.Objects;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappings {
 
