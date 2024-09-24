@@ -16,6 +16,10 @@ public class AnnotationHandlerMapping implements RequestHandlerMapping {
     private final Object[] basePackage;
     private final HandlerExecutions handlerExecutions;
 
+    public AnnotationHandlerMapping() {
+        this(new Object[0]);
+    }
+
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HandlerExecutions();
