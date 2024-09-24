@@ -47,8 +47,8 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandler(Object controllerInstance, Method method) {
-        RequestMapping annotation = method.getAnnotation(REQUEST_MAPPING);
-        List<HandlerKey> handlerKeys = generateHandlerKeys(annotation);
+        RequestMappingInfo requestMappingInfo = new RequestMappingInfo(method.getAnnotation(REQUEST_MAPPING));
+        List<HandlerKey> handlerKeys = requestMappingInfo.getHandlerKeys();
 
         handlerKeys.forEach(key -> {
             HandlerExecution execution = new HandlerExecution(controllerInstance, method);
@@ -56,21 +56,6 @@ public class AnnotationHandlerMapping {
         });
     }
 
-    private List<HandlerKey> generateHandlerKeys(final RequestMapping requestMapping) {
-        RequestMethod[] methods = getHttpMethods(requestMapping);
-        return Arrays.stream(methods)
-                .map(method -> new HandlerKey(requestMapping.value(), method))
-                .toList();
-    }
-
-    private RequestMethod[] getHttpMethods(final RequestMapping requestMapping) {
-        RequestMethod[] methods = requestMapping.method();
-        if (methods.length == 0) {
-            methods = RequestMethod.values();
-        }
-
-        return methods;
-    }
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
