@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
             manualHandlerMapping = new ManualHandlerMapping();
             manualHandlerMapping.initialize();
 
-            annotationHandlerMapping = new AnnotationHandlerMapping(this.getClass().getPackageName());
+            annotationHandlerMapping = new AnnotationHandlerMapping(getClass().getPackageName());
             annotationHandlerMapping.initialize();
 
             handlerAdapters = List.of(new ControllerHandlerAdapter(), new RequestMappingHandlerAdapter());
@@ -77,10 +76,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        Map<String, Object> model = modelAndView.getModel();
-        if (!model.isEmpty()) {
-            View view = modelAndView.getView();
-            view.render(model, request, response);
-        }
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
