@@ -68,20 +68,9 @@ public class AnnotationHandlerMapping {
 		RequestMethod[] requestMethods = requestMapping.method();
 
 		if (requestMethods.length == 0) {
-			registerForAllHttpMethods(uriPattern, instance, method);
-			return;
+			requestMethods = RequestMethod.values();
 		}
-		registerForSpecificHttpMethods(uriPattern, requestMethods, instance, method);
-	}
 
-	private void registerForAllHttpMethods(String uriPattern, Object instance, Method method) {
-		for (RequestMethod requestMethod : RequestMethod.values()) {
-			registerHandler(uriPattern, requestMethod, instance, method);
-		}
-	}
-
-	private void registerForSpecificHttpMethods(String uriPattern, RequestMethod[] requestMethods,
-		Object instance, Method method) {
 		for (RequestMethod requestMethod : requestMethods) {
 			registerHandler(uriPattern, requestMethod, instance, method);
 		}
