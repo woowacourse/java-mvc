@@ -21,7 +21,7 @@ public class HandlerExecution {
         try {
             return (ModelAndView) method.invoke(controllerInstance, request, response);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException("요청 처리 중 에러가 발생했습니다. " + e);
+            throw new IllegalStateException("HandlerExecution 요청 처리 중 에러가 발생했습니다. " + e);
         }
     }
 }
