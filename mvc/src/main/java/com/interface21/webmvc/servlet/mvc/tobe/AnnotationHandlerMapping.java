@@ -3,7 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -101,12 +101,10 @@ public class AnnotationHandlerMapping {
         return Arrays.asList(requestMethods);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<HandlerExecution> findHandler(final HttpServletRequest request) {
         final String requestUri = request.getRequestURI();
         final String requestMethod = request.getMethod().toUpperCase();
         final HandlerKey handlerKey = new HandlerKey(requestUri, RequestMethod.valueOf(requestMethod));
-        return handlerExecutions.findHandlerExecution(handlerKey)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "해당 요청을 처리할 핸들러가 존재하지 않습니다. - " + requestUri + " " + requestMethod));
+        return handlerExecutions.findHandlerExecution(handlerKey);
     }
 }

@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.NoSuchElementException;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -38,7 +36,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = handlerMapping.findHandler(request).get();
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -53,7 +51,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = handlerMapping.findHandler(request).get();
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -72,7 +70,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn(requestMethod.name());
 
         // When
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = handlerMapping.findHandler(request).get();
         final var modelAndView = handlerExecution.handle(request, response);
 
         // Then
@@ -87,23 +85,5 @@ class AnnotationHandlerMappingTest {
         assertThatThrownBy(() -> new AnnotationHandlerMapping(input))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("패키지 명은 null 혹은 공백일 수 없습니다. - " + input);
-    }
-
-    @DisplayName("처리할 수 없는 요청이 입력되면 예외를 발생시킨다.")
-    @Test
-    void inputNotSupportedRequest() {
-        // Given
-        final var request = mock(HttpServletRequest.class);
-        final String requestUri = "/give_money_for_kelly";
-        final String requestMethod = RequestMethod.GET.name();
-
-        when(request.getAttribute("id")).thenReturn("kelly");
-        when(request.getRequestURI()).thenReturn(requestUri);
-        when(request.getMethod()).thenReturn(requestMethod);
-
-        // When & Then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("해당 요청을 처리할 핸들러가 존재하지 않습니다. - " + requestUri + " " + requestMethod);
     }
 }
