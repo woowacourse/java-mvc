@@ -1,12 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
@@ -15,8 +17,47 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping("samples.valid");
         handlerMapping.initialize();
+    }
+
+    @DisplayName("같은 path와 method를 가진 handler를 두 개 이상 등록하려 하면 예외가 발생한다.")
+    @Test
+    void initialize_duplicatedAnnotationValue() {
+        // given
+        AnnotationHandlerMapping mapping = new AnnotationHandlerMapping("samples.duplicatedvalue");
+
+        // when & then
+        assertThatThrownBy(mapping::initialize).isInstanceOf(HandlingException.class)
+                .hasMessage("같은 요청을 처리할 메서드가 두 개 이상 존재합니다.");
+    }
+
+    @DisplayName("기본 생성자를 사용할 수 없는 컨트롤러를 등록하려 하면 예외가 발생한다.")
+    @Test
+    void initialize_invalidConstructor() {
+        // given
+        AnnotationHandlerMapping mapping = new AnnotationHandlerMapping("samples.invalidconstructor");
+
+        // when & then
+        assertThatThrownBy(mapping::initialize).isInstanceOf(HandlingException.class)
+                .hasMessage("해당 컨트롤러의 기본 생성자로 인스턴스를 생성할 수 없습니다.");
+    }
+
+    @DisplayName("요청을 처리할 핸들러가 없으면 null을 반환한다.")
+    @Test
+    void getHandler_notFound() {
+        // given
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/invalid");
+        when(request.getMethod()).thenReturn("GET");
+
+        // when
+        HandlerExecution handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isNull();
     }
 
     @Test

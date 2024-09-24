@@ -1,18 +1,16 @@
 package reflection;
 
-import java.util.Arrays;
-import java.util.Date;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.DATE;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ReflectionTest {
 
@@ -127,7 +125,6 @@ class ReflectionTest {
         final Field field = studentClass.getDeclaredField("age");
 
         field.setAccessible(true);
-        // todo field에 접근 할 수 있도록 만든다.
 
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
