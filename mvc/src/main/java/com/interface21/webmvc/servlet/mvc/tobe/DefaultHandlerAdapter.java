@@ -15,8 +15,8 @@ public class DefaultHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response,
-        Object handler) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+        throws Exception {
         return (ModelAndView) handler.getClass()
             .getDeclaredMethod(DEFAULT_HANDLER_METHOD_NAME)
             .invoke(handler);
