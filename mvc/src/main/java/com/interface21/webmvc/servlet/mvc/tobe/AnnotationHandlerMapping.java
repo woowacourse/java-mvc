@@ -5,7 +5,6 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerKeys;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +65,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         handlerKeys.put(handlerKey, new HandlerExecution(controller, method));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        return handlerKeys.get(new HandlerKey(request));
+    public HandlerExecution getHandler(final HandlerKey key) {
+        return handlerKeys.get(key);
     }
 }

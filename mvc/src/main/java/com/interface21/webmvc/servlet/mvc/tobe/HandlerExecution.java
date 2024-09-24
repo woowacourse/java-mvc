@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -16,11 +15,11 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response){
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            return (ModelAndView) method.invoke(controller, request, response);
+            return method.invoke(controller, request, response);
         } catch (final IllegalAccessException | InvocationTargetException e) {
-            throw new FailHandlerExecuteException(method,e);
+            throw new FailHandlerExecuteException(method, e);
         }
     }
 }
