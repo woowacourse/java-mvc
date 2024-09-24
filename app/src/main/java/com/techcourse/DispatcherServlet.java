@@ -1,6 +1,10 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.adepter.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adepter.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,8 +23,11 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
 
+    private final List<HandlerAdapter> handlerAdapters;
+
     public DispatcherServlet() {
         handlerMappings = new ArrayList<>();
+        handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -28,6 +35,9 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.forEach(HandlerMapping::initialize);
+
+        handlerAdapters.add(new ControllerHandlerAdapter());
+        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
@@ -39,6 +49,8 @@ public class DispatcherServlet extends HttpServlet {
             if (handler == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             // todo
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -48,7 +60,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
+            Object handler = handlerMapping.getHandler(request);
             if (handler != null) {
                 return handler;
             }
@@ -56,13 +68,12 @@ public class DispatcherServlet extends HttpServlet {
         return null;
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
         }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        throw new ServletException("There is no handler adapter for handler: %s".formatted(handler.getClass().getCanonicalName()));
     }
 }
