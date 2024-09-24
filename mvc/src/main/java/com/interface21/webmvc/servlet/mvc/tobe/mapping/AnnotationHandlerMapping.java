@@ -33,7 +33,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     protected AnnotationHandlerMapping() {
-        this.basePackage = new Object[0];
+        this.basePackage = new Object[]{"com"};
         this.handlerExecutions = new HashMap<>();
     }
 
