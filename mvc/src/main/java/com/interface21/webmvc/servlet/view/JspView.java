@@ -1,8 +1,10 @@
 package com.interface21.webmvc.servlet.view;
 
+import java.io.IOException;
 import java.util.Map;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -22,25 +24,21 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
-    public static boolean isRedirectView(String viewName) {
-        return viewName != null && viewName.startsWith(REDIRECT_PREFIX);
-    }
-
-    public static String getRedirectUrl(String viewName) {
-        if (!isRedirectView(viewName)) {
-            throw new IllegalArgumentException("redirect를 사용하지 않은 viewName입니다.");
-        }
-
-        return viewName.substring(REDIRECT_PREFIX.length());
-    }
-
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        if (isForwardView(viewName)) {
+            forward(model, request, response);
             return;
         }
 
+        response.sendRedirect(getRedirectUrl(viewName));
+    }
+
+    private boolean isForwardView(String viewName) {
+        return !viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    private void forward(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
@@ -48,5 +46,9 @@ public class JspView implements View {
 
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    private String getRedirectUrl(String viewName) {
+        return viewName.substring(REDIRECT_PREFIX.length());
     }
 }
