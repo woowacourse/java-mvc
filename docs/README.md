@@ -20,4 +20,14 @@
   - [x] ManualHandlerAdapter 구현
   - [x] AnnotationHandlerAdapter 구현
   - [x] DispatcherServlet에서 HandlerMapping과 HandlerAdapter를 사용하도록 수정
-- [x] 존재하지 않는 핸들러인 경우 404 에러 페이지로 이동하도록 수정
+
+## Step 3
+
+- [x] JsonView 구현
+  - [x] Jackson 라이브러리를 사용하여 자바 객체로 변환
+  - [x] ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE로 반환
+  - [x] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환 ex) 하나면 `{"name": "keesun"}`, 둘 이상이면 `{"user1": {"name": "keesun"}, "user2": {"name": "whiteship"}}`
+- [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+  - [x] app 모듈에 있는 모든 컨트롤러에 @Controller 어노테이션 추가
+- [x] DispatcherServlet을 mvc 패키지로 이동
+- [x] mappings, adapters를 dispatcher servlet에서 등록하게 수정
