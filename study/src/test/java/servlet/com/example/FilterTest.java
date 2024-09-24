@@ -22,6 +22,10 @@ class FilterTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // 테스트가 통과하도록 CharacterEncodingFilter 클래스를 수정해보자.
+        /**
+         * CharacterEncodingFilter에서 response에 UTF-8 설정을 넣어줌.
+         * getWriter()를 호출하기전 response 객체에 인코딩이 설정되어야 하기 때문에 Filter에서 인코딩 설정을 해준다.
+         */
         assertThat(response.body()).isEqualTo(인코딩);
     }
 }

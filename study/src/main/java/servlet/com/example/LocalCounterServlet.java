@@ -15,7 +15,7 @@ public class LocalCounterServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        getServletContext().log("init() 호출");
+        getServletContext().log("init() 호출\n\n");
     }
 
     /**
@@ -24,7 +24,7 @@ public class LocalCounterServlet extends HttpServlet {
      */
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        getServletContext().log("service() 호출");
+        getServletContext().log("service() 호출\n\n");
         response.addHeader("Content-Type", "text/html; charset=utf-8");
         int localCounter = 0;
         localCounter++;
@@ -33,6 +33,6 @@ public class LocalCounterServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        getServletContext().log("destroy() 호출");
+        getServletContext().log("destroy() 호출\n\n");
     }
 }
