@@ -1,10 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-public interface HandlerMapping<T, R> {
+import com.interface21.webmvc.servlet.Handler;
+import com.interface21.webmvc.servlet.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
+
+public interface HandlerMapping {
 
     void initialize();
 
-    boolean hasHandler(T request);
+    boolean hasHandler(HttpServletRequest request);
 
-    R getHandler(T request);
+    Handler getHandler(HttpServletRequest request);
 }

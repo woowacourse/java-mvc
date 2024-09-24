@@ -13,7 +13,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping implements HandlerMapping<HttpServletRequest, HandlerExecution> {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final Class<? extends RequestMapping> MAPPING_ANNOTATION = RequestMapping.class;

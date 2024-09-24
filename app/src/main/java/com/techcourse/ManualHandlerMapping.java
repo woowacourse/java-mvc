@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandler;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.LoginController;
@@ -8,12 +9,13 @@ import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ManualHandlerMapping implements HandlerMapping<String, Controller> {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
@@ -34,13 +36,14 @@ public class ManualHandlerMapping implements HandlerMapping<String, Controller> 
     }
 
     @Override
-    public boolean hasHandler(String request) {
-        return controllers.containsKey(request);
+    public boolean hasHandler(HttpServletRequest request) {
+        return controllers.containsKey(request.getRequestURI());
     }
 
     @Override
-    public Controller getHandler(final String requestURI) {
+    public ControllerHandler getHandler(HttpServletRequest requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        Controller controller = controllers.get(requestURI.getRequestURI());
+        return new ControllerHandler(controller);
     }
 }
