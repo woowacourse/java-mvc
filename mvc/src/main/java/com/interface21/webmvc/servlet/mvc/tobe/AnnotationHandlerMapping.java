@@ -73,6 +73,10 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("등록되지않은 요청URI와 MethodType입니다.");
+        }
         return handlerExecutions.get(
                 new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
