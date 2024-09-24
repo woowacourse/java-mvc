@@ -1,5 +1,9 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,15 +17,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final Object[] basePackage;
 
-    public DispatcherServlet() {
+    private ManualHandlerMapping manualHandlerMapping;
+    private AnnotationHandlerMapping annotationHandlerMapping;
+
+    public DispatcherServlet(Object... basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        annotationHandlerMapping.initialize();
     }
 
     @Override
@@ -29,6 +39,18 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
+        HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
+        if (handlerExecution != null) {
+            try {
+                ModelAndView modelAndView = handlerExecution.handle(request, response);
+                View view = modelAndView.getView();
+                view.render(modelAndView.getModel(), request, response);
+                return;
+            } catch (Exception e) {
+                log.error("Exception : {}", e.getMessage(), e);
+                throw new ServletException(e.getMessage());
+            }
+        }
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
