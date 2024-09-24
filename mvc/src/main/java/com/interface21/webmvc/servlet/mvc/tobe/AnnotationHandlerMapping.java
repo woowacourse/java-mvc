@@ -20,15 +20,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final HandlerKeys handlerKeys;
     private final ControllerContainer controllerContainer;
 
-    public AnnotationHandlerMapping(final HandlerKeys handlerKeys, final Object... basePackage) {
+    public AnnotationHandlerMapping(final HandlerKeys handlerKeys, final ControllerContainer controllerContainer,final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerKeys = handlerKeys;
-        this.controllerContainer = new ControllerContainer(basePackage);
+        this.controllerContainer = controllerContainer;
     }
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        controllerContainer.initialize();
         final Reflections reflections = new Reflections(basePackage);
         final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
         controllers.forEach(this::init);
