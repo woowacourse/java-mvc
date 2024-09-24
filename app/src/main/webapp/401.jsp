@@ -3,7 +3,7 @@
 <html lang="en">
     <head>
         <%@ include file="include/header.jspf" %>
-        <title>404 Error - SB Admin</title>
+        <title>401 Error - SB Admin</title>
     </head>
     <body>
         <div id="layoutError">
