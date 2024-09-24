@@ -53,7 +53,7 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    @DisplayName("Controller에 No-Arg Constructor가 존재하지 않을 경우 예외가 발생한다.")
+    @DisplayName("Controller에 매개 변수가 있는 생성자가 정의 되었을 때 매개 변수가 없는 생성자가 존재하지 않을 경우 예외가 발생한다.")
     @Test
     void exceptionWithNoArgConstructor() {
         // given
