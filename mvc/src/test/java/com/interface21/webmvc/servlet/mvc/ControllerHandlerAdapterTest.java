@@ -33,7 +33,7 @@ class ControllerHandlerAdapterTest {
         void supports() {
             final Controller controller = new TestExtendsController();
 
-            final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
+            final ControllerHandlerAdapter controllerHandlerAdapter = ControllerHandlerAdapter.getInstance();
             assertTrue(controllerHandlerAdapter.supports(controller));
         }
 
@@ -44,7 +44,7 @@ class ControllerHandlerAdapterTest {
             final Method getMethod = TestAnnotationController.class.getDeclaredMethods()[0];
             final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, getMethod);
 
-            final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
+            final ControllerHandlerAdapter controllerHandlerAdapter = ControllerHandlerAdapter.getInstance();
             assertFalse(controllerHandlerAdapter.supports(handlerExecution));
         }
     }
@@ -62,13 +62,13 @@ class ControllerHandlerAdapterTest {
             final Controller testController = new TestExtendsController();
 
             // when
-            final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
+            final ControllerHandlerAdapter controllerHandlerAdapter = ControllerHandlerAdapter.getInstance();
 
             // then
             final ModelAndView modelAndView = controllerHandlerAdapter.handle(testController, request, response);
             assertAll(
-                () -> assertThat(modelAndView.getView()).isEqualTo(new JspView("/test.jsp")),
-                () -> assertThat(modelAndView.getModel()).isEmpty()
+                    () -> assertThat(modelAndView.getView()).isEqualTo(new JspView("/test.jsp")),
+                    () -> assertThat(modelAndView.getModel()).isEmpty()
             );
         }
     }

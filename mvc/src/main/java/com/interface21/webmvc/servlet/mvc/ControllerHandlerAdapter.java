@@ -10,6 +10,15 @@ import com.interface21.webmvc.servlet.view.JspView;
 
 public class ControllerHandlerAdapter implements HandlerAdapter {
 
+    private static final ControllerHandlerAdapter INSTANCE = new ControllerHandlerAdapter();
+
+    private ControllerHandlerAdapter() {
+    }
+
+    public static ControllerHandlerAdapter getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public boolean supports(Object handler) {
         return handler instanceof Controller;
