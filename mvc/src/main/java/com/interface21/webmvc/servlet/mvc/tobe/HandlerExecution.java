@@ -1,6 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -26,12 +28,13 @@ public class HandlerExecution {
     }
 
     private Object resolveArgument(HttpServletRequest request, HttpServletResponse response, Class<?> parameterType) {
-        if (parameterType.isAssignableFrom(HttpServletRequest.class)) {
+        if (ServletRequest.class.isAssignableFrom(parameterType)) {
             return request;
         }
-        if (parameterType.isAssignableFrom(HttpServletResponse.class)) {
+        if (ServletResponse.class.isAssignableFrom(parameterType)) {
             return response;
         }
+
         throw new IllegalStateException("Unsupported parameter type: " + parameterType.getName());
     }
 }
