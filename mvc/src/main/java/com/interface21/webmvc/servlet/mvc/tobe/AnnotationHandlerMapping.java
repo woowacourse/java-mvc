@@ -17,8 +17,9 @@ import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.techcourse.HandlerMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -75,7 +76,7 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(key);
     }
