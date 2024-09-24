@@ -32,6 +32,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    protected AnnotationHandlerMapping() {
+        this.basePackage = new Object[0];
+        this.handlerExecutions = new HashMap<>();
+    }
+
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 

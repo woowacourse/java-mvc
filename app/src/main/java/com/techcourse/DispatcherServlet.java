@@ -13,29 +13,25 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterContainer;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappings;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingContainer;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappings handlerMappings;
+    private final HandlerMappingContainer handlerMappingContainer;
     private final HandlerAdapterContainer handlerAdapterContainer;
 
 
     public DispatcherServlet() {
-        this.handlerMappings = new HandlerMappings(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping()
-        );
+        this.handlerMappingContainer = new HandlerMappingContainer("com");
         handlerAdapterContainer = new HandlerAdapterContainer("com");
     }
 
     @Override
     public void init() {
-        handlerMappings.initialize();
+        handlerMappingContainer.initialize();
     }
 
     @Override
@@ -45,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMappings.getHandler(request);
+            final Object handler = handlerMappingContainer.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterContainer.findHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response);
             modelAndView.getView().render(Map.of(), request, response);
