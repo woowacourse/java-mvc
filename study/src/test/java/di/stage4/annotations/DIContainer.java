@@ -1,5 +1,9 @@
 package di.stage4.annotations;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -7,18 +11,68 @@ import java.util.Set;
  */
 class DIContainer {
 
+    public static DIContainer createContainerForPackage(final String rootPackageName) {
+        Set<Class<?>> classes = ClassPathScanner.getAllClassesInPackage(rootPackageName);
+        return new DIContainer(classes);
+    }
+
     private final Set<Object> beans;
 
     public DIContainer(final Set<Class<?>> classes) {
-        this.beans = Set.of();
+        this.beans = createBeans(classes);
+        this.beans.forEach(this::injectFields);
     }
 
-    public static DIContainer createContainerForPackage(final String rootPackageName) {
-        return null;
+    private Set<Object> createBeans(Set<Class<?>> clazzes) {
+        Set<Object> beans = new HashSet<>();
+        for (Class<?> clazz : clazzes) {
+            beans.add(createBean(clazz));
+        }
+        return beans;
+    }
+
+    private Object createBean(Class<?> clazz) {
+        try {
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (InstantiationException e) {
+            throw new IllegalStateException("Cannot instantiate bean of type: " + clazz.getName(), e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Cannot access constructor of bean type: " + clazz.getName(), e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalStateException("Constructor of bean type " + clazz.getName() + " threw an exception: " + e.getCause(), e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("No default constructor for bean type: " + clazz.getName(), e);
+        }
+    }
+
+    private void injectFields(Object bean) {
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                injectField(bean, field);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Cannot access field: " + field.getName(), e);
+            }
+        }
+    }
+
+    private void injectField(Object targetBean, Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        if (field.isAnnotationPresent(Inject.class)) {
+            Class<?> fieldType = field.getType();
+            field.set(targetBean, getBean(fieldType));
+        }
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getBean(final Class<T> aClass) {
+    public <T> T getBean(final Class<T> clazz) {
+        for (Object bean : beans) {
+            if (clazz.isAssignableFrom(bean.getClass())) {
+                return (T) bean;
+            }
+        }
         return null;
     }
 }
