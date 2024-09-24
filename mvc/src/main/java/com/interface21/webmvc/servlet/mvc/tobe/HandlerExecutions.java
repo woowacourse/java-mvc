@@ -4,7 +4,6 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class HandlerExecutions {
 
@@ -18,10 +17,9 @@ public class HandlerExecutions {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
-    public Optional<HandlerExecution> findHandler(HttpServletRequest request) {
-        return Optional.ofNullable(handlerExecutions.get(
-                        new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))
-                )
+    public HandlerExecution findHandler(HttpServletRequest request) {
+        return handlerExecutions.get(
+                new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))
         );
     }
 }
