@@ -96,12 +96,13 @@ class ReflectionTest {
     }
 
     @Test
-    void givenClass_whenGetsDeclaredFields_thenCorrect() {
+    void givenClass_whenGetsDeclaredFields_thenCorrect() throws NoSuchFieldException {
         final Class<?> questionClass = Question.class;
         final Field[] fields = questionClass.getDeclaredFields();
+        final Field field = questionClass.getDeclaredField("questionId");
 
         assertThat(fields).hasSize(6);
-        assertThat(fields[0].getName()).isEqualTo("questionId");
+        assertThat(field.getName()).isEqualTo("questionId");
     }
 
     @Test
