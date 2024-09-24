@@ -16,8 +16,9 @@ import org.reflections.scanners.Scanners;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Class<RequestMapping> REQUEST_MAPPING = RequestMapping.class;
     private static final Class<Controller> CONTROLLER = Controller.class;
@@ -56,7 +57,12 @@ public class AnnotationHandlerMapping {
         });
     }
 
+    @Override
+    public boolean hasHandler(HttpServletRequest request) {
+        return handlerExecutions.containsKey(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+    }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return Optional.ofNullable(handlerExecutions.get(handlerKey))
