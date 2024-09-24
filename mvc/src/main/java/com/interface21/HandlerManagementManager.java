@@ -24,18 +24,18 @@ public class HandlerManagementManager {
     }
 
     public void initialize(Class<?> clazz) {
-        registerHandler(clazz);
-        registerHandler(this.getClass());
+        registerHandlerManagement(clazz);
+        registerHandlerManagement(this.getClass());
     }
 
-    public void registerHandler(Class<?> clazz) {
+    public void registerHandlerManagement(Class<?> clazz) {
         for (Class<?> handlerClass : HANDLER_CLASSES) {
             HandlerManagementScanner.scanSubTypeOf(clazz, handlerClass)
-                    .forEach(this::registerHandler);
+                    .forEach(this::registerHandlerManagement);
         }
     }
 
-    private void registerHandler(Object object) {
+    private void registerHandlerManagement(Object object) {
         String clazzName = object.getClass().getName();
         if (MANAGERS.containsKey(clazzName)) {
             log.info("이미 등록되어 있는 클래스입니다");
