@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import samples.TestController;
 
 class AnnotationHandlerMappingTest {
@@ -84,12 +86,13 @@ class AnnotationHandlerMappingTest {
     }
 
     @DisplayName("RequestMapping에 메서드를 지정하지 않아도 처리할 수 있다.")
-    @Test
-    void noRequestMethod() throws Exception {
+    @ParameterizedTest
+    @EnumSource(RequestMethod.class)
+    void noRequestMethod(RequestMethod requestMethod) {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/no-request-method");
-        when(request.getMethod()).thenReturn("GET");
+        when(request.getMethod()).thenReturn(requestMethod.name());
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         assertThat(handlerExecution).isNotNull();
