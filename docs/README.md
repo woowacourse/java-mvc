@@ -7,4 +7,12 @@
     - [X] `DispatcherServlet` 클래스의 `service` 메서드에서 뷰 처리 로직을 `JspView` 클래스로 옮기기
   - [X] RequestMapping에 method 설정이 되어 있지 않으면, 모든 HTTP method 지원하기
 - [ ] 점진적인 리팩터링
+  - [ ] `DispatcherServlet` 리팩토링
+    - [ ] 핸들러를 반환하는 `HandlerMapping` 인터페이스 구현
+      - [ ] `ManualHandlerMapping` 구현체 생성
+      - [ ] `AnnotationHandlerMapping` 구현체 생성
+    - [ ] 핸들러를 받아 실행하는 `HandlerExecutor` 구현
+      - [ ] 핸들러를 실행 가능한 형태로 바꿔주는 `HandlerAdapter` 구현
+        - [ ] `ManualHandlerAdapter` 구현체 생성
+        - [ ] `AnnotationHandlerAdapter` 구현체 생성
 - [ ] JSON View 구현하기

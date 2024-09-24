@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -34,9 +36,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+//            [ Legacy MVC ]
+//            final var controller = manualHandlerMapping.getHandler(requestURI);
+//            final var viewName = controller.execute(request, response);
+//            move(viewName, request, response);
+
+//            [ @MVC ]
+//            final HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
+//            final var viewNameV2 = handlerExecution.handle(request, response);
+//            move(viewNameV2.toString(), request, response);
+
+//            [ 통합 ]
+//            final var handler = handlerMapping.getHandler(request);
+//            final var view = handlerExecutor.execute(handler, request, response);
+//            move(view, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
