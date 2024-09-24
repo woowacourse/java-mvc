@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
-import javassist.NotFoundException;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,12 +66,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) throws NotFoundException {
+    public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(
                 request.getRequestURI(), RequestMethod.valueOf(request.getMethod())
         );
         if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new NotFoundException("Resource not found");
+            throw new NoSuchElementException("Resource not found");
         }
         return handlerExecutions.get(handlerKey);
     }
