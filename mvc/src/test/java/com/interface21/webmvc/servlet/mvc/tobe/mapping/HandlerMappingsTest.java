@@ -1,12 +1,11 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.tobe.HandlingException;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ class HandlerMappingsTest {
 
     @BeforeEach
     void setUp() {
-        handlerMappings = new HandlerMappings(List.of(new AnnotationHandlerMapping("samples.valid")));
+        handlerMappings = new HandlerMappings(new AnnotationHandlerMapping("samples.valid"));
     }
 
     @DisplayName("요청을 처리할 Handler가 존재하지 않으면 예외가 발생한다.")
