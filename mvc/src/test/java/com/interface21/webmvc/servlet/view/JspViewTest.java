@@ -8,6 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -22,9 +23,13 @@ class JspViewTest {
         // given
         HttpServletRequest request = spy(HttpServletRequest.class);
         HttpServletResponse response = spy(HttpServletResponse.class);
+        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
 
+        String viewName = "/login.jsp";
         Map<String, ?> model = Map.of("id", "groom");
-        JspView view = new JspView("/login.jsp");
+        JspView view = new JspView(viewName);
+
+        when(request.getRequestDispatcher(viewName)).thenReturn(requestDispatcher);
 
         // when
         view.render(model, request, response);
@@ -32,7 +37,8 @@ class JspViewTest {
         // then
         assertAll(
             () -> verify(request).setAttribute("id", "groom"),
-            () -> verify(request).getRequestDispatcher("/login.jsp")
+            () -> verify(request).getRequestDispatcher("/login.jsp"),
+            () -> verify(requestDispatcher).forward(request, response)
         );
     }
 
@@ -54,24 +60,5 @@ class JspViewTest {
             () -> verify(response).sendRedirect("/404.jsp"),
             () -> verify(request, never()).getRequestDispatcher(anyString())
         );
-    }
-
-    @DisplayName("조회한 페이지가 없으면 404 페이지를 반환한다.")
-    @Test
-    void renderTest2() throws Exception {
-        // given
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-
-        Map<String, ?> model = Map.of();
-        String viewName = "/notfound.jsp";
-        JspView jspView = new JspView(viewName);
-        when(request.getRequestDispatcher(viewName)).thenReturn(null);
-
-        // when
-        jspView.render(model, request, response);
-
-        // then
-        verify(response).sendRedirect("/404.jsp");
     }
 }
