@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.HandlerMappings;
+import com.interface21.webmvc.RequestMappingHandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
@@ -32,6 +33,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE));
         handlerAdapters = new HandlerAdapters();
         handlerAdapters.addHandlerAdapter(new SimpleControllerHandlerAdapter());
+        handlerAdapters.addHandlerAdapter(new RequestMappingHandlerAdapter());
     }
 
     @Override
