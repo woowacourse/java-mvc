@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
@@ -37,11 +38,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private DispatcherServlet createDispatcherServlet() {
         HandlerMappings handlerMappings = new HandlerMappings(
-                new ManualHandlerMapping(),
                 new AnnotationHandlerMapping(getClass().getPackageName())
         );
         HandlerAdapters handlerAdapters = new HandlerAdapters(
-                new ManualHandlerAdapter(),
                 new AnnotationHandlerAdapter()
         );
 
