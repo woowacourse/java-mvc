@@ -11,7 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 
 class AnnotationHandlerMappingTest {
 
@@ -55,14 +57,14 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("request method가 없으면 모든 메서드를 등록한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"POST", "GET", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"})
-    void allRequestMethod(String method) throws Exception {
+    @EnumSource(RequestMethod.class)
+    void allRequestMethod(RequestMethod method) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("method")).thenReturn(method);
         when(request.getRequestURI()).thenReturn("/method-test");
-        when(request.getMethod()).thenReturn(method);
+        when(request.getMethod()).thenReturn(method.name());
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
