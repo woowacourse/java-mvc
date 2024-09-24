@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,39 +30,49 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            initializeHandlerExecutions(controller);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controllerClass : controllerClasses) {
+            initializeHandlerExecutions(controllerClass);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void initializeHandlerExecutions(Class<?> controller) {
-        List<Method> requestMappingMethods = getRequestMappingMethods(controller);
+    private void initializeHandlerExecutions(Class<?> controllerClass) {
+        List<Method> requestMappingMethods = getRequestMappingMethods(controllerClass);
         for (Method requestMappingMethod : requestMappingMethods) {
             RequestMapping annotation = requestMappingMethod.getAnnotation(RequestMapping.class);
-            setHandlerExecutions(controller, requestMappingMethod, annotation);
+            setHandlerExecutions(controllerClass, requestMappingMethod, annotation);
         }
     }
 
-    public List<Method> getRequestMappingMethods(Class<?> controller) {
-        Method[] methods = controller.getDeclaredMethods();
+    public List<Method> getRequestMappingMethods(Class<?> controllerClass) {
+        Method[] methods = controllerClass.getDeclaredMethods();
         return Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
     }
 
-    private void setHandlerExecutions(Class<?> controller, Method method, RequestMapping annotation) {
+    private void setHandlerExecutions(Class<?> controllerClass, Method method, RequestMapping annotation) {
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
         if (requestMethods.length == EMPTY) {
             requestMethods = RequestMethod.values();
         }
 
+        Object controller = getController(controllerClass);
         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private Object getController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 
