@@ -50,16 +50,16 @@ public class AnnotationHandlerMapping {
     private void register(final Class<?> controllerClass) {
         Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> assignHandlerExecution(controllerClass, method));
+                .forEach(this::assignHandlerExecution);
     }
 
-    private void assignHandlerExecution(Class<?> controllerClass, Method method) {
+    private void assignHandlerExecution(Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String uri = requestMapping.value();
         RequestMethod[] requestMethods = getRequestMethods(requestMapping);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controllerClass, method);
+            HandlerExecution handlerExecution = new HandlerExecution(method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }

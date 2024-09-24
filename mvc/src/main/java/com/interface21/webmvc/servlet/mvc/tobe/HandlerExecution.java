@@ -16,8 +16,8 @@ public class HandlerExecution {
     private final Object instance;
     private final Method method;
 
-    public HandlerExecution(Class<?> controllerClass, Method method) {
-        this.instance = createInstance(controllerClass);
+    public HandlerExecution(Method method) {
+        this.instance = createInstance(method);
         this.method = method;
     }
 
@@ -26,12 +26,12 @@ public class HandlerExecution {
         return (ModelAndView) result;
     }
 
-    private Object createInstance(Class<?> controllerClass) {
+    private Object createInstance(Method method) {
         try {
-            return ReflectionUtils.accessibleConstructor(controllerClass).newInstance();
+            return ReflectionUtils.accessibleConstructor(method.getDeclaringClass()).newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            log.error("Failed to create instance of class: {}", controllerClass.getName(), e);
+            log.error("Failed to create instance by method: {}", method.getName(), e);
             throw new RuntimeException(e);
         }
     }
