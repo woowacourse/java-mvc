@@ -29,7 +29,7 @@ public class DispatcherServlet extends HttpServlet {
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping()
         );
-        handlerAdapterContainer = new HandlerAdapterContainer("app", "mvc");
+        handlerAdapterContainer = new HandlerAdapterContainer("com");
     }
 
     @Override
