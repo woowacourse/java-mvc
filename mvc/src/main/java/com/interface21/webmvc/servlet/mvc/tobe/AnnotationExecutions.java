@@ -18,9 +18,14 @@ public class AnnotationExecutions {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public Object getHandler(String uri, RequestMethod requestMethod) {
+    public HandlerExecution getHandler(String uri, RequestMethod requestMethod) {
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
         return handlerExecutions.get(handlerKey);
+    }
+
+    public boolean hasHandler(String uri, RequestMethod requestMethod) {
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        return handlerExecutions.containsKey(handlerKey);
     }
 
     public void addExecutor(Object instance, Method method) {

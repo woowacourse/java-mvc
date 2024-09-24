@@ -7,7 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -19,6 +19,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new AnnotationExecutions();
     }
 
+    @Override
     public void initialize() {
         basePackage.initialize();
         List<Object> controllerInstances = basePackage.controllerInstances();
@@ -31,7 +32,13 @@ public class AnnotationHandlerMapping {
         log.info("AnnotationHandlerMapping 초기화 완료");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerExecutions.getHandler(request.getRequestURI(), RequestMethod.findByName(request.getMethod()));
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        return handlerExecutions.hasHandler(request.getRequestURI(), RequestMethod.findByName(request.getMethod()));
     }
 }
