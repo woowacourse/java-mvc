@@ -9,6 +9,7 @@ import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -35,10 +36,10 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(final Object requestURI) {
-        String url = (String) requestURI;
-        log.debug("Request Mapping Uri : {}", url);
-        return controllers.get(url);
+    public Controller getHandler(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        log.debug("Request Mapping Uri : {}", uri);
+        return controllers.get(uri);
     }
 
     @Override

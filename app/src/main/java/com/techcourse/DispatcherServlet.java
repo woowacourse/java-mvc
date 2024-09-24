@@ -1,8 +1,13 @@
 package com.techcourse;
 
+import com.interface21.webmvc.HandlerMappings;
 import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.SimpleControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -14,16 +19,19 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private HandlerAdapter handlerAdapter;
+    private HandlerMappings handlerMappings;
+    private HandlerAdapters handlerAdapters;
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerAdapter = new HandlerAdapter();
+        handlerMappings = new HandlerMappings();
+        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE));
+        handlerAdapters = new HandlerAdapters();
+        handlerAdapters.addHandlerAdapter(new SimpleControllerHandlerAdapter());
     }
 
     @Override
@@ -33,8 +41,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            ModelAndView modelAndView = handlerAdapter.handle(controller, request, response);
+            HandlerMapping handlerMapping = handlerMappings.getHandlerMapping(request);
+            Object handler = handlerMapping.getHandler(request);
+
+            HandlerAdapter adapter = handlerAdapters.getHandlerAdapter(handler);
+            ModelAndView modelAndView = adapter.handle(handler, request, response);
 
             View view = new JspView(modelAndView.getViewName());
             view.render(modelAndView.getModel(), request, response);

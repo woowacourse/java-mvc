@@ -14,13 +14,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerAdapterTest {
+class SimpleControllerHandlerAdapterTest {
 
-    private HandlerAdapter handlerAdapter;
+    private SimpleControllerHandlerAdapter handlerAdapter;
 
     @BeforeEach
     void setUp() {
-        handlerAdapter = new HandlerAdapter();
+        handlerAdapter = new SimpleControllerHandlerAdapter();
+    }
+
+    @DisplayName("핸들러 타입이 Controller 이면 true을 반환한다.")
+    @Test
+    void givenControllerTypeHandler_thenReturnTrue() {
+        Controller handler = mock(Controller.class);
+
+        assertThat(handlerAdapter.support(handler)).isTrue();
     }
 
     @DisplayName("컨트롤러의 실행결과가 문자면 viwName인 ModelAndView를 반환한다.")
@@ -74,7 +82,6 @@ class HandlerAdapterTest {
         Controller controller = mock(Controller.class);
 
         when(controller.execute(request, response)).thenReturn("viewName");
-
         ModelAndView modelAndView = handlerAdapter.handle(controller, request, response);
 
         assertThat(modelAndView.getModel()).isEqualTo(EMPTY_MAP);
