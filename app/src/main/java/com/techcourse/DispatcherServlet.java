@@ -8,10 +8,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.view.JspView;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private ManualHandlerMapping manualHandlerMapping;
@@ -32,23 +34,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final Controller handler = manualHandlerMapping.getHandler(requestURI);
+            final String viewName = handler.execute(request, response);
+            final JspView view = new JspView(viewName);
+            view.render(null, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
