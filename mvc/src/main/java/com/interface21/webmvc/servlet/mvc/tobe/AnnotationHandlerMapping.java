@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -41,7 +42,7 @@ public class AnnotationHandlerMapping {
         for (Class<?> controllerType : annotatedControllerTypes) {
             addHandlers(controllerType);
         }
-        
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -57,14 +58,17 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandler(final Method method, final Object controllerInstance) {
-        HandlerKey handlerKey = createHandlerKey(method);
         HandlerExecution handlerExecution = createHandlerExecution(method, controllerInstance);
-        handlerExecutions.put(handlerKey, handlerExecution);
+        for (HandlerKey handlerKey : createHandlerKeys(method)) {
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
-    private HandlerKey createHandlerKey(final Method method) {
+    private List<HandlerKey> createHandlerKeys(final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        return new HandlerKey(requestMapping.value(), requestMapping.method()[0]);
+        return Arrays.stream(requestMapping.method())
+                .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
+                .toList();
     }
 
     private HandlerExecution createHandlerExecution(final Method method, final Object controller) {

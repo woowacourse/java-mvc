@@ -27,5 +27,6 @@
 - [x] AnnotationHandlerMappingTest 클래스의 테스트가 성공.
     - [x] `@Controller`를 가지는 클래스 스캔
     - [x] `@RequestMapping`을 가지는 메서드에서 핸들러 정보 추출 및 등록
+    - [x] `RequestMapping`에 RequestMethod가 지정되지 않는 경우 모든 메서드를 지원
 - [x] JspView 클래스 구현
     - [x] DispatcherServlet의 뷰로직 JspView로 이동 개선
