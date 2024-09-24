@@ -58,5 +58,5 @@
   - [x] POST /login 로그인 실패 -> /401.jsp
 
 - 처리 추가
-  - [ ] /login, /register 시 request에 param이 잘못된 경우 -> /400.jsp
-  - [ ] request 매핑이 중복되는 경우 예외 처리
+  - [x] /login, /register 시 request에 param이 잘못된 경우 -> /400.jsp
+

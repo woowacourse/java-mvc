@@ -21,6 +21,7 @@ public class LoginController {
     private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
     private static final String REDIRECT_LOGIN_JSP = "redirect:/login.jsp";
     private static final String REDIRECT_401_JSP = "redirect:/401.jsp";
+    private static final String REDIRECT_404_JSP = "redirect:/404.jsp";
     private static final String ACCOUNT = "account";
     private static final String PASSWORD = "password";
 
@@ -39,6 +40,10 @@ public class LoginController {
     public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView(REDIRECT_INDEX_JSP));
+        }
+
+        if (req.getParameter(ACCOUNT) == null || req.getParameter(PASSWORD) == null) {
+            return new ModelAndView(new JspView(REDIRECT_404_JSP));
         }
 
         String viewName = InMemoryUserRepository.findByAccount(req.getParameter(ACCOUNT))
