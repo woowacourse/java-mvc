@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,11 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(controllerInstance, request, response);
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            return (ModelAndView) method.invoke(controllerInstance, request, response);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("요청 처리 중 에러가 발생했습니다. " + e);
+        }
     }
 }
