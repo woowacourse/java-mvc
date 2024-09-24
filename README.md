@@ -39,8 +39,8 @@
   - 구현체: AnnotationHandlerMapping, ManualHandlerMapping 
 
 - DispatcherServlet 수정
-  - [ ] handler 리스트 갖도록 수정
-  - [ ] service 로직에서 handler 모두 실행해서 매핑 정보 가져옴
+  - [x] handler 리스트 갖도록 수정
+  - [x] service 로직에서 handler 모두 실행해서 매핑 정보 가져옴
 
 - Legacy MVC를 따르는 컨트롤러 정상 동작
   - [ ] GET / -> /index.jsp
