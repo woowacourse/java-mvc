@@ -57,6 +57,6 @@ public class RequestHandlerMappings {
                 .map(requestHandlerMapping -> requestHandlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("유효한 핸들러를 찾지 못했습니다."));
+                .orElseThrow(() -> new NoSuchElementException("유효한 핸들러 매핑을 찾지 못했습니다."));
     }
 }
