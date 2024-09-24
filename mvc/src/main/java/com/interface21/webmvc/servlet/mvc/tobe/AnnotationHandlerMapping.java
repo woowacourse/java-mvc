@@ -51,7 +51,7 @@ public class AnnotationHandlerMapping {
 
     private Object getController(Class<?> clazz) {
         try {
-            Constructor<?> constructor = clazz.getConstructor();
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (InvocationTargetException
