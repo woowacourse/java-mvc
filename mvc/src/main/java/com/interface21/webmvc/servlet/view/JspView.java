@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class JspView implements View {
 
@@ -35,5 +36,17 @@ public class JspView implements View {
                     log.debug("attribute name : {}, value : {}", key, model.get(key));
                     request.setAttribute(key, model.get(key));
                 });
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof final JspView jspView)) return false;
+        return Objects.equals(viewName, jspView.viewName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(viewName);
     }
 }
