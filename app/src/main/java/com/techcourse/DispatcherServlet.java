@@ -23,10 +23,12 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingContainer handlerMappingContainer;
     private final HandlerAdapterContainer handlerAdapterContainer;
 
-
-    public DispatcherServlet() {
-        this.handlerMappingContainer = new HandlerMappingContainer("com");
-        handlerAdapterContainer = new HandlerAdapterContainer("com");
+    public DispatcherServlet(
+            HandlerMappingContainer handlerMappingContainer,
+            HandlerAdapterContainer handlerAdapterContainer
+    ) {
+        this.handlerMappingContainer = handlerMappingContainer;
+        this.handlerAdapterContainer = handlerAdapterContainer;
     }
 
     @Override
