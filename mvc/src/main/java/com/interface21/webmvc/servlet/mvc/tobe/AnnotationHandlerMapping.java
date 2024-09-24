@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,11 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Class<?> controller : new Reflections(basePackage).getTypesAnnotatedWith(Controller.class)) {
-            addHandlers(controller);
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> annotatedControllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+        
+        for (Class<?> controllerType : annotatedControllerTypes) {
+            addHandlers(controllerType);
         }
     }
 
