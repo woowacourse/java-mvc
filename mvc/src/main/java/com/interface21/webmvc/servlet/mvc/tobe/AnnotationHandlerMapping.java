@@ -8,13 +8,13 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
@@ -51,10 +52,9 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        return handlerExecutions.computeIfAbsent(handlerKey, key -> {
-            throw new NoSuchElementException("요청을 처리할 핸들러가 존재하지 않습니다.");
-        });
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 }
