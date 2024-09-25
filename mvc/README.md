@@ -46,6 +46,6 @@
 
 - [x] HandlerMapping 인터페이스
     - [x] ManualHandlerMapping, AnnotationHandlerMapping 초기화
-- [ ] HandlerAdapter 인터페이스
-    - [ ] HandlerMapping으로 찾은 컨트롤러 실행
+- [x] HandlerAdapter 인터페이스
+    - [x] HandlerMapping으로 찾은 컨트롤러 실행
 - [ ] JspViewResolver

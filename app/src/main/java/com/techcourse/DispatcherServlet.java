@@ -2,10 +2,11 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,14 +48,19 @@ public class DispatcherServlet extends HttpServlet {
     private ModelAndView getModelAndView(HttpServletRequest request, HttpServletResponse response) throws Exception {
         for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(request);
-            if (handler instanceof Controller controller) {
-                String viewName = controller.execute(request, response);
-                return new ModelAndView(new JspView(viewName));
-            }
-            if (handler instanceof HandlerExecution handlerExecution) {
-                return handlerExecution.handle(request, response);
-            }
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            handlerAdapter.handle(request, response, handler);
         }
         throw new ServletException("Not found handler");
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        if (handler instanceof Controller) {
+            return new ManualHandlerAdapter();
+        }
+        if (handler instanceof HandlerExecution) {
+            return new AnnotationHandlerAdapter();
+        }
+        return null;
     }
 }
