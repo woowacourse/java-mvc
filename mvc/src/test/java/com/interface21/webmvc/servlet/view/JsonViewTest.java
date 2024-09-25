@@ -70,7 +70,9 @@ public class JsonViewTest {
     @Test
     void render_object() throws Exception {
         // given
-        Map<String, Object> model = Map.of("person", new Person("atom", 25));
+        Map<String, Object> model = Map.of(
+                "reviewer", new Person("atom", 25),
+                "reviewee", new Person("myungoh", 25));
 
         // when
         view.render(model, request, response);
@@ -79,7 +81,7 @@ public class JsonViewTest {
 
         // then
         assertThat(expected)
-                .contains("\"name\":\"atom\"")
-                .contains("\"age\":25");
+                .contains("\"reviewer\":{\"name\":\"atom\",\"age\":25}")
+                .contains("\"reviewee\":{\"name\":\"myungoh\",\"age\":25}");
     }
 }
