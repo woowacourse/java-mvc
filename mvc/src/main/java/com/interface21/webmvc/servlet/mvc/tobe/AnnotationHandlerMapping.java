@@ -19,7 +19,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final String ALL_CLASS_PATH = "";
     private static final int NO_BASE_PACKAGE = 0;
@@ -33,6 +33,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Set<Class<?>> controllerClasses = findControllerClasses();
@@ -102,7 +103,8 @@ public class AnnotationHandlerMapping {
         return methods;
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         if (!handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalArgumentException("HttpServletRequest에 대응하는 handlerKey가 등록되어 있지 않습니다. " + handlerKey);
