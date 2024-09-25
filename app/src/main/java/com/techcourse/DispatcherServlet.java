@@ -10,7 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -19,6 +22,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private ManualHandlerMapping manualHandlerMapping;
+    private AnnotationHandlerMapping annotationHandlerMapping;
 
     public DispatcherServlet() {
     }
@@ -27,6 +31,8 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotationHandlerMapping.initialize();
     }
 
     @Override
@@ -36,9 +42,17 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
+            var viewName = "";
             final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            if(controller != null) {
+                viewName = controller.execute(request, response);
+                move(viewName, request, response);
+            }
+            final var handler = (HandlerExecution) annotationHandlerMapping.getHandler(request);
+            if(handler != null) {
+                ModelAndView modelAndView = handler.handle(request, response);
+                modelAndView.render(request, response);
+            }
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

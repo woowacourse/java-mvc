@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 public class ModelAndView {
 
     private final View view;
@@ -29,5 +32,13 @@ public class ModelAndView {
 
     public View getView() {
         return view;
+    }
+
+    public void render(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            view.render(model, request, response);
+        } catch (Exception e) {
+            throw new RuntimeException("render error");
+        }
     }
 }
