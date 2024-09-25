@@ -26,6 +26,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         this.handlers = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized ManualHandlerMapping!");
 

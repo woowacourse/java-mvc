@@ -28,6 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlers = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
