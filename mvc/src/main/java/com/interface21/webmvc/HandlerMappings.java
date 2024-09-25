@@ -10,7 +10,7 @@ import java.util.List;
 
 public class HandlerMappings {
 
-    private List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappings() {
         this.handlerMappings = new ArrayList<>();
