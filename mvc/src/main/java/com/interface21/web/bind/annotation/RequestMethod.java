@@ -7,8 +7,8 @@ public enum RequestMethod {
 
 	public static RequestMethod from(String method) {
 		return Arrays.stream(values())
-			.filter(requestMethod -> requestMethod.name().equalsIgnoreCase(method))
+			.filter(requestMethod -> requestMethod.name().equals(method))
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("not fount request method : " + method));
+			.orElseThrow(() -> new IllegalArgumentException("Invalid request method : " + method));
 	}
 }
