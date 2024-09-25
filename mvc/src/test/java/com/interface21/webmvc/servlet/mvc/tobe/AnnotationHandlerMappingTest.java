@@ -6,10 +6,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,8 +19,6 @@ import samples.TestController;
 
 class AnnotationHandlerMappingTest {
     private static final String BASE_PACKAGE = "samples";
-    private static final String KEY = "id";
-    private static final String VALUE = "id";
     private static final String REQUEST_URI_GET_TEST = "/get-test";
     private static final String REQUEST_URI_WRONG = "/get-example";
     private static final String REQUEST_URI_POST_TEST = "/post-test";
