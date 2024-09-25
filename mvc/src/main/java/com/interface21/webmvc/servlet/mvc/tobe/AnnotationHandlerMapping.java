@@ -1,11 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -40,6 +40,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                     .forEach(method -> handlerMapping(getControllerInstance(controllerClass), method));
         });
+
+        handlers.forEach((key, value) -> log.info("HandlerKey : {}, handler : {}", key, value));
     }
 
     private void handlerMapping(final Object instance, final Method method) {
@@ -66,6 +68,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
+        log.debug("Request Mapping Uri : {}", request.getRequestURI());
 
         return Optional.ofNullable(handlers.get(handlerKey))
                 .orElseThrow(() -> new IllegalArgumentException("적절하지 않은 요청입니다."));
