@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
