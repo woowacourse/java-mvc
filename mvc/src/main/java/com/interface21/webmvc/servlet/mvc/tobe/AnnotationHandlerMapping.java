@@ -51,16 +51,11 @@ public class AnnotationHandlerMapping {
 
 	private void registerHandlerMethod(Class<?> controllerClass, Method method, RequestMapping requestMapping) throws Exception {
 		String url = requestMapping.value();
-		RequestMethod[] httpMethods = getHttpMethods(requestMapping);
+		RequestMethod[] httpMethods = requestMapping.method();
 
 		for (RequestMethod requestMethod : httpMethods) {
 			handlerExecutions.put(new HandlerKey(url, requestMethod), createHandlerExecution(controllerClass, method));
 		}
-	}
-
-	private RequestMethod[] getHttpMethods(RequestMapping requestMapping) {
-		RequestMethod[] methods = requestMapping.method();
-		return methods.length > 0 ? methods : RequestMethod.values();
 	}
 
 	private HandlerExecution createHandlerExecution(Class<?> controllerClass, Method method) {
