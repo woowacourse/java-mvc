@@ -9,10 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ControllerScanner {
-
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
-    public Map<Class<?>, Object> getControllers(Object[] basePackages) {
+    private final Object[] basePackages;
+
+    public ControllerScanner(Object[] basePackages) {
+        this.basePackages = basePackages;
+    }
+
+    public Map<Class<?>, Object> scan() {
         Map<Class<?>, Object> controllers = new HashMap<>();
 
         for (Object basePackage : basePackages) {

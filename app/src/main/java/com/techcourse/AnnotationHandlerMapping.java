@@ -19,17 +19,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    private ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
         this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
-        this.controllerScanner = new ControllerScanner();
     }
 
     @Override
     public void initialize() {
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers(basePackages);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.scan();
+
         for (Entry<Class<?>, Object> classAndInstance : controllers.entrySet()) {
             Class<?> clazz = classAndInstance.getKey();
             Object instance = classAndInstance.getValue();
