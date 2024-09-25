@@ -40,7 +40,7 @@ class RequestMethodTest {
 				.hasMessageContaining("Invalid request method : " + method);
 	}
 
-	@DisplayName("주어진 string 으로 RequestMethod 를 찾는다")
+	@DisplayName("존재하지 않는 메소드 입력 시 IllegalArgumentException 발생")
 	@Test
 	void from_withNotFoundMethod() {
 		// given
