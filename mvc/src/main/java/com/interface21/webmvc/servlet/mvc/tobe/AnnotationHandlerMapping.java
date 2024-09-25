@@ -3,7 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecutions;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerKey;
 
 public class AnnotationHandlerMapping {
 
@@ -25,9 +28,13 @@ public class AnnotationHandlerMapping {
     private final HandlerExecutions handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
-        validateBasePackages(basePackages);
-        this.basePackages = basePackages;
+        this.basePackages = setBasePackages(basePackages);
         this.handlerExecutions = new HandlerExecutions();
+    }
+
+    private Object[] setBasePackages(final Object... basePackages) {
+        validateBasePackages(basePackages);
+        return basePackages;
     }
 
     private void validateBasePackages(final Object[] basePackages) {
@@ -92,12 +99,10 @@ public class AnnotationHandlerMapping {
         return Arrays.asList(requestMethods);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<HandlerExecution> findHandler(final HttpServletRequest request) {
         final String requestUri = request.getRequestURI();
         final String requestMethod = request.getMethod().toUpperCase();
         final HandlerKey handlerKey = new HandlerKey(requestUri, RequestMethod.valueOf(requestMethod));
-        return handlerExecutions.findHandlerExecution(handlerKey)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "해당 요청을 처리할 핸들러가 존재하지 않습니다. - " + requestUri + " " + requestMethod));
+        return handlerExecutions.findHandlerExecution(handlerKey);
     }
 }
