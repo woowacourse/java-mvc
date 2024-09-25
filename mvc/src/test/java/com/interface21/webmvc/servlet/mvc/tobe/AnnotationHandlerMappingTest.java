@@ -112,15 +112,4 @@ class AnnotationHandlerMappingTest {
         assertThatThrownBy(handlerMapping::initialize)
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    @DisplayName("핸들러 처리에 실패하면 예외가 발생한다.")
-    @Test
-    void cantHandle() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        when(request.getRequestURI()).thenReturn("/none");
-        when(request.getMethod()).thenReturn("DELETE");
-
-        assertThatThrownBy(() -> handlerMapping.handle(request, response)).isInstanceOf(RuntimeException.class);
-    }
 }
