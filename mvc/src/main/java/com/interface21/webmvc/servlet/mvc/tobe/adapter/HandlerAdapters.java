@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapters {
@@ -8,13 +7,10 @@ public class HandlerAdapters {
     private final List<HandlerAdapter> handlerAdapters;
 
     public HandlerAdapters() {
-        this.handlerAdapters = new ArrayList<>();
-        initHandlerAdapters();
-    }
-
-    private void initHandlerAdapters() {
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        this.handlerAdapters = List.of(
+                new ControllerHandlerAdapter(),
+                new HandlerExecutionHandlerAdapter()
+        );
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
