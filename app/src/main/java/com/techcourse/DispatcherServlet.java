@@ -57,21 +57,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-
-//            [ Legacy MVC ]
-//            final var controller = manualHandlerMapping.getHandler(requestURI);
-//            final var viewName = controller.execute(request, response);
-//            move(viewName, request, response);
-
-//            [ @MVC ]
-//            final HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
-//            final var viewNameV2 = handlerExecution.handle(request, response);
-//            move(viewNameV2.toString(), request, response);
-
-//            [ 통합 ]
-//            final var handler = handlerMapping.getHandler(request);
-//            final var view = handlerAdapter.handle(request, response, handler);
-//            move(view, request, response);
+            final var handler = handlerMappingRegistry.getHandler(request);
+            final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final var viewName = handlerAdapter.handle(request, response, handler);
+            move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
