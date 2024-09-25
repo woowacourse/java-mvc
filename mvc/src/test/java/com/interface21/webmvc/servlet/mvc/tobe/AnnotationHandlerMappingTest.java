@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import com.interface21.web.bind.annotation.RequestMethod;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -24,14 +27,8 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        setUpRequest(request, "/get-test", "GET", "gugu");
+        handleRequestAndAssert(request, response, "gugu");
     }
 
     @Test
@@ -39,13 +36,41 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+        setUpRequest(request, "/post-test", "POST", "gugu");
+        handleRequestAndAssert(request, response, "gugu");
+    }
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+    @ParameterizedTest
+    @EnumSource(RequestMethod.class)
+    void all(RequestMethod requestMethod) throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        setUpRequest(request, "/all-test", requestMethod.name(), "gugu");
+        handleRequestAndAssert(request, response, "gugu");
+    }
+
+    @Test
+    void noneMatchHandler() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+
+        setUpRequest(request, "/noneMatch-test", "DELETE", "gugu");
+        assertThat(handlerMapping.getHandler(request).isPresent()).isFalse();
+    }
+
+    private void setUpRequest(HttpServletRequest request, String uri, String method, String id) {
+        when(request.getAttribute("id")).thenReturn(id);
+        when(request.getRequestURI()).thenReturn(uri);
+        when(request.getMethod()).thenReturn(method);
+    }
+
+    private void handleRequestAndAssert(HttpServletRequest request, HttpServletResponse response, String expectedId) throws Exception {
+        if (handlerMapping.getHandler(request).isPresent()) {
+            final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request).get();
+            final var modelAndView = handlerExecution.handle(request, response);
+            assertThat(modelAndView.getObject("id")).isEqualTo(expectedId);
+            return;
+        }
+        throw new RuntimeException();
     }
 }
