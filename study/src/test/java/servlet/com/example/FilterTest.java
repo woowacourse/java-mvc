@@ -22,6 +22,10 @@ class FilterTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // 테스트가 통과하도록 CharacterEncodingFilter 클래스를 수정해보자.
+        // getWriter를 호출하기 전 MIME Type을 설정해야 하기 떄문에
+        // filter에서 인코딩을 설정해 주어야 한다.
+        // 만약 설정하지 않으면 ISO-8859-1 이 사용되기 때문에
+        // 한글이 깨진다.
         assertThat(response.body()).isEqualTo(인코딩);
     }
 }
