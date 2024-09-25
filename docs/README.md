@@ -16,5 +16,4 @@
       - [X] 핸들러를 실행 가능한 형태로 바꿔주는 `HandlerAdapter` 구현
       - [ ] `ManualHandlerAdapter` 구현체 생성
       - [ ] `AnnotationHandlerAdapter` 구현체 생성
-    - [ ] 핸들러를 받아 실행하는 `HandlerExecutor` 구현
 - [ ] JSON View 구현하기
