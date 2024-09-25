@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController  {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
@@ -26,7 +26,7 @@ public class RegisterController  {
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         View view = new JspView("/register.jsp");
         return new ModelAndView(view);
     }
