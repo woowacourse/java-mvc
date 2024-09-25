@@ -44,7 +44,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
 
-        return Optional.ofNullable(handlers.get(requestURI))
-                .orElseThrow(() -> new IllegalArgumentException("적절하지 않은 요청입니다."));
+        return handlers.get(requestURI);
     }
 }

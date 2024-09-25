@@ -70,7 +70,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
         log.debug("Request Mapping Uri : {}", request.getRequestURI());
 
-        return Optional.ofNullable(handlers.get(handlerKey))
-                .orElseThrow(() -> new IllegalArgumentException("적절하지 않은 요청입니다."));
+        return handlers.get(handlerKey);
     }
 }
