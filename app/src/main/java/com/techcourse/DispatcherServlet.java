@@ -40,9 +40,6 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletRequest request,
             final HttpServletResponse response) throws ServletException {
 
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
         try {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElse(new NotFoundController());
