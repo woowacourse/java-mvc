@@ -39,7 +39,7 @@ public class AnnotationHandlerMapping {
                 );
     }
 
-    private void putHandlerExecutions(Class<?> clazz, Method method) {
+    private void putHandlerExecutions(final Class<?> clazz, final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String mappingUrl = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
@@ -52,7 +52,8 @@ public class AnnotationHandlerMapping {
                 .forEach(requestMethod -> putHandlerExecution(mappingUrl, requestMethod, clazz, method));
     }
 
-    private void putHandlerExecution(String mappingUrl, RequestMethod requestMethod, Class<?> clazz, Method method) {
+    private void putHandlerExecution(final String mappingUrl, final RequestMethod requestMethod,
+                                     final Class<?> clazz, final Method method) {
         HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
         HandlerExecution handlerExecution = (request, response) -> {
             try {
