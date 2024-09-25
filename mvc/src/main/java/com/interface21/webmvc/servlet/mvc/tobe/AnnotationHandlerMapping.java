@@ -4,16 +4,12 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
@@ -31,24 +27,22 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        Set<Method> handlers = controllers.stream()
-                .flatMap(controller -> Arrays.stream(controller.getDeclaredMethods()))
+        ControllerScanner scanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = scanner.scan();
+        controllers.forEach((clazz, object) -> Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .collect(Collectors.toSet());
-        handlers.forEach(this::addHandlerExecution);
+                .forEach(method -> addHandlerExecution(object, method)));
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet().forEach(key -> log.info("{}", key));
     }
 
-    private void addHandlerExecution(final Method handler) {
-        RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
+    private void addHandlerExecution(final Object controller, final Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String path = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(path, requestMethod);
-            HandlerExecution execution = new HandlerExecution(handler);
+            HandlerExecution execution = new HandlerExecution(controller, method);
             validateUnique(handlerKey);
             handlerExecutions.put(handlerKey, execution);
         }
