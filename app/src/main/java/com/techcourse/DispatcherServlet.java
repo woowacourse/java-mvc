@@ -17,11 +17,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> registryHandlerMapping;
-    private final HandlerAdaptor handlerAdaptor;
+    private final List<HandlerAdaptor> registryHandlerAdaptor;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdaptor> handlerAdaptors) {
         this.registryHandlerMapping = handlerMappings;
-        this.handlerAdaptor = new HandlerAdaptor();
+        this.registryHandlerAdaptor = handlerAdaptors;
     }
 
     @Override
@@ -31,12 +31,24 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = getHandler(request);
-            ModelAndView modelAndView = handlerAdaptor.adaptHandler(handler, request, response);
+            HandlerAdaptor handlerAdaptor = getAdaptor(handler);
+
+            ModelAndView modelAndView = handlerAdaptor.handle(request, response, handler);
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerAdaptor getAdaptor(Object handler) {
+        for (HandlerAdaptor handlerAdaptor : registryHandlerAdaptor) {
+            if(handlerAdaptor.supports(handler)) {
+                return handlerAdaptor;
+            }
+        }
+        throw new IllegalArgumentException("매핑 가능한 HandlerAdaptor가 존재하지 않습니다. (Handler type: %s)"
+                .formatted(handler.getClass().getName()));
     }
 
     private Object getHandler(HttpServletRequest request) {

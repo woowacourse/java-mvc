@@ -19,10 +19,14 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
             new ManualHandlerMapping(),
             new AnnotationHandlerMapping()
     );
+    private static final List<HandlerAdaptor> handlerAdaptors = List.of(
+            new ManualHandlerAdaptor(),
+            new AnnotationHandlerAdaptor()
+    );
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet(handlerMappings);
+        final var dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdaptors);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
