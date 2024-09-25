@@ -39,6 +39,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .collect(Collectors.toSet());
         handlers.forEach(this::addHandlerExecution);
         log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet().forEach(key -> log.info("{}", key));
     }
 
     private void addHandlerExecution(final Method handler) {
