@@ -15,7 +15,7 @@ class ComponentScannerTest {
 	@Test
 	@DisplayName("@Controller 메소드에 대한 @RequestMapping 속성을 추출한다.")
 	void scan() {
-		Map<HandlerKey, HandlerExecution> scan = ComponentScanner.scan();
+		Map<HandlerKey, HandlerExecution> scan = ComponentScanner.scan("samples");
 
 		assertThat(scan).hasSize(10);
 		assertThat(scan.get(new HandlerKey("/get-test", RequestMethod.GET))).isNotNull();

@@ -15,14 +15,11 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 public final class ComponentScanner {
 
-	public static Map<HandlerKey, HandlerExecution> scan() {
-		Reflections reflections = new Reflections(new ConfigurationBuilder()
-			.forPackage("com.interface21.webmvc")
-			.addScanners(Scanners.TypesAnnotated));
+	public static Map<HandlerKey, HandlerExecution> scan(Object ... basePackages) {
+		Reflections reflections = new Reflections(basePackages, Scanners.TypesAnnotated);
 
 		Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
 		reflections.getTypesAnnotatedWith(Controller.class)
-			.stream()
 			.forEach(clazz -> scanRequestMappingForMethods(executions, clazz));
 		return executions;
 	}

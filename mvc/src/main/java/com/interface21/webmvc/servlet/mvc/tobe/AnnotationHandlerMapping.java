@@ -18,7 +18,7 @@ public class AnnotationHandlerMapping {
 
     public AnnotationHandlerMapping(final Object... basePackage) {
 		this.basePackage = basePackage;
-        this.handlerExecutions = ComponentScanner.scan();
+        this.handlerExecutions = ComponentScanner.scan(basePackage);
 
     }
 
