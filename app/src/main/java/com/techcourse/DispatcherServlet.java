@@ -5,6 +5,7 @@ import com.interface21.web.servlet.HandlerMapping;
 import com.interface21.web.servlet.mvc.ControllerHandlerAdapter;
 import com.interface21.web.servlet.mvc.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,18 +31,24 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        initHandlerMappings();
+        initHandlerAdapters();
+    }
+
+    private void initHandlerMappings() {
+        handlerMappings = new ArrayList<>();
+
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(CONTROLLER_PACKAGE);
-
         manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
 
-        handlerMappings = new ArrayList<>();
         handlerMappings.add(manualHandlerMapping);
         handlerMappings.add(annotationHandlerMapping);
+    }
 
+    private void initHandlerAdapters() {
         handlerAdapters = new ArrayList<>();
-
         handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new HandlerExecutionAdapter());
     }
@@ -51,25 +59,50 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                Object handler = handlerMapping.getHandler(request);
-                if (handler != null) {
-                    for (HandlerAdapter handlerAdapter : handlerAdapters) {
-                        if (handlerAdapter.supports(handler)) {
-                            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-                            modelAndView.getView().render(modelAndView.getModel(), request, response);
-                            return;
-                        }
-                    }
-                    throw new ServletException("No adapter for handler [" + handler
-                            + "]: The DispatcherServlet configuration needs to include a HandlerAdapter that supports this handler");
-                }
-            }
-
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            doDispatch(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object handler = getHandler(request);
+        if (handler == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        HandlerAdapter handlerAdapter = getAdapter(handler);
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        render(request, response, modelAndView);
+    }
+
+    private Object getHandler(HttpServletRequest request) throws Exception {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
+        }
+        return null;
+    }
+
+    private HandlerAdapter getAdapter(Object handler)
+            throws ServletException {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new ServletException("No adapter for handler [" + handler
+                + "]: The DispatcherServlet configuration needs to include a HandlerAdapter that supports this handler");
+    }
+
+    private void render(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) throws Exception {
+        View view = modelAndView.getView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        view.render(model, request, response);
     }
 }
