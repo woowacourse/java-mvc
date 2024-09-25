@@ -1,7 +1,5 @@
 package com.techcourse;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.ServletException;
@@ -12,32 +10,40 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        addHandlerMapping(new ManualHandlerMapping());
         addHandlerMapping(new AnnotationHandlerMapping());
+        addHandlerMapping(new ManualHandlerMapping());
+        addHandlerAdapter(new HandlerExecutionAdapter());
+        addHandlerAdapter(new ControllerAdapter());
     }
 
     private void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMapping.initialize();
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    private void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -45,12 +51,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            // TODO: 핸들러어댑터를 활용해서 handle을 호출하도록 변경
-            HandlerMapping handlerMapping = handlerMappings.get(0);
-            final var controller = handlerMapping.getHandler(request);
-            final var viewName = ((Controller) controller).execute(request, response);
-            View jspView = new JspView(viewName);
-            jspView.render(Map.of(), request, response);
+            Object handler = handlerMappingRegistry.getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            modelAndView.getView().render(Map.of(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

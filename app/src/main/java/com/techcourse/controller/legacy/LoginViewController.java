@@ -1,10 +1,11 @@
-package com.techcourse.controller;
+package com.techcourse.controller.legacy;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.techcourse.controller.UserSession;
 
 public class LoginViewController implements Controller {
 
