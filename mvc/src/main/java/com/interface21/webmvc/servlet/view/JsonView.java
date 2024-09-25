@@ -5,9 +5,7 @@ import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -20,16 +18,15 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         PrintWriter writer = response.getWriter();
-        if (model.size() == UNIQUE_SIZE) {
-            model.forEach((key, value) -> writer.print(value.toString()));
-            return;
-        }
-        responseJson(model, response, writer);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        Object content = getContent(model);
+        mapper.writeValue(writer, content);
     }
 
-    private void responseJson(Map<String, ?> model, HttpServletResponse response, Writer writer)
-            throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        mapper.writeValue(writer, model);
+    private Object getContent(Map<String, ?> model) {
+        if (model.size() == UNIQUE_SIZE) {
+            return model.values().iterator().next();
+        }
+        return model;
     }
 }

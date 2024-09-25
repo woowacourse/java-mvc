@@ -34,7 +34,7 @@ public class JsonViewTest {
         String expected = outputStream.toString();
 
         // then
-        assertThat(expected).isEqualTo("value");
+        assertThat(expected).isEqualTo("\"value\"");
     }
 
     @DisplayName("model의 attribute가 2개 이상이면, json 형태로 응답한다.")
