@@ -43,8 +43,8 @@ public class HandlerAdapters {
                 .map(this::getInstance)
                 .collect(Collectors.toUnmodifiableSet());
         adapters.addAll(handlerAdapters);
-        log.info("Initialize HandlerAdapters - " + "Adapters Size : " + adapters.size());
-        adapters.forEach(adapter -> log.info("Adapter : " + adapter.getClass().getName()));
+        log.info("Initialize HandlerAdapters - Adapters Size : {}", adapters.size());
+        adapters.forEach(adapter -> log.info("Adapter : {}", adapter.getClass().getName()));
     }
 
     private HandlerAdapter getInstance(final Class<?> clazz) {
@@ -66,6 +66,10 @@ public class HandlerAdapters {
                 return adapter.handle(handler, request, response);
             }
         }
-        throw new NoSuchElementException("지원 가능한 핸들러가 없습니다.");
+        String errorMessage = String.join(" ",
+                request.getRequestURI(),
+                request.getMethod(),
+                "지원 가능한 핸들러가 없습니다.");
+        throw new NoSuchElementException(errorMessage);
     }
 }
