@@ -3,9 +3,9 @@ package com.techcourse;
 import com.interface21.webmvc.HandlerMappings;
 import com.interface21.webmvc.RequestMappingHandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
+    private static final String BASE_PACKAGE = DispatcherServlet.class.getPackageName();
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
