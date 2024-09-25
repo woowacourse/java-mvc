@@ -3,7 +3,6 @@ package com.techcourse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,16 +18,18 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
+    private HandlerMappingRegistry handlerMappingRegistry;
     private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
@@ -36,22 +37,18 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
     @Override
     public void init() {
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping
+                (new AnnotationHandlerMapping(DispatcherServlet.class.getPackage().getName()));
+
         handlerAdapters = new ArrayList<>();
         handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
-
-        handlerMappings = new ArrayList<>();
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
-        handlerMappings.add(annotationHandlerMapping);
     }
 
     @Override
@@ -61,7 +58,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = getHandler(request);
+            Object handler = handlerMappingRegistry.getHandler(request);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler, request);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
@@ -69,15 +66,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(HttpServletRequest request) throws ServletException {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() ->
-                        new ServletException("No handler found for request URI: " + request.getRequestURI()));
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler, HttpServletRequest request) throws ServletException {
