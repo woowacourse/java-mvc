@@ -50,6 +50,14 @@ class AnnotationHandlerMappingTest {
         handleRequestAndAssert(request, response, "gugu");
     }
 
+    @Test
+    void noneMatchHandler() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+
+        setUpRequest(request, "/noneMatch-test", "DELETE", "gugu");
+        assertThat(handlerMapping.getHandler(request).isPresent()).isFalse();
+    }
+
     private void setUpRequest(HttpServletRequest request, String uri, String method, String id) {
         when(request.getAttribute("id")).thenReturn(id);
         when(request.getRequestURI()).thenReturn(uri);
