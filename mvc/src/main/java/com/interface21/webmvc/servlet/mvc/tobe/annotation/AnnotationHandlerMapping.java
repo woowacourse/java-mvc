@@ -34,33 +34,36 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         for (var controller : reflections.getTypesAnnotatedWith(Controller.class)) {
-            putController(controller);
+            registerController(controller);
         }
     }
 
-    private void putController(Class<?> controllerClass) {
+    private void registerController(Class<?> controllerClass) {
         List<Method> handlerMethods = Arrays.stream(controllerClass.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
-        for (Method method : handlerMethods) {
-            putHandlerExecution(controllerClass, method);
+        for (Method handlerMethod : handlerMethods) {
+            RequestMapping requestMappingAnnotation = handlerMethod.getAnnotation(RequestMapping.class);
+            String requestUrl = requestMappingAnnotation.value();
+            bindControllerToRequest(controllerClass, handlerMethod, requestUrl,
+                    getRequestMethods(requestMappingAnnotation));
         }
     }
 
-    private void putHandlerExecution(Class<?> controllerClass, Method handlerMethod) {
-        RequestMapping requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
-        if (requestMapping.method().length == 0) {
-            mappingTo(controllerClass, handlerMethod, requestMapping.value(), RequestMethod.values());
-            return;
+    private RequestMethod[] getRequestMethods(RequestMapping requestMappingAnnotation) {
+        if (requestMappingAnnotation.method().length == 0) {
+            return RequestMethod.values();
         }
-
-        mappingTo(controllerClass, handlerMethod, requestMapping.value(), requestMapping.method());
+        return requestMappingAnnotation.method();
     }
 
-    private void mappingTo(Class<?> controllerClass, Method method, String value, RequestMethod... requestMethods) {
+    private void bindControllerToRequest(Class<?> controllerClass, Method method, String requestUrl,
+            RequestMethod... requestMethods
+    ) {
         for (RequestMethod requestMethod : requestMethods) {
-            handlerExecutions.put(new HandlerKey(value, requestMethod), new HandlerExecution(controllerClass, method));
-            log.info("map method {}() to {} {}", method.getName(), requestMethod.name(), value);
+            handlerExecutions.put(new HandlerKey(requestUrl, requestMethod),
+                    new HandlerExecution(controllerClass, method));
+            log.info("map method {}() to {} {}", method.getName(), requestMethod.name(), requestUrl);
         }
     }
 
