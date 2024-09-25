@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -29,6 +30,18 @@ class AnnotationHandlerMappingTest {
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+    }
+
+    @Test
+    @DisplayName("요청 URI와 method를 통해 핸들러를 찾는다.")
+    void getHandler() {
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+
+        assertThat(handlerExecution).extracting("controller")
+                .isInstanceOf(TestController.class);
     }
 
     @Test
@@ -56,11 +69,11 @@ class AnnotationHandlerMappingTest {
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
-    
+
     @ParameterizedTest
     @EnumSource(RequestMethod.class)
     @DisplayName("@RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원한다.")
-    void getHandler(RequestMethod method) throws Exception {
+    void requestMethods(RequestMethod method) throws Exception {
         when(request.getAttribute("id")).thenReturn("pororo");
         when(request.getRequestURI()).thenReturn("/pororo-test");
         when(request.getMethod()).thenReturn(method.name());
