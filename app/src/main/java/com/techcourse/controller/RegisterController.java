@@ -24,7 +24,6 @@ public class RegisterController {
         JspView view = new JspView("redirect:/index.jsp");
         Model model = new Model();
         model.addAttribute("user", user);
-        view.render(model.getModel(), req, res);
         return new ModelAndView(model, view);
     }
 
@@ -32,7 +31,6 @@ public class RegisterController {
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) throws Exception {
         JspView view = new JspView("redirect:/register.jsp");
         Model model = new Model();
-        view.render(model.getModel(), req, res);
         return new ModelAndView(model, view);
     }
 }

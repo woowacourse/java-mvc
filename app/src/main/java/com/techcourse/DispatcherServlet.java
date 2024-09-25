@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.tobe.RequestHandlerMappings;
 import jakarta.servlet.ServletException;
@@ -36,7 +38,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = requestHandlerMappings.getHandler(request);
-            handlerAdapters.handle(handler, request, response);
+            ModelAndView modelAndView = handlerAdapters.handle(handler, request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

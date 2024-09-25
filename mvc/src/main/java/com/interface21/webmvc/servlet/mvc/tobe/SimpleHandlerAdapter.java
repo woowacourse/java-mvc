@@ -21,7 +21,6 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
         String viewName = controller.execute(request, response);
         JspView jspView = new JspView(viewName);
         Model model = new Model(request);
-        jspView.render(model.getModel(), request, response);
         return new ModelAndView(model, jspView);
     }
 }
