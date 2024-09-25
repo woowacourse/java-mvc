@@ -38,8 +38,11 @@ class ReflectionTest {
     @Test
     void givenObject_whenGetsFieldNamesAtRuntime_thenCorrect() {
         final Object student = new Student();
-        final Field[] fields = student.getClass().getFields();
-        final List<String> actualFieldNames = Arrays.stream(fields).map(Field::getName).toList();
+        final Field[] fields = student.getClass().getDeclaredFields();
+        final List<String> actualFieldNames = Arrays.stream(fields)
+                .peek(r -> r.setAccessible(true))
+                .map(Field::getName)
+                .toList();
 
         assertThat(actualFieldNames).contains("name", "age");
     }
@@ -128,7 +131,7 @@ class ReflectionTest {
         assertThat(field.getInt(student)).isZero();
         assertThat(student.getAge()).isZero();
 
-        field.set(student,99);
+        field.set(student, 99);
 
         assertThat(field.getInt(student)).isEqualTo(99);
         assertThat(student.getAge()).isEqualTo(99);
