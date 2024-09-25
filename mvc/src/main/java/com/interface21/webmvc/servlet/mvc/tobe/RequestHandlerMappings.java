@@ -1,10 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -57,6 +57,6 @@ public class RequestHandlerMappings {
                 .map(requestHandlerMapping -> requestHandlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("유효한 핸들러 매핑을 찾지 못했습니다."));
+                .orElse(new ForwardController("/404.jsp"));
     }
 }

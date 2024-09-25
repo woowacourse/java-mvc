@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 public class HandlerExecutions {
 
@@ -34,9 +33,6 @@ public class HandlerExecutions {
 
     public HandlerExecution findByUrlAndMethod(String url, RequestMethod method) {
         HandlerKey handlerKey = new HandlerKey(url, method);
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-        throw new NoSuchElementException("핸들러가 존재하지 않습니다.");
+        return handlerExecutions.get(handlerKey);
     }
 }

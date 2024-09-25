@@ -17,7 +17,6 @@ public class ManualHandlerMapping implements RequestHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
-    private static final ForwardController DEFAULT_CONTROLLER = new ForwardController("/404.jsp");
 
     @Override
     public void initialize() {
@@ -35,9 +34,6 @@ public class ManualHandlerMapping implements RequestHandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        if (controllers.containsKey(requestURI)) {
-            return controllers.get(requestURI);
-        }
-        return DEFAULT_CONTROLLER;
+        return controllers.get(requestURI);
     }
 }
