@@ -1,14 +1,12 @@
 package com.interface21.webmvc.servlet.view;
 
 import java.util.Map;
-
+import java.util.Objects;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.interface21.webmvc.servlet.View;
 
 public class JspView implements View {
@@ -36,5 +34,20 @@ public class JspView implements View {
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        JspView view = (JspView) o;
+        return Objects.equals(viewName, view.viewName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(viewName);
     }
 }

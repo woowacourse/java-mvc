@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.view.JspView;
 
 public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
@@ -14,6 +15,8 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return null;
+        Controller controller = (Controller) handler;
+        String view = controller.execute(request, response);
+        return new ModelAndView(new JspView(view));
     }
 }
