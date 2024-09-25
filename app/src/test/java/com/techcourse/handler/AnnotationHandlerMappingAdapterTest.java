@@ -27,4 +27,32 @@ class AnnotationHandlerMappingAdapterTest {
         // then
         assertThat(actual).isEqualTo(new ModelAndView(new JspView("")));
     }
+
+    @Test
+    @DisplayName("핸들러에 특정 http request에 대한 핸들러를 지원하는지 확인한다. - 참")
+    void check_support_handler_with_specific_http_request_true_case() {
+        // given
+        final AnnotationHandlerMappingAdapter mappingAdapter = new AnnotationHandlerMappingAdapter("support");
+        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/get");
+
+        // when
+        final boolean support = mappingAdapter.support(request);
+
+        // then
+        assertThat(support).isTrue();
+    }
+
+    @Test
+    @DisplayName("핸들러에 특정 http request에 대한 핸들러를 지원하는지 확인한다. - 거짓")
+    void check_support_handler_with_specific_http_request_false_case() {
+        // given
+        final AnnotationHandlerMappingAdapter mappingAdapter = new AnnotationHandlerMappingAdapter("support");
+        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/none");
+
+        // when
+        final boolean support = mappingAdapter.support(request);
+
+        // then
+        assertThat(support).isFalse();
+    }
 }

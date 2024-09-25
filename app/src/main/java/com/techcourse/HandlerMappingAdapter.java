@@ -8,4 +8,6 @@ import com.interface21.webmvc.servlet.ModelAndView;
 public interface HandlerMappingAdapter {
 
     ModelAndView adapt(HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+    boolean support(HttpServletRequest request);
 }

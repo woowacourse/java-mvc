@@ -1,7 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -51,9 +53,26 @@ public class AnnotationHandlerMapping {
         final RequestMethod method = RequestMethod.from(request.getMethod());
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, method);
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("존재하지 않는 API");
-        }
         return handlerExecutions.get(handlerKey);
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        final AnnotationHandlerMapping that = (AnnotationHandlerMapping) object;
+        return Arrays.equals(basePackage, that.basePackage) && Objects.equals(handlerExecutions,
+                that.handlerExecutions);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(handlerExecutions);
+        result = 31 * result + Arrays.hashCode(basePackage);
+        return result;
     }
 }

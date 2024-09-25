@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
@@ -313,7 +314,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 
     @Override
     public RequestDispatcher getRequestDispatcher(final String path) {
-        return null;
+        return new FakeDispatcher();
     }
 
     @Override
@@ -369,7 +370,8 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 
     @Override
     public DispatcherType getDispatcherType() {
-        return null;
+
+        return DispatcherType.REQUEST;
     }
 
     @Override
@@ -385,5 +387,35 @@ public class FakeHttpServletRequest implements HttpServletRequest {
     @Override
     public ServletConnection getServletConnection() {
         return null;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        final FakeHttpServletRequest request = (FakeHttpServletRequest) object;
+        return Objects.equals(method, request.method) && Objects.equals(requestUri, request.requestUri);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(method, requestUri);
+    }
+
+    static class FakeDispatcher implements RequestDispatcher {
+
+        @Override
+        public void forward(final ServletRequest request, final ServletResponse response)
+                throws ServletException, IOException {
+        }
+
+        @Override
+        public void include(final ServletRequest request, final ServletResponse response)
+                throws ServletException, IOException {
+        }
     }
 }

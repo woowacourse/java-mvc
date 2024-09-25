@@ -1,5 +1,7 @@
 package com.techcourse.handler;
 
+import java.util.Objects;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -23,5 +25,11 @@ public class ManualHandlerMappingAdapter implements HandlerMappingAdapter {
         final Controller handler = handlerMapping.getHandler(request.getRequestURI());
         final String viewName = handler.execute(request, response);
         return new ModelAndView(new JspView(viewName));
+    }
+
+    @Override
+    public boolean support(final HttpServletRequest request) {
+        final Controller handler = handlerMapping.getHandler(request.getRequestURI());
+        return !Objects.isNull(handler);
     }
 }

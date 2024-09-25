@@ -178,4 +178,5 @@ public class FakeHttpServletResponse implements HttpServletResponse {
     public void setLocale(final Locale loc) {
 
     }
+
 }

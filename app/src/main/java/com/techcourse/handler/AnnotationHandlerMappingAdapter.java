@@ -1,5 +1,7 @@
 package com.techcourse.handler;
 
+import java.util.Objects;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -22,5 +24,11 @@ public class AnnotationHandlerMappingAdapter implements HandlerMappingAdapter {
     public ModelAndView adapt(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
         return handlerExecution.handle(request, response);
+    }
+
+    @Override
+    public boolean support(final HttpServletRequest request) {
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
+        return !Objects.isNull(handlerExecution);
     }
 }

@@ -30,4 +30,31 @@ class ManualHandlerMappingAdapterTest {
         assertThat(modelAndView).isEqualTo(new ModelAndView(new JspView("/index.jsp")));
     }
 
+    @Test
+    @DisplayName("핸들러에 특정 http request에 대한 핸들러를 지원하는지 확인한다. - 참")
+    void check_support_handler_with_specific_http_request_true_case() {
+        // given
+        final ManualHandlerMappingAdapter mappingAdapter = new ManualHandlerMappingAdapter();
+        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/");
+
+        // when
+        final boolean support = mappingAdapter.support(request);
+
+        // then
+        assertThat(support).isTrue();
+    }
+
+    @Test
+    @DisplayName("핸들러에 특정 http request에 대한 핸들러를 지원하는지 확인한다. - 거짓")
+    void check_support_handler_with_specific_http_request_false_case() {
+        // given
+        final ManualHandlerMappingAdapter mappingAdapter = new ManualHandlerMappingAdapter();
+        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/get");
+
+        // when
+        final boolean support = mappingAdapter.support(request);
+
+        // then
+        assertThat(support).isFalse();
+    }
 }
