@@ -12,7 +12,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final String DELIMITER_PATH = "/";
@@ -27,10 +27,13 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         reflections.getTypesAnnotatedWith(Controller.class).forEach(this::assignHandlerByClass);
+
+        handlerExecutions.forEach((key, execution) -> log.info("Key : {}, Execution : {}", key, execution));
     }
 
     private void assignHandlerByClass(Class<?> clazz) {
@@ -64,6 +67,10 @@ public class AnnotationHandlerMapping {
     }
 
     private String generateEndpoint(String basePath, String subPath) {
+        if (subPath.isBlank()) {
+            return String.join(DELIMITER_PATH, DELIMITER_PATH, basePath)
+                    .replaceAll(REGEX_MANY_PATH_DELIMITER, DELIMITER_PATH);
+        }
         return String.join(DELIMITER_PATH, DELIMITER_PATH, basePath, subPath)
                 .replaceAll(REGEX_MANY_PATH_DELIMITER, DELIMITER_PATH);
     }
@@ -85,6 +92,7 @@ public class AnnotationHandlerMapping {
         return null;
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod;
         try {
