@@ -13,7 +13,7 @@
       - [X] `ManualHandlerMapping` 구현체 생성
       - [X] `AnnotationHandlerMapping` 구현체 생성
     - [ ] `HandlerAdapter`
-      - [ ] 핸들러를 실행 가능한 형태로 바꿔주는 `HandlerAdapter` 구현
+      - [X] 핸들러를 실행 가능한 형태로 바꿔주는 `HandlerAdapter` 구현
       - [ ] `ManualHandlerAdapter` 구현체 생성
       - [ ] `AnnotationHandlerAdapter` 구현체 생성
     - [ ] 핸들러를 받아 실행하는 `HandlerExecutor` 구현
