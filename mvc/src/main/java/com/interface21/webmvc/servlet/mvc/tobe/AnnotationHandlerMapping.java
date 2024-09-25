@@ -22,7 +22,7 @@ public class AnnotationHandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    private final HashMap<Method, Object> cache = new HashMap<>();
+    private final HashMap<Class<?>, Object> cache = new HashMap<>();
 
 
     public AnnotationHandlerMapping(final Object... basePackage) {
@@ -32,12 +32,9 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-        List<Method> declaredMethods = reflections.getTypesAnnotatedWith(Controller.class)
-                .stream()
-                .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))
-                .toList();
 
-        initHandlerByMethods(declaredMethods);
+        reflections.getTypesAnnotatedWith(Controller.class)
+                .forEach(clazz -> initHandlerExecutions(clazz, Arrays.stream(clazz.getDeclaredMethods()).toList()));
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -48,19 +45,24 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(new HandlerKey(requestURI, RequestMethod.valueOf(method)));
     }
 
-    private void initHandlerByMethods(List<Method> declaredMethods) {
-        for (Method method : declaredMethods) {
+    private void initHandlerExecutions(Class<?> controllerClazz, List<Method> methods) {
+        for (Method method : methods) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             String url = mapping.value();
             RequestMethod[] requestMethods = getRequestMethods(mapping, mapping.method());
-            putHandlerKeyAndExecution(method, requestMethods, url);
+            putHandlerKeyAndExecution(controllerClazz, method, requestMethods, url);
         }
     }
 
-    private void putHandlerKeyAndExecution(Method method, RequestMethod[] requestMethods, String url) {
+    private void putHandlerKeyAndExecution(
+            Class<?> controllerClazz,
+            Method method,
+            RequestMethod[] requestMethods,
+            String url
+    ) {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            HandlerExecution handlerExecution = createHandlerExecution(method);
+            HandlerExecution handlerExecution = createHandlerExecution(controllerClazz, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
@@ -72,12 +74,12 @@ public class AnnotationHandlerMapping {
         return mapping.method();
     }
 
-    private HandlerExecution createHandlerExecution(Method method) {
+    private HandlerExecution createHandlerExecution(Class<?> controllerClazz, Method method) {
         try {
-            if (!cache.containsKey(method)) {
-                cache.put(method, method.getDeclaringClass().getConstructor().newInstance());
+            if (!cache.containsKey(controllerClazz)) {
+                cache.put(controllerClazz, controllerClazz.getConstructor().newInstance());
             }
-            return new HandlerExecution(cache.get(method), method);
+            return new HandlerExecution(cache.get(controllerClazz), method);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);

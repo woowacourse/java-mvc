@@ -15,8 +15,8 @@ public class HandlerExecution {
     private final Object controller;
     private final Method method;
 
-    public HandlerExecution(Object declaringClass, Method method) {
-        this.controller = declaringClass;
+    public HandlerExecution(Object controller, Method method) {
+        this.controller = controller;
         this.method = method;
     }
 
