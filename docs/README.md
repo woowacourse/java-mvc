@@ -14,6 +14,6 @@
       - [X] `AnnotationHandlerMapping` 구현체 생성
     - [ ] `HandlerAdapter`
       - [X] 핸들러를 실행 가능한 형태로 바꿔주는 `HandlerAdapter` 구현
-      - [ ] `ManualHandlerAdapter` 구현체 생성
+      - [X] `ManualHandlerAdapter` 구현체 생성
       - [ ] `AnnotationHandlerAdapter` 구현체 생성
 - [ ] JSON View 구현하기
