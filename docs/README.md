@@ -17,5 +17,5 @@
       - [X] `ManualHandlerAdapter` 구현체 생성
       - [X] `AnnotationHandlerAdapter` 구현체 생성
     - [X] `HandlerMapping`을 담아서 관리하는 `HandlerMappingRegistry` 구현
-    - [ ] `HandlerAdapter`를 담아서 관리하서 `HandlerAdapterRegistry` 구현
+    - [X] `HandlerAdapter`를 담아서 관리하서 `HandlerAdapterRegistry` 구현
 - [ ] JSON View 구현하기

@@ -16,6 +16,7 @@ import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 
@@ -25,12 +26,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
     private ManualHandlerAdapter manualHandlerAdapter;
     private AnnotationHandlerAdapter annotationHandlerAdapter;
     private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -42,9 +45,10 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
-        manualHandlerAdapter = new ManualHandlerAdapter();
-        annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        handlerAdapters = List.of(manualHandlerAdapter, annotationHandlerAdapter);
+        final ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+        final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        handlerAdapterRegistry.addHandlerAdapter(manualHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
     }
 
     @Override
