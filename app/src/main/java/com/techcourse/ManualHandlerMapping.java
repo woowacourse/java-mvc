@@ -33,10 +33,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     public Controller getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        Controller controller = controllers.get(requestURI);
-        if (controller == null) {
-            throw new IllegalArgumentException("URI에 대한 핸들러를 찾을 수 없습니다: " + requestURI);
-        }
-        return controller;
+        return controllers.get(requestURI);
     }
 }
