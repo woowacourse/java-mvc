@@ -30,12 +30,12 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized ManualHandlerMapping!");
 
-        handlers.put("/", ForwardController.class);
-        handlers.put("/login", LoginController.class);
-        handlers.put("/login/view", LoginViewController.class);
-        handlers.put("/logout", LogoutController.class);
-        handlers.put("/register/view", RegisterViewController.class);
-        handlers.put("/register", RegisterController.class);
+        handlers.put("/", new ForwardController("/index.jsp"));
+        handlers.put("/login", new LoginController());
+        handlers.put("/login/view", new LoginViewController());
+        handlers.put("/logout", new LogoutController());
+        handlers.put("/register/view", new RegisterViewController());
+        handlers.put("/register", new RegisterController());
 
         handlers.forEach((key, value) -> log.info("HandlerKey : {}, handler : {}", key, value));
     }
