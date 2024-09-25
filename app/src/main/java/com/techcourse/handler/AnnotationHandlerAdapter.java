@@ -8,13 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.techcourse.HandlerMappingAdapter;
+import com.techcourse.HandlerAdapter;
 
-public class AnnotationHandlerMappingAdapter implements HandlerMappingAdapter {
+public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     private final AnnotationHandlerMapping handlerMapping;
 
-    public AnnotationHandlerMappingAdapter(String... basePackages) {
+    public AnnotationHandlerAdapter(String... basePackages) {
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackages);
         annotationHandlerMapping.initialize();
         this.handlerMapping = annotationHandlerMapping;

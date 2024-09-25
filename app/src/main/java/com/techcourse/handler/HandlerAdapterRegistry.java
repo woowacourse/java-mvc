@@ -5,22 +5,22 @@ import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.techcourse.HandlerMappingAdapter;
+import com.techcourse.HandlerAdapter;
 
-public class HandlerMappingAdapterLookup {
+public class HandlerAdapterRegistry {
 
-    public final List<HandlerMappingAdapter> lookups;
+    public final List<HandlerAdapter> lookups;
 
-    public HandlerMappingAdapterLookup() {
+    public HandlerAdapterRegistry() {
         this.lookups = new ArrayList<>();
     }
 
-    public int addAdapter(final HandlerMappingAdapter handlerMappingAdapter) {
-        lookups.add(handlerMappingAdapter);
+    public int addAdapter(final HandlerAdapter handlerAdapter) {
+        lookups.add(handlerAdapter);
         return lookups.size();
     }
 
-    public HandlerMappingAdapter get(final HttpServletRequest request) {
+    public HandlerAdapter get(final HttpServletRequest request) {
         return lookups.stream()
                 .filter(handlerMappingAdapter -> handlerMappingAdapter.support(request))
                 .findAny()

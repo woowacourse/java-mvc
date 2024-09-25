@@ -2,8 +2,6 @@ package com.techcourse.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,29 +11,29 @@ import com.interface21.webmvc.servlet.view.JspView;
 import support.FakeHttpServletRequest;
 import support.FakeHttpServletResponse;
 
-class ManualHandlerMappingAdapterTest {
+class AnnotationHandlerAdapterTest {
 
     @Test
-    @DisplayName("ManualHandler를 적용한다.")
-    void adapt_manual_handler_mapping() throws Exception {
+    @DisplayName("애노테이션 기반 핸들러 적용")
+    void adapt_annotation_based_handler_mapping() throws Exception {
         // given
-        final ManualHandlerMappingAdapter mappingAdapter = new ManualHandlerMappingAdapter();
-        final HttpServletRequest request = new FakeHttpServletRequest("GET", "/");
+        final AnnotationHandlerAdapter mappingAdapter = new AnnotationHandlerAdapter("support");
+        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/get");
         final FakeHttpServletResponse response = new FakeHttpServletResponse();
 
         // when
-        final ModelAndView modelAndView = mappingAdapter.adapt(request, response);
+        final ModelAndView actual = mappingAdapter.adapt(request, response);
 
         // then
-        assertThat(modelAndView).isEqualTo(new ModelAndView(new JspView("/index.jsp")));
+        assertThat(actual).isEqualTo(new ModelAndView(new JspView("")));
     }
 
     @Test
     @DisplayName("핸들러에 특정 http request에 대한 핸들러를 지원하는지 확인한다. - 참")
     void check_support_handler_with_specific_http_request_true_case() {
         // given
-        final ManualHandlerMappingAdapter mappingAdapter = new ManualHandlerMappingAdapter();
-        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/");
+        final AnnotationHandlerAdapter mappingAdapter = new AnnotationHandlerAdapter("support");
+        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/get");
 
         // when
         final boolean support = mappingAdapter.support(request);
@@ -48,8 +46,8 @@ class ManualHandlerMappingAdapterTest {
     @DisplayName("핸들러에 특정 http request에 대한 핸들러를 지원하는지 확인한다. - 거짓")
     void check_support_handler_with_specific_http_request_false_case() {
         // given
-        final ManualHandlerMappingAdapter mappingAdapter = new ManualHandlerMappingAdapter();
-        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/get");
+        final AnnotationHandlerAdapter mappingAdapter = new AnnotationHandlerAdapter("support");
+        final FakeHttpServletRequest request = new FakeHttpServletRequest("GET", "/none");
 
         // when
         final boolean support = mappingAdapter.support(request);

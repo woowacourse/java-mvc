@@ -8,13 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
-import com.techcourse.HandlerMappingAdapter;
+import com.techcourse.HandlerAdapter;
 
-public class ManualHandlerMappingAdapter implements HandlerMappingAdapter {
+public class ManualHandlerAdapter implements HandlerAdapter {
 
     private final ManualHandlerMapping handlerMapping;
 
-    public ManualHandlerMappingAdapter() {
+    public ManualHandlerAdapter() {
         final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
         this.handlerMapping = manualHandlerMapping;
