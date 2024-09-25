@@ -78,11 +78,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new IllegalArgumentException("handlerKey에 매핑되는 handlerExecution이 존재하지 않습니다. (handlerKey: %s)"
-                    .formatted(handlerKey));
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }

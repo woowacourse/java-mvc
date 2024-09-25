@@ -1,10 +1,10 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.view.MvcViewResolver;
+import com.interface21.web.WebApplicationInitializer;
 import jakarta.servlet.ServletContext;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -15,10 +15,14 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final List<HandlerMapping> handlerMappings = List.of(
+            new ManualHandlerMapping(),
+            new AnnotationHandlerMapping()
+    );
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet(new MvcViewResolver());
+        final var dispatcherServlet = new DispatcherServlet(handlerMappings);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
