@@ -12,5 +12,5 @@ import static com.interface21.web.bind.annotation.RequestMethod.*;
 public @interface RequestMapping {
     String value() default "";
 
-    RequestMethod[] method() default {GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE};
+    RequestMethod[] method() default {GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD, TRACE};
 }
