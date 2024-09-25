@@ -57,7 +57,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = handlerMappingRegistry.getHandler(request);
+            final var handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new ServletException("Request URI를 처리할 핸들러가 없습니다."));
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final var viewName = handlerAdapter.handle(request, response, handler);
             move(viewName, request, response);
