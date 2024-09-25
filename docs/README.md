@@ -8,12 +8,12 @@
   - [X] RequestMapping에 method 설정이 되어 있지 않으면, 모든 HTTP method 지원하기
 - [ ] 점진적인 리팩터링
   - [ ] `DispatcherServlet` 리팩토링
-    - [ ] `HandlerMapping`
+    - [X] `HandlerMapping`
       - [X] 핸들러를 반환하는 `HandlerMapping` 인터페이스 구현
       - [X] `ManualHandlerMapping` 구현체 생성
       - [X] `AnnotationHandlerMapping` 구현체 생성
-    - [ ] `HandlerAdapter`
+    - [X] `HandlerAdapter`
       - [X] 핸들러를 실행 가능한 형태로 바꿔주는 `HandlerAdapter` 구현
       - [X] `ManualHandlerAdapter` 구현체 생성
-      - [ ] `AnnotationHandlerAdapter` 구현체 생성
+      - [X] `AnnotationHandlerAdapter` 구현체 생성
 - [ ] JSON View 구현하기
