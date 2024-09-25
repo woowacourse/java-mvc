@@ -37,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
+            Controller controller = (Controller) manualHandlerMapping.getHandler(request);
             String viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
