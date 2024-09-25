@@ -13,13 +13,16 @@ class HandlerKeyTest {
 
     @BeforeEach
     void setUp() {
-        HandlerKey.cleanCache();
+        cleanCache();
     }
 
     @DisplayName("캐시에 존재하지 않는 HandlerKey 생성을 시도하는 경우 해당 인스턴스를 캐시에 추가 후 반환한다.")
     @Test
     void should_addInCache_when_createNewHandlerKey() {
-        // given & when
+        // given
+        assertThat(getCacheSize()).isEqualTo(0);
+
+        // when
         HandlerKey.from("/new", RequestMethod.GET);
 
         // then
@@ -31,12 +34,13 @@ class HandlerKeyTest {
     void should_getInCache_when_createExistHandlerKey() {
         // given
         HandlerKey exist = HandlerKey.from("/url", RequestMethod.GET);
+        assertThat(getCacheSize()).isEqualTo(1);
 
         // when
         HandlerKey created = HandlerKey.from("/url", RequestMethod.GET);
 
         // then
-        assertThat(created).isEqualTo(exist);
+        assertThat(created).isSameAs(exist);
         assertThat(getCacheSize()).isEqualTo(1);
     }
 
@@ -49,6 +53,18 @@ class HandlerKeyTest {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
             throw new RuntimeException("CACHE 사이즈에 접근할 수 없습니다.");
+        }
+    }
+
+    private void cleanCache() {
+        try {
+            Field cacheField = HandlerKey.class.getDeclaredField("CACHE");
+            cacheField.setAccessible(true);
+            List<HandlerKey> cache = (List<HandlerKey>) cacheField.get(null);
+            cache.clear();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException("CACHE를 초기화할 수 없습니다.");
         }
     }
 }

@@ -25,10 +25,6 @@ public class HandlerKey {
         CACHE.add(this);
     }
 
-    protected static void cleanCache() {
-        CACHE.clear();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
