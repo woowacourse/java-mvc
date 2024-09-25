@@ -14,9 +14,9 @@ public abstract class HttpUtils {
             .connectTimeout(Duration.ofSeconds(3))
             .build();
 
-    public static HttpResponse<String> send(final String path) {
+    public static HttpResponse<String> send(final String path, final int port) {
         final var request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080" + path))
+                .uri(URI.create("http://localhost:" + port + path))
                 .timeout(Duration.ofSeconds(3))
                 .build();
 

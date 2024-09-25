@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
+import support.TestTomcatStarter;
 
 class ServletTest {
 
@@ -12,14 +13,15 @@ class ServletTest {
     @Test
     void testSharedCounter() {
         // 톰캣 서버 시작
-        final var tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
+        int port = 8083;
+        final var tomcatStarter = new TestTomcatStarter(WEBAPP_DIR_LOCATION, port);
         tomcatStarter.start();
 
         // shared-counter 페이지를 3번 호출한다.
         final var PATH = "/shared-counter";
-        HttpUtils.send(PATH);
-        HttpUtils.send(PATH);
-        final var response = HttpUtils.send(PATH);
+        HttpUtils.send(PATH, port);
+        HttpUtils.send(PATH, port);
+        final var response = HttpUtils.send(PATH, port);
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
@@ -35,14 +37,15 @@ class ServletTest {
     @Test
     void testLocalCounter() {
         // 톰캣 서버 시작
-        final var tomcatStarter = new TomcatStarter(WEBAPP_DIR_LOCATION);
+        int port = 8082;
+        final var tomcatStarter = new TestTomcatStarter(WEBAPP_DIR_LOCATION, port);
         tomcatStarter.start();
 
         // local-counter 페이지를 3번 호출한다.
         final var PATH = "/local-counter";
-        HttpUtils.send(PATH);
-        HttpUtils.send(PATH);
-        final var response = HttpUtils.send(PATH);
+        HttpUtils.send(PATH, port);
+        HttpUtils.send(PATH, port);
+        final var response = HttpUtils.send(PATH, port);
 
         // 톰캣 서버 종료
         tomcatStarter.stop();
