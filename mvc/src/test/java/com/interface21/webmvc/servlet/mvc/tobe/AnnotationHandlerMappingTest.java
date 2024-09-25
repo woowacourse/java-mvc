@@ -1,17 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -51,37 +47,5 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @DisplayName("request method가 없으면 모든 메서드를 등록한다.")
-    @ParameterizedTest
-    @ValueSource(strings = {"POST", "GET", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"})
-    void allRequestMethod(String method) throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("method")).thenReturn(method);
-        when(request.getRequestURI()).thenReturn("/method-test");
-        when(request.getMethod()).thenReturn(method);
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("method")).isEqualTo(method);
-    }
-
-    @DisplayName("RequestMapping의 value가 없으면 '/' 를 기본값으로 설정한다.")
-    @Test
-    void defaultUri() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("emptyUriTest")).isEqualTo("success");
     }
 }

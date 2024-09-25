@@ -30,18 +30,4 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
-
-    @RequestMapping(value = "/method-test")
-    public ModelAndView testEmptyMethod(final HttpServletRequest request, final HttpServletResponse response) {
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("method", request.getAttribute("method"));
-        return modelAndView;
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView testEmptyUri(final HttpServletRequest request, final HttpServletResponse response) {
-        final var modelAndView = new ModelAndView(new JspView(""));
-        modelAndView.addObject("emptyUriTest", "success");
-        return modelAndView;
-    }
 }
