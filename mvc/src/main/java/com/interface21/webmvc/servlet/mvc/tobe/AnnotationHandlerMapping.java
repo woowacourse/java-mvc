@@ -38,7 +38,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final Method[] methods = controller.getMethods();
             registerHandlerByMethods(methods);
         }
-        handlerExecutions.keySet().forEach(key -> System.out.println("aaaa" + key));
+        handlerExecutions.keySet().forEach(System.out::println);
     }
 
     private void registerHandlerByMethods(final Method[] methods) {
@@ -83,7 +83,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void checkDuplicatedHandlerKey(final HandlerKey handlerKey) {
         if (handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalStateException("중복된 handlerKey가 존재합니다");
+            throw new IllegalArgumentException("중복된 handlerKey가 존재합니다");
         }
     }
 
@@ -103,5 +103,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Object getHandler(HttpServletRequest request) {
+        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(key);
     }
 }
