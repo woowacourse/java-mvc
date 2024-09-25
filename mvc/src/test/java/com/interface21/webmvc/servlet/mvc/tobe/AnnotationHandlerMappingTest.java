@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.InvocationTargetException;
+import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMapping;
 
 class AnnotationHandlerMappingTest {
 

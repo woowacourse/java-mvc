@@ -14,6 +14,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.NoMatchedHandlerException;
+import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMappingAdapter;
 import com.techcourse.framework.ManualHandler.ManualHandlerMapping;
 import com.techcourse.framework.ManualHandler.ManualHandlerMappingAdapter;
 
@@ -29,7 +30,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappingAdapters = List.of(new ManualHandlerMappingAdapter(new ManualHandlerMapping()));
+        handlerMappingAdapters = List.of(
+                new AnnotationHandlerMappingAdapter("com.techcourse.controller"),
+                new ManualHandlerMappingAdapter(new ManualHandlerMapping())
+        );
         for (HandlerMappingAdapter handlerMappingAdapter : handlerMappingAdapters) {
             handlerMappingAdapter.initialize();
         }

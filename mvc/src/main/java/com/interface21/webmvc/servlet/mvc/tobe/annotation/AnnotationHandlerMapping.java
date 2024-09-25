@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.annotation;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 
 public class AnnotationHandlerMapping {
 
@@ -62,12 +64,8 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new NoMatchedHandlerException(request);
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }
