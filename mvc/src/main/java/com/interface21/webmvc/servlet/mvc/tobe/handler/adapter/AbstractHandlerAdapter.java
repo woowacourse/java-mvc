@@ -17,7 +17,15 @@ public abstract class AbstractHandlerAdapter<T> implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handlerClass.isInstance(handler);
+        if (handler == null) {
+            return false;
+        }
+        return handler.getClass().isAssignableFrom(handlerClass);
+    }
+
+    @Override
+    public Class<?> getHandlerType() {
+        return handlerClass;
     }
 
     protected T castHandler(Object handler) throws ServletException {
