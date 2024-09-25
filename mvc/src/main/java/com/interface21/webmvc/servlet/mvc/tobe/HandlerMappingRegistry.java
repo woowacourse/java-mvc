@@ -14,11 +14,11 @@ public class HandlerMappingRegistry {
         this.handlerMappings = new ArrayList<>();
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
