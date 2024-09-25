@@ -29,7 +29,7 @@ class HandlerExecutionsTest {
         assertThat(handlerExecutions.findHandler(request)).isEqualTo(handlerExecution);
     }
 
-    @DisplayName("요청에 해당하는 HandlerExecution이 없을 때 빈 Optional 반환")
+    @DisplayName("요청에 해당하는 HandlerExecution이 없을 때 null 반환")
     @Test
     void getHandle_notExist() {
         //given & when
