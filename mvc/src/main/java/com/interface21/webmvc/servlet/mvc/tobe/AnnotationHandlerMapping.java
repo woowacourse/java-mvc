@@ -13,10 +13,10 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
-    private final Object[] basePackage;
+    private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new ConcurrentHashMap<>();
     }
@@ -26,7 +26,7 @@ public class AnnotationHandlerMapping {
                 .forEach(this::initializeByPackage);
     }
 
-    private void initializeByPackage(final Object basePackage) {
+    private void initializeByPackage(final String basePackage) {
         final AnnotatedHandlerRegistry registry = new AnnotatedHandlerRegistry(basePackage);
         registry.initialize(Controller.class, RequestMapping.class);
         registry.getMethods()
@@ -47,7 +47,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(key, new HandlerExecution(instance, method));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final RequestMethod method = RequestMethod.from(request.getMethod());
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, method);
