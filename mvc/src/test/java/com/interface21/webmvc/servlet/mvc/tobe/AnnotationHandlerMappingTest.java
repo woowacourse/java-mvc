@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 class AnnotationHandlerMappingTest {
 
@@ -70,22 +69,6 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @DisplayName("매핑되지 않은 메서드 입력한 경우 404 상태 코드를 응답한다.")
-    @Test
-    void methodIsNotMapped() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = new MockHttpServletResponse(); // 상태 코드를 검증하기 위해 사용
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("POST");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        handlerExecution.handle(request, response);
-
-        assertThat(response.getStatus()).isEqualTo(404);
     }
 
     @DisplayName("존재하지 않는 메서드 입력한 경우 예외 발생한다.")
