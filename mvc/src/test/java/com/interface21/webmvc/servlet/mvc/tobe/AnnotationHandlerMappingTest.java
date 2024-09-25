@@ -88,7 +88,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("정의되지 않은 HTTP 메서드로 요청 시 핸들러를 찾을 수 없다.")
-    void requestWithInvalidMethod() throws Exception {
+    void requestWithInvalidMethod() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -105,7 +105,7 @@ class AnnotationHandlerMappingTest {
 
     @Test
     @DisplayName("등록되지 않은 엔드포인트로 요청 시 핸들러를 찾을 수 없다.")
-    void requestWithUnassignedEndpoint() throws Exception {
+    void requestWithUnassignedEndpoint() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
