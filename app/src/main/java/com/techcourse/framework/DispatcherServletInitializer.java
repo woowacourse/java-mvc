@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.framework;
 
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
