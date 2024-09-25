@@ -57,8 +57,8 @@ public class AnnotationHandlerMapping {
         String value = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
 
+        Object controller = createController(controllerClass);
         for (RequestMethod requestMethod : requestMethods) {
-            Object controller = createController(controllerClass);
             HandlerKey handlerKey = new HandlerKey(value, requestMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
