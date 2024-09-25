@@ -1,15 +1,19 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
@@ -20,8 +24,9 @@ public class ManualHandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+        //TODO 이렇게 등록하지 않고 @RequestMapping 사용해서 등록
+//        controllers.put("/register/view", new RegisterViewController());
+        //        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
