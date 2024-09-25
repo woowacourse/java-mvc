@@ -1,4 +1,4 @@
-package com.techcourse.framework;
+package com.techcourse.framework.ManualHandler;
 
 import com.techcourse.controller.*;
 import org.slf4j.Logger;

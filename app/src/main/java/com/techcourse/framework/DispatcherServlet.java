@@ -1,6 +1,7 @@
 package com.techcourse.framework;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -9,22 +10,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.NoMatchedHandlerException;
+import com.techcourse.framework.ManualHandler.ManualHandlerMapping;
+import com.techcourse.framework.ManualHandler.ManualHandlerMappingAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMappingAdapter> handlerMappingAdapters;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappingAdapters = List.of(new ManualHandlerMappingAdapter(new ManualHandlerMapping()));
+        for (HandlerMappingAdapter handlerMappingAdapter : handlerMappingAdapters) {
+            handlerMappingAdapter.initialize();
+        }
     }
 
     @Override
@@ -33,10 +41,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            JspView view = new JspView(viewName);
-            view.render(new HashMap<>(), request, response);
+            HandlerAdapter handlerAdapter = handlerMappingAdapters.stream()
+                    .map(handlerMappingAdapter -> handlerMappingAdapter.getHandler(request))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElseThrow(() -> new NoMatchedHandlerException(request));
+            ModelAndView modelAndView = handlerAdapter.handle(request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
