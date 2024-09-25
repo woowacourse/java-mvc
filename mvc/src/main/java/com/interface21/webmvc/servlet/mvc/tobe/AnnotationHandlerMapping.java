@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -22,6 +22,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HandlerExecutions();
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         reflections.getTypesAnnotatedWith(Controller.class)
@@ -40,6 +41,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.mappingHandler(controller, method, requestMapping);
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(request);
     }
