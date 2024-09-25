@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class HandlerMappingRegistry {
 
-    private List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappingRegistry() {
         handlerMappings = new ArrayList<>();
@@ -25,7 +25,6 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() ->
-                        new ServletException("No handler found for request URI: " + request.getRequestURI()));
+                .orElseThrow(() -> new ServletException("No handler found"));
     }
 }
