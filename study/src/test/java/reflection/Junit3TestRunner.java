@@ -25,6 +25,6 @@ class Junit3TestRunner {
             method.invoke(clazz.getDeclaredConstructor().newInstance());
         }
 
-        assertThat(methodNames).containsExactly("test1", "test2");
+        assertThat(methodNames).containsOnly("test1", "test2");
     }
 }
