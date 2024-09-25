@@ -30,12 +30,10 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = new MockHttpServletRequest("GET", "/get-test");
+        final HttpServletResponse response = new MockHttpServletResponse();
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        request.setAttribute("id", "gugu");
 
         final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);

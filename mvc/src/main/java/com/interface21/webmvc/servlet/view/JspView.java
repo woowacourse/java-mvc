@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
 import java.util.Map;
+import java.util.Objects;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,5 +35,22 @@ public class JspView implements View {
         });
 
         request.getRequestDispatcher(viewName).forward(request, response);
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        final JspView jspView = (JspView) object;
+        return Objects.equals(viewName, jspView.viewName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(viewName);
     }
 }
