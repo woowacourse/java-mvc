@@ -1,6 +1,10 @@
 package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.HandlerAdaptor;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.ServletContext;
 import java.util.List;
 import org.slf4j.Logger;
