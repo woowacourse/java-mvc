@@ -1,6 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,9 +44,8 @@ public class AnnotationHandlerMapping {
 
 	private void registerHandlerMethods(Class<?> controllerClass) throws Exception {
 		for (Method method : controllerClass.getDeclaredMethods()) {
-			RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-			if (requestMapping != null) {
-				registerHandlerMethod(controllerClass, method, requestMapping);
+			if (method.isAnnotationPresent(RequestMapping.class)) {
+				registerHandlerMethod(controllerClass, method, method.getAnnotation(RequestMapping.class));
 			}
 		}
 	}
@@ -58,14 +59,9 @@ public class AnnotationHandlerMapping {
 		}
 	}
 
-	private HandlerExecution createHandlerExecution(Class<?> controllerClass, Method method) {
-		return new HandlerExecution() {
-			@Override
-			public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-				Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
-				return (ModelAndView)method.invoke(controllerInstance, request, response);
-			}
-		};
+	private HandlerExecution createHandlerExecution(Class<?> controllerClass, Method method) throws Exception{
+		Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+		return new HandlerExecution(controllerInstance, method);
 	}
 
 	public Object getHandler(final HttpServletRequest request) {
