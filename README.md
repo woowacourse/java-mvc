@@ -26,3 +26,10 @@
   - [x] AnnotationHandlerMapping.initialize() 및 getHandler() 구현
   - [x] HandlerExecution.handle() 구현
 - [x] JspView 클래스 구현
+
+### 2단계 - 점진적인 리팩터링
+
+- [ ] ControllerScanner 객체를 통해 컨트롤러 인스턴스 생성하는 로직 분리
+  - [ ] AnnotationHandlerMapping 리팩터링
+- [ ] Legacy MVC 와 @MVC 통합하기
+  - [ ] HandlerMapping 인터페이스로 AnnotationHandlerMapping 과 ManualHandlerMapping 통합
