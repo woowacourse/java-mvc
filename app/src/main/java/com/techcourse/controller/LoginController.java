@@ -1,5 +1,9 @@
 package com.techcourse.controller;
 
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +12,7 @@ import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@com.interface21.context.stereotype.Controller
 public class LoginController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
@@ -24,6 +29,12 @@ public class LoginController implements Controller {
                     return login(req, user);
                 })
                 .orElse("redirect:/401.jsp");
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        JspView view = new JspView(execute(request, response));
+        return new ModelAndView(view);
     }
 
     private String login(final HttpServletRequest request, final User user) {
