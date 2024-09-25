@@ -26,6 +26,34 @@ public class AnnotationHandlerMapping {
         initialize();
     }
 
+    public Object getHandler(final HttpServletRequest request) {
+        RequestMethod requestMethod = RequestMethod.from(request.getMethod());
+        String uri = request.getRequestURI();
+
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+
+        if (handlerExecutions.containsKey(handlerKey)) {
+            return handlerExecutions.get(handlerKey);
+        }
+
+        return createNotFoundHandlerExecution();
+    }
+
+    private HandlerExecution createNotFoundHandlerExecution() {
+        try {
+            DefaultController defaultController = DefaultController.getInstance();
+
+            Method notFoundMethod = Arrays.stream(defaultController.getClass().getDeclaredMethods())
+                    .filter(method -> method.getName().equals(NOT_FOUND_HANDLER_NAME))
+                    .findAny()
+                    .orElseThrow(MethodNotFoundException::new);
+
+            return new HandlerExecution(notFoundMethod, defaultController);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
@@ -59,33 +87,5 @@ public class AnnotationHandlerMapping {
         return Arrays.stream(annotation.method())
                 .map(method -> new HandlerKey(uri, method))
                 .toList();
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        RequestMethod requestMethod = RequestMethod.from(request.getMethod());
-        String uri = request.getRequestURI();
-
-        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-
-        return createNotFoundHandlerExecution();
-    }
-
-    private HandlerExecution createNotFoundHandlerExecution() {
-        try {
-            DefaultController defaultController = DefaultController.getInstance();
-
-            Method notFoundMethod = Arrays.stream(defaultController.getClass().getDeclaredMethods())
-                    .filter(method -> method.getName().equals(NOT_FOUND_HANDLER_NAME))
-                    .findAny()
-                    .orElseThrow(MethodNotFoundException::new);
-
-            return new HandlerExecution(notFoundMethod, defaultController);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 }
