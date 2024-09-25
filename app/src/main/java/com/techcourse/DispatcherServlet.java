@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import java.util.HashMap;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,8 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -20,6 +24,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private ManualHandlerMapping manualHandlerMapping;
+    private AnnotationHandlerMapping annotationHandlerMapping;
+    private ManualHandlerAdapter manualHandlerAdapter;
+    private AnnotationHandlerAdapter annotationHandlerAdapter;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -28,6 +37,13 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        annotationHandlerMapping = new AnnotationHandlerMapping();
+        annotationHandlerMapping.initialize();
+        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+
+        manualHandlerAdapter = new ManualHandlerAdapter();
+        annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        handlerAdapters = List.of(manualHandlerAdapter, annotationHandlerAdapter);
     }
 
     @Override
@@ -36,6 +52,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
+
 //            [ Legacy MVC ]
 //            final var controller = manualHandlerMapping.getHandler(requestURI);
 //            final var viewName = controller.execute(request, response);
