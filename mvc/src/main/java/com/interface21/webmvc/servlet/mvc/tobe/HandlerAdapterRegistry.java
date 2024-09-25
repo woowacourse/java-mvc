@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class HandlerAdapterContainer {
+public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapterContainer() {
+    public HandlerAdapterRegistry() {
         this.handlerAdapters = new ArrayList<>();
     }
 

@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class HandlerMappingContainer {
+public class HandlerMappingRegistry {
 
     private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingContainer() {
+    public HandlerMappingRegistry() {
         this.handlerMappings = new ArrayList<>();
     }
 

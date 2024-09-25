@@ -3,9 +3,9 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterContainer;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingContainer;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,18 +19,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerAdapterContainer handlerAdapterContainer;
-    private final HandlerMappingContainer handlerMappingContainer;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
-        handlerAdapterContainer = new HandlerAdapterContainer();
-        handlerMappingContainer = new HandlerMappingContainer();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
     public void init() {
-        handlerAdapterContainer.initialize();
-        handlerMappingContainer.initialize();
+        handlerAdapterRegistry.initialize();
+        handlerMappingRegistry.initialize();
     }
 
     @Override
@@ -51,13 +51,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object findHandler(HttpServletRequest request) {
-        return handlerMappingContainer.getHandler(request)
+        return handlerMappingRegistry.getHandler(request)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No handler found for request URI: " + request.getRequestURI()));
     }
 
     private HandlerAdapter findHandlerAdapter(Object handler) {
-        return handlerAdapterContainer.getHandlerAdapter(handler).orElseThrow(
+        return handlerAdapterRegistry.getHandlerAdapter(handler).orElseThrow(
                 () -> new IllegalArgumentException(
                         "No handler adapter found for handler: " + handler.getClass()));
     }
@@ -71,6 +71,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappingContainer.addHandlerMapping(handlerMapping);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 }
