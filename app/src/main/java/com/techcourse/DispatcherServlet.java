@@ -1,8 +1,6 @@
 package com.techcourse;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -27,9 +24,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
-    private ManualHandlerAdapter manualHandlerAdapter;
-    private AnnotationHandlerAdapter annotationHandlerAdapter;
-    private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
