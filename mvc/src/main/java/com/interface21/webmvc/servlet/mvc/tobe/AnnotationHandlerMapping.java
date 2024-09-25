@@ -17,7 +17,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,8 +29,8 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         Set<Method> handlers = controllers.stream()
@@ -38,6 +38,7 @@ public class AnnotationHandlerMapping {
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toSet());
         handlers.forEach(this::addHandlerExecution);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addHandlerExecution(final Method handler) {
@@ -58,6 +59,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String method = request.getMethod();
         String requestUri = request.getRequestURI();
