@@ -18,16 +18,15 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
-
+public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, Object> handlers;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlers = new HashMap<>();
     }
 
     public void initialize() {
@@ -43,8 +42,7 @@ public class AnnotationHandlerMapping {
         });
     }
 
-    private void handlerMapping(final Object instance, Method method) {
-        final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+    private void handlerMapping(final Object instance, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
         List<RequestMethod> requestMethods = List.of(requestMapping.method());
@@ -54,10 +52,10 @@ public class AnnotationHandlerMapping {
 
         requestMethods.stream()
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
-                .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+                .forEach(handlerKey -> handlers.put(handlerKey, instance));
     }
 
-    private Object getControllerInstance(Class<?> controllerClass) {
+    private Object getControllerInstance(final Class<?> controllerClass) {
         try {
             return controllerClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
@@ -65,10 +63,11 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
 
-        return Optional.ofNullable(handlerExecutions.get(handlerKey))
+        return Optional.ofNullable(handlers.get(handlerKey))
                 .orElseThrow(() -> new IllegalArgumentException("적절하지 않은 요청입니다."));
     }
 }
