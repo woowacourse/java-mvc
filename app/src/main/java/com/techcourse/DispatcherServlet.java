@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import java.io.Serial;
 import java.util.Map;
 
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import com.interface21.webmvc.servlet.View;
 
 public class DispatcherServlet extends HttpServlet {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
