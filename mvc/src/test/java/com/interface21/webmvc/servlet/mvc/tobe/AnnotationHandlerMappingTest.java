@@ -36,7 +36,7 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("GET /get-test 요청 시, TestController가 핸들러로 반환된다.")
     @Test
-    void testController_When_Get_GetTest_Request() {
+    void test_GetHandler_ReturnTestController_When_GetTest_Request() {
         // given
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
@@ -49,9 +49,9 @@ class AnnotationHandlerMappingTest {
         assertThat(handler).isInstanceOf(TestController.class);
     }
 
-    @DisplayName("POST /get-test 요청 시, TestController가 핸들러로 반환된다.")
+    @DisplayName("POST /post-test 요청 시, TestController가 핸들러로 반환된다.")
     @Test
-    void testController_When_Post_GetTest_Request() {
+    void test_GetHandler_ReturnTestController_When_PostTest_Request() {
         // given
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_POST_TEST);
@@ -67,7 +67,7 @@ class AnnotationHandlerMappingTest {
     @DisplayName("모든 Request Method에 대해 /no-request-method-test 요청 시, TestController가 핸들러로 반환된다.")
     @EnumSource(RequestMethod.class)
     @ParameterizedTest
-    void executeMethodWithNoRequestMethod(RequestMethod requestMethod) {
+    void test_GetHandler_ReturnTestController_When_NoRequestMethod_Request(RequestMethod requestMethod) {
         // given
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_NO_REQUEST_METHOD);
@@ -82,7 +82,7 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("요청으로 핸들러를 찾지 못하면 IllegalArgumentException을 던진다.")
     @Test
-    void getHandlerTestThrowExceptionWhenNotFound() {
+    void test_GetHandler_ThrowException_When_NotFound() {
         // given
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_WRONG);
