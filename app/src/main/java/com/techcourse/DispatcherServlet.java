@@ -14,6 +14,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapters;
+import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -37,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = requestHandlerMapping.getHandler(request);
             if (handler == null) {
-                sendNotFoundResponse();
+                sendNotFoundResponse(request, response);
                 return;
             }
 
@@ -52,7 +53,14 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void sendNotFoundResponse() {
-        log.info("Not Found Response");
+    private void sendNotFoundResponse(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            final JspView view = new JspView("/404.jsp");
+            final ModelAndView modelAndView = new ModelAndView(view);
+            final Map<String, Object> model = modelAndView.getModel();
+            view.render(model, request, response);
+        } catch (final Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+        }
     }
 }
