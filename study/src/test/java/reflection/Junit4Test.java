@@ -15,4 +15,9 @@ public class Junit4Test {
     public void testThree() throws Exception {
         System.out.println("Running Test3");
     }
+
+    @MyTest
+    public static void testFour() {
+        System.out.println("Running Test4");
+    }
 }

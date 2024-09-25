@@ -1,6 +1,7 @@
 package reflection;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,13 @@ class Junit4TestRunner {
         // @MyTest 애노테이션이 붙은 메서드만 실행
         for (Method method : methods) {
             if (method.isAnnotationPresent(MyTest.class)) {
-                method.invoke(instance);  // 인스턴스에서 메서드 실행
+                if (Modifier.isStatic(method.getModifiers())) {
+                    // static 메서드인 경우
+                    method.invoke(null);  // null을 인자로 사용하여 호출
+                } else {
+                    // 인스턴스 메서드인 경우
+                    method.invoke(instance);  // 인스턴스에서 메서드 실행
+                }
             }
         }
     }
