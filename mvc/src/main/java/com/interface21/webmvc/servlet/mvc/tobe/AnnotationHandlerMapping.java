@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -14,8 +15,9 @@ import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,6 +29,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
@@ -35,6 +38,7 @@ public class AnnotationHandlerMapping {
             final Method[] methods = controller.getMethods();
             registerHandlerByMethods(methods);
         }
+        handlerExecutions.keySet().forEach(key -> System.out.println("aaaa" + key));
     }
 
     private void registerHandlerByMethods(final Method[] methods) {
@@ -83,9 +87,21 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
+    @Override
+    public boolean hasHandler(final HttpServletRequest request) {
+        final HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.containsKey(key);
+    }
+
+    @Override
+    public void handle(final HttpServletRequest request, final HttpServletResponse response) {
+        final HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        try {
+            final ModelAndView modelAndView = handlerExecutions.get(key)
+                    .handle(request, response);
+            modelAndView.render(request, response);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
