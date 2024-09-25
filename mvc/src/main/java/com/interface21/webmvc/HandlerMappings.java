@@ -22,12 +22,12 @@ public class HandlerMappings {
     }
 
     public HandlerMapping getHandlerMapping(String url, RequestMethod requestMethod) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            if (handlerMapping.support(url, requestMethod)) {
-                return handlerMapping;
-            }
-        }
-        throw new NoHandlerFoundException("[%s %s]에 매핑된 핸들러가 존재하지 않습니다.".formatted(requestMethod.name(), url));
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.support(url, requestMethod))
+                .findFirst()
+                .orElseThrow(() -> new NoHandlerFoundException(
+                        "[%s %s]에 매핑된 핸들러가 존재하지 않습니다.".formatted(requestMethod.name(), url)
+                ));
     }
 
     public HandlerMapping getHandlerMapping(HttpServletRequest request) {
