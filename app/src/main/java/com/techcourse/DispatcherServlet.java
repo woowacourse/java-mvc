@@ -1,6 +1,8 @@
 package com.techcourse;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,41 +13,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.AsIsHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ToBeHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping(getClass().getPackageName()));
+        handlerAdapters = List.of(new AsIsHandlerAdaptor(), new ToBeHandlerAdapter());
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final var handler = getHandler(request);
+            final var adapter = getHandlerAdapter(handler);
+            final var modelAndView = adapter.handle(request, response, handler);
+            View view = modelAndView.getView();
+            view.render(Map.of(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        View view = new JspView(viewName);
-        view.render(Map.of(), request, response);
+    private Object getHandler(final HttpServletRequest request) {
+        return handlerMappings.stream()
+                .flatMap(handlerMapping -> Stream.ofNullable(handlerMapping.getHandler(request)) )
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No handler found for request URI: " + request.getRequestURI()));
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No handler adapter found."));
     }
 }
