@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import java.util.Objects;
@@ -34,10 +34,9 @@ public class HandlerKey {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof HandlerKey)) {
+        if (!(o instanceof HandlerKey that)) {
             return false;
         }
-        HandlerKey that = (HandlerKey) o;
         return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
     }
 
