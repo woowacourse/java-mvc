@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 
-public class ToBeHandlerAdapter implements HandlerAdapter {
+public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
