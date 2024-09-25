@@ -18,7 +18,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
-
+    private static final String BASE_PACKAGE = "samples";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -33,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
