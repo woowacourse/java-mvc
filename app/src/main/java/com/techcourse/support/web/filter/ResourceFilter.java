@@ -16,10 +16,10 @@ public class ResourceFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceFilter.class);
 
-    private static final List<String> resourcePrefixs = new ArrayList<>();
+    private static final List<String> resourcePrefixes = new ArrayList<>();
 
     static {
-        resourcePrefixs.addAll(Arrays.asList(
+        resourcePrefixes.addAll(Arrays.asList(
                 "/css",
                 "/js",
                 "/assets",
@@ -50,7 +50,7 @@ public class ResourceFilter implements Filter {
     }
 
     private boolean isResourceUrl(final String url) {
-        for (final var prefix : resourcePrefixs) {
+        for (final var prefix : resourcePrefixes) {
             if (url.startsWith(prefix)) {
                 return true;
             }
