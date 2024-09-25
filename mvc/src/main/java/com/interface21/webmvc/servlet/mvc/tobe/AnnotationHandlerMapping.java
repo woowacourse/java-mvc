@@ -2,9 +2,9 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class AnnotationHandlerMapping {
 
     public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new ConcurrentHashMap<>();
+        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
