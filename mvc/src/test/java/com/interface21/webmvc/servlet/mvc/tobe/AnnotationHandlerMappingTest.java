@@ -96,4 +96,20 @@ class AnnotationHandlerMappingTest {
 
 		assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
 	}
+
+	@Test
+	@DisplayName("private 메소드에는 핸들러 요청시 예외가 발생한다.")
+	void get_private() throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
+
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/private-method-test");
+		when(request.getMethod()).thenReturn("GET");
+
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+
+		assertThatThrownBy(() -> handlerExecution.handle(request, response))
+				.isInstanceOf(IllegalAccessException.class);
+	}
 }
