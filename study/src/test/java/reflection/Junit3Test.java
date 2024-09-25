@@ -9,7 +9,7 @@ public class Junit3Test {
         System.out.println("Running Test2");
     }
 
-    public void three() throws Exception {
+    private void privateTest3() throws Exception {
         System.out.println("Running Test3");
     }
 }

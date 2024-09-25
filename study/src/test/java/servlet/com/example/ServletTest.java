@@ -1,9 +1,9 @@
 package servlet.com.example;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletTest {
 
@@ -27,8 +27,9 @@ class ServletTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
-        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // Q. 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
+        // A. SharedCounterServlet의 sharedCounter는 공유되므로
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -49,7 +50,9 @@ class ServletTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
-        // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // Q. 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
+        // A. LocalCounterServlet의 localCounter는 매 요청마다 새로 생성되므로
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
+        // init -> (doFilter -> service) * 3 -> destroy
     }
 }

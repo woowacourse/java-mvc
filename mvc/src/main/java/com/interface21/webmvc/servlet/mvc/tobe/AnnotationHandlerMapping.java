@@ -1,15 +1,24 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+
+    private static final int EMPTY_REQUEST_METHODS = 0;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -21,9 +30,57 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerTypes.forEach(this::mapControllerHandlers);
+    }
+
+    private void mapControllerHandlers(Class<?> controllerType) {
+        try {
+            Object controller = controllerType.getConstructor().newInstance();
+            Method[] handlers = controllerType.getDeclaredMethods();
+            mapHandlerToExecution(controller, handlers);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void mapHandlerToExecution(Object controller, Method[] handlers) {
+        Arrays.stream(handlers)
+                .filter(handler -> handler.isAnnotationPresent(RequestMapping.class))
+                .forEach(handler -> addMapper(handler, new HandlerExecution(controller, handler)));
+    }
+
+    private void addMapper(Method handler, HandlerExecution handlerExecution) {
+        RequestMapping requestMapping = handler.getAnnotation(RequestMapping.class);
+        List<HandlerKey> handlerKeys = createHandlerKeys(requestMapping);
+        handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+    }
+
+    private List<HandlerKey> createHandlerKeys(RequestMapping requestMapping) {
+        String uri = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == EMPTY_REQUEST_METHODS) {
+            requestMethods = RequestMethod.values();
+        }
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> HandlerKey.from(uri, requestMethod))
+                .toList();
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        HandlerKey handlerKey = createHandlerKey(request);
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        if (handlerExecution == null) {
+            throw new IllegalArgumentException(
+                    String.format("해당 요청에 대응하는 핸들러가 없습니다: %s %s", request.getMethod(), request.getRequestURI()));
+        }
+        return handlerExecution;
+    }
+
+    private HandlerKey createHandlerKey(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.find(request.getMethod());
+        return HandlerKey.from(requestURI, requestMethod);
     }
 }
