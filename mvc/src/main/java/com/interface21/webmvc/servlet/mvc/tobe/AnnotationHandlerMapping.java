@@ -22,7 +22,6 @@ import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerKey;
 
 public class AnnotationHandlerMapping {
 
-    private static final String ROOT_PACKAGE_NAME = "com";
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackages;
@@ -34,10 +33,6 @@ public class AnnotationHandlerMapping {
     }
 
     private Object[] setBasePackages(final Object... basePackages) {
-        if (basePackages.length == 0) {
-            return new Object[]{ROOT_PACKAGE_NAME};
-        }
-
         validateBasePackages(basePackages);
         return basePackages;
     }

@@ -13,7 +13,7 @@ public class RequestHandlerMapping {
 
     public RequestHandlerMapping() {
         this.manualHandlerMapping = new ManualHandlerMapping();
-        this.annotationHandlerMapping = new AnnotationHandlerMapping();
+        this.annotationHandlerMapping = new AnnotationHandlerMapping("com");
         initHandlerMapping();
     }
 
