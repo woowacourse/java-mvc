@@ -1,8 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import static org.reflections.scanners.Scanners.SubTypes;
-import static org.reflections.scanners.Scanners.TypesAnnotated;
-
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -32,7 +29,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Reflections reflections = new Reflections(basePackage);
-        reflections.get(SubTypes.of(TypesAnnotated.with(Controller.class)).asClass())
+        reflections.getTypesAnnotatedWith(Controller.class)
                 .forEach(clazz -> Arrays.stream(clazz.getMethods())
                         .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                         .forEach(method -> putHandlerExecutions(clazz, method))
