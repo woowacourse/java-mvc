@@ -1,28 +1,29 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HandlerKey {
 
-    private static final List<HandlerKey> CACHE = new ArrayList<>();
+    private static final Map<String, HandlerKey> CACHE = new ConcurrentHashMap<>();
 
     public final String url;
     public final RequestMethod requestMethod;
 
     public static HandlerKey from(String url, RequestMethod requestMethod) {
-        return CACHE.stream()
-                .filter(handlerKey -> handlerKey.url.equals(url) && handlerKey.requestMethod == requestMethod)
-                .findAny()
-                .orElseGet(() -> new HandlerKey(url, requestMethod));
+        String key = url + requestMethod.name();
+        if (CACHE.containsKey(key)) {
+            return CACHE.get(key);
+        }
+        return new HandlerKey(url, requestMethod);
     }
 
     private HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
-        CACHE.add(this);
+        CACHE.put(url + requestMethod.name(), this);
     }
 
     @Override

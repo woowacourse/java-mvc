@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class HandlerKeyTest {
         try {
             Field cacheField = HandlerKey.class.getDeclaredField("CACHE");
             cacheField.setAccessible(true);
-            List<HandlerKey> cache = (List<HandlerKey>) cacheField.get(null);
+            Map<String, HandlerKey> cache = (Map<String, HandlerKey>) cacheField.get(null);
             return cache.size();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
@@ -60,7 +60,7 @@ class HandlerKeyTest {
         try {
             Field cacheField = HandlerKey.class.getDeclaredField("CACHE");
             cacheField.setAccessible(true);
-            List<HandlerKey> cache = (List<HandlerKey>) cacheField.get(null);
+            Map<String, HandlerKey> cache = (Map<String, HandlerKey>) cacheField.get(null);
             cache.clear();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
