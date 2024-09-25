@@ -80,7 +80,7 @@ class AnnotationHandlerMappingTest {
         assertThat(handler).isInstanceOf(TestController.class);
     }
 
-    @DisplayName("요청으로 핸들러를 찾지 못하면 IllegalArgumentException을 던진다.")
+    @DisplayName("요청으로 핸들러를 찾지 못하면 null을 반환한다.")
     @Test
     void test_GetHandler_ThrowException_When_NotFound() {
         // given
@@ -89,8 +89,9 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn(METHOD_GET);
 
         // when & then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("적절하지 않은 요청입니다.");
+        final var handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isNull();
     }
 }
