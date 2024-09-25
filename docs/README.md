@@ -9,7 +9,7 @@
 - [ ] 점진적인 리팩터링
   - [ ] `DispatcherServlet` 리팩토링
     - [ ] `HandlerMapping`
-      - [ ] 핸들러를 반환하는 `HandlerMapping` 인터페이스 구현
+      - [X] 핸들러를 반환하는 `HandlerMapping` 인터페이스 구현
       - [ ] `ManualHandlerMapping` 구현체 생성
       - [ ] `AnnotationHandlerMapping` 구현체 생성
     - [ ] `HandlerAdapter`
