@@ -15,6 +15,7 @@ public class HandlerAdapters {
 
     public HandlerAdapters(HandlerAdapter... handlerAdapters) {
         this.values = new LinkedHashSet<>(Arrays.asList(handlerAdapters));
+        values.add(new AnnotationHandlerAdapter());
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {

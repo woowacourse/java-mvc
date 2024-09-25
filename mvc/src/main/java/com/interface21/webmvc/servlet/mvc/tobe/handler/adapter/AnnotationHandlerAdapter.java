@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class AnnotationHandlerAdapter extends AbstractHandlerAdapter<HandlerExecution> {
 
-    public AnnotationHandlerAdapter() {
+    AnnotationHandlerAdapter() {
         super(HandlerExecution.class);
     }
 

@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.ExampleController;
+import samples.TestController;
 
 class HandlerAdaptersTest {
 
@@ -31,7 +32,7 @@ class HandlerAdaptersTest {
     @Test
     void noSuitableAdapter() {
         HandlerAdapters handlerAdapters = new HandlerAdapters();
-        assertThatThrownBy(() -> handlerAdapters.getHandlerAdapter(handlerExecution))
+        assertThatThrownBy(() -> handlerAdapters.getHandlerAdapter(new TestController()))
                 .isInstanceOf(ServletException.class)
                 .hasMessage("No suitable adapter found for handler");
     }

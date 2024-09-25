@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe.handler.mapping;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
@@ -14,7 +15,22 @@ public class HandlerMappings {
     private final List<HandlerMapping> values;
 
     public HandlerMappings(HandlerMapping... handlerMappings) {
-        this.values = List.of(handlerMappings);
+        this(List.of(handlerMappings));
+    }
+
+    public HandlerMappings(List<HandlerMapping> values) {
+        this.values = values;
+    }
+
+    public static HandlerMappings createFromBasePackages(Object... basePackage) {
+        return of(basePackage, List.of());
+    }
+
+    public static HandlerMappings of(Object[] basePackage, List<HandlerMapping> additionalMappings) {
+        List<HandlerMapping> handlerMappings = new ArrayList<>(additionalMappings);
+        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
+
+        return new HandlerMappings(handlerMappings);
     }
 
     public Object getHandler(HttpServletRequest request) throws ServletException {
