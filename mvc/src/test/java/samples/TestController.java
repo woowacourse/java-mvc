@@ -30,4 +30,12 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/no-method-test")
+    public ModelAndView noMethod(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("if method is not defined in annotation, then support all http methods");
+        final var modelAndView = new ModelAndView(new JspView(""));
+        modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
 }
