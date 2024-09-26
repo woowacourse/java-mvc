@@ -3,9 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,12 +27,7 @@ public class HandlerAdapterRegistryTest {
     @Test
     void test_GetHandlerAdapter_When_Use_ManualHandlerAdapter() {
         // given
-        final Object handler = new Controller() {
-            @Override
-            public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-                return "";
-            }
-        };
+        final Object handler = (Controller) (req, res) -> "";
 
         // when
         final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
