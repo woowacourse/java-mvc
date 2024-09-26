@@ -1,10 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,15 +18,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMapping handlerMapping;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMapping = new ControllerHandlerMapping();
+        handlerMapping.initialize();
     }
 
     @Override
@@ -34,7 +35,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
+            // TODO : index.jps 처리
+            Object controller = handlerMapping.getHandler(request);
             HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
             ModelAndView mv = handlerAdapter.invoke(controller, request, response);
             View view = mv.getView();
