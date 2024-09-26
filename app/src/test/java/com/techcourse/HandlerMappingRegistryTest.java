@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import com.techcourse.controller.LoginController;
 import com.techcourse.handlermapping.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,9 +21,8 @@ class HandlerMappingRegistryTest {
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
 
-        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        Object handler = handlerMappingRegistry.getHandler(request);
 
-        assertThat(handler.isPresent()).isTrue();
-        assertThat(handler.get()).isInstanceOf(LoginController.class);
+        assertThat(handler).isInstanceOf(LoginController.class);
     }
 }
