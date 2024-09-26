@@ -27,25 +27,10 @@
 
 ### 2단계
 
-**AnnotationHandlerMapping**
-
-- [ ] ControllerScanner
-    - 컨트롤러를 찾아서 인스턴스 생성
-    - [ ] `@Controller`가 설정된 모든 클래스를 찾기 (Reflection)
-    - [ ] 각 클래스(컨트롤러)의 인스턴스를 생성
-- [ ] HandlerExecutions
-    - 스캔한 컨트롤러 정보를 바탕으로 HandlerKey, HandlerExecution 매핑
-    - [ ] HandlerKey
-        - 매핑되는 메서드를 실행
-    - [ ] HandlerExecution
-        - 인스턴스 변수
-            - 실행할 메서드의 인스턴스
-            - 실행할 메서드
-
 **DispatcherServlet**
 
 - [x] HandlerMapping 인터페이스
     - [x] ManualHandlerMapping, AnnotationHandlerMapping 초기화
 - [x] HandlerAdapter 인터페이스
     - [x] HandlerMapping으로 찾은 컨트롤러 실행
-- [ ] JspViewResolver
+- [ ] 컨트롤러 인터페이스 기반과 어노테이션 기반이 겹치면
