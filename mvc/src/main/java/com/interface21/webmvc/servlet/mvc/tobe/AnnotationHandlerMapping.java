@@ -25,13 +25,17 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (String basePackage : basePackages) {
-            scanControllers(basePackage);
+        try {
+            for (String basePackage : basePackages) {
+                scanControllers(basePackage);
+            }
+            log.info("Initialized AnnotationHandlerMapping: {} handlers", handlerExecutions.size());
+        } catch (ReflectiveOperationException e) {
+            log.warn("Initialize failed: {}", e.getMessage());
         }
-        log.info("Initialized AnnotationHandlerMapping: {} handlers", handlerExecutions.size());
     }
 
-    private void scanControllers(String basePackage) {
+    private void scanControllers(String basePackage) throws ReflectiveOperationException {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
@@ -41,13 +45,16 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void scanControllerMethods(Class<?> controllerClass, Method[] methods) {
+    private void scanControllerMethods(Class<?> controllerClass, Method[] methods) throws ReflectiveOperationException {
         for (Method method : methods) {
             registerRequestMappingMethod(controllerClass, method);
         }
     }
 
-    private void registerRequestMappingMethod(Class<?> controllerClass, Method method) {
+    private void registerRequestMappingMethod(
+            Class<?> controllerClass,
+            Method method
+    ) throws ReflectiveOperationException {
         if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             String url = requestMapping.value();

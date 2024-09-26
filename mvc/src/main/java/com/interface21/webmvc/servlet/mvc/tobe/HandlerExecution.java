@@ -8,20 +8,19 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Class<?> controllerClass;
+    private final Object controllerInstance;
     private final Method method;
 
-    public HandlerExecution(Class<?> controllerClass, Method method) {
-        this.controllerClass = controllerClass;
+    public HandlerExecution(Class<?> controllerClass, Method method) throws ReflectiveOperationException {
+        this.controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
         this.method = method;
     }
 
     public ModelAndView handle(
             final HttpServletRequest request, final HttpServletResponse response
-    ) throws IllegalArgumentException, ReflectiveOperationException {
-        Object controller = controllerClass.getDeclaredConstructor().newInstance();
+    ) throws IllegalArgumentException {
         try {
-            return (ModelAndView) method.invoke(controller, request, response);
+            return (ModelAndView) method.invoke(controllerInstance, request, response);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new IllegalArgumentException("Failed to invoke controller method", e);
         }
