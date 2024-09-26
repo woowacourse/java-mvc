@@ -54,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter adapter = findHandlerAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(request, response, handler);
-            move(modelAndView, request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -76,7 +76,7 @@ public class DispatcherServlet extends HttpServlet {
                 .orElseThrow(() -> new UnsupportedOperationException("처리할 수 없는 요청입니다."));
     }
 
-    private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
