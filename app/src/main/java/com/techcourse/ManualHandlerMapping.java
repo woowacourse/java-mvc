@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -21,7 +20,11 @@ public class ManualHandlerMapping implements HandlerMapping {
 
 	private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-	private static final Map<String, Handler> handler = new HashMap<>();
+	private final Map<String, Handler> handler;
+
+	public ManualHandlerMapping(Map<String, Handler> handler) {
+		this.handler = handler;
+	}
 
 	@Override
 	public void initialize() {

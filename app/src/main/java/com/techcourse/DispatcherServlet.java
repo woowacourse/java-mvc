@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
 
 	@Override
 	public void init() {
-		handlerMappings.add(new ManualHandlerMapping());
+		handlerMappings.add(new ManualHandlerMapping(new HashMap<>()));
 		handlerMappings.add(new AnnotationHandlerMapping());
 		handlerMappings.forEach(HandlerMapping::initialize);
 	}
