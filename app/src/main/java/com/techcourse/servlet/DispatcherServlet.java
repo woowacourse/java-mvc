@@ -1,7 +1,8 @@
-package com.techcourse;
+package com.techcourse.servlet;
 
 import com.interface21.webmvc.servlet.Handler;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.techcourse.servlet.handlermapper.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

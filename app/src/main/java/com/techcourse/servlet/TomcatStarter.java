@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.servlet;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;

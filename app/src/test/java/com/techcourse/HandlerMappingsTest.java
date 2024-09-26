@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.techcourse.servlet.handlermapper.HandlerMappings;
+import com.techcourse.servlet.handlermapper.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
