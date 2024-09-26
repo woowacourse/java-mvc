@@ -12,6 +12,6 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public String handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return ((HandlerExecution)handler).handle(request, response).toString();
+        return ((HandlerExecution) handler).handle(request, response).toString();
     }
 }
