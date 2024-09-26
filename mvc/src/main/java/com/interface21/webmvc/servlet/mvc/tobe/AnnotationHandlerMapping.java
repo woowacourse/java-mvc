@@ -15,23 +15,40 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
 	private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
 	private final Object[] basePackage;
-	private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+	private final Map<HandlerKey, Handler> handlers;
 
 	public AnnotationHandlerMapping(final Object... basePackage) {
 		this.basePackage = basePackage;
-		this.handlerExecutions = new HashMap<>();
+		this.handlers = new HashMap<>();
 	}
 
-	public void initialize() throws NoSuchMethodException {
+	@Override
+	public Handler getHandler(final HttpServletRequest request) {
+		String requestURI = request.getRequestURI();
+		RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+		HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+		return handlers.get(handlerKey);
+	}
+
+	@Override
+	public boolean canService(HttpServletRequest request) {
+		String requestURI = request.getRequestURI();
+		RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+		HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+		return handlers.containsKey(handlerKey);
+	}
+
+	@Override
+	public void initialize() throws Exception {
 		log.info("Initializing AnnotationHandlerMapping!");
 		Set<Class<?>> controllers = findControllers();
 		processControllers(controllers);
-		log.info("Initialized AnnotationHandlerMapping with {} handlers", handlerExecutions.size());
+		log.info("Initialized AnnotationHandlerMapping with {} handlers", handlers.size());
 	}
 
 	private Set<Class<?>> findControllers() {
@@ -79,17 +96,6 @@ public class AnnotationHandlerMapping {
 	private void registerHandler(String uriPattern, RequestMethod requestMethod,
 		Object instance, Method method) {
 		HandlerKey handlerKey = new HandlerKey(uriPattern, requestMethod);
-		handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
-	}
-
-	public Object getHandler(final HttpServletRequest request) {
-		String requestURI = request.getRequestURI();
-		RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-		HandlerExecution handler = handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
-		if (handler == null) {
-			String invalidRequestInfo = String.join(" ", requestMethod.name(), requestURI);
-			throw new IllegalArgumentException("해당 요청을 처리할 수 있는 핸들러가 존재하지 않습니다. : " + invalidRequestInfo);
-		}
-		return handler;
+		handlers.put(handlerKey, new AnnotationHandler(new HandlerExecution(instance, method)));
 	}
 }
