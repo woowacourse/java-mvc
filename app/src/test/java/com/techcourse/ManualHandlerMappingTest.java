@@ -53,7 +53,7 @@ class ManualHandlerMappingTest {
 
 	@DisplayName("요청을 처리할 수 있는 컨트롤러가 있는지 확인한다.")
 	@Test
-	void canHandle() {
+	void canService() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getRequestURI()).thenReturn("/get-test");
 		when(request.getMethod()).thenReturn("GET");

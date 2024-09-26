@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
 	@Override
 	public void init() {
 		handlerMappings.add(new ManualHandlerMapping(new HashMap<>()));
-		handlerMappings.add(new AnnotationHandlerMapping());
+		handlerMappings.add(new AnnotationHandlerMapping(new HashMap<>()));
 		handlerMappings.forEach(HandlerMapping::initialize);
 	}
 

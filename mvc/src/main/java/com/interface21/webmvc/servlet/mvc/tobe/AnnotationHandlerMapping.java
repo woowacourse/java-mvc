@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,9 +21,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 	private final Object[] basePackage;
 	private final Map<HandlerKey, Handler> handlers;
 
-	public AnnotationHandlerMapping(final Object... basePackage) {
+	public AnnotationHandlerMapping(Map<HandlerKey, Handler> handlers, Object... basePackage) {
 		this.basePackage = basePackage;
-		this.handlers = new HashMap<>();
+		this.handlers = handlers;
 	}
 
 	@Override
