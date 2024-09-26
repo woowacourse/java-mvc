@@ -6,6 +6,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+// TODO: RegisterController RequestMapping 형태로 변경
 public class RegisterController implements Controller {
 
     @Override

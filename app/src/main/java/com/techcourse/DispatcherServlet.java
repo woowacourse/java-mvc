@@ -32,6 +32,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
+
+            // TODO : JSP View 지원
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
