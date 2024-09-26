@@ -1,35 +1,50 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class ManualHandlerMapping {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final ConcurrentMap<String, ManualHandler> handlers;
 
-    public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
-
-        log.info("Initialized Handler Mapping!");
-        controllers.keySet()
-                .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+    public ManualHandlerMapping(ConcurrentMap<String, ManualHandler> handlers) {
+        this.handlers = handlers;
     }
 
-    public Controller getHandler(final String requestURI) {
+    @Override
+    public void initialize() {
+        handlers.put("/", new ManualHandler(new ForwardController("/index.jsp")));
+        handlers.put("/login", new ManualHandler(new LoginController()));
+        handlers.put("/login/view", new ManualHandler(new LoginViewController()));
+        handlers.put("/logout", new ManualHandler(new LogoutController()));
+        handlers.put("/register/view", new ManualHandler(new RegisterViewController()));
+        handlers.put("/register", new ManualHandler(new RegisterController()));
+
+        log.info("Initialized Handler Mapping!");
+        handlers.keySet()
+                .forEach(path -> log.info("Path : {}, Controller : {}", path, handlers.get(path).getClass()));
+    }
+
+    @Override
+    public ManualHandler getHandler(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        return handlers.get(requestURI);
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        return handlers.containsKey(request.getRequestURI());
     }
 }

@@ -15,19 +15,20 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final ConcurrentMap<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ConcurrentMap<HandlerKey, AnnotationHandler> handlers;
     private final Object[] basePackage;
 
-    public AnnotationHandlerMapping(ConcurrentMap<HandlerKey, HandlerExecution> handlerExecutions,
+    public AnnotationHandlerMapping(ConcurrentMap<HandlerKey, AnnotationHandler> handlers,
                                     final Object... basePackage) {
-        this.handlerExecutions = handlerExecutions;
+        this.handlers = handlers;
         this.basePackage = basePackage;
     }
 
+    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
@@ -41,11 +42,20 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public AnnotationHandler getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        return handlers.get(handlerKey);
+    }
+
+    @Override
+    public boolean canHandle(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        return handlers.containsKey(handlerKey);
     }
 
     private List<Method> getMethodsWithAnnotation(Class<?> controllerClass) {
@@ -67,10 +77,11 @@ public class AnnotationHandlerMapping {
         for (Method method : methods) {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            AnnotationHandler handler = new AnnotationHandler(handlerExecution);
 
             Arrays.stream(getRequestMethods(requestMapping))
                     .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))
-                    .forEach(handlerKey -> registerHandlerExecution(handlerKey, handlerExecution));
+                    .forEach(handlerKey -> registerHandler(handlerKey, handler));
         }
     }
 
@@ -82,10 +93,11 @@ public class AnnotationHandlerMapping {
         return httpMethods;
     }
 
-    private void registerHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
-        if (handlerExecutions.containsKey(handlerKey)) {
+    private void registerHandler(HandlerKey handlerKey, AnnotationHandler handler) {
+        if (handlers.containsKey(handlerKey)) {
+            log.error("중복된 url과 http method 입니다.");
             throw new IllegalArgumentException("중복된 url과 http method 입니다.");
         }
-        handlerExecutions.put(handlerKey, handlerExecution);
+        handlers.put(handlerKey, handler);
     }
 }

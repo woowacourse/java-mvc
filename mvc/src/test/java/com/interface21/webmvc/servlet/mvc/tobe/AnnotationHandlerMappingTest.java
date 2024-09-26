@@ -20,46 +20,14 @@ import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerMappingTest {
 
-    private ConcurrentHashMap<HandlerKey, HandlerExecution> handlerExecutions;
+    private ConcurrentHashMap<HandlerKey, AnnotationHandler> handlers;
     private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerExecutions = new ConcurrentHashMap<>();
-        handlerMapping = new AnnotationHandlerMapping(handlerExecutions, "samples");
+        handlers = new ConcurrentHashMap<>();
+        handlerMapping = new AnnotationHandlerMapping(handlers, "samples");
         handlerMapping.initialize();
-    }
-
-    @Test
-    @DisplayName("GET 요청에 대한 핸들러를 찾아 ModelAndView를 반환한다.")
-    void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @Test
-    @DisplayName("POST 요청에 대한 핸들러를 찾아 ModelAndView를 반환한다.")
-    void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @Test
@@ -69,13 +37,37 @@ class AnnotationHandlerMappingTest {
                 .map(requestMethod -> new HandlerKey("/no-method-test", requestMethod))
                 .toList();
 
-        assertThat(handlerExecutions.keySet()).containsAll(expected);
+        assertThat(handlers.keySet()).containsAll(expected);
+    }
+
+    @Test
+    @DisplayName("요청을 처리할 수 있는지 확인한다.")
+    void canHandle() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        boolean actual = handlerMapping.canHandle(request);
+
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    @DisplayName("등록되지 않은 url에 대한 요청을 처리할 수 없다.")
+    void canNotHandle() {
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/not-found");
+        when(request.getMethod()).thenReturn("GET");
+
+        boolean actual = handlerMapping.canHandle(request);
+
+        assertThat(actual).isFalse();
     }
 
     @Test
     @DisplayName("중복된 url과 http method를 등록할 수 없다.")
     void initializeWithDuplicateUrlAndMethod() {
-        handlerMapping = new AnnotationHandlerMapping(handlerExecutions, "com.interface21.webmvc.servlet.mvc.tobe");
+        handlerMapping = new AnnotationHandlerMapping(handlers, "com.interface21.webmvc.servlet.mvc.tobe");
         assertThatThrownBy(() -> handlerMapping.initialize())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("중복된 url과 http method 입니다.");
