@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +37,11 @@ public class DispatcherServlet extends HttpServlet {
             annotationHandlerMapping.initialize();
 
             handlerAdapters = List.of(new ControllerHandlerAdapter(), new RequestMappingHandlerAdapter());
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             log.info("Dispatcher Servlet을 초기화하던 중 오류가 발생했습니다. :: message = {}", e.getMessage(), e.getCause());
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("예상치 못한 예외가 발생했습니다.", e);
         }
     }
 
