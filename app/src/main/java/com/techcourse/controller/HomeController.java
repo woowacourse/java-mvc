@@ -12,6 +12,6 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView home(HttpServletRequest request, HttpServletResponse response) {
-        return ModelAndView.createWithJspView("redirect:/index.jsp");
+        return ModelAndView.createWithJspView("index.jsp");
     }
 }
