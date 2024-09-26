@@ -9,7 +9,7 @@ public class HandlerMappingRegistry {
 
     private static final HandlerMappingRegistry INSTANCE = new HandlerMappingRegistry();
 
-    private List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     private HandlerMappingRegistry() {
     }
