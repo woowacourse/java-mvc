@@ -9,12 +9,13 @@ import java.util.Set;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         try {
             processControllers();
@@ -90,7 +92,8 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    protected Object getHandler(HttpServletRequest request) {
+    @Override
+    public Object getHandler(HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
 
