@@ -1,9 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,23 +9,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public DispatcherServlet() {
-        handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.interface21"));
     }
 
     @Override
     public void init() {
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.init();
     }
 
     @Override
@@ -44,11 +39,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView getModelAndView(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            handlerAdapter.handle(request, response, handler);
-        }
-        throw new ServletException("Not found handler");
+        Object handler = handlerMappingRegistry.getHandler(request);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        return handlerAdapter.handle(request, response, handler);
     }
 }
