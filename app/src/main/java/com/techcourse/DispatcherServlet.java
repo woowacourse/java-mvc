@@ -1,6 +1,10 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,24 +34,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-
-            // TODO : JSP View 지원
-            move(viewName, request, response);
+            Controller controller = manualHandlerMapping.getHandler(requestURI);
+            HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
+            ModelAndView mv = handlerAdapter.invoke(controller, request, response);
+            View view = mv.getView();
+            view.render(mv.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
