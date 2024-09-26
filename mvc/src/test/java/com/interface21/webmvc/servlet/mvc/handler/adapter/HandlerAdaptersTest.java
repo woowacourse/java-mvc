@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.adapter;
+package com.interface21.webmvc.servlet.mvc.handler.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

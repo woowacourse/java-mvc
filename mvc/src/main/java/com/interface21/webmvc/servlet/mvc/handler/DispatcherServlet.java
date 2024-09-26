@@ -1,12 +1,12 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.handler;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapters;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappings;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

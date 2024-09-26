@@ -1,10 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe.mapping;
+package com.interface21.webmvc.servlet.mvc.handler.mapping;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlingException;
+import com.interface21.webmvc.servlet.mvc.handler.HandlingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

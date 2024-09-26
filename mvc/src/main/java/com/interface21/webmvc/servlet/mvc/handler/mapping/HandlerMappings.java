@@ -1,6 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe.mapping;
+package com.interface21.webmvc.servlet.mvc.handler.mapping;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlingException;
+import com.interface21.webmvc.servlet.mvc.handler.HandlingException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;

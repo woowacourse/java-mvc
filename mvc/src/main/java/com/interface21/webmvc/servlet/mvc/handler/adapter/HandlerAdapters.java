@@ -1,6 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe.adapter;
+package com.interface21.webmvc.servlet.mvc.handler.adapter;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlingException;
+import com.interface21.webmvc.servlet.mvc.handler.HandlingException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
