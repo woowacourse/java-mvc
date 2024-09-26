@@ -82,12 +82,12 @@ public class AnnotationHandlerMapping {
     }
 
     private void addHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
-        validateDuplicateHanderKey(handlerKey);
+        validateDuplicateHandlerKey(handlerKey);
         handlerExecutions.put(handlerKey, handlerExecution);
         log.info("Mapped {} to {}", handlerKey, handlerExecution);
     }
 
-    private void validateDuplicateHanderKey(HandlerKey handlerKey) {
+    private void validateDuplicateHandlerKey(HandlerKey handlerKey) {
         if (handlerExecutions.containsKey(handlerKey)) {
             throw new IllegalStateException("중복된 핸들러 매핑 정보입니다.");
         }
