@@ -12,13 +12,16 @@ import java.io.IOException;
 /**
  * 서블릿(Servlet)은 웹 서버에서 실행되는 자바 프로그램이다.
  * 서블릿은 HTTP로 웹 클라이언트의 요청을 수신하고 응답한다.
- *
+ * <br/>
  * 자바 표준은 jakarta.servlet 패키지에서 Servlet 인터페이스를 제공한다.
  * Servlet 인터페이스의 service() 메서드는 HTTP 요청 및 응답을 처리할 때 사용된다.
  * 개발자는 service() 메서드에서 비즈니스 로직을 처리한다.
- * ```java
+ *
+ * <pre>
+ * {@code
  * public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException;
- * ```
+ * }
+ * </pre>
  *
  * 톰캣 만들기 미션의 RequestMapping 클래스는 아주 단순한 형태의 서블릿 컨테이너로 볼 수 있다.
  * RequestMapping 클래스에서 Controller 객체를 하나씩만 인스턴스화하여 url에 매핑한 것처럼
@@ -26,7 +29,6 @@ import java.io.IOException;
  */
 @WebServlet(name = "sharedCounterServlet", urlPatterns = "/shared-counter")
 public class SharedCounterServlet extends HttpServlet {
-
     /**
      * ❗아래 변수는 문제가 있다.
      * 서블릿의 인스턴스 변수는 다른 스레드와 공유된다.
