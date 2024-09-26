@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.exception.HandlerInitializationException;
@@ -10,8 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +16,14 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(ControllerScanner controllerScanner) {
         this.handlerExecutions = new HashMap<>();
+        this.controllerScanner = controllerScanner;
     }
+
 
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
@@ -36,22 +34,16 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> annotatedControllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controllerType : annotatedControllerTypes) {
-            addHandlers(controllerType);
-        }
-
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach(this::addHandlers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlers(final Class<?> controller) {
+    private void addHandlers(final Class<?> controllerType, final Object instance) {
         try {
-            Object controllerInstance = controller.getConstructor().newInstance();
-            Arrays.stream(controller.getMethods())
+            Arrays.stream(controllerType.getMethods())
                     .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> addHandler(method, controllerInstance));
+                    .forEach(method -> addHandler(method, instance));
         } catch (Exception e) {
             throw new HandlerInitializationException("핸들러 초기화에서 예외가 발생했습니다.", e);
         }
@@ -59,9 +51,7 @@ public class AnnotationHandlerMapping {
 
     private void addHandler(final Method method, final Object controllerInstance) {
         HandlerExecution handlerExecution = createHandlerExecution(method, controllerInstance);
-        for (HandlerKey handlerKey : createHandlerKeys(method)) {
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
+        createHandlerKeys(method).forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
     }
 
     private List<HandlerKey> createHandlerKeys(final Method method) {
