@@ -1,35 +1,40 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.tobe.Handler;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
+
 public class ManualHandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+	private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+	private static final Map<String, Handler> Handlers = new HashMap<>();
 
-    public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+	public void initialize() {
+		Handlers.put("/", new ManualHandler(new ForwardController("/index.jsp")));
+		Handlers.put("/login", new ManualHandler(new LoginController()));
+		Handlers.put("/login/view", new ManualHandler(new LoginViewController()));
+		Handlers.put("/logout", new ManualHandler(new LogoutController()));
+		Handlers.put("/register/view", new ManualHandler(new RegisterViewController()));
+		Handlers.put("/register", new ManualHandler(new RegisterController()));
 
-        log.info("Initialized Handler Mapping!");
-        controllers.keySet()
-                .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
-    }
+		log.info("Initialized Handler Mapping!");
+		Handlers.keySet()
+			.forEach(path -> log.info("Path : {}, Controller : {}", path, Handlers.get(path).getClass()));
+	}
 
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
-    }
+	public Handler getHandler(final String requestURI) {
+		log.debug("Request Mapping Uri : {}", requestURI);
+		return Handlers.get(requestURI);
+	}
 }
