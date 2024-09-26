@@ -44,7 +44,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 	}
 
 	@Override
-	public void initialize() throws Exception {
+	public void initialize() {
 		log.info("Initializing AnnotationHandlerMapping!");
 		Set<Class<?>> controllers = findControllers();
 		processControllers(controllers);
@@ -56,14 +56,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 		return reflections.getTypesAnnotatedWith(Controller.class);
 	}
 
-	private void processControllers(Set<Class<?>> controllers) throws NoSuchMethodException {
+	private void processControllers(Set<Class<?>> controllers) {
 		for (Class<?> controller : controllers) {
 			Object instance = createInstance(controller);
 			processMethods(controller, instance);
 		}
 	}
 
-	private Object createInstance(Class<?> clazz) throws NoSuchMethodException {
+	private Object createInstance(Class<?> clazz) {
 		try {
 			return clazz.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
