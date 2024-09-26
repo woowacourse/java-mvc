@@ -1,12 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping implements HandlerMapping{
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -32,39 +32,39 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        for (Class<?> clazz : controllers.keySet()) {
-            List<Method> methods = Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .toList();
-            methods.forEach(method -> addHandlerExecutions(controllers.get(clazz), method));
+        Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
+        for (Method method : requestMappingMethods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecutions(Object handler, Method method) {
-        Annotation annotation = method.getAnnotation(RequestMapping.class);
-        String uri = (String) getRequestMappingMethods(annotation, "value");
-        RequestMethod[] requestMethods = (RequestMethod[]) getRequestMappingMethods(annotation, "method");
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
+        return classes.stream()
+                .flatMap(clazz -> Arrays.stream(clazz.getDeclaredMethods()))
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
+
+    private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
+        Object handler = controllers.get(method.getDeclaringClass());
         HandlerExecution handlerExecution = new HandlerExecution(handler, method);
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
+        for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    private static Object getRequestMappingMethods(Annotation annotation, String method) {
-        try {
-            return annotation.getClass()
-                    .getMethod(method)
-                    .invoke(annotation);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Reflect Annotation Error");
-        }
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .toList();
     }
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        if(request.getMethod() == null) {
+        if (request.getMethod() == null) {
             return null;
         }
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
