@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
-    private List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappingRegistry() {
         this.handlerMappings = new ArrayList<>();
