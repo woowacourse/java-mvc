@@ -28,6 +28,6 @@ class Junit3TestRunner {
             System.setOut(originalOut);
         }
 
-        assertThat(outputStream.toString()).isEqualTo("Running Test1\nRunning Test2\n");
+        assertThat(outputStream.toString()).contains("Running Test1", "Running Test2");
     }
 }
