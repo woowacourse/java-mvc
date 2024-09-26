@@ -3,27 +3,30 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.ModelAndView;
 import org.reflections.Reflections;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class HandlerExecution {
 
     private final Object[] basePackage;
+    private final List<Object> controllers;
 
     public HandlerExecution(Object[] basePackage) {
         this.basePackage = basePackage;
+        this.controllers = createController();
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Set<Class<?>> annotatedClasses = checkControllerAnnotationClass();
-
-        return annotatedClasses.stream()
-                .map(this::constructController)
+        return controllers.stream()
                 .flatMap(controller -> Arrays.stream(controller.getClass().getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                         .filter(method -> isMatchingRequest(request, method))
@@ -32,10 +35,14 @@ public class HandlerExecution {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid request"));
     }
 
-    private Set<Class<?>> checkControllerAnnotationClass() {
+    private List<Object> createController() {
         Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        return annotatedClasses.stream()
+                .map(this::constructController)
+                .toList();
     }
+
 
     private Object constructController(Class<?> annotatedClass) {
         try {
@@ -63,6 +70,4 @@ public class HandlerExecution {
             throw new RuntimeException("Failed to invoke controller method", e);
         }
     }
-
-
 }
