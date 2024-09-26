@@ -1,6 +1,5 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.techcourse.handleradapter.ControllerHandlerAdapter;
 import com.techcourse.handleradapter.HandlerExecutionHandlerAdapter;
@@ -55,7 +54,7 @@ public class DispatcherServlet extends HttpServlet {
             log.info("handlerMappingRegistry = {}", handlerMappingRegistry);
             Object controller = handlerMappingRegistry.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
+            Object modelAndView = handlerAdapter.handle(request, response, controller);
             viewResolver.resolveView(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Error while handling request: {}", e.getMessage(), e);

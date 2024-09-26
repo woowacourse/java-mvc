@@ -1,6 +1,5 @@
 package com.techcourse.handleradapter;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.techcourse.HandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,8 +13,8 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
-                               final Object handler) throws Exception {
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response,
+                         final Object handler) throws Exception {
         return ((HandlerExecution) handler).handle(request, response);
     }
 }
