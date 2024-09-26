@@ -1,51 +1,115 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+	private AnnotationHandlerMapping handlerMapping;
 
-    @BeforeEach
-    void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
-    }
+	@BeforeEach
+	void setUp() throws Exception {
+		handlerMapping = new AnnotationHandlerMapping("samples");
+		handlerMapping.initialize();
+	}
 
-    @Test
-    void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+	@Test
+	@DisplayName("GET 요청에 대해 핸들러를 반환한다")
+	void get() throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/get-test");
+		when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+		final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
+		assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+	}
 
-    @Test
-    void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+	@Test
+	@DisplayName("POST 요청에 대해 핸들러를 반환한다")
+	void post() throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/post-test");
+		when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+		final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
+		assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+	}
+
+	@Test
+	@DisplayName("매칭되는 핸들러가 없을 경우 null을 반환한다")
+	void get_withNoMatchingHandler() {
+		final var request = mock(HttpServletRequest.class);
+
+		when(request.getRequestURI()).thenReturn("/non-existent");
+		when(request.getMethod()).thenReturn("GET");
+
+		final var handlerExecution = handlerMapping.getHandler(request);
+
+		assertThat(handlerExecution).isNull();
+	}
+
+	@Test
+	@DisplayName("지원되지 않는 메서드에 대해 null을 반환한다")
+	void unsupportedMethod() {
+		final var request = mock(HttpServletRequest.class);
+
+		when(request.getRequestURI()).thenReturn("/post-test");
+		when(request.getMethod()).thenReturn("PUT");
+
+		final var handlerExecution = handlerMapping.getHandler(request);
+
+		assertThat(handlerExecution).isNull();
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"})
+	@DisplayName("메서드가 지정되지 않은 경우 모든 메소드르 지원한다.")
+	void noMethodSpecified(String method) throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
+
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/no-method-test");
+		when(request.getMethod()).thenReturn(method);
+
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+		final var modelAndView = handlerExecution.handle(request, response);
+
+		assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+	}
+
+	@Test
+	@DisplayName("private 메소드에는 핸들러 요청시 예외가 발생한다.")
+	void get_private() throws Exception {
+		final var request = mock(HttpServletRequest.class);
+		final var response = mock(HttpServletResponse.class);
+
+		when(request.getAttribute("id")).thenReturn("gugu");
+		when(request.getRequestURI()).thenReturn("/private-method-test");
+		when(request.getMethod()).thenReturn("GET");
+
+		final var handlerExecution = (HandlerExecution)handlerMapping.getHandler(request);
+
+		assertThatThrownBy(() -> handlerExecution.handle(request, response))
+				.isInstanceOf(IllegalAccessException.class);
+	}
 }
