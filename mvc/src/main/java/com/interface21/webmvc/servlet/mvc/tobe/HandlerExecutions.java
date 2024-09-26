@@ -3,6 +3,8 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -10,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HandlerExecutions {
+
+    private static final Logger log = LoggerFactory.getLogger(HandlerExecutions.class);
 
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
@@ -28,6 +32,7 @@ public class HandlerExecutions {
 
     private void mappingHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
         if (handlerExecutions.containsKey(handlerKey)) {
+            log.info("{}", handlerKey);
             throw new IllegalArgumentException("Handler key is Duplicated.");
         }
         handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
