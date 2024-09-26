@@ -24,7 +24,6 @@ class DispatcherServletTest {
         given(request.getMethod()).willReturn("GET");
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
 
         dispatcherServlet.service(request, response);
 
@@ -33,7 +32,7 @@ class DispatcherServletTest {
 
     @DisplayName("올바르지 uri 요청을 보내면 에러를 던진다.")
     @Test
-    void service2() throws ServletException, IOException {
+    void service2() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -41,7 +40,6 @@ class DispatcherServletTest {
         given(request.getMethod()).willReturn("GET");
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
 
         assertThatCode(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(ServletException.class);

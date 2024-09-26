@@ -1,18 +1,13 @@
 package com.techcourse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapterRegistry {
 
-    private List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapterRegistry() {
-        this.handlerAdapters = new ArrayList<>();
-    }
-
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
+        this.handlerAdapters = handlerAdapters;
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {

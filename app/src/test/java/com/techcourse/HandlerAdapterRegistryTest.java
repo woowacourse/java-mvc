@@ -7,6 +7,7 @@ import com.techcourse.controller.LoginController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.handleradapter.ControllerHandlerAdapter;
 import com.techcourse.handleradapter.HandlerExecutionHandlerAdapter;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +16,8 @@ class HandlerAdapterRegistryTest {
     @DisplayName("handler에 맞는 handlerAdapter를 반환한다.")
     @Test
     void getHandlerAdapterSuccess() {
-        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
+                List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter()));
         RegisterController handler = new RegisterController();
 
         HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
@@ -27,8 +28,8 @@ class HandlerAdapterRegistryTest {
     @DisplayName("handler에 맞는 handlerAdapter가 존재하지 않으면 에러가 발생한다.")
     @Test
     void getHandlerAdapterFail() {
-        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
+                List.of(new HandlerExecutionHandlerAdapter()));
         LoginController handler = new LoginController();
 
         assertThatCode(() -> handlerAdapterRegistry.getHandlerAdapter(handler))

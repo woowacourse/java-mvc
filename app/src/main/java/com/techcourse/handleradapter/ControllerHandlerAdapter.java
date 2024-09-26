@@ -9,6 +9,7 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
+        System.out.println("(handler instanceof Controller = " + (handler instanceof Controller));
         return handler instanceof Controller;
     }
 

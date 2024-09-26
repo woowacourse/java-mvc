@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import com.techcourse.controller.LoginController;
 import com.techcourse.handlermapping.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +19,9 @@ class HandlerMappingRegistryTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         given(request.getRequestURI()).willReturn("/login");
 
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(
+                List.of(new ManualHandlerMapping())
+        );
 
         Object handler = handlerMappingRegistry.getHandler(request);
 
