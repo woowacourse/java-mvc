@@ -1,15 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
-import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -25,7 +20,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping("samples.general");
         handlerMapping.initialize();
     }
 
@@ -65,27 +60,13 @@ class AnnotationHandlerMappingTest {
         assertThat(handlerExecution.handle(request, response)).isNotNull();
     }
 
-    @Nested
-    @Controller
-    class DuplicateTest {
+    @DisplayName("HandlerKey가 중복인 경우 예외가 발생한다.")
+    @Test
+    void givenDuplicatedHandlerKey_whenMappingHandler_thenThrowException() {
+        handlerMapping = new AnnotationHandlerMapping("samples.duplicate");
 
-        @RequestMapping(value = "/duplicate-test", method = RequestMethod.GET)
-        public ModelAndView helloNakNak(final HttpServletRequest request, final HttpServletResponse response) {
-            return new ModelAndView(new JspView(""));
-        }
 
-        @RequestMapping(value = "/duplicate-test", method = RequestMethod.GET)
-        public ModelAndView hiNakNak(final HttpServletRequest request, final HttpServletResponse response) {
-            return new ModelAndView(new JspView(""));
-        }
-
-        @DisplayName("HandlerKey가 중복인 경우 예외가 발생한다.")
-        @Test
-        void givenDuplicatedHandlerKey_whenMappingHandler_thenThrowException() {
-            handlerMapping = new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.tobe");
-
-            assertThatThrownBy(() -> handlerMapping.initialize())
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        assertThatThrownBy(() -> handlerMapping.initialize())
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
