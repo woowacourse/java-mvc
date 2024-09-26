@@ -11,6 +11,7 @@ import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public ControllerHandler getHandler(HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request);
+        if(!hasHandler(request)) {
+            throw new NoSuchElementException(request.getRequestURI() + "와 일치하는 핸들러 메소드가 없습니다");
+        }
         Controller controller = controllers.get(request.getRequestURI());
         return new ControllerHandler(controller);
     }

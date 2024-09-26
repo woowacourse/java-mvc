@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -11,6 +12,7 @@ import com.techcourse.servlet.handlermapper.HandlerMappings;
 import com.techcourse.servlet.handlermapper.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,9 +53,9 @@ class HandlerMappingsTest {
         setUpMockRequest(request, RequestMethod.GET, "/login/view");
 
         assertAll(
-                () -> assertThatCode(() -> manualHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> manualHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException(),
-                () -> assertThatCode(() -> annotationHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> annotationHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException()
         );
     }
@@ -65,9 +67,9 @@ class HandlerMappingsTest {
         setUpMockRequest(request, RequestMethod.GET, "/logout");
 
         assertAll(
-                () -> assertThatCode(() -> manualHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> manualHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException(),
-                () -> assertThatCode(() -> annotationHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> annotationHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException()
         );
     }
@@ -79,9 +81,9 @@ class HandlerMappingsTest {
         setUpMockRequest(request, RequestMethod.GET, "/register");
 
         assertAll(
-                () -> assertThatCode(() -> manualHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> manualHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException(),
-                () -> assertThatCode(() -> annotationHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> annotationHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException()
         );
     }
@@ -93,10 +95,24 @@ class HandlerMappingsTest {
         setUpMockRequest(request, RequestMethod.GET, "/register/view");
 
         assertAll(
-                () -> assertThatCode(() -> manualHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> manualHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException(),
-                () -> assertThatCode(() -> annotationHandlerMappings.hasHandler(request))
+                () -> assertThatCode(() -> annotationHandlerMappings.getHandler(request))
                         .doesNotThrowAnyException()
+        );
+    }
+
+    @DisplayName("없는 url 호출 시 NoSuchElementException 이 발생한다")
+    @Test
+    void throwNoSuchMethodError_When_Call_NonUrl() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        setUpMockRequest(request, RequestMethod.GET, "/none");
+
+        assertAll(
+                () -> assertThatThrownBy(() -> manualHandlerMappings.getHandler(request))
+                        .isInstanceOf(NoSuchElementException.class),
+                () -> assertThatThrownBy(() -> annotationHandlerMappings.getHandler(request))
+                        .isInstanceOf(NoSuchElementException.class)
         );
     }
 

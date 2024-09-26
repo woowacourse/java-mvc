@@ -58,7 +58,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = makeHandlerKeyByRequest(request);
-        if (!handlerExecutions.containsKey(handlerKey)) {
+        if (!hasHandler(request)) {
             throw new NoSuchElementException(handlerKey + "와 일치하는 핸들러 메소드가 없습니다");
         }
         return handlerExecutions.get(handlerKey);

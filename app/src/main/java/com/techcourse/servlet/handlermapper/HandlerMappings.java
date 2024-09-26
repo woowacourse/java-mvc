@@ -5,6 +5,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class HandlerMappings {
 
@@ -35,7 +36,7 @@ public class HandlerMappings {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.hasHandler(request))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(request + "에 해당하는 핸들러를 찾을 수 없습니다"))
+                .orElseThrow(() -> new NoSuchElementException(request + "에 해당하는 핸들러를 찾을 수 없습니다"))
                 .getHandler(request);
     }
 }
