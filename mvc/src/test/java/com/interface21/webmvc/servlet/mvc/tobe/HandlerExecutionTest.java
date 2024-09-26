@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
-class tttttTest {
+class HandlerExecutionTest {
 
     @Test
     void 컨트롤러의_메서드를_실행() throws Exception {
