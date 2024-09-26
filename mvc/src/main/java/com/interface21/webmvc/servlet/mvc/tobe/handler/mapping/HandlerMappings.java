@@ -14,10 +14,6 @@ public class HandlerMappings {
 
     private final List<HandlerMapping> values;
 
-    public HandlerMappings(HandlerMapping... handlerMappings) {
-        this(List.of(handlerMappings));
-    }
-
     public HandlerMappings(List<HandlerMapping> values) {
         this.values = values;
     }
