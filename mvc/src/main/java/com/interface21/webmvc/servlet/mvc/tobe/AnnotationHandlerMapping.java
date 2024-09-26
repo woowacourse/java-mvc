@@ -35,27 +35,14 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void initializeByController(Class<?> controller) {
-        try {
-            Method[] methods = controller.getDeclaredMethods();
-            Object baseInstance = controller.getDeclaredConstructor()
-                    .newInstance();
+    private void initializeByController(Class<?> controller)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Method[] methods = controller.getDeclaredMethods();
+        Object baseInstance = controller.getDeclaredConstructor()
+                .newInstance();
 
-            for (Method method : methods) {
-                initializeByMethod(method, baseInstance);
-            }
-        } catch (InstantiationException e) {
-            log.warn("error cause :: {}, ", e.getMessage(), e.getCause());
-            throw new RuntimeException("인스턴스 생성에 실패했습니다.", e);
-        } catch (IllegalAccessException e) {
-            log.warn("error cause :: {}, ", e.getMessage(), e.getCause());
-            throw new RuntimeException("생성자 접근 권한이 없습니다.", e);
-        } catch (InvocationTargetException e) {
-            log.warn("error cause :: {}, ", e.getMessage(), e.getCause());
-            throw new RuntimeException("메서드 실행에 실패했습니다.", e);
-        } catch (NoSuchMethodException e) {
-            log.warn("error cause :: {}, ", e.getMessage(), e.getCause());
-            throw new RuntimeException("기본 생성자가 존재하지 않습니다.", e);
+        for (Method method : methods) {
+            initializeByMethod(method, baseInstance);
         }
     }
 
