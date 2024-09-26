@@ -19,5 +19,5 @@ import java.lang.annotation.Target;
 public @interface RequestMapping {
     String value() default "";
 
-    RequestMethod[] method() default {GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE};
+    RequestMethod[] method() default {};
 }
