@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -59,5 +60,17 @@ class DispatcherServletTest {
         String actual = viewNameCaptor.getValue();
 
         assertThat(actual).isEqualTo("/login.jsp");
+    }
+
+    @Test
+    void 매핑되는_URI가_없으면_예외_발생() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/invalid-uri");
+        when(request.getMethod()).thenReturn("GET");
+
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(UnsupportedOperationException.class);
     }
 }

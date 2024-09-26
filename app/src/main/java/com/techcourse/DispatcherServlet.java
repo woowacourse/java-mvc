@@ -41,14 +41,12 @@ public class DispatcherServlet extends HttpServlet {
             if (executeManual(request, response)) {
                 return;
             }
-            if (executeAnnotation(request, response)) {
-                return;
-            }
-            throw new UnsupportedOperationException("지원하지 않는 요청입니다.");
+            executeAnnotation(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+        throw new UnsupportedOperationException("지원하지 않는 요청입니다.");
     }
 
     private boolean executeManual(HttpServletRequest request, HttpServletResponse response) throws Exception {
