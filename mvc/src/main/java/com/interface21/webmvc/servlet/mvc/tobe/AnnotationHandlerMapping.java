@@ -1,7 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.slf4j.Logger;
@@ -14,7 +17,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     private final Packages basePackage;
     private final AnnotationExecutions handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) { // TODO 사용하는 곳에서 에러 핸들링 필요
+    public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = new Packages(basePackage);
         this.handlerExecutions = new AnnotationExecutions();
     }
@@ -33,7 +36,14 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     @Override
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    public void handler(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HandlerExecution handler = getHandler(request);
+        ModelAndView modelAndView = handler.handle(request, response);
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
+    }
+
+    private HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerExecutions.getHandler(request.getRequestURI(), RequestMethod.findByName(request.getMethod()));
     }
 

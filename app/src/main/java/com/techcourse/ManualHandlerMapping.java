@@ -1,8 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
@@ -31,10 +34,25 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Controller getHandler(final HttpServletRequest request) {
+    public void handler(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Controller handler = getHandler(request);
+        String viewName = handler.execute(request, response);
+        View view = new JspView(viewName);
+        view.render(new HashMap<>(), request, response);
+    }
+
+    private Controller getHandler(final HttpServletRequest request) {
+        validateHandlerRequest(request);
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
+    }
+
+    private void validateHandlerRequest(HttpServletRequest request) {
+        if (!canHandle(request)) {
+            log.error("ManualHandler가 처리할 수 있는 요청이 아닙니다. url = {}, method = {}", request.getRequestURI(), request.getMethod());
+            throw new IllegalStateException("처리할 수 있는 핸들러가 없습니다.");
+        }
     }
 
     @Override

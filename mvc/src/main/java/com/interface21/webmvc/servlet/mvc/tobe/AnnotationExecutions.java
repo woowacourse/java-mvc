@@ -20,6 +20,10 @@ public class AnnotationExecutions {
 
     public HandlerExecution getHandler(String uri, RequestMethod requestMethod) {
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        if (!hasHandler(uri, requestMethod)) {
+            log.error("해당 요청에 대한 핸들러가 존재하지 않습니다. uri = {}, method = {}", uri, requestMethod);
+            throw new IllegalStateException("핸들러가 존재하지 않습니다.");
+        }
         return handlerExecutions.get(handlerKey);
     }
 
