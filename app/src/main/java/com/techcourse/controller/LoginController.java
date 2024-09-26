@@ -14,7 +14,6 @@ public class LoginController implements Controller {
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        System.out.println(this.getClass().getClassLoader().getName() + "--login");
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }

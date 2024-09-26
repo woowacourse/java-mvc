@@ -18,7 +18,6 @@ public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
-        System.out.println(this.getClass().getClassLoader().getName() + "--register");
         final var user = new User(
                 atomicLong.getAndIncrement(),
                 req.getParameter("account"),
