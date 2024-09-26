@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -23,10 +23,22 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         controllers.forEach(this::processController);
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
+
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("No handler found for request uri: " + request.getRequestURI());
+        }
+
+        return handlerExecutions.get(handlerKey);
     }
 
     private void processController(Class<?> controller, Object instance) {
@@ -65,15 +77,5 @@ public class AnnotationHandlerMapping {
         }
 
         return requestMethods;
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
-
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("No handler found for request uri: " + request.getRequestURI());
-        }
-
-        return handlerExecutions.get(handlerKey);
     }
 }
