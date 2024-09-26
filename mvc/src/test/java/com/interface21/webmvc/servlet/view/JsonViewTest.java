@@ -17,7 +17,7 @@ import org.mockito.ArgumentCaptor;
 
 class JsonViewTest {
 
-    @DisplayName("Json으로 파싱한다.")
+    @DisplayName("값이 1개 이상인 Model을 Json으로 파싱한다.")
     @Test
     void renderTest() throws Exception {
         // given
@@ -39,6 +39,31 @@ class JsonViewTest {
         verify(writer).write(writerCaptor.capture());
 
         String expected = "{\"user1\":\"Mangcho\",\"user2\":{\"name\":\"Groom\",\"age\":2}}";
+        assertThat(writerCaptor.getValue()).isEqualTo(expected);
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    }
+
+    @DisplayName("값이 1개인 Model을 Json으로 파싱한다.")
+    @Test
+    void renderTest1() throws Exception {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        PrintWriter writer = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(writer);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("user1", "Mangcho");
+
+        // when
+        JsonView jsonView = new JsonView();
+        jsonView.render(model, request, response);
+
+        // then
+        ArgumentCaptor<String> writerCaptor = ArgumentCaptor.forClass(String.class);
+        verify(writer).write(writerCaptor.capture());
+
+        String expected = "\"Mangcho\"";
         assertThat(writerCaptor.getValue()).isEqualTo(expected);
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
