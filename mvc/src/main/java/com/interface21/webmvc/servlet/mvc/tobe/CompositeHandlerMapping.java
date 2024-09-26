@@ -9,13 +9,8 @@ public class CompositeHandlerMapping implements HandlerMapping {
 
     private final List<HandlerMapping> handlerMappings;
 
-
     public CompositeHandlerMapping(HandlerMapping... handlerMappings) {
-        this(List.copyOf(Arrays.asList(handlerMappings)));
-    }
-
-    private CompositeHandlerMapping(List<HandlerMapping> handlerMappings) {
-        this.handlerMappings = handlerMappings;
+        this.handlerMappings = List.copyOf(Arrays.asList(handlerMappings));
         initialize();
     }
 
