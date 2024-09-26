@@ -7,15 +7,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
@@ -33,31 +30,21 @@ public class AnnotationHandlerMapping implements HandlerMapping{
 
     @Override
     public void initialize() {
-        Arrays.stream(basePackage).forEach(this::reflect);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Class<?> clazz : controllers.keySet()) {
+            List<Method> methods = Arrays.stream(clazz.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                    .toList();
+            methods.forEach(method -> addHandlerExecutions(controllers.get(clazz), method));
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void reflect(Object basePackage) {
-        try {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-            for (Class<?> clazz : classes) {
-                Object handler = clazz.getConstructor().newInstance();
-                List<Method> methods = Arrays.stream(clazz.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                        .toList();
-
-                methods.forEach(method -> putHandlerExecutions(handler, method));
-            }
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-
-        }
-    }
-
-    private void putHandlerExecutions(Object handler, Method method) {
+    private void addHandlerExecutions(Object handler, Method method) {
         Annotation annotation = method.getAnnotation(RequestMapping.class);
-        String uri = (String) getValueFromAnnotationMethod(annotation, "value");
-        RequestMethod[] requestMethods = (RequestMethod[]) getValueFromAnnotationMethod(annotation, "method");
+        String uri = (String) getRequestMappingMethods(annotation, "value");
+        RequestMethod[] requestMethods = (RequestMethod[]) getRequestMappingMethods(annotation, "method");
         HandlerExecution handlerExecution = new HandlerExecution(handler, method);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
@@ -65,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         }
     }
 
-    private static Object getValueFromAnnotationMethod(Annotation annotation, String method) {
+    private static Object getRequestMappingMethods(Annotation annotation, String method) {
         try {
             return annotation.getClass()
                     .getMethod(method)
