@@ -50,9 +50,6 @@ public class RequestMappingTest {
 
         // Then
         assertEquals("/dummy", requestMapping.value());
-        assertArrayEquals(new RequestMethod[]{
-                RequestMethod.GET, RequestMethod.HEAD, RequestMethod.POST, RequestMethod.PUT,
-                RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.TRACE
-        }, requestMapping.method());
+        assertArrayEquals(RequestMethod.values(), requestMapping.method());
     }
 }
