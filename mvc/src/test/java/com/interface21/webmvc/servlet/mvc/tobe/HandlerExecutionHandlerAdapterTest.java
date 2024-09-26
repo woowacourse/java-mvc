@@ -61,7 +61,7 @@ class HandlerExecutionHandlerAdapterTest {
         when(handlerExecution.handle(request, response)).thenReturn(expectedModelAndView);
 
         // when
-        ModelAndView actual = handlerExecution.handle(request, response);
+        ModelAndView actual = handlerAdapter.handle(request, response, handlerExecution);
 
         // then
         assertThat(actual).isNotNull();
