@@ -1,9 +1,11 @@
 package com.techcourse;
 
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.techcourse.controller.LoginController;
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,20 +17,37 @@ public class HandlerMappingRegistryTest {
 
     HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
-    @BeforeEach
-    void setUp() {
+    @DisplayName("URI에 해당하는 어노테이션 기반 핸들러를 반환한다.")
+    @Test
+    void getHandlerWithAnnotation() {
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com"));
         handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.init();
-    }
 
-    @DisplayName("URI에 해당하는 컨트롤러 인터페이스 기반 핸들러를 반환한다.")
-    @Test
-    void getHandlerWithController() {
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/login");
+
+        when(request.getMethod()).thenReturn(RequestMethod.GET.name());
+        when(request.getRequestURI()).thenReturn("/");
 
         Object handler = handlerMappingRegistry.getHandler(request);
 
-        assertThat(handler).isInstanceOf(LoginController.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
+    }
+
+    @DisplayName("URI에 해당하는 인터페이스 기반 핸들러를 반환한다.")
+    @Test
+    void getHandlerWithInterface() {
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com"));
+        handlerMappingRegistry.init();
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getMethod()).thenReturn(RequestMethod.GET.name());
+        when(request.getRequestURI()).thenReturn("/");
+
+        Object handler = handlerMappingRegistry.getHandler(request);
+
+        assertThat(handler).isInstanceOf(Controller.class);
     }
 }
