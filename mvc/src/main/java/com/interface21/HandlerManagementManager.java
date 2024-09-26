@@ -1,5 +1,8 @@
 package com.interface21;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.context.stereotype.HandlerManagement;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,14 +14,14 @@ public class HandlerManagementManager {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerManagementManager.class);
     private static final Map<String, Object> MANAGERS = new ConcurrentHashMap<>();
-    private static final Set<Class<?>> HANDLER_CLASSES = HandlerManagementScanner.scanHandlerHelper();
+    private static final Set<Class<?>> HANDLER_CLASSES = HandlerManagementScanner.scanHandlerHelper(HandlerManagementManager.class, HandlerManagement.class);
 
     private HandlerManagementManager() {}
 
     private static class Singleton {
+
         private static final HandlerManagementManager INSTANCE = new HandlerManagementManager();
     }
-
     public static HandlerManagementManager getInstance() {
         return Singleton.INSTANCE;
     }
@@ -26,6 +29,12 @@ public class HandlerManagementManager {
     public void initialize(Class<?> clazz) {
         registerHandlerManagement(clazz);
         registerHandlerManagement(this.getClass());
+        registerAnnotation(clazz);
+    }
+
+    private void registerAnnotation(Class<?> clazz) {
+        HandlerManagementScanner.scanHandlerHelper1(clazz, Controller.class)
+                .forEach(this::registerHandlerManagement);
     }
 
     public void registerHandlerManagement(Class<?> clazz) {
@@ -42,6 +51,12 @@ public class HandlerManagementManager {
             return;
         }
         MANAGERS.put(clazzName, object);
+    }
+
+    public List<Object> getAnnotationHandler(Class<? extends Annotation> controllerClass) {
+        return MANAGERS.values().stream()
+                .filter(clazz -> clazz.getClass().isAnnotationPresent(controllerClass))
+                .toList();
     }
 
     public <T> List<T> getHandler(Class<T> clazz) {
