@@ -21,7 +21,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     @DisplayName("컨트롤러 어노테이션을 지원하는지 확인한다.")
     void supoort() {
-        AnnotationHandlerAdapter sut = new AnnotationHandlerAdapter();
+        var sut = new AnnotationHandlerAdapter();
         var controller = new TestController();
 
         assertThat(sut.support(controller)).isTrue();
@@ -30,7 +30,7 @@ class AnnotationHandlerAdapterTest {
     @Test
     @DisplayName("컨트롤러 어노테이션이 아니면 지원하지 않는다.")
     void notSupport() {
-        AnnotationHandlerAdapter sut = new AnnotationHandlerAdapter();
+        var sut = new AnnotationHandlerAdapter();
         var controller = new Controller() {
             @Override
             public String execute(HttpServletRequest req, HttpServletResponse res) {
@@ -52,7 +52,7 @@ class AnnotationHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        AnnotationHandlerAdapter sut = new AnnotationHandlerAdapter();
+        var sut = new AnnotationHandlerAdapter();
         var controller = new TestController();
         var method = controller.getClass().getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         var handler = new HandlerExecution(controller, method);

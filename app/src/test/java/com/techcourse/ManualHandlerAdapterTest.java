@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.controller.LoginController;
 import com.techcourse.domain.User;
@@ -24,7 +23,7 @@ class ManualHandlerAdapterTest {
     @Test
     @DisplayName("컨트롤러 인터페이스 기반을 지원하는지 확인한다.")
     void supoort() {
-        ManualHandlerAdapter sut = new ManualHandlerAdapter();
+        var sut = new ManualHandlerAdapter();
         var controller = new LoginController();
 
         assertThat(sut.support(controller)).isTrue();
@@ -33,7 +32,7 @@ class ManualHandlerAdapterTest {
     @Test
     @DisplayName("컨트롤러 인터페이스 기반이 아니면 지원하지 않는다.")
     void notSupport() {
-        ManualHandlerAdapter sut = new ManualHandlerAdapter();
+        var sut = new ManualHandlerAdapter();
         var controller = new TestController();
 
         assertThat(sut.support(controller)).isFalse();
@@ -51,9 +50,10 @@ class ManualHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(session);
-        when(session.getAttribute("user")).thenReturn(new User(1, "gugu", "password", "hkkang@woowahan.com")); // 필요한 경우 사용자 정보 반환
+        when(session.getAttribute("user")).thenReturn(
+                new User(1, "gugu", "password", "hkkang@woowahan.com")); // 필요한 경우 사용자 정보 반환
 
-        ManualHandlerAdapter sut = new ManualHandlerAdapter();
+        var sut = new ManualHandlerAdapter();
         var controller = new LoginController();
 
         // when
