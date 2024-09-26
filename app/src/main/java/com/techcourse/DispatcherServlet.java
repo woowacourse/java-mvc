@@ -48,8 +48,6 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = handlerAdapterRegistry.execute(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
