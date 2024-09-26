@@ -37,6 +37,7 @@ public class DispatcherServlet extends HttpServlet {
 
             handlerAdapters = List.of(new ControllerHandlerAdapter(), new RequestMappingHandlerAdapter());
         } catch (Exception e) {
+            log.info("Dispatcher Servlet을 초기화하던 중 오류가 발생했습니다. :: message = {}", e.getMessage(), e.getCause());
             throw new RuntimeException(e);
         }
     }
