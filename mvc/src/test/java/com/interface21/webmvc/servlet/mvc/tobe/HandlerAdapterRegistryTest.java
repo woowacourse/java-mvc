@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class HandlerAdapterRegistryTest {
 
     private HandlerAdapterRegistry handlerAdapterRegistry;
-    
+
     @BeforeEach
     public void setUp() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
