@@ -25,7 +25,7 @@ class ReflectionsTest {
 
         // 각 클래스의 이름을 출력
         for (Class<?> clazz : annotatedClasses) {
-            System.out.println(clazz.getSimpleName());
+            log.info(clazz.getSimpleName());
         }
     }
 }
