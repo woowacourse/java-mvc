@@ -14,7 +14,7 @@ public class HandlerMappings {
 
     private final List<HandlerMapping> values;
 
-    public HandlerMappings(List<HandlerMapping> values) {
+    private HandlerMappings(List<HandlerMapping> values) {
         this.values = values;
     }
 
