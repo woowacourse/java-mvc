@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
@@ -7,23 +8,21 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 
-import java.io.File;
-
 public class TomcatStarter {
 
     public static final String WEBAPP_DIR_LOCATION = "app/src/main/webapp/";
 
     private final Tomcat tomcat;
 
-    public TomcatStarter(final int port) {
+    public TomcatStarter(int port) {
         this(WEBAPP_DIR_LOCATION, port);
     }
 
-    public TomcatStarter(final String webappDirLocation, final int port) {
+    public TomcatStarter(String webappDirLocation, int port) {
         this.tomcat = new Tomcat();
         tomcat.setConnector(createConnector(port));
 
-        final var docBase = new File(webappDirLocation).getAbsolutePath();
+        String docBase = new File(webappDirLocation).getAbsolutePath();
         final var context = (StandardContext) tomcat.addWebapp("", docBase);
         skipJarScan(context);
         skipClearReferences(context);
@@ -46,18 +45,18 @@ public class TomcatStarter {
         }
     }
 
-    private Connector createConnector(final int port) {
+    private Connector createConnector(int port) {
         final var connector = new Connector();
         connector.setPort(port);
         return connector;
     }
 
-    private void skipJarScan(final Context context) {
+    private void skipJarScan(Context context) {
         final var jarScanner = (StandardJarScanner) context.getJarScanner();
         jarScanner.setScanClassPath(false);
     }
 
-    private void skipClearReferences(final StandardContext context) {
+    private void skipClearReferences(StandardContext context) {
         /**
          * https://tomcat.apache.org/tomcat-10.1-doc/config/context.html
          *

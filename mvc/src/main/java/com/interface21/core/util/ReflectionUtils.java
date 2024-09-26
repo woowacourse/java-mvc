@@ -7,7 +7,8 @@ public abstract class ReflectionUtils {
 
     /**
      * Obtain an accessible constructor for the given class and parameters.
-     * @param clazz the clazz to check
+     *
+     * @param clazz          the clazz to check
      * @param parameterTypes the parameter types of the desired constructor
      * @return the constructor reference
      * @throws NoSuchMethodException if no such constructor exists

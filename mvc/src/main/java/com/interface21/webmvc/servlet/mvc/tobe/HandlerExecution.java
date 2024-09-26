@@ -1,10 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import com.interface21.webmvc.servlet.ModelAndView;
 
 public class HandlerExecution {

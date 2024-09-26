@@ -25,12 +25,6 @@ class DispatcherServletTest {
 
     private DispatcherServlet dispatcherServlet;
 
-    @BeforeEach
-    void setUp() {
-        this.dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
-    }
-
     private static Stream<Arguments> handlerProvider() {
         return Stream.of(
                 Arguments.of("/login", "POST", Controller.class),
@@ -50,6 +44,12 @@ class DispatcherServletTest {
         Method method = controller.getClass()
                 .getMethod("save", HttpServletRequest.class, HttpServletResponse.class);
         return new HandlerExecution(method, controller);
+    }
+
+    @BeforeEach
+    void setUp() {
+        this.dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.init();
     }
 
     @DisplayName("올바른 요청에 대해 handler를 찾을 수 있다.")
