@@ -17,8 +17,7 @@ class HandlerMappingRegistryTest {
     public void setUp() {
         handlerMappingRegistry = new HandlerMappingRegistry();
     }
-
-
+    
     @DisplayName("핸들러를 반환한다.")
     @Test
     void getHandler_returnHandler() {
