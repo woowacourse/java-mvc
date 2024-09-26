@@ -28,6 +28,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
+        if (!handlerExecutions.isEmpty()) {
+            return;
+        }
+
         log.info("Initialized AnnotationHandlerMapping!");
 
         Reflections reflections = new Reflections(basePackage);
