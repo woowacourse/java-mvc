@@ -22,7 +22,7 @@ public class Controllers {
                 controllers.put(controllerClass, controllerClass.getDeclaredConstructor().newInstance());
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException("컨트롤러 클래스 인스턴스 생성에 실패했습니다.");
         }
     }
 
