@@ -10,6 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ManualHandlerAdapter implements HandlerAdapter {
 
     @Override
+    public boolean supports(Object handler) {
+        return handler instanceof Controller;
+    }
+
+    @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Controller controller = (Controller) handler;
         String viewName = controller.execute(request, response);
