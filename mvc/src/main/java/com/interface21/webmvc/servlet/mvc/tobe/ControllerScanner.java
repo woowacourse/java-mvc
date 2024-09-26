@@ -1,7 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.webmvc.servlet.exception.HandlerInitializationException;
+import com.interface21.webmvc.servlet.exception.ControllerScanException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +28,7 @@ public class ControllerScanner {
             Object controllerInstance = annotatedControllerType.getConstructor().newInstance();
             controllers.put(annotatedControllerType, controllerInstance);
         } catch (Exception e) {
-            throw new HandlerInitializationException("핸들러 초기화에서 예외가 발생했습니다.", e);
+            throw new ControllerScanException("핸들러 초기화에서 예외가 발생했습니다.", e);
         }
     }
 
