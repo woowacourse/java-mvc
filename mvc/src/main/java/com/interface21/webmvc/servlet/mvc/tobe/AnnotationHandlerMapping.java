@@ -56,9 +56,17 @@ public class AnnotationHandlerMapping {
 
     private List<HandlerKey> createHandlerKeys(final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        return Arrays.stream(requestMapping.method())
+        
+        return Arrays.stream(getMappingMethods(requestMapping))
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
                 .toList();
+    }
+
+    private RequestMethod[] getMappingMethods(RequestMapping requestMapping) {
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMapping.method();
     }
 
     private HandlerExecution createHandlerExecution(final Method method, final Object controller) {
