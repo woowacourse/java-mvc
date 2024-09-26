@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,30 +18,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner scanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        this.scanner = new ControllerScanner(basePackage);
     }
 
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class)
+        scanner.getAll()
                 .forEach(this::initializeControllerHandlers);
     }
 
     private void initializeControllerHandlers(Class<?> clazz) {
-        try {
-            Object instance = clazz.getDeclaredConstructor().newInstance();
-            Stream.of(clazz.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(MAPPING_ANNOTATION))
-                    .forEach(method -> initializeHandler(method, instance));
-        } catch (Exception e) {
-            log.error("메소드 핸들러 초기화 오류", e);
-            throw new RuntimeException(clazz + "의 메소드 핸들러를 초기화할 수 없습니다.");
-        }
+        Stream.of(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(MAPPING_ANNOTATION))
+                .forEach(method -> initializeHandler(method, scanner.get(clazz)));
     }
 
     private void initializeHandler(Method method, Object instance) {
