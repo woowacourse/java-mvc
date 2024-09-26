@@ -95,6 +95,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void registerHandler(HandlerKey handlerKey, AnnotationHandler handler) {
         if (handlers.containsKey(handlerKey)) {
+            log.error("중복된 url과 http method 입니다.");
             throw new IllegalArgumentException("중복된 url과 http method 입니다.");
         }
         handlers.put(handlerKey, handler);
