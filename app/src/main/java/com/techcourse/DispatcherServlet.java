@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.handler.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.handler.HandlerAdapter;
 import com.interface21.webmvc.servlet.handler.HandlerExecutionHandlerAdapter;
@@ -56,19 +55,10 @@ public class DispatcherServlet extends HttpServlet {
                 return;
             }
             ModelAndView modelAndView = handlerExecutor.handle(request, response, handler.get());
-            move(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final ModelAndView modelAndView,
-                      final HttpServletRequest request,
-                      final HttpServletResponse response) throws Exception {
-        View view = modelAndView.getView();
-        var model = modelAndView.getModel();
-
-        view.render(model, request, response);
     }
 }
