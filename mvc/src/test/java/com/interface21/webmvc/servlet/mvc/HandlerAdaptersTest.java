@@ -51,7 +51,7 @@ class HandlerAdaptersTest {
 
     @DisplayName("HandlerAdapter를 구현하는 클래스를 저장한 뒤 적절한 Adapter를 활용해 들어온 요청을 처리한다")
     @Test
-    void notExistMatchHandlerAdapter() throws Exception {
+    void notExistMatchHandlerAdapter() {
         HandlerAdapters handlerAdapters = new HandlerAdapters();
         handlerAdapters.initialize();
 
