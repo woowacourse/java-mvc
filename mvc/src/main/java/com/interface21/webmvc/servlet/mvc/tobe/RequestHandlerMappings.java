@@ -20,6 +20,7 @@ public class RequestHandlerMappings {
     public RequestHandlerMappings(final Object... basePackage) {
         this.basePackage = getBasePackage(basePackage);
         this.mappings = new LinkedHashSet<>();
+        initialize();
     }
 
     private Object[] getBasePackage(final Object... basePackage) {
@@ -31,7 +32,7 @@ public class RequestHandlerMappings {
         return basePackages;
     }
 
-    public void initialize() {
+    private void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<RequestHandlerMapping> requestHandlerMappings = reflections.getSubTypesOf(RequestHandlerMapping.class)
                 .stream()

@@ -25,6 +25,7 @@ public class HandlerAdapters {
     public HandlerAdapters(final Object... basePackage) {
         this.basePackage = getBasePackage(basePackage);
         this.adapters = new LinkedHashSet<>();
+        initialize();
     }
 
     private Object[] getBasePackage(final Object... basePackage) {
@@ -36,7 +37,7 @@ public class HandlerAdapters {
         return basePackages;
     }
 
-    public void initialize() {
+    private void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<HandlerAdapter> handlerAdapters = reflections.getSubTypesOf(HandlerAdapter.class)
                 .stream()

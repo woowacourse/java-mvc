@@ -26,8 +26,6 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         requestHandlerMappings = new RequestHandlerMappings(getClass().getPackageName());
         handlerAdapters = new HandlerAdapters();
-        requestHandlerMappings.initialize();
-        handlerAdapters.initialize();
     }
 
     @Override
