@@ -4,17 +4,17 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.exception.HandlerMappingInitializeException;
+import com.interface21.webmvc.servlet.handler.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
@@ -47,6 +48,8 @@ public class AnnotationHandlerMapping {
             RequestMethod[] requestMethods = requestMapping.method();
             Object instance = clazz.getDeclaredConstructor().newInstance();
             HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            log.info("Path : {}, Method : {}, Controller : {}",
+                    paths, Arrays.toString(requestMethods), method.getName());
 
             Arrays.stream(requestMethods)
                     .map(requestMethod -> new HandlerKey(paths, requestMethod))
@@ -56,7 +59,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    @Nullable
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), request.getMethod());
         return handlerExecutions.get(handlerKey);

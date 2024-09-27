@@ -3,6 +3,7 @@ package samples;
 import com.interface21.context.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -29,5 +30,9 @@ public class TestController {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
+    }
+
+    public static Method getFindUserIdMethod() throws NoSuchMethodException {
+        return TestController.class.getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
     }
 }
