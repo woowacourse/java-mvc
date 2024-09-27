@@ -18,7 +18,7 @@ public class HandlerMappings {
     public static HandlerMappings defaultHandlerMappings() {
         List<HandlerMapping> handlerMappings = List.of(
                 new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("controller")
+                new AnnotationHandlerMapping("com.techcourse.controller")
         );
         return new HandlerMappings(handlerMappings);
     }
