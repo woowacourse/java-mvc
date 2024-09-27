@@ -12,9 +12,13 @@ public class HandlerAdaptorRegistry {
     }
 
     public HandlerAdaptor getHandlerAdaptor(Object handler) {
-        return handlerAdaptors.stream()
-                .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Can not find proper adaptor from handler: " + handler.toString()));
+        try {
+            return handlerAdaptors.stream()
+                    .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
+                    .findAny()
+                    .orElseThrow(() -> new NullPointerException("Can not find proper adaptor from handler: " + handler.toString()));
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }

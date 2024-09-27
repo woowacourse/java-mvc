@@ -15,10 +15,14 @@ public class HandlerMappingRegistry {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Can not find proper handler from requestUrl: %s, requestMethod: %s", request.getRequestURI(), request.getMethod())));
+        try {
+            return handlerMappings.stream()
+                    .map(handlerMapping -> handlerMapping.getHandler(request))
+                    .findAny()
+                    .orElseThrow(() -> new NullPointerException(
+                            String.format("Can not find proper handler from requestUrl: %s, requestMethod: %s", request.getRequestURI(), request.getMethod())));
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }
