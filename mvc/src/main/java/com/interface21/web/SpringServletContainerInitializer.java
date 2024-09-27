@@ -14,33 +14,40 @@ import org.reflections.Reflections;
 @HandlesTypes(WebApplicationInitializer.class)
 public class SpringServletContainerInitializer implements ServletContainerInitializer {
 
+    private final List<WebApplicationInitializer> initializers;
+
+    public SpringServletContainerInitializer() {
+        initializers = new ArrayList<>();
+    }
+
+    SpringServletContainerInitializer(List<WebApplicationInitializer> initializers) {
+        this.initializers = initializers;
+    }
+
     @Override
     public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
             throws ServletException {
-        final List<WebApplicationInitializer> initializers = new ArrayList<>();
-
         if (webAppInitializerClasses == null || webAppInitializerClasses.isEmpty()) {
             String packageName = getClass().getPackageName();
             String rootPackageName = packageName.split("\\.")[0];
             Reflections reflections = new Reflections(rootPackageName);
             var foundClasses = reflections.getSubTypesOf(WebApplicationInitializer.class);
-            addClassToInitializers(new HashSet<>(foundClasses), initializers);
-            startUp(servletContext, initializers);
+            addClassToInitializers(new HashSet<>(foundClasses));
+            startUp(servletContext);
             return;
         }
 
-        addClassToInitializers(webAppInitializerClasses, initializers);
+        addClassToInitializers(webAppInitializerClasses);
 
         if (initializers.isEmpty()) {
             servletContext.log("No Spring WebApplicationInitializer types detected on classpath");
             return;
         }
 
-        startUp(servletContext, initializers);
+        startUp(servletContext);
     }
 
-    private void addClassToInitializers(Set<Class<?>> webAppInitializerClasses,
-                                        List<WebApplicationInitializer> initializers)
+    private void addClassToInitializers(Set<Class<?>> webAppInitializerClasses)
             throws ServletException {
         for (Class<?> waiClass : webAppInitializerClasses) {
             try {
@@ -52,7 +59,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
         }
     }
 
-    private void startUp(ServletContext servletContext, List<WebApplicationInitializer> initializers)
+    private void startUp(ServletContext servletContext)
             throws ServletException {
         for (WebApplicationInitializer initializer : initializers) {
             initializer.onStartup(servletContext);
