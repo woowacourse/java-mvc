@@ -1,7 +1,6 @@
 package com.interface21;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.webmvc.servlet.HandlerStore;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import java.lang.annotation.Annotation;
@@ -12,7 +11,7 @@ public class HandlerContainer {
     private final HandlerStore handlerStore;
 
     private HandlerContainer() {
-        handlerStore = new HandlerStore();
+        handlerStore = HandlerStore.getInstance();
     }
 
     private static class Singleton {
@@ -31,11 +30,11 @@ public class HandlerContainer {
     }
 
     public void registerHandlerManagement(Class<?> clazz) {
-        List<Object> mappings = HandlerManagementScanner.scanSubTypeOf(clazz, HandlerMapping.class);
+        List<Object> mappings = HandlerScanner.scanSubTypeOf(clazz, HandlerMapping.class);
         handlerStore.registerHandler(mappings);
-        List<Object> adapters = HandlerManagementScanner.scanSubTypeOf(clazz, HandlerAdapter.class);
+        List<Object> adapters = HandlerScanner.scanSubTypeOf(clazz, HandlerAdapter.class);
         handlerStore.registerHandler(adapters);
-        List<Object> controllers = HandlerManagementScanner.scanTypesAnnotatedWith(clazz, Controller.class);
+        List<Object> controllers = HandlerScanner.scanTypesAnnotatedWith(clazz, Controller.class);
         handlerStore.registerHandler(controllers);
     }
 

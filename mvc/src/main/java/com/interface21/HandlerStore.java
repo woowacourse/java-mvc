@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet;
+package com.interface21;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -8,6 +8,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HandlerStore {
 
     private static final Map<String, Object> MANAGERS = new ConcurrentHashMap<>();
+
+    private HandlerStore() {}
+
+    private static class Singleton {
+        private static final HandlerStore INSTANCE = new HandlerStore();
+    }
+
+    public static HandlerStore getInstance() {
+        return HandlerStore.Singleton.INSTANCE;
+    }
 
     public void registerHandler(List<Object> objects) {
         for (Object object : objects) {
