@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerExecution;
@@ -64,8 +65,7 @@ class AnnotationHandlerAdapterTest {
         // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getView()).isInstanceOf(JspView.class)
+                () -> assertThat(actual).isInstanceOf(ModelAndView.class)
         );
     }
-
 }
