@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 
-class HandlerAdapters {
+public class HandlerAdapters {
 
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 

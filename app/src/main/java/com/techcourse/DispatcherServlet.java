@@ -1,10 +1,10 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerAdapters;
 import com.interface21.webmvc.servlet.HandlerMappings;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +18,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappings handlerMappings;
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -25,6 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings = new HandlerMappings("index.jsp", "com.techcourse.controller");
+        handlerAdapters = new HandlerAdapters();
     }
 
     @Override
@@ -33,9 +35,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object controller = handlerMappings.getHandler(request);
-            HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
-            ModelAndView mv = handlerAdapter.invoke(controller, request, response);
+            Object handler = handlerMappings.getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
+            ModelAndView mv = handlerAdapter.invoke(handler, request, response);
             View view = mv.getView();
             view.render(mv.getModel(), request, response);
         } catch (Throwable e) {
