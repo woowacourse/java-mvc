@@ -1,7 +1,9 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.Model;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.RequestHandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,15 +16,16 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private RequestHandlerMappings requestHandlerMappings;
+    private HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        requestHandlerMappings = new RequestHandlerMappings(getClass().getPackageName());
+        handlerAdapters = new HandlerAdapters();
     }
 
     @Override
@@ -32,11 +35,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            JspView jspView = new JspView(viewName);
-            Model model = new Model(request);
-            jspView.render(model.getModel(), request, response);
+            Object handler = requestHandlerMappings.getHandler(request);
+            ModelAndView modelAndView = handlerAdapters.handle(handler, request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

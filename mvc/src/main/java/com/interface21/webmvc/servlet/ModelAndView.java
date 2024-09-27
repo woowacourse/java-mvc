@@ -8,8 +8,12 @@ public class ModelAndView {
     private final Model model;
 
     public ModelAndView(final View view) {
+        this(new Model(), view);
+    }
+
+    public ModelAndView(final Model model, final View view) {
+        this.model = model;
         this.view = view;
-        this.model = new Model();
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {

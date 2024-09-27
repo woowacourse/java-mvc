@@ -1,7 +1,7 @@
 package com.techcourse.repository;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.techcourse.domain.User;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,8 +20,12 @@ public class InMemoryUserRepository {
     }
 
     public static Optional<User> findByAccount(String account) {
+        if (StringUtil.isNullOrEmpty(account)) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {}
+    private InMemoryUserRepository() {
+    }
 }
