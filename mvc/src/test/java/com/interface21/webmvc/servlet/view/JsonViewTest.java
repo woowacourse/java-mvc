@@ -17,7 +17,7 @@ import org.mockito.ArgumentCaptor;
 
 class JsonViewTest {
 
-    @DisplayName("값이 1개 이상인 Model을 Json으로 파싱한다.")
+    @DisplayName("값이 2개 이상인 Model을 Json으로 파싱한다.")
     @Test
     void renderTest() throws Exception {
         // given
