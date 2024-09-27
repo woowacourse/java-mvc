@@ -33,4 +33,11 @@ public class RegisterController {
         Model model = new Model();
         return new ModelAndView(model, view);
     }
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView showView(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        JspView view = new JspView("redirect:/register.jsp");
+        Model model = new Model();
+        return new ModelAndView(model, view);
+    }
 }
