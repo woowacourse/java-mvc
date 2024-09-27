@@ -67,10 +67,7 @@ public class HandlerAdapters {
                 return adapter.handle(handler, request, response);
             }
         }
-        String errorMessage = String.join(" ",
-                request.getRequestURI(),
-                request.getMethod(),
-                "지원 가능한 핸들러가 없습니다.");
-        throw new NoSuchElementException(errorMessage);
+        throw new NoSuchElementException(
+                "%s %s 지원 가능한 핸들러가 없습니다.".formatted(request.getRequestURI(), request.getMethod()));
     }
 }
