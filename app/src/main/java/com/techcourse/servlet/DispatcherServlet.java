@@ -2,7 +2,9 @@ package com.techcourse.servlet;
 
 import com.interface21.webmvc.servlet.Handler;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.techcourse.servlet.handlermapper.HandlerMappings;
+import com.techcourse.servlet.view.ViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
+    private final ViewResolver viewResolver;
 
     public DispatcherServlet() {
         this(DEFAULT_HANDLER_MAPPINGS);
@@ -26,6 +29,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(HandlerMappings handlerMappings) {
         this.handlerMappings = handlerMappings;
+        this.viewResolver = new ViewResolver();
     }
 
     @Override
@@ -39,6 +43,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             if (!handlerMappings.hasHandler(request)) {
+                renderViewByStatusCode(request, response, 404);
                 throw new BadRequestException("requestUrI를 처리한 핸들러가 없습니다" + request.getRequestURI());
             }
 
@@ -47,7 +52,14 @@ public class DispatcherServlet extends HttpServlet {
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
+            renderViewByStatusCode(request, response, 500);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void renderViewByStatusCode(HttpServletRequest request, HttpServletResponse response, int statusCode) {
+        View view = viewResolver.resolveByStatusCode(statusCode);
+        ModelAndView modelAndView = new ModelAndView(view);
+        modelAndView.render(request, response);
     }
 }
