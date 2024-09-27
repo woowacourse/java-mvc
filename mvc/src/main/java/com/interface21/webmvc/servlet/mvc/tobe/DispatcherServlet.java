@@ -1,11 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMappingAdaptor;
-import com.interface21.webmvc.servlet.mvc.tobe.CompositeHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdaptor;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,23 +15,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
     private CompositeHandlerMapping handlerMapping;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(getPackageName());
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         var annotationHandlerMappingAdaptor = new AnnotationHandlerMappingAdaptor(annotationHandlerMapping);
 
         this.handlerMapping = new CompositeHandlerMapping(
                 annotationHandlerMappingAdaptor
         );
-    }
-
-    private String getPackageName() {
-        return getClass().getPackageName();
     }
 
     @Override
