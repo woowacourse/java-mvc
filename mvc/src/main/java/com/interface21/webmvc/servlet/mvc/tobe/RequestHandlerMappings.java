@@ -4,7 +4,7 @@ import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +19,7 @@ public class RequestHandlerMappings {
 
     public RequestHandlerMappings(final Object... basePackage) {
         this.basePackage = getBasePackage(basePackage);
-        this.mappings = new HashSet<>();
+        this.mappings = new LinkedHashSet<>();
     }
 
     private Object[] getBasePackage(final Object... basePackage) {

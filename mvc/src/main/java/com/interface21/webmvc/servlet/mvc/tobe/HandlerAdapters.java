@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class HandlerAdapters {
 
     public HandlerAdapters(final Object... basePackage) {
         this.basePackage = getBasePackage(basePackage);
-        this.adapters = new HashSet<>();
+        this.adapters = new LinkedHashSet<>();
     }
 
     private Object[] getBasePackage(final Object... basePackage) {
