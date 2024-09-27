@@ -1,9 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.HandlerManagement;
+import com.interface21.context.stereotype.Handler;
 import jakarta.servlet.http.HttpServletRequest;
 
-@HandlerManagement
+@Handler
 public interface HandlerMapping {
 
     void initialize();

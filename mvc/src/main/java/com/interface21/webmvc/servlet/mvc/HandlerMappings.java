@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.HandlerManagementManager;
+import com.interface21.HandlerContainer;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ public class HandlerMappings {
     }
 
     public void initialize() {
-        HandlerManagementManager handlerManagementManager = HandlerManagementManager.getInstance();
-        List<HandlerMapping> mappings = handlerManagementManager.getHandler(HandlerMapping.class);
+        HandlerContainer handlerContainer = HandlerContainer.getInstance();
+        List<HandlerMapping> mappings = handlerContainer.getHandlers(HandlerMapping.class);
         mappings.forEach(HandlerMapping::initialize);
         handlerMappings.addAll(mappings);
     }

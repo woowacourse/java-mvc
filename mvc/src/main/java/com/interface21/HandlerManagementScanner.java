@@ -4,29 +4,23 @@ import com.interface21.core.util.ReflectionUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Set;
 import org.reflections.Reflections;
 
 public class HandlerManagementScanner {
 
     private HandlerManagementScanner() {}
 
-    public static Set<Class<?>> scanHandlerHelper(Class<?> clazz, Class<? extends Annotation> annotation) {
+    public static List<Object> scanTypesAnnotatedWith(Class<?> clazz, Class<? extends Annotation> annotation) {
         Reflections reflections = new Reflections(clazz.getPackageName());
-        return reflections.getTypesAnnotatedWith(annotation, true);
-    }
-
-    public static List<Object> scanHandlerHelper1(Class<?> clazz, Class<? extends Annotation> annotation) {
-        return scanHandlerHelper(clazz, annotation).stream()
+        return reflections.getTypesAnnotatedWith(annotation).stream()
                 .map(HandlerManagementScanner::createObject)
                 .toList();
     }
 
-    public static <T> List<T> scanSubTypeOf(Class<?> clazz, Class<T> type) {
+    public static List<Object> scanSubTypeOf(Class<?> clazz, Class<?> type) {
         Reflections reflections = new Reflections(clazz.getPackageName());
         return reflections.getSubTypesOf(type).stream()
                 .map(HandlerManagementScanner::createObject)
-                .map(type::cast)
                 .toList();
     }
 
