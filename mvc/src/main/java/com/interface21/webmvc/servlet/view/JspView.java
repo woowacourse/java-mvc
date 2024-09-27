@@ -25,7 +25,7 @@ public class JspView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        log.debug("Rendering view: {} | Method: {} | Request URI: {}", viewName, request.getMethod(),
+        log.info("Rendering view: {} | Method: {} | Request URI: {}", viewName, request.getMethod(),
                 request.getRequestURI());
 
         if (isRedirect()) {
@@ -34,6 +34,15 @@ public class JspView implements View {
         }
 
         forward(model, request, response);
+    }
+
+    private boolean isRedirect() {
+        return viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    private void handleRedirect(HttpServletResponse response) throws IOException {
+        log.info("Redirecting to: {}", viewName);
+        response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
     }
 
     private void forward(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
@@ -50,18 +59,9 @@ public class JspView implements View {
 
     private void setAttributes(Map<String, ?> model, HttpServletRequest request) {
         model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
+            log.info("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
-    }
-
-    private boolean isRedirect() {
-        return viewName.startsWith(REDIRECT_PREFIX);
-    }
-
-    private void handleRedirect(HttpServletResponse response) throws IOException {
-        log.debug("Redirecting to: {}", viewName);
-        response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
     }
 
     private void forwardToView(HttpServletRequest request, HttpServletResponse response)
@@ -70,7 +70,7 @@ public class JspView implements View {
         if (requestDispatcher == null) {
             throw new IllegalArgumentException("RequestDispatcher is null for viewName: " + viewName);
         }
-        log.debug("Forwarding to view: {}", viewName);
+        log.info("Forwarding to view: {}", viewName);
         requestDispatcher.forward(request, response);
     }
 }
