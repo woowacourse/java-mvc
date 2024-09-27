@@ -33,4 +33,6 @@
   - [x] AnnotationHandlerMapping 리팩터링
 - [ ] Legacy MVC 와 @MVC 통합하기
   - [x] HandlerMapping 인터페이스로 AnnotationHandlerMapping 과 ManualHandlerMapping 통합
-  - [ ] HandlerAdaptor 인터페이스로 Handler 을 통한 메서드 실행
+  - [x] HandlerAdaptor 인터페이스로 Handler 을 통한 메서드 실행
+  - [ ] 각 객체를 관리하는 registry 구현
+  - [ ] DispatcherServlet 리팩터링
