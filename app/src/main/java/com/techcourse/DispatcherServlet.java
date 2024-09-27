@@ -21,8 +21,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> registryHandlerMapping;
-    private List<HandlerAdaptor> registryHandlerAdaptor;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdaptor> handlerAdaptors;
 
     public DispatcherServlet() {
         initHandlerMapping();
@@ -42,7 +42,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdaptor() {
-        this.registryHandlerAdaptor = List.of(
+        this.handlerAdaptors = List.of(
                 new ManualHandlerAdaptor(),
                 new AnnotationHandlerAdaptor()
         );
@@ -66,7 +66,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdaptor getAdaptor(Object handler) {
-        for (HandlerAdaptor handlerAdaptor : registryHandlerAdaptor) {
+        for (HandlerAdaptor handlerAdaptor : handlerAdaptors) {
             if(handlerAdaptor.supports(handler)) {
                 return handlerAdaptor;
             }
@@ -76,7 +76,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : registryHandlerMapping) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(request);
             if(handler != null) {
                 return handler;
