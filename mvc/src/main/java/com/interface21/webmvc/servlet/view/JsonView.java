@@ -6,6 +6,7 @@ import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.Writer;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -17,10 +18,10 @@ public class JsonView implements View {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         Object rawResponseBody = getResponseFromModel(model);
-        String responseBody = MAPPER.writeValueAsString(rawResponseBody);
+        Writer responseWriter = response.getWriter();
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.getWriter().write(responseBody);
+        MAPPER.writeValue(responseWriter, rawResponseBody);
     }
 
     private Object getResponseFromModel(Map<String, ?> model) {
