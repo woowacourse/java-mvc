@@ -28,14 +28,15 @@ class HandlerMappingsTest {
         manualHandlerMappings.initialize();
 
         annotationHandlerMappings = new HandlerMappings(
-                List.of(new AnnotationHandlerMapping("com.techcourse.controller")));
+                List.of(new AnnotationHandlerMapping("com.techcourse.controller.annotation")));
         annotationHandlerMappings.initialize();
     }
 
-    @DisplayName("/login 은 두 매핑 방식이 호환된다")
+    @DisplayName("POST /login 은 두 매핑 방식이 호환된다")
     @Test
     void login() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
+        setUpMockRequest(request, RequestMethod.POST, "/login");
         setUpMockRequest(request, RequestMethod.POST, "/login");
 
         assertAll(
@@ -46,21 +47,27 @@ class HandlerMappingsTest {
         );
     }
 
-    @DisplayName("/login/view 호환")
+    @DisplayName("manualMapping - GET /login/view의 핸들러를 찾을 수 있다")
     @Test
-    void loginView() throws Exception {
+    void mapManualHandler_loginView() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         setUpMockRequest(request, RequestMethod.GET, "/login/view");
 
-        assertAll(
-                () -> assertThatCode(() -> manualHandlerMappings.getHandler(request))
-                        .doesNotThrowAnyException(),
-                () -> assertThatCode(() -> annotationHandlerMappings.getHandler(request))
-                        .doesNotThrowAnyException()
-        );
+        assertThatCode(() -> manualHandlerMappings.getHandler(request))
+                .doesNotThrowAnyException();
     }
 
-    @DisplayName("/logout 호환")
+    @DisplayName("annotationMapping - GET /login의 핸들러를 찾을 수 있다")
+    @Test
+    void mapAnnotationHandler_loginView() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        setUpMockRequest(request, RequestMethod.GET, "/login");
+
+        assertThatCode(() -> annotationHandlerMappings.getHandler(request))
+                .doesNotThrowAnyException();
+    }
+
+    @DisplayName("GET /logout 호환")
     @Test
     void logOut() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -74,7 +81,7 @@ class HandlerMappingsTest {
         );
     }
 
-    @DisplayName("/register 호환")
+    @DisplayName("GET /register 호환")
     @Test
     void register() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -88,18 +95,24 @@ class HandlerMappingsTest {
         );
     }
 
-    @DisplayName("/register/view 호환")
+    @DisplayName("manualMapping - GET /register/view의 핸들러를 찾을 수 있다")
     @Test
-    void registerView() throws Exception {
+    void mapManualHandler_registerView() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         setUpMockRequest(request, RequestMethod.GET, "/register/view");
 
-        assertAll(
-                () -> assertThatCode(() -> manualHandlerMappings.getHandler(request))
-                        .doesNotThrowAnyException(),
-                () -> assertThatCode(() -> annotationHandlerMappings.getHandler(request))
-                        .doesNotThrowAnyException()
-        );
+        assertThatCode(() -> manualHandlerMappings.getHandler(request))
+                .doesNotThrowAnyException();
+    }
+
+    @DisplayName("annotationMapping - GET /register의 핸들러를 찾을 수 있다")
+    @Test
+    void mapAnnotationHandler_registerView() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        setUpMockRequest(request, RequestMethod.GET, "/register");
+
+        assertThatCode(() -> annotationHandlerMappings.getHandler(request))
+                .doesNotThrowAnyException();
     }
 
     @DisplayName("없는 url 호출 시 NoSuchElementException 이 발생한다")
@@ -118,9 +131,6 @@ class HandlerMappingsTest {
 
     private void setUpMockRequest(HttpServletRequest request, RequestMethod requestMethod, String requestUrl) {
         doReturn(requestUrl)
-                .doReturn(requestUrl)
-                .doReturn(requestUrl)
-                .doReturn(requestUrl)
                 .doReturn(requestUrl)
                 .doReturn(requestUrl)
                 .when(request).getRequestURI();
