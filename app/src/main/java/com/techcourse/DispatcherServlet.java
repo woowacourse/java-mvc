@@ -4,6 +4,8 @@ import com.interface21.webmvc.servlet.HandlerAdaptor;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,12 +21,31 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> registryHandlerMapping;
-    private final List<HandlerAdaptor> registryHandlerAdaptor;
+    private List<HandlerMapping> registryHandlerMapping;
+    private List<HandlerAdaptor> registryHandlerAdaptor;
 
-    public DispatcherServlet(List<HandlerMapping> handlerMappings, List<HandlerAdaptor> handlerAdaptors) {
-        this.registryHandlerMapping = handlerMappings;
-        this.registryHandlerAdaptor = handlerAdaptors;
+    public DispatcherServlet() {
+        initHandlerMapping();
+        initHandlerAdaptor();
+    }
+
+    private void initHandlerMapping() {
+        List<HandlerMapping> handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.techcourse.controller")
+        );
+
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            log.info("initialize HandlerMapping :: %s".formatted(handlerMapping.getClass().getName()));
+            handlerMapping.initialize();
+        }
+    }
+
+    private void initHandlerAdaptor() {
+        this.registryHandlerAdaptor = List.of(
+                new ManualHandlerAdaptor(),
+                new AnnotationHandlerAdaptor()
+        );
     }
 
     @Override
