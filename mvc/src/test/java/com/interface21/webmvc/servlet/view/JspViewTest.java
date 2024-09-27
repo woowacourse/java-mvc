@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class JspViewTest {
 
-    @DisplayName("redirect 접두사가 존재하는 경우 Redirec 처리한다.")
+    @DisplayName("redirect 접두사가 존재하는 경우 Redirect 처리한다.")
     @Test
     void redirect() throws Exception {
         // given
