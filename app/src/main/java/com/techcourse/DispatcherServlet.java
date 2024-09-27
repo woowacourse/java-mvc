@@ -29,7 +29,6 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         List<HandlerMapping> handlerMappings = List.of(
-                new ManualHandlerMapping(),
                 new AnnotationHandlerMapping(BASE_PACKAGE)
         );
         handlerMappings.forEach(mapping -> {
