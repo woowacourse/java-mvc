@@ -54,9 +54,6 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         String requestURI = request.getRequestURI();
         String requestMethod = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("No handler found for requestURI: " + requestURI + ", method: " + requestMethod);
-        }
         return handlerExecutions.get(handlerKey);
     }
 }
