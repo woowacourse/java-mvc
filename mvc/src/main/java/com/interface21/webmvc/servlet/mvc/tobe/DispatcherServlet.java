@@ -27,9 +27,7 @@ public class DispatcherServlet extends HttpServlet {
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         var annotationHandlerMappingAdaptor = new AnnotationHandlerMappingAdaptor(annotationHandlerMapping);
 
-        this.handlerMapping = new CompositeHandlerMapping(
-                annotationHandlerMappingAdaptor
-        );
+        this.handlerMapping = new CompositeHandlerMapping(annotationHandlerMappingAdaptor);
     }
 
     @Override
