@@ -5,12 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerExecution;
@@ -22,11 +26,15 @@ class AnnotationHandlerAdapterTest {
 
     @Test
     @DisplayName("컨트롤러 어노테이션을 지원하는지 확인한다.")
-    void supoort() {
+    void supoort()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<?> clazz = TestController.class;
+        Method[] methods = clazz.getDeclaredMethods();
         var sut = new AnnotationHandlerAdapter();
-        var controller = new TestController();
 
-        assertThat(sut.support(controller)).isTrue();
+        var handlerExecutor = new HandlerExecution(clazz.getConstructor().newInstance(), methods[0]);
+
+        assertThat(sut.support(handlerExecutor)).isTrue();
     }
 
     @Test
