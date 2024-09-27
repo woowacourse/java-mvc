@@ -16,12 +16,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final Class<? extends RequestMapping> MAPPING_ANNOTATION = RequestMapping.class;
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
     private final ControllerScanner scanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
         this.scanner = new ControllerScanner(basePackage);
     }
@@ -52,20 +50,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public boolean hasHandler(HttpServletRequest request) {
-        HandlerKey handlerKey = makeHandlerKeyByRequest(request);
-        return handlerExecutions.containsKey(handlerKey);
+        return handlerExecutions.containsKey(new HandlerKey(request));
     }
 
     @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = makeHandlerKeyByRequest(request);
+        HandlerKey handlerKey = new HandlerKey(request);
         if (!hasHandler(request)) {
             throw new NoSuchElementException(handlerKey + "와 일치하는 핸들러 메소드가 없습니다");
         }
         return handlerExecutions.get(handlerKey);
-    }
-
-    private HandlerKey makeHandlerKeyByRequest(HttpServletRequest request) {
-        return new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
     }
 }

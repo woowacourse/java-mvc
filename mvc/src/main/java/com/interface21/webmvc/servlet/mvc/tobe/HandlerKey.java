@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 public class HandlerKey {
@@ -12,6 +13,10 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public HandlerKey(HttpServletRequest request) {
+        this(request.getRequestURI(), RequestMethod.from(request.getMethod()));
     }
 
     @Override
