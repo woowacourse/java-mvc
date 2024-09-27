@@ -11,3 +11,13 @@
 
 - [x] Legacy MVC와 @MVC 통합
     - 인터페이스 컨트롤러를 어노테이션 기반 컨트롤러로 변경해도 정상 동작한다.
+    - [ ] ControllerScanner 클래스 추가
+        - 컨트롤러를 찾아서 인스턴스 생성하는 역할
+        - Relfections 라이브러리를 사용한다.
+        - Relfections 객체로 @Controller가 설정된 모든 클래스를 찾는다.
+        - 각 클래스의 인스턴스를 생성한다.
+    - [ ] HandlerMapping 인터페이스 분리
+        - DispatcherServlet의 초기화 과정에서 ManualHandlerMapping, AnnotationHandlerMapping을 모두 초기화
+        - 초기화한 2개의 HandlerMapping List로 관리한다.
+    - [ ] HandlerAdapter 인터페이스 분리
+        - HandlerMapping 클래스에서 찾은 컨트롤러를 실행하는 역할
