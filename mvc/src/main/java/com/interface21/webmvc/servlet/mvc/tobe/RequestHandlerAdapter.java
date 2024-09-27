@@ -30,12 +30,10 @@ public class RequestHandlerAdapter implements HandlerAdapter {
     private Optional<RequestHandler> getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            RequestHandler handler = handlerMapping.getHandler(method, requestURI);
-            if (handler != null) {
-                return Optional.of(handler);
-            }
-        }
-        return Optional.empty();
+
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.canHandle(method, requestURI))
+                .findFirst()
+                .map(handlerMapping -> handlerMapping.getHandler(method, requestURI));
     }
 }

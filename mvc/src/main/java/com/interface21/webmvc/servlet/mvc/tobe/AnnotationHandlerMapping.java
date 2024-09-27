@@ -68,4 +68,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public RequestHandler getHandler(String requestMethod, final String requestURI) {
         return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
+
+    @Override
+    public boolean canHandle(String requestMethod, String requestURI) {
+        return handlerExecutions.containsKey(new HandlerKey(requestURI, requestMethod));
+    }
 }
