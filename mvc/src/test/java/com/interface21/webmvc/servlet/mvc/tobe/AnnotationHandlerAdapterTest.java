@@ -3,10 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,12 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
 
 import samples.TestController;
 
@@ -49,10 +43,6 @@ class AnnotationHandlerAdapterTest {
         // given
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
 
         var sut = new AnnotationHandlerAdapter();
         var controller = new TestController();
