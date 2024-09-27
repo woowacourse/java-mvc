@@ -29,14 +29,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        scanner.getAll()
+        scanner.getAllControllers()
                 .forEach(this::initializeControllerHandlers);
     }
 
     private void initializeControllerHandlers(Class<?> clazz) {
         Stream.of(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(MAPPING_ANNOTATION))
-                .forEach(method -> initializeHandler(method, scanner.get(clazz)));
+                .forEach(method -> initializeHandler(method, scanner.getController(clazz)));
     }
 
     private void initializeHandler(Method method, Object instance) {
@@ -56,6 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.containsKey(handlerKey);
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = makeHandlerKeyByRequest(request);
         if (!hasHandler(request)) {

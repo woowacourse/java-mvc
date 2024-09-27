@@ -3,27 +3,30 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static java.util.stream.Collectors.toMap;
 
 import com.interface21.context.stereotype.Controller;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Map<Class, Object> controllerCache;
+    private final Map<Class<?>, Object> controllerCache;
 
     public ControllerScanner(Object[] basePackages) {
         Reflections reflections = new Reflections(basePackages);
-        this.controllerCache = reflections.getTypesAnnotatedWith(Controller.class)
+        this.controllerCache = initializeControllers(reflections.getTypesAnnotatedWith(Controller.class));
+    }
+
+    private Map<Class<?>, Object> initializeControllers(Set<Class<?>> controllers) {
+        return controllers
                 .stream()
                 .collect(toMap(clazz -> clazz, this::newInstance));
     }
 
-    public Set<Class<?>> getAll() {
-        return new HashSet(controllerCache.keySet());
+    public Set<Class<?>> getAllControllers() {
+        return controllerCache.keySet();
     }
 
-    public Object get(Class<?> clazz) {
+    public Object getController(Class<?> clazz) {
         return controllerCache.get(clazz);
     }
 
