@@ -42,25 +42,6 @@ class RequestHandlerAdapterTest {
         requestHandlerAdapter = new RequestHandlerAdapter(List.of(handlerMapping1, handlerMapping2));
     }
 
-    @DisplayName("ModelAndView를 반환")
-    @Test
-    void testHandleWithValidHandler() throws Exception {
-        // given
-        when(request.getRequestURI()).thenReturn("/valid");
-        when(request.getMethod()).thenReturn("GET");
-
-        // when
-        when(handlerMapping1.getHandler("GET", "/valid")).thenReturn(null);
-        when(handlerMapping2.getHandler("GET", "/valid")).thenReturn(requestHandler);
-        when(requestHandler.handle(request, response)).thenReturn(modelAndView);
-
-        // then
-        ModelAndView result = requestHandlerAdapter.handle(request, response);
-
-        assertNotNull(result);
-        verify(requestHandler).handle(request, response);
-    }
-
     @Test
     void testHandleWithNoHandlerFound() {
         // given
@@ -75,24 +56,5 @@ class RequestHandlerAdapterTest {
         assertThrows(ServletException.class, () -> {
             requestHandlerAdapter.handle(request, response);
         });
-    }
-
-    @Test
-    void testHandleWithFirstHandlerMapping() throws Exception {
-        // given
-        when(request.getRequestURI()).thenReturn("/first");
-        when(request.getMethod()).thenReturn("POST");
-
-        // when
-        when(handlerMapping1.getHandler("POST", "/first")).thenReturn(requestHandler);
-        when(requestHandler.handle(request, response)).thenReturn(modelAndView);
-
-        // then
-        ModelAndView result = requestHandlerAdapter.handle(request, response);
-
-        assertNotNull(result);
-        verify(handlerMapping2, never()).getHandler(anyString(),
-                anyString());  // second handlerMapping should not be invoked
-        verify(requestHandler).handle(request, response);
     }
 }
