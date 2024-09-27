@@ -33,7 +33,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request).get();
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -48,7 +48,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request).get();
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -65,13 +65,13 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/any-test");
         when(request.getMethod()).thenReturn(requestMethod);
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request).get();
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("test")).isEqualTo("gugu");
     }
 
-    @DisplayName("일치하는 url이 없다면 NoSuchElementException을 반환한다")
+    @DisplayName("일치하는 url이 없다면 Optional.empty를 반환한다")
     @Test
     void throwNoSuchElementException_When_NotMatchedURL() {
         final var request = mock(HttpServletRequest.class);
@@ -79,7 +79,6 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/not-matched-url");
         when(request.getMethod()).thenReturn("GET");
 
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(NoSuchElementException.class);
+        assertThat(handlerMapping.getHandler(request)).isEmpty();
     }
 }
