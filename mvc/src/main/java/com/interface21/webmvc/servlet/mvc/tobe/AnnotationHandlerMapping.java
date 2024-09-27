@@ -23,12 +23,20 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
+    public boolean supports(HttpServletRequest request) {
+        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.containsKey(key);
+    }
+
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach((k, v) -> log.info("Found Controller: {}, {}", k, v));
         Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
         requestMappingMethods.forEach(method -> addHandlerExecutions(controllers, method, method.getAnnotation(RequestMapping.class)));
+        handlerExecutions.forEach((k, v) -> log.info("HandlerExecution: {}, {}", k, v));
     }
 
     private Set<Method> getRequestMappingMethods(Set<Class<?>> classes) {
@@ -41,6 +49,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         String url = requestMapping.value();
         RequestMethod[] methods = requestMapping.method().length != 0 ? requestMapping.method() : RequestMethod.values();
         List<HandlerKey> handlerKeys = mapHandlerKeys(url, methods);
+        log.info("HandlerKeys: {}", handlerKeys);
         handlerKeys.forEach(handlerKey -> handlerExecutions.put(
                 handlerKey, new HandlerExecution(controllers.get(method.getDeclaringClass()), method)));
     }

@@ -17,6 +17,7 @@ public class HandlerMappingRegistry {
     public Object getHandler(HttpServletRequest request) {
         try {
             return handlerMappings.stream()
+                    .filter(handlerMapping -> handlerMapping.supports(request))
                     .map(handlerMapping -> handlerMapping.getHandler(request))
                     .findAny()
                     .orElseThrow(() -> new NullPointerException(
