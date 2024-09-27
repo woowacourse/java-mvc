@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
@@ -15,9 +14,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .findAny();
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Can not find proper handler from requestUrl: %s, requestMethod: %s", request.getRequestURI(), request.getMethod())));
     }
 }

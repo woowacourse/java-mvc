@@ -15,6 +15,6 @@ public class HandlerAdaptorRegistry {
         return handlerAdaptors.stream()
                 .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException(""));
+                .orElseThrow(() -> new IllegalArgumentException("Can not find proper adaptor from handler: " + handler.toString()));
     }
 }
