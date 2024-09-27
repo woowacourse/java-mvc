@@ -1,11 +1,11 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +36,7 @@ public class DispatcherServlet extends HttpServlet {
             final var viewName = controller.execute(request, response);
 
             JspView jspView = new JspView(viewName);
-            ModelAndView modelAndView = new ModelAndView(jspView);
-            jspView.render(modelAndView.getModel(), request, response);
+            jspView.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
