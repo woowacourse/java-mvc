@@ -21,10 +21,10 @@
 
 - [x] `ManualHandlerMapping`과 `AnnotationHandlerMapping`을 모두 고려할 수 있도록 추상화한다.
 - [x] `RegisterController`를 어노테이션 기반으로 수정한다. (작동하지는 않는다)
-- [ ] `RegisterController`가 어노테이션 기반으로 작동하도록 구조를 변경한다.
-  - [ ] Package 기반으로 스캔한다.
+- [x] `RegisterController`가 어노테이션 기반으로 작동하도록 구조를 변경한다.
+  - [x] Package 기반으로 스캔한다.
 
 `DispatcherServlet`에서 어노테이션 기반, 매뉴얼 기반 핸들러를 모두 사용할 수 있도록 `HandlerMappingRegistry`를 만들었다. 이제 `HandlerMapping`을 상속받는 모든 매핑을 넣을 수 있게 되었다!
 
 하지만 이를 `DispatcherServlet`에 넣는 순간, `@Controller` 어노테이션 기반과 `Controller` 상속 기반에서 메서드 실행에 문제를 겪게 되었다. 메서드를 실행할 때에도 같은 방식으로 추상화하면 어떨까?
-- [ ] `HandlerAdapter`를 생성하고, 이를 각각 `ControllerHandlerAdapter`와 `HandlerExecutionHandlerAdapter`로 구현한다.
+- [x] `HandlerAdapter`를 생성하고, 이를 각각 `ControllerHandlerAdapter`와 `HandlerExecutionHandlerAdapter`로 구현한다.
