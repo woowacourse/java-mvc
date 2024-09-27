@@ -15,9 +15,6 @@ public class AnnotationHandlerAdaptor implements HandlerAdaptor {
 
     @Override
     public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp, Object handler) {
-        if (supports(handler)) {
-            return ((HandlerExecution) handler).handle(req, resp);
-        }
-        throw new IllegalArgumentException("Fail to Handler Adapting");
+        return ((HandlerExecution) handler).handle(req, resp);
     }
 }

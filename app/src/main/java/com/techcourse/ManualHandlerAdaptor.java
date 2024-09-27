@@ -20,11 +20,8 @@ public class ManualHandlerAdaptor implements HandlerAdaptor {
 
     @Override
     public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp, Object handler) {
-        if (supports(handler)) {
-            String viewName = ((Controller) handler).execute(req, resp);
-            return new ModelAndView(getView(viewName));
-        }
-        throw new IllegalArgumentException("Fail to Handler Adapting");
+        String viewName = ((Controller) handler).execute(req, resp);
+        return new ModelAndView(getView(viewName));
     }
 
     private View getView(String viewName) {
