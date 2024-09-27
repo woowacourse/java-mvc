@@ -11,16 +11,17 @@ public class HandlerMappings {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public void initialize() {
-        handlerMappings.forEach(HandlerMapping::initialize);
-    }
-
     public HandlerMappings(String indexViewName, String basePackage) {
         List<HandlerMapping> mappings = new ArrayList<>();
         mappings.add(new ControllerHandlerMapping(indexViewName, basePackage));
         mappings.add(new AnnotationHandlerMapping(basePackage));
 
         this.handlerMappings = mappings;
+        initialize();
+    }
+
+    private void initialize() {
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public Object getHandler(HttpServletRequest request) {

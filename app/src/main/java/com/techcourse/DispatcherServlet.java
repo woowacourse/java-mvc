@@ -25,16 +25,14 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings = new HandlerMappings("index.jsp", "com.techcourse.controller");
-        handlerMappings.initialize();
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            // TODO : index.jps 처리
             Object controller = handlerMappings.getHandler(request);
             HandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
             ModelAndView mv = handlerAdapter.invoke(controller, request, response);
