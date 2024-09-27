@@ -2,9 +2,10 @@ package com.interface21.webmvc.servlet.mvc.tobe.argumentresolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.interface21.webmvc.servlet.mvc.tobe.MethodParameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +15,9 @@ class DefaultResponseArgumentResolverTest {
     @Test
     void supportsTrue() {
         DefaultResponseArgumentResolver resolver = new DefaultResponseArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[1];
-        boolean supports = resolver.supports(parameter);
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 1);
+        boolean supports = resolver.supports(methodParameter);
 
         assertThat(supports).isTrue();
     }
@@ -24,8 +26,9 @@ class DefaultResponseArgumentResolverTest {
     @Test
     void supportsFalse() {
         DefaultResponseArgumentResolver resolver = new DefaultResponseArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[0];
-        boolean supports = resolver.supports(parameter);
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 0);
+        boolean supports = resolver.supports(methodParameter);
 
         assertThat(supports).isFalse();
     }

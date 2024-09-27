@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.bean.container.BeanContainer;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 public class HandlerExecution {
 
@@ -19,7 +18,7 @@ public class HandlerExecution {
         return handler.invoke(controller, args);
     }
 
-    public Parameter[] getParameters() {
-        return handler.getParameters();
+    public Method getMethod() {
+        return handler;
     }
 }

@@ -6,8 +6,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestParam;
+import com.interface21.webmvc.servlet.mvc.tobe.MethodParameter;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -19,8 +20,9 @@ class RequestParamArgumentResolverTest {
     @Test
     void supportsTrue() {
         RequestParamArgumentResolver resolver = new RequestParamArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[0];
-        boolean supports = resolver.supports(parameter);
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 0);
+        boolean supports = resolver.supports(methodParameter);
 
         assertThat(supports).isTrue();
     }
@@ -29,8 +31,9 @@ class RequestParamArgumentResolverTest {
     @Test
     void supportsFalse() {
         RequestParamArgumentResolver resolver = new RequestParamArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[1];
-        boolean supports = resolver.supports(parameter);
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 1);
+        boolean supports = resolver.supports(methodParameter);
 
         assertThat(supports).isFalse();
     }
@@ -39,12 +42,13 @@ class RequestParamArgumentResolverTest {
     @Test
     void resolveArgument() {
         RequestParamArgumentResolver resolver = new RequestParamArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[0];
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 0);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameter("account")).thenReturn("gugu");
 
-        Object argument = resolver.resolveArgument(request, new MockHttpServletResponse(), parameter);
+        Object argument = resolver.resolveArgument(request, new MockHttpServletResponse(), methodParameter);
 
         assertThat(argument)
                 .isEqualTo("gugu");
@@ -54,10 +58,11 @@ class RequestParamArgumentResolverTest {
     @Test
     void resolveArgumentNull() {
         RequestParamArgumentResolver resolver = new RequestParamArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[0];
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 0);
 
         assertThatThrownBy(
-                () -> resolver.resolveArgument(new MockHttpServletRequest(), new MockHttpServletResponse(), parameter))
+                () -> resolver.resolveArgument(new MockHttpServletRequest(), new MockHttpServletResponse(), methodParameter))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

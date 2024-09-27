@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import com.interface21.bean.container.BeanContainer;
 import com.interface21.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Method;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,9 +27,9 @@ class ArgumentResolversTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameter("account")).thenReturn("gugu");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        Parameter[] parameters = TestClass.class.getMethods()[0].getParameters();
+        Method method = TestClass.class.getMethods()[0];
 
-        Object[] args = argumentResolvers.handle(request, response, parameters);
+        Object[] args = argumentResolvers.handle(request, response, method);
 
 
         assertAll(

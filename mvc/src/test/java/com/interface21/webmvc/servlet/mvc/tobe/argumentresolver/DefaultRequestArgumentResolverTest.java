@@ -2,9 +2,10 @@ package com.interface21.webmvc.servlet.mvc.tobe.argumentresolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.interface21.webmvc.servlet.mvc.tobe.MethodParameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -16,8 +17,9 @@ class DefaultRequestArgumentResolverTest {
     @Test
     void supportsTrue() {
         DefaultRequestArgumentResolver resolver = new DefaultRequestArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[0];
-        boolean supports = resolver.supports(parameter);
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 0);
+        boolean supports = resolver.supports(methodParameter);
 
         assertThat(supports).isTrue();
     }
@@ -27,8 +29,9 @@ class DefaultRequestArgumentResolverTest {
     @Test
     void supportsFalse() {
         DefaultRequestArgumentResolver resolver = new DefaultRequestArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[1];
-        boolean supports = resolver.supports(parameter);
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 1);
+        boolean supports = resolver.supports(methodParameter);
 
         assertThat(supports).isFalse();
     }
@@ -37,8 +40,10 @@ class DefaultRequestArgumentResolverTest {
     @Test
     void resolveArgument() {
         DefaultRequestArgumentResolver resolver = new DefaultRequestArgumentResolver();
-        Parameter parameter = TestClass.class.getMethods()[0].getParameters()[0];
-        Object argument = resolver.resolveArgument(new MockHttpServletRequest(), new MockHttpServletResponse(), parameter);
+        Method method = TestClass.class.getMethods()[0];
+        MethodParameter methodParameter = new MethodParameter(method, 0);
+        Object argument = resolver.resolveArgument(
+                new MockHttpServletRequest(), new MockHttpServletResponse(), methodParameter);
 
         assertThat(argument)
                 .isInstanceOf(HttpServletRequest.class);

@@ -7,7 +7,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.argumentresolver.ArgumentResolver
 import com.interface21.webmvc.servlet.mvc.tobe.returnvaluehandler.ReturnValueHandlers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Method;
 
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
@@ -22,9 +22,10 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        Parameter[] parameters = ((HandlerExecution) handler).getParameters();
-        Object[] args = argumentResolvers.handle(request, response, parameters);
-        Object returnValue = ((HandlerExecution) handler).handle(args);
+        HandlerExecution handlerExecution = (HandlerExecution) handler;
+        Method method = handlerExecution.getMethod();
+        Object[] args = argumentResolvers.handle(request, response, method);
+        Object returnValue = handlerExecution.handle(args);
         return returnvalueHandlers.handle(returnValue);
     }
 }

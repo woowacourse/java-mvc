@@ -2,11 +2,12 @@ package com.interface21.webmvc.servlet.mvc.tobe.argumentresolver;
 
 import com.interface21.bean.container.BeanContainer;
 import com.interface21.webmvc.servlet.mvc.tobe.ArgumentResolver;
+import com.interface21.webmvc.servlet.mvc.tobe.MethodParameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class ArgumentResolvers {
 
@@ -17,20 +18,21 @@ public class ArgumentResolvers {
         this.argumentResolvers = beanContainer.getSubTypeBeansOf(ArgumentResolver.class);
     }
 
-    public Object[] handle(HttpServletRequest request, HttpServletResponse response, Parameter[] parameters) {
-        return Arrays.stream(parameters)
-                .map(parameter -> getArgument(request, response, parameter))
+    public Object[] handle(HttpServletRequest request, HttpServletResponse response, Method method) {
+        return IntStream.range(0, method.getParameterCount())
+                .mapToObj(index -> new MethodParameter(method, index))
+                .map(methodParameter -> getArgument(request, response, methodParameter))
                 .toArray();
     }
 
-    private Object getArgument(HttpServletRequest request, HttpServletResponse response, Parameter parameter) {
-        ArgumentResolver argumentResolver = findArgumentResolver(parameter);
-        return argumentResolver.resolveArgument(request, response, parameter);
+    private Object getArgument(HttpServletRequest request, HttpServletResponse response, MethodParameter methodParameter) {
+        ArgumentResolver argumentResolver = findArgumentResolver(methodParameter);
+        return argumentResolver.resolveArgument(request, response, methodParameter);
     }
 
-    private ArgumentResolver findArgumentResolver(Parameter parameter) {
+    private ArgumentResolver findArgumentResolver(MethodParameter methodParameter) {
         return argumentResolvers.stream()
-                .filter(argumentResolver -> argumentResolver.supports(parameter))
+                .filter(argumentResolver -> argumentResolver.supports(methodParameter))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("변환 불가능한 타입입니다."));
     }
