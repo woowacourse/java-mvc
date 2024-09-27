@@ -32,4 +32,5 @@
 - [x] ControllerScanner 객체를 통해 컨트롤러 인스턴스 생성하는 로직 분리
   - [x] AnnotationHandlerMapping 리팩터링
 - [ ] Legacy MVC 와 @MVC 통합하기
-  - [ ] HandlerMapping 인터페이스로 AnnotationHandlerMapping 과 ManualHandlerMapping 통합
+  - [x] HandlerMapping 인터페이스로 AnnotationHandlerMapping 과 ManualHandlerMapping 통합
+  - [ ] HandlerAdaptor 인터페이스로 Handler 을 통한 메서드 실행
