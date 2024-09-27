@@ -18,6 +18,7 @@ public class HandlerContainer {
     private static class Singleton {
         private static final HandlerContainer INSTANCE = new HandlerContainer();
     }
+
     public static HandlerContainer getInstance() {
         return Singleton.INSTANCE;
     }

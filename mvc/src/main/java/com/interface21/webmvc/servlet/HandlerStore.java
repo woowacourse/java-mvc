@@ -4,20 +4,16 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HandlerStore {
 
-    private static final Logger log = LoggerFactory.getLogger(HandlerStore.class);
     private static final Map<String, Object> MANAGERS = new ConcurrentHashMap<>();
 
     public void registerHandler(List<Object> objects) {
         for (Object object : objects) {
             String clazzName = object.getClass().getName();
             if (MANAGERS.containsKey(clazzName)) {
-                log.info("이미 등록되어 있는 클래스입니다");
-                return;
+                throw new IllegalArgumentException("이미 등록되어 있는 클래스입니다");
             }
             MANAGERS.put(clazzName, object);
         }
