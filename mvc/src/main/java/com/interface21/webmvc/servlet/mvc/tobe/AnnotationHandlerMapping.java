@@ -30,7 +30,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             for (String basePackage : basePackages) {
                 ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-                scanControllers(controllerScanner.getControllers());
+                scanControllers(controllerScanner.getControllers(ScanType.ANNOTATION));
             }
             log.info("Initialized AnnotationHandlerMapping: {} handlers", handlerExecutions.size());
         } catch (ReflectiveOperationException e) {
