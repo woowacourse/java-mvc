@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.manual;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
