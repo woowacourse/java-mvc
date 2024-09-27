@@ -28,7 +28,6 @@ class ManualHandlerMappingTest {
     void getHandler() {
         final var request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/login");
         when(request.getMethod()).thenReturn("GET");
 
@@ -44,10 +43,6 @@ class ManualHandlerMappingTest {
     @DisplayName("처리할 수 없는 경우 null을 반환한다.")
     void getHandler_null() {
         final var request = mock(HttpServletRequest.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/none-test");
-        when(request.getMethod()).thenReturn("GET");
 
         var actual = handlerMapping.getHandler(request);
 
