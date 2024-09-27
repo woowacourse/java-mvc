@@ -6,7 +6,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.ReturnValueHandler;
 public class ModelAndViewReturnValueHandler implements ReturnValueHandler {
 
     @Override
-    public boolean support(Object returnValue) {
+    public boolean supports(Object returnValue) {
         return returnValue instanceof ModelAndView;
     }
 

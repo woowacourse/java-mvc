@@ -12,20 +12,20 @@ class ViewNameReturnValueHandlerTest {
 
     @DisplayName("String 타입을 지원한다.")
     @Test
-    void supportTrue() {
+    void supportsTrue() {
         ViewNameReturnValueHandler handler = new ViewNameReturnValueHandler();
         Object returnValue = new String("hi");
-        boolean support = handler.support(returnValue);
+        boolean support = handler.supports(returnValue);
 
         assertThat(support).isTrue();
     }
 
     @DisplayName("String 타입이 아니면 지원하지 않는다.")
     @Test
-    void supportFalse() {
+    void supportsFalse() {
         ViewNameReturnValueHandler handler = new ViewNameReturnValueHandler();
         Object returnValue = Integer.parseInt("1");
-        boolean support = handler.support(returnValue);
+        boolean support = handler.supports(returnValue);
 
         assertThat(support).isFalse();
     }

@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class TestFailHandlerAdapter implements HandlerAdapter {
 
     @Override
-    public boolean support(Object handler) {
+    public boolean supports(Object handler) {
         return false;
     }
 

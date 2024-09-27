@@ -16,7 +16,7 @@ public class ReturnValueHandlers {
 
     public ModelAndView handle(Object returnValue) {
         ReturnValueHandler handler = returnValueHandlers.stream()
-                .filter(returnValueHandler -> returnValueHandler.support(returnValue))
+                .filter(returnValueHandler -> returnValueHandler.supports(returnValue))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 반환값입니다."));
 

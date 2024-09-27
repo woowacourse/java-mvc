@@ -10,22 +10,22 @@ class HandlerExecutionHandlerAdapterTest {
 
     @DisplayName("HandlerExecution을 지원한다.")
     @Test
-    void supportTrue() {
+    void supportsTrue() {
         HandlerExecution handlerExecution = new HandlerExecution(getClass().getMethods()[0]);
         HandlerExecutionHandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
-        boolean support = handlerAdapter.support(handlerExecution);
+        boolean support = handlerAdapter.supports(handlerExecution);
 
         assertThat(support).isTrue();
     }
 
     @DisplayName("HandlerExecution이 아니면 지원하지 않는다.")
     @Test
-    void supportFalse() {
+    void supportsFalse() {
         Object object = new Object();
         HandlerExecutionHandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
 
-        boolean support = handlerAdapter.support(object);
+        boolean support = handlerAdapter.supports(object);
 
         assertThat(support).isFalse();
     }

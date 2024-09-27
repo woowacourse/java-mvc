@@ -7,7 +7,7 @@ import com.interface21.webmvc.servlet.view.JspView;
 public class ViewNameReturnValueHandler implements ReturnValueHandler {
 
     @Override
-    public boolean support(Object returnValue) {
+    public boolean supports(Object returnValue) {
         return returnValue instanceof String;
     }
 

@@ -5,6 +5,7 @@ import com.interface21.bean.scanner.BeanCreationException;
 import com.interface21.bean.scanner.SubTypeScanner;
 import com.interface21.bean.scanner.ComponentScanner;
 import com.interface21.core.util.ReflectionUtils;
+import com.interface21.webmvc.servlet.mvc.tobe.ArgumentResolver;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ReturnValueHandler;
@@ -24,6 +25,7 @@ public class BeanRegister {
 
     private static void registerInternalBean(BeanContainer beanContainer) {
         registerSubTypeBean(beanContainer, ReturnValueHandler.class);
+        registerSubTypeBean(beanContainer, ArgumentResolver.class);
         registerSubTypeBean(beanContainer, HandlerAdapter.class);
         registerSubTypeBean(beanContainer, HandlerMapping.class);
     }

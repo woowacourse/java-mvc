@@ -38,22 +38,22 @@ class ControllerHandlerAdapterTest {
 
     @DisplayName("Controller 인터페이스 구현체를 지원한다.")
     @Test
-    void supportTrue() {
+    void supportsTrue() {
         Object testController = new TestController();
 
         ControllerHandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
-        boolean support = handlerAdapter.support(testController);
+        boolean support = handlerAdapter.supports(testController);
 
         assertThat(support).isTrue();
     }
 
     @DisplayName("Controller 인터페이스 구현체가 아니면 지원하지 않는다.")
     @Test
-    void supportFalse() {
+    void supportsFalse() {
         Object testController = new Object();
 
         ControllerHandlerAdapter handlerAdapter = new ControllerHandlerAdapter();
-        boolean support = handlerAdapter.support(testController);
+        boolean support = handlerAdapter.supports(testController);
 
         assertThat(support).isFalse();
     }

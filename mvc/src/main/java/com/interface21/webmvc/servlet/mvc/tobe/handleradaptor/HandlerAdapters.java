@@ -15,7 +15,7 @@ public class HandlerAdapters {
 
     public HandlerAdapter findHandlerAdaptor(Object handler) {
         return handlerAdapters.stream()
-                .filter(handlerAdaptor -> handlerAdaptor.support(handler))
+                .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("지원하는 handlerAdaptor 가 없습니다."));
     }

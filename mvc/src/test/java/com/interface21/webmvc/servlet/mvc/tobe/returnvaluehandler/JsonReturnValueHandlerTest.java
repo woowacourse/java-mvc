@@ -15,32 +15,32 @@ class JsonReturnValueHandlerTest {
 
     @DisplayName("String, ModelAndView가 아닌 객체를 지원한다.")
     @Test
-    void supportTrue() {
+    void supportsTrue() {
         JsonReturnValueHandler handler = new JsonReturnValueHandler();
         User user = new User("gugu", "account");
 
-        boolean support = handler.support(user);
+        boolean support = handler.supports(user);
 
         assertThat(support).isTrue();
     }
 
     @DisplayName("String은 지원하지 않는다.")
     @Test
-    void supportFalseString() {
+    void supportsFalseString() {
         JsonReturnValueHandler handler = new JsonReturnValueHandler();
 
-        boolean support = handler.support("/index.jsp");
+        boolean support = handler.supports("/index.jsp");
 
         assertThat(support).isFalse();
     }
 
     @DisplayName("ModelAndView는 지원하지 않는다.")
     @Test
-    void supportFalseModelAndView() {
+    void supportsFalseModelAndView() {
         JsonReturnValueHandler handler = new JsonReturnValueHandler();
         ModelAndView modelAndView = new ModelAndView(new JspView("/index.jsp"));
 
-        boolean support = handler.support(modelAndView);
+        boolean support = handler.supports(modelAndView);
 
         assertThat(support).isFalse();
     }
