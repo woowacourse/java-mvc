@@ -33,4 +33,5 @@
     - [x] ManualHandlerMapping, AnnotationHandlerMapping 초기화
 - [x] HandlerAdapter 인터페이스
     - [x] HandlerMapping으로 찾은 컨트롤러 실행
-- [ ] 컨트롤러 인터페이스 기반과 어노테이션 기반이 겹치면
+- [x] 컨트롤러 인터페이스 기반과 어노테이션 기반이 겹치면
+    - 핸들러에 등록한 순서대로 매핑
