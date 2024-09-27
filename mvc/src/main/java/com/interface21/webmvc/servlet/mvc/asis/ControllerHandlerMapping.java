@@ -1,11 +1,11 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.asis;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -14,15 +14,17 @@ import org.slf4j.LoggerFactory;
 public class ControllerHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerHandlerMapping.class);
+    private static final HandlerKey FORWARD_INDEX_CONTROLLER_KEY = new HandlerKey("/", RequestMethod.GET);
     private static final String VIEW_CONTROLLER_NAME_RULE = "View";
     private static final String CONTROLLER_POSTFIX_RULE = "Controller$";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, Controller> controllers;
 
-    public ControllerHandlerMapping(Object... basePackage) {
+    public ControllerHandlerMapping(String indexViewName, Object... basePackage) {
         this.basePackage = basePackage;
         this.controllers = new HashMap<>();
+        this.controllers.put(FORWARD_INDEX_CONTROLLER_KEY, new ForwardController(indexViewName));
     }
 
     @Override

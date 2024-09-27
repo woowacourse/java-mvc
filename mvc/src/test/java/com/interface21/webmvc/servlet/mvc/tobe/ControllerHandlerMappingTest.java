@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ class ControllerHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new ControllerHandlerMapping("samples");
+        handlerMapping = new ControllerHandlerMapping("index.jsp", "samples");
         handlerMapping.initialize();
     }
 
