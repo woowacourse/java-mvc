@@ -1,4 +1,4 @@
-package com.techcourse.servlet.handlermapper;
+package com.techcourse.servlet.handler;
 
 import com.interface21.webmvc.servlet.Handler;
 import com.interface21.webmvc.servlet.ModelAndView;

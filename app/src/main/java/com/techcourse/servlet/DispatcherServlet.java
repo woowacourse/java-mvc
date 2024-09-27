@@ -3,7 +3,7 @@ package com.techcourse.servlet;
 import com.interface21.webmvc.servlet.Handler;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.techcourse.servlet.handlermapper.HandlerMappings;
+import com.techcourse.servlet.handler.HandlerMappings;
 import com.techcourse.servlet.view.ViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.techcourse.servlet.handlermapper.HandlerMappings;
-import com.techcourse.servlet.handlermapper.ManualHandlerMapping;
+import com.techcourse.servlet.handler.HandlerMappings;
+import com.techcourse.servlet.handler.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.NoSuchElementException;
