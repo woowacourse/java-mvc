@@ -25,7 +25,9 @@ public class HandlerContainer {
 
     public void initialize(Class<?> clazz) {
         registerHandlerManagement(clazz);
-        registerHandlerManagement(this.getClass());
+        if (clazz.getPackageName().equals(this.getClass().getPackageName())) {
+            registerHandlerManagement(this.getClass());
+        }
     }
 
     public void registerHandlerManagement(Class<?> clazz) {
@@ -43,5 +45,9 @@ public class HandlerContainer {
 
     public <T> List<T> getHandlers(Class<T> clazz) {
         return handlerStore.getHandler(clazz);
+    }
+
+    public void clear() {
+        handlerStore.clear();
     }
 }

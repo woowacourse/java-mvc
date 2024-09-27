@@ -1,4 +1,4 @@
-package samples;
+package com.interface21.webmvc.servlet.mvc;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

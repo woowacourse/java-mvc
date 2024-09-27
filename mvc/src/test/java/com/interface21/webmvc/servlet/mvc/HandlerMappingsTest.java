@@ -11,6 +11,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,12 +36,16 @@ class HandlerMappingsTest {
         }
     }
 
+    @BeforeEach
+    void setUp() {
+        HandlerContainer instance = HandlerContainer.getInstance();
+        instance.clear();
+        instance.initialize(ContextLoaderTest.class);
+    }
+
     @DisplayName("HandlerMapping을 구현하는 클래스를 저장한 뒤 적절한 Mapping을 활용해 들어온 요청을 처리한다")
     @Test
     void getHandler() throws Exception {
-        HandlerContainer handlerContainer = HandlerContainer.getInstance();
-        handlerContainer.initialize(this.getClass());
-
         HandlerMappings handlerMappings = new HandlerMappings();
         handlerMappings.initialize();
 
@@ -53,9 +58,6 @@ class HandlerMappingsTest {
     @DisplayName("일치하는 HandlerMapping이 없을 경우 예외를 발생시킨다")
     @Test
     void notExistMatchHandlerMapping() throws Exception {
-        HandlerContainer handlerContainer = HandlerContainer.getInstance();
-        handlerContainer.initialize(this.getClass());
-
         HandlerMappings handlerMappings = new HandlerMappings();
         handlerMappings.initialize();
 

@@ -7,7 +7,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import com.interface21.webmvc.servlet.mvc.TestController;
 
 class HandlerExecutionsTest {
 

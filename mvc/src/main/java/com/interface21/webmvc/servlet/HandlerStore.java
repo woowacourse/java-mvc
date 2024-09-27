@@ -31,4 +31,8 @@ public class HandlerStore {
                 .filter(clazz -> clazz.getClass().isAnnotationPresent(annotation))
                 .toList();
     }
+
+    public void clear() {
+        MANAGERS.clear();
+    }
 }
