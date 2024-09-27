@@ -32,6 +32,6 @@ public class HandlerMappings {
                 .filter(handlerMapping -> handlerMapping.getHandler(request).isPresent())
                 .findAny()
                 .orElseThrow(() -> new NoSuchElementException(request + "에 해당하는 핸들러를 찾을 수 없습니다"))
-                .getHandler(request);
+                .getHandler(request).get();
     }
 }
