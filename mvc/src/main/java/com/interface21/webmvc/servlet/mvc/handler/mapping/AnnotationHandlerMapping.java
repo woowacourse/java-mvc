@@ -9,13 +9,9 @@ import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerExecution;
@@ -23,8 +19,6 @@ import com.interface21.webmvc.servlet.mvc.handler.HandlerKey;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private static final String ALL_CLASS_PATH = "";
-    private static final int NO_BASE_PACKAGE = 0;
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
@@ -38,37 +32,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Set<Class<?>> controllerClasses = findControllerClasses();
-        for (Class<?> controllerClass : controllerClasses) {
-            Object controller = getInstance(controllerClass);
+        Map<Class<?>, Object> controllers = getControllers();
+        for (Class<?> controllerClass : controllers.keySet()) {
             Set<Method> methods = findRequestMappingMethods(controllerClass);
-            methods.forEach(method -> addHandlerExecution(controller, method));
+            methods.forEach(method -> addHandlerExecution(controllers.get(controllerClass), method));
         }
     }
 
-    private Set<Class<?>> findControllerClasses() {
-        Reflections reflections = getReflections();
+    private Map<Class<?>, Object> getControllers() {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        controllerScanner.initialize();
 
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private Reflections getReflections() {
-        if (basePackage.length == NO_BASE_PACKAGE) {
-            ConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.forPackages(ALL_CLASS_PATH)
-                    .addScanners(Scanners.TypesAnnotated);
-
-            return new Reflections(builder);
-        }
-        return new Reflections(basePackage, Scanners.TypesAnnotated);
-    }
-
-    private Object getInstance(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Class의 인스턴스를 생성하는데 실패했습니다. Class = " + clazz.getCanonicalName());
-        }
+        return controllerScanner.getControllers();
     }
 
     private Set<Method> findRequestMappingMethods(Class<?> controllerClass) {
