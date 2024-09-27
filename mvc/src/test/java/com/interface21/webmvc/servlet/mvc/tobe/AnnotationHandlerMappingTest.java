@@ -21,7 +21,7 @@ class AnnotationHandlerMappingTest {
         final ControllerContainer container = new ControllerContainer(basePackages);
         container.initialize();
 
-        handlerMapping = new AnnotationHandlerMapping(new HandlerKeys(), container, basePackages);
+        handlerMapping = new AnnotationHandlerMapping(new HandlerKeys(), container);
         handlerMapping.initialize();
     }
 

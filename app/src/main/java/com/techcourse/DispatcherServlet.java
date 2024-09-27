@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.ViewConverter;
 import com.interface21.webmvc.servlet.mvc.HandlerKeys;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
@@ -52,9 +51,9 @@ public class DispatcherServlet extends HttpServlet {
                         new HandlerKey("/"), new ForwardController("/index.jsp"),
                         new HandlerKey("/login", RequestMethod.POST), new LoginController(),
                         new HandlerKey("/login", RequestMethod.GET), new LoginViewController(),
-                        new HandlerKey("/logout", RequestMethod.POST), new LogoutController()
+                        new HandlerKey("/logout", RequestMethod.GET), new LogoutController()
                 )));
-        handlerMappings.add(new AnnotationHandlerMapping(handlerKeys, container, "com.techcourse.controller"));
+        handlerMappings.add(new AnnotationHandlerMapping(handlerKeys, container));
     }
 
     @Override
@@ -64,7 +63,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = handlerKeys.get(new HandlerKey(request));
             final var result = controller.handle(request, response);
-            final View view = ViewConverter.convert(result);
+            final var view = ViewConverter.convert(result);
             view.render(Map.of(), request, response);
         } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);

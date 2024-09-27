@@ -1,11 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerKeys;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,52 +14,48 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final HandlerKeys handlerKeys;
     private final ControllerContainer controllerContainer;
 
-    public AnnotationHandlerMapping(final HandlerKeys handlerKeys, final ControllerContainer controllerContainer,final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final HandlerKeys handlerKeys, final ControllerContainer controllerContainer) {
         this.handlerKeys = handlerKeys;
         this.controllerContainer = controllerContainer;
     }
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        final var controllers = controllerContainer.getControllers();
         controllers.forEach(this::init);
     }
 
-    private void init(final Class<?> controller) {
-        Arrays.stream(controller.getDeclaredMethods())
+    private void init(final Class<?> controllerClass, final Object controllerInstance) {
+        Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(this::hasRequestMapping)
-                .forEach(this::initialize);
+                .forEach(method -> initialize(method, controllerInstance));
     }
 
     private boolean hasRequestMapping(final Method method) {
         return method.isAnnotationPresent(RequestMapping.class);
     }
 
-    private void initialize(final Method method) {
+    private void initialize(final Method method, final Object controllerInstance) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
         final String path = requestMapping.value();
-        final Object controller = controllerContainer.getController(method.getDeclaringClass());
-        if (requestMapping.method().length == 0) {
-            putAnnotationHandler(path, RequestMethod.all(), controller, method);
+        final RequestMethod[] requestMethods = requestMapping.method();
+
+        final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+        if (requestMethods.length == 0) {
+            putAnnotationHandler(path, RequestMethod.all(), handlerExecution);
+            return;
         }
-        putAnnotationHandler(path, requestMapping.method(), controller, method);
+        putAnnotationHandler(path, requestMethods, handlerExecution);
     }
 
-    private void putAnnotationHandler(final String path, final RequestMethod[] methods, final Object controller, final Method method) {
+    private void putAnnotationHandler(final String path, final RequestMethod[] methods, final HandlerExecution execution) {
         Arrays.stream(methods)
                 .map(requestMethod -> new HandlerKey(path, requestMethod))
-                .forEach(handlerKey -> put(handlerKey, controller, method));
-    }
-
-    private void put(final HandlerKey handlerKey, final Object controller, final Method method) {
-        handlerKeys.put(handlerKey, new HandlerExecution(controller, method));
+                .forEach(handlerKey -> handlerKeys.put(handlerKey, execution));
     }
 
     public HandlerExecution getHandler(final HandlerKey key) {

@@ -19,34 +19,29 @@ public class MapHandlerMapping implements HandlerMapping {
     private static final String METHOD_NAME = "execute";
 
     private final HandlerKeys handlerKeys;
-    private final Map<HandlerKey, Controller> controllers;
 
     public MapHandlerMapping(final HandlerKeys handlerKeys, final Map<HandlerKey, Controller> controllers) {
         this.handlerKeys = handlerKeys;
-        this.controllers = controllers;
+        controllers.forEach(this::init);
     }
 
     @Override
     public void initialize() {
         log.info("Initialized MapHandlerMapping!");
-        controllers.forEach(this::init);
     }
 
     private void init(final HandlerKey key, final Controller controller) {
         final Method method = getExecuteMethod(controller.getClass());
-        put(key, controller, method);
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        handlerKeys.put(key, handlerExecution);
     }
 
-    private Method getExecuteMethod(final Class<? extends Controller> controller) {
+    private static Method getExecuteMethod(final Class<? extends Controller> controller) {
         try {
             return controller.getDeclaredMethod(METHOD_NAME, HttpServletRequest.class, HttpServletResponse.class);
         } catch (final NoSuchMethodException e) {
             throw new NotFoundMethodException(String.format("%s 에서 %s 에 대한 메소드를 찾지 못했습니다.", controller, METHOD_NAME));
         }
-    }
-
-    private void put(final HandlerKey handlerKey, final Object controller, final Method method) {
-        handlerKeys.put(handlerKey, new HandlerExecution(controller, method));
     }
 
     @Override
