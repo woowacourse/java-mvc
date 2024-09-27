@@ -9,14 +9,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class HandlerMappings {
 
-    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public HandlerMappings(String indexViewName, String basePackage) {
-        List<HandlerMapping> mappings = new ArrayList<>();
-        mappings.add(new AnnotationHandlerMapping(basePackage));
-        mappings.add(new ControllerHandlerMapping(indexViewName, basePackage));
+        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
+        handlerMappings.add(new ControllerHandlerMapping(indexViewName, basePackage));
 
-        this.handlerMappings = mappings;
         initialize();
     }
 

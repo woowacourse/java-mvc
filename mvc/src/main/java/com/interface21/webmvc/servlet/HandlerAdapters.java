@@ -8,14 +8,11 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 
 class HandlerAdapters {
 
-    private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public HandlerAdapters() {
-        List<HandlerAdapter> adapters = new ArrayList<>();
-        adapters.add(new HandlerExecutionAdapter());
-        adapters.add(new ControllerHandlerAdapter());
-
-        this.handlerAdapters = adapters;
+        handlerAdapters.add(new HandlerExecutionAdapter());
+        handlerAdapters.add(new ControllerHandlerAdapter());
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
