@@ -1,8 +1,8 @@
 package com.techcourse.servlet.handler;
 
-import com.interface21.webmvc.servlet.Handler;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.servlet.handler.mapper.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -27,14 +27,9 @@ public class HandlerMappings {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public boolean hasHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
-                .anyMatch(handlerMapping -> handlerMapping.hasHandler(request));
-    }
-
-    public Handler getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.hasHandler(request))
+                .filter(handlerMapping -> handlerMapping.getHandler(request).isPresent())
                 .findAny()
                 .orElseThrow(() -> new NoSuchElementException(request + "에 해당하는 핸들러를 찾을 수 없습니다"))
                 .getHandler(request);

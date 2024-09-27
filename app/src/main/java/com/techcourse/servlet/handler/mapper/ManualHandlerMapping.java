@@ -1,4 +1,4 @@
-package com.techcourse.servlet.handler;
+package com.techcourse.servlet.handler.mapper;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,17 +37,8 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public boolean hasHandler(HttpServletRequest request) {
-        return controllers.containsKey(request.getRequestURI());
-    }
-
-    @Override
-    public ControllerHandler getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request);
-        if(!hasHandler(request)) {
-            throw new NoSuchElementException(request.getRequestURI() + "와 일치하는 핸들러 메소드가 없습니다");
-        }
-        Controller controller = controllers.get(request.getRequestURI());
-        return new ControllerHandler(controller);
+        return Optional.ofNullable(controllers.get(request.getRequestURI()));
     }
 }

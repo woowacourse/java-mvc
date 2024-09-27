@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,16 +50,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public boolean hasHandler(HttpServletRequest request) {
-        return handlerExecutions.containsKey(new HandlerKey(request));
-    }
-
-    @Override
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request);
-        if (!hasHandler(request)) {
-            throw new NoSuchElementException(handlerKey + "와 일치하는 핸들러 메소드가 없습니다");
-        }
-        return handlerExecutions.get(handlerKey);
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 }

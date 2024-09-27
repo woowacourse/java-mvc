@@ -1,9 +1,9 @@
 package com.techcourse.servlet;
 
-import com.interface21.webmvc.servlet.Handler;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.techcourse.servlet.handler.HandlerMappings;
+import com.techcourse.servlet.handler.adapter.HandlerAdapter;
 import com.techcourse.servlet.view.ViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -21,6 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
+    private final HandlerAdapter handlerAdapter;
     private final ViewResolver viewResolver;
 
     public DispatcherServlet() {
@@ -29,6 +30,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(HandlerMappings handlerMappings) {
         this.handlerMappings = handlerMappings;
+        this.handlerAdapter = new HandlerAdapter();
         this.viewResolver = new ViewResolver();
     }
 
@@ -42,13 +44,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            if (!handlerMappings.hasHandler(request)) {
-                renderViewByStatusCode(request, response, 404);
-                throw new BadRequestException("requestUrI를 처리한 핸들러가 없습니다" + request.getRequestURI());
-            }
-
-            Handler handler = handlerMappings.getHandler(request);
-            ModelAndView modelAndView = handler.handle(request, response);
+            Object handler = handlerMappings.getHandler(request);
+            ModelAndView modelAndView = handlerAdapter.adaptHandler(handler, request, response);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
