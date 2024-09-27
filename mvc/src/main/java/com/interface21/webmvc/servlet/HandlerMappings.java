@@ -13,8 +13,8 @@ public class HandlerMappings {
 
     public HandlerMappings(String indexViewName, String basePackage) {
         List<HandlerMapping> mappings = new ArrayList<>();
-        mappings.add(new ControllerHandlerMapping(indexViewName, basePackage));
         mappings.add(new AnnotationHandlerMapping(basePackage));
+        mappings.add(new ControllerHandlerMapping(indexViewName, basePackage));
 
         this.handlerMappings = mappings;
         initialize();
