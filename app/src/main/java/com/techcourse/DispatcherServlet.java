@@ -11,13 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.ControllerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 

@@ -9,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
+
 class HandlerMappingRegistryTest {
 
     @DisplayName("HandlerMapping에 등록된 순서대로 핸들러 검사를 수행한다.")
