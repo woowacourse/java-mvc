@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,8 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void initializeByController(Class<?> controller) throws Exception {
+    private void initializeByController(Class<?> controller)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Method[] methods = controller.getDeclaredMethods();
         Object baseInstance = controller.getDeclaredConstructor()
                 .newInstance();
@@ -49,6 +51,7 @@ public class AnnotationHandlerMapping {
         RequestMethod[] mappingMethods = getMappingMethods(requestMapping);
 
         for (RequestMethod requestMethod : mappingMethods) {
+            log.info("Path : {}, Method: {}", requestMapping.value(), requestMethod);
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution execution = new HandlerExecution(baseInstance, method);
             handlerExecutions.put(handlerKey, execution);
