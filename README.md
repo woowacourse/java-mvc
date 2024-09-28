@@ -26,13 +26,7 @@
 
 - [x] 핸들러 매핑 구현
 - [x] jsp view 구현
+- [ ] 어노테이션 기반 컨트롤러 변경해도 정상 동작하도록 구현
+- [ ] 파라미터가 있어도 기존 url에 매핑되도록 구현
 
 ## 리팩토링 목록
-
-- [x] reflectionTest 생성자 테스트 수정
-- [x] handlerExecutions 초기화
-    - [x] basepackage sample 중복 삭제
-    - [x] mapping 범위 컨트롤러로 축소
-- [x] reflection test runner 스트림을 for문으로 변경
-- [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method 지원
-- [x] annotationMapping 테스트 추가
