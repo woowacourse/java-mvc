@@ -3,6 +3,7 @@ package com.techcourse;
 import ch.qos.logback.core.model.Model;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = (Controller) manualHandlerMapping.getHandler(request);
             final var viewName = controller.execute(request, response);
 
             Map<String, Object> model = new HashMap<>();
