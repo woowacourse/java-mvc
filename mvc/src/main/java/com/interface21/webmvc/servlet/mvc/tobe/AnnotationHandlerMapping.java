@@ -20,6 +20,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HandlerExecutions();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
