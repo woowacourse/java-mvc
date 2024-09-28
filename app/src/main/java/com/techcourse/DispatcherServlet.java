@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerAdapters;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.HandlerMappings;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
@@ -47,5 +48,9 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    public void appendHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.appendHandlerMapping(handlerMapping);
     }
 }

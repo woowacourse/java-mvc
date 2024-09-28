@@ -30,4 +30,8 @@ public class HandlerMappings {
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("핸들러가 존재하지 않습니다. " + request.getRequestURI()));
     }
+
+    public void appendHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
+    }
 }
