@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 
-class ComponentScannerTest {
+class ControllerScannerTest {
 
 	@Test
 	@DisplayName("@Controller 메소드에 대한 @RequestMapping 속성을 추출한다.")
 	void scan() {
-		Map<HandlerKey, HandlerExecution> scan = ComponentScanner.scan("samples");
+		Map<HandlerKey, HandlerExecution> scan = ControllerScanner.scan("samples");
 
 		assertThat(scan).hasSize(10);
 		assertThat(scan.get(new HandlerKey("/get-test", RequestMethod.GET))).isNotNull();

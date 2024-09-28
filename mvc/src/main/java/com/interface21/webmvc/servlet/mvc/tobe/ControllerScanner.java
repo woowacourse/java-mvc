@@ -1,10 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.reflections.ReflectionUtils.*;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
@@ -12,7 +15,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
-public final class ComponentScanner {
+public final class ControllerScanner {
 
 	public static Map<HandlerKey, HandlerExecution> scan(Object ... basePackages) {
 		Reflections reflections = new Reflections(basePackages, Scanners.TypesAnnotated);
@@ -24,8 +27,7 @@ public final class ComponentScanner {
 	}
 
 	private static void scanRequestMappingForMethods(Map<HandlerKey, HandlerExecution> executions, Class clazz) {
-		Arrays.stream(clazz.getDeclaredMethods())
-			.filter(method -> method.isAnnotationPresent(RequestMapping.class))
+		getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
 			.forEach(method -> {
 				String value = method.getAnnotation(RequestMapping.class).value();
 				extractMethodOfRequestMapping(executions, clazz, value, method);
