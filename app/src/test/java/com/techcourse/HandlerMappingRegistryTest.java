@@ -20,6 +20,8 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 
 class HandlerMappingRegistryTest {
 
+    private final HandlerMappingRegistry sut = new HandlerMappingRegistry("samples");
+
     @ParameterizedTest
     @MethodSource
     @DisplayName("Find handler mapping.")
@@ -28,7 +30,6 @@ class HandlerMappingRegistryTest {
         var request = mock(HttpServletRequest.class);
         when(request.getMethod()).thenReturn(method);
         when(request.getRequestURI()).thenReturn(path);
-        var sut = new HandlerMappingRegistry("samples");
 
         // when
         var actual = sut.getHandler(request);
@@ -55,7 +56,6 @@ class HandlerMappingRegistryTest {
         var request = mock(HttpServletRequest.class);
         when(request.getMethod()).thenReturn("OPTIONS");
         when(request.getRequestURI()).thenReturn("/invalid-path");
-        var sut = new HandlerMappingRegistry("samples");
 
         // when & then
         assertThatThrownBy(() -> sut.getHandler(request))
