@@ -4,6 +4,8 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.LoginController;
+import com.techcourse.mapping.HandlerMappingRegistry;
+import com.techcourse.mapping.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
