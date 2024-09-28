@@ -1,15 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,36 +26,28 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Class<?> controller : controllers.keySet()) {
+            Set<Method> methods = getRequestMappingMethods(controller);
+            methods.forEach(method -> addHandlerExecution(controllers.get(controller), method));
+        }
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackages);
-        reflections.getTypesAnnotatedWith(Controller.class)
-                .forEach(this::registerHandlers);
     }
 
-    private void registerHandlers(Class<?> controllerClass) {
-        Arrays.stream(controllerClass.getDeclaredMethods())
+    private Set<Method> getRequestMappingMethods(Class<?> controller) {
+        return Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> registerHandler(method, controllerClass));
+                .collect(Collectors.toSet());
     }
 
-    private void registerHandler(Method method, Class<?> controllerClass) {
-        Object controllerInstance = instantiateController(controllerClass);
+    private void addHandlerExecution(Object controllerInstance, Method method) {
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = getRequestMappingMethod(requestMapping);
         HandlerExecution handlerExecution = new HandlerExecution(method, controllerInstance);
         Arrays.stream(requestMethods)
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
                 .forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
-    }
-
-    private Object instantiateController(Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("기본 생성자를 찾을 수 없습니다: " + controllerClass.getName(), e);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("컨트롤러를 인스턴스화할 수 없습니다: " + controllerClass.getName(), e);
-        }
     }
 
     private RequestMethod[] getRequestMappingMethod(RequestMapping requestMapping) {
