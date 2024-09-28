@@ -1,5 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,12 @@ import java.util.Optional;
 public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+
+    public HandlerMappingRegistry() {
+        new ControllerScanner();
+        new AnnotationHandlerMapping();
+        handlerMappings.add();
+    }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);

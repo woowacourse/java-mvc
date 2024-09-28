@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,9 @@ public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public HandlerAdapterRegistry() {
+        handlerAdapters.add(new ManualHandlerAdapter());
+        handlerAdapters.add(new RequestMappingHandlerAdapter());
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
