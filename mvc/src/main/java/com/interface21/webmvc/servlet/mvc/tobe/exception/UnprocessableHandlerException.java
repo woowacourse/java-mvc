@@ -8,7 +8,7 @@ public class UnprocessableHandlerException extends RuntimeException{
     private static final Logger log = LoggerFactory.getLogger(UnprocessableHandlerException.class);
 
     public UnprocessableHandlerException(String handlerClassName) {
-        super("처리할 수 없는 유형의 Handler 입니다.");
-        log.error("Failed to process handler of type: {}", handlerClassName, this);
+        super("The handler is of an unsupported type");
+        log.error("UnprocessableHandlerException: {}", handlerClassName, this);
     }
 }

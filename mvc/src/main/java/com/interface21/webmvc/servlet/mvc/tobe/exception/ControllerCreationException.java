@@ -7,8 +7,8 @@ public class ControllerCreationException extends RuntimeException {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerCreationException.class);
 
-    public ControllerCreationException(String message) {
-        super(message);
-        log.error("Failed to create Controller instance : {}", message, this);
+    public ControllerCreationException(String message, Throwable e) {
+        super(message, e);
+        log.error("ControllerCreationException: {}: {}", e.getClass().getName(), message, e);
     }
 }

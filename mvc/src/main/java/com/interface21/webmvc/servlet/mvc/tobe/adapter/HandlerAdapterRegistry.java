@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerAdapterCreationException;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerAdapterNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class HandlerAdapterRegistry {
             return handlerAdapterClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
-            throw new HandlerAdapterCreationException(e.getMessage());
+            throw new HandlerAdapterCreationException(e.getMessage(), e);
         }
     }
 
@@ -41,6 +42,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(HandlerAdapterNotFoundException::new);
     }
 }

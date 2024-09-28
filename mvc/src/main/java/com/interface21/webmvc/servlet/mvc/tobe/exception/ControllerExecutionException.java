@@ -7,8 +7,8 @@ public class ControllerExecutionException extends RuntimeException {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerExecutionException.class);
 
-    public ControllerExecutionException(String message) {
+    public ControllerExecutionException(String message, Throwable e) {
         super(message);
-        log.error("Controller execution failed: {}", message, this);
+        log.error("ControllerExecutionException: {}: {}", e.getClass().getName(), message, e);
     }
 }

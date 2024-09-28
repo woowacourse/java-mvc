@@ -32,8 +32,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return;
         }
 
-        log.info("Initialized AnnotationHandlerMapping!");
-
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerTypeClass = reflections.getTypesAnnotatedWith(Controller.class);
         log.info("Controller type class count : {}", controllerTypeClass.size());
@@ -41,6 +39,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Class<?> controllerClass : controllerTypeClass) {
             mapControllerToHandler(controllerClass);
         }
+
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void mapControllerToHandler(Class<?> controllerClass) {
@@ -53,7 +53,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return controllerClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
-            throw new ControllerCreationException(e.getMessage());
+            throw new ControllerCreationException(e.getMessage(), e);
         }
     }
 

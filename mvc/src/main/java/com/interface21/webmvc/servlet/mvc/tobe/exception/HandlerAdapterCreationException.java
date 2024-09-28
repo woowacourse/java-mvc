@@ -7,8 +7,8 @@ public class HandlerAdapterCreationException extends  RuntimeException{
 
     private static final Logger log = LoggerFactory.getLogger(HandlerAdapterCreationException.class);
 
-    public HandlerAdapterCreationException(String message) {
-        super(message);
-        log.error("Failed to create HandlerAdapter instance : {}", message, this);
+    public HandlerAdapterCreationException(String message, Throwable e) {
+        super(message, e);
+        log.error("HandlerAdapterCreationException: {}: {}", e.getClass().getName(), message, e);
     }
 }

@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerMappingCreationException;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerMappingNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class HandlerMappingRegistry {
             return createWithConstructor(handlerMappingClass);
         } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
-            throw new HandlerMappingCreationException(e.getMessage());
+            throw new HandlerMappingCreationException(e.getMessage(), e);
         }
     }
 
@@ -59,6 +60,6 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(HandlerMappingNotFoundException::new);
     }
 }

@@ -23,7 +23,7 @@ public class HandlerExecution {
             return (ModelAndView) method.invoke(controller, request, response);
 
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ControllerExecutionException(e.getMessage());
+            throw new ControllerExecutionException(e.getMessage(), e);
 
         } catch (ClassCastException e) {
             throw new ControllerResultCastException(method.getName());

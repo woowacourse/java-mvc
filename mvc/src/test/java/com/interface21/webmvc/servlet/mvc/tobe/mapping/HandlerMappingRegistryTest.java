@@ -1,10 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerMappingNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 
@@ -46,16 +48,14 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
-    void 요청을_처리할_수_있는_핸들러가_없다면_null을_반환() {
+    void 요청을_처리할_수_있는_핸들러가_없다면_예외_발생() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
 
-        // when
-        Object actual = handlerMappingRegistry.getHandler(request);
-
-        // then
-        assertThat(actual).isNull();
+        // when, then
+        assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
+                .isInstanceOf(HandlerMappingNotFoundException.class);
     }
 
     static class CustomHandler {

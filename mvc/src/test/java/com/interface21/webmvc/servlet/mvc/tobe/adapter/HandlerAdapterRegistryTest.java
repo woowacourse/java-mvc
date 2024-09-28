@@ -1,10 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerAdapterNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -40,16 +42,14 @@ class HandlerAdapterRegistryTest {
     }
 
     @Test
-    void 요청을_처리할_수_있는_어댑터가_없다면_null을_반환() {
+    void 요청을_처리할_수_있는_어댑터가_없다면_예외_발생() {
         // given
         Object unknownController = new Object();
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
-        // when
-        HandlerAdapter actual = handlerAdapterRegistry.getHandlerAdapter(unknownController);
-
-        // then
-        assertThat(actual).isNull();
+        // when, then
+        assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(unknownController))
+                .isInstanceOf(HandlerAdapterNotFoundException.class);
     }
 
     static class CustomHandlerAdapter implements HandlerAdapter {

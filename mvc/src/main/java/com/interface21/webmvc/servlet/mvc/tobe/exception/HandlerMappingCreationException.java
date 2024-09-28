@@ -7,8 +7,8 @@ public class HandlerMappingCreationException extends  RuntimeException{
 
     private static final Logger log = LoggerFactory.getLogger(HandlerMappingCreationException.class);
 
-    public HandlerMappingCreationException(String message) {
+    public HandlerMappingCreationException(String message, Throwable e) {
         super(message);
-        log.error("Failed to create HandlerMapping instance : {}", message, this);
+        log.error("HandlerMappingCreationException: {}: {}", e.getClass().getName(), message, e);
     }
 }
