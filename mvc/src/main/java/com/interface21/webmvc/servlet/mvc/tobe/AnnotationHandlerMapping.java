@@ -17,7 +17,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
 	private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -74,6 +74,7 @@ public class AnnotationHandlerMapping {
 		return handlerKeys;
 	}
 
+	@Override
 	public Object getHandler(final HttpServletRequest request) {
 		String url = request.getRequestURI();
 		RequestMethod requestMethod = RequestMethod.from(request.getMethod());
