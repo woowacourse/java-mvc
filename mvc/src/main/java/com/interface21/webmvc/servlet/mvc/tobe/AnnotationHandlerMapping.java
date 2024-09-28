@@ -39,9 +39,10 @@ public class AnnotationHandlerMapping {
 
     private void initializeHandlerExecutions(Class<?> controllerClass) {
         List<Method> requestMappingMethods = getRequestMappingMethods(controllerClass);
+        Object controller = getController(controllerClass);
         for (Method requestMappingMethod : requestMappingMethods) {
             RequestMapping annotation = requestMappingMethod.getAnnotation(RequestMapping.class);
-            setHandlerExecutions(controllerClass, requestMappingMethod, annotation);
+            setHandlerExecutions(controller, requestMappingMethod, annotation);
         }
     }
 
@@ -52,27 +53,26 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void setHandlerExecutions(Class<?> controllerClass, Method method, RequestMapping annotation) {
-        String url = annotation.value();
-        RequestMethod[] requestMethods = annotation.method();
-        if (requestMethods.length == EMPTY) {
-            requestMethods = RequestMethod.values();
-        }
-
-        Object controller = getController(controllerClass);
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
     private Object getController(Class<?> controllerClass) {
         try {
             return controllerClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void setHandlerExecutions(Object controller, Method method, RequestMapping annotation) {
+        String url = annotation.value();
+        RequestMethod[] requestMethods = annotation.method();
+        if (requestMethods.length == EMPTY) {
+            requestMethods = RequestMethod.values();
+        }
+
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
