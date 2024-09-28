@@ -41,7 +41,7 @@ class ControllerAdapterTest {
                 .when(controller)
                 .execute(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-        assertThatCode(() -> handlerAdapter.adaptHandler(controller, request, response))
+        assertThatCode(() -> handlerAdapter.handle(request, response, controller))
                 .doesNotThrowAnyException();
     }
 }
