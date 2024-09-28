@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappings;
 import jakarta.servlet.ServletException;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -36,7 +39,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = handlerMappings.getHandler(request);
-            handler.handle(request, response);
+            ModelAndView modelAndView = handler.handle(request, response);
+            Map<String, Object> model = modelAndView.getModel();
+            View view = modelAndView.getView();
+            view.render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
