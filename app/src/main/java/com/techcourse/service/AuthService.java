@@ -38,7 +38,10 @@ public class AuthService {
 
     private User findUserByAccount(String account) throws AuthException {
         return userService.findByAccount(account)
-                .orElseThrow(() -> new AuthException(account + "계정을 가진 유저가 존재하지 않습니다"));
+                .orElseThrow(() -> {
+                    log.error("계정을 가진 유저를 찾을 수 없습니다 : {}", account);
+                    return new AuthException("유저를 찾을 수 없습니다.");
+                });
     }
 
     public void logout(HttpSession session) {
