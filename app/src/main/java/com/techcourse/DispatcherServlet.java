@@ -22,9 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final String basePackage;
-
-    private HandlerMappings handlerMappings;
-    private HandlerAdapters handlerAdapters;
+    private final HandlerMappings handlerMappings = new HandlerMappings();
+    private final HandlerAdapters handlerAdapters = new HandlerAdapters();
 
     public DispatcherServlet(String basePackage) {
         this.basePackage = basePackage;
@@ -35,8 +34,10 @@ public class DispatcherServlet extends HttpServlet {
         HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         HandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
         HandlerAdapter handlerExecutionAdapter = new HandlerExecutionAdapter();
-        handlerMappings = new HandlerMappings(annotationHandlerMapping);
-        handlerAdapters = new HandlerAdapters(handlerExecutionAdapter, controllerHandlerAdapter);
+
+        handlerMappings.appendHandlerMapping(annotationHandlerMapping);
+        handlerAdapters.appendHandlerAdapter(handlerExecutionAdapter);
+        handlerAdapters.appendHandlerAdapter(controllerHandlerAdapter);
     }
 
     @Override
