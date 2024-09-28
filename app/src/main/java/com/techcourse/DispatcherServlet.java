@@ -1,10 +1,10 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegister;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,13 +12,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegister handlerMappingRegister = new HandlerMappingRegister();
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerExecutor handlerExecutor = new HandlerExecutor();
 
     public DispatcherServlet() {
     }
@@ -41,23 +43,18 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappingRegister.getHandler(request);
-            String viewName = extractViewName(request, response);
-            renderView(viewName, request, response);
+            ModelAndView modelAndView = handlerExecutor.execute(handler, request, response);
+            renderView(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private String extractViewName(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Controller controller = (Controller) manualHandlerMapping.getHandler(request);
-        return controller.execute(request, response);
-    }
+    private void renderView(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        View view = modelAndView.getView();
+        Map<String, Object> model = modelAndView.getModel();
 
-    private void renderView(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        JspView jspView = new JspView(viewName);
-        ModelAndView modelAndView = new ModelAndView(jspView);
-
-        jspView.render(modelAndView.getModel(), request, response);
+        view.render(model, request, response);
     }
 }
