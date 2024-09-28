@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import jakarta.servlet.ServletException;
-
 public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
