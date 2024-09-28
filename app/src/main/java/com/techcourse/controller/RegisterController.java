@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView save(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("redirect:/index.jsp");
 
         User user = new User(2,
