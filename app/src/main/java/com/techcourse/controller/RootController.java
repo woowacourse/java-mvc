@@ -10,16 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class LogoutController {
+public class RootController {
 
-    private static final String REDIRECT_ROOT = "redirect:/";
+    private static final String INDEX_JSP = "/index.jsp";
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-
-        View view = new JspView(REDIRECT_ROOT);
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        View view = new JspView(INDEX_JSP);
         return new ModelAndView(view);
     }
 }
