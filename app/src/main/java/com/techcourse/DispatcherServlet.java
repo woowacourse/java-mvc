@@ -17,15 +17,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
+
     private HandlerMappings handlerMappings;
     private HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        handlerMappings = new HandlerMappings("com.techcourse.controller");
+        handlerMappings = new HandlerMappings(basePackage);
         handlerAdapters = new HandlerAdapters();
     }
 
