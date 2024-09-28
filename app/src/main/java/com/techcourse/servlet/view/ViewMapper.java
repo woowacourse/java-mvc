@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 
 public enum ViewMapper {
 
-    AUTHORIZATION(401,"401.jsp"),
-    NOT_FOUND(404,"404.jsp"),
+    AUTHORIZATION(401, "401.jsp"),
+    NOT_FOUND(404, "404.jsp"),
     INTERNAL_SERVER_ERROR(500, "500.jsp"),
     ;
 
@@ -18,11 +18,11 @@ public enum ViewMapper {
         this.viewName = viewName;
     }
 
-    public static String findViewNameWithStatusCode(int statusCode){
+    public static String findViewNameWithStatusCode(int statusCode) {
         return Stream.of(values())
                 .filter(view -> view.statusCode == statusCode)
                 .findAny()
-                .orElseThrow(() -> new NoSuchElementException(statusCode+ "에 해당하는 뷰가 없습니다."))
+                .orElseThrow(() -> new NoSuchElementException(statusCode + "에 해당하는 뷰가 없습니다."))
                 .viewName;
     }
 }
