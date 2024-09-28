@@ -1,11 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import samples.TestMethod;
 
 import java.lang.reflect.Method;
 
@@ -31,7 +30,8 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongParameterSize", HttpServletRequest.class, HttpServletResponse.class, String.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method parameter size:");
     }
 
     @Test
@@ -41,7 +41,8 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongRequest", String.class, HttpServletResponse.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method parameter type:");
     }
 
     @Test
@@ -51,7 +52,8 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongResponse", HttpServletRequest.class, String.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method parameter type:");
     }
 
     @Test
@@ -61,29 +63,7 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongReturnType", HttpServletRequest.class, HttpServletResponse.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private static class TestMethod {
-
-        public ModelAndView test(final HttpServletRequest request, final HttpServletResponse response) {
-            return new ModelAndView(new JspView(""));
-        }
-
-        public ModelAndView wrongParameterSize(final HttpServletRequest request, final HttpServletResponse response, final String name) {
-            return new ModelAndView(new JspView(""));
-        }
-
-        public ModelAndView wrongRequest(final String request, final HttpServletResponse response) {
-            return new ModelAndView(new JspView(""));
-        }
-
-        public ModelAndView wrongResponse(final HttpServletRequest request, final String response) {
-            return new ModelAndView(new JspView(""));
-        }
-
-        public String wrongReturnType(final HttpServletRequest request, final HttpServletResponse response) {
-            return "";
-        }
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method return type:");
     }
 }
