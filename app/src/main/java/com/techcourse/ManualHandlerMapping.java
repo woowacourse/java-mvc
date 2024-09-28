@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ManualHandlerMapping {
 
@@ -28,8 +29,9 @@ public class ManualHandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+    @Override
+    public Optional<Object> getHandler(final HttpServletRequest request) {
+        log.debug("Request Mapping Uri : {}", request.getRequestURI());
+        return Optional.ofNullable(controllers.get(request.getRequestURI()));
     }
 }
