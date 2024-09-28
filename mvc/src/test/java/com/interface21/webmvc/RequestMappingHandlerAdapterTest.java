@@ -1,9 +1,7 @@
 package com.interface21.webmvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,10 +30,14 @@ class RequestMappingHandlerAdapterTest {
     @DisplayName("HandlerExecution 타입이 아니면 false를 반환한다.")
     @Test
     void givenNotHandlerExecution_thenReturnFalse() {
-        Controller controller = mock(Controller.class);
+        NotHandlerExecution notHandlerExecution = mock(NotHandlerExecution.class);
 
-        boolean canSupport = handlerAdapter.support(controller);
+        boolean canSupport = handlerAdapter.support(notHandlerExecution);
 
         Assertions.assertThat(canSupport).isFalse();
     }
+
+    class NotHandlerExecution {
+    }
+
 }
