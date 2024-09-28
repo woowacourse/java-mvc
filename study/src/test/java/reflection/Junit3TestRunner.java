@@ -1,21 +1,19 @@
 package reflection;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class Junit3TestRunner {
 
     @Test
     void run() throws Exception {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
         Class<Junit3Test> clazz = Junit3Test.class;
-        Junit3Test instance = clazz.getConstructor().newInstance();
+        Junit3Test instance = Mockito.mock(Junit3Test.class);
 
         for (Method method : clazz.getMethods()) {
             if (method.getName().startsWith("test")) {
@@ -23,7 +21,10 @@ class Junit3TestRunner {
             }
         }
 
-        String expect = "Running Test1" + System.lineSeparator() + "Running Test2" + System.lineSeparator();
-        assertThat(outputStream).hasToString(expect);
+        assertAll(
+                () -> Mockito.verify(instance, times(1)).test1(),
+                () -> Mockito.verify(instance, times(1)).test2(),
+                () -> Mockito.verify(instance, never()).three()
+        );
     }
 }
