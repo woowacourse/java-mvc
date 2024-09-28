@@ -17,7 +17,7 @@ public class HandlerMappingRegistry {
 		handlerMappings.add(handlerMapping);
 	}
 
-	Optional<Object> getHandler(HttpServletRequest request) {
+	public Optional<Object> getHandler(HttpServletRequest request) {
 		for (HandlerMapping handlerMapping : handlerMappings) {
 			Object handler = handlerMapping.getHandler(request);
 			if (handler != null) {
