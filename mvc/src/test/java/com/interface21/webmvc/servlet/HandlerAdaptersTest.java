@@ -36,4 +36,20 @@ class HandlerAdaptersTest {
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("핸들러 어댑터가 존재하지 않습니다. " + handler);
     }
+
+    @Test
+    @DisplayName("신규 핸들러 어댑터를 추가한다.")
+    void appendHandlerAdapter() {
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
+        Object handler = new Object();
+        HandlerAdapter handlerAdapter = mock(HandlerAdapter.class);
+        when(handlerAdapter.supports(any()))
+                .thenReturn(true);
+
+        handlerAdapters.appendHandlerAdapter(handlerAdapter);
+
+        HandlerAdapter actual = handlerAdapters.getHandlerAdapter(handler);
+
+        assertThat(actual).isEqualTo(handlerAdapter);
+    }
 }

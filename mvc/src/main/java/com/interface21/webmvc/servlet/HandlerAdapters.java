@@ -19,4 +19,8 @@ public class HandlerAdapters {
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("핸들러 어댑터가 존재하지 않습니다. " + handler.toString()));
     }
+
+    public void appendHandlerAdapter(HandlerAdapter handlerAdapter) {
+        this.handlerAdapters.add(handlerAdapter);
+    }
 }
