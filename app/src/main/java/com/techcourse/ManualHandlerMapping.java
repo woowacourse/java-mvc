@@ -25,10 +25,10 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         if (initialized) {
-            log.warn("ManualHandlerMapping is already initialized!");
+            log.warn("ManualHandlerMapping이 이미 초기화되었습니다.");
             return;
         }
-        log.info("Initialized ManualHandlerMapping!");
+        log.info("ManualHandlerMapping을 초기화했습니다.");
 
         controllers.putIfAbsent("/", new ForwardController("/index.jsp"));
         controllers.putIfAbsent("/logout", new LogoutController());

@@ -29,13 +29,13 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
-            throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
-                    "Check if there is another servlet registered under the same name.");
+            throw new IllegalStateException("'" + DEFAULT_SERVLET_NAME + "' 이름으로 서블릿 등록 실패. " +
+                    "동일한 이름으로 이미 등록된 서블릿이 있는지 확인하십시오.");
         }
 
         registration.setLoadOnStartup(1);
         registration.addMapping("/");
 
-        log.info("Start AppWebApplication Initializer");
+        log.info("AppWebApplication 초기화 시작");
     }
 }

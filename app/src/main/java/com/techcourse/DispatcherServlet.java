@@ -58,7 +58,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             PAGE_404_VIEW.render(Map.of(), request, response);
         } catch (Exception ex) {
-            log.error("Exception during rendering 404 page: {}", ex.getMessage(), ex);
+            log.error("404 페이지 렌더링 중 예외 발생: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }

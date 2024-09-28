@@ -23,6 +23,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    public static final String DEFAULT_BASE_PACKAGE = "com";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
@@ -33,15 +34,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     protected AnnotationHandlerMapping() {
-        this.basePackage = new Object[]{"com"};
+        this.basePackage = new Object[]{DEFAULT_BASE_PACKAGE};
     }
 
     public void initialize() {
         if (initialized) {
-            log.warn("AnnotationHandlerMapping is already initialized!");
+            log.warn("AnnotationHandlerMapping이 이미 초기화되었습니다.");
             return;
         }
-        log.info("Initialized AnnotationHandlerMapping!");
+        log.info("AnnotationHandlerMapping을 초기화했습니다.");
 
         Set<Class<?>> controllerClasses = findControllerClasses();
         for (Class<?> controllerClass : controllerClasses) {
@@ -76,7 +77,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException(
-                    "Failed to instantiate controller: " + controllerClass.getName(), e);
+                    "컨트롤러 인스턴스화 실패: " + controllerClass.getName(), e);
         }
     }
 
