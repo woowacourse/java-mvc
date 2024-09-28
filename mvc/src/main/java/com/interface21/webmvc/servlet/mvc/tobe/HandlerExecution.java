@@ -7,10 +7,9 @@ import java.util.Objects;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 
-public class HandlerExecution implements HandlerMapping {
+public class HandlerExecution {
 
     private final Object handler;
     private final Method method;
