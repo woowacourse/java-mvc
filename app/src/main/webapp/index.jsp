@@ -19,7 +19,7 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#!">내정보</a></li>
                             <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="/logout/view">로그아웃</a></li>
+                            <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
                         </ul>
                     </li>
                 </ul>
