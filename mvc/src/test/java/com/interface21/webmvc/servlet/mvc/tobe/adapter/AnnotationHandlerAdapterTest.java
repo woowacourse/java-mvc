@@ -48,11 +48,10 @@ class AnnotationHandlerAdapterTest {
     void handle() {
         AnnotationHandlerAdapter adapter = new AnnotationHandlerAdapter();
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
-        adapter.supports(handlerExecution);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        ModelAndView actual = adapter.handle(request, response);
+        ModelAndView actual = adapter.handle(request, response, handlerExecution);
 
         verify(handlerExecution).handle(request, response);
         assertThat(actual).isEqualTo(handlerExecution.handle(request, response));

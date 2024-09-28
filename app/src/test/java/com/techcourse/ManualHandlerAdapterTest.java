@@ -48,12 +48,11 @@ class ManualHandlerAdapterTest {
     void handle() throws Exception {
         ManualHandlerAdapter adapter = new ManualHandlerAdapter();
         Controller controller = mock(Controller.class);
-        adapter.supports(controller);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(controller.execute(request, response)).thenReturn("/");
 
-        ModelAndView actual = adapter.handle(request, response);
+        ModelAndView actual = adapter.handle(request, response, controller);
 
         ModelAndView expected = new ModelAndView(new JspView("/"));
         assertThat(actual.getView()).isEqualTo(expected.getView());

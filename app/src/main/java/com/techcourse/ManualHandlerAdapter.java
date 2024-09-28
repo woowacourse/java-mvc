@@ -17,21 +17,20 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerAdapter.class);
     private static final View PAGE_500_VIEW = new JspView("redirect:/500.jsp");
 
-    private Controller controller;
-
     @Override
     public boolean supports(Object handler) {
-        if (handler instanceof Controller) {
-            this.controller = (Controller) handler;
-            return true;
-        }
-        return false;
+        return handler instanceof Controller;
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView handle(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final Object handler
+    ) {
         try {
-            return new ModelAndView(new JspView(controller.execute(request, response)));
+            JspView view = new JspView(((Controller) handler).execute(request, response));
+            return new ModelAndView(view);
         } catch (Exception e) {
             log.error("컨트롤러 실행 중 문제가 발생했습니다.: {}", e.getMessage(), e);
             return new ModelAndView(PAGE_500_VIEW);
