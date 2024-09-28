@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import java.io.Serial;
-import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -39,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
             final var adapter = handlerAdapters.getHandlerAdapter(handler);
             final var modelAndView = adapter.handle(request, response, handler);
             View view = modelAndView.getView();
-            view.render(Map.of(), request, response);
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
