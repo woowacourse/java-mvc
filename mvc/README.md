@@ -19,5 +19,5 @@
     - [x] HandlerMapping 인터페이스 분리
         - DispatcherServlet의 초기화 과정에서 ManualHandlerMapping, AnnotationHandlerMapping을 모두 초기화
         - 초기화한 2개의 HandlerMapping List로 관리한다.
-    - [ ] HandlerAdapter 인터페이스 분리
+    - [x] HandlerAdapter 인터페이스 분리
         - HandlerMapping 클래스에서 찾은 컨트롤러를 실행하는 역할

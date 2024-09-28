@@ -1,15 +1,18 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,55 +21,56 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        addHandlerMapping(manualHandlerMapping);
+
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
+        addHandlerMapping(annotationHandlerMapping);
+
+        addHandlerAdapter(new ControllerAdapter());
+        addHandlerAdapter(new HandlerExecutionAdapter());
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+
+        Object handler = handlerMappingRegistry.getHandler(request)
+                .orElseThrow(() -> new UnsupportedOperationException("지원하지 않는 요청입니다."));
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         try {
-            if (executeManual(request, response)) {
-                return;
-            }
-            executeAnnotation(request, response);
-        } catch (Throwable e) {
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            render(modelAndView, request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-        throw new UnsupportedOperationException("지원하지 않는 요청입니다.");
     }
 
-    private boolean executeManual(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String requestURI = request.getRequestURI();
-        if (manualHandlerMapping.contains(requestURI)) {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
-            String viewName = controller.execute(request, response);
-            new JspView(viewName).render(Map.of(), request, response);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean executeAnnotation(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (annotationHandlerMapping.contains(request)) {
-            HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(request);
-            ModelAndView modelAndView = handlerExecution.handle(request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
-            return true;
-        }
-        return false;
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
