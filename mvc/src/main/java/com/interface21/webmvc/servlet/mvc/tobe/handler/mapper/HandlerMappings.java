@@ -1,4 +1,4 @@
-package com.techcourse.servlet.handler.mapper;
+package com.interface21.webmvc.servlet.mvc.tobe.handler.mapper;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;

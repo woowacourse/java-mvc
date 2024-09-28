@@ -7,14 +7,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.techcourse.controller.manual.LoginController;
 import com.techcourse.controller.manual.LoginViewController;
 import com.techcourse.controller.manual.LogoutController;
 import com.techcourse.controller.manual.RegisterController;
 import com.techcourse.controller.manual.RegisterViewController;
-import com.techcourse.servlet.handler.mapper.HandlerMappings;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.mapper.HandlerMappings;
 import com.techcourse.servlet.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;

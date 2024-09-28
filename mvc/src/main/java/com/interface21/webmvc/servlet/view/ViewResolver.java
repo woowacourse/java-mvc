@@ -1,7 +1,6 @@
-package com.techcourse.servlet.view;
+package com.interface21.webmvc.servlet.view;
 
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class ViewResolver {
 

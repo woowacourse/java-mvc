@@ -1,4 +1,4 @@
-package com.techcourse.servlet.view;
+package com.interface21.webmvc.servlet.view;
 
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
