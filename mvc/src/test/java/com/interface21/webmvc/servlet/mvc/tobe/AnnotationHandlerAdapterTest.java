@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,7 +50,9 @@ class AnnotationHandlerAdapterTest {
         AnnotationHandlerAdapter adapter = new AnnotationHandlerAdapter();
         ModelAndView result = adapter.handle(request, response, handlerExecution);
 
-        assertThat(result).isEqualTo(expected);
-        verify(handlerExecution).handle(request, response);
+        assertAll(
+                () -> assertThat(result).isEqualTo(expected),
+                () -> verify(handlerExecution).handle(request, response)
+        );
     }
 }

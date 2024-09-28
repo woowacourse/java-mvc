@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +28,10 @@ class HandlerMappingRegistryTest {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
 
         Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-        assertThat(handler).isPresent();
-        assertThat(handler.get()).isInstanceOf(AnnotationHandlerMapping.class);
+
+        assertAll(
+                () -> assertThat(handler).isPresent(),
+                () -> assertThat(handler.get()).isInstanceOf(AnnotationHandlerMapping.class)
+        );
     }
 }
