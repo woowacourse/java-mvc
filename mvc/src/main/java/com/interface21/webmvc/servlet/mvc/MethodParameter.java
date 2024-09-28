@@ -22,6 +22,10 @@ public class MethodParameter {
         return parameter.isAnnotationPresent(annotationClass);
     }
 
+    public boolean isType(Class<?> clazz) {
+        return getType().equals(clazz);
+    }
+
     public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass) {
         return method.getAnnotation(annotationClass);
     }

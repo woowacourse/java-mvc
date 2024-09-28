@@ -9,7 +9,7 @@ public class DefaultRequestArgumentResolver implements ArgumentResolver {
 
     @Override
     public boolean supports(MethodParameter methodParameter) {
-        return methodParameter.getType().equals(HttpServletRequest.class);
+        return methodParameter.isType(HttpServletRequest.class);
     }
 
     @Override
