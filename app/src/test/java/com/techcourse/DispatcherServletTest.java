@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.RegisterController;
@@ -29,7 +29,7 @@ class DispatcherServletTest {
     private static Stream<Arguments> handlerProvider() {
         return Stream.of(
                 Arguments.of("/login", "POST", Controller.class),
-                Arguments.of("/register", "POST", HandlerExecution.class)
+                Arguments.of("/register", "GET", HandlerExecution.class)
         );
     }
 
