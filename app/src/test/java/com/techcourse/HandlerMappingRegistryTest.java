@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,10 +29,10 @@ class HandlerMappingRegistryTest {
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
 
         // when
-        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        Object handler = handlerMappingRegistry.getHandler(request);
 
         // then
-        Assertions.assertThat(handler.get()).isInstanceOf(LoginController.class);
+        Assertions.assertThat(handler).isInstanceOf(LoginController.class);
     }
 
     @DisplayName("핸들러 반환 성공 : 핸들러매핑이 여러 개 등록되어 있는 경우")
@@ -58,9 +57,9 @@ class HandlerMappingRegistryTest {
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
         // when
-        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        Object handler = handlerMappingRegistry.getHandler(request);
 
         // then
-        Assertions.assertThat(handler.get()).isInstanceOf(HandlerExecution.class);
+        Assertions.assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 }

@@ -4,7 +4,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 public class HandlerMappingRegistry {
 
@@ -18,10 +18,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.handlerExist(request))
                 .findFirst()
-                .map(handlerMapping -> handlerMapping.getHandler(request));
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .orElseThrow(() -> new NoSuchElementException("처리할 수 있는 핸들러를 찾지 못했습니다."));
     }
 }
