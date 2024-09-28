@@ -45,11 +45,16 @@ public class DispatcherServlet extends HttpServlet {
                     .orElse(new NotFoundController());
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-            JspView jspView = (JspView) modelAndView.getView();
-            jspView.render(modelAndView.getModel(), request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        JspView jspView = (JspView) modelAndView.getView();
+        jspView.render(modelAndView.getModel(), request, response);
     }
 }
