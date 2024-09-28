@@ -19,15 +19,15 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public ModelAndView execute(
+    public Optional<ModelAndView> execute(
             HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Optional<HandlerAdapter> handlerAdapter = handlerAdapters.stream()
                 .filter(adapter -> adapter.support(handler))
                 .findAny();
 
         if (handlerAdapter.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
-        return handlerAdapter.get().handle(request, response, handler);
+        return Optional.of(handlerAdapter.get().handle(request, response, handler));
     }
 }

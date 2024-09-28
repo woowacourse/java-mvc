@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,16 +31,16 @@ class HandlerMappingRegistryTest {
         when(handlerMapping.getHandler(request)).thenReturn(expectedHandler);
 
         // when
-        Object actual = handlerMappingRegistry.getHandler(request);
+        Object actual = handlerMappingRegistry.getHandler(request).get();
 
         // then
         assertThat(actual).isNotNull();
         assertThat(actual).isInstanceOf(HandlerExecution.class);
     }
 
-    @DisplayName("핸들러를 찾지 못하면 null을 반환한다.")
+    @DisplayName("핸들러를 찾지 못하면 빈 옵셔널을 반환한다.")
     @Test
-    void getHandler_returnNull() {
+    void getHandler_returnEmptyOptional() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HandlerMapping handlerMapping = mock(HandlerMapping.class);
@@ -48,9 +49,9 @@ class HandlerMappingRegistryTest {
         when(handlerMapping.getHandler(request)).thenReturn(expectedHandler);
 
         // when
-        Object actual = handlerMappingRegistry.getHandler(request);
+        Optional<Object> actual = handlerMappingRegistry.getHandler(request);
 
         // then
-        assertThat(actual).isNull();
+        assertThat(actual).isEmpty();
     }
 }

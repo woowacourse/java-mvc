@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,18 +42,19 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = handlerMappingRegistry.getHandler(request);
-            if (handler == null) {
+            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+            if (handler.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            ModelAndView modelAndView = handlerAdapterRegistry.execute(request, response, handler);
-            if (modelAndView == null) {
+            Optional<ModelAndView> modelAndViewOptional = handlerAdapterRegistry.execute(request, response, handler.get());
+            if (modelAndViewOptional.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
+            ModelAndView modelAndView = modelAndViewOptional.get();
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {

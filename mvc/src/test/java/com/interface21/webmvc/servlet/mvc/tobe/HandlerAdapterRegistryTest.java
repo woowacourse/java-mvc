@@ -7,6 +7,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,25 +31,25 @@ class HandlerAdapterRegistryTest {
         Controller handler = mock(Controller.class);
 
         // when
-        ModelAndView actual = handlerAdapterRegistry.execute(request, response, handler);
+        ModelAndView actual = handlerAdapterRegistry.execute(request, response, handler).get();
 
         // then
         assertThat(actual).isNotNull();
         assertThat(actual).isInstanceOf(ModelAndView.class);
     }
 
-    @DisplayName("지원하는 handlerAdapter를 찾지 못하면, null을 반환한다.")
+    @DisplayName("지원하는 handlerAdapter를 찾지 못하면, 빈 옵셔널을 반환한다.")
     @Test
-    void execute_returnNull() throws Exception {
+    void execute_returnEmptyOptional() throws Exception {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         HandlerExecution handler = mock(HandlerExecution.class);
 
         // when
-        ModelAndView actual = handlerAdapterRegistry.execute(request, response, handler);
+        Optional<ModelAndView> actual = handlerAdapterRegistry.execute(request, response, handler);
 
         // then
-        assertThat(actual).isNull();
+        assertThat(actual).isEmpty();
     }
 }
