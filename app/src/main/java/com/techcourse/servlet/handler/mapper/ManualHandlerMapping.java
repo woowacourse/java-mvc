@@ -42,6 +42,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request);
+        if (!hasHandler(request)) {
+            throw new IllegalArgumentException("잘못된 핸들러 요청입니다.");
+        }
         return controllers.get(request.getRequestURI());
     }
 }
