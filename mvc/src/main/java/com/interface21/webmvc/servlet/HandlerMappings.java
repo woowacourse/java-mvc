@@ -13,11 +13,6 @@ public class HandlerMappings {
 
     public HandlerMappings(HandlerMapping... handlerMappings) {
         this.handlerMappings.addAll(Arrays.asList(handlerMappings));
-        initialize();
-    }
-
-    private void initialize() {
-        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public Object getHandler(HttpServletRequest request) {

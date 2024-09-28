@@ -25,6 +25,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+
+        initialize();
     }
 
     @Override
