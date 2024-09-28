@@ -1,7 +1,9 @@
 package com.interface21.webmvc.servlet.view;
 
+import java.io.IOException;
 import java.util.Map;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -24,7 +26,7 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+            throws ServletException, IOException {
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
