@@ -50,11 +50,16 @@ public class DispatcherServlet extends HttpServlet {
             log.info("controller = {}", controller);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
-            final View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            move(request, response, modelAndView);
         } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage());
             throw new ServletException("예기치 못한 오류가 발생했습니다.");
         }
+    }
+
+    private void move(final HttpServletRequest request, final HttpServletResponse response,
+                      final ModelAndView modelAndView) throws Exception {
+        final View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
