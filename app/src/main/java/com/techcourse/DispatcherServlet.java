@@ -44,8 +44,15 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMappingRegistry.getHandler(request);
             if (handler == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
+
             ModelAndView modelAndView = handlerAdapterRegistry.execute(request, response, handler);
+            if (modelAndView == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
