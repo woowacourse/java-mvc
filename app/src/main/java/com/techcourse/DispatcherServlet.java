@@ -7,17 +7,15 @@ import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.SimpleControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.ViewResolver;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.view.JsonViewResolver;
 import com.interface21.webmvc.servlet.view.JspViewResolver;
+import com.interface21.webmvc.servlet.view.ViewResolvers;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +27,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMappings handlerMappings;
     private HandlerAdapters handlerAdapters;
-    private List<ViewResolver> viewResolvers;
+    private ViewResolvers viewResolvers;
 
     @Override
     public void init() {
@@ -39,9 +37,9 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters = new HandlerAdapters();
         handlerAdapters.addHandlerAdapter(new SimpleControllerHandlerAdapter());
         handlerAdapters.addHandlerAdapter(new RequestMappingHandlerAdapter());
-        viewResolvers = new ArrayList<>();
-        viewResolvers.add(new JsonViewResolver());
-        viewResolvers.add(new JspViewResolver());
+        viewResolvers = new ViewResolvers();
+        viewResolvers.addViewResolvers(new JsonViewResolver());
+        viewResolvers.addViewResolvers(new JspViewResolver());
     }
 
     @Override
@@ -58,13 +56,8 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = adapter.handle(handler, request, response);
 
             String viewName = modelAndView.getViewName();
-            for (ViewResolver viewResolver : viewResolvers) {
-                View view = viewResolver.resolveViewName(viewName);
-                if (view != null) {
-                    view.render(modelAndView.getModel(), request, response);
-                    return;
-                }
-            }
+            View view = viewResolvers.resolveViewName(viewName);
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
