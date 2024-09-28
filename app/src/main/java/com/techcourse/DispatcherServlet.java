@@ -1,15 +1,16 @@
 package com.techcourse;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AbstractHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -21,17 +22,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
+    private HandlerAdapter handlerAdapter;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        handlerMappings = new ArrayList<>();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        handlerMappings.add(manualHandlerMapping);
+        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
+        handlerAdapter = new AbstractHandlerAdapter();
     }
 
     @Override
@@ -40,16 +44,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = (Controller) manualHandlerMapping.getHandler(request);
-            if(controller == null) {
-                HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
-                ModelAndView modelAndView = handlerExecution.handle(request, response);
-                modelAndView.getView().render(modelAndView.getModel(), request, response);
-            } else{
-                final var viewName = controller.execute(request, response);
-                new JspView(viewName).render(new HashMap<>(), request, response);
+            for(HandlerMapping handlerMapping : handlerMappings) {
+                ModelAndView mav = handlerAdapter.adapt(handlerMapping, request, response);
+                mav.getView().render(mav.getModel(), request, response);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
