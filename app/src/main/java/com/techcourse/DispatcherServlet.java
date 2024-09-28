@@ -61,8 +61,12 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
             Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            if (handler.isEmpty()) {
+                log.error("handler 없음");
+                return;
+            }
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
