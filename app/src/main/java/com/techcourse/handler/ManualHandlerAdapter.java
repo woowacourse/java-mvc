@@ -30,6 +30,6 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean support(final HttpServletRequest request) {
         final Controller handler = handlerMapping.getHandler(request.getRequestURI());
-        return !Objects.isNull(handler);
+        return Objects.nonNull(handler);
     }
 }
