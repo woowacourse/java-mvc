@@ -10,6 +10,8 @@ import java.util.Set;
 
 public class ControllerScanner {
 
+    private static final Class<Controller> CONTROLLER_CLASS = Controller.class;
+
     final Map<Class<?>, Object> controllers = new HashMap<>();
 
     public ControllerScanner(Object... basePackage) {
@@ -18,7 +20,7 @@ public class ControllerScanner {
 
     private void scanControllers(Object... basePackage) {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(CONTROLLER_CLASS);
         for (Class<?> clazz : controllerClasses) {
             Object instance = createInstance(clazz);
             controllers.put(clazz, instance);
