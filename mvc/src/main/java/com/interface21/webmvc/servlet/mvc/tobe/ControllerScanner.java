@@ -2,26 +2,28 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.webmvc.servlet.exception.ControllerScanException;
+import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.reflections.Reflections;
 
 public class ControllerScanner {
+
+    private static final Class<? extends Annotation> CONTROLLER_ANNOTATION = Controller.class;
 
     private final Object[] basePackage;
     private final Map<Class<?>, Object> controllers = new HashMap<>();
 
     public ControllerScanner(Object... basePackage) {
         this.basePackage = basePackage;
-        scanControllers();
+        scanController();
     }
 
-    private void scanControllers() {
+    private void scanController() {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> annotatedControllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
-        annotatedControllerTypes.forEach(this::addController);
+        reflections.getTypesAnnotatedWith(CONTROLLER_ANNOTATION)
+                .forEach(this::addController);
     }
 
     private void addController(Class<?> annotatedControllerType) {
