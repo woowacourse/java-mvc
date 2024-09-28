@@ -1,11 +1,9 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.handleradapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.handleradapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.handleradapter.RequestMappingHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,23 +18,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final String basePackage;
+
     private AnnotationHandlerMapping annotationHandlerMapping;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
         try {
-            manualHandlerMapping = new ManualHandlerMapping();
-            manualHandlerMapping.initialize();
-
-            annotationHandlerMapping = new AnnotationHandlerMapping(getClass().getPackageName());
+            annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
             annotationHandlerMapping.initialize();
 
-            handlerAdapters = List.of(new ControllerHandlerAdapter(), new RequestMappingHandlerAdapter());
+            handlerAdapters = List.of(new RequestMappingHandlerAdapter());
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             log.info("Dispatcher Servlet을 초기화하던 중 오류가 발생했습니다. :: message = {}", e.getMessage(), e.getCause());
             throw new IllegalArgumentException(e);
@@ -50,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = findHandler(request);
+            Object handler = annotationHandlerMapping.getHandler(request);
             HandlerAdapter adapter = findHandlerAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(request, response, handler);
@@ -59,14 +56,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object findHandler(HttpServletRequest request) {
-        Object handler = manualHandlerMapping.getHandler(request.getRequestURI());
-        if (handler == null) {
-            return annotationHandlerMapping.getHandler(request);
-        }
-        return handler;
     }
 
     private HandlerAdapter findHandlerAdapter(Object handler) {
