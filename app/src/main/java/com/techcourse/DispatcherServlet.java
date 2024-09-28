@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -39,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = (Controller) manualHandlerMapping.getHandler(request);
             if(controller == null) {
                 HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMapping.getHandler(request);
                 ModelAndView modelAndView = handlerExecution.handle(request, response);

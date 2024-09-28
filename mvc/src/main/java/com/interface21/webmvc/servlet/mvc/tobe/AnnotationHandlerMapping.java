@@ -9,7 +9,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 

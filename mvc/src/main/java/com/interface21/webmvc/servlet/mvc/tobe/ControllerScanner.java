@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
@@ -27,7 +26,7 @@ public final class ControllerScanner {
 	}
 
 	private static void scanRequestMappingForMethods(Map<HandlerKey, HandlerExecution> executions, Class clazz) {
-		getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
+		getAllMethods(clazz, withAnnotation(RequestMapping.class))
 			.forEach(method -> {
 				String value = method.getAnnotation(RequestMapping.class).value();
 				extractMethodOfRequestMapping(executions, clazz, value, method);

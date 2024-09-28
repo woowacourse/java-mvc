@@ -11,3 +11,4 @@
 
  `@Controller` 어노테이션 기반의 컨트롤러 등록도 지원해주는 프레임워크를 만든다.
 - [x] DispatcherServlet이 AnnotationHandlerMapping을 통해 ModelAndView를 받도록 구현
+- [x] 핸들러 매핑을 추상화하여 어노테이션 기반과 인터페이스 기반의 매핑을 모두 지원하도록 수정
