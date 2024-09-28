@@ -1,5 +1,10 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -13,31 +18,39 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+
         manualHandlerMapping.initialize();
+        annotationHandlerMapping.initialize();
+
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-//            추후 @MVC를 지원할 때 사용할 코드
-//            HandlerExecution handler = annotationHandlerMapping.getHandler(request);
-//            ModelAndView modelAndView = handler.handle(request, response);
-//            modelAndView.render(request, response);
-
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final var handler = handlerMappingRegistry.getHandler(request);
+            if (handler instanceof Controller) {
+                String viewName = ((Controller) handler).execute(request, response);
+                move(viewName, request, response);
+            }
+            if (handler instanceof HandlerExecution) {
+                ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
+                modelAndView.render(request, response);
+            }
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
