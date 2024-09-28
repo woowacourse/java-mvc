@@ -32,8 +32,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
-        HandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
         HandlerAdapter handlerExecutionAdapter = new HandlerExecutionAdapter();
+        HandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
 
         handlerMappings.appendHandlerMapping(annotationHandlerMapping);
         handlerAdapters.appendHandlerAdapter(handlerExecutionAdapter);
