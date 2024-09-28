@@ -42,11 +42,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
 
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(CONTROLLER_PACKAGE);
-        try {
-            annotationHandlerMapping.initialize();
-        } catch (Exception e) {
-            log.error("annotationHandlerMapping initialize 실패", e);
-        }
+        annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
