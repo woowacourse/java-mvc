@@ -17,10 +17,6 @@ public class HandlerAdapters {
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
-    public void add(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
-    }
-
     public Optional<HandlerAdapter> findHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
