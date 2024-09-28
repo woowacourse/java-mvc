@@ -25,7 +25,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     static {
-        handlerMappings.add(new AnnotationHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.add(new ManualHandlerMapping());
 
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
