@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.view;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JsonView implements View {
-    private static final String JSON_CONTENT_TYPE = "Application/json";
-
     private static final String EMPTY_STRING = "";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
@@ -31,7 +30,7 @@ public class JsonView implements View {
             throws Exception {
         String responseBody = createResponseBody(model);
 
-        response.setContentType(JSON_CONTENT_TYPE);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         setResponseBody(response, responseBody);
     }
 

@@ -13,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-public class AnnotationUserController {
+public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationUserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(HttpServletRequest request, HttpServletResponse response) {
