@@ -2,7 +2,6 @@ package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,10 +33,8 @@ class ManualHandlerAdapterTest {
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
-        assertAll(
-                () -> assertThatCode(() -> handlerAdapter.handle(controller, request, response))
-                        .doesNotThrowAnyException()
-        );
+        assertThatCode(() -> handlerAdapter.handle(controller, request, response))
+                .doesNotThrowAnyException();
     }
 
 
