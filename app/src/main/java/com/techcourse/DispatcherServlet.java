@@ -14,14 +14,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerMappingRegistry handlerMappingRegistry;
 
@@ -33,12 +29,10 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(getClass().getPackageName());
         HandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
         HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
         handlerAdapterRegistry.addHandlerAdapter(manualHandlerAdapter);
