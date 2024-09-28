@@ -1,5 +1,7 @@
 package com.interface21.webmvc.servlet;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,5 +31,13 @@ public class ModelAndView {
 
     public View getView() {
         return view;
+    }
+
+    public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        try {
+            view.render(model, httpServletRequest, httpServletResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
