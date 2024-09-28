@@ -30,8 +30,8 @@
   - [x] testSharedCounter()의 결과 이유 적기
 
 ### 3단계 - JSON View 구현하기
-- [ ] JsonView 클래스를 구현한다.
-  - [ ] HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현
+- [x] JsonView 클래스를 구현한다.
+  - [x] HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현
   - [x] JSON을 자바 객체로 변환할 때 Jackson 라이브러리를 사용
   - [x] JSON으로 응답할 때 `ContentType`은 `MediaType.APPLICATION_JSON_UTF8_VALUE`으로 반환
   - [x] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환

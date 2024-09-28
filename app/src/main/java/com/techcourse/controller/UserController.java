@@ -21,7 +21,7 @@ public class UserController {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView("");
+        final ModelAndView modelAndView = new ModelAndView("json:");
         final User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow();
 
