@@ -32,6 +32,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
+    @Override
     public Object getHandler(HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
