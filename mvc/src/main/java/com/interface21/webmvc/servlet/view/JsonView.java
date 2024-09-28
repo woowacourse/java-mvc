@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,12 +28,16 @@ public class JsonView implements View {
     }
 
     private String parseBody(Map<String, ?> model, Set<String> keySet) throws JsonProcessingException {
-        if (keySet.size() == 1) {
-            String key = keySet.iterator().next();
-            return String.valueOf(model.get(key));
+        Map<String, Object> results = new HashMap<>();
+        for (String key : keySet) {
+            results.put(key, model.get(key));
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(model);
+        if (results.size() == 1) {
+            return objectMapper.writeValueAsString(results.values().iterator().next());
+        }
+
+        return objectMapper.writeValueAsString(results);
     }
 }
