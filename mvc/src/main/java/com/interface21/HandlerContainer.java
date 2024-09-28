@@ -24,7 +24,7 @@ public class HandlerContainer {
 
     public void initialize(Class<?> clazz) {
         registerHandlerManagement(clazz);
-        if (clazz.getPackageName().equals(this.getClass().getPackageName())) {
+        if (!clazz.getPackageName().equals(this.getClass().getPackageName())) {
             registerHandlerManagement(this.getClass());
         }
     }
