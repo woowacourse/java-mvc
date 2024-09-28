@@ -1,21 +1,18 @@
 package com.interface21.webmvc.servlet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class HandlerMappings {
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public HandlerMappings(String basePackage) {
-        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
-        handlerMappings.add(new ControllerHandlerMapping(basePackage));
-
+    public HandlerMappings(HandlerMapping... handlerMappings) {
+        this.handlerMappings.addAll(Arrays.asList(handlerMappings));
         initialize();
     }
 
