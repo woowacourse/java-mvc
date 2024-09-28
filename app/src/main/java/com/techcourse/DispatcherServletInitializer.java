@@ -17,12 +17,13 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = new DispatcherServlet("com.techcourse");
+        dispatcherServlet.appendHandlerMapping(new ManualHandlerMapping());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
             throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
-                    "Check if there is another servlet registered under the same name.");
+                                            "Check if there is another servlet registered under the same name.");
         }
 
         registration.setLoadOnStartup(1);
