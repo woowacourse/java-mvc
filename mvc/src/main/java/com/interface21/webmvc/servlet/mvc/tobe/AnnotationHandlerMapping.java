@@ -4,8 +4,8 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
@@ -36,20 +36,19 @@ public class AnnotationHandlerMapping {
     private void addHandlerExecutions(final Object controllerInstance, final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String mappingUrl = requestMapping.value();
-        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+        List<RequestMethod> requestMethods = getRequestMethods(requestMapping);
 
-        Arrays.stream(requestMethods)
-                .forEach(requestMethod -> {
-                    HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
-                    HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                });
+        requestMethods.forEach(requestMethod -> {
+            HandlerKey handlerKey = new HandlerKey(mappingUrl, requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        });
     }
 
-    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
-        RequestMethod[] requestMethods = requestMapping.method();
-        if (requestMethods.length == 0) {
-            requestMethods = RequestMethod.values();
+    private List<RequestMethod> getRequestMethods(final RequestMapping requestMapping) {
+        List<RequestMethod> requestMethods = List.of(requestMapping.method());
+        if (requestMethods.isEmpty()) {
+            requestMethods = List.of(RequestMethod.values());
         }
         return requestMethods;
     }
