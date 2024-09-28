@@ -16,7 +16,7 @@
         - Relfections 라이브러리를 사용한다.
         - Relfections 객체로 @Controller가 설정된 모든 클래스를 찾는다.
         - 각 클래스의 인스턴스를 생성한다.
-    - [ ] HandlerMapping 인터페이스 분리
+    - [x] HandlerMapping 인터페이스 분리
         - DispatcherServlet의 초기화 과정에서 ManualHandlerMapping, AnnotationHandlerMapping을 모두 초기화
         - 초기화한 2개의 HandlerMapping List로 관리한다.
     - [ ] HandlerAdapter 인터페이스 분리

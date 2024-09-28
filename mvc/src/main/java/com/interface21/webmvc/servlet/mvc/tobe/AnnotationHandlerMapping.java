@@ -12,7 +12,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -66,14 +66,8 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
-    public boolean contains(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-        return handlerExecutions.containsKey(handlerKey);
-    }
-
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    @Override
+    public Object getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
