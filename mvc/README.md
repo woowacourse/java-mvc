@@ -11,7 +11,7 @@
 
 - [x] Legacy MVC와 @MVC 통합
     - 인터페이스 컨트롤러를 어노테이션 기반 컨트롤러로 변경해도 정상 동작한다.
-    - [ ] ControllerScanner 클래스 추가
+    - [x] ControllerScanner 클래스 추가
         - 컨트롤러를 찾아서 인스턴스 생성하는 역할
         - Relfections 라이브러리를 사용한다.
         - Relfections 객체로 @Controller가 설정된 모든 클래스를 찾는다.
