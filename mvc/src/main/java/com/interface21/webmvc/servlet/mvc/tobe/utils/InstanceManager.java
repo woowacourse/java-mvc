@@ -2,14 +2,14 @@ package com.interface21.webmvc.servlet.mvc.tobe.utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InstanceManager {
 
     private static final InstanceManager instance = new InstanceManager();
 
-    private final Map<Class<?>, Object> controllers = new HashMap<>();
+    private final Map<Class<?>, Object> controllers = new ConcurrentHashMap<>();
 
     private InstanceManager() {
     }
