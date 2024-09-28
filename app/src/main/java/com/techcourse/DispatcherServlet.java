@@ -1,5 +1,10 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,6 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private ManualHandlerMapping manualHandlerMapping;
+    private AnnotationHandlerMapping annotationHandlerMapping;
 
     public DispatcherServlet() {
     }
@@ -23,20 +29,31 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        annotationHandlerMapping = new AnnotationHandlerMapping("com");  // TODO: base 필요?
+        annotationHandlerMapping.initialize();
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
+            Controller controller = manualHandlerMapping.getHandler(requestURI);
+            if (controller != null) {
+                String viewName = controller.execute(request, response); // model을 request에 담음
+                JspView jspView = new JspView(viewName);
+                jspView.render(new HashMap<>(), request, response); // req에 있는 model 뽑아서 view에 넣음
+            }
 
-            JspView jspView = new JspView(viewName);
-            jspView.render(new HashMap<>(), request, response);
+            if (controller == null) {
+                HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(request);
+                ModelAndView modelAndView = handlerExecution.handle(request, response);
+                View view = modelAndView.getView();
+                view.render(modelAndView.getModel(), request, response);
+            }
+
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
