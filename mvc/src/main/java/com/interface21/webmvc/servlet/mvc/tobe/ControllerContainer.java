@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +16,7 @@ public class ControllerContainer {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerContainer.class);
 
-    private final Map<String, Object> container;
+    private final Map<Class<?>, Object> container;
     private final Object[] basePackage;
 
     public ControllerContainer(final Object... basePackage) {
@@ -32,9 +33,8 @@ public class ControllerContainer {
     }
 
     private void init(final Class<?> controller) {
-        final String name = controller.getName();
         final Object instance = getInstance(controller);
-        container.put(name, instance);
+        container.put(controller, instance);
     }
 
     private Object getInstance(final Class<?> controller) {
@@ -59,11 +59,11 @@ public class ControllerContainer {
     }
 
     public Object getController(final Class<?> controller) {
-        return getController(controller.getName());
+        return Optional.ofNullable(container.get(controller))
+                .orElseThrow(() -> new IllegalArgumentException(String.format("%s는 %s내 없는 인스턴스입니다.", controller, Arrays.toString(basePackage))));
     }
 
-    public Object getController(final String name) {
-        return Optional.ofNullable(container.get(name))
-                .orElseThrow(() -> new IllegalArgumentException(String.format("%s는 %s내 없는 인스턴스입니다.", name, basePackage)));
+    public Map<Class<?>, Object> getControllers() {
+        return container;
     }
 }

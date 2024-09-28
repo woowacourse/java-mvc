@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum RequestMethod {
     GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
@@ -21,5 +22,8 @@ public enum RequestMethod {
 
     public static RequestMethod[] all() {
         return ALL.clone();
+    }
+    public static Stream<RequestMethod> stream() {
+        return Arrays.stream(RequestMethod.values());
     }
 }
