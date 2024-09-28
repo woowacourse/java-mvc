@@ -12,7 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.AnnotationHandlerMapping;
@@ -44,10 +46,27 @@ class AnnotationHandlerMappingTest {
         );
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("처리할 수 없는 경우 null을 반환한다.")
-    void getHandler_null() {
+    @CsvSource(value = {"/none-test, GET", "/get-test, GEET", "/none-test, GEET"})
+    void getHandler_null(String uri, String method) {
         final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn(uri);
+        when(request.getMethod()).thenReturn(method);
+
+        var actual = handlerMapping.getHandler(request);
+
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    @DisplayName("처리할 수 없는 경우 null을 반환한다: null이 입력되는 경우")
+    void getHandler_null_with_null_input() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn(null);
+        when(request.getMethod()).thenReturn(null);
 
         var actual = handlerMapping.getHandler(request);
 
