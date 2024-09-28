@@ -17,6 +17,10 @@ public class HandlerMappingAdapter implements HandlerMapping {
 
     @Override
     public Object getHandler(HttpServletRequest request) {
-        return annotationHandlerMapping.getHandler(request);
+        try {
+            return annotationHandlerMapping.getHandler(request);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

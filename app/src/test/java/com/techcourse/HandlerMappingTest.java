@@ -1,12 +1,11 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,12 +15,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 class HandlerMappingTest {
 
     private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private HandlerMappingAdapter annotationHandlerMapping;
 
     @BeforeEach
     void setUp() {
         manualHandlerMapping = new ManualHandlerMapping();
-        annotationHandlerMapping = new AnnotationHandlerMapping();
+        annotationHandlerMapping = new HandlerMappingAdapter(new AnnotationHandlerMapping());
         manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
     }
@@ -37,7 +36,7 @@ class HandlerMappingTest {
 
         // when & then
         assertThat(manualHandlerMapping.getHandler(request)).isNull();
-        assertDoesNotThrow(() -> annotationHandlerMapping.getHandler(request));
+        assertThat(annotationHandlerMapping.getHandler(request)).isNotNull();
     }
 
     @DisplayName("Legacy MVC로 구현된 요청이 들어올 경우 ManualHandlerMapping가 해당 요청을 처리한다.")
@@ -51,8 +50,6 @@ class HandlerMappingTest {
 
         // when & then
         assertThat(manualHandlerMapping.getHandler(request)).isNotNull();
-        assertThatThrownBy(() -> annotationHandlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("해당 요청에 대응하는 핸들러가 없습니다: GET %s".formatted(requestUri));
+        assertThat(annotationHandlerMapping.getHandler(request)).isNull();
     }
 }

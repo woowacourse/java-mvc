@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,8 +67,6 @@ class HandlerMappingAdapterTest {
         when(request.getMethod()).thenReturn("GET");
 
         // when & then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("해당 요청에 대응하는 핸들러가 없습니다: GET /invalid");
+        assertThat(handlerMappingAdapter.getHandler(request)).isNull();
     }
 }
