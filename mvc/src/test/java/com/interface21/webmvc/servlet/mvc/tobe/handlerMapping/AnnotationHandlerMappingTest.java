@@ -1,6 +1,7 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handlerMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -8,8 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -22,6 +25,49 @@ class AnnotationHandlerMappingTest {
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+    }
+
+    @Test
+    @DisplayName("핸들러를 반환한다.")
+    void getHandler() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/all-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        var actual = handlerMapping.getHandler(request);
+
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual).isInstanceOf(HandlerExecution.class)
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("처리할 수 없는 경우 null을 반환한다.")
+    @CsvSource(value = {"/none-test, GET", "/get-test, GEET", "/none-test, GEET"})
+    void getHandler_null(String uri, String method) {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn(uri);
+        when(request.getMethod()).thenReturn(method);
+
+        var actual = handlerMapping.getHandler(request);
+
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    @DisplayName("처리할 수 없는 경우 null을 반환한다: null이 입력되는 경우")
+    void getHandler_null_with_null_input() {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn(null);
+        when(request.getMethod()).thenReturn(null);
+
+        var actual = handlerMapping.getHandler(request);
+
+        assertThat(actual).isNull();
     }
 
     @Test
