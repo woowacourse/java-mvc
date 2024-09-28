@@ -1,5 +1,7 @@
 package reflection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,8 @@ class Junit3TestRunner {
                 method.invoke(junit3Test);
             }
         }
+
+        assertThat(junit3Test.getMethodCallCount()).isEqualTo(2);
     }
 }
 

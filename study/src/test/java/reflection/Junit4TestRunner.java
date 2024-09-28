@@ -2,6 +2,7 @@ package reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
@@ -19,5 +20,7 @@ class Junit4TestRunner {
                 method.invoke(junit4Test);
             }
         }
+
+        Assertions.assertThat(junit4Test.getMethodCallCount()).isEqualTo(2);
     }
 }
