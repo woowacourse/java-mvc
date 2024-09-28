@@ -15,7 +15,7 @@ import com.techcourse.controller.manual.LogoutController;
 import com.techcourse.controller.manual.RegisterController;
 import com.techcourse.controller.manual.RegisterViewController;
 import com.techcourse.servlet.handler.mapper.HandlerMappings;
-import com.techcourse.servlet.handler.mapper.ManualHandlerMapping;
+import com.techcourse.servlet.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.NoSuchElementException;

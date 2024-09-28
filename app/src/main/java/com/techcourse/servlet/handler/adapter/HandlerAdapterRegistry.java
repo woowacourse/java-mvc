@@ -4,15 +4,11 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class HandlerAdapterRegistry {
-
-    private static final List<HandlerAdapter> DEFAULT_HANDLER_ADAPTERS = List.of(
-            new AnnotationHandlerAdapter(),
-            new ControllerAdapter()
-    );
 
     private final List<HandlerAdapter> handlerAdapters;
 
@@ -21,7 +17,11 @@ public class HandlerAdapterRegistry {
     }
 
     public HandlerAdapterRegistry() {
-        this(DEFAULT_HANDLER_ADAPTERS);
+        this.handlerAdapters = new ArrayList<>();
+    }
+
+    public void addAdapter(HandlerAdapter adapter) {
+        handlerAdapters.add(adapter);
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)

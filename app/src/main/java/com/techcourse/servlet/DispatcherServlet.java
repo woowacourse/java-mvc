@@ -2,6 +2,9 @@ package com.techcourse.servlet;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.techcourse.servlet.handler.adapter.AnnotationHandlerAdapter;
+import com.techcourse.servlet.handler.adapter.ControllerAdapter;
 import com.techcourse.servlet.handler.adapter.HandlerAdapterRegistry;
 import com.techcourse.servlet.handler.mapper.HandlerMappings;
 import com.techcourse.servlet.view.ViewResolver;
@@ -14,8 +17,6 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final HandlerMappings DEFAULT_HANDLER_MAPPINGS = HandlerMappings.defaultHandlerMappings();
-
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -24,18 +25,18 @@ public class DispatcherServlet extends HttpServlet {
     private final ViewResolver viewResolver;
 
     public DispatcherServlet() {
-        this(DEFAULT_HANDLER_MAPPINGS);
-    }
-
-    public DispatcherServlet(HandlerMappings handlerMappings) {
-        this.handlerMappings = handlerMappings;
+        this.handlerMappings = new HandlerMappings();
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         this.viewResolver = new ViewResolver();
     }
 
     @Override
     public void init() {
+        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller.annotation"));
+        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
         handlerMappings.initialize();
+        handlerAdapterRegistry.addAdapter(new ControllerAdapter());
+        handlerAdapterRegistry.addAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override

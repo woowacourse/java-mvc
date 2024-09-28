@@ -1,4 +1,4 @@
-package com.techcourse.servlet.handler.mapper;
+package com.techcourse.servlet;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;

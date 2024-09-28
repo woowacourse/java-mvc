@@ -1,8 +1,8 @@
 package com.techcourse.servlet.handler.mapper;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -14,16 +14,16 @@ public class HandlerMappings {
         this.handlerMappings = handlerMappings;
     }
 
-    public static HandlerMappings defaultHandlerMappings() {
-        List<HandlerMapping> handlerMappings = List.of(
-                new AnnotationHandlerMapping("com.techcourse.controller.annotation"),
-                new ManualHandlerMapping()
-        );
-        return new HandlerMappings(handlerMappings);
+    public HandlerMappings() {
+        this(new ArrayList<>());
     }
 
     public void initialize() {
         handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
     }
 
     public Object getHandler(HttpServletRequest request) {
