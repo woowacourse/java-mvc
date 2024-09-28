@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,26 +17,39 @@ import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    public static final String DEFAULT_BASE_PACKAGE = "com";
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    private boolean initialized = false;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+    }
+
+    protected AnnotationHandlerMapping() {
+        this.basePackage = new Object[]{DEFAULT_BASE_PACKAGE};
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        if (initialized) {
+            log.warn("AnnotationHandlerMapping이 이미 초기화되었습니다.");
+            return;
+        }
+        log.info("AnnotationHandlerMapping을 초기화했습니다.");
 
         Set<Class<?>> controllerClasses = findControllerClasses();
         for (Class<?> controllerClass : controllerClasses) {
             registerHandlerMethods(controllerClass);
         }
+
+        initialized = true;
     }
 
     private Set<Class<?>> findControllerClasses() {
@@ -54,7 +67,7 @@ public class AnnotationHandlerMapping {
         for (Method method : newHandlerExecutions) {
             List<HandlerKey> handlerKeys = createHandlerKeys(method);
             HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+            handlerKeys.forEach(handlerKey -> handlerExecutions.putIfAbsent(handlerKey, handlerExecution));
         }
     }
 
@@ -64,7 +77,7 @@ public class AnnotationHandlerMapping {
         } catch (InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException(
-                    "Failed to instantiate controller: " + controllerClass.getName(), e);
+                    "컨트롤러 인스턴스화 실패: " + controllerClass.getName(), e);
         }
     }
 
@@ -75,7 +88,7 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    public HandlerExecution getHandler(final HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(key);
     }
