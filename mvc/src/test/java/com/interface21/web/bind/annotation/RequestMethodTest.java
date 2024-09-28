@@ -23,5 +23,4 @@ class RequestMethodTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 메소드 입니다.");
     }
-
 }

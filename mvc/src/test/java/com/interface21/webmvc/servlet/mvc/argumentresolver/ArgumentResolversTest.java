@@ -31,7 +31,6 @@ class ArgumentResolversTest {
 
         Object[] args = argumentResolvers.handle(request, response, method);
 
-
         assertAll(
                 () -> assertThat(args).hasSize(2),
                 () -> assertThat(args[0]).isEqualTo("gugu"),
