@@ -18,12 +18,13 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String BASE_PACKAGE = "com";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet(
-                new HandlerMappingContainer("com"),
-                new HandlerAdapterContainer("com")
+                new HandlerMappingContainer(BASE_PACKAGE),
+                new HandlerAdapterContainer(BASE_PACKAGE)
         );
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
