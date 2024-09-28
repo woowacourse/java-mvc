@@ -7,7 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -33,6 +37,40 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-        handlerManager.handle(request, response);
+
+        final Object handler = handlerManager.findHandler(request);
+        final ModelAndView modelAndView = processHandler(request, response, handler);
+        try {
+            modelAndView.render(request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ModelAndView processHandler(final HttpServletRequest request, final HttpServletResponse response,
+                                        final Object handler) {
+        if (handler instanceof Controller) {
+            return processController(request, response, (Controller) handler);
+        }
+        return processHandlerExecute(request, response, (HandlerExecution) handler);
+    }
+
+    private ModelAndView processController(final HttpServletRequest request, final HttpServletResponse response,
+                                           final Controller handler) {
+        try {
+            final String viewName = handler.execute(request, response);
+            return new ModelAndView(new JspView(viewName));
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ModelAndView processHandlerExecute(final HttpServletRequest request, final HttpServletResponse response,
+                                               final HandlerExecution handler) {
+        try {
+            return handler.handle(request, response);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

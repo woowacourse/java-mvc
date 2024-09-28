@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 public interface HandlerMapping {
 
@@ -9,5 +8,5 @@ public interface HandlerMapping {
 
     boolean hasHandler(final HttpServletRequest request);
 
-    void handle(final HttpServletRequest request, final HttpServletResponse response);
+    Object getHandler(final HttpServletRequest request);
 }
