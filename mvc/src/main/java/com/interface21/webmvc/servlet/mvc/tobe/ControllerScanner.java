@@ -3,15 +3,15 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.webmvc.servlet.exception.ControllerScanException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.reflections.Reflections;
 
 public class ControllerScanner {
 
     private final Object[] basePackage;
-    private final Map<Class<?>, Object> controllers = new ConcurrentHashMap();
+    private final Map<Class<?>, Object> controllers = new HashMap<>();
 
     public ControllerScanner(Object... basePackage) {
         this.basePackage = basePackage;
