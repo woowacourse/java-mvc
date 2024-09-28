@@ -62,7 +62,7 @@ class DispatcherServletTest {
         }
 
         @Test
-        @DisplayName("두 컨트롤러 모두 처리할 수 없는 요청에는 예외가 발생한다.")
+        @DisplayName("모든 컨트롤러 모두 처리할 수 없는 요청에는 예외가 발생한다.")
         void noMatchedHandlerTest() {
             final var request = mock(HttpServletRequest.class);
             final var response = mock(HttpServletResponse.class);
