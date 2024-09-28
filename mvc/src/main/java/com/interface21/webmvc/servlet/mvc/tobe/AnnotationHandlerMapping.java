@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +48,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Optional<Object> getHandler(final HttpServletRequest request) {
+    public boolean hasHandler(HttpServletRequest request) {
+        HandlerKey key = new HandlerKey(request);
+        return handlerExecutions.containsKey(key);
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request);
-        return Optional.ofNullable(handlerExecutions.get(handlerKey));
+        if (!hasHandler(request)) {
+            throw new IllegalArgumentException("잘못된 핸들러 요청입니다.");
+        }
+        return handlerExecutions.get(handlerKey);
     }
 }

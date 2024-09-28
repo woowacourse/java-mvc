@@ -2,14 +2,13 @@ package com.techcourse.servlet;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.techcourse.servlet.handler.HandlerMappings;
-import com.techcourse.servlet.handler.adapter.HandlerAdapter;
+import com.techcourse.servlet.handler.adapter.HandlerAdapterRegistry;
+import com.techcourse.servlet.handler.mapper.HandlerMappings;
 import com.techcourse.servlet.view.ViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappings handlerMappings;
-    private final HandlerAdapter handlerAdapter;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final ViewResolver viewResolver;
 
     public DispatcherServlet() {
@@ -30,7 +29,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet(HandlerMappings handlerMappings) {
         this.handlerMappings = handlerMappings;
-        this.handlerAdapter = new HandlerAdapter();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
         this.viewResolver = new ViewResolver();
     }
 
@@ -45,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.getHandler(request);
-            ModelAndView modelAndView = handlerAdapter.adaptHandler(handler, request, response);
+            ModelAndView modelAndView = handlerAdapterRegistry.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
