@@ -7,8 +7,10 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +30,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackages);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        for (Class<?> controller : controllers.keySet()) {
-            Set<Method> methods = getRequestMappingMethods(controller);
-            methods.forEach(method -> addHandlerExecution(controllers.get(controller), method));
-        }
+        controllers.keySet().stream()
+                .flatMap(controller -> mapControllerToMethods(controllers, controller))
+                .forEach(entry -> addHandlerExecution(entry.getKey(), entry.getValue()));
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private Stream<Entry<Object, Method>> mapControllerToMethods(Map<Class<?>, Object> controllers, Class<?> controller) {
+        return getRequestMappingMethods(controller).stream()
+                .map(method -> Map.entry(controllers.get(controller), method));
     }
 
     private Set<Method> getRequestMappingMethods(Class<?> controller) {
