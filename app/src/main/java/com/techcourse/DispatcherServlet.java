@@ -8,13 +8,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.Serial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
