@@ -1,9 +1,9 @@
 package servlet.com.example;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import support.HttpUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ServletTest {
 
@@ -28,7 +28,8 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // -> 서블릿 내 sharedCounter란 인스턴스 변수가 다른 스레드와 공유되어 각 스레드에서 더해진 상태가 전파되었다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +51,7 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+        // 지역 변수는 다른 스레드와 공유되지 않아 호출 횟수와 상관없이 1번 1을 더해지는 메서드가 수행되었다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
