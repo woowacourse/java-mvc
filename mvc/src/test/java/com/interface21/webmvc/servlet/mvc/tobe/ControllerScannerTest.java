@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.interface21.context.stereotype.Controller;
 import java.util.Map;
@@ -29,6 +30,14 @@ class ControllerScannerTest {
                 () -> assertThat(controllers).containsKey(SampleController.class),
                 () -> assertThat(controllers.get(SampleController.class)).isInstanceOf(SampleController.class)
         );
+    }
+    
+    @DisplayName("컨트롤러가 unmodifiableMap으로 반환되는지 확인")
+    @Test
+    void controllersReturnedAsUnmodifiableMap() {
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        assertThatThrownBy(() -> controllers.put(Object.class, new Object()))
+                .isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Controller
