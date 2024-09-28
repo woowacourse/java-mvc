@@ -25,7 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = new HandlerMappings("index.jsp", "com.techcourse.controller");
+        handlerMappings = new HandlerMappings("com.techcourse.controller");
         handlerAdapters = new HandlerAdapters();
     }
 

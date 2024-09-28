@@ -14,17 +14,15 @@ import org.slf4j.LoggerFactory;
 public class ControllerHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerHandlerMapping.class);
-    private static final HandlerKey FORWARD_INDEX_CONTROLLER_KEY = new HandlerKey("/", RequestMethod.GET);
     private static final String VIEW_CONTROLLER_NAME_RULE = "View";
     private static final String CONTROLLER_POSTFIX_RULE = "Controller$";
 
     private final Object[] basePackage;
     private final Map<HandlerKey, Controller> controllers;
 
-    public ControllerHandlerMapping(String indexViewName, Object... basePackage) {
+    public ControllerHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.controllers = new HashMap<>();
-        this.controllers.put(FORWARD_INDEX_CONTROLLER_KEY, new ForwardController(indexViewName));
     }
 
     @Override
