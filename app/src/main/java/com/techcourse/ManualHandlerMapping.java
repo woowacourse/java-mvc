@@ -27,9 +27,6 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        //TODO 이렇게 등록하지 않고 @RequestMapping 사용해서 등록
-//        controllers.put("/register/view", new RegisterViewController());
-        //        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
