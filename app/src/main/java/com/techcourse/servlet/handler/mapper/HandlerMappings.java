@@ -30,6 +30,7 @@ public class HandlerMappings {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.hasHandler(request))
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("request를 처리한 핸들러가 존재하지 않습니다"));
+                .orElseThrow(() -> new NoSuchElementException("request를 처리한 핸들러가 존재하지 않습니다"))
+                .getHandler(request);
     }
 }
