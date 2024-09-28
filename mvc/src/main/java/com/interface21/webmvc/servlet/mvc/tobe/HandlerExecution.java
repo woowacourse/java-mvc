@@ -8,12 +8,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class Handler {
+public class HandlerExecution {
 
     private final Object instanceController;
     private final Method method;
 
-    public Handler(Object instanceController, Method method) {
+    public HandlerExecution(Object instanceController, Method method) {
         this.instanceController = instanceController;
         this.method = method;
     }

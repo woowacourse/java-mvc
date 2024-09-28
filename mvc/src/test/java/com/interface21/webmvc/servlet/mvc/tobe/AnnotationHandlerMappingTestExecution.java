@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AnnotationHandlerMappingTest {
+class AnnotationHandlerMappingTestExecution {
 
     private AnnotationHandlerMapping handlerMapping;
 
@@ -30,8 +30,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        Handler handler = (Handler) handlerMapping.getHandler(request);
-        ModelAndView modelAndView = handler.handle(request, response);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -45,8 +45,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/patch-test");
         when(request.getMethod()).thenReturn("PATCH");
 
-        Handler handler = (Handler) handlerMapping.getHandler(request);
-        ModelAndView modelAndView = handler.handle(request, response);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -60,8 +60,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        Handler handler = (Handler) handlerMapping.getHandler(request);
-        ModelAndView modelAndView = handler.handle(request, response);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }

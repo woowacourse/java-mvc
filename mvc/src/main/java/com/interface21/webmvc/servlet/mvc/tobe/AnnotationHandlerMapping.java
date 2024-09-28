@@ -1,18 +1,25 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, Handler> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -20,28 +27,62 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        HandlerScanner.scanHandlers(basePackage).forEach(this::registerHandler);
+        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        addHandlerExecutions(controllers);
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandler(Handler handler) {
-        String value = handler.getUrl();
-        RequestMethod[] requestMethods = handler.getRequestMethods();
+    private void addHandlerExecutions(Map<Class<?>, Object> controllers) {
+        for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            for (Method method : scanControllerMethods(controller.getKey())) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+                String url = requestMapping.value();
+                RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+                List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
+
+                for (HandlerKey handlerKey : handlerKeys) {
+                    handlerExecutions.put(handlerKey, new HandlerExecution(controller.getValue(), method));
+                }
+            }
+        }
+    }
+
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        List<HandlerKey> handlerKeys = new ArrayList<>();
 
         for (RequestMethod requestMethod : requestMethods) {
-            handlerExecutions.put(new HandlerKey(value, requestMethod), handler);
+            handlerKeys.add(new HandlerKey(url, requestMethod));
         }
+        return handlerKeys;
+    }
+
+    private static List<Method> scanControllerMethods(Class<?> controller) {
+        return Arrays.stream(controller.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+    }
+
+    public RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMapping.method();
     }
 
     public Object getHandler(HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), getRequestMethod(request));
-        Handler handler = handlerExecutions.get(handlerKey);
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
 
-        if (handler == null) {
+        if (handlerExecution == null) {
             throw new IllegalArgumentException("핸들러가 존재하지 않습니다.");
         }
 
-        return handler;
+        return handlerExecution;
     }
 
     private RequestMethod getRequestMethod(HttpServletRequest request) {
