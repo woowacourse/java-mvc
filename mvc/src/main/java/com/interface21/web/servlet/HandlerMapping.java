@@ -6,5 +6,7 @@ import java.util.Optional;
 
 public interface HandlerMapping {
 
-    Object getHandler(HttpServletRequest request);
+    void initialize();
+
+    Optional<Object> getHandler(HttpServletRequest request);
 }
