@@ -25,25 +25,30 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    private boolean initialized = false;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
     }
 
     protected AnnotationHandlerMapping() {
         this.basePackage = new Object[]{"com"};
-        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
+        if (initialized) {
+            log.warn("AnnotationHandlerMapping is already initialized!");
+            return;
+        }
         log.info("Initialized AnnotationHandlerMapping!");
 
         Set<Class<?>> controllerClasses = findControllerClasses();
         for (Class<?> controllerClass : controllerClasses) {
             registerHandlerMethods(controllerClass);
         }
+
+        initialized = true;
     }
 
     private Set<Class<?>> findControllerClasses() {
@@ -61,7 +66,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Method method : newHandlerExecutions) {
             List<HandlerKey> handlerKeys = createHandlerKeys(method);
             HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+            handlerKeys.forEach(handlerKey -> handlerExecutions.putIfAbsent(handlerKey, handlerExecution));
         }
     }
 

@@ -20,19 +20,28 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+    private final Map<String, Controller> controllers = new HashMap<>();
+    private boolean initialized = false;
 
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+        if (initialized) {
+            log.warn("ManualHandlerMapping is already initialized!");
+            return;
+        }
+        log.info("Initialized ManualHandlerMapping!");
 
-        log.info("Initialized Handler Mapping!");
+        controllers.putIfAbsent("/", new ForwardController("/index.jsp"));
+        controllers.putIfAbsent("/logout", new LogoutController());
+        controllers.putIfAbsent("/login/view", new LoginViewController());
+        controllers.putIfAbsent("/register/view", new RegisterViewController());
+        controllers.putIfAbsent("/register", new RegisterController());
+
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+
+        initialized = true;
     }
+
 
     public Object getHandler(final HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request.getRequestURI());
