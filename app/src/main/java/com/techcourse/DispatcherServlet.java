@@ -43,11 +43,14 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
+        HandlerMapping handlerMapping = handlerMappings.stream()
+            .filter(hm -> hm.getHandler(request) != null)
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException("No handler found for requestURI: " + requestURI));
+
         try {
-            for(HandlerMapping handlerMapping : handlerMappings) {
-                ModelAndView mav = handlerAdapter.adapt(handlerMapping, request, response);
-                mav.getView().render(mav.getModel(), request, response);
-            }
+            ModelAndView mav = handlerAdapter.adapt(handlerMapping, request, response);
+            mav.getView().render(mav.getModel(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
