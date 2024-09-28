@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedHashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,7 +80,7 @@ class JsonViewTest {
     @DisplayName("모델에 데이터가 두 개 이상이면 Map 형태 그대로 반환한다.")
     @Test
     void renderMultipleModels() throws Exception {
-        Map<String, String> model = new HashMap<>();
+        Map<String, String> model = new LinkedHashMap<>();
         model.put("key1", "value1");
         model.put("key2", "value2");
 
