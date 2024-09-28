@@ -1,8 +1,7 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.HandlerAdapters;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.HandlerMappings;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
@@ -36,14 +35,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     }
 
     private DispatcherServlet createDispatcherServlet() {
-        HandlerMappings handlerMappings = new HandlerMappings(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping(getClass().getPackageName())
-        );
-        HandlerAdapters handlerAdapters = new HandlerAdapters(
-                new ManualHandlerAdapter(),
-                new AnnotationHandlerAdapter()
-        );
+        HandlerMappings handlerMappings = HandlerMappings.createFromBasePackages(getClass().getPackageName());
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
 
         return new DispatcherServlet(
                 handlerMappings,

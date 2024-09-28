@@ -20,7 +20,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(Object... basePackage) {
+    AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }

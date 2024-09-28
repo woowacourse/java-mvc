@@ -8,5 +8,7 @@ public interface HandlerAdapter {
 
     boolean supports(Object handler);
 
+    Class<?> getHandlerType();
+
     ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 }

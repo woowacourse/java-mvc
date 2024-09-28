@@ -2,7 +2,9 @@ package com.interface21.webmvc.servlet.mvc.tobe.handler.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +13,7 @@ import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.ExampleController;
+import samples.TestController;
 
 class HandlerAdaptersTest {
 
@@ -31,7 +34,7 @@ class HandlerAdaptersTest {
     @Test
     void noSuitableAdapter() {
         HandlerAdapters handlerAdapters = new HandlerAdapters();
-        assertThatThrownBy(() -> handlerAdapters.getHandlerAdapter(handlerExecution))
+        assertThatThrownBy(() -> handlerAdapters.getHandlerAdapter(new TestController()))
                 .isInstanceOf(ServletException.class)
                 .hasMessage("No suitable adapter found for handler");
     }
@@ -40,9 +43,53 @@ class HandlerAdaptersTest {
     @Test
     void getHandlerAdapter() throws Exception {
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        HandlerAdapters handlerAdapters = new HandlerAdapters(annotationHandlerAdapter);
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
 
         assertThat(handlerAdapters.getHandlerAdapter(handlerExecution))
                 .isEqualTo(annotationHandlerAdapter);
+    }
+
+    @DisplayName("자식 클래스의 핸들러에 우선순위를 부여한다.")
+    @Test
+    void getHandlerAdapterByPriority() {
+        class Parent {
+        }
+
+        class Child extends Parent {
+        }
+
+        class ParentHandlerAdapter extends AbstractHandlerAdapter<Parent> {
+            public ParentHandlerAdapter() {
+                super(Parent.class);
+            }
+
+            @Override
+            public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+                return null;
+            }
+        }
+
+        class ChildHandlerAdapter extends AbstractHandlerAdapter<Child> {
+            public ChildHandlerAdapter() {
+                super(Child.class);
+            }
+
+            @Override
+            public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+                return null;
+            }
+        }
+
+        HandlerAdapters handlerAdapters = new HandlerAdapters(
+                new ParentHandlerAdapter(),
+                new ChildHandlerAdapter()
+        );
+
+        assertAll(
+                () -> assertThat(handlerAdapters.getHandlerAdapter(new Parent()))
+                        .isInstanceOf(ChildHandlerAdapter.class),
+                () -> assertThat(handlerAdapters.getHandlerAdapter(new Child()))
+                        .isInstanceOf(ChildHandlerAdapter.class)
+        );
     }
 }

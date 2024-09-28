@@ -16,9 +16,7 @@ import samples.TestController;
 
 class HandlerMappingsTest {
 
-    private static final HandlerMappings handlerMappings = new HandlerMappings(
-            new AnnotationHandlerMapping("samples")
-    );
+    private static final HandlerMappings handlerMappings = HandlerMappings.createFromBasePackages("samples");
 
     @BeforeAll
     static void initializedHandlerMappings() {
