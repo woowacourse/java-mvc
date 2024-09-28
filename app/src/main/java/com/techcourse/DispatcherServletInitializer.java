@@ -19,7 +19,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.addHandlerMapping(getManualHandlerMapping());
         dispatcherServlet.addHandlerMapping(getAnnotationHandlerMapping());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
@@ -32,11 +31,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
-    }
-
-    private ManualHandlerMapping getManualHandlerMapping() {
-        ManualHandlerMapping handlerMapping = new ManualHandlerMapping();
-        return handlerMapping;
     }
 
     private AnnotationHandlerMapping getAnnotationHandlerMapping() {

@@ -1,5 +1,6 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Controller
 public class AnnotationUserController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationUserController.class);
@@ -38,7 +40,7 @@ public class AnnotationUserController {
         return "redirect:/401.jsp";
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         final var session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
@@ -53,6 +55,8 @@ public class AnnotationUserController {
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
+        final var session = request.getSession();
+        session.setAttribute(UserSession.SESSION_KEY, user);
         return "redirect:/index.jsp";
     }
 
