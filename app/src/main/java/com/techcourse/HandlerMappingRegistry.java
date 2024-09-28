@@ -12,8 +12,8 @@ public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRegistry() {
-        handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+    public HandlerMappingRegistry(final Object... basePackages) {
+        handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping(basePackages));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
