@@ -22,7 +22,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
@@ -80,7 +80,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        String method = request.getMethod();
+        if (method == null || method.isEmpty()) {
+            return null;
+        }
+        RequestMethod requestMethod = RequestMethod.valueOf(method);
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
     }

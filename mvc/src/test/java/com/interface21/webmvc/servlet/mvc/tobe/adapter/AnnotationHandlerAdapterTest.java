@@ -6,14 +6,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.exception.UnprocessableHandlerException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
-import samples.TestInterfaceController;
 
 class AnnotationHandlerAdapterTest {
 
@@ -33,11 +31,11 @@ class AnnotationHandlerAdapterTest {
     @Test
     void 지원_불가능한_핸들러일_경우_false_반환() {
         // given
-        Controller controller = new TestInterfaceController();
+        Object unknownController = new Object();
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         // when
-        boolean actual = annotationHandlerAdapter.supports(controller);
+        boolean actual = annotationHandlerAdapter.supports(unknownController);
 
         // then
         assertThat(actual).isFalse();
@@ -67,12 +65,12 @@ class AnnotationHandlerAdapterTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        Controller controller = new TestInterfaceController();
+        Object unknownController = new Object();
 
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         // when, then
-        assertThatThrownBy(() -> annotationHandlerAdapter.handle(request, response, controller))
+        assertThatThrownBy(() -> annotationHandlerAdapter.handle(request, response, unknownController))
                 .isInstanceOf(UnprocessableHandlerException.class);
     }
 }

@@ -2,11 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.ManualHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -20,28 +17,14 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.getInstance();
-    private final HandlerAdapterRegistry handlerAdapterRegistry = HandlerAdapterRegistry.getInstance();
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(
+            DispatcherServlet.class.getPackage());
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     @Override
     public void init() {
-        initHandlerMappingRegistry();
-        initHandlerAdapterRegistry();
-    }
-
-    private void initHandlerMappingRegistry() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(DispatcherServlet.class);
-        annotationHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-    }
-
-    private void initHandlerAdapterRegistry() {
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override

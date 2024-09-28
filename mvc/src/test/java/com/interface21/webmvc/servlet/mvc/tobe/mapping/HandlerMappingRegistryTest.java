@@ -14,17 +14,10 @@ class HandlerMappingRegistryTest {
     void 요청을_처리할_수_있는_핸들러를_반환() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
 
-        HandlerMapping firstHandlerMapping = mock(HandlerMapping.class);
-        HandlerExecution handlerExecution = mock(HandlerExecution.class);
-        when(firstHandlerMapping.getHandler(request)).thenReturn(handlerExecution);
-
-        HandlerMapping secondHandlerMapping = mock(HandlerMapping.class);
-        when(secondHandlerMapping.getHandler(request)).thenReturn(null);
-
-        HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.getInstance();
-        handlerMappingRegistry.addHandlerMapping(firstHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(secondHandlerMapping);
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
 
         // when
         Object actual = handlerMappingRegistry.getHandler(request);
@@ -34,20 +27,37 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
-    void 요청을_처리할_수_있는_핸들러가_없다면_null을_반환() {
+    void 커스텀_HandlerMapping_추가() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        HandlerMapping handlerMapping = mock(HandlerMapping.class);
-        when(handlerMapping.getHandler(request)).thenReturn(null);
+        CustomHandler customHandler = new CustomHandler();
+        HandlerMapping customHandlerMapping = mock(HandlerMapping.class);
+        when(customHandlerMapping.getHandler(request)).thenReturn(customHandler);
 
-        HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.getInstance();
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
+
+        // when
+        handlerMappingRegistry.addHandlerMapping(customHandlerMapping);
+        Object actual = handlerMappingRegistry.getHandler(request);
+
+        // then
+        assertThat(actual).isInstanceOf(CustomHandler.class);
+    }
+
+    @Test
+    void 요청을_처리할_수_있는_핸들러가_없다면_null을_반환() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
 
         // when
         Object actual = handlerMappingRegistry.getHandler(request);
 
         // then
         assertThat(actual).isNull();
+    }
+
+    static class CustomHandler {
     }
 }
