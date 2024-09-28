@@ -23,7 +23,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
+    public void initialize() {
         Set<Class<?>> controllers = extractControllers();
         List<Method> controllerMethods = extractControllerMethods(controllers);
 
