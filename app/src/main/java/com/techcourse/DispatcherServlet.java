@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Optional;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -41,6 +42,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             // TODO getHandler 구현
+            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
 //            Controller controller = manualHandlerMapping.getHandler(request);
 //            String viewName = controller.execute(request, response);
 //            move(viewName, request, response);
