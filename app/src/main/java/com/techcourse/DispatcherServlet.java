@@ -2,9 +2,12 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings = new HandlerMapping[]{
                 new ManualHandlerMapping(),
                 new HandlerMappingAdapter(new AnnotationHandlerMapping())
-        }; // TODO: reflection 이용?
+        };
         Arrays.stream(handlerMappings).forEach(HandlerMapping::initialize);
     }
 
@@ -39,8 +42,8 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            HandlerMapping handlerMapping = selectHandlerMapping(request);
-            ModelAndView modelAndView = handlerMapping.execute(request, response);
+            Object handler = getHandler(request);
+            ModelAndView modelAndView = execute(request, response, handler);
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
@@ -49,13 +52,27 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private HandlerMapping selectHandlerMapping(HttpServletRequest request) {
+    private Object getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            if (handlerMapping.containsRequest(request)) {
-                return handlerMapping;
+            Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
             }
         }
-        throw new IllegalArgumentException("해당 요청을 처리하는 핸들러 매퍼가 없습니다: %s %s"
+        throw new IllegalArgumentException("해당 요청을 처리하는 핸들러가 없습니다: %s %s"
+                .formatted(request.getMethod(), request.getRequestURI()));
+    }
+
+    private ModelAndView execute(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        if (handler instanceof Controller) {
+            String viewName = ((Controller) handler).execute(request, response);
+            return new ModelAndView(new JspView(viewName));
+        }
+        if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
+        }
+        throw new IllegalArgumentException("해당 요청을 수행할 수 없습니다: %s %s"
                 .formatted(request.getMethod(), request.getRequestURI()));
     }
 }
