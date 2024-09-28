@@ -30,13 +30,10 @@ public class ManualHandlerMapping implements HandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
-    }
-
     @Override
     public Object getHandler(HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        log.debug("Request Mapping Uri : {}", requestURI);
+        return controllers.get(requestURI);
     }
 }

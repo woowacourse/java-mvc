@@ -25,7 +25,7 @@ public class ManualHandlerAdapter implements HandlerAdapter {
             return new ModelAndView(new JspView(viewName));
 
         } catch (Exception e) {
-            throw new ControllerExecutionException(e.getMessage());
+            throw new ControllerExecutionException(e.getMessage(), e);
         }
     }
 
