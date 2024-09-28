@@ -10,7 +10,6 @@ public class RegisterController implements Controller {
 
     private UserService userService = new UserService();
 
-
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
