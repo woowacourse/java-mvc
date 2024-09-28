@@ -136,9 +136,8 @@ class HandlerMappingsTest {
     }
 
     private void setUpMockRequest(HttpServletRequest request, RequestMethod requestMethod, String requestUrl) {
-        doReturn(requestUrl)
-                .doReturn(requestUrl)
-                .doReturn(requestUrl)
+        doReturn(requestUrl)  //hasHandler 검증에 필요한 stubbing
+                .doReturn(requestUrl) //getHandler 검증에 필요한 stubbing
                 .when(request).getRequestURI();
 
         doReturn(requestMethod.name())
