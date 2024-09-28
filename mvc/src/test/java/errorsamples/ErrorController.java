@@ -1,4 +1,4 @@
-package samples.error;
+package errorsamples;
 
 import com.interface21.context.stereotype.Controller;
 

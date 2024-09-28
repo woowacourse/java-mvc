@@ -20,7 +20,7 @@ class ControllerScannerTest {
         // given
         ConfigurationBuilder configBuilder = new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage("samples"))
-                .filterInputsBy(new FilterBuilder().includePackage("samples").excludePackage("samples.error"));
+                .filterInputsBy(new FilterBuilder().includePackage("samples"));
         Reflections reflections = new Reflections(configBuilder);
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
 
@@ -35,7 +35,7 @@ class ControllerScannerTest {
     @Test
     void throwsWhenCannotInstantiateController() {
         // given
-        Reflections reflections = new Reflections("samples.error");
+        Reflections reflections = new Reflections("errorsamples");
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
 
         // when & then
