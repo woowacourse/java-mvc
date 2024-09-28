@@ -24,11 +24,12 @@ public class HandlerAdapterRegistry {
         this(DEFAULT_HANDLER_ADAPTERS);
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         return handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findAny()
-                .orElseThrow(()-> new NoSuchElementException("handler를 지원하는 adapter가 없습니다"))
+                .orElseThrow(() -> new NoSuchElementException("handler를 지원하는 adapter가 없습니다"))
                 .handle(request, response, handler);
     }
 }

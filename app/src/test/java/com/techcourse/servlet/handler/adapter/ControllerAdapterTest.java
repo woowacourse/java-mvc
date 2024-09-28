@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 class ControllerAdapterTest {
 
-    @DisplayName("controller 클래스라면 adpat를 지원한다")
+    @DisplayName("controller 클래스라면 adapt를 지원한다")
     @Test
     void supportsHandler() throws Exception {
         ControllerAdapter handlerAdapter = new ControllerAdapter();
