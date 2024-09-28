@@ -5,7 +5,7 @@ import com.interface21.webmvc.servlet.view.JspView;
 
 public class ViewResolver {
 
-    public View resolveByStatusCode(int statusCode){
+    public View resolveByStatusCode(int statusCode) {
         String viewName = ViewMapper.findViewNameWithStatusCode(statusCode);
         return new JspView(viewName);
     }
