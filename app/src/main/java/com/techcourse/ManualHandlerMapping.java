@@ -1,7 +1,7 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.controller.Controller;
+import com.interface21.webmvc.servlet.mvc.controller.ForwardController;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
