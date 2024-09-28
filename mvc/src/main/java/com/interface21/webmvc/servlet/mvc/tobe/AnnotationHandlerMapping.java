@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,9 @@ public class AnnotationHandlerMapping {
 
     private void initializeByController(Class<?> controller)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Method[] methods = controller.getDeclaredMethods();
+        Method[] methods = Arrays.stream(controller.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toArray(Method[]::new);
         Object baseInstance = controller.getDeclaredConstructor()
                 .newInstance();
 
