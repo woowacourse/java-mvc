@@ -19,15 +19,15 @@ public class JsonView implements View {
             throws Exception
     {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        Set<String> keySet = model.keySet();
 
-        String body = parseBody(model, keySet);
-
+        String body = parseBody(model);
         PrintWriter writer = response.getWriter();
         writer.write(body);
     }
 
-    private String parseBody(Map<String, ?> model, Set<String> keySet) throws JsonProcessingException {
+    private String parseBody(Map<String, ?> model) throws JsonProcessingException {
+        Set<String> keySet = model.keySet();
+
         Map<String, Object> results = new HashMap<>();
         for (String key : keySet) {
             results.put(key, model.get(key));
@@ -35,7 +35,7 @@ public class JsonView implements View {
 
         ObjectMapper objectMapper = new ObjectMapper();
         if (results.size() == 1) {
-            return objectMapper.writeValueAsString(results.values().iterator().next());
+            return (String) results.values().iterator().next();
         }
 
         return objectMapper.writeValueAsString(results);
