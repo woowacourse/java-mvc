@@ -1,6 +1,6 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.mvc.view;
 
-import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.View;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

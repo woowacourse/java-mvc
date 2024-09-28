@@ -2,7 +2,7 @@ package com.techcourse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.interface21.webmvc.servlet.RequestHandler;
+import com.interface21.webmvc.servlet.mvc.RequestHandler;
 import com.interface21.webmvc.servlet.mvc.tobe.ManualRequestHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
