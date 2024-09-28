@@ -29,8 +29,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        annotationHandlerMapping = new AnnotationHandlerMapping("com");  // TODO: base 필요?
-        annotationHandlerMapping.initialize();
+        annotationHandlerMapping = new AnnotationHandlerMapping("com");
     }
 
     @Override
