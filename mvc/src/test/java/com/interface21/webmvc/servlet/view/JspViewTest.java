@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class JspViewTest {
+
     @DisplayName("리다이렉트 뷰를 렌더링한다.")
     @Test
     void redirectView() throws Exception {

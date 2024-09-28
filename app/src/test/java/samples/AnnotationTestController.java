@@ -8,6 +8,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 
 @Controller
 public class AnnotationTestController {
+
     @RequestMapping(value = "/all-test")
     public ModelAndView any(HttpServletRequest request, HttpServletResponse response) {
         return null;

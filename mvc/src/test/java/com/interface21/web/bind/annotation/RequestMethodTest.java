@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RequestMethodTest {
+
     private static Stream<Arguments> methodsProvider() {
         return Stream.of(
                 Arguments.of("get", RequestMethod.GET),

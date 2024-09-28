@@ -11,6 +11,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ClassScannerTest {
+
     private ClassScanner classScanner;
 
     @BeforeEach
