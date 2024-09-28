@@ -1,63 +1,53 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controller : controllers) {
-            processController(controller);
-        }
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach(this::processController);
     }
 
-    private void processController(Class<?> controller) {
-        Object controllerInstance = getControllerInstance(controller);
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
+
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("No handler found for request uri: " + request.getRequestURI());
+        }
+
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private void processController(Class<?> controller, Object instance) {
         List<Method> annotatedMethods = Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
 
         for (Method method : annotatedMethods) {
-            registerHandlerExecution(controllerInstance, method);
-        }
-    }
-
-    private Object getControllerInstance(Class<?> controller) {
-        try {
-            Constructor<?> constructor = controller.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            return constructor.newInstance();
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            registerHandlerExecution(instance, method);
         }
     }
 
@@ -87,15 +77,5 @@ public class AnnotationHandlerMapping {
         }
 
         return requestMethods;
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.of(request.getMethod()));
-
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("No handler found for request uri: " + request.getRequestURI());
-        }
-
-        return handlerExecutions.get(handlerKey);
     }
 }
