@@ -40,6 +40,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
+            Object handler = handlerMappingRegister.getHandler(request);
             String viewName = extractViewName(request, response);
             renderView(viewName, request, response);
         } catch (Throwable e) {
