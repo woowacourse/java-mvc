@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -6,10 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.RequestHandler;
-import com.interface21.webmvc.servlet.mvc.RequestHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
