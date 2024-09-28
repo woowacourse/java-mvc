@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
@@ -19,7 +20,8 @@ class ControllerHandlerAdapterTest {
     void supports() {
         //given
         final HandlerAdapter adapter = new ControllerHandlerAdapter();
-        final List<Object> classes = List.of(new LoginController(), new LogoutController(), new LoginViewController());
+        final List<Object> classes = List.of(new LoginController(), new LogoutController(), new LoginViewController(),
+                new ForwardController("/"));
 
         //when && then
         assertThat(classes).isNotEmpty().allMatch(adapter::supports);

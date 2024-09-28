@@ -9,6 +9,6 @@ public interface HandlerAdapter {
 
     boolean supports(Object handler);
 
-    ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+    ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
             throws IllegalAccessException, InvocationTargetException;
 }
