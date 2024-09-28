@@ -47,10 +47,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final HandlerMapping hm = getHandlerMapping(request);
-            final Object handler = hm.getHandler(request);
-            final HandlerAdapter ha = getHandlerAdapter(handler);
-            final ModelAndView modelAndView = ha.handle(request, response, handler);
+            final HandlerMapping handlerMapping = getHandlerMapping(request);
+            final Object handler = handlerMapping.getHandler(request);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
             render(modelAndView, request, response);
         } catch (Throwable e) {
