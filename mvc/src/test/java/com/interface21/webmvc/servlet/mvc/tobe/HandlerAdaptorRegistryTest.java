@@ -44,6 +44,7 @@ class HandlerAdaptorRegistryTest {
         HandlerExecution handler = new HandlerExecution(clazz, method);
 
         assertThatThrownBy(() -> registry.getHandlerAdaptor(handler))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Can not find proper adaptor from handler:");
     }
 }

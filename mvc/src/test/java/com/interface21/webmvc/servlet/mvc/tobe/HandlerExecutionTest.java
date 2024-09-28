@@ -30,7 +30,8 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongParameterSize", HttpServletRequest.class, HttpServletResponse.class, String.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method parameter size:");
     }
 
     @Test
@@ -40,7 +41,8 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongRequest", String.class, HttpServletResponse.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method parameter type:");
     }
 
     @Test
@@ -50,7 +52,8 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongResponse", HttpServletRequest.class, String.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method parameter type:");
     }
 
     @Test
@@ -60,6 +63,7 @@ class HandlerExecutionTest {
         Method method = clazz.getDeclaredMethod("wrongReturnType", HttpServletRequest.class, HttpServletResponse.class);
 
         assertThatThrownBy(() -> new HandlerExecution(clazz, method))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid method return type:");
     }
 }

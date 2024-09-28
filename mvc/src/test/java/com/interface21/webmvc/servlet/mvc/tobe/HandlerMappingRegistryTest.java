@@ -47,6 +47,7 @@ class HandlerMappingRegistryTest {
         registry.addHandlerMapping(new AnnotationHandlerMapping("samples"));
 
         assertThatThrownBy(() -> registry.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Can not find proper handler from requestUrl:");
     }
 }

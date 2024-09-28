@@ -20,10 +20,9 @@ public class HandlerMappingRegistry {
                     .filter(handlerMapping -> handlerMapping.supports(request))
                     .map(handlerMapping -> handlerMapping.getHandler(request))
                     .findAny()
-                    .orElseThrow(() -> new NullPointerException(
-                            String.format("Can not find proper handler from requestUrl: %s, requestMethod: %s", request.getRequestURI(), request.getMethod())));
+                    .orElseThrow(NullPointerException::new);
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new IllegalArgumentException(String.format("Can not find proper handler from requestUrl: %s, requestMethod: %s", request.getRequestURI(), request.getMethod()));
         }
     }
 }

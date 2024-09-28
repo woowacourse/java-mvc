@@ -16,9 +16,9 @@ public class HandlerAdaptorRegistry {
             return handlerAdaptors.stream()
                     .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
                     .findAny()
-                    .orElseThrow(() -> new NullPointerException("Can not find proper adaptor from handler: " + handler.toString()));
+                    .orElseThrow(NullPointerException::new);
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new IllegalArgumentException("Can not find proper adaptor from handler: " + handler.toString());
         }
     }
 }
