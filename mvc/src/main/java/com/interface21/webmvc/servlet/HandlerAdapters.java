@@ -1,18 +1,16 @@
 package com.interface21.webmvc.servlet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 
 public class HandlerAdapters {
 
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public HandlerAdapters() {
-        handlerAdapters.add(new HandlerExecutionAdapter());
-        handlerAdapters.add(new ControllerHandlerAdapter());
+    public HandlerAdapters(HandlerAdapter... handlerAdapters) {
+        this.handlerAdapters.addAll(Arrays.asList(handlerAdapters));
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
