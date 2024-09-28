@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.web.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.exception.UnsupportedMethodException;
 import com.interface21.webmvc.servlet.mvc.exception.UnsupportedRequestURIException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final int EMPTY_REQUEST_METHOD_SIZE = 0;
 

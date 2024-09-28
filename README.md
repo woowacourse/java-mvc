@@ -35,7 +35,7 @@
     - [ ] ControllerScanner 클래스 추가
         - [ ] HandlerExecution 생성 메서드 구현
 - [ ] DispatcherServlet 클래스 구현
-    - [ ] HandlerMapping 인터페이스 구현
+    - [x] HandlerMapping 인터페이스 구현
     - [ ] HandlerAdapter 인터페이스 구현
 
 ### 학습목표
