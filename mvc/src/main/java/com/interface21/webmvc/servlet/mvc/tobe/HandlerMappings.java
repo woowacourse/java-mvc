@@ -5,6 +5,7 @@ import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HandlerMappings {
 
@@ -18,15 +19,17 @@ public class HandlerMappings {
         if (handlerMappings.isEmpty()) {
             return null;
         }
-        Object handler = null;
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            handler = handlerMapping.getHandler(request);
-            if (handler != null) break;
-        }
+
+        HandlerExecution handler = handlerMappings.stream()
+                .map(handlerMapping -> getHandler(request))
+                .filter(Objects::isNull)
+                .findFirst()
+                .orElse(null);
+
         if (handler instanceof Controller) {
             return new ControllerHandlerAdapter((Controller) handler);
         }
 
-        return (HandlerExecution) handler;
+        return handler;
     }
 }
