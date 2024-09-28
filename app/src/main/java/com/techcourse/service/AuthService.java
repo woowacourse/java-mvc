@@ -14,7 +14,7 @@ public class AuthService {
     private final UserService userService = new UserService();
 
     public void login(String account, String password, HttpSession session) throws AuthException {
-        if (isAlreadyLogin(session)) {
+        if (isAlreadyLoggedIn(session)) {
             return;
         }
 
@@ -32,7 +32,7 @@ public class AuthService {
         log.info("logged in {}", user1.getAccount());
     }
 
-    private boolean isAlreadyLogin(HttpSession session) {
+    private boolean isAlreadyLoggedIn(HttpSession session) {
         return UserSession.isLoggedIn(session);
     }
 
