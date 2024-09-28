@@ -72,14 +72,4 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("GET /get-test에 대한 핸들러가 중복됩니다.");
     }
-
-    @Test
-    @DisplayName("url, method를 처리할 수 있는 핸들러가 존재하지 않는 경우 예외가 발생한다.")
-    void getHandlerAbsenceExceptionTest() {
-        final var request = new MockHttpServletRequest("GET", "/absence-test");
-
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessage("GET /absence-test를 처리할 수 있는 핸들러가 존재하지 않습니다.");
-    }
 }

@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +75,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        return Optional.ofNullable(handlerExecutions.get(handlerKey))
-                .orElseThrow(() -> new UnsupportedOperationException(String.format("%s %s를 처리할 수 있는 핸들러가 존재하지 않습니다.",
-                        handlerKey.getRequestMethod(), handlerKey.getUrl())));
+        return handlerExecutions.get(handlerKey);
     }
 }
