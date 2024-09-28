@@ -29,12 +29,12 @@ class HandlerAdapterTest {
         controllers = new HashMap<>();
         controllers.put("/test", new TestSimpleController());
 
+        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping.initialize();
+
         adapters = new ArrayList<>();
         adapters.add(new SimpleControllerHandlerAdapter());
         adapters.add(new AnnotationHandlerAdapter());
-
-        handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
     }
 
     @Test
@@ -42,8 +42,7 @@ class HandlerAdapterTest {
     void supports() {
         // given
         final var request = mock(HttpServletRequest.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
+        
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 

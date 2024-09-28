@@ -19,14 +19,10 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
-    public void add(final HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
-    }
-
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
+                .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 Handler입니다."));
     }
 }

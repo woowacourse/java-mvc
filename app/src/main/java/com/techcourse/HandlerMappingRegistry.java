@@ -28,7 +28,7 @@ public class HandlerMappingRegistry {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst()
+                .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 요청입니다."));
     }
 }
