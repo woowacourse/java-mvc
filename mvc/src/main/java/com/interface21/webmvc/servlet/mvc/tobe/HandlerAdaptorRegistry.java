@@ -18,6 +18,6 @@ public class HandlerAdaptorRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> new NoSuchElementException("적합한 HandlerAdapter를 찾지 못했습니다: " + handler.getClass()));
     }
 }

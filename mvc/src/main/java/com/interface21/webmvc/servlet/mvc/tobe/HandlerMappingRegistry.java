@@ -23,6 +23,6 @@ public class HandlerMappingRegistry {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> new NoSuchElementException("적합한 Handler를 찾지 못했습니다: " + request.getRequestURI() + "/" + request.getMethod()));
     }
 }
