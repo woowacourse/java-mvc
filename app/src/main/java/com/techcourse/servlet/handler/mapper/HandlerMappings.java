@@ -29,8 +29,7 @@ public class HandlerMappings {
     public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.hasHandler(request))
-                .findAny()
-                .orElseThrow(() -> new NoSuchElementException(request + "에 해당하는 핸들러를 찾을 수 없습니다"))
-                .getHandler(request);
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("request를 처리한 핸들러가 존재하지 않습니다"));
     }
 }
