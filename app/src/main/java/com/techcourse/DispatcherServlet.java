@@ -1,6 +1,8 @@
 package com.techcourse;
 
-import jakarta.servlet.ServletException;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws IOException {
         log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -51,9 +53,12 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, controller);
             move(request, response, modelAndView);
-        } catch (final Exception e) {
+        } catch (final NoSuchElementException e) {
             log.error("Exception : {}", e.getMessage());
-            throw new ServletException("예기치 못한 오류가 발생했습니다.");
+            response.sendRedirect("/404.jsp");
+        } catch (final Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            response.sendRedirect("/500.jsp");
         }
     }
 
