@@ -31,3 +31,7 @@
   - [x] @Controller 가 붙은 클래스 AnnotationHandlerMapping에 등록한다. 
 - [x] [JspView 클래스](mvc/src/main/java/com/interface21/webmvc/servlet/view/JspView.java) 구현하기
   - [x] DispatchServlet 클래스의 service 메서드에서 뷰를 처리하는 부분을 JspView 클래스로 옮긴다.
+
+### 2단계 - 점진적인 리팩터링
+- [ ] Legacy MVC와 @MVC 통합하기
+  - [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하게 만들자
