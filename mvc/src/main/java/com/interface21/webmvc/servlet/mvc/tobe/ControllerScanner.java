@@ -11,7 +11,7 @@ import com.interface21.context.stereotype.Controller;
 public class ControllerScanner {
 	private final Reflections reflections;
 
-	public ControllerScanner(String basePackage) {
+	public ControllerScanner(Object... basePackage) {
 		this.reflections = new Reflections(basePackage);
 	}
 
