@@ -62,7 +62,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn(requestUri);
         when(request.getMethod()).thenReturn(httpMethod);
 
-        Method method = dispatcherServlet.getClass().getDeclaredMethod("findHandler", HttpServletRequest.class);
+        Method method = dispatcherServlet.getClass().getDeclaredMethod("getHandler", HttpServletRequest.class);
         method.setAccessible(true);
 
         // when
@@ -80,7 +80,7 @@ class DispatcherServletTest {
         when(request.getRequestURI()).thenReturn("/none");
         when(request.getMethod()).thenReturn("HEAD");
 
-        Method method = dispatcherServlet.getClass().getDeclaredMethod("findHandler", HttpServletRequest.class);
+        Method method = dispatcherServlet.getClass().getDeclaredMethod("getHandler", HttpServletRequest.class);
         method.setAccessible(true);
 
         // when & then
@@ -95,7 +95,7 @@ class DispatcherServletTest {
     @MethodSource("handlerAdapterProvider")
     void findHandlerAdapter(Object handler, Class<?> expectedAdapterClass) throws Exception {
         // given
-        Method method = dispatcherServlet.getClass().getDeclaredMethod("findHandlerAdapter", Object.class);
+        Method method = dispatcherServlet.getClass().getDeclaredMethod("getHandlerAdapter", Object.class);
         method.setAccessible(true);
 
         // when
@@ -111,7 +111,7 @@ class DispatcherServletTest {
         // given
         Object invalidObject = new Object();
 
-        Method method = dispatcherServlet.getClass().getDeclaredMethod("findHandlerAdapter", Object.class);
+        Method method = dispatcherServlet.getClass().getDeclaredMethod("getHandlerAdapter", Object.class);
         method.setAccessible(true);
 
         // when & then

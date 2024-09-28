@@ -9,6 +9,8 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class HandlerMappings {
 
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
+
     private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappings() {
@@ -16,7 +18,7 @@ public class HandlerMappings {
     }
 
     public void initialize() {
-        handlerMappings.add(new AnnotationHandlerMapping(getClass().getPackageName()));
+        handlerMappings.add(new AnnotationHandlerMapping(BASE_PACKAGE));
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
