@@ -34,7 +34,7 @@ class HandlerMappingRegistryTest {
     }
 
     @Test
-    @DisplayName("서로 다른 핸들러 매핑이 존재해도 메뉴얼 핸들러를 찾을 수 있다.")
+    @DisplayName("서로 다른 핸들러 매핑이 존재해도 어노테이션 핸들러를 찾을 수 있다.")
     void getAnnotationHandler() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
