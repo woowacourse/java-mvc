@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe.handlerMapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import jakarta.servlet.ServletException;
@@ -20,11 +21,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Object getHandler(HttpServletRequest request) throws ServletException {
+    public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new ServletException("No handler found"));
+                .orElseThrow(() -> new NoSuchElementException("No handler found"));
     }
 }

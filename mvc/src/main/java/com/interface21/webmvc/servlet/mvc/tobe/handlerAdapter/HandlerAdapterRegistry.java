@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import jakarta.servlet.ServletException;
 
@@ -17,10 +18,10 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
+    public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.support(handler))
                 .findFirst()
-                .orElseThrow(() -> new ServletException("No handlerAdapter found"));
+                .orElseThrow(() -> new NoSuchElementException("No handlerAdapter found"));
     }
 }
