@@ -65,7 +65,7 @@ public class DispatcherServlet extends HttpServlet {
             throws Exception {
         if (handler instanceof Controller) {
             String viewName = ((Controller) handler).execute(request, response);
-            return new ModelAndView(new JspView(viewName));
+            return new ModelAndView(JspView.from(viewName));
         }
         if (handler instanceof HandlerExecution) {
             return ((HandlerExecution) handler).handle(request, response);

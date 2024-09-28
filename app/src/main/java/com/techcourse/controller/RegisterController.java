@@ -20,11 +20,11 @@ public class RegisterController {
                 req.getParameter("password"),
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView(JspView.from("/index.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return new ModelAndView(JspView.from("/register.jsp"));
     }
 }
