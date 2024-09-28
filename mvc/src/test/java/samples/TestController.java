@@ -39,11 +39,6 @@ public class TestController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/get-view-test", method = RequestMethod.GET)
-    public ModelAndView getView(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("test-view"));
-    }
-
     public ModelAndView isNotRequestMapping(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("isNotRequestMapping"));
     }
