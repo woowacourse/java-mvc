@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.webmvc.servlet.exception.ControllerScanException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +34,6 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> getControllers() {
-        return controllers;
+        return Collections.unmodifiableMap(controllers);
     }
 }
