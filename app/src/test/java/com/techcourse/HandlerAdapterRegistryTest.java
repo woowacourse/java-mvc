@@ -9,9 +9,11 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 
 class HandlerAdapterRegistryTest {
@@ -19,20 +21,22 @@ class HandlerAdapterRegistryTest {
     @ParameterizedTest
     @MethodSource
     @DisplayName("Find handler adapter.")
-    void getHandler(Class<?> handlerType) {
+    void getHandler(Class<?> handlerType, Class<?> adapterType) {
         // given
-        var handlerExecution = mock(handlerType);
+        var handler = mock(handlerType);
         var sut = new HandlerAdapterRegistry();
 
         // when
-        var actual = sut.getHandlerAdapter(handlerExecution);
+        var actual = sut.getHandlerAdapter(handler);
 
         // then
-        assertThat(actual).isNotNull();
+        assertThat(actual).isInstanceOf(adapterType);
     }
 
-    static Stream<Class<?>> getHandler() {
-        return Stream.of(Controller.class, HandlerExecution.class);
+    static Stream<Arguments> getHandler() {
+        return Stream.of(
+                Arguments.of(Controller.class, ManualHandlerAdaptor.class),
+                Arguments.of(HandlerExecution.class, AnnotationHandlerAdapter.class));
     }
 
     @Test
