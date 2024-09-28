@@ -20,7 +20,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         final var dispatcherServlet = new DispatcherServlet("com.techcourse");
         dispatcherServlet.appendHandlerMapping(new ManualHandlerMapping());
 
-
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
             throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
