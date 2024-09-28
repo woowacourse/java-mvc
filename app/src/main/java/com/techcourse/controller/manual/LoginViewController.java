@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class LoginViewController implements Controller {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
-
     private AuthService authService = new AuthService();
-
 
     @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
