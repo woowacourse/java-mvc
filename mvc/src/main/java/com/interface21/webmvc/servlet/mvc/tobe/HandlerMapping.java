@@ -5,5 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface HandlerMapping {
 
     void initialize();
+    boolean handlerExist(HttpServletRequest request);
     Object getHandler(HttpServletRequest request);
 }

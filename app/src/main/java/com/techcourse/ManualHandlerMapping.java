@@ -33,6 +33,13 @@ public class ManualHandlerMapping implements HandlerMapping {
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
+    @Override
+    public boolean handlerExist(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return controllers.containsKey(requestURI);
+    }
+
+    @Override
     public Controller getHandler(HttpServletRequest httpServletRequest) {
         return controllers.get(httpServletRequest.getRequestURI());
     }

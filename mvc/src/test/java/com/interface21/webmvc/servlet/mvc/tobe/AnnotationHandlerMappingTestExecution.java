@@ -5,11 +5,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static samples.TestController.GET_URL;
 
 class AnnotationHandlerMappingTestExecution {
 
@@ -78,5 +80,31 @@ class AnnotationHandlerMappingTestExecution {
         Assertions.assertThatThrownBy(() -> handlerMapping.getHandler(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("핸들러가 존재하지 않습니다.");
+    }
+
+    @DisplayName("핸들러가 존재하면 true를 반환한다.")
+    @Test
+    void handlerExist_returnTrue() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn(GET_URL);
+        when(request.getMethod()).thenReturn("GET");
+
+        boolean result = handlerMapping.handlerExist(request);
+        Assertions.assertThat(result).isTrue();
+    }
+
+    @DisplayName("핸들러가 존재하지 않으면 false를 반환한다.")
+    @Test
+    void handlerExist_returnFalse() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getRequestURI()).thenReturn("/not-exist-uri");
+        when(request.getMethod()).thenReturn("GET");
+
+        boolean result = handlerMapping.handlerExist(request);
+        Assertions.assertThat(result).isFalse();
     }
 }
