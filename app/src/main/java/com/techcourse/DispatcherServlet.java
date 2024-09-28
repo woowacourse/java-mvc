@@ -22,8 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final View PAGE_404_VIEW = new JspView("redirect:/404.jsp");
     private static final long serialVersionUID = 1L;
 
-    private final HandlerMappingContainer handlerMappingContainer;
-    private final HandlerAdapterContainer handlerAdapterContainer;
+    private final transient HandlerMappingContainer handlerMappingContainer;
+    private final transient HandlerAdapterContainer handlerAdapterContainer;
 
     public DispatcherServlet(
             HandlerMappingContainer handlerMappingContainer,
