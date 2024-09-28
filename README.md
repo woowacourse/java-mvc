@@ -10,11 +10,13 @@
 ### 시작 가이드
 
 1. 미션을 시작하기 전에 학습 테스트를 먼저 진행합니다.
-  - [Junit3TestRunner](study/src/test/java/reflection/Junit3TestRunner.java)
-  - [Junit4TestRunner](study/src/test/java/reflection/Junit4TestRunner.java)
-  - [ReflectionTest](study/src/test/java/reflection/ReflectionTest.java)
-  - [ReflectionsTest](study/src/test/java/reflection/ReflectionsTest.java)
-  - 나머지 학습 테스트는 강의 시간에 풀어봅시다.
+
+- [Junit3TestRunner](study/src/test/java/reflection/Junit3TestRunner.java)
+- [Junit4TestRunner](study/src/test/java/reflection/Junit4TestRunner.java)
+- [ReflectionTest](study/src/test/java/reflection/ReflectionTest.java)
+- [ReflectionsTest](study/src/test/java/reflection/ReflectionsTest.java)
+- 나머지 학습 테스트는 강의 시간에 풀어봅시다.
+
 2. 학습 테스트를 완료하면 LMS의 1단계 미션부터 진행합니다.
 
 ## 학습 테스트
@@ -59,4 +61,9 @@
 
 - 처리 추가
   - [x] /login, /register 시 request에 param이 잘못된 경우 -> /400.jsp
+  - [x] 컨트롤러 단 예외 발생 -> /500.jsp
+  - [x] 페이지가 존재하지 않은 예외 발생 -> /404.jsp
 
+- 테스트
+  - [ ] servlet 테스트
+  - [ ] 컨트롤러 정상 동작 확인
