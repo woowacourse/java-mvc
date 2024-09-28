@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +7,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,17 +24,17 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        reflections.getTypesAnnotatedWith(Controller.class)
-                .forEach(this::mapHandlers);
-        log.info("Initialized AnnotationHandlerMapping!");
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        addHandlerExecutions(controllers);
+        log.info("AnnotationHandlerMapping initialized");
     }
 
-    private void mapHandlers(Class<?> controllerClass) {
-        Arrays.stream(controllerClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(this::registerHandlers);
-
+    private void addHandlerExecutions(Map<Class<?>, Object> controllers) {
+        controllers.forEach((controllerClass, controllerInstance) ->
+                Arrays.stream(controllerClass.getDeclaredMethods())
+                        .forEach(this::registerHandlers)
+        );
     }
 
     private void registerHandlers(Method method) {
