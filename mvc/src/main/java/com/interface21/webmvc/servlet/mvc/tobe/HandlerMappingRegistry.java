@@ -14,7 +14,7 @@ public class HandlerMappingRegistry {
         handlerMappings = new ArrayList<>();
     }
 
-    private void addHandlerMapping(HandlerMapping handlerMapping) {
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
