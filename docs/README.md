@@ -10,7 +10,7 @@
 * [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원하기
 
 ### 2단계
-* [ ] Legacy MVC와 @MVC 통합하기 위한 적절한 추상화
+* [x] Legacy MVC와 @MVC 통합하기 위한 적절한 추상화
 
 ## 서블릿 학습 테스트
 
