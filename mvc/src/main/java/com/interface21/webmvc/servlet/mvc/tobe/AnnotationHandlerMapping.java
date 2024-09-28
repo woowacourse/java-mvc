@@ -31,20 +31,31 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-        controllerClasses.forEach(controllerClass -> {
-            Arrays.stream(controllerClass.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> handlerMapping(getControllerInstance(controllerClass), method));
-        });
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        controllerClasses.forEach(this::handlerMapping);
 
         handlers.forEach((key, value) -> log.info("HandlerKey : {}, handler : {}", key, value));
     }
 
-    private void handlerMapping(final Object instance, final Method method) {
+    private void handlerMapping(final Class<?> controllerClass) {
+        final Object instance = getControllerInstance(controllerClass);
+
+        Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> methodMapping(instance, method));
+    }
+
+    private Object getControllerInstance(final Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("컨트롤러 인스턴스 생성에 실패했습니다.");
+        }
+    }
+
+    private void methodMapping(final Object instance, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
         List<RequestMethod> requestMethods = List.of(requestMapping.method());
@@ -55,14 +66,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         requestMethods.stream()
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
                 .forEach(handlerKey -> handlers.put(handlerKey, instance));
-    }
-
-    private Object getControllerInstance(final Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("컨트롤러 인스턴스 생성에 실패했습니다.");
-        }
     }
 
     @Override
