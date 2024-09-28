@@ -29,10 +29,15 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
         controllerTypes.forEach(this::mapControllerHandlers);
+
+        log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("Path : {} {}, Controller : {}", handlerKey.requestMethod,
+                        handlerKey.url,
+                        handlerExecutions.get(handlerKey)));
     }
 
     private void mapControllerHandlers(Class<?> controllerType) {
