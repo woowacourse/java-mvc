@@ -1,5 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
@@ -13,10 +15,7 @@ public class JsonView implements View {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
-        objectMapper.setVisibility(
-                objectMapper.getVisibilityChecker()
-                        .withFieldVisibility(com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY)
-        );
+        objectMapper.setVisibility(objectMapper.getVisibilityChecker().withFieldVisibility(ANY));
     }
 
     @Override
