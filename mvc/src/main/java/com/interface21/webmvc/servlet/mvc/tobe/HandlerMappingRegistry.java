@@ -16,6 +16,7 @@ public class HandlerMappingRegistry {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("no handler found."));
+                .orElseThrow(() -> new IllegalArgumentException("no handler found."))
+                .getHandler(request);
     }
 }
