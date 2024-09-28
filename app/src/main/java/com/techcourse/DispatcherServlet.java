@@ -2,8 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegister;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -22,19 +22,13 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegister handlerMappingRegister = new HandlerMappingRegister();
     private final HandlerExecutor handlerExecutor = new HandlerExecutor();
 
-    public DispatcherServlet() {
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappingRegister.addHandlerMapping(handlerMapping);
     }
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-
-        handlerMappingRegister.addHandlerMapping(manualHandlerMapping);
-        handlerMappingRegister.addHandlerMapping(annotationHandlerMapping);
+        handlerMappingRegister.initialize();
     }
 
     @Override
@@ -44,14 +38,14 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappingRegister.getHandler(request);
             ModelAndView modelAndView = handlerExecutor.execute(handler, request, response);
-            renderView(modelAndView, request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void renderView(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
         View view = modelAndView.getView();
         Map<String, Object> model = modelAndView.getModel();
 

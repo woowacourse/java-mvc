@@ -14,6 +14,10 @@ public class HandlerMappingRegister {
         handlerMappings.add(handlerMapping);
     }
 
+    public void initialize() {
+        handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
     public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
