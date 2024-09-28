@@ -9,19 +9,19 @@ import com.techcourse.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 
-    public final List<HandlerAdapter> lookups;
+    public final List<HandlerAdapter> registry;
 
     public HandlerAdapterRegistry() {
-        this.lookups = new ArrayList<>();
+        this.registry = new ArrayList<>();
     }
 
     public int addAdapter(final HandlerAdapter handlerAdapter) {
-        lookups.add(handlerAdapter);
-        return lookups.size();
+        registry.add(handlerAdapter);
+        return registry.size();
     }
 
     public HandlerAdapter get(final HttpServletRequest request) {
-        return lookups.stream()
+        return registry.stream()
                 .filter(handlerMappingAdapter -> handlerMappingAdapter.support(request))
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("핸들러를 찾을 수 없는 HTTP request 요청"));

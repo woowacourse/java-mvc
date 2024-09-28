@@ -15,11 +15,11 @@ class HandlerAdapterRegistryTest {
     @DisplayName("핸들러 매핑 어텁터 목록을 추가한다.")
     void add_handler_mapping_adapter_list() {
         // given
-        final HandlerAdapterRegistry lookup = new HandlerAdapterRegistry();
+        final HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
         final AnnotationHandlerAdapter handlerMappingAdapter = new AnnotationHandlerAdapter("support");
 
         // when
-        final int size = lookup.addAdapter(handlerMappingAdapter);
+        final int size = registry.addAdapter(handlerMappingAdapter);
 
         // then
         assertThat(size).isEqualTo(1);
