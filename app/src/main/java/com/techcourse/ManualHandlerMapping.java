@@ -3,8 +3,8 @@ package com.techcourse;
 import com.techcourse.controller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.controller.Controller;
+import com.interface21.webmvc.servlet.mvc.controller.ForwardController;
 
 import java.util.HashMap;
 import java.util.Map;
