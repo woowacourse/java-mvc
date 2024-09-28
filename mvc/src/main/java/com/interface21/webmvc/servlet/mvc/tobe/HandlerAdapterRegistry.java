@@ -19,6 +19,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 handler 입니다."));
     }
 }
