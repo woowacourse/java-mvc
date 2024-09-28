@@ -49,7 +49,7 @@
 
 - Legacy MVC를 따르는 컨트롤러 정상 동작
   - [x] GET / -> /index.jsp
-  - [x] GET /register/view -> /register.js
+  - [x] GET /register/view -> /register.jsp
   - [x] POST /register 회원가입 성공 -> /index.jsp
   - [x] GET /logout -> 세션 정보 삭제
   - [x] GET /login/view -> /login.jsp
@@ -65,5 +65,5 @@
   - [x] 페이지가 존재하지 않은 예외 발생 -> /404.jsp
 
 - 테스트
-  - [ ] servlet 테스트
-  - [ ] 컨트롤러 정상 동작 확인
+  - [x] servlet 테스트
+    - [x] 컨트롤러 정상 동작 확인
