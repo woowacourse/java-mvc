@@ -22,9 +22,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
     private final ControllerScanner controllerScanner;
 
-    public AnnotationHandlerMapping(ControllerScanner controllerScanner) {
+    public AnnotationHandlerMapping(Object... basePackage) {
         this.handlerExecutions = new HashMap<>();
-        this.controllerScanner = controllerScanner;
+        this.controllerScanner = new ControllerScanner(basePackage);
+    }
+
+    @Override
+    public void initialize() {
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach(this::addHandlers);
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     @Override
@@ -34,12 +41,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HandlerKey handlerKey = new HandlerKey(requestURI, method);
 
         return handlerExecutions.get(handlerKey);
-    }
-
-    public void initialize() {
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        controllers.forEach(this::addHandlers);
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addHandlers(final Class<?> controllerType, final Object instance) {
