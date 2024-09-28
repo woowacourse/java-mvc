@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerAdapterTest {
 
-    @DisplayName("HandlerExecution 클래스라면 adpat를 지원한다")
+    @DisplayName("HandlerExecution 클래스라면 adapt를 지원한다")
     @Test
     void supportsHandler() throws Exception {
         AnnotationHandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
