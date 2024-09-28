@@ -9,8 +9,10 @@ public class HandlerAdapterRegistry {
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public HandlerAdapterRegistry() {
-        handlerAdapters.add(new ManualHandlerAdapter());
-        handlerAdapters.add(new RequestMappingHandlerAdapter());
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {

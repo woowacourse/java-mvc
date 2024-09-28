@@ -1,9 +1,14 @@
 package com.techcourse;
 
+import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.RequestMappingHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +22,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = createDispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +34,17 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet createDispatcherServlet() {
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
+
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.addHandlerAdapter(new RequestMappingHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+
+        return new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
     }
 }
