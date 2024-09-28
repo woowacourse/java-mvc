@@ -30,7 +30,6 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.initialize();
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.initialize();
     }
 

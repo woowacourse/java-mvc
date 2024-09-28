@@ -13,7 +13,7 @@ public class HandlerAdapters {
     }
 
     public void initialize() {
-
+        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
