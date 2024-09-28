@@ -8,15 +8,16 @@ import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
-    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
     private final List<HandlerMapping> handlerMappings;
+    private final String basePackage;
 
-    public HandlerMappingRegistry() {
+    public HandlerMappingRegistry(String basePackage) {
         this.handlerMappings = new ArrayList<>();
+        this.basePackage = basePackage;
     }
 
     public void initialize() {
-        addHandlerMapping(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE));
+        addHandlerMapping(new AnnotationHandlerMapping(basePackage));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 

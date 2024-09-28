@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -24,7 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry = new HandlerMappingRegistry(BASE_PACKAGE);
     }
 
     @Override
