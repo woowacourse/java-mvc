@@ -28,6 +28,11 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    public AnnotationHandlerMapping() {
+        this.basePackage = new Object[]{"com.techcourse.controller"};
+        this.handlerExecutions = new HashMap<>();
+    }
+
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
