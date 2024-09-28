@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples.success");
-        handlerMapping.initialize();
+        handlerMapping.init();
     }
 
     @Test
@@ -68,7 +68,7 @@ class AnnotationHandlerMappingTest {
     @DisplayName("같은 url, method에 대한 핸들러를 중복으로 등록하는 경우 예외가 발생한다.")
     void duplicateHandlerKeyExceptionTest() {
         AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples.exception.duplicate");
-        assertThatThrownBy(() -> handlerMapping.initialize())
+        assertThatThrownBy(() -> handlerMapping.init())
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("GET /get-test에 대한 핸들러가 중복됩니다.");
     }

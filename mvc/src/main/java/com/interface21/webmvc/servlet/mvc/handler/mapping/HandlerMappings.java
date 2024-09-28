@@ -20,4 +20,8 @@ public class HandlerMappings {
                 .orElseThrow(() -> new UnsupportedOperationException(String.format(
                         "%s %s를 처리할 수 있는 핸들러가 존재하지 않습니다.", request.getMethod(), request.getRequestURI())));
     }
+
+    public void init() {
+        mappings.forEach(HandlerMapping::init);
+    }
 }

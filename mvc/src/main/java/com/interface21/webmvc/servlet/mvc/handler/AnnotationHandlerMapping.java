@@ -1,11 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.handler.mapping;
+package com.interface21.webmvc.servlet.mvc.handler;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.handler.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.handler.HandlerKey;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -27,7 +26,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
+    @Override
+    public void init() {
         initHandlerExecutions();
         log.info("Initialized AnnotationHandlerMapping!");
     }

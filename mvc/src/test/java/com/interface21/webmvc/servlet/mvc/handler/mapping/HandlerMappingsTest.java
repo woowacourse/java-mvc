@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.handler.mapping;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerMapping;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,7 @@ class HandlerMappingsTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples.success");
-        handlerMapping.initialize();
+        handlerMapping.init();
         handlerMappings = new HandlerMappings(List.of(handlerMapping));
     }
 
