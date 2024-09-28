@@ -28,11 +28,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            String viewName = extractViewName(request, response, requestURI);
+            String viewName = extractViewName(request, response);
             renderView(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -40,8 +39,8 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private String extractViewName(HttpServletRequest request, HttpServletResponse response, String requestURI) throws Exception {
-        Controller controller = manualHandlerMapping.getHandler(requestURI);
+    private String extractViewName(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Controller controller = (Controller) manualHandlerMapping.getHandler(request);
         return controller.execute(request, response);
     }
 
