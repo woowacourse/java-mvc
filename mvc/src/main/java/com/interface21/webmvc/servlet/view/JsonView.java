@@ -1,14 +1,40 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.interface21.webmvc.servlet.View;
+import java.util.Map;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.webmvc.servlet.View;
 
 public class JsonView implements View {
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(
+            final Map<String, ?> model,
+            final HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        response.setContentType("application/json;charset=utf-8");
+        handleResponse(response, model);
+    }
+
+    private void handleResponse(final HttpServletResponse response, final Map<String, ?> model) {
+        if (model.size() == 1) {
+            model.values().forEach(data -> sendResponse(response, data));
+            return;
+        }
+        sendResponse(response, model);
+    }
+
+    private void sendResponse(final HttpServletResponse response, final Object data) {
+        try {
+            response.getWriter().write(objectMapper.writeValueAsString(data));
+        } catch (Exception e) {
+            throw new IllegalStateException("Http 응답을 보내는 중 문제가 발생하였습니다.");
+        }
     }
 }
