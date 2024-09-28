@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.techcourse.handler.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
 import com.techcourse.handler.HandlerAdapterRegistry;
 import com.techcourse.handler.ManualHandlerAdapter;
 
@@ -21,12 +22,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerAdapterRegistry lookup = new HandlerAdapterRegistry();
+    private final HandlerAdapterRegistry registry = new HandlerAdapterRegistry();
 
     @Override
     public void init() {
-        lookup.addAdapter(new ManualHandlerAdapter());
-        lookup.addAdapter(new AnnotationHandlerAdapter("com.techcourse.controller"));
+        registry.addAdapter(new ManualHandlerAdapter());
+        registry.addAdapter(new AnnotationHandlerAdapter("com.techcourse.controller"));
     }
 
     @Override
@@ -34,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            final HandlerAdapter handlerAdapter = lookup.get(request);
+            final HandlerAdapter handlerAdapter = registry.get(request);
             final ModelAndView modelAndView = handlerAdapter.adapt(request, response);
             final View view = modelAndView.getView();
             view.render(Map.of(), request, response);

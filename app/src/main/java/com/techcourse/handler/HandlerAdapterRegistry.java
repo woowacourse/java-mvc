@@ -5,7 +5,7 @@ import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.techcourse.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 

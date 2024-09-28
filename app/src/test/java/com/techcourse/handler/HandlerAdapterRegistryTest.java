@@ -5,7 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.techcourse.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 
 import support.FakeHttpServletRequest;
 

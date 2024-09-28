@@ -1,4 +1,4 @@
-package com.techcourse.handler;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.Objects;
 
@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.techcourse.HandlerAdapter;
 
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 
