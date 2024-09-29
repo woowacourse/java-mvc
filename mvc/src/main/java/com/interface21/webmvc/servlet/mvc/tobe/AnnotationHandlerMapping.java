@@ -1,18 +1,19 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
+import org.reflections.util.ReflectionUtilsPredicates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,10 +25,12 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new ConcurrentHashMap<>();
     }
 
+    @Override
     public void initialize() {
         try {
             for (String basePackage : basePackages) {
-                scanControllers(basePackage);
+                ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+                scanControllers(controllerScanner.getControllers(ScanType.ANNOTATION));
             }
             log.info("Initialized AnnotationHandlerMapping: {} handlers", handlerExecutions.size());
         } catch (ReflectiveOperationException e) {
@@ -35,37 +38,31 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void scanControllers(String basePackage) throws ReflectiveOperationException {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controllerClass : controllers) {
-            Method[] methods = controllerClass.getDeclaredMethods();
-            scanControllerMethods(controllerClass, methods);
+    private void scanControllers(Map<Class<?>, Object> controllers) {
+        for (Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
+            Set<Method> methods = ReflectionUtils.getAllMethods(
+                    controllerEntry.getKey(),
+                    ReflectionUtilsPredicates.withAnnotation(RequestMapping.class)
+            );
+            scanControllerMethods(controllerEntry.getValue(), methods);
         }
     }
 
-    private void scanControllerMethods(Class<?> controllerClass, Method[] methods) throws ReflectiveOperationException {
+    private void scanControllerMethods(Object controller, Set<Method> methods) {
         for (Method method : methods) {
-            registerRequestMappingMethod(controllerClass, method);
+            registerRequestMappingMethod(controller, method);
         }
     }
 
-    private void registerRequestMappingMethod(
-            Class<?> controllerClass,
-            Method method
-    ) throws ReflectiveOperationException {
-        if (method.isAnnotationPresent(RequestMapping.class)) {
-            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-            String url = requestMapping.value();
-            RequestMethod[] methodsArray = requestMapping.method();
-            RequestMethod requestMethod = methodsArray[0];
-            HandlerKey key = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(key, new HandlerExecution(controllerClass, method));
-            log.info("Annotation Mapping Initialized: {} - {}", key, method.getName());
-        }
+    private void registerRequestMappingMethod(Object controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
+        HandlerKey key = new HandlerKey(url, requestMapping.method());
+        handlerExecutions.put(key, new HandlerExecution(controller, method));
+        log.info("Annotation Mapping Initialized: {} - {}", key, method.getName());
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());

@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
+import samples.TestServiceA;
+import samples.TestServiceB;
 
 class HandlerExecutionTest {
 
@@ -21,8 +23,8 @@ class HandlerExecutionTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Class<?> controllerClass = TestController.class;
-        Method method = controllerClass.getDeclaredMethod(
+        Object controllerClass = new TestController(new TestServiceA(), new TestServiceB());
+        Method method = TestController.class.getDeclaredMethod(
                 "handleRequest",
                 HttpServletRequest.class,
                 HttpServletResponse.class

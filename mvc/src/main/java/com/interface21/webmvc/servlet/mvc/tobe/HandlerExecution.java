@@ -11,8 +11,8 @@ public class HandlerExecution {
     private final Object controllerInstance;
     private final Method method;
 
-    public HandlerExecution(Class<?> controllerClass, Method method) throws ReflectiveOperationException {
-        this.controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+    public HandlerExecution(Object controller, Method method) {
+        this.controllerInstance = controller;
         this.method = method;
     }
 

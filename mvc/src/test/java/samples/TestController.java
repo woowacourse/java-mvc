@@ -15,6 +15,31 @@ public class TestController {
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
 
+    private final TestServiceA testServiceA;
+    private final TestServiceB testServiceB;
+
+    public TestController(TestServiceA testServiceA, TestServiceB testServiceB) {
+        this.testServiceA = testServiceA;
+        this.testServiceB = testServiceB;
+    }
+
+    public TestController() {
+        this.testServiceA = null;
+        this.testServiceB = null;
+    }
+
+    public String sayHello() {
+        return "Hello from Controller";
+    }
+
+    public TestServiceA getTestServiceA() {
+        return testServiceA;
+    }
+
+    public TestServiceB getTestServiceB() {
+        return testServiceB;
+    }
+
     @RequestMapping(value = "/get-test", method = RequestMethod.GET)
     public ModelAndView findUserId(final HttpServletRequest request, final HttpServletResponse response) {
         log.info("test controller get method");
