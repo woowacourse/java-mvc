@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,19 +11,18 @@ import java.util.Map;
 public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     private static final String REDIRECT_PREFIX = "redirect:";
 
-    public final String url;
+    public final String viewName;
 
-    public JspView(final String url) {
-        this.url = url;
+    public JspView(final String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (url.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(url.substring(JspView.REDIRECT_PREFIX.length()));
+        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
 
@@ -33,7 +31,7 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(url);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
 }
