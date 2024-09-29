@@ -5,7 +5,6 @@ import java.util.Map;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
         controllers.put("/logout", new LogoutController());
 
         log.info("Initialized Handler Mapping!");
