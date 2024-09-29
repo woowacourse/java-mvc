@@ -49,7 +49,7 @@ public class AnnotationHandlerAdapterTest {
     }
 
     @DisplayName("핸들러를 실행할 수 있다.")
-    @Test()
+    @Test
     void testHandle() throws Exception {
         // given
         final var request = mock(HttpServletRequest.class);
