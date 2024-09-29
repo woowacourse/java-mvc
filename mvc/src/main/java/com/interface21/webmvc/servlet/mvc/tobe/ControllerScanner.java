@@ -17,7 +17,7 @@ public class ControllerScanner {
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
 
         controllers = classes.stream()
-                .collect(Collectors.toMap(clazz -> clazz, this::createInstance, (o1, o2) -> o1));
+                .collect(Collectors.toMap(clazz -> clazz, this::createInstance));
     }
 
     private Object createInstance(Class<?> clazz) {
