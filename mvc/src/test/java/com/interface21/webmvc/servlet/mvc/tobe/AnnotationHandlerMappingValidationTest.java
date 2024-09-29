@@ -11,7 +11,7 @@ import java.net.URL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class AnnotationHandlerMappingValidationTest {
+class AnnotationHandlerMappingValidationTest {
 
     @DisplayName("Controller에 매개 변수가 있는 생성자가 정의 되었을 때 매개 변수가 없는 생성자가 존재하지 않을 경우 예외가 발생한다.")
     @Test

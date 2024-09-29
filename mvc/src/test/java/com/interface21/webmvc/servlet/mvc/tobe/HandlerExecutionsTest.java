@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.possible.TestController;
 
-public class HandlerExecutionsTest {
+class HandlerExecutionsTest {
 
     @DisplayName("중복 핸들러 키를 등록할 경우 예외가 발생한다.")
     @Test
