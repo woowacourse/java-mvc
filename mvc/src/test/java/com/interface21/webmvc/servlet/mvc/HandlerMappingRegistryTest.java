@@ -17,7 +17,6 @@ class HandlerMappingRegistryTest {
     void getHandlerTest() {
         // given
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
-        annotationHandlerMapping.initialize();
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
         

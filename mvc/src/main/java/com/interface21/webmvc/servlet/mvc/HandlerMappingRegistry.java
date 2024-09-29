@@ -19,7 +19,6 @@ public class HandlerMappingRegistry {
 
     public void initialize() {
         handlerMappings.add(new AnnotationHandlerMapping(controllerScanBase));
-        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     public void addHandlerMapping(HandlerMapping mapping) {

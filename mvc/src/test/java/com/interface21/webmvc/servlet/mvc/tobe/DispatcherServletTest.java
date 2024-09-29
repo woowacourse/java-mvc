@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -77,15 +76,6 @@ class DispatcherServletTest {
     }
 
     private void registerFakeHandlerMapping(Object retVal) {
-        dispatcherServlet.addHandlerMapping(new HandlerMapping() {
-            @Override
-            public void initialize() {
-            }
-
-            @Override
-            public Object getHandler(HttpServletRequest request) {
-                return retVal;
-            }
-        });
+        dispatcherServlet.addHandlerMapping(req -> retVal);
     }
 }
