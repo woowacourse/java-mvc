@@ -1,49 +1,41 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        for (Object basePackage : basePackage) {
-            Reflections reflections = new Reflections((String) basePackage);
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            try {
-                initializeControllers(controllers);
-            } catch (Exception e) {
-                log.error("Fail to initialized AnnotationHandlerMapping", e);
-            }
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
+        ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.scan();
 
-    private void initializeControllers(Set<Class<?>> controllers) {
-        for (Class<?> controller : controllers) {
-            try {
-                initializeMethods(controller.getDeclaredConstructor().newInstance(), controller.getMethods());
-            } catch (Exception e) {
-                log.error("Handler의 Method를 매핑하는 과정에서 오류가 발생했습니다.", e);
-            }
+        for (Entry<Class<?>, Object> classAndInstance : controllers.entrySet()) {
+            Class<?> clazz = classAndInstance.getKey();
+            Object instance = classAndInstance.getValue();
+
+            initializeMethods(instance, clazz.getMethods());
         }
     }
 
@@ -82,16 +74,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new IllegalArgumentException("handlerKey에 매핑되는 handlerExecution이 존재하지 않습니다. (handlerKey: %s)"
-                    .formatted(handlerKey));
-        }
-        return handlerKey;
+        return handlerExecutions.get(handlerKey);
     }
 }

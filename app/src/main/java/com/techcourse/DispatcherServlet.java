@@ -1,32 +1,50 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdaptor;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.view.ViewResolver;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.type.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private final ViewResolver viewResolver;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdaptor> handlerAdaptors;
 
-    public DispatcherServlet(ViewResolver viewResolver) {
-        this.viewResolver = viewResolver;
+    public DispatcherServlet() {
+        initHandlerMapping();
+        initHandlerAdaptor();
     }
 
-    @Override
-    public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+    private void initHandlerMapping() {
+        handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.techcourse.controller")
+        );
+
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            log.info("initialize HandlerMapping :: %s".formatted(handlerMapping.getClass().getName()));
+            handlerMapping.initialize();
+        }
+    }
+
+    private void initHandlerAdaptor() {
+        this.handlerAdaptors = List.of(
+                new ManualHandlerAdaptor(),
+                new AnnotationHandlerAdaptor()
+        );
     }
 
     @Override
@@ -35,18 +53,41 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Object handler = getHandler(request);
+            HandlerAdaptor handlerAdaptor = getAdaptor(handler);
+
+            ModelAndView modelAndView = handlerAdaptor.handle(request, response, handler);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        HashMap<String, ?> model = new HashMap<>();
-        View view = viewResolver.resolveViewName(viewName);
+    private HandlerAdaptor getAdaptor(Object handler) {
+        for (HandlerAdaptor handlerAdaptor : handlerAdaptors) {
+            if(handlerAdaptor.supports(handler)) {
+                return handlerAdaptor;
+            }
+        }
+        throw new IllegalArgumentException("매핑 가능한 HandlerAdaptor가 존재하지 않습니다. (Handler type: %s)"
+                .formatted(handler.getClass().getName()));
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            Object handler = handlerMapping.getHandler(request);
+            if(handler != null) {
+                return handler;
+            }
+        }
+        throw new IllegalArgumentException("매핑 가능한 Handler가 존재하지 않습니다. (Request URI : %s"
+                .formatted(request.getRequestURI()));
+    }
+
+    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        Map<String, Object> model = modelAndView.getModel();
+        View view = modelAndView.getView();
 
         view.render(model, request, response);
     }
