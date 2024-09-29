@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
 import com.interface21.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
@@ -13,7 +12,7 @@ public class HandlerKey {
     private final String url;
     private final RequestMethod requestMethod;
 
-    private HandlerKey(final String url, final RequestMethod requestMethod) {
+    private HandlerKey(String url, RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
     }

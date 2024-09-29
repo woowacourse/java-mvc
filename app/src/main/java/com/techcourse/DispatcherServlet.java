@@ -1,53 +1,66 @@
 package com.techcourse;
 
 import java.util.Map;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappings handlerMappings;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet() {
+        handlerMappings = new HandlerMappings();
+        handlerAdapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappings.add(new ManualHandlerMapping());
+        handlerMappings.initialize();
+        handlerAdapters.initialize();
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
-            String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Object handler = getHandler(request);
+            HandlerAdapter adapter = getHandlerAdapter(handler);
+
+            ModelAndView modelAndView = adapter.handle(request, response, handler);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(String viewName, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = new ModelAndView(new JspView(viewName));
+    private Object getHandler(HttpServletRequest request) {
+        return handlerMappings.findHandler(request)
+                .orElseThrow(() -> new UnsupportedOperationException("요청을 처리할 수 없습니다."));
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        return handlerAdapters.findHandlerAdapter(handler)
+                .orElseThrow(() -> new UnsupportedOperationException("요청을 처리할 수 없습니다."));
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, Object> model = modelAndView.getModel();
         View view = modelAndView.getView();
 

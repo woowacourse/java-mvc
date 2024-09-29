@@ -1,18 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import java.lang.reflect.Method;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import com.interface21.web.bind.annotation.RequestMapping;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 class ClassScannerTest {
+
     private ClassScanner classScanner;
 
     @BeforeEach
