@@ -25,7 +25,7 @@ public class LoginController {
                     log.info("logged in {}", user.getAccount());
                     return new ModelAndView(new JspView(REDIRECT_INDEX_VIEW));
                 })
-                .orElse(new ModelAndView(new JspView("redirect:/login.jsp")));
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
