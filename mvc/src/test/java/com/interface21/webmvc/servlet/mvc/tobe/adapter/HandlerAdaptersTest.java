@@ -2,6 +2,8 @@ package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +16,7 @@ class HandlerAdaptersTest {
     @Test
     void getHandlerAdapterForHandlerExecutionHandlerAdapter() {
         // Given
-        final HandlerAdapters handlerAdapters = new HandlerAdapters();
+        final HandlerAdapters handlerAdapters = new HandlerAdapters(List.of(new HandlerExecutionHandlerAdapter()));
         final HandlerExecution handler = new HandlerExecution(null, null);
 
         // When

@@ -6,10 +6,8 @@ public class HandlerAdapters {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapters() {
-        this.handlerAdapters = List.of(
-                new HandlerExecutionHandlerAdapter()
-        );
+    public HandlerAdapters(final List<HandlerAdapter> handlerAdapters) {
+        this.handlerAdapters = handlerAdapters;
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
