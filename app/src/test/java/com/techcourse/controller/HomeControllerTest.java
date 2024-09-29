@@ -32,7 +32,7 @@ class HomeControllerTest {
     }
 
     @Test
-    @DisplayName("홈 화면을 요청한다.")
+    @DisplayName("홈 화면을 요청시 대시보드 페이지를 응답한다.")
     void getHome() throws IOException, InterruptedException {
         // given
         HttpClient client = HttpClient.newHttpClient();
