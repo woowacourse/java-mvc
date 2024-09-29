@@ -69,11 +69,9 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void handlerNotExist() throws Exception {
+    void handlerNotExist() {
         HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/no-test");
         when(request.getMethod()).thenReturn("GET");
 
@@ -87,7 +85,6 @@ class AnnotationHandlerMappingTest {
     void handlerExist_returnTrue() {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn(GET_URL);
         when(request.getMethod()).thenReturn("GET");
 
@@ -100,7 +97,6 @@ class AnnotationHandlerMappingTest {
     void handlerExist_returnFalse() {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
         when(request.getRequestURI()).thenReturn("/not-exist-uri");
         when(request.getMethod()).thenReturn("GET");
 
