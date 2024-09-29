@@ -14,7 +14,6 @@ public class HandlerAdapterRegistry {
 
     public void initialize() {
         addHandlerAdapter(new ExecutionHandlerAdapter());
-        addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
