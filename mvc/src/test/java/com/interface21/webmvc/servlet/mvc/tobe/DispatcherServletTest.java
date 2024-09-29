@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,12 +6,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.techcourse.controller.legacy.LoginViewController;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +23,7 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("samples");
         dispatcherServlet.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -36,7 +34,7 @@ class DispatcherServletTest {
     void processAnnotationBasedController() throws ServletException {
         // given
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/get-test");
 
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
@@ -48,29 +46,7 @@ class DispatcherServletTest {
 
         // then
         assertThat(argumentCaptor.getValue())
-                .isEqualTo("/register.jsp");
-    }
-
-    @DisplayName("Controller 인터페이스 기반 컨트롤러를 찾아서 처리한다.")
-    @Test
-    void processInterfaceBasedController() throws ServletException {
-        // given
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/login/view");
-        when(request.getSession()).thenReturn(mock(HttpSession.class));
-        registerFakeHandlerMapping(new LoginViewController());
-
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        when(request.getRequestDispatcher(argumentCaptor.capture()))
-                .thenReturn(requestDispatcher);
-
-        // when
-        dispatcherServlet.service(request, response);
-
-        // then
-        assertThat(argumentCaptor.getValue())
-                .isEqualTo("/login.jsp");
+                .isEqualTo("/index.jsp");
     }
 
     @DisplayName("요청에 해당하는 핸들러를 찾을 수 없으면 예외가 발생한다.")

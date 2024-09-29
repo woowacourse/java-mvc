@@ -18,7 +18,7 @@ class HandlerMappingRegistryTest {
         // given
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
         annotationHandlerMapping.initialize();
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
         
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -36,7 +36,7 @@ class HandlerMappingRegistryTest {
     @Test
     void getHandlerNotFoundTest() {
         // given
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/");

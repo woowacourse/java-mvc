@@ -9,16 +9,16 @@ import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
-    private static final String ANNOTATION_BASED_CONTROLLER_BASE = "com.techcourse.controller";
-
+    private final String controllerScanBase;
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRegistry() {
+    public HandlerMappingRegistry(String basePackage) {
+        this.controllerScanBase = Objects.requireNonNull(basePackage);
         handlerMappings = new ArrayList<>();
     }
 
     public void initialize() {
-        handlerMappings.add(new AnnotationHandlerMapping(ANNOTATION_BASED_CONTROLLER_BASE));
+        handlerMappings.add(new AnnotationHandlerMapping(controllerScanBase));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 

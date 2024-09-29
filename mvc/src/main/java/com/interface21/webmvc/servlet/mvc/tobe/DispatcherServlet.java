@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
@@ -22,8 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
+    public DispatcherServlet(String basePackage) {
+        handlerMappingRegistry = new HandlerMappingRegistry(basePackage);
         handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
