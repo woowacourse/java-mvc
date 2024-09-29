@@ -1,11 +1,12 @@
 package com.techcourse;
 
-import java.util.HashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.handleradapter.HandlerAdapterRegistry;
+import com.techcourse.handlermapping.HandlerMappingRegistry;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -17,15 +18,16 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMappingRegistry handlerMappingRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -33,11 +35,13 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
+        HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
+        Object handler = handlerMapping.getHandler(request);
+
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            new JspView(viewName).render(new HashMap<>(), request, response);
-        } catch (Throwable e) {
+            ModelAndView mav = handlerAdapterRegistry.getHandlerAdapter(handler).adapt(handler, request, response);
+            mav.getView().render(mav.getModel(), request, response);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
