@@ -27,7 +27,7 @@ public class LoginController {
     private static final String PASSWORD = "password";
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView showLoginPage(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
