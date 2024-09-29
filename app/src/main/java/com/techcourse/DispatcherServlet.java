@@ -66,7 +66,7 @@ public class DispatcherServlet extends HttpServlet {
                 handleNotFound(request, response);
                 return;
             }
-            ModelAndView modelAndView = getModelAndView(request, response, handler.get());
+            ModelAndView modelAndView = handle(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -74,7 +74,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private ModelAndView getModelAndView(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    private ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         return handlerAdapter.handle(request, response, handler);
     }
