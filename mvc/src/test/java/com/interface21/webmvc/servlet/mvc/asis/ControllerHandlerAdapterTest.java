@@ -12,7 +12,7 @@ import samples.OldController;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class ControllerHandlerAdapterTest {
+class ControllerHandlerAdapterTest {
 
     @Test
     @DisplayName("기존 Controller를 변경하지 않으면서 HandlerExecution 역할을 할 수 있도록 한다.")

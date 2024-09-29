@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HandlerMappingsTest {
+class HandlerMappingsTest {
 
     private static final HttpServletRequest VALID_REQUEST = mock(HttpServletRequest.class);
     private static final HttpServletRequest INVALID_REQUEST = mock(HttpServletRequest.class);

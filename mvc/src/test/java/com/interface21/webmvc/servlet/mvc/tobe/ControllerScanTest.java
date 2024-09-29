@@ -7,7 +7,7 @@ import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ControllerScanTest {
+class ControllerScanTest {
 
     @Test
     @DisplayName("@Controller 어노테이션이 붙은 클래스를 찾을 수 있다.")
