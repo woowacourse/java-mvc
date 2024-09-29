@@ -56,7 +56,7 @@ public class HandlerMappingRegistryTest {
         final Object handler = handlerMappingRegistry.getHandler(request);
 
         // then
-        assertThat(handler).isInstanceOf(TestController.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("요청을 처리할 수 있는 핸들러가 없으면, IllegalArgumentException이 발생한다.")

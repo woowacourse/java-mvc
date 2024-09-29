@@ -14,8 +14,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 
-import samples.TestController;
-
 class AnnotationHandlerMappingTest {
     private static final String BASE_PACKAGE = "samples";
     private static final String REQUEST_URI_GET_TEST = "/get-test";
@@ -33,7 +31,7 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
-    @DisplayName("GET /get-test 요청 시, TestController가 핸들러로 반환된다.")
+    @DisplayName("GET /get-test 요청 시, HandlerExecution 핸들러로 반환된다.")
     @Test
     void test_GetHandler_ReturnTestController_When_GetTest_Request() {
         // given
@@ -45,10 +43,10 @@ class AnnotationHandlerMappingTest {
         final var handler = handlerMapping.getHandler(request);
 
         // then
-        assertThat(handler).isInstanceOf(TestController.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 
-    @DisplayName("POST /post-test 요청 시, TestController가 핸들러로 반환된다.")
+    @DisplayName("POST /post-test 요청 시, HandlerExecution 핸들러로 반환된다.")
     @Test
     void test_GetHandler_ReturnTestController_When_PostTest_Request() {
         // given
@@ -60,10 +58,10 @@ class AnnotationHandlerMappingTest {
         final var handler = handlerMapping.getHandler(request);
 
         // then
-        assertThat(handler).isInstanceOf(TestController.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 
-    @DisplayName("모든 Request Method에 대해 /no-request-method-test 요청 시, TestController가 핸들러로 반환된다.")
+    @DisplayName("모든 Request Method에 대해 /no-request-method-test 요청 시, HandlerExecution 핸들러로 반환된다.")
     @EnumSource(RequestMethod.class)
     @ParameterizedTest
     void test_GetHandler_ReturnTestController_When_NoRequestMethod_Request(RequestMethod requestMethod) {
@@ -76,7 +74,7 @@ class AnnotationHandlerMappingTest {
         final var handler = handlerMapping.getHandler(request);
 
         // then
-        assertThat(handler).isInstanceOf(TestController.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("요청으로 핸들러를 찾지 못하면 null을 반환한다.")

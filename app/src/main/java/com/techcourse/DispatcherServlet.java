@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -18,7 +19,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
-    private static final String BASE_PACKAGE = "samples";
+    private static final String BASE_PACKAGE = "com";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -62,17 +63,13 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappingRegistry.getHandler(request);
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            final var viewName = handlerAdapter.handle(request, response, handler);
-            move(viewName, request, response);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
+            final View view = modelAndView.getView();
+            view.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final View view = new JspView(viewName);
-
-        view.render(new HashMap<>(), request, response);
     }
 }
