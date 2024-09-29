@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.util.Map;
 
@@ -14,6 +14,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerMappings;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
@@ -21,12 +22,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final RequestHandlerMapping requestHandlerMapping;
+    private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        this.requestHandlerMapping = new RequestHandlerMapping();
-        this.handlerAdapters = new HandlerAdapters();
+    public DispatcherServlet(final HandlerMappings handlerMappings, final HandlerAdapters handlerAdapters) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapters = handlerAdapters;
     }
 
     @Override
@@ -36,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = requestHandlerMapping.getHandler(request);
+            final Object handler = handlerMappings.getHandler(request);
             if (handler == null) {
                 sendNotFoundResponse(request, response);
                 return;
