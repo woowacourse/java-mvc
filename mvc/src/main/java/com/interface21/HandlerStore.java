@@ -27,7 +27,7 @@ public class HandlerStore {
         }
     }
 
-    private static void validateDuplicateHandler(String clazzName) {
+    private void validateDuplicateHandler(String clazzName) {
         if (MANAGERS.containsKey(clazzName)) {
             throw new IllegalArgumentException("이미 등록되어 있는 클래스입니다");
         }
