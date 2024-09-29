@@ -1,4 +1,4 @@
-package com.interface21;
+package com.techcourse.servlet.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,18 +16,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerMappingsTest {
+class AppHandlerMappingTest {
 
     private HandlerMappings annotationHandlerMappings;
 
     @BeforeEach
     void setUp() {
         annotationHandlerMappings = new HandlerMappings(
-                List.of(new AnnotationHandlerMapping("com.techcourse.controller.annotation")));
+                List.of(new AnnotationHandlerMapping("com")));
         annotationHandlerMappings.initialize();
     }
 
-    @DisplayName("POST /login 핸들러가 매핑된다")
+    @DisplayName("annotationMapping - POST /login의 핸들러를 찾을 수 있다")
     @Test
     void login() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -47,7 +47,7 @@ class HandlerMappingsTest {
                 .isInstanceOf(HandlerExecution.class);
     }
 
-    @DisplayName("GET /logout 호환")
+    @DisplayName("annotationMapping - GET /logout의 핸들러를 찾을 수 있다")
     @Test
     void logOut() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -57,11 +57,11 @@ class HandlerMappingsTest {
                 .isInstanceOf(HandlerExecution.class);
     }
 
-    @DisplayName("GET /register 호환")
+    @DisplayName("annotationMapping - POST /register의 핸들러를 찾을 수 있다")
     @Test
     void register() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
-        setUpMockRequest(request, RequestMethod.GET, "/register");
+        setUpMockRequest(request, RequestMethod.POST, "/register");
 
         assertThat(annotationHandlerMappings.getHandler(request))
                 .isInstanceOf(HandlerExecution.class);
