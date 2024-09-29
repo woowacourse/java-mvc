@@ -9,6 +9,10 @@ public class ForwardController implements Controller {
 
     private final String path;
 
+    public ForwardController() {
+        this("/");
+    }
+
     public ForwardController(final String path) {
         this.path = Objects.requireNonNull(path);
     }

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.interface21.context.container.ControllerScanner;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
@@ -19,6 +20,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+
+    public AnnotationHandlerMapping() {
+        this(new Object[0]);
+    }
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
