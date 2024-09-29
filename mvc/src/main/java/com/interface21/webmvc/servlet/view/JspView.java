@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.view;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -35,7 +36,7 @@ public class JspView implements View {
     }
 
     private boolean isForwardView(String viewName) {
-        return !viewName.startsWith(REDIRECT_PREFIX);
+        return viewName != null && !viewName.startsWith(REDIRECT_PREFIX);
     }
 
     private void forward(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
