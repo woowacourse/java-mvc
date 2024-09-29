@@ -22,7 +22,7 @@
 
 ### 1단계 - @MVC 프레임워크 구현하기
 
-1. @MVC Framework 테스트 통과하기
+1. @MVC Framework 테스트 통과
 
 - [x] URL을 컨트롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등)도 매핑 조건에 포함
 - [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method 지원
@@ -31,23 +31,34 @@
     - Tomcat 구현하기 미션에서 적용한 Controller 인터페이스는 2단계 미션에서 통합할 예정
     - AnnotationHandlerMappingTest 클래스의 테스트 성공
 
-2. JspView 클래스를 구현한다
+2. JspView 클래스를 구현
 
 - [x] DispatcherServlet 클래스의 service 메서드에서 뷰에 대한 처리 하는 부분을 JspView 클래스로 이동
 
 ### 2단계 - 점진적인 리팩터링
 
-1. Legacy MVC와 @MVC 통합하기
+1. AnnotationHandlerMapping 클래스 리팩터링
 
 - [x] ControllerScanner 클래스 추가
     - [x] Reflections 객체로 @Controller가 설정된 모든 클래스 탐색
     - [x] 각 클래스의 인스턴스 생성
-- [ ] 컨트롤러의 메서드 정보로 HandlerExecution 생성
-    - [ ] @RequestMapping이 붙어있는 메서드 정보 가져옴
-    - [ ] 가져온 메서드에서 @RequestMapping의 정보를 바탕으로 HandlerKey 객체 생성
-    - [ ] HandlerExecution 생성해 HandlerKey에 매핑되는 메서드를 실행하는 역할 분배
-- [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크 통합
-    - [ ] 컨트롤러를 어노테이션 기반 컨트롤러로 변경해도 정상 동작하도록 지원
+- [x] 컨트롤러의 메서드 정보로 HandlerExecution 생성
+    - [x] @RequestMapping이 붙어있는 메서드 정보 가져옴
+    - [x] 가져온 메서드에서 @RequestMapping의 정보를 바탕으로 HandlerKey 객체 생성
+    - [x] HandlerExecution 생성해 HandlerKey에 매핑되는 메서드를 실행하는 역할 분배
+
+2. DispatcherServlet 클래스 리팩터링해 Legacy MVC와 @MVC 통합 </p>
+   (컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크 통합)
+
+- [ ] HandlerMapping 인터페이스화
+    - [ ] HandlerMapping 인터페이스화 (요청 URL과 실행할 컨트롤러 클래스 또는 메소드를 매핑하는 역할)
+    - [ ] HandlerMappingRegistry 클래스에 HandlerMapping들을 List로 두고 사용
+    - [ ] DispatcherServlet의 초기화 과정에서 ManualHandlerMapping, AnnotationHandlerMapping을 모두 초기화
+- [ ] HandlerAdaptor 인터페이스화
+    - [ ] HandlerAdaptor 인터페이스화 (특정 HandlerMapping 클래스에서 찾은 컨트롤러 실행하는 역할)
+    - [ ] HandlerAdaptorRegistry 클래스에 HandlerAdaptor들을 List로 두고 사용
+    - [ ] DispatcherServlet의 초기화 과정에서 ManualHandlerAdaptor, AnnotationHandlerAdaptor를 모두 초기화
+- [ ] 컨트롤러를 어노테이션 기반 컨트롤러로 변경해도 정상 동작하도록 지원하는지 테스트
 
 ### 3단계 - JSON View 구현하기
 
