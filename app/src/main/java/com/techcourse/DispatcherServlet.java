@@ -7,9 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -26,6 +27,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final String NOT_FOUND_VIEW_NAME = "404.jsp";
 
     private HandlerMappingRegistry handlerMappingRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
@@ -41,6 +43,10 @@ public class DispatcherServlet extends HttpServlet {
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
         addHandlerMapping(annotationHandlerMapping);
+
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -60,7 +66,8 @@ public class DispatcherServlet extends HttpServlet {
                 notFoundView.render(Map.of(), request, response);
                 return;
             }
-            ModelAndView modelAndView = handle(handler.get(), request, response);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -71,16 +78,5 @@ public class DispatcherServlet extends HttpServlet {
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
         JspView view = (JspView)modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
-    }
-
-    private ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (handler instanceof Controller) {
-            String viewName = ((Controller)handler).execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        }
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution)handler).handle(request, response);
-        }
-        throw new IllegalArgumentException("Unsupported handler type: " + handler.getClass().getName());
     }
 }
