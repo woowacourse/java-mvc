@@ -59,7 +59,7 @@ class DispatcherServletTest {
     void serviceWithAnnotationMvc() throws Exception {
         // given
         ManualHandlerMapping manualHandlerMapping = spy(new ManualHandlerMapping());
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        AnnotationHandlerMapping annotationHandlerMapping = spy(new AnnotationHandlerMapping("samples"));
         DispatcherServlet dispatcherServlet = new DispatcherServlet(manualHandlerMapping, annotationHandlerMapping);
         dispatcherServlet.init();
 
@@ -77,5 +77,6 @@ class DispatcherServletTest {
 
         // then
         verify(manualHandlerMapping, never()).getHandler("/test-annotation-mvc");
+        verify(annotationHandlerMapping).getHandler(request);
     }
 }
