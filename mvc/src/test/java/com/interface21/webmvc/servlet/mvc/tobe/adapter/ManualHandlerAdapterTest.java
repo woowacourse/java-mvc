@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
-import com.techcourse.controller.RegisterController;
+import com.techcourse.ManualHandlerAdapter;
+
+import samples.TestManualController;
 
 class ManualHandlerAdapterTest {
 
@@ -27,7 +29,7 @@ class ManualHandlerAdapterTest {
         void supportsTrue() {
             ManualHandlerAdapter adapter = new ManualHandlerAdapter();
 
-            boolean actual = adapter.supports(new RegisterController());
+            boolean actual = adapter.supports(new TestManualController());
 
             assertThat(actual).isTrue();
         }
