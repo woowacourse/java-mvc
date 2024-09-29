@@ -59,8 +59,4 @@ public class DispatcherServlet extends HttpServlet {
             throw new ServletException(e.getMessage());
         }
     }
-
-    public void appendHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.appendHandlerMapping(handlerMapping);
-    }
 }
