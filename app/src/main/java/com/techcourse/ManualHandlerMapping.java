@@ -52,14 +52,14 @@ public class ManualHandlerMapping implements ServletRequestHandler {
         final var controller = getController(request)
                 .orElseThrow(() -> new HandlerNotFoundException(request));
         final var viewName = controller.execute(request, response);
-        move(viewName, request, response);
+        render(viewName, request, response);
     }
 
     private Optional<Controller> getController(HttpServletRequest request) {
         return Optional.ofNullable(controllers.get(request.getRequestURI()));
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
+    private void render(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
