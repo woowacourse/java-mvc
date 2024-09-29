@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,24 @@ class HandlerExecutionTest {
         assertAll(
                 () -> assertThat(handlerExecution.handle(request, response)).isEqualTo(expected),
                 () -> verify(controller).findUserId(request, response)
+        );
+    }
+
+    @DisplayName("컨트롤러 메서드가 String을 반환하는 경우 JspView가 포함된 ModelAndView를 반환한다.")
+    @Test
+    void handleWithViewName() throws Exception {
+        TestController controller = mock(TestController.class);
+        Method method = TestController.class.getDeclaredMethod("string", HttpServletRequest.class, HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
+        when(controller.string(request, response)).thenReturn("string");
+
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        assertAll(
+                () -> assertThat(modelAndView).isInstanceOf(ModelAndView.class),
+                () -> assertThat(((JspView) modelAndView.getView())).isInstanceOf(JspView.class)
         );
     }
 }
