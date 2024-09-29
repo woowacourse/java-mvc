@@ -15,7 +15,7 @@ public class ControllerScanner {
     }
 
     private Map<Class<?>, Object> initializeController(Object[] basePackage) {
-         Reflections reflections = new Reflections(basePackage);
+        Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         return instantiateControllers(classes);
     }
