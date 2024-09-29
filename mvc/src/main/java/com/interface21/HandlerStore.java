@@ -22,10 +22,14 @@ public class HandlerStore {
     public void registerHandler(List<Object> objects) {
         for (Object object : objects) {
             String clazzName = object.getClass().getName();
-            if (MANAGERS.containsKey(clazzName)) {
-                throw new IllegalArgumentException("이미 등록되어 있는 클래스입니다");
-            }
+            validateDuplicateHandler(clazzName);
             MANAGERS.put(clazzName, object);
+        }
+    }
+
+    private static void validateDuplicateHandler(String clazzName) {
+        if (MANAGERS.containsKey(clazzName)) {
+            throw new IllegalArgumentException("이미 등록되어 있는 클래스입니다");
         }
     }
 
