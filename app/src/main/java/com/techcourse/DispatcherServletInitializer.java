@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.web.WebApplicationInitializer;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 import jakarta.servlet.ServletContext;
 
@@ -14,31 +13,23 @@ import jakarta.servlet.ServletContext;
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
-	private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
-	private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
-	@Override
-	public void onStartup(final ServletContext servletContext) {
-		final var dispatcherServlet = new DispatcherServlet();
+    @Override
+    public void onStartup(final ServletContext servletContext) {
+        final var dispatcherServlet = new DispatcherServlet();
 
-		ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-		manualHandlerMapping.initialize();
-		dispatcherServlet.addHandlerMapping(manualHandlerMapping);
+        final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
+        if (registration == null) {
+            throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
+                "Check if there is another servlet registered under the same name.");
+        }
 
-		AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-		annotationHandlerMapping.initialize();
-		dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
+        registration.setLoadOnStartup(1);
+        registration.addMapping("/");
 
-		final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
-		if (registration == null) {
-			throw new IllegalStateException("Failed to register servlet with name '" + DEFAULT_SERVLET_NAME + "'. " +
-				"Check if there is another servlet registered under the same name.");
-		}
-
-		registration.setLoadOnStartup(1);
-		registration.addMapping("/");
-
-		log.info("Start AppWebApplication Initializer");
-	}
+        log.info("Start AppWebApplication Initializer");
+    }
 }
