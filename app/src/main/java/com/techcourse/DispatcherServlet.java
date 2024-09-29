@@ -39,7 +39,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -49,7 +50,8 @@ public class DispatcherServlet extends HttpServlet {
                 return;
             }
 
-            Optional<ModelAndView> modelAndViewOptional = handlerAdapterRegistry.execute(request, response, handler.get());
+            Optional<ModelAndView> modelAndViewOptional
+                    = handlerAdapterRegistry.execute(request, response, handler.get());
             if (modelAndViewOptional.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
