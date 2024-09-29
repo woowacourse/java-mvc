@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
@@ -42,7 +43,8 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             if (modelAndView != null) {
-                modelAndView.render(request, response);
+                View view = modelAndView.getView();
+                view.render(modelAndView.getModel(), request, response);
             }
         } catch (Exception e) {
             throw new ServletException("요청을 처리하는 것에 실패했습니다", e);
