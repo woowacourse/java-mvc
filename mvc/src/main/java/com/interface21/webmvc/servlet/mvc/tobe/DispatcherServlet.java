@@ -15,6 +15,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String BASE_PACKAGE = "com.techcourse";
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
@@ -26,7 +27,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         annotationHandlerMapping.initialize();
 
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
