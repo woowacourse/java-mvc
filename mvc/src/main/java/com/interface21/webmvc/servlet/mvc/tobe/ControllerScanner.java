@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 
 public class ControllerScanner {
 
-    private final Reflections reflections;;
+    private final Reflections reflections;
+    ;
     private final Map<Class<?>, Object> controllers;
 
     public ControllerScanner(Object[] basePackage) {

@@ -9,12 +9,12 @@ public class StandardOutputExchangeRateRenderer implements ExchangeRateRenderer 
     }
 
     @Override
-    public void setExchangeRateProvider(ExchangeRateProvider provider) {
-        this.provider = provider;
+    public ExchangeRateProvider getExchangeRateProvider() {
+        return provider;
     }
 
     @Override
-    public ExchangeRateProvider getExchangeRateProvider() {
-        return provider;
+    public void setExchangeRateProvider(ExchangeRateProvider provider) {
+        this.provider = provider;
     }
 }

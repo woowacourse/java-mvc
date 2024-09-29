@@ -1,7 +1,6 @@
 package di.stage0.staticreferences;
 
 import di.User;
-
 import java.util.HashMap;
 import java.util.Map;
 

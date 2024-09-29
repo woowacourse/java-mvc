@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import reflection.annotation.Controller;
 import reflection.annotation.Repository;
 import reflection.annotation.Service;
-import java.lang.annotation.Annotation;
 import java.util.Set;
 
 class ReflectionsTest {

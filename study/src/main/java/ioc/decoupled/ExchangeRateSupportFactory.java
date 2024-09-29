@@ -4,12 +4,13 @@ import java.util.Properties;
 
 public final class ExchangeRateSupportFactory {
     private static final ExchangeRateSupportFactory instance;
-    private final ExchangeRateProvider exchangeRateProvider;
-    private final ExchangeRateRenderer exchangeRateRenderer;
 
     static {
         instance = new ExchangeRateSupportFactory();
     }
+
+    private final ExchangeRateProvider exchangeRateProvider;
+    private final ExchangeRateRenderer exchangeRateRenderer;
 
     private ExchangeRateSupportFactory() {
         Properties properties = new Properties();
@@ -20,8 +21,10 @@ public final class ExchangeRateSupportFactory {
             final var providerClass = properties.getProperty("provider.class");
             final var rendererClass = properties.getProperty("renderer.class");
 
-            this.exchangeRateProvider = (ExchangeRateProvider) Class.forName(providerClass).getDeclaredConstructor().newInstance();
-            this.exchangeRateRenderer = (ExchangeRateRenderer) Class.forName(rendererClass).getDeclaredConstructor().newInstance();
+            this.exchangeRateProvider = (ExchangeRateProvider) Class.forName(providerClass).getDeclaredConstructor()
+                    .newInstance();
+            this.exchangeRateRenderer = (ExchangeRateRenderer) Class.forName(rendererClass).getDeclaredConstructor()
+                    .newInstance();
 
             exchangeRateRenderer.setExchangeRateProvider(exchangeRateProvider);
         } catch (Exception e) {
