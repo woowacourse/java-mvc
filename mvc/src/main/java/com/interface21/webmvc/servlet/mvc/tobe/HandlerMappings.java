@@ -20,8 +20,8 @@ public class HandlerMappings {
             return null;
         }
 
-        HandlerExecution handler = handlerMappings.stream()
-                .map(handlerMapping -> getHandler(request))
+        Object handler = handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
@@ -30,6 +30,6 @@ public class HandlerMappings {
             return new ControllerHandlerAdapter((Controller) handler);
         }
 
-        return handler;
+        return (HandlerExecution) handler;
     }
 }
