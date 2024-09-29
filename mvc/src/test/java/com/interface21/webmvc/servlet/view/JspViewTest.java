@@ -29,7 +29,7 @@ class JspViewTest {
     @Test
     void testRenderJsp() throws Exception {
         // Given
-        String viewName = "user";
+        String viewName = "/user.jsp";
         JspView view = new JspView(viewName);
 
         // When
@@ -37,7 +37,7 @@ class JspViewTest {
 
         // Then
         verify(request).setAttribute("id", "123");
-        verify(request).getRequestDispatcher("/META-INF/jsp/user.jsp");
+        verify(request).getRequestDispatcher("/user.jsp");
         verify(dispatcher).forward(request, response);
     }
 
