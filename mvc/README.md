@@ -21,3 +21,14 @@
         - 초기화한 2개의 HandlerMapping List로 관리한다.
     - [x] HandlerAdapter 인터페이스 분리
         - HandlerMapping 클래스에서 찾은 컨트롤러를 실행하는 역할
+
+## 3. JSON View 구현
+
+- [ ] JsonView 클래스 구현
+    - JSON 자바 객체 변환 시, Jackson 라이브러리를 사용한다.
+    - JSON으로 응답 시, `ContentType` -> `MediaType.APPLICATION_JSON_UTF8_VALUE`으로 변환한다.
+    - model 데이터 개수 1개면 값 그대로 반환, 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환한다.
+- [ ] Legacy MVC 제거
+    - [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
+    - [ ] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작한다.
+    - [ ] DispatcherServlet를 mvc 패키지로 옮긴다.
