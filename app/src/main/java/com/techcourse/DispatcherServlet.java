@@ -36,11 +36,16 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        final Object handler = handlerMappingRegistry.getHandler(request);
+        final Object handler = getHandler(request);
         final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
         render(modelAndView, request, response);
+    }
+
+    private Object getHandler(final HttpServletRequest request) {
+        return handlerMappingRegistry.getHandler(request)
+                .orElseThrow(() -> new IllegalArgumentException("해당 URI에 매핑되는 핸들러가 없습니다."));
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
