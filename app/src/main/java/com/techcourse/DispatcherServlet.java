@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.interface21.web.servlet.HandlerAdapter;
+import com.interface21.web.servlet.HandlerAdaptor;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.*;
@@ -32,8 +32,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void addHandlerAdaptors() {
-        handlerAdaptorRegistry.addHandlerAdapters(new ControllerHandlerAdaptor());
-        handlerAdaptorRegistry.addHandlerAdapters(new HandlerExecutionAdaptor());
+        handlerAdaptorRegistry.addHandlerAdaptors(new ControllerHandlerAdaptor());
+        handlerAdaptorRegistry.addHandlerAdaptors(new HandlerExecutionAdaptor());
     }
 
     private void addHandlerMappings() {
@@ -45,9 +45,9 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         try {
             Object handler = handlerMappingRegistry.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdaptorRegistry.getHandlerAdapters(handler);
+            HandlerAdaptor handlerAdaptor = handlerAdaptorRegistry.getHandlerAdaptors(handler);
 
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            ModelAndView modelAndView = handlerAdaptor.handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);

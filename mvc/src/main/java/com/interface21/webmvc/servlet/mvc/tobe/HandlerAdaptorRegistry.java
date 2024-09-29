@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.web.servlet.HandlerAdapter;
+import com.interface21.web.servlet.HandlerAdaptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +8,16 @@ import java.util.NoSuchElementException;
 
 public class HandlerAdaptorRegistry {
 
-    List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+    List<HandlerAdaptor> handlerAdaptors = new ArrayList<>();
 
-    public void addHandlerAdapters(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public void addHandlerAdaptors(HandlerAdaptor handlerAdaptor) {
+        handlerAdaptors.add(handlerAdaptor);
     }
 
-    public HandlerAdapter getHandlerAdapters(Object handler) {
-        return handlerAdapters.stream()
-                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+    public HandlerAdaptor getHandlerAdaptors(Object handler) {
+        return handlerAdaptors.stream()
+                .filter(handlerAdaptor -> handlerAdaptor.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("적합한 HandlerAdapter를 찾지 못했습니다: " + handler.getClass()));
+                .orElseThrow(() -> new NoSuchElementException("적합한 HandlerAdaptor를 찾지 못했습니다: " + handler.getClass()));
     }
 }
