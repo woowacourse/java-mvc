@@ -24,9 +24,11 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Set<Class<?>> controllers = extractControllers();
-        List<Method> controllerMethods = extractControllerMethods(controllers);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllerInstance = controllerScanner.getControllerInstance();
 
+        List<Class<?>> controllers = controllerScanner.getControllers();
+        List<Method> controllerMethods = extractControllerMethods(controllers);
         for (Method controllerMethod : controllerMethods) {
             HandlerExecution handlerExecution = new HandlerExecution(controllerMethod);
 
@@ -39,12 +41,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Set<Class<?>> extractControllers() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private List<Method> extractControllerMethods(Set<Class<?>> controllers) {
+    private List<Method> extractControllerMethods(List<Class<?>> controllers) {
         return controllers.stream()
                 .flatMap(controller -> Arrays.stream(controller.getMethods()))
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
