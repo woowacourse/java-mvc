@@ -43,7 +43,8 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.render(request, response);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new ServletException("요청을 처리하는 것에 실패했습니다", e);
         }
     }
 }
