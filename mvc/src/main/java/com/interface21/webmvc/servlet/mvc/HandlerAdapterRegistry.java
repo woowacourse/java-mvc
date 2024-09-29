@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ public class HandlerAdapterRegistry {
     }
 
     public void initialize() {
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
     }
 
