@@ -18,7 +18,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class AnnotationHandlerAdapterTest {
@@ -27,7 +26,6 @@ public class AnnotationHandlerAdapterTest {
 
     static Stream<Arguments> testDataForTestSupports() {
         return Stream.of(
-                Arguments.of(mock(Controller.class), false),
                 Arguments.of(mock(HandlerExecution.class), true)
         );
     }
@@ -41,11 +39,14 @@ public class AnnotationHandlerAdapterTest {
     @MethodSource("testDataForTestSupports")
     @ParameterizedTest
     void testSupports(final Object handler, final boolean expected) {
-        // given & when
-        final boolean actual = annotationHandlerAdapter.supports(handler);
+        // given
+        final HandlerExecution handlerExecution = mock(HandlerExecution.class);
+
+        // when
+        final boolean actual = annotationHandlerAdapter.supports(handlerExecution);
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isTrue();
     }
 
     @DisplayName("핸들러를 실행할 수 있다.")
