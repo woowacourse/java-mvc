@@ -19,7 +19,7 @@ public class HandlerAdapterRegistry {
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst()
+                .findAny()
                 .orElseThrow(() -> new NoSuchElementException("적합한 handler adapter가 없습니다."));
     }
 }
