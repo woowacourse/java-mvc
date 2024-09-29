@@ -9,7 +9,11 @@ public class JsonViewResolver implements ViewResolver {
 
     @Override
     public View resolveViewName(String viewName) {
-        if (PREFIX.startsWith(viewName)) {
+        if (viewName == null) {
+            throw new NullPointerException("viewName의 값이 null입니다.");
+        }
+
+        if (viewName.startsWith(PREFIX)) {
             return new JsonView();
         }
         return null;
