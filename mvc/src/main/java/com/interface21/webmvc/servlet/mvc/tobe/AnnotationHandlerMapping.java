@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
@@ -10,8 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,34 +31,30 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        for (Class<?> handlerType : getHandlerTypes()) {
-            detectHandlerMethods(handlerType);
-        }
+        HandlerScanner handlerScanner = new HandlerScanner(basePackage);
+        handlerScanner.getHandlers()
+                .forEach(this::detectHandlerMethods);
     }
 
-    private Set<Class<?>> getHandlerTypes() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private void detectHandlerMethods(Class<?> handlerType) {
-        List<Method> handlerMethods = Arrays.stream(handlerType.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .toList();
+    private void detectHandlerMethods(Class<?> handlerType, Object handler) {
+        List<Method> handlerMethods = ReflectionUtils.getMethods(handlerType, RequestMapping.class);
 
         for (Method handlerMethod : handlerMethods) {
-            List<HandlerKey> handlerKeys = getHandlerKeys(handlerType, handlerMethod);
-            HandlerExecution handlerExecution = getHandlerExecution(handlerType, handlerMethod);
+            Controller controllerAnnotation = handlerType.getAnnotation(Controller.class);
+            RequestMapping requestMappingAnnotation = handlerMethod.getAnnotation(RequestMapping.class);
+
+            List<HandlerKey> handlerKeys = getHandlerKeys(controllerAnnotation, requestMappingAnnotation);
+            HandlerExecution handlerExecution = new HandlerExecution(handler, handlerMethod);
             handlerKeys.forEach(handlerKey -> register(handlerKey, handlerExecution));
         }
     }
 
-    private List<HandlerKey> getHandlerKeys(Class<?> handlerType, Method method) {
-        Controller controllerAnnotation = handlerType.getAnnotation(Controller.class);
-        RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
+    private List<HandlerKey> getHandlerKeys(Controller controllerAnnotation, RequestMapping requestMappingAnnotation) {
         String path = combinePath(controllerAnnotation.value(), requestMappingAnnotation.value());
         RequestMethod[] requestMethods = getRequestMethods(requestMappingAnnotation);
-        return createHandlerKeys(path, requestMethods);
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(path, requestMethod))
+                .toList();
     }
 
     private String combinePath(String parentPath, String childPath) {
@@ -78,21 +73,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return RequestMethod.values();
         }
         return requestMethods;
-    }
-
-    private List<HandlerKey> createHandlerKeys(String path, RequestMethod[] requestMethods) {
-        return Arrays.stream(requestMethods)
-                .map(requestMethod -> new HandlerKey(path, requestMethod))
-                .toList();
-    }
-
-    private HandlerExecution getHandlerExecution(Class<?> handlerType, Method handlerMethod) {
-        try {
-            Object handler = handlerType.getDeclaredConstructor().newInstance();
-            return new HandlerExecution(handler, handlerMethod);
-        } catch (Throwable ex) {
-            throw new HandlerCreationException(handlerType.getName(), ex);
-        }
     }
 
     private void register(HandlerKey handlerKey, HandlerExecution handlerExecution) {
