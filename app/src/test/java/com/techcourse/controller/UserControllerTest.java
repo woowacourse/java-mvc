@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test;
 
 class UserControllerTest {
 
+    private static final String URL = "http://localhost:8080/api/user";
+
     private TomcatStarter tomcat;
 
     @BeforeEach
@@ -36,7 +38,7 @@ class UserControllerTest {
         // given
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/api/user?account=gugu"))
+                .uri(URI.create(URL + "?account=gugu"))
                 .build();
 
         // when
@@ -53,7 +55,7 @@ class UserControllerTest {
         // given
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/api/user?account=seyang"))
+                .uri(URI.create(URL + "?account=seyang"))
                 .build();
 
         // when
@@ -73,7 +75,7 @@ class UserControllerTest {
         // given
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/api/user?account="))
+                .uri(URI.create(URL + "?account="))
                 .build();
 
         // when
