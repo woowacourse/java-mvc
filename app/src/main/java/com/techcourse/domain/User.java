@@ -1,5 +1,7 @@
 package com.techcourse.domain;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 public class User {
 
     private final long id;
@@ -18,8 +20,19 @@ public class User {
         return this.password.equals(password);
     }
 
+    @JsonGetter("account")
     public String getAccount() {
         return account;
+    }
+
+    @JsonGetter("id")
+    public long getId() {
+        return id;
+    }
+
+    @JsonGetter("email")
+    public String getEmail() {
+        return email;
     }
 
     @Override
