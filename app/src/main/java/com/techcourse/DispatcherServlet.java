@@ -11,7 +11,6 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 
@@ -35,22 +34,25 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
 
+        initializeHandlerMappings();
+        initializeHandlerAdapters();
+    }
+
+    private void initializeHandlerMappings() {
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        addHandlerMapping(manualHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
 
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
-        addHandlerMapping(annotationHandlerMapping);
-
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    private void initializeHandlerAdapters() {
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
     }
 
     @Override
@@ -61,18 +63,26 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Optional<Object> handler = handlerMappingRegistry.getHandler(request);
             if (handler.isEmpty()) {
-                response.setStatus(404);
-                JspView notFoundView = new JspView(NOT_FOUND_VIEW_NAME);
-                notFoundView.render(Map.of(), request, response);
+                handleNotFound(request, response);
                 return;
             }
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
+            ModelAndView modelAndView = getModelAndView(request, response, handler.get());
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private ModelAndView getModelAndView(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        return handlerAdapter.handle(request, response, handler);
+    }
+
+    private void handleNotFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.setStatus(404);
+        JspView notFoundView = new JspView(NOT_FOUND_VIEW_NAME);
+        notFoundView.render(Map.of(), request, response);
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
