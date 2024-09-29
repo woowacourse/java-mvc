@@ -7,6 +7,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -58,9 +59,22 @@ public class AnnotationHandlerMapping implements ServletRequestHandler {
     }
 
     private void addAnnotatedHandlerExecutions(Class<?> controller) {
+        Object executionTarget = constructExecutionTarget(controller);
         List<Method> annotatedMethods = searchRequestMappingAnnotation(controller);
         annotatedMethods
-                .forEach(method -> handlerExecutions.addHandlerExecution(controller, method));
+                .forEach(method -> handlerExecutions.addHandlerExecution(executionTarget, method));
+    }
+
+    private Object constructExecutionTarget(Class<?> controller) {
+        try {
+            Constructor<?> firstConstructor = controller.getDeclaredConstructor();
+            return firstConstructor.newInstance();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(
+                    "default constructor가 존재하지 않습니다 %s".formatted(controller.getCanonicalName()));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("HandlerMapping을 초기화 하는데 실패했습니다.");
+        }
     }
 
     private List<Method> searchRequestMappingAnnotation(Class<?> controller) {
