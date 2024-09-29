@@ -41,7 +41,9 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMappingRegistry.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.render(request, response);
+            if (modelAndView != null) {
+                modelAndView.render(request, response);
+            }
         } catch (Exception e) {
             throw new ServletException("요청을 처리하는 것에 실패했습니다", e);
         }
