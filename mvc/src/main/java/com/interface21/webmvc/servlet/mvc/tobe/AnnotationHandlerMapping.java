@@ -39,16 +39,26 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerExecutions(Map<Class<?>, Object> controllers) {
         for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
             for (Method method : scanControllerMethods(controller.getKey())) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-                String url = requestMapping.value();
-                RequestMethod[] requestMethods = getRequestMethods(requestMapping);
-                List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
-
-                for (HandlerKey handlerKey : handlerKeys) {
-                    handlerExecutions.put(handlerKey, new HandlerExecution(controller.getValue(), method));
-                }
+                addHandlerExecutionsByController(controller.getValue(), method);
             }
+        }
+    }
+
+    private static List<Method> scanControllerMethods(Class<?> controller) {
+        return Arrays.stream(controller.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+    }
+
+    private void addHandlerExecutionsByController(Object instanceController, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+        String url = requestMapping.value();
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+        List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
+
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, new HandlerExecution(instanceController, method));
         }
     }
 
@@ -59,12 +69,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             handlerKeys.add(new HandlerKey(url, requestMethod));
         }
         return handlerKeys;
-    }
-
-    private static List<Method> scanControllerMethods(Class<?> controller) {
-        return Arrays.stream(controller.getMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .toList();
     }
 
     public RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
