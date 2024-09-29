@@ -1,7 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handlermapping;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -10,7 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -22,6 +25,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Set<Method> methods = controllerScanner.getAnnotationMethods(RequestMapping.class);
@@ -48,6 +52,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(key, execution);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());

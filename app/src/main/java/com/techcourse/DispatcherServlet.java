@@ -31,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         logRequest(request);
         try {
-            final Controller controller = manualHandlerMapping.getHandler(request.getRequestURI());
+            final Controller controller = manualHandlerMapping.getHandler(request);
             final String viewName = controller.execute(request, response);
             renderView(viewName, request, response);
         } catch (Throwable e) {

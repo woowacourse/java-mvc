@@ -51,7 +51,7 @@
    (컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크 통합)
 
 - [ ] HandlerMapping 인터페이스화
-    - [ ] HandlerMapping 인터페이스화 (요청 URL과 실행할 컨트롤러 클래스 또는 메소드를 매핑하는 역할)
+    - [x] HandlerMapping 인터페이스화 (요청 URL과 실행할 컨트롤러 클래스 또는 메소드를 매핑하는 역할)
     - [ ] HandlerMappingRegistry 클래스에 HandlerMapping들을 List로 두고 사용
     - [ ] DispatcherServlet의 초기화 과정에서 ManualHandlerMapping, AnnotationHandlerMapping을 모두 초기화
 - [ ] HandlerAdaptor 인터페이스화
