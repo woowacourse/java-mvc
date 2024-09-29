@@ -1,23 +1,20 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.interface21.context.stereotype.Controller;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.reflections.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.exception.NotFoundController;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,44 +26,40 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    @Override
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        if (controllers == null) {
-            throw new NotFoundController("컨트롤러가 존재하지 않습니다.");
-        }
-        for (Class<?> controller : controllers) {
-            initializeHandlers(controller);
-        }
+        controllers.forEach((controller, instance) -> {
+            final Set<Method> methods = ReflectionUtils.getAllMethods(
+                    controller, ReflectionUtils.withAnnotation(RequestMapping.class));
+            log.debug("Controller : {}", instance.getClass());
+            initExecutions(instance, methods);
+        });
     }
 
-    private void initializeHandlers(final Class<?> controller)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        final Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-        final Method[] methods = controller.getDeclaredMethods();
-
-        for (Method method : methods) {
-            mapToHandler(controllerInstance, method);
-        }
+    private void initExecutions(final Object instance, final Set<Method> methods) {
+        methods.forEach(method -> addHandlerExecution(instance, method));
     }
 
-    private void mapToHandler(final Object controllerInstance, final Method method) {
-        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        final RequestMethod[] requestMethods = annotation.method();
+    private void addHandlerExecution(final Object instance, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final RequestMethod[] requestMethods = requestMapping.method();
 
         for (RequestMethod requestMethod : requestMethods) {
-            final HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
+            log.debug("HandlerExecution 추가 HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecution);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final RequestMethod requestMethod = RequestMethod.findByName(request.getMethod());
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),requestMethod);
+        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
         return handlerExecutions.get(handlerKey);
     }
 }
