@@ -59,6 +59,7 @@ class HandlerMappingRegistryTest {
         when(handlerMapping1.getHandler(request)).thenReturn(object);
 
         handlerMappingRegistry.addHandlerMapping(handlerMapping1);
+        handlerMappingRegistry.addHandlerMapping(handlerMapping2);
 
         // when
         Object handler = handlerMappingRegistry.getHandler(request);
@@ -72,7 +73,6 @@ class HandlerMappingRegistryTest {
     void noHandlerExist() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-        Object object = mock(Object.class);
         when(request.getRequestURI()).thenReturn(any());
         when(handlerMapping1.handlerExist(request)).thenReturn(false);
 
