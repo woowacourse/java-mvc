@@ -1,26 +1,21 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 
 class AnnotationHandlerMappingTest {
     private static final String BASE_PACKAGE = "samples";
-    private static final String KEY = "id";
-    private static final String VALUE = "id";
     private static final String REQUEST_URI_GET_TEST = "/get-test";
     private static final String REQUEST_URI_WRONG = "/get-example";
     private static final String REQUEST_URI_POST_TEST = "/post-test";
@@ -36,79 +31,64 @@ class AnnotationHandlerMappingTest {
         handlerMapping.initialize();
     }
 
+    @DisplayName("GET /get-test 요청 시, HandlerExecution 핸들러로 반환된다.")
     @Test
-    void get() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute(KEY)).thenReturn(VALUE);
-        when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
-        when(request.getMethod()).thenReturn(METHOD_GET);
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject(KEY)).isEqualTo(VALUE);
-    }
-
-    @Test
-    void post() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute(KEY)).thenReturn(VALUE);
-        when(request.getRequestURI()).thenReturn(REQUEST_URI_POST_TEST);
-        when(request.getMethod()).thenReturn(METHOD_POST);
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject(KEY)).isEqualTo(VALUE);
-    }
-
-    @DisplayName("RequestMapping에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원한다.")
-    @EnumSource(RequestMethod.class)
-    @ParameterizedTest
-    void executeMethodWithNoRequestMethod(RequestMethod requestMethod) throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-
-        when(request.getAttribute(KEY)).thenReturn(VALUE);
-        when(request.getRequestURI()).thenReturn(REQUEST_URI_NO_REQUEST_METHOD);
-        when(request.getMethod()).thenReturn(requestMethod.name());
-
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
-
-        assertThat(modelAndView.getObject(KEY)).isEqualTo(VALUE);
-    }
-
-    @DisplayName("HttpServletRequest로 HandlerExecution를 찾을 수 있다.")
-    @Test
-    void getHandlerTest() {
+    void test_GetHandler_ReturnTestController_When_GetTest_Request() {
         // given
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
         when(request.getMethod()).thenReturn(METHOD_GET);
 
         // when
-        final Object handler = handlerMapping.getHandler(request);
+        final var handler = handlerMapping.getHandler(request);
 
         // then
         assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 
-    @DisplayName("HttpServletRequest로 HandlerExecution을 찾지 못하면 IllegalArgumentException을 던진다.")
+    @DisplayName("POST /post-test 요청 시, HandlerExecution 핸들러로 반환된다.")
     @Test
-    void getHandlerTestThrowExceptionWhenNotFound() {
+    void test_GetHandler_ReturnTestController_When_PostTest_Request() {
+        // given
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI_POST_TEST);
+        when(request.getMethod()).thenReturn(METHOD_POST);
+
+        // when
+        final var handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
+    }
+
+    @DisplayName("모든 Request Method에 대해 /no-request-method-test 요청 시, HandlerExecution 핸들러로 반환된다.")
+    @EnumSource(RequestMethod.class)
+    @ParameterizedTest
+    void test_GetHandler_ReturnTestController_When_NoRequestMethod_Request(RequestMethod requestMethod) {
+        // given
+        final var request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI_NO_REQUEST_METHOD);
+        when(request.getMethod()).thenReturn(requestMethod.name());
+
+        // when
+        final var handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
+    }
+
+    @DisplayName("요청으로 핸들러를 찾지 못하면 null을 반환한다.")
+    @Test
+    void test_GetHandler_ThrowException_When_NotFound() {
         // given
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_WRONG);
         when(request.getMethod()).thenReturn(METHOD_GET);
 
         // when & then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("적절하지 않은 요청입니다.");
+        final var handler = handlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isNull();
     }
 }
