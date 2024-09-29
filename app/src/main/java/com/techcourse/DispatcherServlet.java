@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMappingAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
@@ -46,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = adapter.handle(handler, request, response);
 
-            JspView view = (JspView) modelAndView.getView();
+            View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
