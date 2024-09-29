@@ -28,7 +28,7 @@ class HandlerAdapterTest {
     }
 
     @Test
-    @DisplayName("핸들러 어댑터는 Legacy MVC와 @MVC 모두 지원할 수 있어야 한다.")
+    @DisplayName("어댑터는 주어진 핸들러를 자신이 처리할 수 있는지 검증할 수 있다.")
     void supports() {
         // given
         final var request = mock(HttpServletRequest.class);
