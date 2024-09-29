@@ -55,9 +55,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(HttpServletRequest request) {
         for (HandlerMapping mapping : handlerMappings) {
-            Object handler = mapping.getHandler(request);
-            if (handler != null) {
-                return handler;
+            if (mapping.support(request)) {
+                return mapping.getHandler(request);
             }
         }
         throw new NoSuchElementException("Resource not found");

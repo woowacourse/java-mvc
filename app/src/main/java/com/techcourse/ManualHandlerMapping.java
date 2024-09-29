@@ -25,11 +25,15 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
-//        controllers.put("/register", new RegisterController()); // 3단계 통합 후 제거 예정
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+    }
+
+    @Override
+    public boolean support(HttpServletRequest request) {
+        return controllers.containsKey(request.getRequestURI());
     }
 
     @Override
