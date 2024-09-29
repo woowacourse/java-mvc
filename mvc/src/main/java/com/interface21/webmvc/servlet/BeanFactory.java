@@ -1,6 +1,5 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.UncheckedServletException;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
