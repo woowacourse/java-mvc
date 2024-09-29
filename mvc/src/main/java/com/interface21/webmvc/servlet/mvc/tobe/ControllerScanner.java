@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -29,9 +28,8 @@ public class ControllerScanner {
     private Object getInstance(Class<?> controllerClass) {
         try {
             return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            throw new IllegalStateException("Failed to instantiate " + controllerClass.getName());
         }
     }
 
