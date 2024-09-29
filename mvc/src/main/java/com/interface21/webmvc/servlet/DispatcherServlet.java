@@ -35,11 +35,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Object handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow(() -> new ServletException("요청에 해당하는 핸들러를 찾을 수 없습니다."));
+            Object handler = handlerMappingRegistry.getHandler(request);
 
-            ModelAndView modelAndView = handlerAdapterRegistry.execute(request, response, handler)
-                    .orElseThrow(() -> new ServletException("ModelAndView를 리턴할 수 없습니다."));
+            ModelAndView modelAndView = handlerAdapterRegistry.execute(request, response, handler);
 
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);

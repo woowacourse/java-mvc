@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 public class HandlerAdapterRegistry {
 
@@ -18,15 +18,12 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public Optional<ModelAndView> execute(
+    public ModelAndView execute(
             HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Optional<HandlerAdapter> handlerAdapter = handlerAdapters.stream()
+        return handlerAdapters.stream()
                 .filter(adapter -> adapter.support(handler))
-                .findAny();
-
-        if (handlerAdapter.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(handlerAdapter.get().handle(request, response, handler));
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("핸들러에 해당하는 핸들러 어댑터를 찾을 수 없습니다."))
+                .handle(request, response, handler);
     }
 }

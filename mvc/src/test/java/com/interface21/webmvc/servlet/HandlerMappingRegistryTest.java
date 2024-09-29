@@ -1,14 +1,13 @@
 package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.handler.HandlerExecution;
-import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ class HandlerMappingRegistryTest {
     public void setUp() {
         handlerMappingRegistry = new HandlerMappingRegistry();
     }
-    
+
     @DisplayName("핸들러를 반환한다.")
     @Test
     void getHandler_returnHandler() {
@@ -34,16 +33,16 @@ class HandlerMappingRegistryTest {
         when(handlerMapping.getHandler(request)).thenReturn(expectedHandler);
 
         // when
-        Object actual = handlerMappingRegistry.getHandler(request).get();
+        Object actual = handlerMappingRegistry.getHandler(request);
 
         // then
         assertThat(actual).isNotNull();
         assertThat(actual).isInstanceOf(HandlerExecution.class);
     }
 
-    @DisplayName("핸들러를 찾지 못하면 빈 옵셔널을 반환한다.")
+    @DisplayName("핸들러를 찾지 못하면 예외가 발생한다.")
     @Test
-    void getHandler_returnEmptyOptional() {
+    void getHandler_throwsException() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HandlerMapping handlerMapping = mock(HandlerMapping.class);
@@ -51,10 +50,8 @@ class HandlerMappingRegistryTest {
         Object expectedHandler = mock(HandlerExecution.class);
         when(handlerMapping.getHandler(request)).thenReturn(expectedHandler);
 
-        // when
-        Optional<Object> actual = handlerMappingRegistry.getHandler(request);
-
-        // then
-        assertThat(actual).isEmpty();
+        // when & then
+        assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
