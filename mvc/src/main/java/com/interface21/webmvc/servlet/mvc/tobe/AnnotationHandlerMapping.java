@@ -8,7 +8,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -20,11 +20,16 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HandlerExecutions();
     }
 
-    public void initialize() throws Exception {
+    @Override
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Set<Class<?>> controllers = findControllers(basePackage);
-        handlerExecutions.registerController(controllers);
+        try {
+            handlerExecutions.registerController(controllers);
+        } catch (Exception e) {
+            log.error("annotationHandlerMapping initialize 실패", e);
+        }
     }
 
     private Set<Class<?>> findControllers(Object[] basePackage) {
@@ -32,6 +37,7 @@ public class AnnotationHandlerMapping {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
+    @Override
     public Object getHandler(HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), requestMethod);
