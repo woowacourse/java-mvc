@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ManualTestController implements Controller {
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public String execute(HttpServletRequest req, HttpServletResponse res) {
         return "redirect:/index.jsp";
     }
 }
