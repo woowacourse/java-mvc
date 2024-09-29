@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static samples.TestController.GET_URL;
 
-class AnnotationHandlerMappingTestExecution {
+class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
