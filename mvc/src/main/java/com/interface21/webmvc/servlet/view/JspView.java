@@ -20,13 +20,20 @@ public class JspView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+        if (shouldRedirect()) {
+            response.sendRedirect(parseRedirectViewName());
             return;
         }
-
         setModelAttribute(model, request);
         request.getRequestDispatcher(viewName).forward(request, response);
+    }
+
+    private boolean shouldRedirect() {
+        return viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    private String parseRedirectViewName() {
+        return viewName.substring(REDIRECT_PREFIX.length());
     }
 
     private void setModelAttribute(Map<String, ?> model, HttpServletRequest request) {
