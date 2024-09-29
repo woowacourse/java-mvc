@@ -18,7 +18,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    public static final String NOT_FOUND_VIEW_NAME = "/404.jsp";
+    private static final String NOT_FOUND_VIEW_NAME = "/404.jsp";
 
     private RequestHandlerMappings requestHandlerMappings;
     private HandlerAdapters handlerAdapters;
