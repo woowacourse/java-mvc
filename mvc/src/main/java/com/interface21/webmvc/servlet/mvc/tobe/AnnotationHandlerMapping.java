@@ -1,17 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 
 public class AnnotationHandlerMapping {
 
@@ -43,8 +40,9 @@ public class AnnotationHandlerMapping {
 
     private List<Method> extractControllerMethods(List<Class<?>> controllers) {
         return controllers.stream()
-                .flatMap(controller -> Arrays.stream(controller.getMethods()))
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .flatMap(controller -> ReflectionUtils
+                        .getAllMethodsWithAnnotation(controller, RequestMapping.class)
+                        .stream())
                 .toList();
     }
 
