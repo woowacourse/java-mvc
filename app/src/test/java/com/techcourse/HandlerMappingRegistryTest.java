@@ -5,8 +5,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.mapper.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 class HandlerMappingRegistryTest {
 
-    private final com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry handlerMappingRegistry = new com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry();
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
     @BeforeEach
     void setUp() {
