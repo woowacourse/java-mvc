@@ -39,7 +39,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private DispatcherServlet createDispatcherServlet() {
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
         handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(Application.class));
 
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.addHandlerAdapter(new RequestMappingHandlerAdapter());
