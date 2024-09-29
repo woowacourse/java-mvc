@@ -1,11 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.interface21.context.container.Container;
 import com.interface21.webmvc.servlet.ModelAndView;
 
 public class HandlerExecution {
@@ -14,22 +14,22 @@ public class HandlerExecution {
     private static final int REQUEST_PARAMETER_INDEX = 0;
     private static final int RESPONSE_PARAMETER_INDEX = 1;
 
-    private final Method handler;
+    private final Method method;
 
-    public HandlerExecution(final Method handler) {
-        this.handler = handler;
+    public HandlerExecution(final Method method) {
+        this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Class<?> controllerClass = handler.getDeclaringClass();
-        Constructor<?> constructor = controllerClass.getConstructor();
-        Object controller = constructor.newInstance();
+        Class<?> type = method.getDeclaringClass();
+        Container container = Container.getInstance();
+        Object declaredObject = container.getInstanceOf(type);
         Object[] httpParameters = requireHttpParameters(request, response);
-        return (ModelAndView) handler.invoke(controller, httpParameters);
+        return (ModelAndView) method.invoke(declaredObject, httpParameters);
     }
 
     private Object[] requireHttpParameters(final HttpServletRequest request, final HttpServletResponse response) {
-        Class<?>[] types = handler.getParameterTypes();
+        Class<?>[] types = method.getParameterTypes();
         validateParameterTypes(types);
         return new Object[]{request, response};
     }

@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+import com.interface21.context.container.Container;
+
 public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -16,7 +18,7 @@ public class Application {
         final int port = defaultPortIfNull(args);
         final var tomcat = new TomcatStarter(port);
         log.info("configuring app with basedir: {}", TomcatStarter.WEBAPP_DIR_LOCATION);
-
+        Container.run(Application.class);
         tomcat.start();
         stop(tomcat);
     }
