@@ -21,12 +21,12 @@ public class Packages {
     private final Map<Object, List<Method>> controllerMap;
 
     public Packages(Object[] basePackages) {
-        validate(basePackages);
+        validateBasePackages(basePackages);
         this.basePackages = basePackages;
         this.controllerMap = new HashMap<>();
     }
 
-    private void validate(Object[] basePackages) {
+    private void validateBasePackages(Object[] basePackages) {
         if (basePackages == null || basePackages.length == 0) {
             throw new IllegalArgumentException("basePackages는 비어있을 수 없습니다.");
         }
