@@ -1,5 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe.exception;
+package com.interface21.webmvc.servlet.resolver;
 
+import com.interface21.webmvc.servlet.HandlerExceptionResolver;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
