@@ -1,5 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.handler.adapter;
 
+import com.interface21.webmvc.servlet.mvc.handler.HandlingException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,7 +15,9 @@ public class HandlerAdapters {
                 .collect(Collectors.toMap(
                         HandlerAdapter::getSupportedClass,
                         adapter -> adapter,
-                        (a, b) -> { throw new HandlingException("같은 종류의 핸들러를 처리하는 어댑터를 중복 등록할 수 없습니다."); }
+                        (a, b) -> {
+                            throw new HandlingException("같은 종류의 핸들러를 처리하는 어댑터를 중복 등록할 수 없습니다.");
+                        }
                 ));
     }
 
