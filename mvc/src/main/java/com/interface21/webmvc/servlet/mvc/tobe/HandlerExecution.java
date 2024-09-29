@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.interface21.context.container.Container;
 import com.interface21.webmvc.servlet.ModelAndView;
 
 public class HandlerExecution {
@@ -13,15 +14,16 @@ public class HandlerExecution {
     private static final int REQUEST_PARAMETER_INDEX = 0;
     private static final int RESPONSE_PARAMETER_INDEX = 1;
 
-    private final Object declaredObject;
     private final Method method;
 
-    public HandlerExecution(final Object declaredObject, final Method method) {
-        this.declaredObject = declaredObject;
+    public HandlerExecution(final Method method) {
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        Class<?> type = method.getDeclaringClass();
+        Container container = Container.getInstance();
+        Object declaredObject = container.getInstanceOf(type);
         Object[] httpParameters = requireHttpParameters(request, response);
         return (ModelAndView) method.invoke(declaredObject, httpParameters);
     }

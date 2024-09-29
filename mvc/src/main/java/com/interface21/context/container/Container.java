@@ -75,6 +75,10 @@ public class Container {
         log.info("{} instance registered", name);
     }
 
+    public Object getInstanceOf(final Class<?> type) {
+        return container.get(type.getSimpleName());
+    }
+
     public <T> List<T> getInstancesOf(final Class<T> type) {
         return container.values()
                 .stream()
