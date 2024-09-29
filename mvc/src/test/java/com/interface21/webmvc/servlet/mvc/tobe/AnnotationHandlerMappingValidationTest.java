@@ -5,8 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.context.stereotype.Controller;
 import com.interface21.exception.HandlerNotFoundException;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +23,11 @@ class AnnotationHandlerMappingValidationTest {
     @Test
     void exceptionWithNoArgConstructor() {
         // given
-        AnnotationHandlerMapping testHandlerMapping = new AnnotationHandlerMapping("samples.impossible");
+        AnnotationHandlerMapping testHandlerMapping = new AnnotationHandlerMapping(getClass());
         // when
         assertThatThrownBy(() -> testHandlerMapping.initialize())
                 // then
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("NoArgConstructorController");
     }
 
     @DisplayName("해당 URI을 처리할 수 있는 핸들러가 없을 경우 예외가 발생한다.")
@@ -47,5 +53,24 @@ class AnnotationHandlerMappingValidationTest {
                         .isInstanceOf(IllegalArgumentException.class),
                 () -> assertThatThrownBy(() -> new AnnotationHandlerMapping(new URL("http://TACAN.zzang")))
                         .isInstanceOf(IllegalArgumentException.class));
+    }
+
+    @Controller
+    static public class NoArgConstructorController {
+
+        private String name;
+        private String value;
+
+        public NoArgConstructorController(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        @RequestMapping(value = "/multi-constructor-test", method = RequestMethod.GET)
+        public ModelAndView test(final HttpServletRequest request, final HttpServletResponse response) {
+            final var modelAndView = new ModelAndView(new JspView(""));
+            modelAndView.addObject("name", null);
+            return modelAndView;
+        }
     }
 }

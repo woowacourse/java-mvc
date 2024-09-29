@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.possible.TestController;
+import samples.TestController;
 
 class HandlerExecutionsTest {
 
