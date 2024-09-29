@@ -30,6 +30,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         List<Method> methods = classScanner.findHandlingMethods();
         methods.forEach(this::addHandlerExecutions);
+
+        handlerExecutions.keySet()
+                .forEach(path -> log.info("Path : {}, Controller : {}", path, handlerExecutions.get(path).getClass()));
     }
 
     private void addHandlerExecutions(Method method) {
