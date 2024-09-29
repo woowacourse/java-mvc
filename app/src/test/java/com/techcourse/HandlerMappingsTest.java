@@ -2,7 +2,6 @@ package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -10,12 +9,6 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapper.HandlerMappings;
-import com.techcourse.controller.manual.LoginController;
-import com.techcourse.controller.manual.LoginViewController;
-import com.techcourse.controller.manual.LogoutController;
-import com.techcourse.controller.manual.RegisterController;
-import com.techcourse.controller.manual.RegisterViewController;
-import com.techcourse.servlet.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,41 +19,22 @@ import org.junit.jupiter.api.Test;
 class HandlerMappingsTest {
 
     private HandlerMappings annotationHandlerMappings;
-    private HandlerMappings manualHandlerMappings;
 
     @BeforeEach
     void setUp() {
-        manualHandlerMappings = new HandlerMappings(List.of(new ManualHandlerMapping()));
-        manualHandlerMappings.initialize();
-
         annotationHandlerMappings = new HandlerMappings(
                 List.of(new AnnotationHandlerMapping("com.techcourse.controller.annotation")));
         annotationHandlerMappings.initialize();
     }
 
-    @DisplayName("POST /login 은 두 매핑 방식이 호환된다")
+    @DisplayName("POST /login 핸들러가 매핑된다")
     @Test
     void login() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         setUpMockRequest(request, RequestMethod.POST, "/login");
-        setUpMockRequest(request, RequestMethod.POST, "/login");
 
-        assertAll(
-                () -> assertThat(manualHandlerMappings.getHandler(request))
-                        .isInstanceOf(LoginController.class),
-                () -> assertThat(annotationHandlerMappings.getHandler(request))
-                        .isInstanceOf(HandlerExecution.class)
-        );
-    }
-
-    @DisplayName("manualMapping - GET /login/view의 핸들러를 찾을 수 있다")
-    @Test
-    void mapManualHandler_loginView() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        setUpMockRequest(request, RequestMethod.GET, "/login/view");
-
-        assertThat(manualHandlerMappings.getHandler(request))
-                .isInstanceOf(LoginViewController.class);
+        assertThat(annotationHandlerMappings.getHandler(request))
+                .isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("annotationMapping - GET /login의 핸들러를 찾을 수 있다")
@@ -79,12 +53,8 @@ class HandlerMappingsTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         setUpMockRequest(request, RequestMethod.GET, "/logout");
 
-        assertAll(
-                () -> assertThat(manualHandlerMappings.getHandler(request))
-                        .isInstanceOf(LogoutController.class),
-                () -> assertThat(annotationHandlerMappings.getHandler(request))
-                        .isInstanceOf(HandlerExecution.class)
-        );
+        assertThat(annotationHandlerMappings.getHandler(request))
+                .isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("GET /register 호환")
@@ -93,22 +63,8 @@ class HandlerMappingsTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         setUpMockRequest(request, RequestMethod.GET, "/register");
 
-        assertAll(
-                () -> assertThat(manualHandlerMappings.getHandler(request))
-                        .isInstanceOf(RegisterController.class),
-                () -> assertThat(annotationHandlerMappings.getHandler(request))
-                        .isInstanceOf(HandlerExecution.class)
-        );
-    }
-
-    @DisplayName("manualMapping - GET /register/view의 핸들러를 찾을 수 있다")
-    @Test
-    void mapManualHandler_registerView() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        setUpMockRequest(request, RequestMethod.GET, "/register/view");
-
-        assertThat(manualHandlerMappings.getHandler(request))
-                .isInstanceOf(RegisterViewController.class);
+        assertThat(annotationHandlerMappings.getHandler(request))
+                .isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("annotationMapping - GET /register의 핸들러를 찾을 수 있다")
@@ -127,12 +83,8 @@ class HandlerMappingsTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         setUpMockRequest(request, RequestMethod.GET, "/none");
 
-        assertAll(
-                () -> assertThatThrownBy(() -> manualHandlerMappings.getHandler(request))
-                        .isInstanceOf(NoSuchElementException.class),
-                () -> assertThatThrownBy(() -> annotationHandlerMappings.getHandler(request))
-                        .isInstanceOf(NoSuchElementException.class)
-        );
+        assertThatThrownBy(() -> annotationHandlerMappings.getHandler(request))
+                .isInstanceOf(NoSuchElementException.class);
     }
 
     private void setUpMockRequest(HttpServletRequest request, RequestMethod requestMethod, String requestUrl) {

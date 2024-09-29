@@ -1,15 +1,13 @@
 package com.techcourse.servlet.handler.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.AnnotationHandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -21,13 +19,9 @@ class AnnotationHandlerAdapterTest {
     @Test
     void supportsHandler() throws Exception {
         AnnotationHandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
-        Controller controller = mock(Controller.class);
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
-        assertAll(
-                () -> assertThat(handlerAdapter.supports(handlerExecution)).isTrue(),
-                () -> assertThat(handlerAdapter.supports(controller)).isFalse()
-        );
+        assertThat(handlerAdapter.supports(handlerExecution)).isTrue();
     }
 
     @DisplayName("HandlerExecution 클래스를 adapt 한다")
