@@ -70,8 +70,10 @@
 
 ### 3단계
 
-- [ ] JsonView 클래스를 구현
+- [x] JsonView 클래스를 구현
   - HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현
+  - model에 데이터가 1개면 값을 그대로 반환
+  - 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환
 
 - [x] Legacy MVC 제거
   - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
