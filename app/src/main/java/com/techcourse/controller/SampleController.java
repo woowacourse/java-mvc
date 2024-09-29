@@ -1,4 +1,4 @@
-package samples;
+package com.techcourse.controller;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -29,9 +29,5 @@ public class SampleController {
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
-    }
-
-    @RequestMapping(value = "/dummy")
-    public void dummy() {
     }
 }

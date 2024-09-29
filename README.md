@@ -53,7 +53,7 @@
 - [ ] HandlerMapping 인터페이스화
     - [x] HandlerMapping 인터페이스화 (요청 URL과 실행할 컨트롤러 클래스 또는 메소드를 매핑하는 역할)
     - [x] HandlerMappingRegistry 클래스에 HandlerMapping들을 List로 두고 사용
-    - [ ] DispatcherServlet의 초기화 과정에서 ManualHandlerMapping, AnnotationHandlerMapping을 모두 초기화
+    - [x] DispatcherServlet의 초기화 과정에서 ManualHandlerMapping, AnnotationHandlerMapping을 모두 초기화
 - [ ] HandlerAdaptor 인터페이스화
     - [ ] HandlerAdaptor 인터페이스화 (특정 HandlerMapping 클래스에서 찾은 컨트롤러 실행하는 역할)
     - [ ] HandlerAdaptorRegistry 클래스에 HandlerAdaptor들을 List로 두고 사용
