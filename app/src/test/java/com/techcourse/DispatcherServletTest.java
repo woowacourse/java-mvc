@@ -2,7 +2,9 @@ package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -30,7 +32,7 @@ class DispatcherServletTest {
     @Test
     void serviceWithLegacyMvc() throws Exception {
         // given
-        ManualHandlerMapping manualHandlerMapping = mock(ManualHandlerMapping.class);
+        ManualHandlerMapping manualHandlerMapping = spy(ManualHandlerMapping.class);
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
         DispatcherServlet dispatcherServlet = new DispatcherServlet(manualHandlerMapping, annotationHandlerMapping);
 
@@ -46,14 +48,17 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("")).thenReturn(requestDispatcher);
 
-        // when & then
-        assertThatCode(() -> dispatcherServlet.service(request, response)).doesNotThrowAnyException();
+        // when
+        dispatcherServlet.service(request, response);
+
+        // then
+        verify(manualHandlerMapping).getHandler("/test-legacy-mvc");
     }
 
     @Test
     void serviceWithAnnotationMvc() throws Exception {
         // given
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = spy(new ManualHandlerMapping());
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
         DispatcherServlet dispatcherServlet = new DispatcherServlet(manualHandlerMapping, annotationHandlerMapping);
         dispatcherServlet.init();
@@ -67,7 +72,10 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher("")).thenReturn(requestDispatcher);
 
-        // when & then
-        assertThatCode(() -> dispatcherServlet.service(request, response)).doesNotThrowAnyException();
+        // when
+        dispatcherServlet.service(request, response);
+
+        // then
+        verify(manualHandlerMapping, never()).getHandler("/test-annotation-mvc");
     }
 }
