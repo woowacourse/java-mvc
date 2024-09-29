@@ -2,14 +2,12 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +21,6 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
     }
 
     @Test
@@ -67,12 +64,28 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void 어노테이션에_매핑되지않은_자원을_요청할경우_예외를_반환한다() {
+    void suppport() {
         // given
-        HttpServletRequest request = new MockHttpServletRequest("GET", "/wrongUri");
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        HttpServletRequest request = new MockHttpServletRequest("GET", "/get-test");
 
-        // when && then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(NoSuchElementException.class);
+        // when
+        boolean actual = annotationHandlerMapping.support(request);
+
+        // then
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void getHandler() {
+        // given
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        HttpServletRequest request = new MockHttpServletRequest("GET", "/get-test");
+
+        // when
+        Object handler = annotationHandlerMapping.getHandler(request);
+
+        // then
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 }

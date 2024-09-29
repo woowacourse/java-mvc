@@ -7,52 +7,57 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = initializeHandlerExecutions(basePackage);
     }
 
-    public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+    private Map<HandlerKey, HandlerExecution> initializeHandlerExecutions(Object[] basePackage) {
+        log.info("Initialized ControllerScanner!");
+        Map<HandlerKey, HandlerExecution> handlerMappings = new HashMap<>();
+
         try {
-            initializeHandlerExecutions();
+            Reflections reflections = new Reflections(basePackage);
+            Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+            for (Class<?> controllerClass : controllerClasses) {
+                handlerMappings.putAll(initializeWithController(controllerClass));
+            }
         } catch (ReflectiveOperationException e) {
             throw new InternalError("Internal error: Failed to initialize handler mapping");
         }
+
+        return handlerMappings;
     }
 
-    private void initializeHandlerExecutions() throws ReflectiveOperationException {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllerClasses) {
-            initializeWithController(controllerClass);
-        }
-    }
+    private Map<HandlerKey, HandlerExecution> initializeWithController(Class<?> controllerClass)
+            throws ReflectiveOperationException {
+        Map<HandlerKey, HandlerExecution> handlerMappings = new HashMap<>();
 
-    private void initializeWithController(Class<?> controllerClass) throws ReflectiveOperationException {
         Method[] methods = controllerClass.getDeclaredMethods();
         for (Method method : methods) {
-            initializeWithRequestMapping(method, controllerClass.getDeclaredConstructor().newInstance());
+            Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+            handlerMappings.putAll(initializeWithRequestMapping(method, controllerInstance));
         }
+
+        return handlerMappings;
     }
 
-    private void initializeWithRequestMapping(Method targetMethod, Object controllerClass) {
+    private Map<HandlerKey, HandlerExecution> initializeWithRequestMapping(Method targetMethod,
+                                                                           Object controllerClass) {
         if (!targetMethod.isAnnotationPresent(RequestMapping.class)) {
-            return;
+            throw new InternalError("Internal error: Failed to initialize handler mapping");
         }
+        Map<HandlerKey, HandlerExecution> handlerMappings = new HashMap<>();
 
         RequestMapping requestMapping = targetMethod.getAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = requestMapping.method();
@@ -62,17 +67,21 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controllerClass, targetMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            handlerMappings.put(handlerKey, handlerExecution);
         }
+
+        return handlerMappings;
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(
-                request.getRequestURI(), RequestMethod.valueOf(request.getMethod())
-        );
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new NoSuchElementException("Resource not found");
-        }
+    @Override
+    public boolean support(HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.containsKey(handlerKey);
+    }
+
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
 }
