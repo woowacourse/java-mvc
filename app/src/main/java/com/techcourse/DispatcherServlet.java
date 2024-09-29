@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import java.util.Objects;
+import java.util.Optional;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,16 +13,21 @@ import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.view.JspView;
+
+import static com.interface21.webmvc.servlet.view.JspView.NOT_FOUND_VIEW;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-    private HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("basePackage");
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.handlerMappingRegistry = new HandlerMappingRegistry("com.techcourse");
     }
 
     @Override
@@ -38,14 +45,29 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request).get();
+            Optional<Object> unExpectedHandler = handlerMappingRegistry.getHandler(request);
+            if (unExpectedHandler.isEmpty()) {
+                render(new ModelAndView(NOT_FOUND_VIEW), request, response);
+                return;
+            }
+            Object handler = unExpectedHandler.get();
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        View view = modelAndView.getView();
+        if (!Objects.isNull(view)) {
+            view.render(modelAndView.getModel(), request, response);
+            return;
+        }
+        String viewName = modelAndView.getViewName();
+        JspView jspView = new JspView(viewName);
+        jspView.render(modelAndView.getModel(), request, response);
     }
 }

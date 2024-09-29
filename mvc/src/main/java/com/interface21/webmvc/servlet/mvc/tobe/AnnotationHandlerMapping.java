@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,11 +41,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         String requestMethod = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod));
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (Objects.isNull(handlerExecution)) {
-            log.warn("No handler found for request URI: {} and method: {}", requestURI, requestMethod);
-            return Optional.empty();
-        }
-        return Optional.of(handlerExecution);
+        return Optional.ofNullable(handlerExecution);
     }
 
     private void assignHandlerExecution(Object instance, Method method) {
