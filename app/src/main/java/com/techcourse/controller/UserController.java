@@ -19,7 +19,7 @@ public class UserController {
     private static final String PARAM_NAME_ACCOUNT = "account";
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView getUser(HttpServletRequest request, HttpServletResponse response) {
         if (!isValidRequest(request)) {
             throw new IllegalArgumentException("Please input account as parameter");
         }
