@@ -4,8 +4,6 @@ import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -19,7 +17,8 @@ class HandlerAdaptersTest {
         //given
         HandlerAdapter mockHandlerAdapter = mock(HandlerAdapter.class);
         Object handler = new Object();
-        HandlerAdapters handlerAdapters = new HandlerAdapters(List.of(mockHandlerAdapter));
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
+        handlerAdapters.addHandlerAdapter(mockHandlerAdapter);
 
         //when
         when(mockHandlerAdapter.isSupport(handler)).thenReturn(true);
@@ -34,7 +33,7 @@ class HandlerAdaptersTest {
     void adapter_notFound() {
         //given
         Object handler = new Object();
-        HandlerAdapters handlerAdapters = new HandlerAdapters(List.of());
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
 
         //when & then
         assertThatThrownBy(() -> handlerAdapters.findHandlerAdapter(handler))

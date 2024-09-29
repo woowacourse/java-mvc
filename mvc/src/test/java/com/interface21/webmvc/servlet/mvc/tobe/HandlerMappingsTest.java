@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,7 +19,8 @@ class HandlerMappingsTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         Object handler = new Object();
         HandlerMapping handlerMapping = mock(HandlerMapping.class);
-        HandlerMappings handlerMappings = new HandlerMappings(List.of(handlerMapping));
+        HandlerMappings handlerMappings = new HandlerMappings();
+        handlerMappings.addHandlerMapping(handlerMapping);
 
         //when
         when(handlerMapping.findHandler(request)).thenReturn(handler);
@@ -35,7 +35,8 @@ class HandlerMappingsTest {
         //given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HandlerMapping handlerMapping = mock(HandlerMapping.class);
-        HandlerMappings handlerMappings = new HandlerMappings(List.of(handlerMapping));
+        HandlerMappings handlerMappings = new HandlerMappings();
+        handlerMappings.addHandlerMapping(handlerMapping);
 
         //when & then
         assertThatThrownBy(() -> handlerMappings.mapToHandler(request))

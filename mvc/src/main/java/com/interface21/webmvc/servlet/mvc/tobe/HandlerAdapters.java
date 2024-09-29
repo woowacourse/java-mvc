@@ -2,14 +2,15 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.ServletException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapters {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public HandlerAdapters(List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+    public HandlerAdapters() {
+        this.handlerAdapters = new ArrayList<>();
     }
 
     public HandlerAdapter findHandlerAdapter(Object handler)
@@ -20,5 +21,9 @@ public class HandlerAdapters {
             }
         }
         throw new ServletException("No handlerAdapter found");
+    }
+
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 }
