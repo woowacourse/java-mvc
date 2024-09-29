@@ -28,18 +28,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
 	@Override
 	public Handler getHandler(final HttpServletRequest request) {
-		String requestURI = request.getRequestURI();
-		RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-		HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+		HandlerKey handlerKey = createHandlerKey(request);
 		return handlers.get(handlerKey);
 	}
 
 	@Override
 	public boolean canService(HttpServletRequest request) {
+		HandlerKey handlerKey = createHandlerKey(request);
+		return handlers.containsKey(handlerKey);
+	}
+
+	private HandlerKey createHandlerKey(HttpServletRequest request) {
 		String requestURI = request.getRequestURI();
 		RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-		HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-		return handlers.containsKey(handlerKey);
+		return new HandlerKey(requestURI, requestMethod);
 	}
 
 	@Override
