@@ -51,7 +51,11 @@ class DispatcherServletTest {
 
         @Nested
         @DisplayName("Legacy MVC")
-        class LegacyMVC {
+        class LegacyMVC {}
+
+        @Nested
+        @DisplayName("@MVC")
+        class AnnotationMVC {
             @Test
             @DisplayName("GET / -> /index.jsp")
             void service_success_get_root() throws IOException, ServletException {
@@ -175,51 +179,46 @@ class DispatcherServletTest {
             }
 
             @Nested
-            @DisplayName("@MVC")
-            class AnnotationMVC {
+            @DisplayName("GET /login/view")
+            class ServiceLoginView {
 
-                @Nested
-                @DisplayName("GET /login/view")
-                class ServiceLoginView {
+                @Test
+                @DisplayName("GET /login/view 로그인 안 된 경우 -> /login.jsp")
+                void service_success_get_login_not_login() throws IOException, ServletException {
+                    String path = "/login.jsp";
+                    when(request.getRequestURI()).thenReturn("/login/view");
+                    when(request.getMethod()).thenReturn("GET");
+                    HttpSession session = mock(HttpSession.class);
+                    when(request.getSession()).thenReturn(session);
+                    RequestDispatcher dispatcher = mock(RequestDispatcher.class);
+                    when(request.getRequestDispatcher(path)).thenReturn(dispatcher);
 
-                    @Test
-                    @DisplayName("GET /login/view 로그인 안 된 경우 -> /login.jsp")
-                    void service_success_get_login_not_login() throws IOException, ServletException {
-                        String path = "/login.jsp";
-                        when(request.getRequestURI()).thenReturn("/login/view");
-                        when(request.getMethod()).thenReturn("GET");
-                        HttpSession session = mock(HttpSession.class);
-                        when(request.getSession()).thenReturn(session);
-                        RequestDispatcher dispatcher = mock(RequestDispatcher.class);
-                        when(request.getRequestDispatcher(path)).thenReturn(dispatcher);
+                    dispatcherServlet.service(request, response);
 
-                        dispatcherServlet.service(request, response);
+                    verify(request).getRequestDispatcher(path);
+                    verify(dispatcher).forward(request, response);
+                    verify(response, never()).sendRedirect(anyString());
+                }
 
-                        verify(request).getRequestDispatcher(path);
-                        verify(dispatcher).forward(request, response);
-                        verify(response, never()).sendRedirect(anyString());
-                    }
+                @Test
+                @DisplayName("GET /login/view 로그인 된 경우 -> /index.jsp")
+                void service_success_get_login() throws IOException {
+                    // given
+                    String path = "/index.jsp";
+                    when(request.getRequestURI()).thenReturn("/login/view");
+                    when(request.getMethod()).thenReturn("GET");
 
-                    @Test
-                    @DisplayName("GET /login/view 로그인 된 경우 -> /index.jsp")
-                    void service_success_get_login() throws IOException {
-                        // given
-                        String path = "/index.jsp";
-                        when(request.getRequestURI()).thenReturn("/login/view");
-                        when(request.getMethod()).thenReturn("GET");
+                    HttpSession session = mock(HttpSession.class);
+                    var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+                    when(session.getAttribute("user")).thenReturn(user);
+                    when(request.getSession()).thenReturn(session);
 
-                        HttpSession session = mock(HttpSession.class);
-                        var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
-                        when(session.getAttribute("user")).thenReturn(user);
-                        when(request.getSession()).thenReturn(session);
+                    // then
+                    dispatcherServlet.service(request, response);
 
-                        // then
-                        dispatcherServlet.service(request, response);
-
-                        // when
-                        verify(response).sendRedirect(path);
-                        verify(request, never()).getRequestDispatcher(anyString());
-                    }
+                    // when
+                    verify(response).sendRedirect(path);
+                    verify(request, never()).getRequestDispatcher(anyString());
                 }
             }
 

@@ -9,21 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.techcourse.ManualHandlerAdapter;
 import com.techcourse.controller.LoginController;
-import com.techcourse.controller.RegisterController;
 
 class HandlerAdapterContainerTest {
-
-    @Test
-    @DisplayName("핸들러 어댑터 찾기 : ManualHandlerAdapter")
-    void findHandlerAdapterWithManualHandlerAdapter() {
-        HandlerAdapterContainer container = new HandlerAdapterContainer("com");
-
-        HandlerAdapter handlerAdapter = container.findHandlerAdapter(new RegisterController());
-
-        assertThat(handlerAdapter).isInstanceOf(ManualHandlerAdapter.class);
-    }
 
     @Test
     @DisplayName("핸들러 어댑터 찾기 : AnnotationHandlerAdapter")

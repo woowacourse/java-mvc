@@ -12,23 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 
 class HandlerMappingContainerTest {
-
-    @Test
-    @DisplayName("Legacy MVC 핸들러 매핑 실행 : ManualHandlerMapping")
-    void getHandlerWithLegacyMVC() {
-        HandlerMappingContainer container = new HandlerMappingContainer("com");
-        container.initialize();
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/register");
-
-        Object handler = container.getHandler(request);
-
-        assertThat(handler).isInstanceOf(Controller.class);
-    }
 
     @Test
     @DisplayName("Legacy MVC 핸들러 매핑 실행 : AnnotationHandlerMapping")
@@ -36,7 +22,7 @@ class HandlerMappingContainerTest {
         HandlerMappingContainer container = new HandlerMappingContainer("com");
         container.initialize();
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
 
         Object handler = container.getHandler(request);
