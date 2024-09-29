@@ -60,7 +60,7 @@ class AnnotationHandlerMappingTest {
     @DisplayName("RequestMethod가 비어있으면, 모든 Method를 지원한다.")
     @EnumSource(RequestMethod.class)
     @ParameterizedTest
-    void methodName(RequestMethod method) {
+    void registerHandlers(RequestMethod method) {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("none", "yes");
