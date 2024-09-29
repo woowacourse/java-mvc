@@ -175,92 +175,51 @@ class DispatcherServletTest {
             }
 
             @Nested
-            @DisplayName("GET /login/view")
-            class ServiceLoginView {
+            @DisplayName("@MVC")
+            class AnnotationMVC {
 
-                @Test
-                @DisplayName("GET /login/view 로그인 안 된 경우 -> /login.jsp")
-                void service_success_get_login_not_login() throws IOException, ServletException {
-                    String path = "/login.jsp";
-                    when(request.getRequestURI()).thenReturn("/login/view");
-                    when(request.getMethod()).thenReturn("GET");
-                    HttpSession session = mock(HttpSession.class);
-                    when(request.getSession()).thenReturn(session);
-                    RequestDispatcher dispatcher = mock(RequestDispatcher.class);
-                    when(request.getRequestDispatcher(path)).thenReturn(dispatcher);
+                @Nested
+                @DisplayName("GET /login/view")
+                class ServiceLoginView {
 
-                    dispatcherServlet.service(request, response);
+                    @Test
+                    @DisplayName("GET /login/view 로그인 안 된 경우 -> /login.jsp")
+                    void service_success_get_login_not_login() throws IOException, ServletException {
+                        String path = "/login.jsp";
+                        when(request.getRequestURI()).thenReturn("/login/view");
+                        when(request.getMethod()).thenReturn("GET");
+                        HttpSession session = mock(HttpSession.class);
+                        when(request.getSession()).thenReturn(session);
+                        RequestDispatcher dispatcher = mock(RequestDispatcher.class);
+                        when(request.getRequestDispatcher(path)).thenReturn(dispatcher);
 
-                    verify(request).getRequestDispatcher(path);
-                    verify(dispatcher).forward(request, response);
-                    verify(response, never()).sendRedirect(anyString());
-                }
+                        dispatcherServlet.service(request, response);
 
-                @Test
-                @DisplayName("GET /login/view 로그인 된 경우 -> /index.jsp")
-                void service_success_get_login() throws IOException {
-                    // given
-                    String path = "/index.jsp";
-                    when(request.getRequestURI()).thenReturn("/login/view");
-                    when(request.getMethod()).thenReturn("GET");
+                        verify(request).getRequestDispatcher(path);
+                        verify(dispatcher).forward(request, response);
+                        verify(response, never()).sendRedirect(anyString());
+                    }
 
-                    HttpSession session = mock(HttpSession.class);
-                    var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
-                    when(session.getAttribute("user")).thenReturn(user);
-                    when(request.getSession()).thenReturn(session);
+                    @Test
+                    @DisplayName("GET /login/view 로그인 된 경우 -> /index.jsp")
+                    void service_success_get_login() throws IOException {
+                        // given
+                        String path = "/index.jsp";
+                        when(request.getRequestURI()).thenReturn("/login/view");
+                        when(request.getMethod()).thenReturn("GET");
 
-                    // then
-                    dispatcherServlet.service(request, response);
+                        HttpSession session = mock(HttpSession.class);
+                        var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+                        when(session.getAttribute("user")).thenReturn(user);
+                        when(request.getSession()).thenReturn(session);
 
-                    // when
-                    verify(response).sendRedirect(path);
-                    verify(request, never()).getRequestDispatcher(anyString());
-                }
-            }
-        }
+                        // then
+                        dispatcherServlet.service(request, response);
 
-        @Nested
-        @DisplayName("@MVC")
-        class AnnotationMVC {
-
-            @Nested
-            @DisplayName("GET /login")
-            class ServiceGetLogin {
-
-                @Test
-                @DisplayName("로그인 안 된 경우 -> /login.jsp")
-                void service_success_get_login_not_login() throws IOException {
-                    String path = "/login.jsp";
-                    when(request.getRequestURI()).thenReturn("/login");
-                    when(request.getMethod()).thenReturn("GET");
-                    HttpSession session = mock(HttpSession.class);
-                    when(request.getSession()).thenReturn(session);
-
-                    dispatcherServlet.service(request, response);
-
-                    verify(response).sendRedirect(path);
-                    verify(request, never()).getRequestDispatcher(anyString());
-                }
-
-                @Test
-                @DisplayName("로그인 된 경우 -> /index.jsp")
-                void service_success_get_login() throws IOException {
-                    // given
-                    String path = "/index.jsp";
-                    when(request.getRequestURI()).thenReturn("/login");
-                    when(request.getMethod()).thenReturn("GET");
-
-                    HttpSession session = mock(HttpSession.class);
-                    var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
-                    when(session.getAttribute("user")).thenReturn(user);
-                    when(request.getSession()).thenReturn(session);
-
-                    // then
-                    dispatcherServlet.service(request, response);
-
-                    // when
-                    verify(response).sendRedirect(path);
-                    verify(request, never()).getRequestDispatcher(anyString());
+                        // when
+                        verify(response).sendRedirect(path);
+                        verify(request, never()).getRequestDispatcher(anyString());
+                    }
                 }
             }
 

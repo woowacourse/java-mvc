@@ -19,14 +19,14 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
-    private static final String REDIRECT_LOGIN_JSP = "redirect:/login.jsp";
+    private static final String REDIRECT_LOGIN_JSP = "/login.jsp";
     private static final String REDIRECT_400_JSP = "redirect:/400.jsp";
     private static final String REDIRECT_401_JSP = "redirect:/401.jsp";
     private static final String ACCOUNT = "account";
     private static final String PASSWORD = "password";
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView showLoginPage(HttpServletRequest req, HttpServletResponse res) {
         String viewName = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
