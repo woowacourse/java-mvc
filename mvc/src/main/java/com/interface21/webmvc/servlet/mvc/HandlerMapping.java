@@ -7,5 +7,4 @@ public interface HandlerMapping {
     boolean hasHandler(HttpServletRequest request);
 
     Object getHandler(HttpServletRequest request);
-
 }
