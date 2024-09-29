@@ -12,9 +12,9 @@ public class ControllerScanner {
     private final Reflections reflections;
     private final Map<Class<?>, Object> controllers;
 
-    public ControllerScanner(Reflections reflections) {
-        this.reflections = reflections;
-        Set<Class<?>> controllerClasses = this.reflections.getTypesAnnotatedWith(Controller.class);
+    public ControllerScanner(Object[] basePackage) {
+        this.reflections = new Reflections(basePackage);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllers = instantiateControllers(controllerClasses);
     }
 

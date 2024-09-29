@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         initializeHandlerExecutions(controllers);
         log.info("Initialized AnnotationHandlerMapping!");
