@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -86,13 +85,12 @@ class AnnotationHandlerMappingTest {
 
     @ParameterizedTest
     @CsvSource(value = {"/invalid-test, GET", "/post-test, GET"})
-    @DisplayName("요청 URI 또는 method와 일치하는 핸들러가 없다면 예외가 발생한다.")
+    @DisplayName("요청 URI 또는 method와 일치하는 핸들러가 없다면 null을 반환한다.")
     void invalidRequest(String requestURI, String method) {
         when(request.getAttribute("id")).thenReturn("pororo");
         when(request.getRequestURI()).thenReturn(requestURI);
         when(request.getMethod()).thenReturn(method);
 
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(handlerMapping.getHandler(request)).isNull();
     }
 }

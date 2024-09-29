@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object basePackage : basePackages) {
             Set<Class<?>> controllerClasses = extractControllerClasses(basePackage);
@@ -73,16 +74,11 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-        HandlerKey handlerKey = createHandlerKey(requestURI, method);
+        HandlerKey handlerKey = createHandlerKey(request.getRequestURI(), request.getMethod());
 
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-        throw new IllegalArgumentException(
-                String.format("요청 URI 또는 method와 일치하는 핸들러를 찾을 수 없습니다. 요청된 URI: \"%s\", method: \"%s\"", requestURI, method));
+        return handlerExecutions.get(handlerKey);
     }
 
     private HandlerKey createHandlerKey(String requestURI, String method) {
