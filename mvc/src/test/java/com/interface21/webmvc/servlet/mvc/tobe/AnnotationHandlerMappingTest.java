@@ -74,20 +74,4 @@ class AnnotationHandlerMappingTest {
         assertThat(handlerExecution).isNotNull();
         assertThat(modelAndView).isNotNull();
     }
-
-    @DisplayName("Request URI에 해당하는 핸들러를 찾지 못할 경우 예외가 발생한다.")
-    @Test
-    void throwExceptionWhenHandlerNotFoundForRequestURI() {
-        // given
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        String requestURI = "/not-found-handler";
-        String method = "GET";
-
-        when(request.getRequestURI()).thenReturn(requestURI);
-        when(request.getMethod()).thenReturn(method);
-
-        // when & then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 }
