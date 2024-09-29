@@ -33,11 +33,8 @@ public class ModelAndView {
         return view;
     }
 
-    public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        try {
-            view.render(model, httpServletRequest, httpServletResponse);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+            throws Exception {
+        view.render(model, httpServletRequest, httpServletResponse);
     }
 }
