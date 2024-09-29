@@ -1,7 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 public class HandlerKey {
@@ -14,6 +14,10 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
+    public HandlerKey(HttpServletRequest request) {
+        this(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +
@@ -24,8 +28,12 @@ public class HandlerKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HandlerKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof HandlerKey)) {
+            return false;
+        }
         HandlerKey that = (HandlerKey) o;
         return Objects.equals(url, that.url) && requestMethod == that.requestMethod;
     }

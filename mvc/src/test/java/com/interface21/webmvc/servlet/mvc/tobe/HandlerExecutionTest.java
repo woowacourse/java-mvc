@@ -31,7 +31,8 @@ class HandlerExecutionTest {
         HttpServletRequest request = new MockHttpServletRequest();
         HttpServletResponse response = new MockHttpServletResponse();
         Method method = TestHandler.class.getMethod("handle", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution execution = new HandlerExecution(method);
+        Object instance = new TestHandler();
+        HandlerExecution execution = new HandlerExecution(method, instance);
 
         ModelAndView actual = execution.handle(request, response);
 

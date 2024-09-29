@@ -1,0 +1,35 @@
+package com.interface21.webmvc.servlet.mvc.tobe.handler.adapter;
+
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+public class HandlerAdapterRegistry {
+
+    private final List<HandlerAdapter> handlerAdapters;
+
+    public HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
+        this.handlerAdapters = handlerAdapters;
+    }
+
+    public HandlerAdapterRegistry() {
+        this.handlerAdapters = new ArrayList<>();
+    }
+
+    public void addAdapter(HandlerAdapter adapter) {
+        handlerAdapters.add(adapter);
+    }
+
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("handler를 지원하는 adapter가 없습니다"))
+                .handle(request, response, handler);
+    }
+}

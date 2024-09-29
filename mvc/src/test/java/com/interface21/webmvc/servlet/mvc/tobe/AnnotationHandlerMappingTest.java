@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,15 +71,15 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("test")).isEqualTo("gugu");
     }
 
-    @DisplayName("일치하는 url이 없다면 NoSuchElementException을 반환한다")
+    @DisplayName("일치하는 url이 없다면 IllegalArgumentException을 반환한다")
     @Test
-    void throwNoSuchElementException_When_NotMatchedURL() {
+    void throwIllegalArgumentException_When_NotMatchedURL() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/not-matched-url");
         when(request.getMethod()).thenReturn("GET");
 
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

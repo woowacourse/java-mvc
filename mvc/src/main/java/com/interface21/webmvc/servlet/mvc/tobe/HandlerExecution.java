@@ -10,15 +10,9 @@ public class HandlerExecution {
     private final Method method;
     private final Object handler;
 
-    public HandlerExecution(Method method) {
-        try {
-            this.method = method;
-            this.handler = method.getDeclaringClass()
-                    .getDeclaredConstructor()
-                    .newInstance();
-        } catch (Exception exception) {
-            throw new IllegalArgumentException("핸들러를 초기화할 수 없습니다.", exception);
-        }
+    public HandlerExecution(Method method, Object handler) {
+        this.method = method;
+        this.handler = handler;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
