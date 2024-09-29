@@ -88,6 +88,19 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 지원하는_method가_없으면_예외_발생() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getMethod()).thenReturn("invalid-method");
+
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("지원하지 않는 request method 입니다.");
+    }
+
+    @Test
     void request_method가_null이면_예외_발생() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
