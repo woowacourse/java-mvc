@@ -1,42 +1,59 @@
 package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class HandlerAdapterRegistryTest {
 
     private HandlerAdapterRegistry handlerAdapterRegistry;
-    private HandlerAdapter handlerAdapter;
-    private Object handler;
 
     @BeforeEach
     void setUp() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapter = mock(HandlerAdapter.class);
-        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+
+        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
-    @DisplayName("요청에 맞는 handlerAdapter를 반환한다.")
-    @Test
-    void getHandlerAdapter() {
-        when(handlerAdapter.supports(handler)).thenReturn(true);
+    @DisplayName("handler에 맞는 handlerAdapter를 반환한다.")
+    @Nested
+    class getHandlerAdapter {
 
-        assertThatCode(() -> handlerAdapterRegistry.getHandlerAdapter(handler))
-                .doesNotThrowAnyException();
+        @Test
+        void getControllerHandlerAdapter() {
+            Object handler = mock(Controller.class);
+
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
+            assertThat(handlerAdapter).isInstanceOf(ControllerHandlerAdapter.class);
+        }
+
+        @Test
+        void getHandlerExecutionHandlerAdapter() {
+            Object handler = mock(HandlerExecution.class);
+
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
+            assertThat(handlerAdapter).isInstanceOf(HandlerExecutionHandlerAdapter.class);
+        }
     }
 
     @DisplayName("요청에 맞는 handlerAdapter가 없으면 예외가 발생한다.")
     @Test
     void getHandlerAdapterThrowException() {
-        when(handlerAdapter.supports(handler)).thenReturn(false);
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+        Object handler = new Object();
 
         assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(handler))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
