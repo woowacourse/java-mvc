@@ -1,20 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,9 +25,18 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        createController().forEach(this::checkMethodOfController);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.values().forEach(this::checkMethodOfController);
         log.info("Initialized AnnotationHandlerMapping!");
     }
+
+    private void checkMethodOfController(Object controller) {
+        Set<Method> methods = ReflectionUtils.getAllMethods(controller.getClass(),
+                ReflectionUtils.withAnnotation(RequestMapping.class));
+        methods.forEach(method -> addHandlerExecution(controller, method)); // 해당 메서드들을 핸들러로 추가
+    }
+
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
@@ -37,28 +44,6 @@ public class AnnotationHandlerMapping {
             return handlerExecutions.get(handlerKey);
         }
         throw new IllegalArgumentException("No handler found for " + request.getRequestURI() + request.getMethod());
-    }
-
-    private List<Object> createController() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        return annotatedClasses.stream()
-                .map(this::constructController)
-                .toList();
-    }
-
-    private Object constructController(Class<?> annotatedClass) {
-        try {
-            return annotatedClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create controller instance", e);
-        }
-    }
-
-    private void checkMethodOfController(Object controller) {
-        Arrays.stream(controller.getClass().getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> addHandlerExecution(controller, method));
     }
 
     private void addHandlerExecution(Object controller, Method method) {

@@ -2,7 +2,6 @@ package di.stage1.constructorinjection;
 
 import di.User;
 import org.h2.jdbcx.JdbcDataSource;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
