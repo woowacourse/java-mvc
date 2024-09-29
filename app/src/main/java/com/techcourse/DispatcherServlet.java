@@ -1,7 +1,7 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,16 +13,21 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String DEFAULT_PACKAGE = "com.techcourse";
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(DEFAULT_PACKAGE);
+        annotationHandlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
     @Override
@@ -31,10 +36,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Controller controller = manualHandlerMapping.getHandler(requestURI);
+            HandlerMapping handler = handlerMappingRegistry.getHandler(request);
+            /* HandlerAdapter 적용 후 추가 수정
             String viewName = controller.execute(request, response);
             JspView jspView = new JspView(viewName);
-            jspView.render(null, request, response); // TODO: 2단계 annotationHandlerMapping 적용 후 수정
+            jspView.render(null, request, response); // TODO: 2단계 annotationHandlerMapping 적용 후 수정*/
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
