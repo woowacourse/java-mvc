@@ -1,5 +1,7 @@
 package com.techcourse.controller.annotation;
 
+import java.util.NoSuchElementException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -9,9 +11,8 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotatedController;
-import com.interface21.webmvc.servlet.mvc.tobe.ViewResolver;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
-import com.techcourse.exception.NotFoundAccount;
 import com.techcourse.repository.InMemoryUserRepository;
 
 @Controller
@@ -27,7 +28,7 @@ public class RegisterController implements AnnotatedController {
         InMemoryUserRepository.save(user);
 
         final String viewName = "redirect:/index.jsp";
-        final View view = ViewResolver.mapToView(viewName);
+        final View view = new JspView(viewName);
         return new ModelAndView(view)
                 .addObject("user", user);
     }
@@ -36,10 +37,10 @@ public class RegisterController implements AnnotatedController {
     @Override
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         final User user = InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .orElseThrow(() -> new NotFoundAccount("account가 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("account가 존재하지 않습니다."));
 
         final String viewName = "/register.jsp";
-        final View view = ViewResolver.mapToView(viewName);
+        final View view = new JspView(viewName);
         return new ModelAndView(view)
                 .addObject("user", user);
     }
