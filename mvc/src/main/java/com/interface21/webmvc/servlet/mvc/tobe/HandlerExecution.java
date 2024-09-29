@@ -42,4 +42,12 @@ public class HandlerExecution {
                 .findAny()
                 .orElse(null);
     }
+
+    @Override
+    public String toString() {
+        return "HandlerExecution{" +
+                "method=" + method +
+                ", controllerInstance=" + controllerInstance +
+                '}';
+    }
 }
