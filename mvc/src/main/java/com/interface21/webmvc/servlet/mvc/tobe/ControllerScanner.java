@@ -21,7 +21,7 @@ public class ControllerScanner {
         Map<Class<?>, Object> controllers = new HashMap<>();
 
         for (Object basePackage : basePackages) {
-            Reflections reflections = new Reflections((String) basePackage);
+            Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
             initializeControllers(controllerClasses, controllers);
