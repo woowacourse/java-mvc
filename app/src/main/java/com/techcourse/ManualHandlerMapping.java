@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.interface21.HandlerMapping;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+//        controllers.put("/register/view", new RegisterViewController());
+//        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
