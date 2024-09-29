@@ -8,16 +8,14 @@ import java.util.stream.Collectors;
 
 public class ControllerScanner {
 
-    private final Reflections reflections;
-    ;
     private final Map<Class<?>, Object> controllers;
 
     public ControllerScanner(Object[] basePackage) {
-        this.reflections = new Reflections(basePackage);
-        this.controllers = initializeController();
+        this.controllers = initializeController(basePackage);
     }
 
-    private Map<Class<?>, Object> initializeController() {
+    private Map<Class<?>, Object> initializeController(Object[] basePackage) {
+         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         return instantiateControllers(classes);
     }
