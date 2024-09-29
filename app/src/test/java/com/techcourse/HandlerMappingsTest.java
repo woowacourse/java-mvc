@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapper.AnnotationHandlerMapping;
@@ -136,11 +138,7 @@ class HandlerMappingsTest {
     }
 
     private void setUpMockRequest(HttpServletRequest request, RequestMethod requestMethod, String requestUrl) {
-        doReturn(requestUrl)  //hasHandler 검증에 필요한 stubbing
-                .doReturn(requestUrl) //getHandler 검증에 필요한 stubbing
-                .when(request).getRequestURI();
-
-        doReturn(requestMethod.name())
-                .when(request).getMethod();
+        doReturn(requestUrl).when(request).getRequestURI();
+        doReturn(requestMethod.name()).when(request).getMethod();
     }
 }
