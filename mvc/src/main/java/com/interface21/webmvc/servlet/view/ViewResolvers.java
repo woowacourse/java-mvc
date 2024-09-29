@@ -29,4 +29,8 @@ public class ViewResolvers {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundView("viewName : %s 에 해당하는 뷰가 존재하지 않습니다.".formatted(viewName)));
     }
+
+    protected int size() {
+        return viewResolvers.size();
+    }
 }
