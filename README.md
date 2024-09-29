@@ -26,6 +26,18 @@
     - [x] 존재하지 않는 엔드포인트로 메서드 요청이 들어오면 예외를 반환한다.
     - [x] 지원하지 않는 메서드 요청이 들어오면 예외를 반환한다.
 
+<br>
+
+### 2단계 요구사항
+
+- [ ] AnnotationHandlerMapping 클래스 리팩토링
+    - [ ] initialize 메서드 리팩터링
+    - [ ] ControllerScanner 클래스 추가
+        - [ ] HandlerExecution 생성 메서드 구현
+- [x] DispatcherServlet 클래스 구현
+    - [x] HandlerMapping 인터페이스 구현
+    - [x] HandlerAdapter 인터페이스 구현
+
 ### 학습목표
 
 - @MVC를 구현하면서 MVC 구조와 MVC의 각 역할을 이해한다.

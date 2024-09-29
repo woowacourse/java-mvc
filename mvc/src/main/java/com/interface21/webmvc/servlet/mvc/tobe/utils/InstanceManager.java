@@ -2,10 +2,14 @@ package com.interface21.webmvc.servlet.mvc.tobe.utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InstanceManager {
 
     private static final InstanceManager instance = new InstanceManager();
+
+    private final Map<Class<?>, Object> controllers = new ConcurrentHashMap<>();
 
     private InstanceManager() {
     }
@@ -14,9 +18,20 @@ public class InstanceManager {
         return instance;
     }
 
-    public Object get(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException,
+    public Object get(Class<?> clazz) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        if (controllers.containsKey(clazz)) {
+            return controllers.get(clazz);
+        }
+
+        return create(clazz);
+    }
+
+    private Object create(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException,
             InstantiationException, IllegalAccessException {
         Constructor<?> constructor = clazz.getConstructor();
-        return constructor.newInstance();
+        Object controllerInstance = constructor.newInstance();
+
+        controllers.put(clazz, controllerInstance);
+        return controllerInstance;
     }
 }

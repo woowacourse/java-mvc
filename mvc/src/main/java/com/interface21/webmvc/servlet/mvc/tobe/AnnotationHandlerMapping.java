@@ -3,8 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.exception.UnsupportedMethodException;
-import com.interface21.webmvc.servlet.mvc.exception.UnsupportedRequestURIException;
+import com.interface21.web.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final int EMPTY_REQUEST_METHOD_SIZE = 0;
 
@@ -62,28 +61,9 @@ public class AnnotationHandlerMapping {
         return requestMethods;
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
 
-        return Optional.ofNullable(handlerExecutions.get(handlerKey))
-                .orElseGet(() -> {
-                    try {
-                        return handleUnsupportedMethods(request, handlerKey);
-                    } catch (UnsupportedMethodException | UnsupportedRequestURIException e) {
-                        throw new IllegalArgumentException("오류 - " + e.getMessage(), e);
-                    }
-                });
-    }
-
-    private HandlerExecution handleUnsupportedMethods(HttpServletRequest request, HandlerKey handlerKey)
-            throws UnsupportedMethodException, UnsupportedRequestURIException {
-        boolean hasUrl = handlerExecutions.keySet().stream()
-                .anyMatch(key -> key.isSameUrl(handlerKey));
-
-        if (hasUrl) {
-            throw new UnsupportedMethodException("해당 메서드는 지원되지 않습니다: " + request.getMethod());
-        }
-
-        throw new UnsupportedRequestURIException("해당 requestURI은 지원되지 않습니다: " + request.getRequestURI());
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 }
