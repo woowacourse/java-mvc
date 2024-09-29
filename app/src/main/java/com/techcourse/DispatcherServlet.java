@@ -1,7 +1,11 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.view.JspView;
-import jakarta.servlet.ServletException;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,46 +17,37 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+
         manualHandlerMapping.initialize();
+        annotationHandlerMapping.initialize();
+
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
+        String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        try {
-//            추후 @MVC를 지원할 때 사용할 코드
-//            HandlerExecution handler = annotationHandlerMapping.getHandler(request);
-//            ModelAndView modelAndView = handler.handle(request, response);
-//            modelAndView.render(request, response);
+        Object handler = handlerMappingRegistry.getHandler(request);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-    // 추후 @MVC를 지원할 때 삭제
-    private void move(final String viewName,
-                      final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        handlerAdapter.handle(handler, request, response);
     }
 }
