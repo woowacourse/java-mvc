@@ -1,6 +1,10 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final String DEFAULT_PACKAGE = "com.techcourse";
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public DispatcherServlet() {
     }
@@ -28,6 +33,8 @@ public class DispatcherServlet extends HttpServlet {
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(DEFAULT_PACKAGE);
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -37,10 +44,9 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             HandlerMapping handler = handlerMappingRegistry.getHandler(request);
-            /* HandlerAdapter 적용 후 추가 수정
-            String viewName = controller.execute(request, response);
-            JspView jspView = new JspView(viewName);
-            jspView.render(null, request, response); // TODO: 2단계 annotationHandlerMapping 적용 후 수정*/
+            ModelAndView modelAndView = handlerAdapterRegistry.handle(handler, request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
