@@ -22,7 +22,7 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        Map<Class<?>, Object> controllerInstance = controllerScanner.getControllerInstance();
+        Map<Class<?>, Object> controllerRegistry = controllerScanner.getControllerInstance();
 
         List<Class<?>> controllers = controllerScanner.getControllers();
         List<Method> controllerMethods = extractControllerMethods(controllers);

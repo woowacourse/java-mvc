@@ -10,14 +10,14 @@ import org.reflections.Reflections;
 
 class ControllerScanner {
 
-    private final Map<Class<?>, Object> controllers = new HashMap<>();
+    private final Map<Class<?>, Object> controllerRegistry = new HashMap<>();
 
     public ControllerScanner(Object[] basePackage) {
         initiateControllers(basePackage);
     }
 
-    public Map<Class<?>, Object> getControllers(Class<?> clazz) {
-        return Map.copyOf(controllers);
+    public Map<Class<?>, Object> getControllerInstance() {
+        return Map.copyOf(controllerRegistry);
     }
 
     private void initiateControllers(Object[] basePackage) {
@@ -26,7 +26,7 @@ class ControllerScanner {
 
         for (Class<?> clazz : classes) {
             Constructor<?> constructor = getDeclaredConstructor(clazz);
-            controllers.put(clazz, getInstance(constructor));
+            controllerRegistry.put(clazz, getInstance(constructor));
         }
     }
 
