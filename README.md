@@ -39,9 +39,9 @@
 
 1. Legacy MVC와 @MVC 통합하기
 
-- [ ] ControllerScanner 클래스 추가
-    - [ ] Reflections 객체로 @Controller가 설정된 모든 클래스 탐색
-    - [ ] 각 클래스의 인스턴스 생성
+- [x] ControllerScanner 클래스 추가
+    - [x] Reflections 객체로 @Controller가 설정된 모든 클래스 탐색
+    - [x] 각 클래스의 인스턴스 생성
 - [ ] 컨트롤러의 메서드 정보로 HandlerExecution 생성
     - [ ] @RequestMapping이 붙어있는 메서드 정보 가져옴
     - [ ] 가져온 메서드에서 @RequestMapping의 정보를 바탕으로 HandlerKey 객체 생성

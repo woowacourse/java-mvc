@@ -13,16 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import samples.TestController;
 
-public class ControllersTest {
+public class ControllerScannerTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ControllersTest.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerScannerTest.class);
 
-    private Controllers controllers;
+    private ControllerScanner controllerScanner;
 
     @BeforeEach
     void setUp() {
         Object[] basePackage = new String[]{"samples"};
-        controllers = new Controllers(basePackage);
+        controllerScanner = new ControllerScanner(basePackage);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class ControllersTest {
         Class<?> clazz = TestController.class;
 
         // when
-        Object controller = controllers.getController(clazz);
+        Object controller = controllerScanner.getController(clazz);
 
         // then
         assertThat(controller).isInstanceOf(TestController.class);
@@ -45,7 +45,7 @@ public class ControllersTest {
         Class<?> clazz = method.getDeclaringClass();
 
         // when
-        Object controller = controllers.getController(clazz);
+        Object controller = controllerScanner.getController(clazz);
 
         // then
         assertThat(controller).isInstanceOf(TestController.class);
@@ -54,7 +54,7 @@ public class ControllersTest {
     @Test
     void 특정_어노테이션이_붙은_메서드들의_정보를_가져올_수_있다() {
         // when
-        Set<Method> methods = controllers.getAnnotationMethods(RequestMapping.class);
+        Set<Method> methods = controllerScanner.getAnnotationMethods(RequestMapping.class);
         methods.forEach(method -> log.info(method.getName()));
 
         // then

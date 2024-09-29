@@ -23,10 +23,10 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Controllers controllers = new Controllers(basePackage);
-        Set<Method> methods = controllers.getAnnotationMethods(RequestMapping.class);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Set<Method> methods = controllerScanner.getAnnotationMethods(RequestMapping.class);
         for (Method method : methods) {
-            Object controller = controllers.getController(method.getDeclaringClass());
+            Object controller = controllerScanner.getController(method.getDeclaringClass());
             addHandlers(controller, method);
         }
         log.info("Initialized AnnotationHandlerMapping!");
