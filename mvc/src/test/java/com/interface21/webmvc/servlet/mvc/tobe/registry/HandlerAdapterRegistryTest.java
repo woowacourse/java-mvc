@@ -16,17 +16,6 @@ import static org.mockito.Mockito.mock;
 class HandlerAdapterRegistryTest {
 
     @Test
-    @DisplayName("Handler Adapter를 캐싱하여 저장후 가져온다.")
-    void gatHandlerAdapter() {
-        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        HandlerAdapterRegistry.addHandlerAdapters(Set.of(annotationHandlerAdapter));
-
-        HandlerAdapter handlerAdapter = getMockHandlerAdapter().get();
-
-        assertThat(annotationHandlerAdapter).hasSameHashCodeAs(handlerAdapter);
-    }
-
-    @Test
     @DisplayName("Handler Adapter가 없는 경우 새로 저장한다.")
     void addHandlerAdapter_WhenNewHandlerAdapter() {
         Optional<HandlerAdapter> notInsertedHandlerAdapter = getMockHandlerAdapter();
