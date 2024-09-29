@@ -64,5 +64,4 @@ class JspViewTest {
         verify(request).setAttribute("key1", "value1");
         verify(request).setAttribute("key2", "value2");
     }
-
 }
