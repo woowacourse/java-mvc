@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public class HandlerManager {
-    List<ServletRequestHandler> servletRequestHandlers;
+    private final List<ServletRequestHandler> servletRequestHandlers;
 
     public HandlerManager(ServletRequestHandler... servletRequestHandlers) {
         this.servletRequestHandlers = List.of(servletRequestHandlers);
