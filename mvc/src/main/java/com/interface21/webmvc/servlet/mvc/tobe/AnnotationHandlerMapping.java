@@ -38,10 +38,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
             List<Method> requestMappingMethods = getRequestMappingMethods(entry.getKey());
             Object controller = entry.getValue();
-            for (Method requestMappingMethod : requestMappingMethods) {
-                RequestMapping annotation = requestMappingMethod.getAnnotation(RequestMapping.class);
-                setHandlerExecutions(controller, requestMappingMethod, annotation);
-            }
+
+            setHandlerExecutions(requestMappingMethods, controller);
         }
     }
 
@@ -52,7 +50,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 .toList();
     }
 
-    private void setHandlerExecutions(Object controller, Method method, RequestMapping annotation) {
+    private void setHandlerExecutions(List<Method> requestMappingMethods, Object controller) {
+        for (Method requestMappingMethod : requestMappingMethods) {
+            RequestMapping annotation = requestMappingMethod.getAnnotation(RequestMapping.class);
+            setHandlerExecutionsByMethod(controller, requestMappingMethod, annotation);
+        }
+    }
+
+    private void setHandlerExecutionsByMethod(Object controller, Method method, RequestMapping annotation) {
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
         if (requestMethods.length == EMPTY) {
