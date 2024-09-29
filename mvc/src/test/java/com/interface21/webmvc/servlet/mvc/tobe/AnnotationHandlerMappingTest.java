@@ -31,7 +31,7 @@ class AnnotationHandlerMappingTest {
 	@DisplayName("RequestMapping 어노테이션에 method 가 없으면 모든 method 를 등록한다.")
 	@Test
 	void NoHttpMethod() {
-		List<HandlerKey> expected = Arrays.stream(RequestMethod.getRequestMethods())
+		List<HandlerKey> expected = Arrays.stream(RequestMethod.values())
 			.map(requestMethod -> new HandlerKey("/no-method", requestMethod))
 			.toList();
 
