@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.exception.HandlerNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URL;
@@ -66,7 +67,7 @@ class AnnotationHandlerMappingTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("해당 URI을 처리할 수 있는 핸들러가 없을 경우 null을 반환한다.")
+    @DisplayName("해당 URI을 처리할 수 있는 핸들러가 없을 경우 예외가 발생한다.")
     @Test
     void notRegisteredHandler() {
         final var request = mock(HttpServletRequest.class);
@@ -74,8 +75,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/not-registered-url");
         when(request.getMethod()).thenReturn("GET");
 
-        // 핸들러를 못 찾으면 어떻게 처리 해야 할까?
-        assertThat(handlerMapping.getHandler(request)).isNull();
+        assertThatThrownBy(() -> handlerMapping.getHandler(request))
+                .isInstanceOf(HandlerNotFoundException.class);
     }
 
     @DisplayName("AnnotationMapping을 지원하지 않은 객체 타입이 들어올 경우 예외가 발생한다.")

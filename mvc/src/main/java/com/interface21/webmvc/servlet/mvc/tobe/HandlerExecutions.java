@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class HandlerExecutions {
 
@@ -50,7 +51,7 @@ public class HandlerExecutions {
         return HandlerKeyGenerator.fromAnnotatedMethod(method);
     }
 
-    public Object get(HandlerKey key) {
-        return executions.get(key);
+    public Optional<Object> get(HandlerKey key) {
+        return Optional.ofNullable(executions.get(key));
     }
 }
