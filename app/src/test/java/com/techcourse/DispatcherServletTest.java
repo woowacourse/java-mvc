@@ -72,6 +72,6 @@ class DispatcherServletTest {
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessage("지원하지 않는 요청입니다.");
+                .hasMessage("지원하지 않는 Handler 입니다.");
     }
 }

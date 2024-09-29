@@ -51,8 +51,7 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        Object handler = handlerMappingRegistry.getHandler(request)
-                .orElseThrow(() -> new UnsupportedOperationException("지원하지 않는 요청입니다."));
+        Object handler = handlerMappingRegistry.getHandler(request);
         HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         try {

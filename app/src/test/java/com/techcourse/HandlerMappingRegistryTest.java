@@ -1,15 +1,15 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapper.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,11 +35,9 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("/register");
         when(request.getMethod()).thenReturn("GET");
 
-        Optional<Object> actual = handlerMappingRegistry.getHandler(request);
+        Object actual = handlerMappingRegistry.getHandler(request);
 
-        assertThat(actual).isPresent()
-                .get()
-                .isInstanceOf(HandlerExecution.class);
+        assertThat(actual).isInstanceOf(HandlerExecution.class);
     }
 
     @Test
@@ -48,22 +46,20 @@ class HandlerMappingRegistryTest {
 
         when(request.getRequestURI()).thenReturn("/register/view");
 
-        Optional<Object> actual = handlerMappingRegistry.getHandler(request);
+        Object actual = handlerMappingRegistry.getHandler(request);
 
-        assertThat(actual).isPresent()
-                .get()
-                .isInstanceOf(Controller.class);
+        assertThat(actual).isInstanceOf(Controller.class);
     }
 
     @Test
-    void 매핑된_컨트롤러가_없으면_빈_Optional을_반환한다() {
+    void 매핑된_컨트롤러가_없으면_예외가_발생한다() {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/invalid-uri");
         when(request.getMethod()).thenReturn("GET");
 
-        Optional<Object> actual = handlerMappingRegistry.getHandler(request);
-
-        assertThat(actual).isEmpty();
+        assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("지원하지 않는 Handler 입니다.");
     }
 }
