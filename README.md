@@ -27,7 +27,7 @@
 - [x] @MVC Framework 테스트 통과하기
 - [x] JspView 클래스 구현 : DispatcherServlet, service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮기기
 - [x] Legacy MVC와 @MVC 통합하기
-- [ ] JsonView 클래스를 구현
+- [x] JsonView 클래스를 구현
 - [x] Legacy MVC 제거
   - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
   - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링
