@@ -13,8 +13,6 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.controller.UserSession;
-import com.techcourse.domain.User;
-import com.techcourse.repository.InMemoryUserRepository;
 
 @Controller
 public class LogoutController {
