@@ -9,6 +9,7 @@ public class HandlerExecutionFailedException extends RuntimeException {
     }
 
     private static String getMessage(Object handler, Method method) {
-        return String.format("핸들러 실행에 실패했습니다. - handler: %s, method: %s", handler.getClass().getName(), method.getName());
+        return String.format("핸들러 실행에 실패했습니다. - handler: %s, method: %s", handler.getClass().getName(),
+                method.getName());
     }
 }

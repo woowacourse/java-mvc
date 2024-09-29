@@ -28,7 +28,7 @@ class RequestMethodTest {
     @DisplayName("올바르지 않은 HTTP Method 문자열이 주어지면, 예외를 던진다.")
     void givenIncorrectString_thenThrowIllegalArgumentException() {
         assertThatCode(() -> RequestMethod.from("WRONG"))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Wrong http method - given: WRONG");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Wrong http method - given: WRONG");
     }
 }

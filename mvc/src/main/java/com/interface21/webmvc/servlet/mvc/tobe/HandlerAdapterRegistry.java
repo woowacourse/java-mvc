@@ -14,7 +14,8 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
