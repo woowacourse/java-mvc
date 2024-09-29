@@ -11,15 +11,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerMappingAdapterTest {
+class AnnotationHandlerMappingAdapterTest {
 
     private AnnotationHandlerMapping handlerMapping;
-    private HandlerMappingAdapter handlerMappingAdapter;
+    private AnnotationHandlerMappingAdapter annotationHandlerMappingAdapter;
 
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMappingAdapter = new HandlerMappingAdapter(handlerMapping);
+        annotationHandlerMappingAdapter = new AnnotationHandlerMappingAdapter(handlerMapping);
     }
 
     @DisplayName("어댑터를 초기화할 경우 핸들러 매퍼가 초기화된다.")
@@ -31,7 +31,7 @@ class HandlerMappingAdapterTest {
         when(request.getMethod()).thenReturn("GET");
 
         // when
-        handlerMappingAdapter.initialize();
+        annotationHandlerMappingAdapter.initialize();
 
         // then
         Object handlerExecution = handlerMapping.getHandler(request);
@@ -42,7 +42,7 @@ class HandlerMappingAdapterTest {
     @Test
     void should_returnController_when_getHandlerWithValidUri() throws Exception {
         // given
-        handlerMappingAdapter.initialize();
+        annotationHandlerMappingAdapter.initialize();
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/get-test");
@@ -50,7 +50,7 @@ class HandlerMappingAdapterTest {
         when(request.getAttribute("id")).thenReturn("ever");
 
         // when
-        HandlerExecution handlerExecution = (HandlerExecution) handlerMappingAdapter.getHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) annotationHandlerMappingAdapter.getHandler(request);
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         // then
@@ -61,12 +61,12 @@ class HandlerMappingAdapterTest {
     @Test
     void should_returnNull_when_getHandlerWithInvalidUri() {
         // given
-        handlerMappingAdapter.initialize();
+        annotationHandlerMappingAdapter.initialize();
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/invalid");
         when(request.getMethod()).thenReturn("GET");
 
         // when & then
-        assertThat(handlerMappingAdapter.getHandler(request)).isNull();
+        assertThat(annotationHandlerMappingAdapter.getHandler(request)).isNull();
     }
 }

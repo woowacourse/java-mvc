@@ -3,9 +3,9 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMappingAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -29,7 +29,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappings = new HandlerMapping[]{
                 new ManualHandlerMapping(),
-                new HandlerMappingAdapter(new AnnotationHandlerMapping())
+                new AnnotationHandlerMappingAdapter(new AnnotationHandlerMapping())
         };
         Arrays.stream(handlerMappings).forEach(HandlerMapping::initialize);
     }

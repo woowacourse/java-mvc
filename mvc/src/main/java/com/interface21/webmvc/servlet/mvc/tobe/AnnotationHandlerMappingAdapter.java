@@ -2,11 +2,11 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class HandlerMappingAdapter implements HandlerMapping {
+public class AnnotationHandlerMappingAdapter implements HandlerMapping {
 
     private final AnnotationHandlerMapping annotationHandlerMapping;
 
-    public HandlerMappingAdapter(AnnotationHandlerMapping annotationHandlerMapping) {
+    public AnnotationHandlerMappingAdapter(AnnotationHandlerMapping annotationHandlerMapping) {
         this.annotationHandlerMapping = annotationHandlerMapping;
     }
 

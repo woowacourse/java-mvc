@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMappingAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,12 +15,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 class HandlerMappingTest {
 
     private ManualHandlerMapping manualHandlerMapping;
-    private HandlerMappingAdapter annotationHandlerMapping;
+    private AnnotationHandlerMappingAdapter annotationHandlerMapping;
 
     @BeforeEach
     void setUp() {
         manualHandlerMapping = new ManualHandlerMapping();
-        annotationHandlerMapping = new HandlerMappingAdapter(new AnnotationHandlerMapping());
+        annotationHandlerMapping = new AnnotationHandlerMappingAdapter(new AnnotationHandlerMapping());
         manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
     }
