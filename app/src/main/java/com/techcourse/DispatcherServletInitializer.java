@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterContainer;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingContainer;
 
