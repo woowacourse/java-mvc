@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
-    public static final String BASE_PACKAGE = "com.techcourse.controller";
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
 
     private final List<HandlerMapping> handlerMappings;
 
