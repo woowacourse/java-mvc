@@ -1,8 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         addHandlerMapping(new ManualHandlerMapping());
-        addHandlerMapping(new AnnotationHandlerMapping(Application.class));
+        addHandlerMapping(new AnnotationHandlerMapping("com"));
         addHandlerAdaptor(new ControllerAdaptor());
         addHandlerAdaptor(new HandlerExecutionAdaptor());
     }

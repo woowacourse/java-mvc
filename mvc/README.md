@@ -23,4 +23,4 @@
 - [x] Legacy MVC 제거
   - [x] app 모듈 내 모든 컨트롤러 어노테이션 기반으로 수정
   - [x] as-is 패키지 삭제
-  - [ ] DispatcherServlet mvc 패키지로 이동
+  - [x] DispatcherServlet mvc 패키지로 이동
