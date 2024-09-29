@@ -8,12 +8,10 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
 @Controller
-public class LogoutController {
+public class ForwardController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String doLogout(final HttpServletRequest req, final HttpServletResponse res) {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return "redirect:/";
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String showHomePage(final HttpServletRequest request, final HttpServletResponse response) {
+        return "/index.jsp";
     }
 }

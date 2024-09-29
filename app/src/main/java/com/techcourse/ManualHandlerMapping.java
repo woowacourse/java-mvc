@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 
 public class ManualHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
@@ -27,12 +24,12 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized ManualHandlerMapping!");
 
-        handlers.put("/", new ForwardController("/index.jsp"));
+//        handlers.put("/", new ForwardController("/index.jsp"));
 //        handlers.put("/login", new LegacyLoginController());
 //        handlers.put("/login/view", new LegacyLoginViewController());
-        handlers.put("/logout", new LogoutController());
-        handlers.put("/register/view", new RegisterViewController());
-        handlers.put("/register", new RegisterController());
+//        handlers.put("/logout", new LegacyLogoutController());
+//        handlers.put("/register/view", new LegacyRegisterViewController());
+//        handlers.put("/register", new LegacyRegisterController());
 
         handlers.forEach((key, value) -> log.info("HandlerKey : {}, handler : {}", key, value));
     }
