@@ -24,12 +24,17 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         basePackage.initialize();
         List<Object> controllerInstances = basePackage.controllerInstances();
         for (Object controllerInstance : controllerInstances) {
-            List<Method> requestMappingMethods = basePackage.findRequestMappingMethodsByControllerInstance(controllerInstance);
-            for (Method requestMappingMethod : requestMappingMethods) {
-                handlerExecutions.addExecutor(controllerInstance, requestMappingMethod);
-            }
+            addExecutions(controllerInstance);
         }
         log.info("AnnotationHandlerMapping 초기화 완료");
+    }
+
+    private void addExecutions(Object controllerInstance) {
+        List<Method> requestMappingMethods = basePackage.findRequestMappingMethodsByControllerInstance(
+                controllerInstance);
+        for (Method requestMappingMethod : requestMappingMethods) {
+            handlerExecutions.addExecutor(controllerInstance, requestMappingMethod);
+        }
     }
 
     public Handler getHandler(final HttpServletRequest request) {
