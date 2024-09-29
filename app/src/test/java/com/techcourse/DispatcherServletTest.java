@@ -20,20 +20,6 @@ class DispatcherServletTest {
     }
 
     @Test
-    void login_by_manualHandler() throws ServletException {
-        // given
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/login");
-        request.addParameter("account", "wrongAccount");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        // when
-        dispatcherServlet.service(request, response);
-
-        // then
-        assertThat(response.getRedirectedUrl()).isEqualTo("/401.jsp");
-    }
-
-    @Test
     void register_by_annotationHandler() throws ServletException {
         // given
         HttpServletRequest request = new MockHttpServletRequest("GET", "/register");
