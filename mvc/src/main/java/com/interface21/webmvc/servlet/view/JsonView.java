@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JsonView implements View {
 
+    private static final int SINGLE_RENDER_SIZE = 1;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -22,7 +24,7 @@ public class JsonView implements View {
     }
 
     private Object getTargetData(Map<String, ?> model) {
-        if (model.size() == 1) {
+        if (model.size() == SINGLE_RENDER_SIZE) {
             return model.values().iterator().next();
         }
 
