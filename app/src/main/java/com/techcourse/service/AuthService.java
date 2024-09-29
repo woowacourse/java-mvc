@@ -36,12 +36,8 @@ public class AuthService {
         return UserSession.isLoggedIn(session);
     }
 
-    private User findUserByAccount(String account) throws AuthException {
-        return userService.findByAccount(account)
-                .orElseThrow(() -> {
-                    log.error("계정을 가진 유저를 찾을 수 없습니다 : {}", account);
-                    return new AuthException("유저를 찾을 수 없습니다.");
-                });
+    private User findUserByAccount(String account) {
+        return userService.findByAccount(account);
     }
 
     public void logout(HttpSession session) {
