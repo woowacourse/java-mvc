@@ -29,6 +29,9 @@ class DispatcherServletTest {
 	void mapControllerByAnnotation() {
 		request.setMethod("POST");
 		request.setRequestURI("/register");
+		request.setParameter("account", "gugu");
+		request.setParameter("password", "password");
+		request.setParameter("email", "gugu@gmail.com");
 
 		try {
 			dispatcherServlet.service(request, response);
@@ -36,6 +39,6 @@ class DispatcherServletTest {
 			exception.printStackTrace();
 		}
 
-		assertThat(request.getAttribute("username")).isEqualTo("anna");
+		assertThat(response.getStatus()).isEqualTo(302);
 	}
 }
