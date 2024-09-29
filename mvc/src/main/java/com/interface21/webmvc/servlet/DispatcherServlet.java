@@ -1,10 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerExceptionResolver;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.handler.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.handler.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.resolver.ArgumentHandlerExceptionResolver;
@@ -18,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -26,9 +20,9 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerMappingRegistry = new HandlerMappingRegistry(BASE_PACKAGE);
+        handlerMappingRegistry = new HandlerMappingRegistry(basePackage);
         handlerExceptionResolver = new ArgumentHandlerExceptionResolver();
     }
 
