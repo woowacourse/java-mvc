@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21;
 
 import java.util.Map;
 
@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
@@ -23,20 +23,20 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(
-                new AnnotationHandlerMapping(DispatcherServlet.class.getPackage().getName()));
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+                new AnnotationHandlerMapping(basePackage));
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 

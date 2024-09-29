@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerExecution;
 
 import samples.TestController;
@@ -25,15 +24,6 @@ class AnnotationHandlerAdapterTest {
         var handlerExecutor = mock(HandlerExecution.class);
 
         assertThat(sut.support(handlerExecutor)).isTrue();
-    }
-
-    @Test
-    @DisplayName("컨트롤러 어노테이션이 아니면 지원하지 않는다.")
-    void notSupport() {
-        var sut = new AnnotationHandlerAdapter();
-        var controller = mock(Controller.class);
-
-        assertThat(sut.support(controller)).isFalse();
     }
 
     @Test
