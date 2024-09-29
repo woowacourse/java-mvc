@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,11 +7,14 @@ import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapper.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import samples.TestManualHandlerMapping;
 
 class HandlerMappingRegistryTest {
 
@@ -19,43 +22,40 @@ class HandlerMappingRegistryTest {
 
     @BeforeEach
     void setUp() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        TestManualHandlerMapping manualHandlerMapping = new TestManualHandlerMapping();
         manualHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
 
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
-    @Test
-    void 매핑된_어노테이션_컨트롤러가_있으면_HandlerExecution을_반환한다() {
+    @ParameterizedTest
+    @MethodSource("requestAndHandler")
+    void 매핑된_컨트롤러가_있으면_Handler를_반환한다(String requestURI, String requestMethod, Class<?> expectedHandler) {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
-        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn(requestURI);
+        when(request.getMethod()).thenReturn(requestMethod);
 
         Object actual = handlerMappingRegistry.getHandler(request);
 
-        assertThat(actual).isInstanceOf(HandlerExecution.class);
+        assertThat(actual).isInstanceOf(expectedHandler);
     }
 
-    @Test
-    void 매핑된_레거시_컨트롤러가_있으면_Controller를_반환한다() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        when(request.getRequestURI()).thenReturn("/register/view");
-
-        Object actual = handlerMappingRegistry.getHandler(request);
-
-        assertThat(actual).isInstanceOf(Controller.class);
+    public static Stream<Arguments> requestAndHandler() {
+        return Stream.of(
+                Arguments.arguments("/post-test", "POST", HandlerExecution.class),
+                Arguments.arguments("/supported-uri", null, Controller.class)
+        );
     }
 
     @Test
     void 매핑된_컨트롤러가_없으면_예외가_발생한다() {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getRequestURI()).thenReturn("/invalid-uri");
+        when(request.getRequestURI()).thenReturn("/unsupported-uri");
         when(request.getMethod()).thenReturn("GET");
 
         assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
