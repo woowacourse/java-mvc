@@ -1,20 +1,28 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
+import samples.TestController;
+import java.util.Map;
+
 class ControllerScannerTest {
 
-    // TODO 리팩토링
-//    @DisplayName("패키지 이름에 따른 핸들러를 반환한다.")
-//    @Test
-//    void scanHandlers() {
-//        // given
-//        Object[] basePackage = new Object[1];
-//        basePackage[0] = TestController.class.getPackage().getName();
-//        int expectedHandlerSize = TestController.class.getDeclaredMethods().length;
-//
-//        // when
-//        List<Handler> handlers = ControllerScanner.scanHandlers(basePackage);
-//
-//        // then
-//        Assertions.assertThat(handlers).hasSize(expectedHandlerSize);
-//    }
+    @DisplayName("패키지 이름에 따른 컨트롤러를 반환한다.")
+    @Test
+    void getControllers() {
+        // given
+        Object[] basePackage = new Object[1];
+        basePackage[0] = TestController.class.getPackage().getName();
+
+        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+
+        // when
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+
+        // then
+        Assertions.assertThat(controllers).hasSize(1);
+    }
 }
