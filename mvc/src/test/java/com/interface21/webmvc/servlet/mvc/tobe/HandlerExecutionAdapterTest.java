@@ -11,7 +11,7 @@ import samples.TestController;
 class HandlerExecutionAdapterTest {
 
     @Test
-    @DisplayName("HandlerExecution 타입만 지원한다.")
+    @DisplayName("ModelAndView를 반환하는 HandlerExecution 타입만 지원한다.")
     void supports() {
         HandlerExecutionAdapter controllerHandlerAdapter = new HandlerExecutionAdapter();
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
