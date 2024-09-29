@@ -41,14 +41,4 @@ public class LoginController {
 		}
 		return new ModelAndView(new JspView("redirect:/401.jsp"));
 	}
-
-	@RequestMapping(value = "/login/view", method = RequestMethod.GET)
-	public ModelAndView showLoginPage(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-		return UserSession.getUserFrom(req.getSession())
-			.map(user -> {
-				log.info("logged in {}", user.getAccount());
-				return new ModelAndView(new JspView("redirect:/index.jsp"));
-			})
-			.orElse(new ModelAndView(new JspView("/login.jsp")));
-	}
 }
