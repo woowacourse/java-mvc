@@ -31,8 +31,8 @@ class ControllerScannerTest {
                 () -> assertThat(controllers.get(SampleController.class)).isInstanceOf(SampleController.class)
         );
     }
-    
-    @DisplayName("컨트롤러가 unmodifiableMap으로 반환되는지 확인")
+
+    @DisplayName("컨트롤러스캐너에서 반환한 컨트롤러 정보를 변경하려고 한다면 예외가 발생한다")
     @Test
     void controllersReturnedAsUnmodifiableMap() {
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
