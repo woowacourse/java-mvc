@@ -1,10 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -37,11 +36,10 @@ public class HandlerMappingRegistryTest {
         registerHandlerMapping(new TestManualHandlerMapping());
 
         // when
-        final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        final Object handler = handlerMappingRegistry.getHandler(request);
 
         // then
-        assertThat(handler).isPresent();
-        assertThat(handler.get()).isInstanceOf(TestController.class);
+        assertThat(handler).isInstanceOf(TestController.class);
     }
 
     @DisplayName("AnnotationHandlerMapping(@MVC)이 요청을 처리할 수 있다.")
@@ -55,14 +53,13 @@ public class HandlerMappingRegistryTest {
         registerHandlerMapping(new AnnotationHandlerMapping(BASE_PACKAGE));
 
         // when
-        final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        final Object handler = handlerMappingRegistry.getHandler(request);
 
         // then
-        assertThat(handler).isPresent();
-        assertThat(handler.get()).isInstanceOf(TestController.class);
+        assertThat(handler).isInstanceOf(TestController.class);
     }
 
-    @DisplayName("요청을 처리할 수 있는 핸들러가 없으면, null을 반환한다.")
+    @DisplayName("요청을 처리할 수 있는 핸들러가 없으면, IllegalArgumentException이 발생한다.")
     @Test
     void test_GetHandler_ReturnNull_When_NoHandler() {
         // given
@@ -70,11 +67,10 @@ public class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
         when(request.getMethod()).thenReturn(METHOD_GET);
 
-        // when
-        final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-
-        // then
-        assertThat(handler).isEmpty();
+        // when & then
+        assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Request URI를 처리할 핸들러가 없습니다.");
     }
 
     private void registerHandlerMapping(final HandlerMapping handlerMapping) {
