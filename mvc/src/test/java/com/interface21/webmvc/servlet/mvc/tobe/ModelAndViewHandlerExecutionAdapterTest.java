@@ -8,12 +8,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
-class HandlerExecutionAdapterTest {
+class ModelAndViewHandlerExecutionAdapterTest {
 
     @Test
     @DisplayName("ModelAndView를 반환하는 HandlerExecution 타입만 지원한다.")
     void supports() {
-        HandlerExecutionAdapter controllerHandlerAdapter = new HandlerExecutionAdapter();
+        ModelAndViewHandlerExecutionAdapter controllerHandlerAdapter = new ModelAndViewHandlerExecutionAdapter();
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
         TestController otherController = new TestController();
 

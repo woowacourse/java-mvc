@@ -8,7 +8,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.ModelAndViewHandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
-        HandlerAdapter handlerExecutionAdapter = new HandlerExecutionAdapter();
+        HandlerAdapter handlerExecutionAdapter = new ModelAndViewHandlerExecutionAdapter();
         HandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
 
         handlerMappings.appendHandlerMapping(annotationHandlerMapping);
