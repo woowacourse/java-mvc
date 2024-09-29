@@ -16,6 +16,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("제공하지 않는 핸들러입니다: " + handler));
+                .orElseThrow(() -> new IllegalStateException("제공하지 않는 핸들러입니다: " + handler));
     }
 }
