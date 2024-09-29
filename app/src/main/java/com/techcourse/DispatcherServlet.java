@@ -40,7 +40,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = handlerMappingRegistry.getHandlerMapping(request).get();
+            Object handler = handlerMappingRegistry.getHandlerMapping(request)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "%s에 해당하는 HandlerMapping이 존재하지 않습니다.".formatted(request.getRequestURI())));
             HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = adapter.handle(handler, request, response);
 

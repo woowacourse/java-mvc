@@ -1,11 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,5 +58,24 @@ public class HandlerMappingRegistryTest {
 
         //then
         assertThat(handlerMapping).isInstanceOf(HandlerExecution.class);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 정보로 매핑된 요청을 받으면 빈 Optional 객체를 반환한다.")
+    void should_return_empty_Optional_when_get_invalid_RequestMapping_request() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/invalid");
+        when(request.getMethod()).thenReturn("GET");
+
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        annotationHandlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+
+        // when
+        Optional<Object> handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
+
+        //then
+        assertTrue(handlerMapping.isEmpty());
     }
 }
