@@ -1,35 +1,53 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-
-import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.tobe.Handler;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterController;
+import com.techcourse.controller.RegisterViewController;
 
-    private static final Map<String, Controller> controllers = new HashMap<>();
+import jakarta.servlet.http.HttpServletRequest;
 
-    public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
+public class ManualHandlerMapping implements HandlerMapping {
 
-        log.info("Initialized Handler Mapping!");
-        controllers.keySet()
-                .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
-    }
+	private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
-    public Controller getHandler(final String requestURI) {
-        log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
-    }
+	private final Map<String, Handler> handler;
+
+	public ManualHandlerMapping(Map<String, Handler> handler) {
+		this.handler = handler;
+	}
+
+	@Override
+	public void initialize() {
+		handler.put("/", new ManualHandler(new ForwardController("/index.jsp")));
+		handler.put("/login", new ManualHandler(new LoginController()));
+		handler.put("/login/view", new ManualHandler(new LoginViewController()));
+		handler.put("/logout", new ManualHandler(new LogoutController()));
+		handler.put("/register/view", new ManualHandler(new RegisterViewController()));
+		handler.put("/register", new ManualHandler(new RegisterController()));
+
+		log.info("Initialized Handler Mapping!");
+		handler.keySet()
+			.forEach(path -> log.info("Path : {}, Controller : {}", path, handler.get(path).getClass()));
+	}
+
+	@Override
+	public Handler getHandler(HttpServletRequest request) {
+		log.debug("Request Mapping Uri : {}", request.getRequestURI());
+		return handler.get(request.getRequestURI());
+	}
+
+	@Override
+	public boolean canService(HttpServletRequest request) {
+		return handler.containsKey(request.getRequestURI());
+	}
 }

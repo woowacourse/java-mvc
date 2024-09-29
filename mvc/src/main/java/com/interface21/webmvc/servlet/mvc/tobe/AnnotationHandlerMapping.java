@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,23 +14,42 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
 	private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
 	private final Object[] basePackage;
-	private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+	private final Map<HandlerKey, Handler> handlers;
 
-	public AnnotationHandlerMapping(final Object... basePackage) {
+	public AnnotationHandlerMapping(Map<HandlerKey, Handler> handlers, Object... basePackage) {
 		this.basePackage = basePackage;
-		this.handlerExecutions = new HashMap<>();
+		this.handlers = handlers;
 	}
 
-	public void initialize() throws NoSuchMethodException {
+	@Override
+	public Handler getHandler(final HttpServletRequest request) {
+		HandlerKey handlerKey = createHandlerKey(request);
+		return handlers.get(handlerKey);
+	}
+
+	@Override
+	public boolean canService(HttpServletRequest request) {
+		HandlerKey handlerKey = createHandlerKey(request);
+		return handlers.containsKey(handlerKey);
+	}
+
+	private HandlerKey createHandlerKey(HttpServletRequest request) {
+		String requestURI = request.getRequestURI();
+		RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+		return new HandlerKey(requestURI, requestMethod);
+	}
+
+	@Override
+	public void initialize() {
 		log.info("Initializing AnnotationHandlerMapping!");
 		Set<Class<?>> controllers = findControllers();
 		processControllers(controllers);
-		log.info("Initialized AnnotationHandlerMapping with {} handlers", handlerExecutions.size());
+		log.info("Initialized AnnotationHandlerMapping with {} handlers", handlers.size());
 	}
 
 	private Set<Class<?>> findControllers() {
@@ -39,14 +57,14 @@ public class AnnotationHandlerMapping {
 		return reflections.getTypesAnnotatedWith(Controller.class);
 	}
 
-	private void processControllers(Set<Class<?>> controllers) throws NoSuchMethodException {
+	private void processControllers(Set<Class<?>> controllers) {
 		for (Class<?> controller : controllers) {
 			Object instance = createInstance(controller);
 			processMethods(controller, instance);
 		}
 	}
 
-	private Object createInstance(Class<?> clazz) throws NoSuchMethodException {
+	private Object createInstance(Class<?> clazz) {
 		try {
 			return clazz.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
@@ -79,17 +97,6 @@ public class AnnotationHandlerMapping {
 	private void registerHandler(String uriPattern, RequestMethod requestMethod,
 		Object instance, Method method) {
 		HandlerKey handlerKey = new HandlerKey(uriPattern, requestMethod);
-		handlerExecutions.put(handlerKey, new HandlerExecution(instance, method));
-	}
-
-	public Object getHandler(final HttpServletRequest request) {
-		String requestURI = request.getRequestURI();
-		RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-		HandlerExecution handler = handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
-		if (handler == null) {
-			String invalidRequestInfo = String.join(" ", requestMethod.name(), requestURI);
-			throw new IllegalArgumentException("해당 요청을 처리할 수 있는 핸들러가 존재하지 않습니다. : " + invalidRequestInfo);
-		}
-		return handler;
+		handlers.put(handlerKey, new AnnotationHandler(new HandlerExecution(instance, method)));
 	}
 }
