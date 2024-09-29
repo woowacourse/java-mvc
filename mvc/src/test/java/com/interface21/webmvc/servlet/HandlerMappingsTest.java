@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.NoSuchElementException;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,19 +16,19 @@ class HandlerMappingsTest {
     @DisplayName("적절한 핸들러를 조회할 수 있다.")
     void getHandler() {
         HandlerMapping handlerMapping = mock(HandlerMapping.class);
-        Controller controller = mock(Controller.class);
+        Object handler = new Object();
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI())
                 .thenReturn("/samples");
         when(request.getMethod())
                 .thenReturn("GET");
         when(handlerMapping.getHandler(request))
-                .thenReturn(controller);
+                .thenReturn(handler);
 
         HandlerMappings handlerMappings = new HandlerMappings(handlerMapping);
 
         Object actual = handlerMappings.getHandler(request);
-        assertThat(actual).isEqualTo(controller);
+        assertThat(actual).isEqualTo(handler);
     }
 
     @Test
@@ -37,7 +36,7 @@ class HandlerMappingsTest {
     void append() {
         HandlerMappings handlerMappings = new HandlerMappings();
         HandlerMapping handlerMapping = mock(HandlerMapping.class);
-        Controller controller = mock(Controller.class);
+        Object handler = new Object();
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI())
@@ -45,12 +44,12 @@ class HandlerMappingsTest {
         when(request.getMethod())
                 .thenReturn("GET");
         when(handlerMapping.getHandler(request))
-                .thenReturn(controller);
+                .thenReturn(handler);
 
         handlerMappings.appendHandlerMapping(handlerMapping);
 
         Object actual = handlerMappings.getHandler(request);
-        assertThat(actual).isEqualTo(controller);
+        assertThat(actual).isEqualTo(handler);
     }
 
     @Test
