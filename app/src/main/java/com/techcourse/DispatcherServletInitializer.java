@@ -22,11 +22,10 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
     private static final List<HandlerMapping> DEFAULT_MAPPINGS = List.of(
-            new AnnotationHandlerMapping("com.techcourse"),
-            new ManualHandlerMapping()
+            new AnnotationHandlerMapping("com.techcourse")
     );
     private static final List<HandlerAdapter> DEFAULT_ADAPTERS = List.of(
-            new ManualHandlerAdapter(), new AnnotationHandlerAdapter()
+            new AnnotationHandlerAdapter()
     );
 
     @Override
