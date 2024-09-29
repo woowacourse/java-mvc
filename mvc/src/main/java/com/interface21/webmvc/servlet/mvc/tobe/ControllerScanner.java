@@ -10,12 +10,15 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Map<Class<?>, Object> controllers;
+    private final Reflections reflections;
 
     public ControllerScanner(Object... basePackage) {
-        Reflections reflections = new Reflections(basePackage);
+        reflections = new Reflections(basePackage);
+    }
+
+    public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> clazz = reflections.getTypesAnnotatedWith(Controller.class);
-        this.controllers = instantiateControllers(clazz);
+        return Collections.unmodifiableMap(instantiateControllers(clazz));
     }
 
     private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
@@ -31,9 +34,5 @@ public class ControllerScanner {
                  IllegalAccessException e) {
             throw new RuntimeException("controller 리플렉션 중 실패");
         }
-    }
-
-    public Map<Class<?>, Object> getControllers() {
-        return Collections.unmodifiableMap(controllers);
     }
 }
