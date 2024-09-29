@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.NoSuchHandlerException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -58,6 +58,7 @@ public class RequestHandlerMappings {
                 .map(requestHandlerMapping -> requestHandlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElse(new ForwardController("/404.jsp"));
+                .orElseThrow(NoSuchHandlerException::new);
     }
+
 }
