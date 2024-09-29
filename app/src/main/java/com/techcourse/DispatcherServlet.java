@@ -23,12 +23,12 @@ public class DispatcherServlet extends HttpServlet {
     public DispatcherServlet() {
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    public void addHandlerMapping(int order, HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(order, handlerMapping);
     }
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
+    public void addHandlerAdapter(int order, HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(order, handlerAdapter);
     }
 
     @Override

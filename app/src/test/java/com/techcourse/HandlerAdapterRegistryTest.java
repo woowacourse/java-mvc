@@ -20,8 +20,8 @@ class HandlerAdapterRegistryTest {
 
     @BeforeEach
     public void setUp() {
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(0, new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(0, new ManualHandlerAdapter());
     }
 
     @DisplayName("인터페이스 기반 핸들러에 해당하는 핸들러어댑터를 반환한다.")

@@ -7,8 +7,8 @@ public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
-        handlerAdapters.add(handlerAdapter);
+    public void addHandlerAdapter(int order, HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(order, handlerAdapter);
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {

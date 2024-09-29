@@ -16,7 +16,7 @@ class HandlerMappingRegistryTest {
 
     @BeforeEach
     void setUp() {
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("samples.general"));
+        handlerMappingRegistry.addHandlerMapping(0, new AnnotationHandlerMapping("samples.general"));
         handlerMappingRegistry.init();
     }
 

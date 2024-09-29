@@ -22,7 +22,7 @@ class HandlerAdapterRegistryTest {
 
     @BeforeEach
     public void setUp() {
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(0, new AnnotationHandlerAdapter());
     }
 
     @Nested

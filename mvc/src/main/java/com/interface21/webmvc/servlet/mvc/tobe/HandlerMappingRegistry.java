@@ -14,8 +14,8 @@ public class HandlerMappingRegistry {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+    public void addHandlerMapping(int order, HandlerMapping handlerMapping) {
+        handlerMappings.add(order, handlerMapping);
     }
 
     public Object getHandler(HttpServletRequest request) {

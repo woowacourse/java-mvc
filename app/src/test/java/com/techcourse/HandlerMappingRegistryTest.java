@@ -20,8 +20,8 @@ public class HandlerMappingRegistryTest {
     @DisplayName("URI에 해당하는 어노테이션 기반 핸들러를 반환한다.")
     @Test
     void getHandlerWithAnnotation() {
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com"));
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(0, new AnnotationHandlerMapping("com"));
+        handlerMappingRegistry.addHandlerMapping(1, new ManualHandlerMapping());
         handlerMappingRegistry.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -37,8 +37,8 @@ public class HandlerMappingRegistryTest {
     @DisplayName("URI에 해당하는 인터페이스 기반 핸들러를 반환한다.")
     @Test
     void getHandlerWithInterface() {
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com"));
+        handlerMappingRegistry.addHandlerMapping(0, new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(1, new AnnotationHandlerMapping("com"));
         handlerMappingRegistry.init();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
