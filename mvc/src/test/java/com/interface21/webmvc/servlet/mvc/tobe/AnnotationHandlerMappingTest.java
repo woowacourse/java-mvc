@@ -30,14 +30,12 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() throws Exception {
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = new MockHttpServletRequest("GET", "/get-test");
+        final HttpServletResponse response = new MockHttpServletResponse();
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        request.setAttribute("id", "gugu");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -52,7 +50,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -65,7 +63,7 @@ class AnnotationHandlerMappingTest {
         // given
         final HttpServletRequest request = new MockHttpServletRequest(method.name(), "/all-test");
         final HttpServletResponse response = new MockHttpServletResponse();
-        final HandlerExecution handler = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handler = handlerMapping.getHandler(request);
 
         // when
         final ModelAndView modelAndView = handler.handle(request, response);

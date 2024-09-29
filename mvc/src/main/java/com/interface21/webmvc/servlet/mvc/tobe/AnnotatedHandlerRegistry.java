@@ -4,18 +4,18 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
 public class AnnotatedHandlerRegistry {
 
-    private final Map<Method, Object> methodRegistry = new ConcurrentHashMap<>();
-    private final Map<Class<?>, Object> instanceRegistry = new ConcurrentHashMap<>();
+    private final Map<Method, Object> methodRegistry = new HashMap<>();
+    private final Map<Class<?>, Object> instanceRegistry = new HashMap<>();
     private final Object basePackage;
 
     public AnnotatedHandlerRegistry(final Object basePackage) {

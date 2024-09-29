@@ -1,8 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,12 +15,12 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
-    private final Object[] basePackage;
+    private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new ConcurrentHashMap<>();
+        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
@@ -26,7 +28,7 @@ public class AnnotationHandlerMapping {
                 .forEach(this::initializeByPackage);
     }
 
-    private void initializeByPackage(final Object basePackage) {
+    private void initializeByPackage(final String basePackage) {
         final AnnotatedHandlerRegistry registry = new AnnotatedHandlerRegistry(basePackage);
         registry.initialize(Controller.class, RequestMapping.class);
         registry.getMethods()
@@ -47,13 +49,30 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(key, new HandlerExecution(instance, method));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final RequestMethod method = RequestMethod.from(request.getMethod());
         final String requestURI = request.getRequestURI();
         final HandlerKey handlerKey = new HandlerKey(requestURI, method);
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("존재하지 않는 API");
-        }
         return handlerExecutions.get(handlerKey);
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        final AnnotationHandlerMapping that = (AnnotationHandlerMapping) object;
+        return Arrays.equals(basePackage, that.basePackage) && Objects.equals(handlerExecutions,
+                that.handlerExecutions);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(handlerExecutions);
+        result = 31 * result + Arrays.hashCode(basePackage);
+        return result;
     }
 }
