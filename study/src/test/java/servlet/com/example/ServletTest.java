@@ -28,7 +28,10 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+
+        // 단일 클라이언트 입장에서는 숫자를 1 올리는 것을 예상했지만 실제로는 3이 나온다.
+        // 다른 스레드에서 인스턴스 변수의 값을 바꿔버렸다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(3);
     }
 
     @Test
@@ -50,6 +53,8 @@ class ServletTest {
 
         // expected를 0이 아닌 올바른 값으로 바꿔보자.
         // 예상한 결과가 나왔는가? 왜 이런 결과가 나왔을까?
-        assertThat(Integer.parseInt(response.body())).isEqualTo(0);
+
+        // 인스턴스 변수가 아닌 로컬 변수를 사용하기 때문에 스레드와 상관 없이 1 증가된 값을 받는다.
+        assertThat(Integer.parseInt(response.body())).isEqualTo(1);
     }
 }
