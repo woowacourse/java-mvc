@@ -10,11 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.techcourse.controller.RegisterController;
-import samples.TestController;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -34,7 +32,6 @@ class DispatcherServletTest {
 
     private static Stream<Arguments> handlerAdapterProvider() throws NoSuchMethodException {
         return Stream.of(
-                Arguments.of(new TestController(), ControllerHandlerAdapter.class),
                 Arguments.of(createHandlerExecution(), AnnotationHandlerAdapter.class)
         );
     }
