@@ -17,7 +17,7 @@ class AnnotationHandlerAdaptorTest {
     void 입력받은_handler가_HandlerExecution의_instance인지_검증한다() {
         // given
         AnnotationHandlerAdaptor handlerAdaptor = new AnnotationHandlerAdaptor();
-        Object handler = mock(HandlerExecution.class);
+        HandlerExecution handler = new HandlerExecution(null, null);
 
         // when & then
         Assertions.assertThat(handlerAdaptor.supports(handler)).isTrue();
