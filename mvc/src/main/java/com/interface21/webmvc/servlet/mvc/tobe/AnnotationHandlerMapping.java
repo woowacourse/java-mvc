@@ -10,7 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private static final int EMPTY_REQUEST_METHOD_NUMBER = 0;
@@ -55,6 +55,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(handlerKey, new HandlerExecution(method));
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         String requestURI = request.getRequestURI();
