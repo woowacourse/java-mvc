@@ -11,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,23 +43,16 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-            if (handler.isEmpty()) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
+            Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new ServletException("요청에 해당하는 핸들러를 찾을 수 없습니다."));
 
-            Optional<ModelAndView> modelAndViewOptional
-                    = handlerAdapterRegistry.execute(request, response, handler.get());
-            if (modelAndViewOptional.isEmpty()) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
+            ModelAndView modelAndView = handlerAdapterRegistry.execute(request, response, handler)
+                    .orElseThrow(() -> new ServletException("ModelAndView를 리턴할 수 없습니다."));
 
-            ModelAndView modelAndView = modelAndViewOptional.get();
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
