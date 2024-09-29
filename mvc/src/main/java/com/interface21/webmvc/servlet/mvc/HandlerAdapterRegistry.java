@@ -13,8 +13,8 @@ public class HandlerAdapterRegistry {
     }
 
     private void initialize() {
-        handlerAdapters.add(HandlerExecutionHandlerAdapter.getInstance());
-        handlerAdapters.add(ControllerHandlerAdapter.getInstance());
+        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        handlerAdapters.add(new ControllerHandlerAdapter());
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {

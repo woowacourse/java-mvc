@@ -36,7 +36,7 @@ class HandlerExecutionHandlerAdapterTest {
             final Method getMethod = TestAnnotationController.class.getDeclaredMethods()[0];
             final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, getMethod);
 
-            final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = HandlerExecutionHandlerAdapter.getInstance();
+            final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
             assertTrue(handlerExecutionHandlerAdapter.supports(handlerExecution));
         }
 
@@ -45,7 +45,7 @@ class HandlerExecutionHandlerAdapterTest {
         void supports_WhenHandlerIsNotHandlerExecution() {
             final Controller controller = new TestExtendsController();
 
-            final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = HandlerExecutionHandlerAdapter.getInstance();
+            final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
             assertFalse(handlerExecutionHandlerAdapter.supports(controller));
         }
     }
@@ -80,7 +80,7 @@ class HandlerExecutionHandlerAdapterTest {
             );
 
             // when
-            final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = HandlerExecutionHandlerAdapter.getInstance();
+            final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
 
             // then
             final ModelAndView modelAndView = handlerExecutionHandlerAdapter.handle(handlerExecution, request, response);

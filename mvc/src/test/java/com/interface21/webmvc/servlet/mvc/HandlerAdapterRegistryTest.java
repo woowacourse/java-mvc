@@ -25,7 +25,7 @@ class HandlerAdapterRegistryTest {
             final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(new TestExtendsController());
 
-            assertThat(handlerAdapter).isEqualTo(ControllerHandlerAdapter.getInstance());
+            assertThat(handlerAdapter).isInstanceOf(ControllerHandlerAdapter.class);
         }
 
         @Test
@@ -35,7 +35,7 @@ class HandlerAdapterRegistryTest {
             final HandlerExecution handlerExecution = new HandlerExecution(new TestAnnotationController(), null);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handlerExecution);
 
-            assertThat(handlerAdapter).isEqualTo(HandlerExecutionHandlerAdapter.getInstance());
+            assertThat(handlerAdapter).isInstanceOf(HandlerExecutionHandlerAdapter.class);
         }
 
         @Test

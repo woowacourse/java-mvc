@@ -98,7 +98,7 @@ class AnnotationHandlerMappingTest {
 
             assertThatThrownBy(() -> handlerMapping.getHandler(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("해당 요청을 처리할 수 있는 핸들러가 없습니다.");
+                    .hasMessage("Annotation Mapping에 해당 요청을 처리할 수 있는 핸들러가 없습니다.");
         }
     }
 }

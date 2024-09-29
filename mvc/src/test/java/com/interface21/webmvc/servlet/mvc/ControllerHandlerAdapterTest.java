@@ -35,7 +35,7 @@ class ControllerHandlerAdapterTest {
         void supports() {
             final Controller controller = new TestExtendsController();
 
-            final ControllerHandlerAdapter controllerHandlerAdapter = ControllerHandlerAdapter.getInstance();
+            final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
             assertTrue(controllerHandlerAdapter.supports(controller));
         }
 
@@ -46,7 +46,7 @@ class ControllerHandlerAdapterTest {
             final Method getMethod = TestAnnotationController.class.getDeclaredMethods()[0];
             final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, getMethod);
 
-            final ControllerHandlerAdapter controllerHandlerAdapter = ControllerHandlerAdapter.getInstance();
+            final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
             assertFalse(controllerHandlerAdapter.supports(handlerExecution));
         }
     }
@@ -67,7 +67,7 @@ class ControllerHandlerAdapterTest {
             when(request.getRequestDispatcher(argumentCaptor.capture())).thenReturn(requestDispatcher);
 
             // when
-            final ControllerHandlerAdapter controllerHandlerAdapter = ControllerHandlerAdapter.getInstance();
+            final ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
 
             // then
             final ModelAndView modelAndView = controllerHandlerAdapter.handle(new TestExtendsController(), request, response);
