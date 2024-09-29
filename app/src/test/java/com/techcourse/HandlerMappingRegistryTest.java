@@ -79,7 +79,7 @@ class HandlerMappingRegistryTest {
         handlerMappingRegistry.addHandlerMapping(handlerMapping1);
 
         // when & then
-        Assertions.assertThatCode(() -> handlerMappingRegistry.getHandler(request))
+        Assertions.assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))
                 .isInstanceOf(NoSuchElementException.class);
     }
 }

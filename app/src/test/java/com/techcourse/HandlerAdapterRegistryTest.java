@@ -68,7 +68,7 @@ class HandlerAdapterRegistryTest {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter1);
 
         // when & then
-        Assertions.assertThatCode(() -> handlerAdapterRegistry.getHandlerAdapter(handler))
+        Assertions.assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(handler))
                 .isInstanceOf(NoSuchElementException.class);
     }
 }
