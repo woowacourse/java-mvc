@@ -61,16 +61,10 @@ public class DispatcherServlet extends HttpServlet {
 
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler.get());
-            render(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
     }
 }
