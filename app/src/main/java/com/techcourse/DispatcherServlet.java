@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.Handler;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -36,7 +37,8 @@ public class DispatcherServlet extends HttpServlet {
                     .filter(handler -> handler.canHandle(request))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No handler found for request URI: " + requestURI));
-            handlerMapping.handler(request, response);
+            Handler handler = handlerMapping.getHandler(request);
+            handler.execute(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

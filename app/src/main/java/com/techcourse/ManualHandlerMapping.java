@@ -1,18 +1,18 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
-import com.techcourse.controller.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-
+import com.interface21.webmvc.servlet.mvc.tobe.Handler;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.controller.LoginController;
+import com.techcourse.controller.LoginViewController;
+import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.RegisterViewController;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -34,18 +34,11 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public void handler(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Controller handler = getHandler(request);
-        String viewName = handler.execute(request, response);
-        View view = new JspView(viewName);
-        view.render(new HashMap<>(), request, response);
-    }
-
-    private Controller getHandler(final HttpServletRequest request) {
+    public Handler getHandler(final HttpServletRequest request) {
         validateHandlerRequest(request);
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        return new Handler(controllers.get(requestURI));
     }
 
     private void validateHandlerRequest(HttpServletRequest request) {

@@ -35,16 +35,9 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         log.info("AnnotationHandlerMapping 초기화 완료");
     }
 
-    @Override
-    public void handler(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HandlerExecution handler = getHandler(request);
-        ModelAndView modelAndView = handler.handle(request, response);
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
-    }
-
-    private HandlerExecution getHandler(final HttpServletRequest request) {
-        return handlerExecutions.getHandler(request.getRequestURI(), RequestMethod.findByName(request.getMethod()));
+    public Handler getHandler(final HttpServletRequest request) {
+        return new Handler(
+                handlerExecutions.getHandler(request.getRequestURI(), RequestMethod.findByName(request.getMethod())));
     }
 
     @Override
