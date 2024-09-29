@@ -15,10 +15,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String SCAN_PACKAGE_RANGE = "com.techcourse.controller";
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        var dispatcherServlet = new DispatcherServlet();
+        var dispatcherServlet = new DispatcherServlet(SCAN_PACKAGE_RANGE);
 
         var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

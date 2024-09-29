@@ -13,16 +13,15 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
         this.handlerMappings = List.of(
-            new AnnotationHandlerMapping(BASE_PACKAGE),
+            new AnnotationHandlerMapping(basePackage),
             new DefaultHandlerMapping()
         );
         this.handlerAdapters = List.of(
