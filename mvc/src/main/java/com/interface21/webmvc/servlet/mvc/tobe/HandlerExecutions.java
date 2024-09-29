@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,8 +19,7 @@ public class HandlerExecutions {
     }
 
     public HandlerExecution findHandler(HttpServletRequest request) {
-        return handlerExecutions.get(
-                new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))
-        );
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(handlerKey);
     }
 }
