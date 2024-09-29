@@ -24,15 +24,17 @@ public class DispatcherServlet extends HttpServlet {
 	private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
 	private final List<HandlerMapping> handlerMappings;
+	private final String basePackage;
 
-	public DispatcherServlet() {
+	public DispatcherServlet(String basePackage) {
 		this.handlerMappings = new ArrayList<>();
+		this.basePackage = basePackage;
 	}
 
 	@Override
 	public void init() {
 		handlerMappings.add(new ManualHandlerMapping(new HashMap<>()));
-		handlerMappings.add(new AnnotationHandlerMapping(new HashMap<>()));
+		handlerMappings.add(new AnnotationHandlerMapping(new HashMap<>(), basePackage));
 		handlerMappings.forEach(HandlerMapping::initialize);
 	}
 
