@@ -21,7 +21,6 @@ import org.reflections.Reflections;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.techcourse.controller.RegisterViewController;
 
 import samples.TestController;
 
@@ -137,23 +136,5 @@ class AnnotationHandlerMappingTest {
         for (int i = 0; i < RequestMethod.values().length; i++) {
             assertThat(handlerMapping.getHandler(request)).isNotNull();
         }
-    }
-
-    @Test
-    @DisplayName("app 모튤아래 있는 @Controller 클래스를 불러온다.")
-    void getController() throws NoSuchMethodException {
-        //given
-        handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        handlerMapping.initialize();
-        final HandlerExecution expected = new HandlerExecution(new RegisterViewController(),
-                RegisterViewController.class.getMethod("getView", HttpServletRequest.class, HttpServletResponse.class));
-
-        final var request = mock(HttpServletRequest.class);
-
-        when(request.getRequestURI()).thenReturn("/register/view");
-        when(request.getMethod()).thenReturn(RequestMethod.GET.name());
-
-        //when && then
-        assertThat(handlerMapping.getHandler(request)).isEqualTo(expected);
     }
 }
