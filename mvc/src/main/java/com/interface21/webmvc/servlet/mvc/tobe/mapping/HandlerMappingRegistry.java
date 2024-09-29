@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
@@ -22,8 +23,8 @@ public class HandlerMappingRegistry {
 
     public Object getHandler(HttpServletRequest httpServletRequest) {
         return handlerMappings.stream()
-                .filter(hm -> hm.getHandler(httpServletRequest) != null)
                 .map(hm -> hm.getHandler(httpServletRequest))
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("요청을 처리할 수 있는 핸들러 매핑 정보가 없습니다"));
     }
