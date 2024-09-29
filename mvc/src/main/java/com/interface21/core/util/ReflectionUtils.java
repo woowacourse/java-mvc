@@ -1,6 +1,5 @@
 package com.interface21.core.util;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -40,9 +39,8 @@ public abstract class ReflectionUtils {
         }
     }
 
-    public static List<Method> getAllMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationType) {
+    public static List<Method> getAllMethods(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(annotationType))
                 .toList();
     }
 }
