@@ -18,13 +18,11 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> getControllers(ScanType scanType) throws ReflectiveOperationException {
-        Set<Class<?>> classes = new HashSet<>();
-        switch (scanType) {
-            case ScanType.ANNOTATION -> classes.addAll(reflections.getTypesAnnotatedWith(Controller.class));
-            case ScanType.SUB_TYPE_HIERARCHY ->
-                    classes.addAll(reflections.getSubTypesOf(com.interface21.webmvc.servlet.mvc.asis.Controller.class));
-            default -> throw new IllegalArgumentException("존재하지 않는 Scan Type입니다.");
-        }
+        Set<Class<?>> classes = new HashSet<>(
+                switch (scanType) {
+                    case ANNOTATION -> reflections.getTypesAnnotatedWith(Controller.class);
+                    case SUB_TYPE_HIERARCHY -> reflections.getSubTypesOf(com.interface21.webmvc.servlet.mvc.asis.Controller.class);
+                });
         return instantiateControllers(classes);
     }
 
