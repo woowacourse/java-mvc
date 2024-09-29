@@ -16,19 +16,39 @@ import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements ServletRequestHandler {
 
+    private static final List<Class<?>> AVAILABLE_PACKAGE_TYPE = List.of(String.class, Class.class);
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final HandlerExecutions handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        validatePackageTypes(basePackages);
+        this.basePackages = basePackages;
         this.handlerExecutions = new HandlerExecutions();
+    }
+
+    private void validatePackageTypes(Object[] basePackages) {
+        if (basePackages == null) {
+            throw new IllegalArgumentException("basePackages는 null 값이 될 수 없습니다");
+        }
+        for (Object basePackage : basePackages) {
+            validatePackageType(basePackage);
+        }
+    }
+
+    private void validatePackageType(Object basePackage) {
+        if (basePackage == null) {
+            throw new IllegalArgumentException("basePackage는 null 값이 될 수 없습니다");
+        }
+        if (basePackage != null & !AVAILABLE_PACKAGE_TYPE.contains(basePackage.getClass())) {
+            throw new IllegalArgumentException("지원하지 않은 패키지 타입입니다 : [%s]".formatted(basePackage.getClass().toString()));
+        }
     }
 
     @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
+        Reflections reflections = new Reflections(basePackages);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllerClasses) {
             addAnnotatedHandlerExecutions(controller);

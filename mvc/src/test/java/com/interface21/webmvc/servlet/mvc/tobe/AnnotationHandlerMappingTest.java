@@ -2,12 +2,14 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.context.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,5 +76,14 @@ class AnnotationHandlerMappingTest {
 
         // 핸들러를 못 찾으면 어떻게 처리 해야 할까?
         assertThat(handlerMapping.getHandler(request)).isNull();
+    }
+
+    @DisplayName("AnnotationMapping을 지원하지 않은 객체 타입이 들어올 경우 예외가 발생한다.")
+    @Test
+    void exceptionWithUnsupportedType() throws Exception {
+        assertAll(() -> assertThatThrownBy(() -> new AnnotationHandlerMapping(null))
+                        .isInstanceOf(IllegalArgumentException.class),
+                () -> assertThatThrownBy(() -> new AnnotationHandlerMapping(new URL("http://TACAN.zzang")))
+                        .isInstanceOf(IllegalArgumentException.class));
     }
 }
