@@ -21,7 +21,7 @@ public class ControllerScanner {
         return instantiateControllers(controllerClasses);
     }
 
-    private static Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerClasses) {
+    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerClasses) {
         Map<Class<?>, Object> controllers = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
             mapControllers(controllerClass, controllers);
@@ -29,7 +29,7 @@ public class ControllerScanner {
         return controllers;
     }
 
-    private static void mapControllers(Class<?> controllerClass, Map<Class<?>, Object> controllers) {
+    private void mapControllers(Class<?> controllerClass, Map<Class<?>, Object> controllers) {
         try {
             Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
             controllers.put(controllerClass, controllerInstance);
