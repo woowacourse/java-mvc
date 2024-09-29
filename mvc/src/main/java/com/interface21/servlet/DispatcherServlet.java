@@ -1,4 +1,4 @@
-package com.techcourse.servlet;
+package com.interface21.servlet;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
@@ -23,17 +23,19 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final ViewResolver viewResolver;
 
-    public DispatcherServlet() {
-        this.handlerMappings = new HandlerMappings();
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
-        this.viewResolver = new ViewResolver();
+    public DispatcherServlet(
+            HandlerMappings handlerMappings,
+            HandlerAdapterRegistry handlerAdapterRegistry,
+            ViewResolver viewResolver
+    ) {
+        this.handlerMappings = handlerMappings;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
+        this.viewResolver = viewResolver;
     }
 
     @Override
     public void init() {
-        handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller.annotation"));
         handlerMappings.initialize();
-        handlerAdapterRegistry.addAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override

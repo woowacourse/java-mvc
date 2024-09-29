@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
