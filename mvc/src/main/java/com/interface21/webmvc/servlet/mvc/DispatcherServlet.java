@@ -18,8 +18,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        handlerMappings = new HandlerMappings();
+    public DispatcherServlet(String basePackage) {
+        handlerMappings = new HandlerMappings(basePackage);
         handlerAdapters = new HandlerAdapters();
     }
 

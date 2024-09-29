@@ -8,16 +8,16 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class HandlerMappings {
 
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
-
     private final List<HandlerMapping> handlerMappings;
+    private final String basePackage;
 
-    public HandlerMappings() {
+    public HandlerMappings(String basePackage) {
         this.handlerMappings = new ArrayList<>();
+        this.basePackage = basePackage;
     }
 
     public void initialize() {
-        handlerMappings.add(new AnnotationHandlerMapping(BASE_PACKAGE));
+        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }

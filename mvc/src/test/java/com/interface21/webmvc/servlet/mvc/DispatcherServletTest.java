@@ -1,16 +1,11 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import java.lang.reflect.Method;
-import java.util.stream.Stream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import samples.AnnotationTestController;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,18 +19,17 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        this.dispatcherServlet = new DispatcherServlet();
+        this.dispatcherServlet = new DispatcherServlet("samples");
         dispatcherServlet.init();
     }
 
-    @Disabled
     @DisplayName("올바른 요청에 대해 handler를 찾을 수 있다.")
     @Test
     void findHandler() throws Exception {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
 
         Method method = dispatcherServlet.getClass().getDeclaredMethod("getHandler", HttpServletRequest.class);
         method.setAccessible(true);
