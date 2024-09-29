@@ -50,9 +50,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : this.handlerMappings) {
-            Object foundHandler = handlerMapping.getHandler(request);
-            if (foundHandler != null) {
-                return foundHandler;
+            if(handlerMapping.isSupported(request)){
+                return handlerMapping.getHandler(request);
             }
         }
         throw new IllegalStateException("request에 적합한 Handler를 찾지 못했습니다");
