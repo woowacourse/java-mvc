@@ -57,7 +57,7 @@
 - [x] 컨트롤러를 어노테이션 기반 컨트롤러로 변경해도 정상 동작하도록 지원
 - [x] HandlerAdapter 인터페이스화
     - [x] HandlerAdapter 인터페이스화 (특정 HandlerMapping 클래스에서 찾은 컨트롤러 실행하는 역할)
-    - [ ] HandlerAdapterRegistry 클래스에 HandlerAdapter들을 List로 두고 사용
+    - [x] HandlerAdapterRegistry 클래스에 HandlerAdapter들을 List로 두고 사용
     - [ ] DispatcherServlet의 초기화 과정에서 ManualHandlerAdapter, AnnotationHandlerAdapter를 모두 초기화
 
 ### 3단계 - JSON View 구현하기
