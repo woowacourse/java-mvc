@@ -27,11 +27,11 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) {
         final Controller controller = (Controller) handler;
-        final View view = new JspView(getViewName(controller, request, response));
+        final View view = new JspView(executeController(controller, request, response));
         return new ModelAndView(view);
     }
 
-    private String getViewName(Controller controller, HttpServletRequest request, HttpServletResponse response) {
+    private String executeController(Controller controller, HttpServletRequest request, HttpServletResponse response) {
         try {
             return controller.execute(request, response);
         } catch (Exception e) {
