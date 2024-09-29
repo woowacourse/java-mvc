@@ -11,7 +11,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,18 +22,16 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMapping[] handlerMappings;
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMappings = new HandlerMapping[]{
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMappingAdapter(new AnnotationHandlerMapping())
-        };
-        Arrays.stream(handlerMappings).forEach(HandlerMapping::initialize);
+        handlerMappings.add(new ManualHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMappingAdapter(new AnnotationHandlerMapping()));
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
@@ -51,14 +51,12 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        throw new IllegalArgumentException("해당 요청을 처리하는 핸들러가 없습니다: %s %s"
-                .formatted(request.getMethod(), request.getRequestURI()));
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("해당 요청을 처리하는 핸들러가 없습니다: %s %s"
+                        .formatted(request.getMethod(), request.getRequestURI())));
     }
 
     private ModelAndView execute(HttpServletRequest request, HttpServletResponse response, Object handler)
