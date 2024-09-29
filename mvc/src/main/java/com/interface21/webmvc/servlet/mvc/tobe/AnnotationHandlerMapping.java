@@ -56,6 +56,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void methodMapping(final Object instance, final Method method) {
+        final HandlerExecution handlerExecution = new HandlerExecution(instance, method);
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
         List<RequestMethod> requestMethods = List.of(requestMapping.method());
@@ -65,7 +66,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         requestMethods.stream()
                 .map(requestMethod -> new HandlerKey(requestMapping.value(), requestMethod))
-                .forEach(handlerKey -> handlers.put(handlerKey, instance));
+                .forEach(handlerKey -> handlers.put(handlerKey, handlerExecution));
     }
 
     @Override
