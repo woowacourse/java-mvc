@@ -1,29 +1,30 @@
 package reflection;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class Junit4TestRunner {
 
     @Test
     void run() throws Exception {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
         Class<Junit4Test> clazz = Junit4Test.class;
-        Junit4Test instance = clazz.getConstructor().newInstance();
+        Junit4Test instance = Mockito.mock(Junit4Test.class);
 
-        for (Method method : clazz.getMethods()) {
+        for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(MyTest.class)) {
                 method.invoke(instance);
             }
         }
 
-        String expect = "Running Test1" + System.lineSeparator() + "Running Test2" + System.lineSeparator();
-        assertThat(outputStream).hasToString(expect);
+        assertAll(
+                () -> Mockito.verify(instance, times(1)).one(),
+                () -> Mockito.verify(instance, times(1)).two(),
+                () -> Mockito.verify(instance, never()).testThree()
+        );
     }
 }

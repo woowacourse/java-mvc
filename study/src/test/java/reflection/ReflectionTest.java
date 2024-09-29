@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Date;
@@ -26,12 +27,16 @@ class ReflectionTest {
     }
 
     @Test
-    void givenClassName_whenCreatesObject_thenCorrect() throws ClassNotFoundException {
+    void givenClassName_whenCreatesObject_thenCorrect()
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Class<?> clazz = Class.forName("reflection.Question");
 
-        assertThat(clazz.getSimpleName()).isEqualTo("Question");
-        assertThat(clazz.getName()).isEqualTo("reflection.Question");
-        assertThat(clazz.getCanonicalName()).isEqualTo("reflection.Question");
+        Object object = clazz.getConstructor(String.class, String.class, String.class)
+                .newInstance("writer", "title", "contents");
+
+        assertThat(clazz.getSimpleName()).isEqualTo(object.getClass().getSimpleName());
+        assertThat(clazz.getName()).isEqualTo(object.getClass().getName());
+        assertThat(clazz.getCanonicalName()).isEqualTo(object.getClass().getCanonicalName());
     }
 
     @Test

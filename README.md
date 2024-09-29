@@ -38,3 +38,16 @@
 - [x] @RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원
 - [x] [AnnotationHandlerMappingTest](mvc%2Fsrc%2Ftest%2Fjava%2Fcom%2Finterface21%2Fwebmvc%2Fservlet%2Fmvc%2Ftobe%2FAnnotationHandlerMappingTest.java) 테스트 통과
 - [x] JspView 클래스 구현
+
+<br>
+
+## 2단계
+
+### 학습 테스트
+
+- [x] [FilterTest](study%2Fsrc%2Ftest%2Fjava%2Fservlet%2Fcom%2Fexample%2FFilterTest.java)
+- [x] [ServletTest](study%2Fsrc%2Ftest%2Fjava%2Fservlet%2Fcom%2Fexample%2FServletTest.java)
+
+### 미션 
+
+- [x] Legacy MVC와 @MVC 통합
