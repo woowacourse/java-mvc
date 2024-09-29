@@ -159,11 +159,11 @@ class DispatcherServletTest {
             }
 
             @Test
-            @DisplayName("GET /logout -> 세션 정보 삭제")
+            @DisplayName("POST /logout -> 세션 정보 삭제")
             void service_success_get_logout() throws IOException {
                 String path = "/";
                 when(request.getRequestURI()).thenReturn("/logout");
-                when(request.getMethod()).thenReturn("GET");
+                when(request.getMethod()).thenReturn("POST");
                 HttpSession session = mock(HttpSession.class);
                 when(request.getSession()).thenReturn(session);
 

@@ -18,6 +18,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final String REDIRECT_ROOT = "redirect:/";
     private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
     private static final String REDIRECT_LOGIN_JSP = "/login.jsp";
     private static final String REDIRECT_400_JSP = "redirect:/400.jsp";
@@ -55,12 +56,19 @@ public class LoginController {
         return new ModelAndView(new JspView(viewName));
     }
 
-    private String login(final HttpServletRequest request, final User user) {
+    private String login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter(PASSWORD))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return REDIRECT_INDEX_JSP;
         }
         return REDIRECT_401_JSP;
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res) {
+        final var session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        return new ModelAndView(new JspView(REDIRECT_ROOT));
     }
 }

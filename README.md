@@ -51,7 +51,7 @@
   - [x] GET / -> /index.jsp
   - [x] GET /register/view -> /register.jsp
   - [x] POST /register 회원가입 성공 -> /index.jsp
-  - [x] GET /logout -> 세션 정보 삭제
+  - [x] POST /logout -> 세션 정보 삭제
   - [x] GET /login/view -> /login.jsp
 
 - @MVC 따르는 컨트롤러 정상 동작
