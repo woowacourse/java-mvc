@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMapping;
 
 public class ManualHandlerMapping implements HandlerMapping {
@@ -25,8 +24,6 @@ public class ManualHandlerMapping implements HandlerMapping {
             return;
         }
         log.info("ManualHandlerMapping을 초기화했습니다.");
-
-        controllers.putIfAbsent("/", new ForwardController("/index.jsp"));
 
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
