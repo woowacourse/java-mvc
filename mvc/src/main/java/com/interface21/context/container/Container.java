@@ -22,7 +22,13 @@ public class Container {
         private static final Container INSTANCE = new Container();
     }
 
+    public static Container getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
     private static final Logger log = LoggerFactory.getLogger(Container.class);
+
+    private static final String MVC_PACKAGE = "com.interface21.webmvc";
 
     private final Map<String, Object> container;
 
@@ -30,28 +36,14 @@ public class Container {
         container = new ConcurrentHashMap<>();
     }
 
-    public static Container getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
-
     public static void run(final Class<?> app) {
         Container container = getInstance();
-        container.mvcScan();
-        container.appScan(app);
+        container.scan(MVC_PACKAGE);
+        container.scan(app.getPackageName());
     }
 
-    private void mvcScan() {
-        Reflections reflections = new Reflections("com.interface21");
-        scan(reflections);
-    }
-
-    private void appScan(final Class<?> app) {
-        String packageName = app.getPackageName();
+    private void scan(final String packageName) {
         Reflections reflections = new Reflections(packageName);
-        scan(reflections);
-    }
-
-    private void scan(final Reflections reflections) {
         registerAnnotatedInstancesOf(reflections, com.interface21.context.stereotype.Controller.class);
         registerInstancesOf(reflections, Controller.class);
         registerInstancesOf(reflections, HandlerMapping.class);
@@ -75,7 +67,8 @@ public class Container {
         try {
             Constructor<T> constructor = ReflectionUtils.accessibleConstructor(type);
             instance = constructor.newInstance();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
             throw new IllegalArgumentException("Instance registration failed on class: %s".formatted(name), e);
         }
         container.put(name, instance);
