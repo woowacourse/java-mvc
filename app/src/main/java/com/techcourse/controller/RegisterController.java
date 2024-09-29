@@ -16,7 +16,7 @@ public class RegisterController {
     private static final String REGISTER_JSP = "/register.jsp";
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView registerPage(final HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView registerPage(final HttpServletRequest req, final HttpServletResponse res) {
         JspView jspView = new JspView(REGISTER_JSP);
         return new ModelAndView(jspView);
     }
