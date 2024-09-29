@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         manualHandlerMapping.initialize();
         handlerMappings.add(manualHandlerMapping);
 
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
 
@@ -53,6 +54,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappings.stream()
                     .map(handlerMapping -> handlerMapping.getHandler(request))
+                    .filter(Objects::nonNull)
                     .findAny()
                     .orElseThrow();
 
