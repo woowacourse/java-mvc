@@ -6,11 +6,16 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
+    private final Object view;
     private final Map<String, Object> model;
 
     public ModelAndView(final View view) {
         this.view = view;
+        this.model = new HashMap<>();
+    }
+
+    public ModelAndView(final String viewName) {
+        this.view = viewName;
         this.model = new HashMap<>();
     }
 
@@ -28,6 +33,16 @@ public class ModelAndView {
     }
 
     public View getView() {
-        return view;
+        if (this.view instanceof View) {
+            return (View) this.view;
+        }
+        return null;
+    }
+
+    public String getViewName() {
+        if (this.view instanceof String) {
+            return (String) this.view;
+        }
+        return null;
     }
 }
