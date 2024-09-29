@@ -47,7 +47,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         try {
             return controllerClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            log.error("Failed to create controller instance", e);
             throw new IllegalStateException("Failed to create controller instance", e);
         }
     }
