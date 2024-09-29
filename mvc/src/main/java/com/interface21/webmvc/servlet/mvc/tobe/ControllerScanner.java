@@ -1,14 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import static org.reflections.ReflectionUtils.*;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.reflections.util.ReflectionUtilsPredicates;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ public final class ControllerScanner {
 	}
 
 	private static void scanRequestMappingForMethods(Map<HandlerKey, HandlerExecution> executions, Class clazz) {
-		getAllMethods(clazz, withAnnotation(RequestMapping.class))
+		ReflectionUtils.getAllMethods(clazz, ReflectionUtilsPredicates.withAnnotation(RequestMapping.class))
 			.forEach(method -> {
 				String value = method.getAnnotation(RequestMapping.class).value();
 				extractMethodOfRequestMapping(executions, clazz, value, method);
