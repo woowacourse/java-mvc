@@ -22,7 +22,7 @@
   - [X] JsonView 클래스 구현
   - [ ] Legacy MVC 제거하기
     - [X] 모든 컨트롤러를 어노테이션 기반 MVC로 변경
-    - [ ] `asis` 패키지의 레거시 코드 삭제
-    - [ ] Legacy MVC 제거
+    - [X] `asis` 패키지의 레거시 코드 삭제
+    - [X] Legacy MVC 제거
     - [ ] `DispatcherServlet` mvc 패키지로 이동
     - [ ] 컨트롤러 추가해서 정상 동작 테스트
