@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -23,9 +22,7 @@ public class ControllerScanner {
     private Object createInstance(Class<?> clazz) {
         try {
             return clazz.getDeclaredConstructor().newInstance();
-        } catch (NoSuchMethodException exception) {
-            throw new RuntimeException(exception);
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException exception) {
+        } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
     }
