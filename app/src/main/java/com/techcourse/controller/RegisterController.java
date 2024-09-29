@@ -19,6 +19,12 @@ public class RegisterController {
     private static final String EMAIL = "email";
     private static final String REDIRECT_INDEX_JSP = "redirect:/index.jsp";
     private static final String REDIRECT_400_JSP = "redirect:/400.jsp";
+    private static final String REGISTER_JSP = "/register.jsp";
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+        return new ModelAndView(new JspView(REGISTER_JSP));
+    }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest req, HttpServletResponse res) {
