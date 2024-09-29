@@ -1,24 +1,33 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import java.util.stream.Stream;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import com.interface21.context.container.Container;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+
+import samples.TestApp;
+import samples.TestHandlerAdapter;
 
 class HandlerAdapterRegistryTest {
 
-    private final HandlerAdapterRegistry sut = new HandlerAdapterRegistry();
+    private HandlerAdapterRegistry sut;
+
+    @BeforeEach
+    void setUp() {
+        Container.run(TestApp.class);
+        sut = new HandlerAdapterRegistry();
+    }
 
     @ParameterizedTest
     @MethodSource
@@ -31,12 +40,12 @@ class HandlerAdapterRegistryTest {
         var actual = sut.getHandlerAdapter(handler);
 
         // then
-        assertThat(actual).isInstanceOf(adapterType);
+        Assertions.assertThat(actual).isInstanceOf(adapterType);
     }
 
     static Stream<Arguments> getHandler() {
         return Stream.of(
-                Arguments.of(Controller.class, ManualHandlerAdaptor.class),
+                Arguments.of(Controller.class, TestHandlerAdapter.class),
                 Arguments.of(HandlerExecution.class, AnnotationHandlerAdapter.class));
     }
 

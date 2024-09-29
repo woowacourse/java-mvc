@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,18 +9,26 @@ import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.context.container.Container;
+
+import samples.TestApp;
 
 class HandlerMappingRegistryTest {
 
-    private final HandlerMappingRegistry sut = new HandlerMappingRegistry("samples");
+    private HandlerMappingRegistry sut;
+
+    @BeforeEach
+    void setUp() {
+        Container.run(TestApp.class);
+        sut = new HandlerMappingRegistry();
+    }
 
     @ParameterizedTest
     @MethodSource
@@ -40,12 +48,10 @@ class HandlerMappingRegistryTest {
 
     static Stream<Arguments> getHandler() {
         return Stream.of(
-                Arguments.of("/", "GET", Controller.class),
-                Arguments.of("/login", "POST", Controller.class),
-                Arguments.of("/login/view", "GET", Controller.class),
-                Arguments.of("/logout", "GET", Controller.class),
                 Arguments.of("/get-test", "GET", HandlerExecution.class),
-                Arguments.of("/post-test", "POST", HandlerExecution.class)
+                Arguments.of("/post-test", "POST", HandlerExecution.class),
+                Arguments.of("/put-test", "PUT", HandlerExecution.class),
+                Arguments.of("/delete-test", "DELETE", HandlerExecution.class)
         );
     }
 
