@@ -1,9 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,9 +21,9 @@ class DispatcherServletTest {
     }
 
     @Test
-    void register_by_annotationHandler() throws ServletException {
+    void register_by_annotationHandler() throws ServletException, IOException {
         // given
-        HttpServletRequest request = new MockHttpServletRequest("GET", "/register");
+        HttpServletRequest request = new MockHttpServletRequest("GET", "/register/view");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         // when
