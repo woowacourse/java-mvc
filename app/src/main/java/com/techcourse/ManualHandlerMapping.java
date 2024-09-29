@@ -6,11 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.techcourse.controller.legacy.LoginController;
-import com.techcourse.controller.legacy.LoginViewController;
 import com.techcourse.controller.legacy.LogoutController;
-import com.techcourse.controller.legacy.RegisterController;
-import com.techcourse.controller.legacy.RegisterViewController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +22,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
-        controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
