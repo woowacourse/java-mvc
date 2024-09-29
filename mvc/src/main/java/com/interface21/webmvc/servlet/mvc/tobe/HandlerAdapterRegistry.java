@@ -9,7 +9,8 @@ public class HandlerAdapterRegistry {
 
     public HandlerAdapterRegistry() {
         AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-        this.handlerAdapters.add(annotationHandlerAdapter);
+        ErrorHandlerAdapter errorHandlerAdapter = new ErrorHandlerAdapter();
+        this.handlerAdapters.addAll(List.of(annotationHandlerAdapter, errorHandlerAdapter));
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {

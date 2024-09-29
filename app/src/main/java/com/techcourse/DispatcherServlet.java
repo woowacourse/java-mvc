@@ -10,12 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.ErrorController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
-
-import static com.interface21.webmvc.servlet.view.JspView.NOT_FOUND_VIEW;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -46,11 +45,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Optional<Object> unExpectedHandler = handlerMappingRegistry.getHandler(request);
-            if (unExpectedHandler.isEmpty()) {
-                render(new ModelAndView(NOT_FOUND_VIEW), request, response);
-                return;
-            }
-            Object handler = unExpectedHandler.get();
+            Object handler = unExpectedHandler.orElseGet(ErrorController::new);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
