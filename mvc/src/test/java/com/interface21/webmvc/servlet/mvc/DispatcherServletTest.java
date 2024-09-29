@@ -22,26 +22,6 @@ class DispatcherServletTest {
 
     private DispatcherServlet dispatcherServlet;
 
-    private static Stream<Arguments> handlerProvider() {
-        return Stream.of(
-                Arguments.of("/login", "POST", HandlerExecution.class),
-                Arguments.of("/register", "GET", HandlerExecution.class)
-        );
-    }
-
-    private static Stream<Arguments> handlerAdapterProvider() throws NoSuchMethodException {
-        return Stream.of(
-                Arguments.of(createHandlerExecution(), AnnotationHandlerAdapter.class)
-        );
-    }
-
-    private static HandlerExecution createHandlerExecution() throws NoSuchMethodException {
-        AnnotationTestController controller = new AnnotationTestController();
-        Method method = controller.getClass()
-                .getMethod("save", HttpServletRequest.class, HttpServletResponse.class);
-        return new HandlerExecution(method, controller);
-    }
-
     @BeforeEach
     void setUp() {
         this.dispatcherServlet = new DispatcherServlet();
@@ -64,7 +44,7 @@ class DispatcherServletTest {
         Object handler = method.invoke(dispatcherServlet, request);
 
         // then
-        assertThat(handler).isInstanceOf(AnnotationHandlerMapping.class);
+        assertThat(handler).isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("요청을 처리할 handler를 찾을 수 없으면 예외를 발생시킨다.")
@@ -86,18 +66,24 @@ class DispatcherServletTest {
     }
 
     @DisplayName("올바른 handler에 대해 지원하는 adapter를 찾을 수 있다.")
-    @ParameterizedTest
-    @MethodSource("handlerAdapterProvider")
-    void findHandlerAdapter(Object handler, Class<?> expectedAdapterClass) throws Exception {
+    @Test
+    void findHandlerAdapter() throws Exception {
         // given
         Method method = dispatcherServlet.getClass().getDeclaredMethod("getHandlerAdapter", Object.class);
         method.setAccessible(true);
 
         // when
-        Object handlerAdapter = method.invoke(dispatcherServlet, handler);
+        Object handlerAdapter = method.invoke(dispatcherServlet, createHandlerExecution());
 
         // then
-        assertThat(handlerAdapter).isInstanceOf(expectedAdapterClass);
+        assertThat(handlerAdapter).isInstanceOf(AnnotationHandlerAdapter.class);
+    }
+
+    private static HandlerExecution createHandlerExecution() throws NoSuchMethodException {
+        AnnotationTestController controller = new AnnotationTestController();
+        Method method = controller.getClass()
+                .getMethod("save", HttpServletRequest.class, HttpServletResponse.class);
+        return new HandlerExecution(method, controller);
     }
 
     @DisplayName("handler를 지원하는 adapter를 찾지 못하면 예외를 발생시킨다.")
