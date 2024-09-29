@@ -1,9 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,14 +15,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
         handlerMappingRegistry.initialize();
+        handlerAdapterRegistry.initialize();
     }
 
     @Override
@@ -35,24 +36,12 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappingRegistry.getHandler(request);
-            ModelAndView modelAndView = execute(request, response, handler);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.execute(request, response, handler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private ModelAndView execute(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        if (handler instanceof Controller) {
-            String viewName = ((Controller) handler).execute(request, response);
-            return new ModelAndView(JspView.from(viewName));
-        }
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        }
-        throw new IllegalArgumentException("해당 요청을 수행할 수 없습니다: %s %s"
-                .formatted(request.getMethod(), request.getRequestURI()));
     }
 }

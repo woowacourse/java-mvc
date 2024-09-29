@@ -15,7 +15,7 @@ public class AnnotationTestController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationTestController.class);
 
-    @RequestMapping(value = "/get-test", method = RequestMethod.GET)
+    @RequestMapping(value = "/annotation-test", method = RequestMethod.GET)
     public ModelAndView findUserId(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller get method");
         final ModelAndView modelAndView = new ModelAndView(JspView.from("/get-test.jsp"));
@@ -23,7 +23,7 @@ public class AnnotationTestController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/post-test", method = RequestMethod.POST)
+    @RequestMapping(value = "/annotation-test", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         log.info("test controller post method");
         final ModelAndView modelAndView = new ModelAndView(JspView.from("/post-test.jsp"));

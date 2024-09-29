@@ -4,25 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMappingAdapter;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class HandlerMappingTest {
+class HandlerMappingRegistryTest {
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMappingAdapter annotationHandlerMapping;
+    private HandlerMappingRegistry handlerMappingRegistry;
 
     @BeforeEach
     void setUp() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        annotationHandlerMapping = new AnnotationHandlerMappingAdapter(new AnnotationHandlerMapping());
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping.initialize();
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.initialize();
     }
 
     @DisplayName("@MVC로 구현된 요청이 들어올 경우 AnnotationHandlerMapping가 해당 요청을 처리한다.")
@@ -35,8 +32,7 @@ class HandlerMappingTest {
         when(request.getMethod()).thenReturn(requestMethod);
 
         // when & then
-        assertThat(manualHandlerMapping.getHandler(request)).isNull();
-        assertThat(annotationHandlerMapping.getHandler(request)).isNotNull();
+        assertThat(handlerMappingRegistry.getHandler(request)).isInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("Legacy MVC로 구현된 요청이 들어올 경우 ManualHandlerMapping가 해당 요청을 처리한다.")
@@ -46,10 +42,8 @@ class HandlerMappingTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(requestUri);
-        when(request.getMethod()).thenReturn("GET");
 
         // when & then
-        assertThat(manualHandlerMapping.getHandler(request)).isNotNull();
-        assertThat(annotationHandlerMapping.getHandler(request)).isNull();
+        assertThat(handlerMappingRegistry.getHandler(request)).isInstanceOf(Controller.class);
     }
 }
