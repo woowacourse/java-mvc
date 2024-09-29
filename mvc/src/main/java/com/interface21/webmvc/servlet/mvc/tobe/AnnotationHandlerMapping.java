@@ -45,6 +45,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         Method[] methods = controllerClass.getDeclaredMethods();
         for (Method method : methods) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
+                continue;
+            }
             Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
             handlerMappings.putAll(initializeWithRequestMapping(method, controllerInstance));
         }
@@ -54,9 +57,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private Map<HandlerKey, HandlerExecution> initializeWithRequestMapping(Method targetMethod,
                                                                            Object controllerClass) {
-        if (!targetMethod.isAnnotationPresent(RequestMapping.class)) {
-            throw new InternalError("Internal error: Failed to initialize handler mapping");
-        }
         Map<HandlerKey, HandlerExecution> handlerMappings = new HashMap<>();
 
         RequestMapping requestMapping = targetMethod.getAnnotation(RequestMapping.class);
