@@ -46,4 +46,9 @@ public class ManualHandlerMapping implements HandlerMapping {
         }
         return controller;
     }
+
+    @Override
+    public boolean supports(HttpServletRequest request) {
+        return controllers.containsKey(request.getRequestURI());
+    }
 }
