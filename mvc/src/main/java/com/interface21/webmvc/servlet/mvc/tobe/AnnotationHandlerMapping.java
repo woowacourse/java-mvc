@@ -66,6 +66,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return Optional.ofNullable(handlerExecutions.get(handlerKey))
-                .orElseThrow(() -> new IllegalArgumentException("해당 요청을 처리할 수 있는 핸들러가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("Annotation Mapping에 해당 요청을 처리할 수 있는 핸들러가 없습니다."));
     }
 }

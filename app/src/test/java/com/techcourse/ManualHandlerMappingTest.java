@@ -86,7 +86,7 @@ class ManualHandlerMappingTest {
             when(request.getMethod()).thenReturn("GET");
 
             assertThatThrownBy(() -> manualHandlerMapping.getHandler(request))
-                    .isInstanceOf(IllegalStateException.class)
+                    .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("ManualHandlerMapping 에 요청을 처리할 수 있는 핸들러가 없습니다. 핸들러를 등록해주세요.");
         }
     }
