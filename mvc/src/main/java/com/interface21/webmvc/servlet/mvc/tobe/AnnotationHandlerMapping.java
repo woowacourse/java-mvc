@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.context.container.ControllerScanner;
+import com.interface21.context.container.Container;
+import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
@@ -18,25 +20,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping() {
-        this(new Object[0]);
-    }
-
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     @Override
     public void initialize() {
-        ControllerScanner scanner = new ControllerScanner(basePackage);
-        Map<Class<?>, Object> controllers = scanner.scan();
-        controllers.forEach((clazz, object) -> Arrays.stream(clazz.getDeclaredMethods())
+        Container container = Container.getInstance();
+        List<Object> controllers = container.getInstancesAnnotatedOf(Controller.class);
+        controllers.forEach(controller -> Arrays.stream(controller.getClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> addHandlerExecution(object, method)));
+                .forEach(method -> addHandlerExecution(controller, method)));
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet().forEach(key -> log.info("{}", key));
     }
