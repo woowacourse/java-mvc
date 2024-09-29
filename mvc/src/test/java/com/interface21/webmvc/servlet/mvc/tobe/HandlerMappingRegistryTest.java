@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestManualHandlerMapping;
 
 class HandlerMappingRegistryTest {
 
@@ -30,17 +32,6 @@ class HandlerMappingRegistryTest {
         registerHandlerMapping(new AnnotationHandlerMapping("samples"));
 
         assertThat(registry.getHandler(request).get()).isInstanceOf(HandlerExecution.class);
-    }
-
-    @DisplayName("Legacy MVC 요청을 받으면 적합한 Controller를 반환한다.")
-    @Test
-    void getControllerHandler() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/get-test");
-
-        registerHandlerMapping(new TestManualHandlerMapping());
-
-        assertThat(registry.getHandler(request).get()).isInstanceOf(Controller.class);
     }
 
     private void registerHandlerMapping(HandlerMapping handlerMapping) {
