@@ -46,6 +46,9 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView showPage(HttpServletRequest request, HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView("/index.jsp"));
+        }
         return new ModelAndView(new JspView("/login.jsp"));
     }
 }
