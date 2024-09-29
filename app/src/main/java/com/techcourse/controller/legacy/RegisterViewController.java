@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.legacy;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
