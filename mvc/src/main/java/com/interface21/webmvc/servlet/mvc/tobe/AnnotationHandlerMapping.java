@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -53,8 +53,8 @@ public class AnnotationHandlerMapping {
         return requestMapping.method();
     }
 
-    public HandlerExecution findHandler(HttpServletRequest request) {
-        return handlerExecutions.findHandler(request)
-                .orElseThrow(() -> new IllegalArgumentException("No handler found for request: " + request.getRequestURI()));
+    @Override
+    public Object findHandler(HttpServletRequest request) {
+        return handlerExecutions.findHandler(request);
     }
 }

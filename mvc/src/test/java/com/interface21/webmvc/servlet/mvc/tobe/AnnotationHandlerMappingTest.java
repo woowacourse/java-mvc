@@ -11,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +36,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         //when
-        HandlerExecution handlerExecution = handlerMapping.findHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.findHandler(request);
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         //then
@@ -56,7 +55,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("POST");
 
         //when
-        HandlerExecution handlerExecution = handlerMapping.findHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.findHandler(request);
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         //then
@@ -76,14 +75,14 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn(requestMethod.name());
 
         //when
-        HandlerExecution handlerExecution = handlerMapping.findHandler(request);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.findHandler(request);
         ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         //then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
-    @DisplayName("요청에 해당하는 HandlerExecution이 없을 때 예외 발생")
+    @DisplayName("요청에 해당하는 HandlerExecution이 없을 때 null 반환")
     @Test
     void getHandle_notExist() {
         //given & when
@@ -92,8 +91,6 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         //then
-        assertThatThrownBy(() -> handlerMapping.findHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("No handler found for request: /get");
+        assertThat(handlerMapping.findHandler(request)).isNull();
     }
 }

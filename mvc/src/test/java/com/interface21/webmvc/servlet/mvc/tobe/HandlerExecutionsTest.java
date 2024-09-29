@@ -26,10 +26,10 @@ class HandlerExecutionsTest {
         handlerExecutions.add(new HandlerKey("/get", RequestMethod.GET), handlerExecution);
 
         //then
-        assertThat(handlerExecutions.findHandler(request)).isEqualTo(Optional.of(handlerExecution));
+        assertThat(handlerExecutions.findHandler(request)).isEqualTo(handlerExecution);
     }
 
-    @DisplayName("요청에 해당하는 HandlerExecution이 없을 때 빈 Optional 반환")
+    @DisplayName("요청에 해당하는 HandlerExecution이 없을 때 null 반환")
     @Test
     void getHandle_notExist() {
         //given & when
@@ -39,6 +39,6 @@ class HandlerExecutionsTest {
         when(request.getMethod()).thenReturn("GET");
 
         //then
-        assertThat(handlerExecutions.findHandler(request)).isEqualTo(Optional.empty());
+        assertThat(handlerExecutions.findHandler(request)).isNull();
     }
 }
