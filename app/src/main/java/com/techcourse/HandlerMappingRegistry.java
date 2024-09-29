@@ -20,4 +20,8 @@ public class HandlerMappingRegistry {
                 .findFirst()
                 .orElseThrow(() -> new HandlerNotFoundException(request.getRequestURI()));
     }
+
+    public void initialize() {
+        handlerMappings.forEach(HandlerMapping::initialize);
+    }
 }
