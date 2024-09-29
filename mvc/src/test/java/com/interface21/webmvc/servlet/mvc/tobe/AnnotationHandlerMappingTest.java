@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.AnnotationHandlerMapping;
 
 class AnnotationHandlerMappingTest {
 
@@ -36,7 +37,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = handlerMapping.findHandler(request).get();
+        final var handlerExecution = handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -51,7 +52,7 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = handlerMapping.findHandler(request).get();
+        final var handlerExecution = handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -70,7 +71,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn(requestMethod.name());
 
         // When
-        final var handlerExecution = handlerMapping.findHandler(request).get();
+        final var handlerExecution = handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
         // Then
