@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.exception.HandlerNotFoundException;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.ServletRequestHandler;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,14 +44,19 @@ public class ManualHandlerMapping implements ServletRequestHandler {
 
     @Override
     public boolean canHandle(HttpServletRequest request) {
-        return controllers.get(request.getRequestURI()) != null;
+        return getController(request).isPresent();
     }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final var controller = controllers.get(request.getRequestURI());
+        final var controller = getController(request)
+                .orElseThrow(() -> new HandlerNotFoundException(request));
         final var viewName = controller.execute(request, response);
         move(viewName, request, response);
+    }
+
+    private Optional<Controller> getController(HttpServletRequest request) {
+        return Optional.ofNullable(controllers.get(request.getRequestURI()));
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)

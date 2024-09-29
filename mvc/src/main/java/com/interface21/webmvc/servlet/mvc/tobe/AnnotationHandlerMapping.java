@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -83,21 +84,20 @@ public class AnnotationHandlerMapping implements ServletRequestHandler {
                 .toList();
     }
 
-    public Object getHandler(HttpServletRequest request) {
-        HandlerKey key = new HandlerKey(request.getRequestURI(),
-                RequestMethod.findMethod(request.getMethod()));
-        return handlerExecutions.get(key)
-                .orElseThrow(() -> new HandlerNotFoundException(request));
+    Optional<Object> getHandler(HttpServletRequest request) {
+        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.findMethod(request.getMethod()));
+        return handlerExecutions.get(key);
     }
 
     @Override
     public boolean canHandle(HttpServletRequest request) {
-        return getHandler(request) != null;
+        return getHandler(request).isPresent();
     }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HandlerExecution handler = (HandlerExecution) getHandler(request);
+        HandlerExecution handler = (HandlerExecution) getHandler(request)
+                .orElseThrow(() -> new HandlerNotFoundException(request));
         ModelAndView modelAndView = handler.handle(request, response);
         modelAndView.render(request, response);
     }
