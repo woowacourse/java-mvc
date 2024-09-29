@@ -1,5 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.pathfinder.RootPathFinder;
+import com.interface21.webmvc.servlet.mvc.tobe.pathfinder.TestRootPathStrategy;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +21,7 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMapping = new AnnotationHandlerMapping(new RootPathFinder(new TestRootPathStrategy()));
         handlerMapping.initialize();
     }
 
