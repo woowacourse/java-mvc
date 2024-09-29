@@ -57,7 +57,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         View view = modelAndView.getView();
-        if (!Objects.isNull(view)) {
+        if (Objects.nonNull(view)) {
             view.render(modelAndView.getModel(), request, response);
             return;
         }
