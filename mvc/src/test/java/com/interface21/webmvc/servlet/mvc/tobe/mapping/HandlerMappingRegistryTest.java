@@ -2,10 +2,11 @@ package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,46 +15,53 @@ import org.junit.jupiter.api.Test;
 class HandlerMappingRegistryTest {
 
     private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerMapping handlerMapping;
     private HttpServletRequest request;
 
     @BeforeEach
     void setUp() {
+        HandlerMapping handlerMapping = new HandlerMapping() {
+
+            private final Map<String, Object> controllers = new HashMap<>();
+
+            @Override
+            public void initialize() {
+                controllers.put("/test1", "test-controller1");
+                controllers.put("/test2", "test-controller2");
+            }
+
+            @Override
+            public Object getHandler(HttpServletRequest request) {
+                String requestURI = request.getRequestURI();
+                return controllers.get(requestURI);
+            }
+        };
+
         handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMapping = mock(HandlerMapping.class);
+
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
+        handlerMappingRegistry.initialize();
 
         request = mock(HttpServletRequest.class);
-    }
-
-    @DisplayName("handlerMapping 등록 시 initialize 메서드가 호출된다.")
-    @Test
-    void addHandlerMapping() {
-        HandlerMapping handlerMapping = mock(HandlerMapping.class);
-
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
-
-        verify(handlerMapping).initialize();
+        when(request.getMethod()).thenReturn("GET");
     }
 
     @DisplayName("요청에 맞는 handler를 반환한다.")
     @Test
     void getHandler() {
-        Object expect = new Object();
-        when(handlerMapping.getHandler(request)).thenReturn(expect);
+        when(request.getRequestURI()).thenReturn("/test1");
 
-        Optional<Object> actual = handlerMappingRegistry.getHandler(request);
+        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
 
-        assertThat(actual).contains(expect);
+        assertThat(handler).contains("test-controller1");
     }
 
     @DisplayName("요청에 맞는 handler가 없으면 Optional.empty()를 반환한다.")
     @Test
     void getEmpty() {
-        when(handlerMapping.getHandler(request)).thenReturn(null);
+        when(request.getRequestURI()).thenReturn("/test3");
 
-        Optional<Object> actual = handlerMappingRegistry.getHandler(request);
+        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
 
-        assertThat(actual).isNotPresent();
+        assertThat(handler).isEmpty();
     }
 }
