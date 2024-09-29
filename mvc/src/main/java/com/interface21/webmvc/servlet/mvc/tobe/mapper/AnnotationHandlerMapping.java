@@ -1,8 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.mapper;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -10,12 +12,10 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,25 +27,18 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        controllers.forEach(this::reflect);
+        Map<Class<?>, Object> controllers = new ControllerScanner(basePackage).getControllers();
+        controllers.keySet().forEach(clazz -> reflect(clazz, controllers.get(clazz)));
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void reflect(Class<?> controller) {
-        try {
-            Object instance = controller.getConstructor().newInstance();
-            Method[] methods = controller.getDeclaredMethods();
-
-            Arrays.stream(methods).forEach(method -> addHandlerExecution(instance, method));
-
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
-            throw new RuntimeException("controller 리플렉션 중 실패");
-        }
+    private void reflect(Class<?> clazz, Object instance) {
+        Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> addHandlerExecution(instance, method));
     }
 
     private void addHandlerExecution(Object handlerInstance, Method handlerMethod) {
@@ -58,7 +51,7 @@ public class AnnotationHandlerMapping {
         HandlerExecution handlerExecution = new HandlerExecution(handlerInstance, handlerMethod);
         Arrays.stream(requestMethods).forEach(requestMethod -> add(requestMethod, uri, handlerExecution));
 
-        log.info("uri = {}, method = {} 등록!", uri, requestMethods);
+        log.info("Path : {}, Method : {}", uri, requestMethods);
     }
 
     private Object executeMethod(String methodName, Method method) {
@@ -77,14 +70,15 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Object getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
+        String method = request.getMethod();
+        if (uri == null || method == null) {
+            throw new IllegalArgumentException("request URI와 http method는 null일 수 없습니다.");
         }
-        throw new UnsupportedOperationException("지원하지 않는 요청입니다.");
+        RequestMethod requestMethod = RequestMethod.of(method);
+        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+        return handlerExecutions.get(handlerKey);
     }
 }
