@@ -8,6 +8,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -29,9 +30,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void scanClass(Class<?> c) {
-        for (Method method : c.getDeclaredMethods()) {
-            registerRequestMappingHandlerExecution(c, method);
-        }
+        Arrays.stream(c.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerRequestMappingHandlerExecution(c, method));
     }
 
     private void registerRequestMappingHandlerExecution(Class<?> c, Method method) {
