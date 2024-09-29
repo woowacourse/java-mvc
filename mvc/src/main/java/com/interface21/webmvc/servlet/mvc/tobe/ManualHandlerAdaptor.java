@@ -6,7 +6,7 @@ import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ManualHandlerAdaptor implements HandlerAdaptor{
+public class ManualHandlerAdaptor implements HandlerAdaptor {
 
     @Override
     public boolean isSupported(Object handler) {

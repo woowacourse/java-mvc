@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response)  {
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
         final var user = new User(2,
                 request.getParameter("account"),
                 request.getParameter("password"),

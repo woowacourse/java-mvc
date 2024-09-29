@@ -66,7 +66,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             view.render(model, request, response);
         } catch (Exception e) {
-            throw new IllegalStateException("해당 model과 view로 렌더링을 할 수 없습니다. "+ e.getCause().getMessage());
+            throw new IllegalStateException("해당 model과 view로 렌더링을 할 수 없습니다. " + e.getCause().getMessage());
         }
     }
 }

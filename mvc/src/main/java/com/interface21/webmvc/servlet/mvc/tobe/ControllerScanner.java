@@ -19,10 +19,6 @@ public class ControllerScanner {
         controllers = initialize();
     }
 
-    public Map<Class<?>, Object> getControllers() {
-        return controllers;
-    }
-
     private Map<Class<?>, Object> initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> annotatedClass = reflections.getTypesAnnotatedWith(Controller.class);
@@ -30,7 +26,7 @@ public class ControllerScanner {
     }
 
     private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controller) {
-            Map<Class<?>, Object> controllerMapping = new HashMap<>();
+        Map<Class<?>, Object> controllerMapping = new HashMap<>();
         try {
             for (Class<?> clazz : controller) {
                 Constructor<?> constructor = clazz.getDeclaredConstructor();
@@ -42,5 +38,9 @@ public class ControllerScanner {
             throw new ControllerScannerException("Controller 인스턴스화를 실패했습니다.: " + e.getCause().getMessage());
         }
         return controllerMapping;
+    }
+
+    public Map<Class<?>, Object> getControllers() {
+        return controllers;
     }
 }
