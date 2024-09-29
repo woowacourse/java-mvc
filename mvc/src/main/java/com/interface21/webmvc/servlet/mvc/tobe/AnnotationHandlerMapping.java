@@ -6,14 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
@@ -21,7 +16,6 @@ import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Class<RequestMapping> REQUEST_MAPPING = RequestMapping.class;
-    private static final Class<Controller> CONTROLLER = Controller.class;
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -33,9 +27,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void initialize() {
-        Reflections typesAnnotatedReflections = new Reflections(basePackage, Scanners.TypesAnnotated);
-        Set<Class<?>> controllers = typesAnnotatedReflections.getTypesAnnotatedWith(CONTROLLER);
-        controllers.forEach(this::mapRequestMappingToHandler);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        controllerScanner.getControllers().forEach(this::mapRequestMappingToHandler);
     }
 
     private void mapRequestMappingToHandler(Class<?> controller) {
