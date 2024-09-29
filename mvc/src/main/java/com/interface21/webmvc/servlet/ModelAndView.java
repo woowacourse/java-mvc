@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet;
 
+import com.interface21.webmvc.servlet.view.JspView;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,10 @@ public class ModelAndView {
     public ModelAndView(final View view) {
         this.view = view;
         this.model = new HashMap<>();
+    }
+
+    public static ModelAndView createJspView(String viewName) {
+        return new ModelAndView(new JspView(viewName));
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
