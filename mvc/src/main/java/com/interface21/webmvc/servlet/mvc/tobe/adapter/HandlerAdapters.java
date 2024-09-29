@@ -8,7 +8,6 @@ public class HandlerAdapters {
 
     public HandlerAdapters() {
         this.handlerAdapters = List.of(
-                new ControllerHandlerAdapter(),
                 new HandlerExecutionHandlerAdapter()
         );
     }
