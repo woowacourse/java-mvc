@@ -1,10 +1,10 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 
 class HandlerMappingRegistryTest {
 
@@ -21,7 +21,7 @@ class HandlerMappingRegistryTest {
     class GetHandlerMapping {
 
         @Test
-        @DisplayName("요청에 맞는 HandlerMapping 반환 성공: AnnotationHandlerMapping")
+        @DisplayName("요청에 맞는 Handle 반환 성공: HandlerExecution")
         void getHandlerMapping_AnnotationHandlerMapping() {
             final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
             final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -29,9 +29,9 @@ class HandlerMappingRegistryTest {
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestURI()).thenReturn("/get-test");
 
-            final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
+            final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
 
-            assertThat(handlerMapping).isInstanceOf(AnnotationHandlerMapping.class);
+            assertThat(handler).containsInstanceOf(HandlerExecution.class);
         }
 
         @Test
@@ -43,9 +43,7 @@ class HandlerMappingRegistryTest {
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestURI()).thenReturn("/nonexistent");
 
-            assertThatThrownBy(() -> handlerMappingRegistry.getHandlerMapping(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("해당 요청을 처리할 수 있는 핸들러가 없습니다.");
+            assertThat(handlerMappingRegistry.getHandler(request)).isEmpty();
         }
     }
 }

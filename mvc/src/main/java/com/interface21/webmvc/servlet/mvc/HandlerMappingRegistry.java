@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -24,10 +25,10 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public HandlerMapping getHandlerMapping(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping -> handlerMapping.hasHandler(request))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("해당 요청을 처리할 수 있는 핸들러가 없습니다."));
+                .map(handlerMapping -> handlerMapping.getHandler(request));
     }
 }

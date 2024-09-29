@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
@@ -37,8 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
-        final Object handler = handlerMapping.getHandler(request);
+        final Object handler = handlerMappingRegistry.getHandler(request);
         final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
