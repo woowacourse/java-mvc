@@ -71,6 +71,7 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("GET");
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-                .isInstanceOf(UnsupportedOperationException.class);
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("지원하지 않는 요청입니다.");
     }
 }
