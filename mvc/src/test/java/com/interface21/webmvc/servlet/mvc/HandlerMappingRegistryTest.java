@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;

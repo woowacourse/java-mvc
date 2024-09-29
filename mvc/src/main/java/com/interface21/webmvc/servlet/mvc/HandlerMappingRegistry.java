@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
