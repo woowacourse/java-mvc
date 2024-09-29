@@ -21,6 +21,10 @@ public class HandlerExecutions {
         handlerKeys.forEach(handlerKey -> executions.put(handlerKey, handlerExecution));
     }
 
+    private List<HandlerKey> constructHandlerKey(Method method) {
+        return HandlerKeyGenerator.fromAnnotatedMethod(method);
+    }
+
     private void validateDuplicateKeys(List<HandlerKey> handlerKeys) {
         for (HandlerKey key : handlerKeys) {
             validateDuplicateKey(key);
@@ -37,9 +41,6 @@ public class HandlerExecutions {
         return new HandlerExecution(executionTarget, targetMethod);
     }
 
-    private List<HandlerKey> constructHandlerKey(Method method) {
-        return HandlerKeyGenerator.fromAnnotatedMethod(method);
-    }
 
     public Optional<Object> get(HandlerKey key) {
         return Optional.ofNullable(executions.get(key));
