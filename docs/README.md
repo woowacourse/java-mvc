@@ -19,7 +19,7 @@
     - [X] `HandlerMapping`을 담아서 관리하는 `HandlerMappingRegistry` 구현
     - [X] `HandlerAdapter`를 담아서 관리하서 `HandlerAdapterRegistry` 구현
 - [ ] JSON View 구현하기
-  - [ ] JsonView 클래스 구현
+  - [X] JsonView 클래스 구현
   - [ ] Legacy MVC 제거하기
     - [ ] 모든 컨트롤러를 어노테이션 기반 MVC로 변경
     - [ ] `asis` 패키지의 레거시 코드 삭제
