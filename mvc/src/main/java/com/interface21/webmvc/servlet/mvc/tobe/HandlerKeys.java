@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HandlerKeys {
@@ -26,6 +27,6 @@ public class HandlerKeys {
     }
 
     public List<HandlerKey> getHandlerKeys() {
-        return new ArrayList<>(handlerKeys);
+        return Collections.unmodifiableList(handlerKeys);
     }
 }
