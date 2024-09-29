@@ -37,6 +37,18 @@
 
 ### 2단계 - 점진적인 리팩터링
 
+1. Legacy MVC와 @MVC 통합하기
+
+- [ ] ControllerScanner 클래스 추가
+    - [ ] Reflections 객체로 @Controller가 설정된 모든 클래스 탐색
+    - [ ] 각 클래스의 인스턴스 생성
+- [ ] 컨트롤러의 메서드 정보로 HandlerExecution 생성
+    - [ ] @RequestMapping이 붙어있는 메서드 정보 가져옴
+    - [ ] 가져온 메서드에서 @RequestMapping의 정보를 바탕으로 HandlerKey 객체 생성
+    - [ ] HandlerExecution 생성해 HandlerKey에 매핑되는 메서드를 실행하는 역할 분배
+- [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크 통합
+    - [ ] 컨트롤러를 어노테이션 기반 컨트롤러로 변경해도 정상 동작하도록 지원
+
 ### 3단계 - JSON View 구현하기
 
 ## @MVC 구현하기 가이드
