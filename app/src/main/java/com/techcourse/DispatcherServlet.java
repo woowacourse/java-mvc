@@ -6,6 +6,8 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.ArgumentHandlerExceptionResolver;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerExceptionResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,10 +24,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
     public DispatcherServlet() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerMappingRegistry = new HandlerMappingRegistry(BASE_PACKAGE);
+        handlerExceptionResolver = new ArgumentHandlerExceptionResolver();
     }
 
     @Override
@@ -40,14 +44,14 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
+        Object handler = null;
         try {
-            Object handler = findHandler(request);
+            handler = findHandler(request);
             HandlerAdapter handlerAdapter = findHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             renderViewWithModel(request, response, modelAndView);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+        } catch (Exception e) {
+            handlerExceptionResolver.resolveException(request, response, handler, e);
         }
     }
 
