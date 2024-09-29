@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.mapping;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
 
 class HandlerMappingContainerTest {
 

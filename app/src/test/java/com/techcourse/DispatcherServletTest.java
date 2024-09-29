@@ -20,8 +20,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterContainer;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingContainer;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterContainer;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingContainer;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 

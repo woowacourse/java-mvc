@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.adapter;
+package com.interface21.webmvc.servlet.mvc.adapter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
