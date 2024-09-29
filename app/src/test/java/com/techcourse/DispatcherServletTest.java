@@ -74,4 +74,29 @@ class DispatcherServletTest {
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessage("지원하지 않는 Handler 입니다.");
     }
+
+    @Test
+    void request_URI가_null이면_예외_발생() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn(null);
+
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("request URI는 null일 수 없습니다.");
+    }
+
+    @Test
+    void request_method가_null이면_예외_발생() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getMethod()).thenReturn(null);
+
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("request URI와 http method는 null일 수 없습니다.");
+    }
 }

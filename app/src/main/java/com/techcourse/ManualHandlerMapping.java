@@ -34,6 +34,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+        if (requestURI == null) {
+            throw new IllegalArgumentException("request URI는 null일 수 없습니다.");
+        }
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
