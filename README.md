@@ -35,3 +35,5 @@
 ### 2단계 - 점진적인 리팩터링
 - [ ] Legacy MVC와 @MVC 통합하기
   - [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하게 만들자
+  - [x] HandlerMapping 관리 클래스 생성
+  - [ ] handler 실행을 도와주는 HandlerAdaptor 생성
