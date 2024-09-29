@@ -22,7 +22,7 @@ public class HandlerMappings {
 
         HandlerExecution handler = handlerMappings.stream()
                 .map(handlerMapping -> getHandler(request))
-                .filter(Objects::isNull)
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
 
