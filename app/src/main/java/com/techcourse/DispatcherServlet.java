@@ -46,22 +46,24 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletResponse response
     ) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
         try {
             Object handler = compositeHandlerMapping.getHandler(request);
-            if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(request, response);
-                JspView jspView = new JspView(viewName);
-                resolveView(new ModelAndView(jspView), request, response);
-            }
-            if (handler instanceof HandlerExecution) {
-                ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                resolveView(modelAndView, request, response);
-            }
+            ModelAndView modelAndView = executeHandler(handler, request, response);
+            resolveView(modelAndView, request, response);
         } catch (Exception exception) {
             log.error("Exception : {}", exception.getMessage(), exception);
             throw new ServletException(exception);
         }
+    }
+
+    private ModelAndView executeHandler(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (handler instanceof Controller) {
+            String viewName = ((Controller) handler).execute(request, response);
+            return new ModelAndView(new JspView(viewName));
+        } else if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
+        }
+        throw new IllegalArgumentException("실행할 핸들러가 존재하지 않습니다. : " + handler.getClass().getName());
     }
 
     private void resolveView(
