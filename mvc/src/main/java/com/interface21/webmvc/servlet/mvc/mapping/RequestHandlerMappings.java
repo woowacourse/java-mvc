@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
 import com.interface21.webmvc.servlet.NoSuchHandlerException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,5 +60,4 @@ public class RequestHandlerMappings {
                 .findFirst()
                 .orElseThrow(NoSuchHandlerException::new);
     }
-
 }
