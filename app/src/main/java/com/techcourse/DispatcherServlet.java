@@ -4,9 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AbstractHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.handleradapter.HandlerAdapterRegistry;
 import com.techcourse.handlermapping.HandlerMappingRegistry;
 
 import jakarta.servlet.ServletException;
@@ -20,7 +19,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerAdapter handlerAdapter;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
@@ -28,7 +27,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapter = new AbstractHandlerAdapter();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -37,9 +36,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
+        Object handler = handlerMapping.getHandler(request);
 
         try {
-            ModelAndView mav = handlerAdapter.adapt(handlerMapping, request, response);
+            ModelAndView mav = handlerAdapterRegistry.getHandlerAdapter(handler).adapt(handler, request, response);
             mav.getView().render(mav.getModel(), request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);

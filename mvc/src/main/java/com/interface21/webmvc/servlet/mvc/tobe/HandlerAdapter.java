@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface HandlerAdapter {
-	ModelAndView adapt(HandlerMapping handlerMapping, HttpServletRequest request, HttpServletResponse response) throws
+
+	boolean canHandle(Object handler);
+
+	ModelAndView adapt(Object handler, HttpServletRequest request, HttpServletResponse response) throws
 		Exception;
 }

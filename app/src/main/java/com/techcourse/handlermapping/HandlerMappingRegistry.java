@@ -24,7 +24,6 @@ public class HandlerMappingRegistry {
 	}
 
 	public HandlerMapping getHandlerMapping(HttpServletRequest request) {
-
 		return handlerMappings.stream()
 			.filter(hm -> hm.getHandler(request) != null)
 			.findAny()
