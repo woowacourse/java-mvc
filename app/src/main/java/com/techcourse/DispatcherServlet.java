@@ -87,7 +87,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Map<String, ?> model = new HashMap<>();
+        Map<String, Object> model = modelAndView.getModel();
         View view = modelAndView.getView();
 
         view.render(model, request, response);
