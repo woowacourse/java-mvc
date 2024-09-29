@@ -5,6 +5,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
+import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -12,23 +14,19 @@ import org.junit.jupiter.api.Test;
 
 class RegisterControllerTest {
 
-    @DisplayName("Controller 인터페이스 구현 메서드 execute 실행시 viewName을 반환한다.")
+    @DisplayName("/register 경로로 접근하면 register.jsp 를 반환한다.")
     @Test
-    void execute() throws Exception {
+    void show() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        given(request.getParameter("account")).willReturn("test");
-        given(request.getParameter("password")).willReturn("1234");
-        given(request.getParameter("email")).willReturn("test@test.com");
-
         RegisterController controller = new RegisterController();
 
-        String result = controller.execute(request, response);
+        ModelAndView modelAndView = controller.show(request, response);
 
-        assertThat(result).isEqualTo("redirect:/index.jsp");
+        assertThat(modelAndView).isEqualTo(new ModelAndView(new JspView("register.jsp")));
     }
 
-    @DisplayName("@RequestMapping 메서드 save 실행시 ModelAndView 를 반환한다.")
+    @DisplayName("/register 경로로 POST 요청을 보내면 회원을 저장하고 redirect:/ 를 반환한다.")
     @Test
     void save() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -41,7 +39,7 @@ class RegisterControllerTest {
 
         ModelAndView modelAndView = controller.save(request, response);
 
-        assertThat(modelAndView).isNotNull();
-        assertThat(modelAndView instanceof ModelAndView).isTrue();
+        assertThat(InMemoryUserRepository.findByAccount("test")).isPresent();
+        assertThat(modelAndView).isEqualTo(new ModelAndView(new JspView("redirect:/")));
     }
 }

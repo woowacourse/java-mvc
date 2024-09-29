@@ -2,9 +2,11 @@ package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.techcourse.handleradapter.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerRegistry;
 import com.techcourse.handleradapter.HandlerExecutionHandlerAdapter;
-import com.techcourse.handlermapping.ManualHandlerMapping;
 import com.techcourse.viewresolver.SimpleViewResolver;
 import jakarta.servlet.ServletContext;
 import java.util.List;
@@ -51,13 +53,13 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private HandlerMappingRegistry getHandlerMappingRegistry() {
         return new HandlerMappingRegistry(
-                List.of(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE), new ManualHandlerMapping())
+                List.of(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE))
         );
     }
 
     private HandlerAdapterRegistry getHandlerAdapterRegistry() {
         return new HandlerAdapterRegistry(
-                List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter())
+                List.of(new HandlerExecutionHandlerAdapter())
         );
     }
 }

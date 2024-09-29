@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.techcourse.controller.LoginController;
-import com.techcourse.handlermapping.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,7 @@ class HandlerMappingRegistryTest {
         given(request.getRequestURI()).willReturn("/login");
 
         HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(
-                List.of(new ManualHandlerMapping())
+                List.of(new AnnotationHandlerMapping())
         );
 
         Object handler = handlerMappingRegistry.getHandler(request);
