@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 
 public class HandlerAdaptorRegistry {
 
-    List<HandlerAdaptor> handlerAdaptors = new ArrayList<>();
+    private final List<HandlerAdaptor> handlerAdaptors = new ArrayList<>();
 
     public void addHandlerAdaptors(HandlerAdaptor handlerAdaptor) {
         handlerAdaptors.add(handlerAdaptor);
