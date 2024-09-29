@@ -20,7 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterContainer;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingContainer;
 import com.techcourse.domain.User;
@@ -164,11 +163,11 @@ class DispatcherServletTest {
             }
 
             @Test
-            @DisplayName("POST /logout -> 세션 정보 삭제")
+            @DisplayName("GET /logout -> 세션 정보 삭제")
             void service_success_get_logout() throws IOException {
                 String path = "/";
                 when(request.getRequestURI()).thenReturn("/logout");
-                when(request.getMethod()).thenReturn("POST");
+                when(request.getMethod()).thenReturn("GET");
                 HttpSession session = mock(HttpSession.class);
                 when(request.getSession()).thenReturn(session);
 
