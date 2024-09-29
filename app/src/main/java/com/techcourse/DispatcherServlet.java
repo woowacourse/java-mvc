@@ -23,7 +23,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
+    private static final String BASE_PACKAGE = "com.techcourse";
 
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerMappingRegistry handlerMappingRegistry;
