@@ -14,7 +14,7 @@ import com.interface21.webmvc.servlet.view.JspView;
 public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerAdapter.class);
-    private static final View PAGE_500_VIEW = new JspView("redirect:/500.jsp");
+    private static final View PAGE_500_VIEW = new JspView("/500.jsp");
 
     @Override
     public boolean supports(Object handler) {
