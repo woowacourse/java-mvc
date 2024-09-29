@@ -7,13 +7,13 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import samples.TestController;
+import com.interface21.webmvc.servlet.mvc.sample.TestController;
 
 class HandlerExecutionsTest {
 
     @DisplayName("핸들러를 성공적으로 등록하고 조회한다.")
     @Test
-    void registerHandler() throws Exception {
+    void registerHandler() {
         HandlerExecutions handlerExecutions = new HandlerExecutions();
         Method[] methods = TestController.class.getDeclaredMethods();
         handlerExecutions.addHandlerExecution(methods);

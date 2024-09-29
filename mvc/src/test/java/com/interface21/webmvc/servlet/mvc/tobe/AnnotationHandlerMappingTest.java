@@ -5,7 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.NotFoundException;
+import com.interface21.HandlerContainer;
+import com.interface21.ContextLoaderTest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,11 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        HandlerContainer instance = HandlerContainer.getInstance();
+        instance.clear();
+        instance.initialize(ContextLoaderTest.class);
+        handlerMapping = new AnnotationHandlerMapping();
+        handlerMapping.initialize();
     }
 
     @Test
@@ -60,7 +65,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("method를 지정하지 않을 경우 모든 RequestMethod에 대해서 등록한다")
