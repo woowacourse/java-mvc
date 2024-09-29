@@ -6,11 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.stream.Stream;
@@ -28,8 +24,7 @@ class ManualHandlerAdapterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         ManualHandlerAdapter handlerAdapter = new ManualHandlerAdapter();
-        Controller controller = new ForwardController("/index.jsp");
-
+        Controller controller = (req, res) -> "/index.jsp";
         when(request.getRequestURI()).thenReturn("/");
         when(request.getMethod()).thenReturn("GET");
 
@@ -51,10 +46,7 @@ class ManualHandlerAdapterTest {
 
     private static Stream<Arguments> randomHandlers() {
         return Stream.of(
-                Arguments.of(new ForwardController("/index.jsp"), true),
-                Arguments.of(new LogoutController(), true),
-                Arguments.of(new RegisterViewController(), true),
-                Arguments.of(new RegisterController(), true),
+                Arguments.of((Controller) (req, res) -> "/index.jsp", true),
                 Arguments.of(new HandlerExecution(ManualHandlerAdapter.class.getEnclosingMethod()), false),
                 Arguments.of("1234", false)
         );
