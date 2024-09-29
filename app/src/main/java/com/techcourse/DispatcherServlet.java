@@ -20,6 +20,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    public static final String DEFAULT_BASE_PACKAGE = "com.techcourse.controller";
+
     private CompositeHandlerMapping compositeHandlerMapping;
 
     public DispatcherServlet() {
@@ -30,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
 
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(DEFAULT_BASE_PACKAGE);
         annotationHandlerMapping.initialize();
 
         this.compositeHandlerMapping = new CompositeHandlerMapping(
