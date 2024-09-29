@@ -8,6 +8,9 @@ import java.util.List;
 
 public abstract class ReflectionUtils {
 
+    private ReflectionUtils() {
+    }
+
     /**
      * Obtain an accessible constructor for the given class and parameters.
      *
