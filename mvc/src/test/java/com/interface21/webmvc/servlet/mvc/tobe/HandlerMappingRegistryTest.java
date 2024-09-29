@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import samples.TestController;
-import samples.TestManualHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.fixture.FakeManualHandlerMapping;
 
 public class HandlerMappingRegistryTest {
     private static final String BASE_PACKAGE = "samples";
@@ -33,7 +33,7 @@ public class HandlerMappingRegistryTest {
         final var request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
 
-        registerHandlerMapping(new TestManualHandlerMapping());
+        registerHandlerMapping(new FakeManualHandlerMapping());
 
         // when
         final Object handler = handlerMappingRegistry.getHandler(request);

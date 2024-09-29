@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspViewTest;
 
-import samples.TestManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.fixture.FakeManualHandlerAdapter;
 
 public class HandlerAdapterRegistryTest {
     private HandlerAdapterRegistry handlerAdapterRegistry;
@@ -19,7 +19,7 @@ public class HandlerAdapterRegistryTest {
     void setup() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
 
-        registerHandlerAdapter(new TestManualHandlerAdapter());
+        registerHandlerAdapter(new FakeManualHandlerAdapter());
         registerHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
@@ -33,7 +33,7 @@ public class HandlerAdapterRegistryTest {
         final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
 
         // then
-        assertThat(handlerAdapter).isInstanceOf(TestManualHandlerAdapter.class);
+        assertThat(handlerAdapter).isInstanceOf(FakeManualHandlerAdapter.class);
     }
 
     @DisplayName("AnnotationHandlerAdapter(@MVC)가 핸들러에 맞는 어댑터를 찾아준다.")

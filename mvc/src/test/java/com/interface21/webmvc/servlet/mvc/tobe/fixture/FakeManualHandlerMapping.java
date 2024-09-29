@@ -1,4 +1,4 @@
-package samples;
+package com.interface21.webmvc.servlet.mvc.tobe.fixture;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,10 +7,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 
-public class TestManualHandlerMapping implements HandlerMapping {
+import samples.TestController;
+
+public class FakeManualHandlerMapping implements HandlerMapping {
     private final Map<String, Object> handlers;
 
-    public TestManualHandlerMapping() {
+    public FakeManualHandlerMapping() {
         this.handlers = new HashMap<>();
     }
 
