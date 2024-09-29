@@ -1,17 +1,14 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappings;
-import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
@@ -43,7 +40,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappings.mapToHandler(request);
-            ModelAndView modelAndView = handlerAdapters.handle(request, response, handler);
+            HandlerAdapter handlerAdapter = handlerAdapters.findHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
