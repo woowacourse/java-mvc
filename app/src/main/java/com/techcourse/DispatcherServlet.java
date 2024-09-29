@@ -1,16 +1,13 @@
 package com.techcourse;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AbstractHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.techcourse.handlermapping.HandlerMappingRegistry;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -22,7 +19,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
+    private HandlerMappingRegistry handlerMappingRegistry;
     private HandlerAdapter handlerAdapter;
 
     public DispatcherServlet() {
@@ -30,12 +27,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = new ArrayList<>();
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
-        handlerAdapter = new AbstractHandlerAdapter();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapter = new AbstractHandlerAdapter();
     }
 
     @Override
@@ -43,10 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        HandlerMapping handlerMapping = handlerMappings.stream()
-            .filter(hm -> hm.getHandler(request) != null)
-            .findAny()
-            .orElseThrow(() -> new IllegalArgumentException("No handler found for requestURI: " + requestURI));
+        HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
 
         try {
             ModelAndView mav = handlerAdapter.adapt(handlerMapping, request, response);
