@@ -13,17 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
-//    @Override
-//    public String execute(final HttpServletRequest req, final HttpServletResponse res) {
-//        final var user = new User(2,
-//                req.getParameter("account"),
-//                req.getParameter("password"),
-//                req.getParameter("email"));
-//        InMemoryUserRepository.save(user);
-//
-//        return "redirect:/index.jsp";
-//    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
         InMemoryUserRepository.save(
@@ -41,5 +30,4 @@ public class RegisterController {
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView(new JspView("register.jsp"));
     }
-
 }
