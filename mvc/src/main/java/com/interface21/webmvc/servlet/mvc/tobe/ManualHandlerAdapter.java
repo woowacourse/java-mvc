@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.view.JspView;
 
 public class ManualHandlerAdapter implements HandlerAdapter {
 
@@ -15,7 +16,8 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(final Object handler, final HttpServletRequest req, final HttpServletResponse res)
             throws Exception {
         if (canHandle(handler)) {
-            return ((HandlerExecution) handler).handle(req, res);
+            final String result = ((Controller) handler).execute(req, res);
+            return new ModelAndView(new JspView(result));
         }
         throw new IllegalArgumentException("실행할 수 없는 타입의 handler 입니다.");
     }

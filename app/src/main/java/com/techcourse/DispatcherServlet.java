@@ -36,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry = new HandlerMappingRegistry();
         try {
             handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-            handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+            handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
         } catch (Exception e) {
             throw new RuntimeException("HandlerMapping 초기화 실패 : {}", e);
         }
