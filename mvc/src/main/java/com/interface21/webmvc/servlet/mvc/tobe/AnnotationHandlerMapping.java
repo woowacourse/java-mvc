@@ -27,7 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
         Reflections reflections = new Reflections(basePackage);
@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void registerRequestMappings(Class<?> controllerClass) throws Exception {
+    private void registerRequestMappings(Class<?> controllerClass) {
         List<Method> methods = Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
@@ -50,16 +50,24 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandlerExecutions(Class<?> controllerClass, Method method, String url,
-                                           RequestMethod[] requestMethods) throws Exception {
+                                           RequestMethod[] requestMethods) {
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
         }
+        Object controllerInstance = createControllerInstance(controllerClass);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+        }
+    }
+
+    private Object createControllerInstance(Class<?> controllerClass) {
+        try {
             Constructor<?> constructor = controllerClass.getDeclaredConstructor();
             constructor.setAccessible(true);
-            Object controllerInstance = constructor.newInstance();
-            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+            return constructor.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Controller를 AnnotationHandlerMapping에서 로딩할 수 없습니다.");
         }
     }
 
