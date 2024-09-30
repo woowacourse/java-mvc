@@ -36,7 +36,7 @@ public class JspView implements View {
 
     private void setRequestAttributes(Map<String, ?> model, HttpServletRequest request) {
         model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
+            log.info("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
     }
