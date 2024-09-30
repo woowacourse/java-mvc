@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 
 public class JsonView implements View {
@@ -18,7 +19,7 @@ public class JsonView implements View {
             final HttpServletRequest request,
             HttpServletResponse response
     ) {
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         handleResponse(response, model);
     }
 
