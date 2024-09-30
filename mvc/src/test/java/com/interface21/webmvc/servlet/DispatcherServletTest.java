@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -20,8 +20,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterContainer;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingContainer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterContainer;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingContainer;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 
@@ -51,7 +52,11 @@ class DispatcherServletTest {
 
         @Nested
         @DisplayName("Legacy MVC")
-        class LegacyMVC {
+        class LegacyMVC {}
+
+        @Nested
+        @DisplayName("@MVC")
+        class AnnotationMVC {
             @Test
             @DisplayName("GET / -> /index.jsp")
             void service_success_get_root() throws IOException, ServletException {
@@ -202,52 +207,6 @@ class DispatcherServletTest {
                     // given
                     String path = "/index.jsp";
                     when(request.getRequestURI()).thenReturn("/login/view");
-                    when(request.getMethod()).thenReturn("GET");
-
-                    HttpSession session = mock(HttpSession.class);
-                    var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
-                    when(session.getAttribute("user")).thenReturn(user);
-                    when(request.getSession()).thenReturn(session);
-
-                    // then
-                    dispatcherServlet.service(request, response);
-
-                    // when
-                    verify(response).sendRedirect(path);
-                    verify(request, never()).getRequestDispatcher(anyString());
-                }
-            }
-        }
-
-        @Nested
-        @DisplayName("@MVC")
-        class AnnotationMVC {
-
-            @Nested
-            @DisplayName("GET /login")
-            class ServiceGetLogin {
-
-                @Test
-                @DisplayName("로그인 안 된 경우 -> /login.jsp")
-                void service_success_get_login_not_login() throws IOException {
-                    String path = "/login.jsp";
-                    when(request.getRequestURI()).thenReturn("/login");
-                    when(request.getMethod()).thenReturn("GET");
-                    HttpSession session = mock(HttpSession.class);
-                    when(request.getSession()).thenReturn(session);
-
-                    dispatcherServlet.service(request, response);
-
-                    verify(response).sendRedirect(path);
-                    verify(request, never()).getRequestDispatcher(anyString());
-                }
-
-                @Test
-                @DisplayName("로그인 된 경우 -> /index.jsp")
-                void service_success_get_login() throws IOException {
-                    // given
-                    String path = "/index.jsp";
-                    when(request.getRequestURI()).thenReturn("/login");
                     when(request.getMethod()).thenReturn("GET");
 
                     HttpSession session = mock(HttpSession.class);

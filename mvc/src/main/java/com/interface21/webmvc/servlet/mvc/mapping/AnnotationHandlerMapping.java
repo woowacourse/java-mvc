@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.mapping;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.HandlerKey;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -58,7 +58,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerHandlerMethods(Class<?> controllerClass) {
-
         List<Method> newHandlerExecutions = Arrays.stream(controllerClass.getMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();

@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import java.util.Map;
 
@@ -9,17 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterContainer;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingContainer;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterContainer;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingContainer;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final View PAGE_404_VIEW = new JspView("redirect:/404.jsp");
+    private static final View PAGE_404_VIEW = new JspView("/404.jsp");
     private static final long serialVersionUID = 1L;
 
     private final transient HandlerMappingContainer handlerMappingContainer;
