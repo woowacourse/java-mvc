@@ -1,12 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.DefaultHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.DefaultHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.DefaultHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.DefaultHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,21 +18,18 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
     private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
         this.handlerMappings = List.of(
-            new ManualHandlerMapping(),
-            new AnnotationHandlerMapping(BASE_PACKAGE),
+            new AnnotationHandlerMapping(basePackage),
             new DefaultHandlerMapping()
         );
         this.handlerAdapters = List.of(
-            new ManualHandlerAdapter(),
             new AnnotationHandlerAdapter(),
             new DefaultHandlerAdapter()
         );
