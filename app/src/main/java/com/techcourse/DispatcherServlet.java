@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.adepter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adepter.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
@@ -38,13 +37,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMappings() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     private void initHandlerAdapters() {
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
     }
 

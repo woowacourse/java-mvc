@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -17,6 +18,10 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(handler, request, response);
+        Object returnValue = method.invoke(handler, request, response);
+        if (returnValue instanceof ModelAndView) {
+            return (ModelAndView) returnValue;
+        }
+        return new ModelAndView((new JspView((String) returnValue)));
     }
 }
