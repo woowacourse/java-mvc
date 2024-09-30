@@ -45,7 +45,7 @@ public class JsonViewTest {
 
         // then
         String expected = """
-                {"account":"anna","id":1,"email":"an@email.com"}""";
+                {"id":1,"account":"anna","email":"an@email.com"}""";
         verify(writer).write(expected);
     }
 
@@ -69,8 +69,8 @@ public class JsonViewTest {
 
     static class TestUser {
 
-        private final String account;
         private final long id;
+        private final String account;
         private final String email;
 
         public TestUser(String account, long id, String email) {
@@ -79,14 +79,14 @@ public class JsonViewTest {
             this.email = email;
         }
 
-        @JsonGetter("account")
-        public String getAccount() {
-            return account;
-        }
-
         @JsonGetter("id")
         public long getId() {
             return id;
+        }
+
+        @JsonGetter("account")
+        public String getAccount() {
+            return account;
         }
 
         @JsonGetter("email")

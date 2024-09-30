@@ -20,14 +20,14 @@ public class User {
         return this.password.equals(password);
     }
 
-    @JsonGetter("account")
-    public String getAccount() {
-        return account;
-    }
-
     @JsonGetter("id")
     public long getId() {
         return id;
+    }
+
+    @JsonGetter("account")
+    public String getAccount() {
+        return account;
     }
 
     @JsonGetter("email")
