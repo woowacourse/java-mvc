@@ -14,6 +14,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.view.ViewResolver;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -34,7 +35,8 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final HandlerAdapter handlerAdapter = registry.get(request);
             final ModelAndView modelAndView = handlerAdapter.adapt(request, response);
-            final View view = modelAndView.getView();
+            final ViewResolver viewResolver = new ViewResolver(modelAndView);
+            final View view = viewResolver.resolve(response);
             view.render(Map.of(), request, response);
         } catch (final Exception e) {
             throw new ServletException(e.getMessage());
