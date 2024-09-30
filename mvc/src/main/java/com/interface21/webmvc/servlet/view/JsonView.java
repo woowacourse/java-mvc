@@ -16,7 +16,16 @@ public class JsonView implements View {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public JsonView() {
+    private static JsonView INSTANCE;
+
+    public static JsonView from() {
+        if (INSTANCE == null) {
+            INSTANCE = new JsonView();
+        }
+        return INSTANCE;
+    }
+
+    private JsonView() {
     }
 
     @Override

@@ -13,7 +13,6 @@ public class HandlerAdapterRegistry {
     }
 
     public void initialize() {
-        // handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 

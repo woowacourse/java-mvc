@@ -35,9 +35,9 @@ class AnnotationHandlerAdapterTest {
         assertThat(handlerAdapter.support(handler)).isTrue();
     }
 
-    @DisplayName("어노테이션 핸들러 어댑터는 HandlerExecution 아닌 타입의 핸들러를 지원하지 않는다.")
+    @DisplayName("어노테이션 핸들러 어댑터는 HandlerExecution 타입이 아닌 핸들러를 지원하지 않는다.")
     @Test
-    void should_returnFalse_when_handlerIsController() {
+    void should_returnFalse_when_handlerIsNotHandlerExecution() {
         // given
         Object handler = new Object();
 
@@ -51,12 +51,14 @@ class AnnotationHandlerAdapterTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
+
         when(request.getRequestURI()).thenReturn("/annotation-test");
         when(request.getMethod()).thenReturn("GET");
         when(request.getAttribute("id")).thenReturn("ever");
 
-        // when
         Object handler = handlerMapping.getHandler(request);
+
+        // when
         ModelAndView modelAndView = handlerAdapter.execute(request, response, handler);
 
         // then
@@ -69,6 +71,7 @@ class AnnotationHandlerAdapterTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
+
         when(request.getRequestURI()).thenReturn("/");
 
         Object handler = new Object();

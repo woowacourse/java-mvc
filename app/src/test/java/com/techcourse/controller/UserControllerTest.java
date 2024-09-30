@@ -20,7 +20,7 @@ class UserControllerTest {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getParameter("account")).thenReturn("gugu");
+        when(request.getParameter("account")).thenReturn("ever");
 
         UserController controller = new UserController();
 
@@ -29,7 +29,7 @@ class UserControllerTest {
 
         // then
         Object actual = modelAndView.getObject("user");
-        User expected = InMemoryUserRepository.findByAccount("gugu")
+        User expected = InMemoryUserRepository.findByAccount("ever")
                 .orElseThrow();
         assertThat(actual).isInstanceOf(User.class);
         assertThat(actual).isEqualTo(expected);

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,44 +29,52 @@ class AnnotationHandlerMappingTest {
     @DisplayName("해당 uri와 method get에 매핑되는 핸들러를 찾아 실행한다.")
     @Test
     void should_handleHandler_when_getRequest() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getAttribute("id")).thenReturn("ever");
         when(request.getRequestURI()).thenReturn("/annotation-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        // when
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        // then
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        assertThat(modelAndView.getObject("id")).isEqualTo("ever");
     }
 
     @DisplayName("해당 uri와 method post에 매핑되는 핸들러를 찾아 실행한다.")
     @Test
     void should_handleHandler_when_postRequest() throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getAttribute("id")).thenReturn("ever");
         when(request.getRequestURI()).thenReturn("/annotation-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        // when
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        // then
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        assertThat(modelAndView.getObject("id")).isEqualTo("ever");
     }
 
     @DisplayName("해당 uri와 method에 매핑되는 핸들러가 없는 경우 예외가 발생한다.")
     @Test
     void should_throwException_when_givenInvalidRequest() throws Exception {
-        final var request = mock(HttpServletRequest.class);
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getAttribute("id")).thenReturn("ever");
         when(request.getRequestURI()).thenReturn("/invalid");
         when(request.getMethod()).thenReturn("POST");
 
+        // when & then
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("해당 요청에 대응하는 핸들러가 없습니다: POST /invalid");
@@ -75,16 +84,17 @@ class AnnotationHandlerMappingTest {
     @ParameterizedTest
     @EnumSource(value = RequestMethod.class)
     void should_mapAllMethods_when_declaredMethodEmpty(RequestMethod method) throws Exception {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getAttribute("id")).thenReturn("gugu");
+        when(request.getAttribute("id")).thenReturn("ever");
         when(request.getRequestURI()).thenReturn("/all-test");
         when(request.getMethod()).thenReturn(method.name());
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        ModelAndView modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertThat(modelAndView.getObject("id")).isEqualTo("ever");
     }
 }

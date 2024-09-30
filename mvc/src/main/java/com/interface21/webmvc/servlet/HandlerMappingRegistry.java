@@ -9,13 +9,15 @@ import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
+    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
+
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public HandlerMappingRegistry() {
     }
 
     public void initialize() {
-        handlerMappings.add(new AnnotationHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 

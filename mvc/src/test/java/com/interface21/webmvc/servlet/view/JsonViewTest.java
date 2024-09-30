@@ -22,7 +22,17 @@ class JsonViewTest {
 
     @BeforeEach
     void setUp() {
-        view = new JsonView();
+        view = JsonView.from();
+    }
+
+    @DisplayName("생성된 인스턴스는 항상 같은 인스턴스이다.")
+    @Test
+    void should_getSameInstance_when_construct() {
+        // when
+        JsonView created = JsonView.from();
+
+        // then
+        assertThat(created).isSameAs(view);
     }
 
     @DisplayName("model에 데이터가 1개면 값을 그대로 반환한다.")

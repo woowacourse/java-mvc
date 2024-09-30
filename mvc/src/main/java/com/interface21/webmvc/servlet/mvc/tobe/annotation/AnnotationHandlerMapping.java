@@ -31,11 +31,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public AnnotationHandlerMapping() {
-        this.basePackage = new Object[]{"com.techcourse.controller"};
-        this.handlerExecutions = new HashMap<>();
-    }
-
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
@@ -43,7 +38,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet()
-                .forEach(handlerKey -> log.info("Path : {} {}, Controller : {}", handlerKey.requestMethod,
+                .forEach(handlerKey -> log.info("Path : {} {}, Controller : {}",
+                        handlerKey.requestMethod,
                         handlerKey.url,
                         handlerExecutions.get(handlerKey)));
     }
