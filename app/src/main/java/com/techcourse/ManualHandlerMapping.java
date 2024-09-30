@@ -36,12 +36,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public boolean hasHandler(final HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
-        return controllers.containsKey(requestURI);
-    }
-
-    @Override
     public Object getHandler(final HttpServletRequest request) {
         return controllers.get(request.getRequestURI());
     }

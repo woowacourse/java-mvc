@@ -88,25 +88,6 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("emptyUriTest")).isEqualTo("success");
     }
 
-    @DisplayName("요청에 맞는 핸들러가 존재하면 True를 반환한다.")
-    @Test
-    void hasHandlerReturnTrue() {
-        final var trueRequest = mock(HttpServletRequest.class);
-        when(trueRequest.getRequestURI()).thenReturn("/get-test");
-        when(trueRequest.getMethod()).thenReturn("GET");
-
-        assertThat(handlerMapping.hasHandler(trueRequest)).isTrue();
-    }
-
-    @DisplayName("요청에 맞는 핸들러가 존재하면 False를 반환한다.")
-    @Test
-    void hasHandlerReturnFalse() {
-        final var falseRequest = mock(HttpServletRequest.class);
-        when(falseRequest.getRequestURI()).thenReturn("/none");
-        when(falseRequest.getMethod()).thenReturn("GET");
-        assertThat(handlerMapping.hasHandler(falseRequest)).isFalse();
-    }
-
     @DisplayName("중복된 핸들러가 존재하면 예외가 발생한다.")
     @Test
     void duplicatedHandler() {

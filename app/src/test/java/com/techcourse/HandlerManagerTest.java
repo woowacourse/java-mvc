@@ -30,7 +30,7 @@ public class HandlerManagerTest {
 
     @DisplayName("요청에 맞는 핸들러를 가지고 있는 핸들러매핑이 없다면 NotFoundController를 반환한다.")
     @Test
-    void notFoundRender() {
+    void notFoundRender() throws ClassNotFoundException {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/none");
@@ -42,7 +42,7 @@ public class HandlerManagerTest {
 
     @DisplayName("요청에 맞는 HandlerExecution 을 반환한다.")
     @Test
-    void getHandlerExecution() {
+    void getHandlerExecution() throws ClassNotFoundException {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/get-test");
@@ -54,7 +54,7 @@ public class HandlerManagerTest {
 
     @DisplayName("요청에 맞는 Controller 를 반환한다.")
     @Test
-    void findController() {
+    void findController() throws ClassNotFoundException {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/login/view");

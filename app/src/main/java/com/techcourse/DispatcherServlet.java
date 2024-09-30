@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,16 +35,16 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
-        final Object handler = handlerManager.getHandler(request);
-        final ModelAndView modelAndView = processHandler(request, response, handler);
         try {
+            final Object handler = handlerManager.getHandler(request);
+            final ModelAndView modelAndView = processHandler(request, response, handler);
             modelAndView.render(request, response);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ServletException(e.getMessage());
         }
     }
 

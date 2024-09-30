@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,18 +19,20 @@ public class HandlerManager {
         mappings.forEach(HandlerMapping::initialize);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        final Optional<HandlerMapping> handlerMapping = mappings.stream()
-                .filter(mapping -> mapping.hasHandler(request))
-                .findFirst();
+    public Object getHandler(final HttpServletRequest request) throws ClassNotFoundException {
+        return mappings.stream()
+                .map(mapping -> mapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(getNotFoundController());
+    }
 
-        if (handlerMapping.isEmpty()) {
-            for (final HandlerMapping mapping : mappings) {
-                if (mapping instanceof final ManualHandlerMapping manualHandlerMapping) {
-                    return manualHandlerMapping.getNotFoundController();
-                }
-            }
-        }
-        return handlerMapping.get().getHandler(request);
+    private Object getNotFoundController() throws ClassNotFoundException {
+        final HandlerMapping handlerMapping = mappings.stream()
+                .filter(mapping -> mapping instanceof ManualHandlerMapping)
+                .findFirst()
+                .orElseThrow(ClassNotFoundException::new);
+        final ManualHandlerMapping manualHandlerMapping = (ManualHandlerMapping) handlerMapping;
+        return manualHandlerMapping.getNotFoundController();
     }
 }
