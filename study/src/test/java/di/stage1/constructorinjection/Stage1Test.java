@@ -1,9 +1,9 @@
 package di.stage1.constructorinjection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import di.User;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage1Test {
 
@@ -16,7 +16,7 @@ class Stage1Test {
     void stage1() {
         final var user = new User(1L, "gugu");
 
-        final var userDao = new UserDao();
+        final var userDao = new UserDaoImpl();
 
         /**
          * 클래스 내부에서 직접 객체를 생성하지 말고 외부에서 객체를 전달 받도록 수정했다.
