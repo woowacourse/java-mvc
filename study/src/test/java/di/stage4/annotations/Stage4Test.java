@@ -1,9 +1,10 @@
 package di.stage4.annotations;
 
-import di.User;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import di.User;
+import java.lang.reflect.InvocationTargetException;
+import org.junit.jupiter.api.Test;
 
 class Stage4Test {
 
@@ -13,7 +14,8 @@ class Stage4Test {
      * 해당 역할은 ClassPathScanner 클래스에게 맡기자.
      */
     @Test
-    void stage4() {
+    void stage4()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         final var user = new User(1L, "gugu");
 
         final var diContext = createDIContainer();
@@ -24,7 +26,8 @@ class Stage4Test {
         assertThat(actual.getAccount()).isEqualTo("gugu");
     }
 
-    private static DIContainer createDIContainer() {
+    private static DIContainer createDIContainer()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         final var rootPackageName = Stage4Test.class.getPackage().getName();
         return DIContainer.createContainerForPackage(rootPackageName);
     }
