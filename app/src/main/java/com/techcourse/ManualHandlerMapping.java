@@ -25,7 +25,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
