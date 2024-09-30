@@ -1,9 +1,9 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.view.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
-import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.view.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;

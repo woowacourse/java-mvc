@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.view.impl;
 
 public class JsonViewRenderFailedException extends RuntimeException {
 
