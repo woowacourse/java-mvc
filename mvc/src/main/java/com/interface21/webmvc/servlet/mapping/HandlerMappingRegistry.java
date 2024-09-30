@@ -14,7 +14,9 @@ public class HandlerMappingRegistry {
 
 	public HandlerMappingRegistry(Object ... basePackages) {
 		this.handlerMappings = new ArrayList<>();
-		this.handlerMappings.add(new AnnotationHandlerMapping(basePackages));
+		AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackages);
+		annotationHandlerMapping.initialize();
+		this.handlerMappings.add(annotationHandlerMapping);
 	}
 
 	public HandlerMapping getHandlerMapping(HttpServletRequest request) {

@@ -1,7 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import static com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +24,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         log.info("Initializing AnnotationHandlerMapping...");
-        handlerExecutions.putAll(scan(basePackage));
+        handlerExecutions.putAll(ControllerScanner.scan(basePackage));
     }
 
     public Object getHandler(final HttpServletRequest request) {
