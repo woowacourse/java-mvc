@@ -3,7 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMapping;
-import com.techcourse.controller.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

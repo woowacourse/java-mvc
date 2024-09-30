@@ -20,6 +20,7 @@ public class LoginController {
     private static final String ACCOUNT = "account";
     private static final String PASSWORD = "password";
     public static final String LOGIN_PAGE = "/login.jsp";
+    public static final String LOGOUT_REDIRECT = "redirect:/";
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginPage(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
@@ -58,5 +59,13 @@ public class LoginController {
             return LOGIN_SUCCESS_REDIRECT;
         }
         return LOGIN_FAILED_REDIRECT;
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) {
+        final var session = req.getSession();
+        session.removeAttribute(UserSession.SESSION_KEY);
+        JspView jspView = new JspView(LOGOUT_REDIRECT);
+        return new ModelAndView(jspView);
     }
 }
