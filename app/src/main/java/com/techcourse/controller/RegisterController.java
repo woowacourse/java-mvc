@@ -1,4 +1,4 @@
-package com.techcourse.controller.annotation;
+package com.techcourse.controller;
 
 import java.util.NoSuchElementException;
 
@@ -10,16 +10,14 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotatedController;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 
 @Controller
-public class RegisterController implements AnnotatedController {
+public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    @Override
     public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(3,
                 req.getParameter("account"),
@@ -34,7 +32,6 @@ public class RegisterController implements AnnotatedController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    @Override
     public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
         final User user = InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .orElseThrow(() -> new NoSuchElementException("account가 존재하지 않습니다."));

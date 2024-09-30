@@ -19,7 +19,6 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -36,12 +35,11 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappingRegistry = new HandlerMappingRegistry();
         try {
-            handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
             handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
         } catch (Exception e) {
             throw new RuntimeException("HandlerMapping 초기화 실패 : {}", e);
         }
-        handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter()));
+        handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(new AnnotationHandlerAdapter()));
     }
 
     @Override
