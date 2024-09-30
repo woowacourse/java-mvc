@@ -40,8 +40,9 @@
 
 **JsonView**
 
-- [ ] ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE
+- [x] ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE
     - 테스트에서 인식을 못함
+    - CharacterEncodingFilter에 추가
 - [x] model에 데이터가 1개
     - 값을 그대로 반환
 - [x] model에 데이터가 2개 이상
@@ -49,6 +50,6 @@
 
 **Legacy MVC 제거**
 
-- [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
-- [ ] asis 패키지에 있는 레거시 코드를 삭제
-- [ ] DispatcherServlet mvc 패키지로 이동.
+- [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+- [x] asis 패키지에 있는 레거시 코드를 삭제
+- [x] DispatcherServlet mvc 패키지로 이동.

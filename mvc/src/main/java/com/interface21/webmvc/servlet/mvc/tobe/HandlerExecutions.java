@@ -31,9 +31,6 @@ public class HandlerExecutions {
     }
 
     private void mappingHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
-        if (handlerExecutions.containsKey(handlerKey)) {
-            log.info("{}", handlerKey);
-        }
         handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
     }
 

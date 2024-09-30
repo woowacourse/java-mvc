@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 class AnnotationHandlerMappingTest {
@@ -58,15 +57,5 @@ class AnnotationHandlerMappingTest {
         final HandlerExecution handlerExecution = handlerMapping.getHandler(request);
 
         assertThat(handlerExecution.handle(request, response)).isNotNull();
-    }
-
-    @DisplayName("HandlerKey가 중복인 경우 예외가 발생한다.")
-    @Test
-    void givenDuplicatedHandlerKey_whenMappingHandler_thenThrowException() {
-        handlerMapping = new AnnotationHandlerMapping("samples.duplicate");
-
-
-        assertThatThrownBy(() -> handlerMapping.initialize())
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }

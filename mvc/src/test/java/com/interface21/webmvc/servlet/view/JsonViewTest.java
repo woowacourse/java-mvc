@@ -40,7 +40,9 @@ class JsonViewTest {
 
         jsonView.render(model, request, response);
 
+
         String json = response.getContentAsString();
-        assertThat(json).isEqualTo("낙낙");
+
+        assertThat(json).isEqualTo("\"낙낙\"");
     }
 }
