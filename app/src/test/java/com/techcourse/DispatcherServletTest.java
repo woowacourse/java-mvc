@@ -77,18 +77,6 @@ class DispatcherServletTest {
     }
 
     @Test
-    void request_URI가_null이면_예외_발생() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn(null);
-
-        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("request URI는 null일 수 없습니다.");
-    }
-
-    @Test
     void 지원하는_method가_없으면_예외_발생() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -99,6 +87,18 @@ class DispatcherServletTest {
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessage("지원하지 않는 request method 입니다.");
+    }
+
+    @Test
+    void request_URI가_null이면_예외_발생() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn(null);
+
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("request URI와 http method는 null일 수 없습니다.");
     }
 
     @Test
