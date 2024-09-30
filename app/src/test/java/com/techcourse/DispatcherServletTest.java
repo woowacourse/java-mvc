@@ -44,11 +44,12 @@ class DispatcherServletTest {
     }
 
     @Test
-    void legacy_MVC_기반_로그인_뷰_페이지_반환() throws ServletException {
+    void annotation_MVC_기반_로그인_뷰_페이지_반환() throws ServletException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getMethod()).thenReturn("GET");
         when(request.getSession()).thenReturn(mock());
         when(request.getRequestDispatcher(any())).thenReturn(mock());
 
