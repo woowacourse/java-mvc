@@ -24,7 +24,7 @@
 
 ## 3. JSON View 구현
 
-- [ ] JsonView 클래스 구현
+- [x] JsonView 클래스 구현
     - JSON 자바 객체 변환 시, Jackson 라이브러리를 사용한다.
     - JSON으로 응답 시, `ContentType` -> `MediaType.APPLICATION_JSON_UTF8_VALUE`으로 변환한다.
     - model 데이터 개수 1개면 값 그대로 반환, 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환한다.
