@@ -41,9 +41,10 @@
 **JsonView**
 
 - [ ] ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE
-- [ ] model에 데이터가 1개
+    - 테스트에서 인식을 못함
+- [x] model에 데이터가 1개
     - 값을 그대로 반환
-- [ ] model에 데이터가 2개 이상
+- [x] model에 데이터가 2개 이상
     - Map 형태 그대로 JSON으로 변환해서 반환
 
 **Legacy MVC 제거**
