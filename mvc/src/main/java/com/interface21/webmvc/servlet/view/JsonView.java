@@ -35,7 +35,7 @@ public class JsonView implements View {
 
         ObjectMapper objectMapper = new ObjectMapper();
         if (results.size() == 1) {
-            return (String) results.values().iterator().next();
+            return String.valueOf(results.values().iterator().next());
         }
 
         return objectMapper.writeValueAsString(results);
