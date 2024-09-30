@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,6 @@ class AnnotationHandlerMappingTest {
 
         // then
         Map<HandlerKey, HandlerExecution> handlerExecutions = (Map<HandlerKey, HandlerExecution>) field.get(handlerMapping);
-       assertThat(handlerExecutions.keySet()).containsAnyElementsOf(handlerKeys);
+       Assertions.assertThat(handlerExecutions.keySet()).containsAnyElementsOf(handlerKeys);
     }
 }

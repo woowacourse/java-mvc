@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.lang.reflect.Method;
 import org.assertj.core.api.Assertions;
