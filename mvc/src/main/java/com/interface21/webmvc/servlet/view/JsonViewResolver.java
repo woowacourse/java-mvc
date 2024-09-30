@@ -5,15 +5,11 @@ import com.interface21.webmvc.servlet.ViewResolver;
 
 public class JsonViewResolver implements ViewResolver {
 
-    private static final String PREFIX = "json:";
+    private static final String VIEW_NAME = "jsonView";
 
     @Override
     public View resolveViewName(String viewName) {
-        if (viewName == null) {
-            throw new NullPointerException("viewName의 값이 null입니다.");
-        }
-
-        if (viewName.startsWith(PREFIX)) {
+        if (VIEW_NAME.equals(viewName)) {
             return new JsonView();
         }
         return null;

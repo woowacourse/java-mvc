@@ -20,7 +20,7 @@ public class UserController {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView("json:");
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
         final User user = InMemoryUserRepository.findByAccount(account)
                 .orElseThrow();
 

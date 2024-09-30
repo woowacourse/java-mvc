@@ -41,7 +41,7 @@ class ViewResolversTest {
     void givenViewName_thenFindView() {
         ViewResolver jsonViewResolver = new JsonViewResolver();
         viewResolvers.addViewResolvers(jsonViewResolver);
-        View view = viewResolvers.resolveViewName("json:api");
+        View view = viewResolvers.resolveViewName("jsonView");
 
         assertThat(view).isInstanceOf(JsonView.class);
     }
