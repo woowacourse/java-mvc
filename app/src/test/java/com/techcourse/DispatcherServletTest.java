@@ -46,7 +46,7 @@ class DispatcherServletTest {
         dispatcherServlet.init();
 
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/login/view");
+        when(request.getRequestURI()).thenReturn("/login");
 
         dispatcherServlet.service(request, response);
 
