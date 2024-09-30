@@ -110,7 +110,9 @@ class AnnotationHandlerMappingTest {
     @DisplayName("중복된 핸들러가 존재하면 예외가 발생한다.")
     @Test
     void duplicatedHandler() {
-        assertThatThrownBy(handlerMapping::initialize)
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        annotationHandlerMapping.initialize();
+        assertThatThrownBy(annotationHandlerMapping::initialize)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }
