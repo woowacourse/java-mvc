@@ -8,7 +8,6 @@ import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.adapter.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.mapping.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
