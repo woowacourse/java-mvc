@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import com.interface21.webmvc.servlet.mvc.legacy.Controller;
 
+@Deprecated
 class ManualHandlerMappingTest {
 
     @Nested
