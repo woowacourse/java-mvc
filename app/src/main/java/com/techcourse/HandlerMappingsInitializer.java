@@ -10,7 +10,6 @@ public class HandlerMappingsInitializer {
 
     public HandlerMappings initialize() {
         HandlerMappings handlerMappings = new HandlerMappings();
-        handlerMappings.addHandlerMapping(new ManualHandlerMapping());
         handlerMappings.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.initialize();
         return handlerMappings;
