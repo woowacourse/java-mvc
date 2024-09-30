@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,16 +23,17 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionAdapter());
     }
 
     @Test
-    void annotation_MVC_기반_회원가입_뷰_페이지_반환() throws ServletException {
+    void 매핑되는_URI가_있으면_페이지_반환() throws ServletException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
-        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getMethod()).thenReturn("POST");
         when(request.getRequestDispatcher(any())).thenReturn(mock());
 
         ArgumentCaptor<String> viewNameCaptor = ArgumentCaptor.forClass(String.class);
@@ -40,27 +43,7 @@ class DispatcherServletTest {
         verify(request).getRequestDispatcher(viewNameCaptor.capture());
         String actual = viewNameCaptor.getValue();
 
-        assertThat(actual).isEqualTo("/register.jsp");
-    }
-
-    @Test
-    void annotation_MVC_기반_로그인_뷰_페이지_반환() throws ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/login");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getSession()).thenReturn(mock());
-        when(request.getRequestDispatcher(any())).thenReturn(mock());
-
-        ArgumentCaptor<String> viewNameCaptor = ArgumentCaptor.forClass(String.class);
-
-        dispatcherServlet.service(request, response);
-
-        verify(request).getRequestDispatcher(viewNameCaptor.capture());
-        String actual = viewNameCaptor.getValue();
-
-        assertThat(actual).isEqualTo("/login.jsp");
+        assertThat(actual).isEqualTo("/post-test.jsp");
     }
 
     @Test
@@ -81,7 +64,7 @@ class DispatcherServletTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("invalid-method");
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
