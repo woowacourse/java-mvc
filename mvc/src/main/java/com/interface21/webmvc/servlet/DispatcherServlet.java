@@ -68,8 +68,4 @@ public class DispatcherServlet extends HttpServlet {
         View view = modelAndView.getView();
         view.render(model, request, response);
     }
-
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappingRegistry.addHandlerMapping(handlerMapping);
-    }
 }
