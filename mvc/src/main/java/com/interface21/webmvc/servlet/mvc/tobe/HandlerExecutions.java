@@ -33,7 +33,6 @@ public class HandlerExecutions {
     private void mappingHandler(HandlerKey handlerKey, HandlerExecution handlerExecution) {
         if (handlerExecutions.containsKey(handlerKey)) {
             log.info("{}", handlerKey);
-            throw new IllegalArgumentException("Handler key is Duplicated.");
         }
         handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
     }
