@@ -15,7 +15,7 @@ public class JsonView implements View {
         ObjectMapper objectMapper = new ObjectMapper();
         if (model.size() == 1) {
             Object value = model.values().iterator().next();
-            objectMapper.writeValue(response.getWriter(), value);
+            response.getWriter().write(String.valueOf(value));
             return;
         }
         String body = objectMapper.writeValueAsString(model);
