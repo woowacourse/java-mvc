@@ -54,9 +54,9 @@ public class AnnotationHandlerMapping implements ServletRequestHandler {
         Reflections reflections = new Reflections(basePackages);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllerClasses) {
+            log.info("Initialized AnnotationHandlerMapping! - {}", controller);
             addAnnotatedHandlerExecutions(controller);
         }
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addAnnotatedHandlerExecutions(Class<?> controller) {
