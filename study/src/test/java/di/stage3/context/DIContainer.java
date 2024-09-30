@@ -1,9 +1,8 @@
 package di.stage3.context;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,45 +13,46 @@ class DIContainer {
 
     private final Set<Object> beans;
 
-    public DIContainer(final Set<Class<?>> classes) throws ReflectiveOperationException {
-        this.beans = createBeans(classes);
-        this.beans.forEach(this::setFields);
+    public DIContainer(final Set<Class<?>> classes) throws Exception {
+        this.beans = new LinkedHashSet<>();
+        initializeBeans(classes);
     }
 
-    private Set<Object> createBeans(Set<Class<?>> classes) throws ReflectiveOperationException {
-        Set<Object> createdBeans = new HashSet<>();
+    private void initializeBeans(Set<Class<?>> classes) throws Exception {
         for (Class<?> clazz : classes) {
-            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            Constructor<?> constructor = Arrays.stream(clazz.getDeclaredConstructors())
+                    .filter(this::isConstructorEligible)
+                    .findFirst()
+                    .orElseThrow(IllegalStateException::new);
+
             constructor.setAccessible(true);
-            Object instance = constructor.newInstance();
-            createdBeans.add(instance);
-        }
-        return createdBeans;
-    }
-
-    private void setFields(Object bean) {
-        for (Field field : bean.getClass().getDeclaredFields()) {
-            Optional<Object> dependency = findBean(field.getType());
-            dependency.ifPresent(value -> {
-                try {
-                    field.setAccessible(true);
-                    field.set(bean, value);
-                } catch (IllegalAccessException e) {
-                    throw new IllegalStateException(e);
-                }
-            });
+            Object[] parameters = resolveConstructorParameters(constructor.getParameterTypes());
+            beans.add(constructor.newInstance(parameters));
         }
     }
 
-    private Optional<Object> findBean(Class<?> type) {
-        return beans.stream()
-                .filter(type::isInstance)
-                .findFirst();
+    private boolean isConstructorEligible(Constructor<?> constructor) {
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        return countMatchedParameters(parameterTypes) == parameterTypes.length;
+    }
+
+    private int countMatchedParameters(Class<?>[] parameterTypes) {
+        return (int) Arrays.stream(parameterTypes)
+                .filter(parameterType -> getBean(parameterType) != null)
+                .count();
+    }
+
+    private Object[] resolveConstructorParameters(Class<?>[] parameterTypes) {
+        return Arrays.stream(parameterTypes)
+                .map(this::getBean)
+                .toArray();
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
-        Optional<Object> bean = findBean(aClass);
-        return (T) bean.orElseThrow(IllegalStateException::new);
+        return (T) beans.stream()
+                .filter(bean -> aClass.isAssignableFrom(bean.getClass()))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
