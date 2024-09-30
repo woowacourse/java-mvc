@@ -1,11 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.view.JsonView;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +27,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void get_jspView() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -35,11 +38,14 @@ class AnnotationHandlerMappingTest {
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertAll(
+                () -> assertThat(modelAndView.getView()).isInstanceOf(JspView.class),
+                () -> assertThat(modelAndView.getObject("id")).isEqualTo("gugu")
+        );
     }
 
     @Test
-    void post() throws Exception {
+    void post_jspView() throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -50,7 +56,28 @@ class AnnotationHandlerMappingTest {
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertAll(
+                () -> assertThat(modelAndView.getView()).isInstanceOf(JspView.class),
+                () -> assertThat(modelAndView.getObject("id")).isEqualTo("gugu")
+        );
+    }
+
+    @Test
+    void api_jsonView() throws Exception {
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/api/account-test");
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getParameter("account")).thenReturn("jojo");
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
+
+        assertAll(
+                () -> assertThat(modelAndView.getView()).isInstanceOf(JsonView.class),
+                () -> assertThat(modelAndView.getObject("account")).isEqualTo("jojo")
+        );
     }
 
     @ParameterizedTest
@@ -66,6 +93,9 @@ class AnnotationHandlerMappingTest {
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
-        assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
+        assertAll(
+                () -> assertThat(modelAndView.getView()).isInstanceOf(JspView.class),
+                () -> assertThat(modelAndView.getObject("id")).isEqualTo("gugu")
+        );
     }
 }
