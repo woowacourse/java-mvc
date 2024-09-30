@@ -4,8 +4,8 @@ import com.interface21.webmvc.servlet.HandlerAdaptor;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.adater.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerAdaptor() {
         this.handlerAdaptors = List.of(
                 new ManualHandlerAdaptor(),
-                new AnnotationHandlerAdaptor()
+                new AnnotationHandlerAdapter()
         );
     }
 
