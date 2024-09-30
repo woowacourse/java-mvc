@@ -43,7 +43,7 @@ public class LoginController {
         return new ModelAndView(view);
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView render(HttpServletRequest req, HttpServletResponse res) {
         View indexView = new JspView("redirect:/index.jsp");
         View loginView = new JspView("/login.jsp");
