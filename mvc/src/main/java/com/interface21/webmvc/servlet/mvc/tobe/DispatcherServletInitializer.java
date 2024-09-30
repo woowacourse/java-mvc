@@ -1,8 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.WebApplicationInitializer;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +14,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String DEFAULT_PACKAGE = "com";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
@@ -38,11 +37,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private void addHandlerAdapter(DispatcherServlet dispatcherServlet) {
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
     }
 
     private void addHandlerMapping(DispatcherServlet dispatcherServlet) {
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(DEFAULT_PACKAGE));
     }
 }
