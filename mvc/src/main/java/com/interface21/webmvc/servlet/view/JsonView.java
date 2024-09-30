@@ -23,7 +23,7 @@ public class JsonView implements View {
 
     private Object getRenderObject(Map<String, ?> model) {
         if (model.size() == 1) {
-            return model.entrySet().iterator().next();
+            return model.values().iterator().next();
         }
         return model;
     }
