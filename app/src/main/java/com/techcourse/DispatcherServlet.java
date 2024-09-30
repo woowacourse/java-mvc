@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
-        final Object handler = handlerManager.findHandler(request);
+        final Object handler = handlerManager.getHandler(request);
         final ModelAndView modelAndView = processHandler(request, response, handler);
         try {
             modelAndView.render(request, response);

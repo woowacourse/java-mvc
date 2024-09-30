@@ -19,7 +19,7 @@ public class HandlerManager {
         mappings.forEach(HandlerMapping::initialize);
     }
 
-    public Object findHandler(final HttpServletRequest request) {
+    public Object getHandler(final HttpServletRequest request) {
         final Optional<HandlerMapping> handlerMapping = mappings.stream()
                 .filter(mapping -> mapping.hasHandler(request))
                 .findFirst();

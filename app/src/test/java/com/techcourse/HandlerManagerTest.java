@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,19 +36,19 @@ public class HandlerManagerTest {
         when(request.getRequestURI()).thenReturn("/none");
         when(request.getMethod()).thenReturn("GET");
 
-        final Object handler = handlerManager.findHandler(request);
+        final Object handler = handlerManager.getHandler(request);
         assertThat(handler).isExactlyInstanceOf(NotFoundViewController.class);
     }
 
     @DisplayName("요청에 맞는 HandlerExecution 을 반환한다.")
     @Test
-    void findHandlerExecution() {
+    void getHandlerExecution() {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final Object handler = handlerManager.findHandler(request);
+        final Object handler = handlerManager.getHandler(request);
         assertThat(handler).isExactlyInstanceOf(HandlerExecution.class);
     }
 
@@ -61,7 +60,7 @@ public class HandlerManagerTest {
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
 
-        final Object handler = handlerManager.findHandler(request);
+        final Object handler = handlerManager.getHandler(request);
         assertThat(handler).isExactlyInstanceOf(LoginViewController.class);
     }
 }
