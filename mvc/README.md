@@ -35,3 +35,19 @@
     - [x] HandlerMapping으로 찾은 컨트롤러 실행
 - [x] 컨트롤러 인터페이스 기반과 어노테이션 기반이 겹치면
     - 핸들러에 등록한 순서대로 매핑
+
+### 3단계
+
+**JsonView**
+
+- [ ] ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE
+- [ ] model에 데이터가 1개
+    - 값을 그대로 반환
+- [ ] model에 데이터가 2개 이상
+    - Map 형태 그대로 JSON으로 변환해서 반환
+
+**Legacy MVC 제거**
+
+- [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+- [ ] asis 패키지에 있는 레거시 코드를 삭제
+- [ ] DispatcherServlet mvc 패키지로 이동.
