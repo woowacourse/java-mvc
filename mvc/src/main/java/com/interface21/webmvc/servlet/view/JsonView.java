@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.view;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,8 +44,7 @@ public class JsonView implements View {
 
     private void write(HttpServletResponse response, Object writeValue) {
         try {
-            response.setCharacterEncoding(ENCODING_TYPE);
-            response.setContentType(CONTENT_TYPE);
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
             response.getWriter().write(writeValue.toString());
         } catch (IOException e) {
