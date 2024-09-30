@@ -44,7 +44,7 @@ class DispatcherServletTest {
 		assertThat(response.getStatus()).isEqualTo(302);
 	}
 
-	@DisplayName("사용자 정보가 JsonView에서 JSON으로 변환된다.")
+	@DisplayName("Model에 하나의 값이 저장된 경우 하나의 데이터만 반환된다.")
 	@Test
 	void convertJsonInJsonView() throws UnsupportedEncodingException {
 		request.setMethod("GET");
@@ -57,6 +57,7 @@ class DispatcherServletTest {
 			exception.printStackTrace();
 		}
 
-		assertThat(response.getContentAsString()).isNotNull();
+		assertThat(response.getContentAsString()).isEmpty();
+		assertThat(request.getAttribute("user")).isNotNull();
 	}
 }
