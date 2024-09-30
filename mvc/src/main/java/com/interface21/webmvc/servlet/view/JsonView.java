@@ -13,22 +13,28 @@ public class JsonView implements View {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final Map<String, Object> data;
+
+    public JsonView(final Map<String, Object> data) {
+        this.data = data;
+    }
+
     @Override
     public void render(
             final Map<String, ?> model,
             final HttpServletRequest request,
-            HttpServletResponse response
+            final HttpServletResponse response
     ) {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        handleResponse(response, model);
+        handleResponse(response);
     }
 
-    private void handleResponse(final HttpServletResponse response, final Map<String, ?> model) {
-        if (model.size() == 1) {
-            model.values().forEach(data -> sendResponse(response, data));
+    private void handleResponse(final HttpServletResponse response) {
+        if (data.size() == 1) {
+            data.values().forEach(data -> sendResponse(response, data));
             return;
         }
-        sendResponse(response, model);
+        sendResponse(response, data);
     }
 
     private void sendResponse(final HttpServletResponse response, final Object data) {

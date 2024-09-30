@@ -1,19 +1,18 @@
 package com.techcourse.controller;
 
+import java.util.Map;
 import java.util.Optional;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class LoginController {
@@ -21,35 +20,29 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView getLoginPage(final HttpServletRequest request, final HttpServletResponse response) {
+    public String getLoginPage(final HttpServletRequest request, final Map<String, Object> model) {
         return findUserFromSession(request).map(user -> {
             log.info("logged in {}", user.getAccount());
-            return convertModelAndView("redirect:/index.jsp");
-        }).orElseGet(() -> convertModelAndView("/login.jsp"));
+            return "redirect:/index.jsp";
+        }).orElseGet(() -> "/login.jsp");
     }
 
     private Optional<User> findUserFromSession(final HttpServletRequest request) {
         return UserSession.getUserFrom(request.getSession());
     }
 
-    private ModelAndView convertModelAndView(final String pageUri) {
-        final JspView view = new JspView(pageUri);
-        return new ModelAndView(view);
-    }
-
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
+    public String login(final HttpServletRequest request, final Map<String, Object> model) {
         if (checkLogin(request)) {
-            return convertModelAndView("redirect:/index.jsp");
+            return "redirect:/index.jsp";
         }
 
         return findUserByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    final String redirectPageUri = login(request, user);
-                    return convertModelAndView(redirectPageUri);
+                    return login(request, user);
                 })
-                .orElseGet(() -> convertModelAndView("redirect:/401.jsp"));
+                .orElseGet(() -> "redirect:/401.jsp");
     }
 
     private boolean checkLogin(final HttpServletRequest req) {

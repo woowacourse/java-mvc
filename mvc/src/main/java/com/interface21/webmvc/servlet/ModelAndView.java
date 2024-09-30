@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
@@ -11,12 +10,12 @@ public class ModelAndView {
 
     public ModelAndView(final View view) {
         this.view = view;
-        this.model = new HashMap<>();
+        this.model = Collections.emptyMap();
     }
 
-    public ModelAndView addObject(final String attributeName, final Object attributeValue) {
-        model.put(attributeName, attributeValue);
-        return this;
+    public ModelAndView(final View view, final Map<String, Object> model) {
+        this.view = view;
+        this.model = model;
     }
 
     public Object getObject(final String attributeName) {
