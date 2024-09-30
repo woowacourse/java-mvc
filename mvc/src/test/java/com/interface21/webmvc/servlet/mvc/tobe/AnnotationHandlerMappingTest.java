@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 
 class AnnotationHandlerMappingTest {
 
@@ -55,14 +58,14 @@ class AnnotationHandlerMappingTest {
 
     @DisplayName("request method가 없으면 모든 메서드를 등록한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"POST", "GET", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"})
-    void allRequestMethod(String method) throws Exception {
+    @EnumSource(RequestMethod.class)
+    void allRequestMethod(RequestMethod method) throws Exception {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("method")).thenReturn(method);
         when(request.getRequestURI()).thenReturn("/method-test");
-        when(request.getMethod()).thenReturn(method);
+        when(request.getMethod()).thenReturn(method.name());
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
@@ -83,5 +86,14 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("emptyUriTest")).isEqualTo("success");
+    }
+
+    @DisplayName("중복된 핸들러가 존재하면 예외가 발생한다.")
+    @Test
+    void duplicatedHandler() {
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        annotationHandlerMapping.initialize();
+        assertThatThrownBy(annotationHandlerMapping::initialize)
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

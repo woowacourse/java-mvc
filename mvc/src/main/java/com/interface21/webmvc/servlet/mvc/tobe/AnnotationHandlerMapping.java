@@ -15,7 +15,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
@@ -79,13 +80,13 @@ public class AnnotationHandlerMapping {
 
     private void checkDuplicatedHandlerKey(final HandlerKey handlerKey) {
         if (handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalStateException("중복된 handlerKey가 존재합니다");
+            throw new IllegalArgumentException("중복된 handlerKey가 존재합니다");
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
+        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        return handlerExecutions.get(key);
     }
 }

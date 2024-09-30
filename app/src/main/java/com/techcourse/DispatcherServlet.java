@@ -8,48 +8,62 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerManager handlerManager;
 
     public DispatcherServlet() {
+        handlerManager = new HandlerManager(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping(BASE_PACKAGE)
+        );
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerManager.initialize();
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            final Object handler = handlerManager.getHandler(request);
+            final ModelAndView modelAndView = processHandler(request, response, handler);
+            modelAndView.render(request, response);
+        } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private ModelAndView processHandler(final HttpServletRequest request, final HttpServletResponse response,
+                                        final Object handler) throws Exception {
+        if (handler instanceof Controller) {
+            return processController(request, response, (Controller) handler);
         }
+        return processHandlerExecute(request, response, (HandlerExecution) handler);
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private ModelAndView processController(final HttpServletRequest request, final HttpServletResponse response,
+                                           final Controller handler) throws Exception {
+        final String viewName = handler.execute(request, response);
+        return new ModelAndView(new JspView(viewName));
+    }
+
+    private ModelAndView processHandlerExecute(final HttpServletRequest request, final HttpServletResponse response,
+                                               final HandlerExecution handler) throws Exception {
+        return handler.handle(request, response);
     }
 }
