@@ -12,6 +12,9 @@
 ### 2단계
 * [x] Legacy MVC와 @MVC 통합하기 위한 적절한 추상화
 
+### 3단계
+* [ ] JsonView 클래스 구현
+
 ## 서블릿 학습 테스트
 
 * 특정 path로 요청을 n번 보냈을 때, 시작할 때 init() 호출, (doFilter(), service() n번 호출), destroy() 호출
