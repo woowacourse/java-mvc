@@ -22,23 +22,8 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void setUp() {
         handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
     }
-
-//    @DisplayName("ManualHandlerMapping을 찾을 수 있다.")
-//    @Test
-//    void getHandler_Manual() {
-//        HttpServletRequest request = mock(HttpServletRequest.class);
-//
-//        doReturn("/login/view")
-//                .when(request).getRequestURI();
-//        doReturn("GET")
-//                .when(request).getMethod();
-//
-//        assertThat(handlerMappingRegistry.getHandler(request))
-//                .containsInstanceOf(LoginViewController.class);
-//    }
 
     @DisplayName("AnnotationHandlerMapping을 찾을 수 있다.")
     @Test

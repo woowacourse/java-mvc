@@ -19,15 +19,7 @@ class HandlerAdapterRegistryTest {
     void setUp() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
     }
-
-//    @DisplayName("ManualHandlerAdapter를 찾을 수 있다.")
-//    @Test
-//    void getHandlerAdapter_Manual() throws Exception {
-//        assertThat(handlerAdapterRegistry.getHandlerAdapter(new LoginController()))
-//                .isExactlyInstanceOf(ManualHandlerAdapter.class);
-//    }
 
     @DisplayName("AnnotationHandlerAdapter를 찾을 수 있다.")
     @Test
