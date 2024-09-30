@@ -16,7 +16,14 @@ public class JsonView implements View {
     private final Map<String, Object> data;
 
     public JsonView(final Map<String, Object> data) {
+        validateDataIsNull(data);
         this.data = data;
+    }
+
+    private void validateDataIsNull(final Map<String, Object> data) {
+        if (data == null) {
+            throw new IllegalArgumentException("data로 null을 입력할 수 없습니다.");
+        }
     }
 
     @Override
