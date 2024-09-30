@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import samples.TestController;
 import java.lang.reflect.Method;
 
-class HandlerTest {
+class HandlerExecutionTest {
 
     @DisplayName("핸들러의 URL 반환 성공")
     @Test
@@ -18,10 +18,10 @@ class HandlerTest {
         TestController newInstance = TestController.class.getConstructor().newInstance();
         Method method = TestController.class.getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
 
-        Handler handler = new Handler(newInstance, method);
+        HandlerExecution handlerExecution = new HandlerExecution(newInstance, method);
 
         // when & then
-        Assertions.assertThat(handler.getUrl()).isEqualTo(TestController.GET_URL);
+        Assertions.assertThat(handlerExecution.getUrl()).isEqualTo(TestController.GET_URL);
     }
 
     @DisplayName("핸들러의 RequestMethod 반환 성공")
@@ -32,9 +32,9 @@ class HandlerTest {
         TestController newInstance = TestController.class.getConstructor().newInstance();
         Method method = TestController.class.getDeclaredMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
 
-        Handler handler = new Handler(newInstance, method);
+        HandlerExecution handlerExecution = new HandlerExecution(newInstance, method);
 
         // when & then
-        Assertions.assertThat(handler.getRequestMethods()).isEqualTo(expectedRequestMethod);
+        Assertions.assertThat(handlerExecution.getRequestMethods()).isEqualTo(expectedRequestMethod);
     }
 }

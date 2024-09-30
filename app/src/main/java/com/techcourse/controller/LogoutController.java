@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpSession;
 public class LogoutController implements Controller {
 
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public String execute(HttpServletRequest req, HttpServletResponse res) {
         HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return "redirect:/";
