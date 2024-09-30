@@ -30,7 +30,7 @@ class HandlerAdapterRegistryTest {
     @DisplayName("핸들러를 처리할 수 있는 핸들러 어댑터가 없다면 예외가 발생한다.")
     void throw_exception_when_cant_handle() {
         // given
-        final var registry = new HandlerAdapterRegistry(List.of(new ManualHandlerAdapter()));
+        final var registry = new HandlerAdapterRegistry(List.of());
         HandlerExecution handlerExecution = new HandlerExecution(new TestController(), null);
 
         // when & then
