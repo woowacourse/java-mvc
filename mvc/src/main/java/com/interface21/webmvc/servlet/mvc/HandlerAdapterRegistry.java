@@ -3,6 +3,8 @@ package com.interface21.webmvc.servlet.mvc;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+
 public class HandlerAdapterRegistry {
 
     private final List<HandlerAdapter> handlerAdapters;
@@ -14,7 +16,6 @@ public class HandlerAdapterRegistry {
 
     private void initialize() {
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
-        handlerAdapters.add(new ControllerHandlerAdapter());
     }
 
     public HandlerAdapter getHandlerAdapter(final Object handler) {
