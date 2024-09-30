@@ -38,13 +38,14 @@ class AnnotationUtilsTest {
 
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
+    @B
+    @MetaAnnotation
     private @interface A {
     }
 
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     @A
-    @MetaAnnotation
     private @interface B {
     }
 
