@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ class JspViewTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         String viewName = "redirect:/redirect-url";
-        JspView jspView = new JspView(viewName);
+        View jspView = new JspView(viewName);
 
         // when
         jspView.render(Collections.emptyMap(), request, response);
@@ -40,7 +41,7 @@ class JspViewTest {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
 
         Map<String, Object> model = Map.of("id", 1L, "name", "prin");
-        JspView jspView = new JspView("viewName");
+        View jspView = new JspView("viewName");
 
         // when
         jspView.render(model, request, response);

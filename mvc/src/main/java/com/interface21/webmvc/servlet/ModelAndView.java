@@ -30,4 +30,9 @@ public class ModelAndView {
     public View getView() {
         return view;
     }
+
+    @Override
+    public String toString() {
+        return "view=%s, model=%s".formatted(view, model);
+    }
 }

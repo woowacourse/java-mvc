@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class AnnotationHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private HandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
