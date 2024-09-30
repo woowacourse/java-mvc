@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappings.getHandler(request);
             final var modelAndView = handlerAdapters.handle(request, response, handler);
-            modelAndView.render(Map.of(), request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

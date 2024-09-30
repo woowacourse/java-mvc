@@ -21,7 +21,7 @@ public class ModelAndView {
         return this;
     }
 
-    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+    public void render(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         view.render(model, request, response);
     }
