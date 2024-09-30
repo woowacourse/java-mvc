@@ -1,14 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +20,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final RequestMappingMethodFinder methodFinder = new RequestMappingMethodFinder();
+    private final HandlerKeyMapper handlerKeyMapper = new HandlerKeyMapper();
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -34,7 +33,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         controllers.keySet().forEach(controllerClass -> {
-            Set<Method> requestMappingMethods = getRequestMappingMethods(Set.of(controllerClass));
+            Set<Method> requestMappingMethods = methodFinder.getRequestMappingMethods(Set.of(controllerClass));
             processRequestMappingMethods(controllers, requestMappingMethods);
         });
 
@@ -48,33 +47,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         });
     }
 
-    private Set<Method> getRequestMappingMethods(Set<Class<?>> controllerClasses) {
-        Set<Method> requestMappingMethods = new HashSet<>();
-        for (Class<?> controllerClass : controllerClasses) {
-            requestMappingMethods.addAll(ReflectionUtils.getAllMethods(controllerClass,
-                ReflectionUtils.withAnnotation(RequestMapping.class)));
-        }
-        return requestMappingMethods;
-    }
-
     private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
-        String url = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method();
-
-        List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
+        List<HandlerKey> handlerKeys = handlerKeyMapper.mapHandlerKeys(requestMapping.value(), requestMapping.method());
         Object controllerInstance = controllers.get(method.getDeclaringClass());
 
         for (HandlerKey handlerKey : handlerKeys) {
             handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
         }
-    }
-
-    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
-        List<HandlerKey> handlerKeys = new ArrayList<>();
-        for (RequestMethod requestMethod : requestMethods) {
-            handlerKeys.add(new HandlerKey(url, requestMethod));
-        }
-        return handlerKeys;
     }
 
     @Override

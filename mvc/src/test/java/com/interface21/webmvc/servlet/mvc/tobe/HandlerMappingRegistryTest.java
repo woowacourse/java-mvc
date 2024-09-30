@@ -9,10 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.techcourse.ManualHandlerMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
+import support.ManualHandlerMapping;
+import support.asis.Controller;
 
 class HandlerMappingRegistryTest {
     HandlerMappingRegistry handlerMappingRegistry;

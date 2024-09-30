@@ -7,10 +7,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.techcourse.ManualHandlerMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import support.ManualHandlerMapping;
 
 class AnnotationHandlerAdapterTest {
 

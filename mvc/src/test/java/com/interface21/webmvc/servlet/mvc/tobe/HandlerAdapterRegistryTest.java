@@ -9,10 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.techcourse.ManualHandlerAdapter;
-import com.techcourse.ManualHandlerMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
+import support.ManualHandlerAdapter;
+import support.ManualHandlerMapping;
 
 class HandlerAdapterRegistryTest {
 
