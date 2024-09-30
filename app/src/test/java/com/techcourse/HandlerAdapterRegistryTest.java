@@ -1,7 +1,7 @@
 package com.techcourse;
 
-import com.techcourse.adapter.HandlerAdapter;
-import com.techcourse.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

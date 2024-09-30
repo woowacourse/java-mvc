@@ -1,4 +1,4 @@
-package com.techcourse.adapter;
+package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;

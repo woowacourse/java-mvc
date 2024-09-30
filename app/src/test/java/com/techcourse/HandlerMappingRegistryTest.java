@@ -1,7 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
