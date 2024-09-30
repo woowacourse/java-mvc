@@ -28,4 +28,19 @@ class JsonViewTest {
         String json = response.getContentAsString();
         assertThat(json).contains("\"name\":\"낙낙\"", "\"age\":20");
     }
+
+    @DisplayName("데이터가 1개라면 값을 반환한다.")
+    @Test
+    void renderWithOneData() throws Exception {
+        Map<String, ?> model = Map.of(
+                "name", "낙낙"
+        );
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        jsonView.render(model, request, response);
+
+        String json = response.getContentAsString();
+        assertThat(json).isEqualTo("낙낙");
+    }
 }
