@@ -36,10 +36,12 @@ public class JsonView implements View {
         ObjectMapper objectMapper = new ObjectMapper();
 
         if (parseResult.size() == 1) {
-            return (String) parseResult.values()
+            Object value = parseResult.values()
                     .stream()
                     .findFirst()
                     .orElse(null);
+
+            return objectMapper.writeValueAsString(value);
         }
 
         return objectMapper.writeValueAsString(parseResult);
