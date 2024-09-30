@@ -1,6 +1,7 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.adapter.impl.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.mapping.impl.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
@@ -38,7 +39,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     }
 
     private void addHandlerAdapter(DispatcherServlet dispatcherServlet) {
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     private void addHandlerMapping(DispatcherServlet dispatcherServlet) {
