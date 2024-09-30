@@ -14,18 +14,18 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import com.interface21.context.stereotype.Controller;
 
-import samples.TestController;
+import samples.TestAnnotationController;
 
 class ClassInstantiatorTest {
 
     @Test
     @DisplayName("클래스로부터 인스턴스 생성 성공")
     void Instantiate() {
-        final Object instance = ClassInstantiator.Instantiate(TestController.class);
+        final Object instance = ClassInstantiator.Instantiate(TestAnnotationController.class);
 
         assertAll(
                 () -> assertNotNull(instance),
-                () -> assertInstanceOf(TestController.class, instance)
+                () -> assertInstanceOf(TestAnnotationController.class, instance)
         );
     }
 

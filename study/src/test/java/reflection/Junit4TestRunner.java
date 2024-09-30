@@ -32,6 +32,5 @@ class Junit4TestRunner {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        ;
     }
 }
