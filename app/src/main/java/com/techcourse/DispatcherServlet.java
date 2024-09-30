@@ -15,7 +15,10 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -23,7 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerAdapter handlerAdapter;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
@@ -40,7 +43,7 @@ public class DispatcherServlet extends HttpServlet {
         }
         log.debug("HandlerMapping 초기화 끝");
         handlerMappingRegistry = new HandlerMappingRegistry(List.of(manualHandlerMapping, annotationHandlerMapping));
-        handlerAdapter = new HandlerAdapter();
+        handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter()));
     }
 
     @Override
@@ -50,6 +53,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
             final Object controller = handlerMappingRegistry.getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
             final ModelAndView modelAndView = handlerAdapter.handle(controller, request, response);
             render(modelAndView, request, response);
         } catch (Throwable e) {
