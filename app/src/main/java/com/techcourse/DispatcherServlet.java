@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.handlerAdapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handlerAdapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handlerAdapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.handlerAdapter.HandlerExecutionHandlerAdapter;
@@ -40,9 +39,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdapterRegistry() {
-        ControllerHandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
         HandlerExecutionHandlerAdapter executionHandlerAdapter = new HandlerExecutionHandlerAdapter();
-        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
         handlerAdapterRegistry.addHandlerAdapter(executionHandlerAdapter);
     }
 
