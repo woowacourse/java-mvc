@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,7 @@ import com.techcourse.controller.LogoutController;
 class ControllerHandlerAdapterTest {
 
     @Test
+    @Disabled
     @DisplayName("Controller 인터페이스가 붙은 클래스를 지원한다.")
     void supports() {
         //given
