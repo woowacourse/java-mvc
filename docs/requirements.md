@@ -18,5 +18,5 @@
 ### 🚀 3단계 - JSON View 구현하기
 - [x] 1\. JsonView 클래스 구현
 - [ ] 2\. Legacy MVC 제거
-  - [ ] `DispatcherServlet` 패키지 이동 app -> mvc
+  - [x] `DispatcherServlet` 패키지 이동 app -> mvc
   - [ ] `UserController` 추가

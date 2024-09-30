@@ -11,13 +11,11 @@ import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.view.JspView;
 
 @Controller
-public class LogoutController {
+public class IndexController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        View view = new JspView("redirect:/");
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView index(final HttpServletRequest req, final HttpServletResponse res) {
+        View view = new JspView("/index.jsp");
         return new ModelAndView(view);
     }
 }
