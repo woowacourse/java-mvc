@@ -3,35 +3,17 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
-public class ControllerRegistry {
+public class InstanceMaker {
 
-    private static final Logger log = LoggerFactory.getLogger(ControllerRegistry.class);
-    private static final Map<Class<?>, Object> controllers = new HashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(InstanceMaker.class);
 
-    private ControllerRegistry() {
-    }
-
-    public static Object getOrCreateController(Class<?> controller) {
-        if (controllers.containsKey(controller)) {
-            return controllers.get(controller);
-        }
-        Object controllerInstance = makeControllerInstance(controller);
-        controllers.put(controller, controllerInstance);
-
-        return controllerInstance;
-    }
-
-    private static Object makeControllerInstance(Class<?> controller) {
+    public static Object makeInstance(Class<?> clazz, Object... arg) {
         try {
-            Constructor<?> constructor = controller.getConstructor();
-            Object controllerInstance = constructor.newInstance();
-
-            return controllerInstance;
+            Class<?>[] parameterTypes = makeParamFrom(arg);
+            return clazz.getDeclaredConstructor(parameterTypes).newInstance(arg);
         } catch (NoSuchMethodException e) {
             log.error("메서드를 찾지 못했습니다. {}", e.getStackTrace()[0]);
             throw new IllegalArgumentException("메서드를 찾지 못했습니다.");
@@ -45,5 +27,11 @@ public class ControllerRegistry {
             log.error("생성자를 실행하던 도중 실패했습니다. {}", e.getStackTrace()[0]);
             throw new IllegalStateException("생성자를 실행하던 도중 실패했습니다.");
         }
+    }
+
+    private static Class<?>[] makeParamFrom(Object[] arg) {
+        return Arrays.stream(arg)
+                .map(Object::getClass)
+                .toArray(Class<?>[]::new);
     }
 }

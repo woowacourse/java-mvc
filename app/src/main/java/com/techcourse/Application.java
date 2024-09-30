@@ -1,11 +1,13 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.pathfinder.FrameApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.stream.Stream;
 
+@FrameApplication
 public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);

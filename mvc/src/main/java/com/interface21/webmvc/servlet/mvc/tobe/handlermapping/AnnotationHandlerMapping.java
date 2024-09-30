@@ -1,9 +1,12 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handlermapping;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.HandlerKeyGenerator;
 import com.interface21.webmvc.servlet.mvc.tobe.keygenerator.HandlerKeyGeneratorMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.pathfinder.RootPathFinder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -15,15 +18,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final String basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(RootPathFinder rootPathFinder) {
+        this.basePackage = rootPathFinder.find();
         this.handlerExecutions = new HashMap<>();
     }
 
@@ -35,7 +38,7 @@ public class AnnotationHandlerMapping {
                 .flatMap(controller -> Arrays.stream(controller.getDeclaredMethods()))
                 .forEach(this::initMethodMapping);
 
-        log.info("initialized Handler ma");
+        log.info("Initialized Annotation Handler mapping");
     }
 
     public Object getHandler(final HttpServletRequest request) {
