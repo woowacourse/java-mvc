@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 public class AnnotationHandlerNotFoundException extends RuntimeException {
 
