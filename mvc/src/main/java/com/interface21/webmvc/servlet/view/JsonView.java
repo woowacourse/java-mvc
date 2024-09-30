@@ -31,7 +31,12 @@ public class JsonView implements View {
     }
 
     private String writeSingleObjectValue(Map<String, ?> model) throws JsonProcessingException {
-        String key = model.keySet().stream().findFirst().get();
+        if (model.size() != 1) {
+            throw new IllegalStateException();
+        }
+        String key = model.keySet().stream()
+                .findFirst()
+                .get();
         return objectMapper.writeValueAsString(model.get(key));
     }
 }
