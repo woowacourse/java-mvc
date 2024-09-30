@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;

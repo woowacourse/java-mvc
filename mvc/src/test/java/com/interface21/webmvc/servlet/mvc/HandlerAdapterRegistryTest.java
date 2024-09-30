@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.core;
 
 public class SingletonInstantiationException extends RuntimeException {
 

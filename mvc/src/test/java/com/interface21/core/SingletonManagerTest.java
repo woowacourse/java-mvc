@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
