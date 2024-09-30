@@ -12,9 +12,9 @@ public class HandlerMappingRegistry {
 
 	private final List<HandlerMapping> handlerMappings;
 
-	public HandlerMappingRegistry() {
+	public HandlerMappingRegistry(Object ... basePackages) {
 		this.handlerMappings = new ArrayList<>();
-		this.handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
+		this.handlerMappings.add(new AnnotationHandlerMapping(basePackages));
 	}
 
 	public HandlerMapping getHandlerMapping(HttpServletRequest request) {
