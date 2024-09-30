@@ -1,7 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapters;
 
 public class HandlerAdaptersInitializer {
 
