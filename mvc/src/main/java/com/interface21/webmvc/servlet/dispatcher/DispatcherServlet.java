@@ -1,12 +1,12 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.dispatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mapping.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.handleradapter.HandlerAdapterRegistry;
-import com.techcourse.handlermapping.HandlerMappingRegistry;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

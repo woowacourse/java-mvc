@@ -1,4 +1,4 @@
-package com.techcourse.handlermapping;
+package com.interface21.webmvc.servlet.mapping;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.dispatcher;
 
 import static org.assertj.core.api.Assertions.*;
 
