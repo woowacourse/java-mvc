@@ -1,12 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.exception.HandlerNotFoundException;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -86,12 +83,5 @@ public class AnnotationHandlerMapping {
     Optional<Object> getHandler(HttpServletRequest request) {
         HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.findMethod(request.getMethod()));
         return handlerExecutions.get(key);
-    }
-    
-    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HandlerExecution handler = (HandlerExecution) getHandler(request)
-                .orElseThrow(() -> new HandlerNotFoundException(request));
-        ModelAndView modelAndView = handler.handle(request, response);
-        modelAndView.render(request, response);
     }
 }
