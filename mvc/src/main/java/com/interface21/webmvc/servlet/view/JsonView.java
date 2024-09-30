@@ -9,19 +9,14 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final ObjectMapper DEFAULT_OBJECT_MAPPER = new ObjectMapper();
     private static final int SINGLE_MODEL_SIZE = 1;
-
-    private final ObjectMapper objectMapper;
-
-    public JsonView() {
-        this.objectMapper = new ObjectMapper();
-    }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String body = DEFAULT_OBJECT_MAPPER.writeValueAsString(extractModel(model));
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        String result = objectMapper.writeValueAsString(extractModel(model));
-        response.getWriter().write(result);
+        response.getWriter().write(body);
     }
 
     private Object extractModel(Map<String, ?> model) {
