@@ -1,17 +1,11 @@
 package com.techcourse;
 
-import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ViewConverter;
 import com.interface21.webmvc.servlet.mvc.HandlerKeys;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.interface21.webmvc.servlet.mvc.asis.MapHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerContainer;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,14 +39,6 @@ public class DispatcherServlet extends HttpServlet {
     private void initialize() {
         final ControllerContainer container = new ControllerContainer("com.techcourse.controller");
         container.initialize();
-
-        handlerMappings.add(new MapHandlerMapping(handlerKeys,
-                Map.of(
-                        new HandlerKey("/"), new ForwardController("/index.jsp"),
-                        new HandlerKey("/login", RequestMethod.POST), new LoginController(),
-                        new HandlerKey("/login", RequestMethod.GET), new LoginViewController(),
-                        new HandlerKey("/logout", RequestMethod.GET), new LogoutController()
-                )));
         handlerMappings.add(new AnnotationHandlerMapping(handlerKeys, container));
     }
 
