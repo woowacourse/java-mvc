@@ -25,7 +25,7 @@ public class HandlerExecution {
                     .newInstance();
             return new HandlerExecution(method, instance);
         } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e.getMessage());
         }
     }
 

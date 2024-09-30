@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView processHandler(final HttpServletRequest request, final HttpServletResponse response,
-                                        final Object handler) {
+                                        final Object handler) throws Exception {
         if (handler instanceof Controller) {
             return processController(request, response, (Controller) handler);
         }
@@ -57,21 +57,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView processController(final HttpServletRequest request, final HttpServletResponse response,
-                                           final Controller handler) {
-        try {
-            final String viewName = handler.execute(request, response);
-            return new ModelAndView(new JspView(viewName));
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+                                           final Controller handler) throws Exception {
+        final String viewName = handler.execute(request, response);
+        return new ModelAndView(new JspView(viewName));
     }
 
     private ModelAndView processHandlerExecute(final HttpServletRequest request, final HttpServletResponse response,
-                                               final HandlerExecution handler) {
-        try {
-            return handler.handle(request, response);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+                                               final HandlerExecution handler) throws Exception {
+        return handler.handle(request, response);
     }
 }
