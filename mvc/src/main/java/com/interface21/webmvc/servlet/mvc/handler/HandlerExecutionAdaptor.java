@@ -8,13 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HandlerExecutionAdaptor implements HandlerAdaptor {
 
     @Override
-    public boolean canExecute(Object handler) {
+    public boolean canExecute(final Object handler) {
         return handler instanceof HandlerExecution;
     }
 
     @Override
-    public ModelAndView execute(Object handler, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public ModelAndView execute(final Object handler, final HttpServletRequest request,
+                                final HttpServletResponse response) throws Exception {
         return ((HandlerExecution) handler).handle(request, response);
     }
 }
