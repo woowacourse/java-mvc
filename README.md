@@ -62,3 +62,6 @@
 
 - [x] JsonView 클래스 구현
 - [ ] Legacy MVC 제거
+  - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+  - [ ] asis 패키지에 있는 레거시 코드 삭제
+  - [ ] DispatcherServlet을 mvc 패키지로 이동
