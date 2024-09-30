@@ -3,7 +3,7 @@ package samples;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.legacy.Controller;
 
 public class TestExtendsController implements Controller {
 

@@ -7,8 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.legacy.ControllerHandlerAdapter;
 
 import samples.TestAnnotationController;
 import samples.TestExtendsController;
@@ -18,15 +18,6 @@ class HandlerAdapterRegistryTest {
     @Nested
     @DisplayName("요청 Handler에 맞는 HandlerAdapter 반환")
     class GetHandlerAdapter {
-
-        @Test
-        @DisplayName("요청 Handler에 맞는 HandlerAdapter 반환 성공: ControllerHandlerAdapter")
-        void getHandlerAdapter_ControllerHandlerAdapter() {
-            final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(new TestExtendsController());
-
-            assertThat(handlerAdapter).isInstanceOf(ControllerHandlerAdapter.class);
-        }
 
         @Test
         @DisplayName("요청 Handler에 맞는 HandlerAdapter 반환 성공: HandlerExecutionHandlerAdapter")

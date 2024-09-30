@@ -3,7 +3,7 @@ package com.interface21.webmvc.servlet.mvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 

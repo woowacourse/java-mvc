@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.legacy.Controller;
 
 @Deprecated
 public class ManualHandlerMapping implements HandlerMapping {

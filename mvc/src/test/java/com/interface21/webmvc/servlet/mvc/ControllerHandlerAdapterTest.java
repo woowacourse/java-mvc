@@ -19,9 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.legacy.Controller;
+import com.interface21.webmvc.servlet.mvc.legacy.ControllerHandlerAdapter;
 
 import samples.TestAnnotationController;
 import samples.TestExtendsController;
