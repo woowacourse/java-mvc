@@ -35,7 +35,7 @@ public class LoginController {
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
-    private ModelAndView login(final HttpServletRequest request, final User user) {
+    private ModelAndView login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
