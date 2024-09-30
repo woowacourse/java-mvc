@@ -15,8 +15,9 @@ class JsonDataMapperTest {
         Map<String, String> model = Map.of("account", "jojo");
 
         String actual = jsonDataMapper.getData(model);
+        String expected = new ObjectMapper().writeValueAsString("jojo");
 
-        assertThat(actual).isEqualTo("jojo");
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test

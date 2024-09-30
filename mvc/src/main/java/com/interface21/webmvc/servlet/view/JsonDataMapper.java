@@ -12,8 +12,8 @@ public class JsonDataMapper {
 
     public String getData(Map<String, ?> model) throws JsonProcessingException {
         if (model.size() == SINGLE) {
-            Object value = model.values().iterator().next();
-            return value.toString();
+            Object singleValue = model.values().iterator().next();
+            return objectMapper.writeValueAsString(singleValue);
         }
         return objectMapper.writeValueAsString(model);
     }
