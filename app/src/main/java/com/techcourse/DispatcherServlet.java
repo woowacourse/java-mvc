@@ -19,17 +19,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String BASE_PACKAGE = "com.techcourse.controller";
 
-    private HandlerManager handlerManager;
+    private final HandlerManager handlerManager;
 
     public DispatcherServlet() {
-    }
-
-    @Override
-    public void init() {
         handlerManager = new HandlerManager(
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping(BASE_PACKAGE)
         );
+    }
+
+    @Override
+    public void init() {
         handlerManager.initialize();
     }
 
