@@ -11,9 +11,8 @@ public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
+    public static final String NOT_FOUND_VIEW = "/404.jsp";
     public static final String REDIRECT_PREFIX = "redirect:";
-    private static final String RESOURCE_PATH = "/META-INF/jsp/";
-    private static final String FILE_EXTENSION = ".jsp";
 
     private final String viewName;
 
@@ -31,7 +30,6 @@ public class JspView implements View {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
-        String jspPath = RESOURCE_PATH + viewName + FILE_EXTENSION;
-        request.getRequestDispatcher(jspPath).forward(request, response);
+        request.getRequestDispatcher(viewName).forward(request, response);
     }
 }
