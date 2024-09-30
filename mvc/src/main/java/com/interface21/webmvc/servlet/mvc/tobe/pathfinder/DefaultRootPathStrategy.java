@@ -6,6 +6,9 @@ import java.util.Set;
 
 public class DefaultRootPathStrategy implements RootPathStrategy {
 
+    private static final int ORDINAL_APPLICATION_SIZE = 1;
+    private static final String ROOT_PATH_REGEX = "\\.";
+    
     private final Reflections reflections;
     private String rootPath;
 
@@ -24,7 +27,7 @@ public class DefaultRootPathStrategy implements RootPathStrategy {
 
     private void initRootPath() {
         Set<Class<?>> applications = reflections.getTypesAnnotatedWith(FrameApplication.class);
-        if (applications.size() != 1) {
+        if (applications.size() != ORDINAL_APPLICATION_SIZE) {
             throw new IllegalStateException("시작할 수 없는 Application 입니다.");
         }
 
@@ -36,6 +39,6 @@ public class DefaultRootPathStrategy implements RootPathStrategy {
         Package currentPackage = application.getPackage();
         String packageName = currentPackage.getName();
 
-        return packageName.split("\\.")[0];
+        return packageName.split(ROOT_PATH_REGEX)[0];
     }
 }
