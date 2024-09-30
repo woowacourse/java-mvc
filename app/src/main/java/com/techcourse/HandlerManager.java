@@ -28,11 +28,11 @@ public class HandlerManager {
     }
 
     private Object getNotFoundController() throws ClassNotFoundException {
-        final HandlerMapping handlerMapping = mappings.stream()
-                .filter(mapping -> mapping instanceof ManualHandlerMapping)
+        return mappings.stream()
+                .filter(ManualHandlerMapping.class::isInstance)
                 .findFirst()
+                .map(ManualHandlerMapping.class::cast)
+                .map(ManualHandlerMapping::getNotFoundController)
                 .orElseThrow(ClassNotFoundException::new);
-        final ManualHandlerMapping manualHandlerMapping = (ManualHandlerMapping) handlerMapping;
-        return manualHandlerMapping.getNotFoundController();
     }
 }
