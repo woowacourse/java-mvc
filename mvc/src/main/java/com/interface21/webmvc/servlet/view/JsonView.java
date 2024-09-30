@@ -2,6 +2,8 @@ package com.interface21.webmvc.servlet.view;
 
 import static com.interface21.web.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.webmvc.servlet.View;
@@ -14,6 +16,14 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final int SINGLE_SIZE = 1;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();;
+
+    public JsonView() {
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    }
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         String body = parseBody(model);
@@ -23,12 +33,12 @@ public class JsonView implements View {
 
     private static String parseBody(Map<String, ?> model) throws JsonProcessingException {
         StringBuilder body = new StringBuilder();
-        if (model.size() == 1) {
+        if (model.size() == SINGLE_SIZE) {
             Object value = model.values().iterator().next();
-            body.append(new ObjectMapper().writeValueAsString(value));
+            body.append(objectMapper.writeValueAsString(value));
             return body.toString();
         }
-        body.append(new ObjectMapper().writeValueAsString(model));
+        body.append(objectMapper.writeValueAsString(model));
         return body.toString();
     }
 
