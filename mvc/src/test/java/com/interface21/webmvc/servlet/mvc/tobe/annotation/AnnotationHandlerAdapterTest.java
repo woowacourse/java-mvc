@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,13 +15,13 @@ import org.junit.jupiter.api.Test;
 
 class AnnotationHandlerAdapterTest {
 
-    private AnnotationHandlerMapping handlerMapping;
     private AnnotationHandlerAdapter handlerAdapter;
+    private AnnotationHandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
         handlerAdapter = new AnnotationHandlerAdapter();
+        handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
     }
 
@@ -36,11 +35,11 @@ class AnnotationHandlerAdapterTest {
         assertThat(handlerAdapter.support(handler)).isTrue();
     }
 
-    @DisplayName("어노테이션 핸들러 어댑터는 Controller 타입의 핸들러를 지원하지 않는다.")
+    @DisplayName("어노테이션 핸들러 어댑터는 HandlerExecution 아닌 타입의 핸들러를 지원하지 않는다.")
     @Test
     void should_returnFalse_when_handlerIsController() {
         // given
-        Object handler = new ForwardController("");
+        Object handler = new Object();
 
         // when & then
         assertThat(handlerAdapter.support(handler)).isFalse();
@@ -64,7 +63,7 @@ class AnnotationHandlerAdapterTest {
         assertThat(modelAndView.getObject("id")).isEqualTo("ever");
     }
 
-    @DisplayName("Controller 타입의 핸들러 실행을 시도할 경우 예외가 발생한다.")
+    @DisplayName("HandlerExecution 타입이 아닌 핸들러 실행을 시도할 경우 예외가 발생한다.")
     @Test
     void should_throwException_when_executeControllerHandler() {
         // given
@@ -72,7 +71,7 @@ class AnnotationHandlerAdapterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getRequestURI()).thenReturn("/");
 
-        Object handler = new ForwardController("");
+        Object handler = new Object();
 
         // when & then
         assertThatThrownBy(() -> handlerAdapter.execute(request, response, handler))

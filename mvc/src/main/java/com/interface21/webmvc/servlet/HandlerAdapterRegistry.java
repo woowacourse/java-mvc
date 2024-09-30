@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerAdapter;
@@ -13,7 +13,7 @@ public class HandlerAdapterRegistry {
     }
 
     public void initialize() {
-        handlerAdapters.add(new ManualHandlerAdapter());
+        // handlerAdapters.add(new ManualHandlerAdapter());
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 

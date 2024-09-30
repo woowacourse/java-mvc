@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMapping;
@@ -15,7 +15,6 @@ public class HandlerMappingRegistry {
     }
 
     public void initialize() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping());
         handlerMappings.forEach(HandlerMapping::initialize);
     }
