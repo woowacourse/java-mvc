@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.exception.HandlerNotFoundException;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,9 +38,20 @@ public class DispatcherServlet extends HttpServlet {
                     .orElseThrow(() -> new HandlerNotFoundException(request));
             ModelAndView modelAndView = handler.handle(request, response);
             render(modelAndView, request, response);
+        } catch (HandlerNotFoundException e) {
+            renderErrorPage(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void renderErrorPage(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        try {
+            JspView jspView = new JspView("/404.jsp");
+            jspView.render(Map.of(), request, response);
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
     }
 
