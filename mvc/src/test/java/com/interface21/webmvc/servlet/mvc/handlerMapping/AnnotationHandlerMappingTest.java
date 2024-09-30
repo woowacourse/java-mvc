@@ -1,11 +1,11 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.handlerMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class AnnotationHandlerMappingTest {
 
@@ -72,19 +71,5 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @DisplayName("요청에 맞는 Handler를 찾을 수 없는 경우 예외로 처리한다")
-    @Test
-    void canNotFindHandler() {
-        final var request = mock(HttpServletRequest.class);
-
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-그건제잔상입니다");
-        when(request.getMethod()).thenReturn("GET");
-
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("요청에 맞는 Handler를 찾을 수 없습니다");
     }
 }

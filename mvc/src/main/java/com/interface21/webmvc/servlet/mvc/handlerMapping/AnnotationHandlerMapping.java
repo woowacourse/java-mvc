@@ -1,20 +1,19 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.handlerMapping;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,24 +25,18 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        controllerClasses.forEach(this::registerController);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> instances = controllerScanner.getControllers();
+        instances.forEach(this::registerController);
     }
 
-    private void registerController(Class<?> clazz) {
+    private void registerController(Class<?> clazz, Object instance) {
         Method[] methods = clazz.getDeclaredMethods();
-        try {
-            Object instance = clazz.getDeclaredConstructor().newInstance();
-            Stream.of(methods)
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                    .forEach(method -> registerHandlerMethod(method, instance));
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
-            log.error(e.getMessage());
-        }
+        Stream.of(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerHandlerMethod(method, instance));
     }
 
     private void registerHandlerMethod(Method method, Object instance) {
@@ -61,6 +54,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
@@ -69,21 +63,6 @@ public class AnnotationHandlerMapping {
 
     private HandlerExecution findHandler(String requestURI, String method) {
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-
-        if (handlerExecution == null) {
-            return findHandlerWithoutMethod(requestURI);
-        }
-        return handlerExecution;
-    }
-
-    private HandlerExecution findHandlerWithoutMethod(String requestURI) {
-        HandlerKey handlerKey = new HandlerKey(requestURI, null);
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-
-        if (handlerExecution == null) {
-            throw new IllegalArgumentException("요청에 맞는 Handler를 찾을 수 없습니다");
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }

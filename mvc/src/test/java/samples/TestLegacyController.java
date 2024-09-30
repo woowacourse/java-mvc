@@ -1,13 +1,12 @@
-package com.techcourse.controller;
+package samples;
 
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 
-public class RegisterViewController implements Controller {
+public class TestLegacyController implements Controller {
 
-    @Override
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "/register.jsp";
+        return "path";
     }
 }
