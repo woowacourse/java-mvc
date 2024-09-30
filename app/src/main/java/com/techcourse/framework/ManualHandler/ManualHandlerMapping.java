@@ -1,10 +1,8 @@
 package com.techcourse.framework.ManualHandler;
 
-import com.techcourse.controller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +14,6 @@ public class ManualHandlerMapping {
     private static final Map<String, Controller> controllers = new HashMap<>();
 
     public void initialize() {
-        controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/login", new LoginController());
-        controllers.put("/login/view", new LoginViewController());
-        controllers.put("/logout", new LogoutController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
