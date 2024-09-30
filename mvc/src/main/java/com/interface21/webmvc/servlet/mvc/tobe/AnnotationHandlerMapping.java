@@ -19,67 +19,70 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-	private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-	private final Object[] basePackage;
-	private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Object[] basePackage;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-	public AnnotationHandlerMapping(final Object... basePackage) {
-		this.basePackage = basePackage;
-		this.handlerExecutions = new HashMap<>();
-	}
+    public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
+        this.handlerExecutions = new HashMap<>();
+    }
 
-	public void initialize() {
-		ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-		Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+    public void initialize() {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-		controllers.keySet()
-			.forEach(controllerClass -> {
-				Set<Method> requestMappingMethods = getRequestMappingMethods(Set.of(controllerClass));
-				for (Method method : requestMappingMethods) {
-					RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-					addHandlerExecutions(controllers, method, requestMapping);
-				}
-			});
+        controllers.keySet().forEach(controllerClass -> {
+            Set<Method> requestMappingMethods = getRequestMappingMethods(Set.of(controllerClass));
+            processRequestMappingMethods(controllers, requestMappingMethods);
+        });
 
-		log.info("Initialized AnnotationHandlerMapping with controllers: {}", controllers.keySet());
-	}
+        log.info("Initialized AnnotationHandlerMapping with controllers: {}", controllers.keySet());
+    }
 
-	private Set<Method> getRequestMappingMethods(Set<Class<?>> controllerClasses) {
-		Set<Method> requestMappingMethods = new HashSet<>();
-		for (Class<?> controllerClass : controllerClasses) {
-			requestMappingMethods.addAll(ReflectionUtils.getAllMethods(controllerClass,
-				ReflectionUtils.withAnnotation(RequestMapping.class)));
-		}
-		return requestMappingMethods;
-	}
+    private void processRequestMappingMethods(Map<Class<?>, Object> controllers, Set<Method> requestMappingMethods) {
+        requestMappingMethods.forEach(method -> {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
+        });
+    }
 
-	private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
-		String url = requestMapping.value();
-		RequestMethod[] requestMethods = requestMapping.method();
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> controllerClasses) {
+        Set<Method> requestMappingMethods = new HashSet<>();
+        for (Class<?> controllerClass : controllerClasses) {
+            requestMappingMethods.addAll(ReflectionUtils.getAllMethods(controllerClass,
+                ReflectionUtils.withAnnotation(RequestMapping.class)));
+        }
+        return requestMappingMethods;
+    }
 
-		List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
-		Object controllerInstance = controllers.get(method.getDeclaringClass());
+    private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
+        String url = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
 
-		for (HandlerKey handlerKey : handlerKeys) {
-			handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
-		}
-	}
+        List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
+        Object controllerInstance = controllers.get(method.getDeclaringClass());
 
-	private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
-		List<HandlerKey> handlerKeys = new ArrayList<>();
-		for (RequestMethod requestMethod : requestMethods) {
-			handlerKeys.add(new HandlerKey(url, requestMethod));
-		}
-		return handlerKeys;
-	}
+        for (HandlerKey handlerKey : handlerKeys) {
+            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+        }
+    }
 
-	@Override
-	public Object getHandler(final HttpServletRequest request) {
-		String url = request.getRequestURI();
-		RequestMethod requestMethod = RequestMethod.from(request.getMethod());
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        for (RequestMethod requestMethod : requestMethods) {
+            handlerKeys.add(new HandlerKey(url, requestMethod));
+        }
+        return handlerKeys;
+    }
 
-		HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-		return handlerExecutions.get(handlerKey);
-	}
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        String url = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.from(request.getMethod());
+
+        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        return handlerExecutions.get(handlerKey);
+    }
 }
