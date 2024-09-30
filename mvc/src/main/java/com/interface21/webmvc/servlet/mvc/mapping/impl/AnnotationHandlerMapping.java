@@ -29,6 +29,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             List<Method> methods = ReflectionUtils.getAllMethods(entry.getKey());
 
             for (Method method : methods) {
+                if (!method.isAnnotationPresent(RequestMapping.class)) {
+                    continue;
+                }
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
                 for (RequestMethod requestMethod : requestMapping.method()) {
