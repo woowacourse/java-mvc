@@ -6,12 +6,19 @@ import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Optional;
 
 public class JsonView implements View {
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ObjectMapper mapper= new ObjectMapper();
+    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        if (model.size() == 1) {
+            Optional<?> value = model.values().stream().findFirst();
+            response.getWriter().write(value.get().toString());
+            return;
+        }
         String json = mapper.writeValueAsString(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.getWriter().write(json);
