@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class IndexController {
+public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest request, HttpServletResponse response) {
