@@ -44,6 +44,7 @@
 
 - [ ] JsonView 클래스 구현
     - [ ] HTML 이외에 JSON으로 응답할 수 있도록
+    - [x] UserController 추가
 - [x] Legacy MVC 제거
     - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
     - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링
