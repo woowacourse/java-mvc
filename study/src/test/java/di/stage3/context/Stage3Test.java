@@ -12,7 +12,7 @@ class Stage3Test {
     /**
      * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자.
      * DIContainer는 애플리케이션을 구성하는 객체의 구조와 관계를 정의한 설계도 역할을 한다.
-     * 어떤 객체가 어떤 객체를 사용하는지 정의하는 역할을 한다.
+     * 어떤 객체가 어떤 객체를 사용하는지 정의하는 역할을 한다. (의존성 관리
      * 테스트가 통과하도록 DIContainer 클래스를 구현하자.
      */
     @Test
@@ -41,8 +41,14 @@ class Stage3Test {
      */
     private static DIContainer createDIContainer() {
         var classes = new HashSet<Class<?>>();
-        classes.add(InMemoryUserDao.class);
-        classes.add(UserService.class);
+        classes.add(InMemoryUserDao.class); // Bean 생성
+        classes.add(UserService.class);  // Bean 생성
+
+        /**
+         * 직접 구현한 DIContainer 는 위 예시처럼 기본 생성자만 가진 객체 + 기본 생성자로 생성되는 객체만 의존성으로 가지는 객체 이 두 의존성만 받을 수 있습니다.
+         * 다만 완벽한 의미의 DI Container 구현하는게 아니라 DI Container의 내부 원리를 이해하는게 이번 학습 테스트의 목적이므로 주어진 테스트 상황에 잘 동작하는 컨테이너 구현으로 끝내겠습니다.
+         * (나름 1뎁스도 지킴 ㅎ)
+         */
         return new DIContainer(classes);
     }
 }
