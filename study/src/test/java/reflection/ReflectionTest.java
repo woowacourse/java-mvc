@@ -155,9 +155,10 @@ class ReflectionTest {
         assertThat(student.getAge()).isZero();
 
         field.set(student,99);
-        field.setAccessible(false);
 
         assertThat(field.getInt(student)).isEqualTo(99);
+        field.setAccessible(false);
+
         assertThat(student.getAge()).isEqualTo(99);
     }
 }
