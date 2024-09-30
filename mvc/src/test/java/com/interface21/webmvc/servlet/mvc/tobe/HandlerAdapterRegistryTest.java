@@ -16,7 +16,7 @@ public class HandlerAdapterRegistryTest {
     @BeforeEach
     void setUp() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerMappingAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Test
@@ -27,7 +27,7 @@ public class HandlerAdapterRegistryTest {
 
         // when & then
         assertThat(handlerAdapterRegistry.getHandlerAdapter(handlerExecution))
-                .isInstanceOf(AnnotationHandlerMappingAdapter.class);
+                .isInstanceOf(AnnotationHandlerAdapter.class);
     }
 
     @Test

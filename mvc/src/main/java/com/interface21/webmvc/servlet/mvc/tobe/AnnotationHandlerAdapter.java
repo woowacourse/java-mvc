@@ -4,7 +4,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class AnnotationHandlerMappingAdapter implements HandlerAdapter{
+public class AnnotationHandlerAdapter implements HandlerAdapter{
 
     @Override
     public boolean canHandle(Object handler) {

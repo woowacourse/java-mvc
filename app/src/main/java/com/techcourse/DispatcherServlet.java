@@ -3,7 +3,7 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMappingAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -47,8 +46,7 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = adapter.handle(handler, request, response);
 
-            View view = modelAndView.getView();
-            view.render(modelAndView.getModel(), request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -67,7 +65,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void setHandlerAdapterRegistry() {
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerMappingAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerMappingAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }

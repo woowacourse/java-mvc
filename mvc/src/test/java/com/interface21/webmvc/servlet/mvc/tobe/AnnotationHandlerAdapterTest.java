@@ -6,14 +6,14 @@ import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class AnnotationHandlerMappingAdapterTest {
+public class AnnotationHandlerAdapterTest {
 
     @Test
     @DisplayName("HandlerExecution을 처리할 수 있다.")
     void should_return_true_when_canhandle_HandlerExecution() {
         // given
         HandlerExecution mockHandlerExecution = mock(HandlerExecution.class);
-        HandlerAdapter handlerAdapter = new AnnotationHandlerMappingAdapter();
+        HandlerAdapter handlerAdapter = new AnnotationHandlerAdapter();
 
         // when & then
         assertThat(handlerAdapter.canHandle(mockHandlerExecution)).isTrue();
