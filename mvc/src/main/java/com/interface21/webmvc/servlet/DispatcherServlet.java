@@ -23,9 +23,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    private final Object[] basePackages;
+
+    public DispatcherServlet(Object... basePackages) {
         handlerMappings = new ArrayList<>();
         handlerAdapters = new ArrayList<>();
+        this.basePackages = basePackages;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMappings() {
-        handlerMappings.add(new AnnotationHandlerMapping()); // todo basePackage
+        handlerMappings.add(new AnnotationHandlerMapping(basePackages));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
