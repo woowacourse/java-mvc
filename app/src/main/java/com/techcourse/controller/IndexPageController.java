@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class defaultController {
+public class IndexPageController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView register(HttpServletRequest request, final HttpServletResponse response) {
