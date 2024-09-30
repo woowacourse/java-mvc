@@ -20,6 +20,5 @@ class ControllerScannerTest {
                 () -> assertThat(controllers).containsOnlyKeys(TestController.class),
                 () -> assertThat(controllers.values()).hasOnlyElementsOfTypes(TestController.class)
         );
-        System.out.println("controllers = " + controllers.size());
     }
 }
