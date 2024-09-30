@@ -40,4 +40,15 @@ class AnnotationHandlerAdapterTest {
 
         assertThat(annotationHandlerAdapter.canHandle(handlerExecution)).isTrue();
     }
+
+    @Test
+    void canHandleFalseTest() {
+        final var request = new MockHttpServletRequest("GET", "/absence-test");
+        request.setAttribute("id", "gugu");
+        final var response = new MockHttpServletResponse();
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+
+        assertThat(annotationHandlerAdapter.canHandle(handlerExecution)).isFalse();
+    }
 }
