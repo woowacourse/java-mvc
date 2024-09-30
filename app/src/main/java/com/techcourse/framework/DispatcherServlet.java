@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,6 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.NoMatchedHandlerException;
 import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMappingAdapter;
-import com.techcourse.framework.ManualHandler.ManualHandlerMapping;
-import com.techcourse.framework.ManualHandler.ManualHandlerMappingAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -31,8 +30,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingAdapters = List.of(
-                new AnnotationHandlerMappingAdapter("com.techcourse.controller"),
-                new ManualHandlerMappingAdapter(new ManualHandlerMapping())
+                new AnnotationHandlerMappingAdapter("com.techcourse.controller")
         );
         for (HandlerMappingAdapter handlerMappingAdapter : handlerMappingAdapters) {
             handlerMappingAdapter.initialize();
@@ -40,7 +38,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
