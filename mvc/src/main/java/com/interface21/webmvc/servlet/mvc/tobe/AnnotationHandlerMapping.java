@@ -43,12 +43,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             throws ReflectiveOperationException {
         Map<HandlerKey, HandlerExecution> handlerMappings = new HashMap<>();
 
+        Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
         Method[] methods = controllerClass.getDeclaredMethods();
         for (Method method : methods) {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
             }
-            Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
             handlerMappings.putAll(initializeWithRequestMapping(method, controllerInstance));
         }
 
