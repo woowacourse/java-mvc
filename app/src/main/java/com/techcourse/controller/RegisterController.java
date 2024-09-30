@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
+    private static final String INDEX_PATH = "redirect:/index.jsp";
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
@@ -21,7 +23,10 @@ public class RegisterController {
                 req.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        JspView view = new JspView("redirect:/index.jsp");
-        return new ModelAndView(view);
+        return redirect(INDEX_PATH);
+    }
+
+    private ModelAndView redirect(String path) {
+        return new ModelAndView(new JspView(path));
     }
 }
