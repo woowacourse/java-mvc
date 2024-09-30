@@ -4,9 +4,9 @@ import di.User;
 
 class UserService {
 
-    private final UserDao userDao;
+    private final InMemoryDao userDao;
 
-    public UserService(UserDao userDao) {
+    public UserService(InMemoryDao userDao) {
         this.userDao = userDao;
     }
 

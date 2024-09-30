@@ -14,9 +14,9 @@ class Stage1Test {
      */
     @Test
     void stage1() {
-        final var user = new User(1L, "gugu");
+        final User user = new User(1L, "gugu");
 
-        final var userDao = new UserDao();
+        final InMemoryDao userDao = new UserDao();
 
         /**
          * 클래스 내부에서 직접 객체를 생성하지 말고 외부에서 객체를 전달 받도록 수정했다.
@@ -25,9 +25,9 @@ class Stage1Test {
          * UserDao라는 구현 클래스에 의존하고 있다.
          * 유연한 변경이 필요한 부분은 인터페이스를 사용하면 결합을 감소시킬 수 있다.
          */
-        final var userService = new UserService(userDao);
+        final UserService userService = new UserService(userDao);
 
-        final var actual = userService.join(user);
+        final User actual = userService.join(user);
 
         assertThat(actual.getAccount()).isEqualTo("gugu");
     }

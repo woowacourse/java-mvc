@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-class UserDao {
+class UserDao implements InMemoryDao {
 
     private static final Map<Long, User> users = new HashMap<>();
 
