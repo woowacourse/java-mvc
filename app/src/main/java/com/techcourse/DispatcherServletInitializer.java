@@ -1,5 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration.Dynamic;
 import org.slf4j.Logger;

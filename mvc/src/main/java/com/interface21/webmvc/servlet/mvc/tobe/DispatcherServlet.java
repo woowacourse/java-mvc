@@ -25,7 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(getClass().getPackageName());
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
