@@ -15,7 +15,8 @@ public class RequestHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, ReflectiveOperationException {
         Optional<RequestHandler> handlerOptional = getHandler(request);
         if (handlerOptional.isEmpty()) {
             throw new ServletException("No handler found for request URI: " + request.getRequestURI());

@@ -15,7 +15,8 @@ public class AnnotationRequestHandler implements RequestHandler {
     }
 
     @Override
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+            throws ReflectiveOperationException {
         return (ModelAndView) method.invoke(controllerInstance, request, response);
     }
 }
