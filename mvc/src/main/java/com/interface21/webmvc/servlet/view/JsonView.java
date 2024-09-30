@@ -10,8 +10,8 @@ import java.util.Map;
 public class JsonView implements View {
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    public void render(Map<String, ?> model,
+                       HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setCharacterEncoding("UTF-8");
