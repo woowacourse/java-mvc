@@ -18,7 +18,7 @@ public class JsonView implements View {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final Map<String, Object> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         String json = generateJsonFromModel(model);
@@ -28,7 +28,7 @@ public class JsonView implements View {
         writer.write(json);
     }
 
-    private String generateJsonFromModel(Map<String, ?> model) throws JsonProcessingException {
+    private String generateJsonFromModel(Map<String, Object> model) throws JsonProcessingException {
         if (model.keySet().size() == 1) {
             String key = model.keySet().stream()
                     .findFirst()
