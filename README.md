@@ -38,6 +38,19 @@
     - [x] HandlerMapping 인터페이스 구현
     - [x] HandlerAdapter 인터페이스 구현
 
+    <br>
+
+### 3단계 요구사항
+
+- [ ] JsonView 클래스 구현
+    - [ ] HTML 이외에 JSON으로 응답할 수 있도록
+- [x] Legacy MVC 제거
+    - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+    - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링
+    - [X] DispatcherServlet app 패키지 -> mvc 패키지로 이동
+
+<br>
+
 ### 학습목표
 
 - @MVC를 구현하면서 MVC 구조와 MVC의 각 역할을 이해한다.

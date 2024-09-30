@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.web.servlet.HandlerAdaptor;
 import com.interface21.webmvc.servlet.ModelAndView;
