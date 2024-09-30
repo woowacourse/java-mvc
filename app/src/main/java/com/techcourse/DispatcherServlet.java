@@ -42,10 +42,6 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initializeHandlerMappings() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
@@ -53,7 +49,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initializeHandlerAdapters() {
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
     }
 
     @Override
