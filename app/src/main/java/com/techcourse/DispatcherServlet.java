@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.ServletException;
@@ -11,22 +12,36 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMappingRegistry handlerMappingRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        try {
+            handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+            handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(getClass().getPackageName()));
+        } catch (Exception e) {
+            throw new RuntimeException("HandlerMapping 초기화 실패 : {}", e);
+        }
+        handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter()));
     }
 
     @Override
@@ -34,25 +49,21 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final JspView jspView = new JspView(viewName);
-            redirect(viewName, response);
-            final Map<String, ?> model = new HashMap<>();
-            if (model != null) {
-                jspView.render(model, request, response);
-            }
+            final Object controller = handlerMappingRegistry.getHandler(request);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
+            final ModelAndView modelAndView = handlerAdapter.handle(controller, request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            log.error("service Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void redirect(final String viewName, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-        }
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
+                        final HttpServletResponse response) throws Exception {
+        final View view = modelAndView.getView();
+        final Map<String, ?> model = new HashMap<>();
+        view.render(model, request, response);
     }
 }
