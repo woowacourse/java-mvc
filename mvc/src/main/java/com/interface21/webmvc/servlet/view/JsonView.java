@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,12 +12,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JsonView implements View {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final JsonMapper jsonMapper = new JsonMapper();
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object value = getValue(model);
-        String json = objectMapper.writeValueAsString(value);
+        String json = jsonMapper.writeValueAsString(value);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         write(response, json);
