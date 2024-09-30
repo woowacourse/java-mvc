@@ -24,12 +24,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
         String basePackageName = getClass().getPackageName().split("\\.")[0];
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackageName);
         annotationHandlerMapping.initialize();
-        handlerMappings.addHandlerMapping(manualHandlerMapping);
         handlerMappings.addHandlerMapping(annotationHandlerMapping);
     }
 
