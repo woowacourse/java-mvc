@@ -11,18 +11,16 @@ public class HandlerExecution {
     private final Method method;
     private final Object instance;
 
-    public HandlerExecution(final Method method) throws Exception {
+    public HandlerExecution(final Method method, final Object instance) {
         this.method = method;
-        this.instance = getInstance(method);
+        this.instance = instance;
     }
 
-    private Object getInstance(Method method)
-            throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return method.getDeclaringClass().getDeclaredConstructor().newInstance();
-    }
-
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-            throws IllegalAccessException, InvocationTargetException {
-        return (ModelAndView) method.invoke(instance, request, response);
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            return (ModelAndView) method.invoke(instance, request, response);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            throw new HandlerExecutionFailedException(instance, method, ex);
+        }
     }
 }
