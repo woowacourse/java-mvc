@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,7 +61,9 @@ class JsonViewTest {
     @DisplayName("model에 데이터가 2개면 Map 형태로 반환한다.")
     void two_data() throws IOException {
         //given
-        final var model = Map.of("account", "redddy", "password", "486");
+        final Map<String, String> model = new LinkedHashMap<>();
+        model.put("account", "redddy");
+        model.put("password", "486");
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
