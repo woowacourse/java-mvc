@@ -8,10 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 
@@ -30,25 +29,20 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
-
-        initializeHandlerMappings();
-        initializeHandlerAdapters();
     }
 
-    private void initializeHandlerMappings() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    private void initializeHandlerAdapters() {
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override

@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.mvc.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 import jakarta.servlet.ServletContext;
 
@@ -20,7 +22,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = initializeDispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -32,5 +34,16 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet initializeDispatcherServlet() {
+        final var dispatcherServlet = new DispatcherServlet();
+
+        AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        handlerMapping.initialize();
+        dispatcherServlet.addHandlerMapping(handlerMapping);
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+
+        return dispatcherServlet;
     }
 }
