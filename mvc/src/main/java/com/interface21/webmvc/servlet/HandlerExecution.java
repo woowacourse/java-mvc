@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet;
 
-import com.interface21.core.SingletonManager;
+import com.interface21.core.SingletonBeanContainer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
@@ -17,9 +17,9 @@ public class HandlerExecution {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
             throws InvocationTargetException, IllegalAccessException {
 
-        SingletonManager manager = SingletonManager.getInstance();
+        SingletonBeanContainer container = SingletonBeanContainer.getInstance();
         Class<?> controllerClass = method.getDeclaringClass();
-        Object controller = manager.get(controllerClass);
+        Object controller = container.getTypedBean(controllerClass);
         return (ModelAndView) method.invoke(controller, request, response);
     }
 }

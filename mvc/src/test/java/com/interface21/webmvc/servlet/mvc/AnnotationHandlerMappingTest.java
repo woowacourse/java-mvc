@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.BeanRegisterer;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerExecution;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import samples.TestController;
 
 class AnnotationHandlerMappingTest {
 
@@ -23,7 +25,9 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        BeanRegisterer.registerBeans(getClass());
+        BeanRegisterer.registerBeans(TestController.class);
+        handlerMapping = new AnnotationHandlerMapping();
         handlerMapping.initialize();
     }
 
@@ -59,6 +63,8 @@ class AnnotationHandlerMappingTest {
 
     @Controller
     static class DummyController {
+        public DummyController() {}
+
         @RequestMapping(value = "/test", method = RequestMethod.GET)
         public ModelAndView test(HttpServletRequest request, HttpServletResponse response) {
             return null;
@@ -73,8 +79,7 @@ class AnnotationHandlerMappingTest {
     @Test
     @DisplayName("Controller 어노테이션을 찾아, RequestMapping이 존재하는 메서드를 핸들러로 등록한다.")
     void registerHandler() {
-        String basePackage = "com.interface21.webmvc.servlet.mvc.tobe";
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -89,8 +94,7 @@ class AnnotationHandlerMappingTest {
     @EnumSource(RequestMethod.class)
     @DisplayName("RequestMapping 어노테이션의 value가 비어있는 경우, 모든 메서드를 등록한다")
     void registerHandlerWithNoRequestMappingValue(RequestMethod method) {
-        String basePackage = "com.interface21.webmvc.servlet.mvc.tobe";
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -100,5 +104,4 @@ class AnnotationHandlerMappingTest {
         Object handler = annotationHandlerMapping.getHandler(request);
         assertThat(handler).isNotNull();
     }
-
 }
