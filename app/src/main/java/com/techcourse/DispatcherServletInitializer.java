@@ -14,12 +14,12 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
-    private static final String BASE_PACKAGE = "com.techcourse";
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        servletContext.setAttribute("basePackage", BASE_PACKAGE);
+        final var basePackage = getClass().getPackage().getName();
+        servletContext.setAttribute("basePackage", basePackage);
         final var dispatcherServlet = new DispatcherServlet(servletContext);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
