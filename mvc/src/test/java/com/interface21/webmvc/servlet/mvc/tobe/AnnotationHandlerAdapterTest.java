@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class AnnotationHandlerAdapterTest {
+class AnnotationHandlerAdapterTest {
 
     @Test
     @DisplayName("HandlerExecution을 처리할 수 있다.")
