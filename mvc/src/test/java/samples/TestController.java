@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JsonView;
 import com.interface21.webmvc.servlet.view.JspView;
 
 @Controller
@@ -28,6 +29,14 @@ public class TestController {
         log.info("test controller post method");
         final var modelAndView = new ModelAndView(new JspView(""));
         modelAndView.addObject("id", request.getAttribute("id"));
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/user/get-test", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final String account = (String) request.getAttribute("name");
+        modelAndView.addObject("name", account);
         return modelAndView;
     }
 }
