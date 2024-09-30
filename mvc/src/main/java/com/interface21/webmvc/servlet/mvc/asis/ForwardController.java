@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Objects;
 
+@Deprecated
 public class ForwardController implements Controller {
 
     private final String path;
