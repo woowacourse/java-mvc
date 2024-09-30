@@ -29,7 +29,7 @@ public class LoginController {
         return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return redirectToIndex();
