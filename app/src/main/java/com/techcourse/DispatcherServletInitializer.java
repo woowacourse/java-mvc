@@ -1,6 +1,7 @@
-package com.interface21.webmvc.servlet;
+package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration.Dynamic;
 import org.slf4j.Logger;

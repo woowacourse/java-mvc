@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet;
+package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappings;
