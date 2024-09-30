@@ -8,11 +8,9 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
@@ -32,8 +30,8 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        for (var controller : reflections.getTypesAnnotatedWith(Controller.class)) {
+
+        for (var controller : ControllerScanner.getControllerClass(basePackage)) {
             registerController(controller);
         }
     }
