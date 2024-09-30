@@ -34,7 +34,4 @@ public class SampleController {
     @RequestMapping(value = "/dummy")
     public void dummy() {
     }
-
-    public void none() {
-    }
 }

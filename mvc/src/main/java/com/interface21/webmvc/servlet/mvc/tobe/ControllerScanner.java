@@ -10,11 +10,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
-public class Controllers {
+public class ControllerScanner {
 
     private final Map<Class<?>, Object> controllers = new HashMap<>();
 
-    public Controllers(Object[] basePackage) {
+    public ControllerScanner(Object[] basePackage) {
         try {
             Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
