@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,6 +75,6 @@ class HandlerMappingRegistryTest {
         Optional<Object> handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
 
         //then
-        assertTrue(handlerMapping.isEmpty());
+        assertThat(handlerMapping).isEmpty();
     }
 }
