@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.DispatcherServlet;
 import com.interface21.web.WebApplicationInitializer;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;

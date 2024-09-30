@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21;
 
 import com.interface21.webmvc.servlet.HandlerAdaptor;
 import com.interface21.webmvc.servlet.HandlerMapping;
@@ -30,7 +30,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMapping() {
         handlerMappings = List.of(
-                new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse.controller")
         );
 
@@ -42,7 +41,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerAdaptor() {
         this.handlerAdaptors = List.of(
-                new ManualHandlerAdaptor(),
                 new AnnotationHandlerAdapter()
         );
     }
