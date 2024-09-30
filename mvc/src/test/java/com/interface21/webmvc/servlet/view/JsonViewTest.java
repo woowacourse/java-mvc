@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.view;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,9 +35,9 @@ class JsonViewTest {
 
     @Test
     @DisplayName("응답을 Json 형식으로 반환 성공: 데이터가 1개면 그대로 반환")
-    void render() throws Exception {
+    void renderOneData() throws Exception {
         // given
-        Map<String, ?> model = Map.of("alpaca", "hihi");
+        Map<String, ?> model = Map.of("alpaca", new User("alpaca", 25));
 
         // when
         JsonView jsonView = new JsonView();
@@ -45,16 +46,16 @@ class JsonViewTest {
         // then
         verify(response).setContentType("application/json");
         verify(response).setCharacterEncoding("UTF-8");
-        verify(writer).write("hihi");
+        verify(writer).write("{\"name\":\"alpaca\",\"age\":25}");
     }
 
     @Test
     @DisplayName("응답을 Json 형식으로 반환 성공: 데이터가 2개 이상이면 Map 형태의 Json으로 반환")
-    void rdfsender() throws Exception {
+    void renderOverTwoData() throws Exception {
         // given
         Map<String, ?> model = Map.of(
-                "key1", "value1",
-                "key2", "value2"
+                "alpaca", new User("alpaca", 25),
+                "moly", new User("moly", 20)
         );
         String expectedJson = new ObjectMapper().writeValueAsString(model);
 
@@ -66,5 +67,12 @@ class JsonViewTest {
         verify(response).setContentType("application/json");
         verify(response).setCharacterEncoding("UTF-8");
         verify(writer).write(expectedJson);
+        assertThat(expectedJson).contains(
+                "alpaca\":{\"name\":\"alpaca\",\"age\":25}",
+                "moly\":{\"name\":\"moly\",\"age\":20}"
+        );
+    }
+
+    private record User(String name, int age) {
     }
 }

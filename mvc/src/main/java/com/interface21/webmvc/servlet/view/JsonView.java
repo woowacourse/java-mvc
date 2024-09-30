@@ -1,11 +1,12 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.interface21.webmvc.servlet.View;
+import java.util.Map;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.webmvc.servlet.View;
 
 public class JsonView implements View {
 
@@ -20,17 +21,21 @@ public class JsonView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        final String jsonFormattedData = objectMapper.writeValueAsString(getRawData(model));
+        response.getWriter().write(jsonFormattedData);
         response.setContentType(JSON_CONTENT_TYPE);
         response.setCharacterEncoding(UTF_8_ENCODING);
+    }
 
+    private Object getRawData(final Map<String, ?> model) {
         if (model.size() == ONE_MODEL_SIZE) {
-            String rawData = model.values().iterator().next().toString();
-            response.getWriter().write(rawData);
-            return;
+            return model.values().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("모델이 비어있습니다. 데이터를 확인해주세요."));
         }
 
-        String jsonFormattedData = objectMapper.writeValueAsString(model);
-        response.getWriter().write(jsonFormattedData);
+        return model;
     }
 }
