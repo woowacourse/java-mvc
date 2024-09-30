@@ -35,11 +35,11 @@ class DIContainer {
     }
 
     private void setFields(final Object bean, final Field field) {
-        Class<?> type = field.getType();
+        final var fieldType = field.getType();
         field.setAccessible(true);
 
         beans.stream()
-                .filter(type::isInstance)
+                .filter(fieldType::isInstance)
                 .forEach(ConsumerWrapper.accept(target -> field.set(bean, target)));
     }
 
