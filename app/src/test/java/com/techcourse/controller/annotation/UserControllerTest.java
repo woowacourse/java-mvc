@@ -8,6 +8,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.techcourse.controller.UserController;
 
 class UserControllerTest {
 

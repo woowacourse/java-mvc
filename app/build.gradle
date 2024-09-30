@@ -18,6 +18,7 @@ repositories {
 dependencies {
     implementation project(':mvc')
 
+    implementation 'org.springframework:spring-web:6.1.13'
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.25'
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.1.25'
     implementation 'ch.qos.logback:logback-classic:1.5.7'

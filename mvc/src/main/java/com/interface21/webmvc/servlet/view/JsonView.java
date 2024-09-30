@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.view;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.web.http.MediaType;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +24,7 @@ public class JsonView implements View {
 			return;
 		}
         objectMapper.writeValue(response.getWriter(), model);
-		response.setContentType("application/json; charset=utf-8");
+		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
 	private void setModelAttribute(Map<String, ?> model, HttpServletRequest request) {
