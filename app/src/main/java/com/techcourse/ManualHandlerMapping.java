@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterViewController;
+import com.techcourse.controller.legacy.LoginController;
+import com.techcourse.controller.legacy.LoginViewController;
+import com.techcourse.controller.legacy.LogoutController;
+import com.techcourse.controller.legacy.RegisterViewController;
 
 import jakarta.servlet.http.HttpServletRequest;
 

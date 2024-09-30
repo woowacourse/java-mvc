@@ -1,4 +1,4 @@
-package com.techcourse.controller;
+package com.techcourse.controller.annotation;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
