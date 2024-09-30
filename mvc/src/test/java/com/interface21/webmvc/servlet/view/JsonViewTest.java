@@ -9,7 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 class JsonViewTest {
@@ -62,10 +65,10 @@ class JsonViewTest {
         View jsonView = new JsonView();
 
         // when
-        Map<String, Object> model = Map.of(
-                "user1", new User("prin", "backend"),
-                "user2", new User("maru", "frontend")
-        );
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("user1", new User("prin", "backend"));
+        model.put("user2", new User("maru", "frontend"));
+
         jsonView.render(model, request, response);
 
         // then
