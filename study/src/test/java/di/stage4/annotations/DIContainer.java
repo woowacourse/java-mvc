@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.ComponentScan.Filter;
 
 /**
  * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
@@ -45,14 +46,16 @@ class DIContainer {
     }
 
     private void injectDependencies(final Object bean) {
-        Arrays.stream(bean.getClass().getDeclaredFields()).forEach(field -> {
-            try {
-                field.setAccessible(true);
-                field.set(bean, getBean(field.getType()));
-            } catch (Exception e) {
-                log.warn("빈 의존성 주입에서 문제 발생: {}", e.getMessage());
-            }
-        });
+        Arrays.stream(bean.getClass().getDeclaredFields())
+            .filter(field -> field.isAnnotationPresent(Inject.class))
+            .forEach(field -> {
+                try {
+                    field.setAccessible(true);
+                    field.set(bean, getBean(field.getType()));
+                } catch (Exception e) {
+                    log.warn("빈 의존성 주입에서 문제 발생: {}", e.getMessage());
+                }
+            });
     }
 
     @SuppressWarnings("unchecked")

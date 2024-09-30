@@ -8,8 +8,7 @@ import org.reflections.Reflections;
 
 public class ClassPathScanner {
 
-    private static final List<Class<? extends Annotation>> ANNOTATIONS = List.of(
-        Inject.class, Service.class, Repository.class);
+    private static final List<Class<? extends Annotation>> ANNOTATIONS = List.of(Service.class, Repository.class);
 
     public static Set<Class<?>> getAllClassesInPackage(final String packageName) {
         Reflections reflections = new Reflections(packageName);
