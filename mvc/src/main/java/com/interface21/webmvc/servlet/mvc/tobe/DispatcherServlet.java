@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
@@ -20,14 +20,13 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(
-            DispatcherServlet.class.getPackage());
-    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private HandlerMappingRegistry handlerMappingRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     @Override
     public void init() {
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerMappingRegistry = new HandlerMappingRegistry(DispatcherServlet.class.getPackage());
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
