@@ -28,7 +28,7 @@ class AnnotatedHandlerRegistryTest {
         final Set<Method> methods = registry.getMethods();
 
         // then
-        assertThat(methods).hasSize(4);
+        assertThat(methods).hasSize(5);
     }
 
     @Test

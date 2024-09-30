@@ -16,4 +16,9 @@ public class SampleController {
     public ModelAndView sample(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView(""));
     }
+
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public ModelAndView get(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView(""));
+    }
 }

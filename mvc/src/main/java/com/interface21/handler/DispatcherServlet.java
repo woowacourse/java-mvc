@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.handler;
 
 import java.util.Map;
 
@@ -12,10 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
-import com.techcourse.handler.HandlerAdapterRegistry;
-import com.techcourse.handler.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -26,7 +24,6 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        registry.addAdapter(new ManualHandlerAdapter());
         registry.addAdapter(new AnnotationHandlerAdapter("com.techcourse.controller"));
     }
 

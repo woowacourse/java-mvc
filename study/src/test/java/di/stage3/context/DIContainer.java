@@ -9,12 +9,16 @@ class DIContainer {
 
     private final Set<Object> beans;
 
-    public DIContainer(final Set<Class<?>> classes) {
-        this.beans = Set.of();
+    public DIContainer(final Set<Class<?>> classes) throws Exception {
+        final BeanInitializer beanInitializer = new BeanInitializer();
+        beans = beanInitializer.initialize(classes);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
-        return null;
+        return (T) beans.stream()
+                .filter(aClass::isInstance)
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
