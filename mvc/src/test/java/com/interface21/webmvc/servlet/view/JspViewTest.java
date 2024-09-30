@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class JspViewTest {
+
     private HttpServletRequest request;
     private HttpServletResponse response;
     private RequestDispatcher dispatcher;
@@ -27,7 +28,7 @@ class JspViewTest {
     }
 
     @Test
-    void testRenderJsp() throws Exception {
+    void renderJsp() throws Exception {
         // Given
         String viewName = "/user.jsp";
         JspView view = new JspView(viewName);
@@ -42,7 +43,7 @@ class JspViewTest {
     }
 
     @Test
-    void testRedirect() throws Exception {
+    void redirect() throws Exception {
         // Given
         String viewName = "redirect:/";
         JspView view = new JspView(viewName);
