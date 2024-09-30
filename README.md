@@ -74,7 +74,7 @@
 
 - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
 - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스 정상 동작하도록 리팩토링
-- [ ] DispatcherServlet을 app 패키지에서 mvc 패키지로 이동
+- [x] DispatcherServlet을 app 패키지에서 mvc 패키지로 이동
 
 ## @MVC 구현하기 가이드
 
@@ -97,3 +97,4 @@
 
 1. [Reflection API](study/src/test/java/reflection)
 2. [Servlet](study/src/test/java/servlet)
+3. [IOC DI](study/src/test/java/di)
