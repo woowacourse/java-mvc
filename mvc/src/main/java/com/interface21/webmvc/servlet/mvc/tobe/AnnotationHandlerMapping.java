@@ -38,8 +38,9 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     public Handler getHandler(final HttpServletRequest request) {
-        return new Handler(
-                handlerExecutions.getHandler(request.getRequestURI(), RequestMethod.findByName(request.getMethod())));
+        HandlerExecution handler = handlerExecutions.getHandler(request.getRequestURI(),
+                RequestMethod.findByName(request.getMethod()));
+        return new AnnotationHandler(handler);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.Handler;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualHandler;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
@@ -38,7 +39,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         validateHandlerRequest(request);
         String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return new Handler(controllers.get(requestURI));
+        return new ManualHandler(controllers.get(requestURI));
     }
 
     private void validateHandlerRequest(HttpServletRequest request) {
