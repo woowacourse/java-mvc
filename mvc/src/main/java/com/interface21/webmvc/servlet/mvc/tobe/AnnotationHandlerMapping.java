@@ -17,7 +17,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping implements ServletRequestHandler {
+public class AnnotationHandlerMapping {
 
     private static final List<Class<?>> AVAILABLE_PACKAGE_TYPE = List.of(String.class, Class.class);
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
@@ -49,7 +49,6 @@ public class AnnotationHandlerMapping implements ServletRequestHandler {
         }
     }
 
-    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackages);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -88,13 +87,7 @@ public class AnnotationHandlerMapping implements ServletRequestHandler {
         HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.findMethod(request.getMethod()));
         return handlerExecutions.get(key);
     }
-
-    @Override
-    public boolean canHandle(HttpServletRequest request) {
-        return getHandler(request).isPresent();
-    }
-
-    @Override
+    
     public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HandlerExecution handler = (HandlerExecution) getHandler(request)
                 .orElseThrow(() -> new HandlerNotFoundException(request));
