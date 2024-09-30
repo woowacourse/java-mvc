@@ -17,7 +17,7 @@ public class HandlerMappings {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException(String.format(
+                .orElseThrow(() -> new IllegalStateException(String.format(
                         "%s %s를 처리할 수 있는 핸들러가 존재하지 않습니다.", request.getMethod(), request.getRequestURI())));
     }
 

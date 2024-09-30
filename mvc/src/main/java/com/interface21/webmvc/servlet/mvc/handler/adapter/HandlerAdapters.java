@@ -18,7 +18,7 @@ public class HandlerAdapters {
         HandlerAdapter handlerAdapter = adapters.stream()
                 .filter(adapter -> adapter.canHandle(handler))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException(String.format(
+                .orElseThrow(() -> new IllegalStateException(String.format(
                         "%s %s를 처리할 수 있는 어댑터가 존재하지 않습니다.", request.getMethod(), request.getRequestURI())));
         return handlerAdapter.handle(request, response, handler);
     }

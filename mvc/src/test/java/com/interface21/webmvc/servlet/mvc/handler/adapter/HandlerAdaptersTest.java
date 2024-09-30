@@ -31,7 +31,7 @@ class HandlerAdaptersTest {
         final var response = new MockHttpServletResponse();
         final var handler = handlerMapping.getHandler(request);
         assertThatThrownBy(() -> handlerAdapters.handle(request, response, handler))
-                .isInstanceOf(UnsupportedOperationException.class)
+                .isInstanceOf(IllegalStateException.class)
                 .hasMessage("GET /absence-test를 처리할 수 있는 어댑터가 존재하지 않습니다.");
     }
 

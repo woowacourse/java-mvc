@@ -28,7 +28,7 @@ class HandlerMappingsTest {
     void getHandlerAbsenceExceptionTest() {
         final var request = new MockHttpServletRequest("GET", "/absence-test");
         assertThatThrownBy(() -> handlerMappings.getHandler(request))
-                .isInstanceOf(UnsupportedOperationException.class)
+                .isInstanceOf(IllegalStateException.class)
                 .hasMessage("GET /absence-test를 처리할 수 있는 핸들러가 존재하지 않습니다.");
     }
 
