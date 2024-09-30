@@ -6,6 +6,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -30,8 +31,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        setHandlerMappingRegistry();
-        setHandlerAdapterRegistry();
+        setHandlerMappingRegistry(new ManualHandlerMapping());
+        setHandlerMappingRegistry(new AnnotationHandlerMapping(BASE_PACKAGE));
+        setHandlerAdapterRegistry(new ManualHandlerAdapter());
+        setHandlerAdapterRegistry(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -53,20 +56,13 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void setHandlerMappingRegistry() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
-        annotationHandlerMapping.initialize();
-
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+    private void setHandlerMappingRegistry(HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    private void setHandlerAdapterRegistry() {
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+    private void setHandlerAdapterRegistry(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
