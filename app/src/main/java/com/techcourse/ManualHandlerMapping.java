@@ -20,7 +20,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
