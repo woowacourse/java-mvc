@@ -1,7 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class JsonView implements View {
             throws IOException {
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        final PrintWriter writer = response.getWriter();
+        final Writer writer = response.getWriter();
 
         if (hasOnlyOneKey(model)) {
             writer.write(mapper.writeValueAsString(model.values().iterator().next()));
