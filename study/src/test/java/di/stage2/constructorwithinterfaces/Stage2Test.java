@@ -1,9 +1,9 @@
 package di.stage2.constructorwithinterfaces;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import di.User;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage2Test {
 
@@ -18,7 +18,7 @@ class Stage2Test {
     void stage2() {
         final var user = new User(1L, "gugu");
 
-        final UserDao userDao = new InMemoryUserDao();
+        final UserDao userDao = UserDaoFactory.getProductionUserDao();
         final var userService = new UserService(userDao);
 
         final var actual = userService.join(user);
@@ -29,19 +29,7 @@ class Stage2Test {
     @Test
     void testAnonymousClass() {
         // given
-        final var userDao = new UserDao() {
-            private User user;
-
-            @Override
-            public void insert(User user) {
-                this.user = user;
-            }
-
-            @Override
-            public User findById(long id) {
-                return user;
-            }
-        };
+        final var userDao = UserDaoFactory.getTestUserDao();
         final var userService = new UserService(userDao);
         final var user = new User(1L, "gugu");
 
