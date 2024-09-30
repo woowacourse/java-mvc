@@ -1,10 +1,12 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.exception.NonExistenceHandlerException;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
@@ -16,9 +18,12 @@ public class HandlerMappingRegistry {
         }
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
+    public HandlerExecution getHandler(HttpServletRequest request) throws NonExistenceHandlerException {
+        return (HandlerExecution) handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .findFirst();
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() ->
+                        new NonExistenceHandlerException(request.getMethod() + "-" + request.getRequestURI()));
     }
 }

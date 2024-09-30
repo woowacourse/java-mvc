@@ -1,21 +1,23 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.exception.NonExistenceHandlerException;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String INTERNAL_SERVER_ERROR_JSP = "/500.jsp";
+    private static final String PAGE_NOT_FOUND_JSP = "/404.jsp";
 
     private final HandlerMappingRegistry handlerMappingRegistry;
 
@@ -25,43 +27,54 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws ServletException {
+        log.info("Received request: {} {}", request.getMethod(), request.getRequestURI());
+
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request);
-
-            if (handler instanceof Controller) {
-                String mav = ((Controller)handler).execute(request, response);
-                move(mav, request, response);
-            } else if (handler instanceof HandlerExecution) {
-                ModelAndView mav = ((HandlerExecution)handler).handle(request, response);
-                mav.getView().render(mav.getModel(), request, response);
-            } else {
-                throw new IllegalArgumentException();
-            }
-
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            HandlerExecution handler = getHandler(request);
+            ModelAndView mav = invokeHandler(handler, request, response);
+            renderView(mav, request, response);
+        } catch (NonExistenceHandlerException e) {
+            log.error("Unhandled exception: {}", e.getMessage(), e);
+            renderView(new ModelAndView(new JspView(PAGE_NOT_FOUND_JSP)), request, response);
+            throw new ServletException("Error occurred while handling the request.", e);
+        } catch (Exception e) {
+            log.error("Unhandled exception: {}", e.getMessage(), e);
+            renderView(new ModelAndView(new JspView(INTERNAL_SERVER_ERROR_JSP)), request, response);
+            throw new ServletException("Error occurred while handling the request.", e);
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private HandlerExecution getHandler(HttpServletRequest request) {
+        log.debug("Attempting to retrieve handler for request URI: {}", request.getRequestURI());
+        return handlerMappingRegistry.getHandler(request);
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private ModelAndView invokeHandler(Object handler, HttpServletRequest request, HttpServletResponse response) {
+        if (!(handler instanceof HandlerExecution)) {
+            renderView(new ModelAndView(new JspView(INTERNAL_SERVER_ERROR_JSP)), request, response);
+            throw new ClassCastException("Handler is not an instance of HandlerExecution.");
+        }
+        log.debug("Invoking handler: {}", handler.getClass().getName());
+        return ((HandlerExecution) handler).handle(request, response);
+    }
+
+    private void renderView(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) {
+        log.debug("Rendering view: {}", mav.getView().getClass().getName());
+        try {
+            mav.getView().render(mav.getModel(), request, response);
+        } catch (Exception e) {
+            renderView(new ModelAndView(new JspView(INTERNAL_SERVER_ERROR_JSP)), request, response);
+            throw new IllegalArgumentException();
+        }
     }
 }
