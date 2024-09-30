@@ -51,3 +51,14 @@
 ### 미션 
 
 - [x] Legacy MVC와 @MVC 통합
+
+<br>
+
+## 3단계
+
+### 학습 테스트
+
+### 미션
+
+- [x] JsonView 클래스 구현
+- [ ] Legacy MVC 제거
