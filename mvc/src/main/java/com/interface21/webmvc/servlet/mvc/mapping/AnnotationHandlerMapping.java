@@ -25,6 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        initialize();
     }
 
     public void initialize() {
@@ -37,7 +38,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void checkMethodOfController(Object controller) {
         Set<Method> methods = ReflectionUtils.getAllMethods(controller.getClass(),
                 ReflectionUtils.withAnnotation(RequestMapping.class));
-        methods.forEach(method -> addHandlerExecution(controller, method)); // 해당 메서드들을 핸들러로 추가
+        methods.forEach(method -> addHandlerExecution(controller, method));
     }
 
 

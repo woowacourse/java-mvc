@@ -7,9 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class HandlerMappingRegistryTest {
 
@@ -29,24 +31,20 @@ class HandlerMappingRegistryTest {
         registry.addHandlerMapping(testHandlerMapping);
 
         // when
-        Optional<Object> handler = registry.getHandler(new MockHttpServletRequest());
+        Object handler = registry.getHandler(new MockHttpServletRequest());
 
         //then
-        assertThat(handler).isPresent()
-                .get()
-                .isEqualTo("test");
+        assertThat(handler).isEqualTo("test");
     }
 
     @Test
-    @DisplayName("핸들러 반환 성공 : 핸들러가 존재하지 않는 경우")
-    void getHandler_notExist() {
+    @DisplayName("핸들러 반환 실패 : 핸들러가 존재하지 않는 경우")
+    void getHandler_notExistException() {
         // given
         HandlerMappingRegistry registry = new HandlerMappingRegistry();
 
-        // when
-        Optional<Object> handler = registry.getHandler(new MockHttpServletRequest());
-
-        // then
-        assertThat(handler).isEmpty();
+        // when & then
+        assertThatThrownBy(() -> registry.getHandler(new MockHttpServletRequest()))
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
