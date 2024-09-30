@@ -1,18 +1,14 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,36 +16,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        this.controllerScanner = new ControllerScanner(basePackage);
     }
 
     public void initialize() {
-        Set<Class<?>> controllerClasses = scanControllerClasses();
-        List<Method> requestMappingMethods = scanRequestMappingMethods(controllerClasses);
+        List<Method> requestMappingMethods = controllerScanner.scanControllerMethods();
         requestMappingMethods.forEach(this::registerHandlerExecution);
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet()
                 .forEach(handlerKey -> log.info("HandlerKey : {}, HandlerExecution : {}", handlerKey, handlerExecutions.get(handlerKey)));
-    }
-
-    private Set<Class<?>> scanControllerClasses() {
-        Reflections reflections = new Reflections(basePackage, Scanners.TypesAnnotated);
-
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private List<Method> scanRequestMappingMethods(Set<Class<?>> controllerClasses) {
-        return controllerClasses.stream()
-                .map(Class::getDeclaredMethods)
-                .flatMap(Stream::of)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .toList();
     }
 
     private void registerHandlerExecution(Method method) {

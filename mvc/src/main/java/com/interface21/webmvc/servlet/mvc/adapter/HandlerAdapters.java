@@ -1,8 +1,7 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.adapter;
 
 import java.util.HashSet;
 import java.util.List;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 
 public class HandlerAdapters {
 
@@ -20,5 +19,9 @@ public class HandlerAdapters {
         }
 
         throw new IllegalStateException("Unsupported handler type: " + handler);
+    }
+
+    public void addHandlerAdapter(AnnotationHandlerAdapter adapter) {
+        adapters.add(adapter);
     }
 }
