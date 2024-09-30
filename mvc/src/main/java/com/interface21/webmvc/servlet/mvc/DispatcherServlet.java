@@ -5,7 +5,6 @@ import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.adapter.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
@@ -32,9 +31,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
     }
 
     @Override
