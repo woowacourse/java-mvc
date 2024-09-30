@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
@@ -86,7 +87,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        JspView view = (JspView)modelAndView.getView();
+        View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
     }
 }
