@@ -64,7 +64,11 @@
 
 1. JsonView 클래스 구현
 
-- [ ] JSON으로 응답할 수 있게 JsonView 클래스 구현
+- [x] JSON으로 응답할 수 있게 JsonView 클래스 구현
+    - [x] JSON과 자바 객체 사이 변환 시 Jackson 라이브러리 사용
+    - [x] JSON으로 응답할 때 ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE로 반환
+    - [x] model에 데이터가 1개면 값을 그대로 반환하고, 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환
+- [ ] UserController 추가해서 정상 동작하는지 테스트
 
 2. Legacy MVC 제거
 
