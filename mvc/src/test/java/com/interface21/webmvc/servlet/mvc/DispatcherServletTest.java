@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,10 +23,14 @@ class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        dispatcherServlet = new DispatcherServlet("samples");
-        dispatcherServlet.init();
+        ServletContext servletContext = mock(ServletContext.class);
+        when(servletContext.getAttribute("basePackage")).thenReturn("samples");
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+
+        dispatcherServlet = new DispatcherServlet(servletContext);
+        dispatcherServlet.init();
     }
 
     @DisplayName("어노테이션 기반 컨트롤러를 찾아서 처리한다.")

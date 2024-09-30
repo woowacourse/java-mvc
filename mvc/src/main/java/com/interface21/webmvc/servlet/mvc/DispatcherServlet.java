@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,11 +15,13 @@ public class DispatcherServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String BASE_PACKAGE_ATTRIB_NAME = "basePackage";
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet(String basePackage) {
+    public DispatcherServlet(ServletContext context) {
+        String basePackage = (String) context.getAttribute(BASE_PACKAGE_ATTRIB_NAME);
         handlerMappingRegistry = new HandlerMappingRegistry(basePackage);
         handlerAdapterRegistry = new HandlerAdapterRegistry();
     }

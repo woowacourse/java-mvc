@@ -17,8 +17,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final String CONTROLLER_SCAN_BASE = "com.techcourse.controller";
 
     @Override
-    public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet(CONTROLLER_SCAN_BASE);
+    public void onStartup(ServletContext servletContext) {
+        servletContext.setAttribute("basePackage", CONTROLLER_SCAN_BASE);
+        final var dispatcherServlet = new DispatcherServlet(servletContext);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
