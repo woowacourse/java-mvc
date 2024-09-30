@@ -1,30 +1,27 @@
-package com.interface21.webmvc.servlet;
+package com.interface21.webmvc.servlet.mvc.annotation;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class HandlerAdapterTest {
+class AnnotationHandlerAdapterTest {
 
-    private List<HandlerAdapter> adapters;
-    private AnnotationHandlerMapping handlerMapping;
+    private HandlerAdapter adapters;
+    private HandlerMapping handlerMapping;
 
     @BeforeEach
     void setAdapters() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
 
-        adapters = new ArrayList<>();
-        adapters.add(new AnnotationHandlerAdapter());
+        adapters = new AnnotationHandlerAdapter();
     }
 
     @Test
@@ -40,6 +37,6 @@ class HandlerAdapterTest {
         final var annotatedController = handlerMapping.getHandler(request);
 
         // then
-        assertTrue(adapters.getLast().supports(annotatedController));
+        assertTrue(adapters.supports(annotatedController));
     }
 }
