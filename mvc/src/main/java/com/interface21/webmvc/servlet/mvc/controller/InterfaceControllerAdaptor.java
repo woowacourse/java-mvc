@@ -6,7 +6,7 @@ import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ControllerAdaptor implements HandlerAdaptor {
+public class InterfaceControllerAdaptor implements HandlerAdaptor {
 
     @Override
     public boolean canExecute(final Object handler) {
