@@ -20,14 +20,16 @@ public class SingletonBeanContainer {
         return instance;
     }
 
-    public Object createSingleton(Class<?> clazz) {
+    public Object registerBean(Class<?> clazz) {
+        if (singletonObjects.containsKey(clazz)) {
+            return singletonObjects.get(clazz);
+        }
         try {
             Constructor<?> constructor = clazz.getConstructor();
             constructor.setAccessible(true);
             Object classInstance = constructor.newInstance();
             constructor.setAccessible(false);
             singletonObjects.putIfAbsent(clazz, classInstance);
-            return classInstance;
         } catch (IllegalArgumentException e) {
             throw new SingletonInstantiationException(clazz, "Arguments mismatch", e);
         } catch (IllegalAccessException e) {
@@ -39,13 +41,14 @@ public class SingletonBeanContainer {
         } catch (NoSuchMethodException e) {
             throw new SingletonInstantiationException(clazz, "No constructor found (interface, array class, ..)", e);
         }
+        return singletonObjects.get(clazz);
     }
 
-    public Object getTypedBean(Class<?> clazz) {
+    public Object getBean(Class<?> clazz) {
         if (singletonObjects.containsKey(clazz)) {
             return singletonObjects.get(clazz);
         }
-        return createSingleton(clazz);
+        throw new BeanNotFoundException(clazz);
     }
 
     public List<Object> getAnnotatedBeans(Class<? extends Annotation> annotation) {

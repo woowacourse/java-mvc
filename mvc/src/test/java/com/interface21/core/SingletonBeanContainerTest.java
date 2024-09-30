@@ -22,8 +22,8 @@ class SingletonBeanContainerTest {
     @DisplayName("여러 번 요청하더라도 같은 인스턴스를 반환한다.")
     void identicalInstanceOnMultipleRequest() {
         SingletonBeanContainer manager = SingletonBeanContainer.getInstance();
-        Object dummy1 = manager.getTypedBean(Dummy.class);
-        Object dummy2 = manager.getTypedBean(Dummy.class);
+        Object dummy1 = manager.registerBean(Dummy.class);
+        Object dummy2 = manager.registerBean(Dummy.class);
         assertThat(dummy1).isSameAs(dummy2);
     }
 
@@ -31,7 +31,7 @@ class SingletonBeanContainerTest {
     @DisplayName("객체 생성에 실패하는 경우 예외가 발생한다.")
     void privateConstructor() {
         SingletonBeanContainer manager = SingletonBeanContainer.getInstance();
-        assertThatThrownBy(() -> manager.getTypedBean(PrivateDummy.class))
-                .isInstanceOf(SingletonInstantiationException.class);
+        assertThatThrownBy(() -> manager.getBean(PrivateDummy.class))
+                .isInstanceOf(BeanNotFoundException.class);
     }
 }

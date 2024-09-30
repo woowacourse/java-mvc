@@ -5,11 +5,11 @@ import com.interface21.core.util.AnnotationUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
-public class BeanRegisterer {
+public class BeanRegistrar {
 
     private static final SingletonBeanContainer container = SingletonBeanContainer.getInstance();
 
-    private BeanRegisterer() {
+    private BeanRegistrar() {
     }
 
     public static void registerBeans(Class<?> basePackageClass) {
@@ -19,6 +19,6 @@ public class BeanRegisterer {
         reflections.getSubTypesOf(Object.class)
                 .stream()
                 .filter(clazz -> AnnotationUtils.hasMetaAnnotatedClasses(clazz, Component.class))
-                .forEach(container::createSingleton);
+                .forEach(container::registerBean);
     }
 }

@@ -19,7 +19,7 @@ public class HandlerExecution {
 
         SingletonBeanContainer container = SingletonBeanContainer.getInstance();
         Class<?> controllerClass = method.getDeclaringClass();
-        Object controller = container.getTypedBean(controllerClass);
+        Object controller = container.getBean(controllerClass);
         return (ModelAndView) method.invoke(controller, request, response);
     }
 }

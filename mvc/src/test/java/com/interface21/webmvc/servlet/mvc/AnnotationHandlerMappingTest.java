@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.core.BeanRegisterer;
+import com.interface21.core.BeanRegistrar;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerExecution;
@@ -25,8 +25,8 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        BeanRegisterer.registerBeans(getClass());
-        BeanRegisterer.registerBeans(TestController.class);
+        BeanRegistrar.registerBeans(getClass());
+        BeanRegistrar.registerBeans(TestController.class);
         handlerMapping = new AnnotationHandlerMapping();
         handlerMapping.initialize();
     }
