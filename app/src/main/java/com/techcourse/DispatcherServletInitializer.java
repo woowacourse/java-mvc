@@ -1,6 +1,7 @@
-package com.interface21.webmvc.servlet;
+package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
