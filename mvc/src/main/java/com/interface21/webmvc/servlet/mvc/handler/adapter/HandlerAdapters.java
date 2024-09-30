@@ -3,14 +3,13 @@ package com.interface21.webmvc.servlet.mvc.handler.adapter;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapters {
     private final List<HandlerAdapter> adapters;
 
     public HandlerAdapters(List<HandlerAdapter> adapters) {
-        this.adapters = new ArrayList<>(adapters);
+        this.adapters = List.copyOf(adapters);
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
