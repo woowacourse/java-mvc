@@ -18,7 +18,9 @@ class Stage2Test {
     void stage2() {
         final var user = new User(1L, "gugu");
 
-        final UserDao userDao = new InMemoryUserDao();
+        final UserDaoDiContainer userDaoDiContainer = UserDaoDiContainer.getInstance();
+
+        final UserDao userDao = userDaoDiContainer.getUserDao(InMemoryUserDao.class);
         final var userService = new UserService(userDao);
 
         final var actual = userService.join(user);
