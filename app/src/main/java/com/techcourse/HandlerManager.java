@@ -6,7 +6,6 @@ import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.controller.NotFoundViewController;
 
 public class HandlerManager {
 
@@ -26,7 +25,11 @@ public class HandlerManager {
                 .findFirst();
 
         if (handlerMapping.isEmpty()) {
-            return new NotFoundViewController();
+            for (final HandlerMapping mapping : mappings) {
+                if (mapping instanceof final ManualHandlerMapping manualHandlerMapping) {
+                    return manualHandlerMapping.getNotFoundController();
+                }
+            }
         }
         return handlerMapping.get().getHandler(request);
     }

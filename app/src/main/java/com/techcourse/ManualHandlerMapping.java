@@ -14,6 +14,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
+import com.techcourse.controller.NotFoundViewController;
 
 public class ManualHandlerMapping implements HandlerMapping {
 
@@ -27,6 +28,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
+        controllers.put("notFound", new NotFoundViewController());
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
@@ -42,5 +44,9 @@ public class ManualHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         return controllers.get(request.getRequestURI());
+    }
+
+    public Object getNotFoundController() {
+        return controllers.get("notFound");
     }
 }
