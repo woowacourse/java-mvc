@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
 
@@ -23,7 +22,6 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
-        controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());
 
