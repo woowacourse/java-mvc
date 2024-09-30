@@ -17,7 +17,7 @@ public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
-    public static Map<Object, List<Method>> scan(Object packageName){
+    public static Map<Object, List<Method>> scan(Object... packageName){
         Map<Object, List<Method>> scanResult = new HashMap<>();
         Reflections reflections = new Reflections(packageName);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);

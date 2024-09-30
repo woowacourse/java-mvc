@@ -11,22 +11,13 @@ public class Packages {
     private final Map<Object, List<Method>> controllerMap;
 
     public Packages(Object[] basePackages) {
-        validatePackagesEmpty(basePackages);
         this.basePackages = basePackages;
         this.controllerMap = new HashMap<>();
     }
 
-    private void validatePackagesEmpty(Object[] basePackages) {
-        if (basePackages == null || basePackages.length == 0) {
-            throw new IllegalArgumentException("basePackages는 비어있을 수 없습니다.");
-        }
-    }
-
     public void initialize() {
-        for (Object basePackage : basePackages) {
-            Map<Object, List<Method>> scanned = ControllerScanner.scan(basePackage);
-            controllerMap.putAll(scanned);
-        }
+        Map<Object, List<Method>> scanned = ControllerScanner.scan(basePackages);
+        controllerMap.putAll(scanned);
     }
 
     public List<Object> controllerInstances() {
