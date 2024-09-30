@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.mapping.impl.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
