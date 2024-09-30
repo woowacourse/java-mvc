@@ -1,7 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
@@ -59,7 +57,7 @@ public class DispatcherServlet extends HttpServlet {
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
-            throw new UncheckedServletException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -69,7 +67,7 @@ public class DispatcherServlet extends HttpServlet {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher(NOT_FOUND_FILE_PATH);
             requestDispatcher.forward(request, response);
         } catch (Exception e) {
-            throw new UncheckedServletException(e);
+            throw new RuntimeException(e);
         }
     }
 }

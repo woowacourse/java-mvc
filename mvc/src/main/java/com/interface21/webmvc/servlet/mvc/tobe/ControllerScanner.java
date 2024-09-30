@@ -12,6 +12,7 @@ public class ControllerScanner {
 
 
     public ControllerScanner(Object... basePackages) {
+        System.out.println("basePackages = " + basePackages);
         this.reflections = new Reflections(basePackages);
         this.controllers = mapControllers();
     }
