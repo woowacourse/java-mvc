@@ -11,8 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class IndexController {
 
+    private static final JspView INDEX_VIEW = new JspView("/index.jsp");
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView(INDEX_VIEW);
     }
 }

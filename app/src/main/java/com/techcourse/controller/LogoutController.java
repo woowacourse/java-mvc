@@ -11,11 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class LogoutController {
 
+    public static final JspView REDIRECT_INDEX_VIEW = new JspView("redirect:/index.jsp");
+
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(REDIRECT_INDEX_VIEW);
     }
 }
