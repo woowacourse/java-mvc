@@ -1,4 +1,4 @@
-package samples;
+package samples.general;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;

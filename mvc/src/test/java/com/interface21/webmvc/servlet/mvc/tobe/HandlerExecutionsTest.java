@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import samples.TestController;
+import samples.general.TestController;
 
 import java.lang.reflect.Method;
 
