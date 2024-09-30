@@ -1,7 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +23,6 @@ public class HandlerMappings {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
-
-        if (handler instanceof Controller) {
-            return new ControllerHandlerAdapter((Controller) handler);
-        }
 
         return (HandlerExecution) handler;
     }
