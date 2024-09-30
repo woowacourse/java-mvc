@@ -19,4 +19,4 @@
 - [x] 1\. JsonView 클래스 구현
 - [ ] 2\. Legacy MVC 제거
   - [x] `DispatcherServlet` 패키지 이동 app -> mvc
-  - [ ] `UserController` 추가
+  - [x] `UserController` 추가
