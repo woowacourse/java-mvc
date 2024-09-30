@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,17 +32,19 @@ class JsonViewTest {
         when(response.getWriter()).thenReturn(new PrintWriter(responseWriter));
     }
 
+    @DisplayName("개수가 1개일 때는 값을 그대로 반환한다.")
     @Test
-    void testRenderSingleModelObject() throws Exception {
+    void renderSingleModelObject() throws Exception {
         Map<String, Object> model = new HashMap<>();
         model.put("name", "John");
 
         jsonView.render(model, request, response);
 
-        assertEquals("{\"name\":\"John\"}", responseWriter.toString().trim());
+        assertEquals("\"John\"", responseWriter.toString().trim());
         verify(response).setContentType("application/json;charset=UTF-8");
     }
 
+    @DisplayName("개수가 2개 이상일 때는 map 형태로 반환한다.")
     @Test
     void testRenderMultipleModelObjects() throws Exception {
         Map<String, Object> model = new HashMap<>();
@@ -54,8 +57,9 @@ class JsonViewTest {
         verify(response).setContentType("application/json;charset=UTF-8");
     }
 
+    @DisplayName("빈 응답을 반환한다.")
     @Test
-    void testRenderEmptyModel() throws Exception {
+    void renderEmptyModel() throws Exception {
         Map<String, Object> model = new HashMap<>();
 
         jsonView.render(model, request, response);
