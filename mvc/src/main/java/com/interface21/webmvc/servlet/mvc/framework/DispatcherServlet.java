@@ -1,4 +1,4 @@
-package com.techcourse.framework;
+package com.interface21.webmvc.servlet.mvc.framework;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,25 +12,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.NoMatchedHandlerException;
-import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerMappingAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingAdapter;
+import com.interface21.webmvc.servlet.mvc.NoMatchedHandlerException;
+import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerMappingAdapter;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackage;
+
     private List<HandlerMappingAdapter> handlerMappingAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(Object... basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
         handlerMappingAdapters = List.of(
-                new AnnotationHandlerMappingAdapter("com.techcourse.controller")
+                new AnnotationHandlerMappingAdapter(basePackage)
         );
         for (HandlerMappingAdapter handlerMappingAdapter : handlerMappingAdapters) {
             handlerMappingAdapter.initialize();

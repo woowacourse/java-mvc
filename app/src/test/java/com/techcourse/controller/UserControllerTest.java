@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techcourse.framework.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.framework.DispatcherServlet;
 import com.techcourse.repository.InMemoryUserRepository;
 
 class UserControllerTest {

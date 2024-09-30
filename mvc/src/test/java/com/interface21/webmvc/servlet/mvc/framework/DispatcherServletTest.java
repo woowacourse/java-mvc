@@ -1,4 +1,4 @@
-package com.techcourse.framework;
+package com.interface21.webmvc.servlet.mvc.framework;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.tobe.NoMatchedHandlerException;
+import com.interface21.webmvc.servlet.mvc.NoMatchedHandlerException;
 
 class DispatcherServletTest {
 

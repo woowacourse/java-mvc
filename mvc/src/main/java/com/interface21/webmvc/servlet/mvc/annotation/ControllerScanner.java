@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.annotation;
+package com.interface21.webmvc.servlet.mvc.annotation;
 
 import java.util.Set;
 

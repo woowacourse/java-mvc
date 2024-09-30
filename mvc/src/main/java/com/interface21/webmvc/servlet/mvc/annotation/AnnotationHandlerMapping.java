@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.annotation;
+package com.interface21.webmvc.servlet.mvc.annotation;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.HandlerKey;
 
 public class AnnotationHandlerMapping {
 
