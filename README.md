@@ -41,8 +41,8 @@
 
 ## 🚀 3단계 - JSON View 구현하기
 
-- [ ] JsonView 클래스를 구현한다.
-   - [ ] HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현해보자.
+- [x] JsonView 클래스를 구현한다.
+   - [x] HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현해보자.
 - [ ] Legacy MVC 제거하기
    - [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
    - [ ] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링
