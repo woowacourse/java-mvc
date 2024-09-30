@@ -62,6 +62,16 @@
 
 ### 3단계 - JSON View 구현하기
 
+1. JsonView 클래스 구현
+
+- [ ] JSON으로 응답할 수 있게 JsonView 클래스 구현
+
+2. Legacy MVC 제거
+
+- [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+- [ ] asis 패키지에 있는 레거시 코드를 삭제해도 서비스 정상 동작하도록 리팩토링
+- [ ] DispatcherServlet을 app 패키지에서 mvc 패키지로 이동
+
 ## @MVC 구현하기 가이드
 
 ### 학습목표
