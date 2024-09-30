@@ -1,4 +1,4 @@
-package com.techcourse.controller.legacy;
+package com.techcourse.controller;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;

@@ -1,4 +1,4 @@
-package com.techcourse.controller.legacy;
+package com.techcourse.controller;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -10,12 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class LogoutController  {
+public class RegisterViewController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res)  {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 }

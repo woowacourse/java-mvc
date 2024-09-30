@@ -1,4 +1,4 @@
-package com.techcourse.controller.legacy;
+package com.techcourse.controller;
 
 import java.util.Optional;
 

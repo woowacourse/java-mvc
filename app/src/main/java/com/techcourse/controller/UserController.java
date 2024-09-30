@@ -1,4 +1,4 @@
-package com.techcourse.controller.annotation;
+package com.techcourse.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,19 @@ public class UserController {
 			.orElseThrow();
 
 		modelAndView.addObject("user", user);
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/api/user/detail", method = RequestMethod.GET)
+	public ModelAndView showDetail(HttpServletRequest request, HttpServletResponse response) {
+		final String account = request.getParameter("account");
+
+		final ModelAndView modelAndView = new ModelAndView(new JsonView());
+		final User user = InMemoryUserRepository.findByAccount(account)
+			.orElseThrow();
+
+		modelAndView.addObject("id", user.getId());
+		modelAndView.addObject("account", user.getAccount());
 		return modelAndView;
 	}
 }
