@@ -1,13 +1,13 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.initializer.HandlerInitializer;
 import com.interface21.webmvc.servlet.mvc.tobe.pathfinder.DefaultRootPathStrategy;
 import com.interface21.webmvc.servlet.mvc.tobe.registry.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.registry.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,7 +60,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        JspView jspView = (JspView) modelAndView.getView();
-        jspView.render(modelAndView.getModel(), request, response);
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
