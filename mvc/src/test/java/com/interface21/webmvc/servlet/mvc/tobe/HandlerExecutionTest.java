@@ -19,7 +19,7 @@ class HandlerExecutionTest {
         Method declaredMethod = TestClass.class.getDeclaredMethod(
                 "testMethod", HttpServletRequest.class, HttpServletResponse.class);
 
-        assertThatCode(() -> new HandlerExecution(declaredMethod))
+        assertThatCode(() -> new HandlerExecution(declaredMethod, new TestClass()))
                 .doesNotThrowAnyException();
     }
 
@@ -28,7 +28,7 @@ class HandlerExecutionTest {
     void handle() throws Exception {
         Method declaredMethod = TestClass.class.getDeclaredMethod(
                 "testMethod", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution handlerExecution = new HandlerExecution(declaredMethod);
+        HandlerExecution handlerExecution = new HandlerExecution(declaredMethod, new TestClass());
 
         ModelAndView modelAndView = handlerExecution.handle(null, null);
 
