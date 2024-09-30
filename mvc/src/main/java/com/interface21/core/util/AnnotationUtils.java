@@ -2,6 +2,7 @@ package com.interface21.core.util;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -11,15 +12,21 @@ public class AnnotationUtils {
     private AnnotationUtils() {
     }
 
-    private static final Set<Class<? extends Annotation>> componentCache = ConcurrentHashMap.newKeySet();
-    private static final Set<Class<? extends Annotation>> visitedAnnotations = ConcurrentHashMap.newKeySet();
+    private static final Map<Class<? extends Annotation>, Set<Class<? extends Annotation>>> annotationCaches = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends Annotation>, Set<Class<? extends Annotation>>> visitedAnnotations = new ConcurrentHashMap<>();
 
     public static boolean hasMetaAnnotatedClasses(Class<?> clazz,
                                                   Class<? extends Annotation> targetAnnotation) {
+        annotationCaches.putIfAbsent(targetAnnotation, ConcurrentHashMap.newKeySet());
+        visitedAnnotations.putIfAbsent(targetAnnotation, ConcurrentHashMap.newKeySet());
+
         return Arrays.stream(clazz.getDeclaredAnnotations())
                 .map(Annotation::annotationType)
-                .map(annotation -> hasMetaAnnotatedClasses(annotation, targetAnnotation, visitedAnnotations))
-                .anyMatch(Predicate.isEqual(true));
+                .map(annotation -> hasMetaAnnotatedClasses(
+                        annotation,
+                        targetAnnotation,
+                        visitedAnnotations.get(targetAnnotation))
+                ).anyMatch(Predicate.isEqual(true));
     }
 
     // Depth-first search to find meta-annotated classes recursively
@@ -27,7 +34,8 @@ public class AnnotationUtils {
                                                    Class<? extends Annotation> targetAnnotation,
                                                    Set<Class<? extends Annotation>> visited) {
         visited.add(currentAnnotation);
-        if (componentCache.contains(currentAnnotation) || currentAnnotation.equals(targetAnnotation)) {
+        Set<Class<? extends Annotation>> cache = annotationCaches.get(targetAnnotation);
+        if (cache.contains(currentAnnotation) || currentAnnotation.equals(targetAnnotation)) {
             return true;
         }
         boolean result = Arrays.stream(currentAnnotation.getDeclaredAnnotations())
@@ -36,7 +44,7 @@ public class AnnotationUtils {
                 .map(annotation -> hasMetaAnnotatedClasses(annotation, targetAnnotation, visited)) // Recursive call
                 .anyMatch(Predicate.isEqual(true));
         if (result) {
-            componentCache.add(currentAnnotation);
+            cache.add(currentAnnotation);
         }
         return result;
     }
