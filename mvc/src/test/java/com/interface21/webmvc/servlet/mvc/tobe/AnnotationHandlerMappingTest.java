@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -89,21 +88,23 @@ class AnnotationHandlerMappingTest {
         assertThat(modelAndView.getObject("emptyUriTest")).isEqualTo("success");
     }
 
-    @DisplayName("요청에 맞는 핸들러가 존재하는지 확인한다.")
+    @DisplayName("요청에 맞는 핸들러가 존재하면 True를 반환한다.")
     @Test
-    void hasHandler() {
+    void hasHandlerReturnTrue() {
         final var trueRequest = mock(HttpServletRequest.class);
         when(trueRequest.getRequestURI()).thenReturn("/get-test");
         when(trueRequest.getMethod()).thenReturn("GET");
 
+        assertThat(handlerMapping.hasHandler(trueRequest)).isTrue();
+    }
+
+    @DisplayName("요청에 맞는 핸들러가 존재하면 False를 반환한다.")
+    @Test
+    void hasHandlerReturnFalse() {
         final var falseRequest = mock(HttpServletRequest.class);
         when(falseRequest.getRequestURI()).thenReturn("/none");
         when(falseRequest.getMethod()).thenReturn("GET");
-
-        assertAll(
-                () -> assertThat(handlerMapping.hasHandler(trueRequest)).isTrue(),
-                () -> assertThat(handlerMapping.hasHandler(falseRequest)).isFalse()
-        );
+        assertThat(handlerMapping.hasHandler(falseRequest)).isFalse();
     }
 
     @DisplayName("중복된 핸들러가 존재하면 예외가 발생한다.")
