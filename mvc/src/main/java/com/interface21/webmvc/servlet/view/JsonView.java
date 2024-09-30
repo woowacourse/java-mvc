@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final int ONE_MODEL_SIZE = 1;
     private static final String JSON_CONTENT_TYPE = "application/json";
     private static final String UTF_8_ENCODING = "UTF-8";
 
@@ -23,6 +24,13 @@ public class JsonView implements View {
         response.setContentType(JSON_CONTENT_TYPE);
         response.setCharacterEncoding(UTF_8_ENCODING);
 
-        response.getWriter().write(objectMapper.writeValueAsString(model));
+        if (model.size() == ONE_MODEL_SIZE) {
+            String rawData = model.values().iterator().next().toString();
+            response.getWriter().write(rawData);
+            return;
+        }
+
+        String jsonFormattedData = objectMapper.writeValueAsString(model);
+        response.getWriter().write(jsonFormattedData);
     }
 }
