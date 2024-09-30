@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage4Test {
-
     /**
      * stage3에서 만든 DIContainer도 충분히 좋지만 빈(bean)으로 등록할 객체를 직접 골라서 코드에 작성해야 하는 문제가 있다.
      * 같은 패키지에 있는 @Inject, @Service, @Repository를 찾아서 객체를 만들고 관계를 설정하도록 수정해보자.
