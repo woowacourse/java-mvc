@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.techcourse.controller.LoginController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,10 +15,11 @@ class ManualHandlerAdapterTest {
     @Test
     void supports() {
         ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+        Controller controller = mock(Controller.class);
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
 
         assertAll(
-                () -> assertThat(manualHandlerAdapter.supports(new LoginController())).isTrue(),
+                () -> assertThat(manualHandlerAdapter.supports(controller)).isTrue(),
                 () -> assertThat(manualHandlerAdapter.supports(handlerExecution)).isFalse()
         );
     }

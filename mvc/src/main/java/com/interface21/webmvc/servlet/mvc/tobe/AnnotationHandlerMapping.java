@@ -15,13 +15,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
-        initialize();
+        initialize(getClass().getPackage().getName(), basePackage);
     }
 
     @Override
@@ -33,8 +31,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    public void initialize() {
-        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+    public void initialize(Object... basePackages) {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackages);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         for (Class<?> clazz : controllers.keySet()) {
