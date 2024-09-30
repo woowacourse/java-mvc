@@ -15,6 +15,8 @@ public class JsonView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -27,8 +29,6 @@ public class JsonView implements View {
     }
 
     private String generateJsonFromModel(Map<String, ?> model) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         if (model.keySet().size() == 1) {
             String key = model.keySet().stream()
                     .findFirst()
