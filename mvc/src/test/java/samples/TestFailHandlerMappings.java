@@ -1,7 +1,7 @@
 package samples;
 
 import com.interface21.context.stereotype.Component;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component

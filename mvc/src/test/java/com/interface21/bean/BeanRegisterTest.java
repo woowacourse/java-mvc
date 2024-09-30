@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.interface21.bean.container.BeanContainer;
 import com.interface21.context.stereotype.Component;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
