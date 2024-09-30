@@ -6,7 +6,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.view.JspView;
+import com.interface21.webmvc.ModelAndView;
+import com.interface21.webmvc.adapter.RequestHandlerAdapter;
+import com.interface21.webmvc.mapping.HandlerMapping;
+import com.interface21.webmvc.handler.RequestHandler;
+import com.interface21.webmvc.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

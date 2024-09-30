@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.mapping;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import java.util.Objects;

@@ -1,5 +1,6 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.mapping;
 
+import com.interface21.webmvc.handler.RequestHandler;
 import java.io.FileNotFoundException;
 
 public interface HandlerMapping {

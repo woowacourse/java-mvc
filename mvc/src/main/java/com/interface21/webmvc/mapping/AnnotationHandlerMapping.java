@@ -1,12 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.mapping;
+package com.interface21.webmvc.mapping;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.AnnotationRequestHandler;
-import com.interface21.webmvc.servlet.mvc.HandlerKey;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.RequestHandler;
+import com.interface21.webmvc.handler.AnnotationRequestHandler;
+import com.interface21.webmvc.handler.RequestHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
