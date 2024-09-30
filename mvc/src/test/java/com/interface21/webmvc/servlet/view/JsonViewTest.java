@@ -26,6 +26,9 @@ class JsonViewTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
+        final var print = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(print);
+
         //when
         final JsonView jsonView = new JsonView();
         jsonView.render(model, request, response);
@@ -51,5 +54,24 @@ class JsonViewTest {
 
         //then
         verify(response.getWriter()).write("\"redddy\"");
+    }
+
+    @Test
+    @DisplayName("model에 데이터가 2개면 Map 형태로 반환한다.")
+    void two_data() throws IOException {
+        //given
+        final var model = Map.of("account", "redddy", "password", "486");
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        final var print = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(print);
+
+        //when
+        final JsonView jsonView = new JsonView();
+        jsonView.render(model, request, response);
+
+        //then
+        verify(response.getWriter()).write("{\"account\":\"redddy\",\"password\":\"486\"}");
     }
 }

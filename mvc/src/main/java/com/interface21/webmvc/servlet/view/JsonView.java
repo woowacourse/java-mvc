@@ -13,17 +13,27 @@ import com.interface21.webmvc.servlet.View;
 
 public class JsonView implements View {
 
+    private final ObjectMapper mapper;
+
+    public JsonView() {
+        this.mapper = new ObjectMapper();
+    }
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        final ObjectMapper objectMapper = new ObjectMapper();
-
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        final PrintWriter writer = response.getWriter();
 
-        if (model.keySet().size() == 1) {
-            final PrintWriter writer = response.getWriter();
-            writer.write(objectMapper.writeValueAsString(model.values().iterator().next()));
+        if (hasOnlyOneKey(model)) {
+            writer.write(mapper.writeValueAsString(model.values().iterator().next()));
+            return;
         }
+        writer.write(mapper.writeValueAsString(model));
+    }
+
+    private boolean hasOnlyOneKey(final Map<String, ?> model) {
+        return model.keySet().size() == 1;
     }
 }
