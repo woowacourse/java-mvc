@@ -6,5 +6,5 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 
 public interface HandlerAdapter {
-    ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception;
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
 }
