@@ -33,16 +33,13 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        handlerMappingRegistry = new HandlerMappingRegistry();
         try {
-            annotationHandlerMapping.initialize();
-        } catch (final Exception e) {
-            log.warn("DispatcherServlet 초기화 실패 : {}", e.getMessage());
+            handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+            handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+        } catch (Exception e) {
+            throw new RuntimeException("HandlerMapping 초기화 실패 : {}", e);
         }
-        log.debug("HandlerMapping 초기화 끝");
-        handlerMappingRegistry = new HandlerMappingRegistry(List.of(manualHandlerMapping, annotationHandlerMapping));
         handlerAdapterRegistry = new HandlerAdapterRegistry(List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter()));
     }
 

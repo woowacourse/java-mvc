@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,13 +9,10 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 
 public class HandlerMappingRegistry {
 
-    private final List<HandlerMapping> handlerMappings;
+    private List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public HandlerMappingRegistry(final List<HandlerMapping> handlerMappings) {
-        this.handlerMappings = handlerMappings;
-    }
-
-    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+    public void addHandlerMapping(final HandlerMapping handlerMapping) throws Exception {
+        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
 
