@@ -1,7 +1,7 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerMapping;
-import com.techcourse.ManualHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +11,12 @@ public class HandlerMappings {
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public HandlerMappings(final Object... basePackage) {
+    public HandlerMappings() {
         HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
         handlerMappings.add(manualHandlerMapping);
 
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
     }

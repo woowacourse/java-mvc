@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.HandlerAdaptor;
 import com.interface21.webmvc.servlet.mvc.HandlerAdaptors;
-import com.interface21.webmvc.servlet.mvc.HandlerMappings;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerAdaptors handlerAdaptors;
 
     public DispatcherServlet() {
-        this.handlerMappings = new HandlerMappings("com.techcourse.controller");
+        this.handlerMappings = new HandlerMappings();
         this.handlerAdaptors = new HandlerAdaptors();
     }
 
