@@ -12,23 +12,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 
 class JsonViewTest {
 
-    @ParameterizedTest
-    @MethodSource
-    @DisplayName("Render json data.")
-    void render(Map<String, Object> model, String expected) throws Exception {
+    @Test
+    @DisplayName("Render one json data.")
+    void render() throws Exception {
         // given
         var request = mock(HttpServletRequest.class);
         var response = mock(HttpServletResponse.class);
         var printWriter = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(printWriter);
+        var model = Map.of("account", "Arachneee");
 
         var sut = new JsonView();
 
@@ -36,19 +38,29 @@ class JsonViewTest {
         sut.render(model, request, response);
 
         // then
-        verify(printWriter).write(expected);
+        var objectMapper = new ObjectMapper();
+        verify(printWriter).write(objectMapper.writeValueAsString("Arachneee"));
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
-    static Stream<Arguments> render() {
-        var value1 = "Arachneee";
-        var value2 = "{\"account\":\"Arachneee\", \"company\":\"woowacourse\"";
-        return Stream.of(
-                Arguments.of(
-                        Map.of("account", "Arachneee"),
-                        value1),
-                Arguments.of(
-                        Map.of("account", "Arachneee", "company", "woowacourse"),
-                        value2));
+
+    @Test
+    @DisplayName("Render mulitple json data.")
+    void render_multiple() throws Exception {
+        // given
+        var request = mock(HttpServletRequest.class);
+        var response = mock(HttpServletResponse.class);
+        var printWriter = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(printWriter);
+        var model = Map.of("account", "Arachneee", "company", "woowacourse");
+        var sut = new JsonView();
+
+        //when
+        sut.render(model, request, response);
+
+        // then
+        var objectMapper = new ObjectMapper();
+        verify(printWriter).write(objectMapper.writeValueAsString(model));
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 }
