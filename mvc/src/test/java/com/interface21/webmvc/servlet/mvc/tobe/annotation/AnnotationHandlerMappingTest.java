@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getRequestURI()).thenReturn("/annotation-test");
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
@@ -47,7 +48,7 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getRequestURI()).thenReturn("/annotation-test");
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
@@ -62,12 +63,12 @@ class AnnotationHandlerMappingTest {
         final var request = mock(HttpServletRequest.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getRequestURI()).thenReturn("/invalid");
         when(request.getMethod()).thenReturn("POST");
 
         assertThatThrownBy(() -> handlerMapping.getHandler(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("해당 요청에 대응하는 핸들러가 없습니다: POST /get-test");
+                .hasMessage("해당 요청에 대응하는 핸들러가 없습니다: POST /invalid");
     }
 
     @DisplayName("핸들러에 http method가 선언되지 않은 경우 모든 method가 매핑되도록 한다.")

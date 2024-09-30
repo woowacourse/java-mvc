@@ -1,8 +1,11 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.annotation;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -14,7 +17,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,11 +31,21 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    public AnnotationHandlerMapping() {
+        this.basePackage = new Object[]{"com.techcourse.controller"};
+        this.handlerExecutions = new HashMap<>();
+    }
+
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
         controllerTypes.forEach(this::mapControllerHandlers);
+
+        log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("Path : {} {}, Controller : {}", handlerKey.requestMethod,
+                        handlerKey.url,
+                        handlerExecutions.get(handlerKey)));
     }
 
     private void mapControllerHandlers(Class<?> controllerType) {
