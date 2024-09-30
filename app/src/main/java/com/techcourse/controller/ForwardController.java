@@ -15,10 +15,10 @@ public class ForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView getIndex(HttpServletRequest request, HttpServletResponse response) {
-        return stringToModelAndView(INDEX_JSP);
+        return convertStringToMav(INDEX_JSP);
     }
 
-    private ModelAndView stringToModelAndView(String viewName) {
+    private ModelAndView convertStringToMav(String viewName) {
         return new ModelAndView(new JspView(viewName));
     }
 
