@@ -1,17 +1,20 @@
 package com.techcourse.repository;
 
-import com.techcourse.domain.User;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+import com.techcourse.domain.User;
 
 public class InMemoryUserRepository {
 
     private static final Map<String, User> database = new ConcurrentHashMap<>();
 
+    public static final AtomicLong idCounter = new AtomicLong();
+
     static {
-        final var user = new User(1, "gugu", "password", "hkkang@woowahan.com");
+        final var user = new User(idCounter.incrementAndGet(), "gugu", "password", "hkkang@woowahan.com");
         database.put(user.getAccount(), user);
     }
 
@@ -23,5 +26,6 @@ public class InMemoryUserRepository {
         return Optional.ofNullable(database.get(account));
     }
 
-    private InMemoryUserRepository() {}
+    private InMemoryUserRepository() {
+    }
 }

@@ -1,22 +1,24 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
+import org.reflections.util.ReflectionUtilsPredicates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,25 +30,43 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-        classes.forEach(aClass ->
-                Arrays.stream(aClass.getDeclaredMethods())
-                        .filter(declaredMethod -> declaredMethod.isAnnotationPresent(RequestMapping.class))
-                        .forEach(declaredMethod -> addHandler(aClass, declaredMethod)));
+        final ControllerScanner scanner = new ControllerScanner(reflections);
+        final Map<Class<?>, Object> controllers = scanner.getController();
+
+        for (final Entry<Class<?>, Object> classObjectEntry : controllers.entrySet()) {
+            addAllHandler(classObjectEntry.getKey(), classObjectEntry.getValue());
+        }
+
         log.info("init handlerExecutions: {}", handlerExecutions);
     }
 
-    private void addHandler(final Class<?> aClass, final Method method) {
-        final RequestMapping request = method.getAnnotation(RequestMapping.class);
-        final var requestMethods = request.method().length == 0 ? RequestMethod.values() : request.method();
-        for (final var requestMethod : requestMethods) {
-            final var key = new HandlerKey(request.value(), requestMethod);
-            validateDuplicate(key);
-            final var handler = ConstructorGenerator.generate(aClass);
-            handlerExecutions.put(key, new HandlerExecution(handler, method));
+    private void addAllHandler(final Class<?> aClass, final Object controller) {
+        final Set<Method> allMethods = ReflectionUtils.getAllMethods(aClass,
+                ReflectionUtilsPredicates.withAnnotation(RequestMapping.class));
+        for (final Method method : allMethods) {
+            addHandler(controller, method);
         }
+    }
+
+    private void addHandler(final Object controller, final Method method) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        for (final RequestMethod requestMethod : getRequestMethods(method)) {
+            final HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
+            validateDuplicate(key);
+            handlerExecutions.put(key, new HandlerExecution(controller, method));
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(final Method declaredMethod) {
+        final RequestMethod[] requestMethods = declaredMethod.getAnnotation(RequestMapping.class).method();
+
+        if (requestMethods.length != 0) {
+            return requestMethods;
+        }
+        return RequestMethod.values();
     }
 
     private void validateDuplicate(final HandlerKey key) {
@@ -55,6 +75,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final var handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.getByValue(request.getMethod()));
         return handlerExecutions.get(handlerKey);
