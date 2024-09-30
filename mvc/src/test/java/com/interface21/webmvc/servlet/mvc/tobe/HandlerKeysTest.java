@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import samples.TestController;
 
-public class HandlerKeysTest {
+class HandlerKeysTest {
 
     private static final String GET_METHOD_TEST_PATH = "/get-test";
     private static final String NO_METHOD_TEST_PATH = "/no-method-test";
