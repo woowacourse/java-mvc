@@ -36,7 +36,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final Method[] methods = controller.getMethods();
             registerHandlerByMethods(methods);
         }
-        handlerExecutions.keySet().forEach(System.out::println);
     }
 
     private void registerHandlerByMethods(final Method[] methods) {
