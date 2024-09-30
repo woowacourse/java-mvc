@@ -33,38 +33,35 @@ public class HandlerManagerTest {
     @Test
     void notFoundRender() {
         final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/none");
         when(request.getMethod()).thenReturn("GET");
 
         final Object handler = handlerManager.findHandler(request);
-        assertThat(handler).isInstanceOf(NotFoundViewController.class);
+        assertThat(handler).isExactlyInstanceOf(NotFoundViewController.class);
     }
 
     @DisplayName("요청에 맞는 HandlerExecution 을 반환한다.")
     @Test
     void findHandlerExecution() {
         final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
         final Object handler = handlerManager.findHandler(request);
-        assertThat(handler).isInstanceOf(HandlerExecution.class);
+        assertThat(handler).isExactlyInstanceOf(HandlerExecution.class);
     }
 
     @DisplayName("요청에 맞는 Controller 를 반환한다.")
     @Test
     void findController() {
         final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
 
         when(request.getRequestURI()).thenReturn("/login/view");
         when(request.getMethod()).thenReturn("GET");
 
         final Object handler = handlerManager.findHandler(request);
-        assertThat(handler).isInstanceOf(LoginViewController.class);
+        assertThat(handler).isExactlyInstanceOf(LoginViewController.class);
     }
 }

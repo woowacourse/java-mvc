@@ -110,6 +110,6 @@ class AnnotationHandlerMappingTest {
     @Test
     void duplicatedHandler() {
         assertThatThrownBy(handlerMapping::initialize)
-                .isInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }
