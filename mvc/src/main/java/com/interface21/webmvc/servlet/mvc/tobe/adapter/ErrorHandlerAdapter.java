@@ -1,18 +1,19 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.ErrorController;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter {
+public class ErrorHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof HandlerExecution;
+        return handler instanceof ErrorController;
     }
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return ((HandlerExecution) handler).handle(request, response);
+        return ((ErrorController) handler).notFoundErrorHandle(request, response);
     }
 }
