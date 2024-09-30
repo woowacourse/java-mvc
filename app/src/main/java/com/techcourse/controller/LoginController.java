@@ -19,6 +19,19 @@ public class LoginController {
     private static final String LOGIN_FAILED_REDIRECT = "redirect:/401.jsp";
     private static final String ACCOUNT = "account";
     private static final String PASSWORD = "password";
+    public static final String LOGIN_PAGE = "/login.jsp";
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView loginPage(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
+        String viewName = UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return LOGIN_SUCCESS_REDIRECT;
+                })
+                .orElse(LOGIN_PAGE);
+        JspView view = new JspView(viewName);
+        return new ModelAndView(view);
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView processLogin(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
