@@ -1,4 +1,4 @@
-package com.interface21.context.stereotype;
+package com.interface21.web.bind.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

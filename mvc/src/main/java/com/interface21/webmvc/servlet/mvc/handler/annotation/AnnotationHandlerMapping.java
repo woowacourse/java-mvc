@@ -1,6 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.handler.annotation;
 
-import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
