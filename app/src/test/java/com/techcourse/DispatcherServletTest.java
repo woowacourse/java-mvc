@@ -2,6 +2,8 @@ package com.techcourse;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.io.UnsupportedEncodingException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,10 +37,26 @@ class DispatcherServletTest {
 
 		try {
 			dispatcherServlet.service(request, response);
-		} catch ( ServletException exception) {
+		} catch (ServletException exception) {
 			exception.printStackTrace();
 		}
 
 		assertThat(response.getStatus()).isEqualTo(302);
+	}
+
+	@DisplayName("사용자 정보가 JsonView에서 JSON으로 변환된다.")
+	@Test
+	void convertJsonInJsonView() throws UnsupportedEncodingException {
+		request.setMethod("GET");
+		request.setRequestURI("/api/user");
+		request.setParameter("account", "gugu");
+
+		try {
+			dispatcherServlet.service(request, response);
+		} catch (ServletException exception) {
+			exception.printStackTrace();
+		}
+
+		assertThat(response.getContentAsString()).isNotNull();
 	}
 }
