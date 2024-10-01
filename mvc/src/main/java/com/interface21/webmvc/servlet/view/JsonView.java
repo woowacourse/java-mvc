@@ -33,6 +33,10 @@ public class JsonView implements View {
             parseResult.put(key, model.get(key));
         }
 
+        return parseBody(parseResult);
+    }
+
+    private static String parseBody(Map<String, Object> parseResult) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         if (parseResult.size() == 1) {
@@ -40,10 +44,8 @@ public class JsonView implements View {
                     .stream()
                     .findFirst()
                     .orElse(null);
-
             return objectMapper.writeValueAsString(value);
         }
-
         return objectMapper.writeValueAsString(parseResult);
     }
 }
