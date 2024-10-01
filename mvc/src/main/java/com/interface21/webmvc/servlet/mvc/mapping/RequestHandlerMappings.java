@@ -58,6 +58,6 @@ public class RequestHandlerMappings {
                 .map(requestHandlerMapping -> requestHandlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(NoSuchHandlerException::new);
+                .orElseThrow(() -> new NoSuchHandlerException(request));
     }
 }
