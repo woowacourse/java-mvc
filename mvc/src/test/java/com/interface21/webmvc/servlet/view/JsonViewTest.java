@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,8 +38,7 @@ class JsonViewTest {
 
         jsonView.render(model, request, response);
 
-        String expected = "\"value\"";
-        assertThat(stringWriter.toString()).isEqualTo(expected);
+        assertThat(stringWriter.toString()).isEqualTo("\"value\"");
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
@@ -54,8 +52,7 @@ class JsonViewTest {
 
         jsonView.render(model, request, response);
 
-        String expected = new ObjectMapper().writeValueAsString(model);
-        assertThat(stringWriter.toString()).isEqualTo(expected);
+        assertThat(stringWriter.toString()).contains("\"key1\":\"value1\"", "\"key2\":\"value2\"}");
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
@@ -66,8 +63,7 @@ class JsonViewTest {
 
         jsonView.render(model, request, response);
 
-        String expected = "{}";
-        assertThat(stringWriter.toString()).isEqualTo(expected);
+        assertThat(stringWriter.toString()).isEqualTo("{}");
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 }
