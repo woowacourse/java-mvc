@@ -1,12 +1,12 @@
 package di.stage4.annotations;
 
+import di.ConsumerWrapper;
+import di.FunctionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -29,23 +29,9 @@ class DIContainer {
     // 기본 생성자로 빈을 생성한다.
     private Set<Object> createBeans(final Set<Class<?>> classes) {
         return classes.stream()
-                .map((final Class<?> aClass) -> {
-                    try {
-                        return aClass.getDeclaredConstructor();
-                    } catch (NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .peek(constructor -> constructor.setAccessible(true))
-                .map(constructor1 -> {
-                    try {
-                        final Object instance = constructor1.newInstance();
-                        constructor1.setAccessible(false);
-                        return instance;
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
+                .peek(ConsumerWrapper.accept(constructor -> constructor.setAccessible(true)))
+                .map(FunctionWrapper.apply(Constructor::newInstance))
                 .collect(Collectors.toSet());
     }
 
@@ -54,21 +40,16 @@ class DIContainer {
     private void setFields(final Object bean) {
         final Field[] fields = bean.getClass().getDeclaredFields();
         Arrays.stream(fields)
-                .forEach(field -> {
+                .peek(ConsumerWrapper.accept(field -> field.setAccessible(true)))
+                .filter(field -> {
                     try {
-                        field.setAccessible(true);
-                        if (Objects.nonNull(field.get(bean)) || !field.isAnnotationPresent(Inject.class)) {
-                            return;
-                        }
+                        return !Objects.nonNull(field.get(bean));
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
-                    try {
-                        field.set(bean, getBean(field.getType()));
-                    } catch (final IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                })
+                .filter(field -> field.isAnnotationPresent(Inject.class))
+                .forEach(ConsumerWrapper.accept(field -> field.set(bean, getBean(field.getType()))));
     }
 
     // 빈 컨텍스트(DI)에서 관리하는 빈을 찾아서 반환한다.
@@ -83,7 +64,11 @@ class DIContainer {
 
     public static DIContainer createContainerForPackage(final String rootPackageName) {
         Set<Class<?>> classes = ClassPathScanner.getAllClassesInPackage(rootPackageName);
-        return new DIContainer(classes);
+        Set<Class<?>> filteredClasses = classes.stream()
+                .filter(clazz -> clazz.isAnnotationPresent(Service.class) ||
+                        clazz.isAnnotationPresent(Repository.class))
+                .collect(Collectors.toSet());
+        return new DIContainer(filteredClasses);
     }
 }
 
