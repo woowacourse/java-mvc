@@ -25,7 +25,8 @@ class HandlerMappingsTest {
         when(handlerMapping.getHandler(request))
                 .thenReturn(handler);
 
-        HandlerMappings handlerMappings = new HandlerMappings(handlerMapping);
+        HandlerMappings handlerMappings = new HandlerMappings();
+        handlerMappings.appendHandlerMapping(handlerMapping);
 
         Object actual = handlerMappings.getHandler(request);
         assertThat(actual).isEqualTo(handler);
