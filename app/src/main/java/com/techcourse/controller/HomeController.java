@@ -13,6 +13,7 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView home(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/index.jsp"));
+        JspView view = new JspView("/index.jsp");
+        return new ModelAndView(view);
     }
 }

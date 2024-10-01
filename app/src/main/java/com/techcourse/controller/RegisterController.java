@@ -21,11 +21,13 @@ public class RegisterController {
                 request.getParameter("email")
         );
         InMemoryUserRepository.save(user);
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        JspView view = new JspView("redirect:/index.jsp");
+        return new ModelAndView(view);
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        JspView view = new JspView("/register.jsp");
+        return new ModelAndView(view);
     }
 }
