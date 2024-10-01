@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -21,7 +21,6 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
     }
 
     @DisplayName("GET /get-test 요청")

@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,17 +9,16 @@ import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
-    private static final String ANNOTATION_BASED_CONTROLLER_BASE = "com.techcourse.controller";
-
+    private final String controllerScanBase;
     private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRegistry() {
+    public HandlerMappingRegistry(String basePackage) {
+        this.controllerScanBase = Objects.requireNonNull(basePackage);
         handlerMappings = new ArrayList<>();
     }
 
     public void initialize() {
-        handlerMappings.add(new AnnotationHandlerMapping(ANNOTATION_BASED_CONTROLLER_BASE));
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappings.add(new AnnotationHandlerMapping(controllerScanBase));
     }
 
     public void addHandlerMapping(HandlerMapping mapping) {

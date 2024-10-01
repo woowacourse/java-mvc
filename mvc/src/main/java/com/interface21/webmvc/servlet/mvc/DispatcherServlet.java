@@ -1,10 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,12 +15,14 @@ public class DispatcherServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String BASE_PACKAGE_ATTRIB_NAME = "basePackage";
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
+    public DispatcherServlet(ServletContext context) {
+        String basePackage = (String) context.getAttribute(BASE_PACKAGE_ATTRIB_NAME);
+        handlerMappingRegistry = new HandlerMappingRegistry(basePackage);
         handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 

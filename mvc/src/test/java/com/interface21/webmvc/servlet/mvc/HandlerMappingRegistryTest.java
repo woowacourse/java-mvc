@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +17,7 @@ class HandlerMappingRegistryTest {
     void getHandlerTest() {
         // given
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
-        annotationHandlerMapping.initialize();
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
         
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -36,7 +35,7 @@ class HandlerMappingRegistryTest {
     @Test
     void getHandlerNotFoundTest() {
         // given
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn("/");
