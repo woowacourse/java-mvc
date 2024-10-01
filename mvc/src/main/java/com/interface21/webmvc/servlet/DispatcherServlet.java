@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final String JSP_EXTENSION = ".jsp";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     public static final String DEFAULT_BASE_PACKAGE = "com.techcourse.controller";
@@ -34,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         this.handlerMapping = new AnnotationHandlerMapping(DEFAULT_BASE_PACKAGE);
         this.handlerMapping.initialize();
-        this.viewResolver = new InternalResourceViewResolver(JSP_EXTENSION);
+        this.viewResolver = new InternalResourceViewResolver();
         this.handlerAdapter = new AnnotationMethodHandlerAdapter(this.viewResolver);
     }
 
