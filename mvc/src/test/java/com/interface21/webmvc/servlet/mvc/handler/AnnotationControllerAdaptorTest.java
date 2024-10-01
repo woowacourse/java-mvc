@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.controller.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +19,7 @@ class AnnotationControllerAdaptorTest {
 
     private AnnotationControllerAdaptor adaptor;
     private HandlerExecution mockAnnotationController;
-    private Controller mockInterfaceController;
+    private Object mockOtherController;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
 
@@ -28,7 +27,7 @@ class AnnotationControllerAdaptorTest {
     void setUp() {
         adaptor = new AnnotationControllerAdaptor();
         mockAnnotationController = mock(HandlerExecution.class);
-        mockInterfaceController = mock(Controller.class);
+        mockOtherController = mock(Object.class);
         mockRequest = mock(HttpServletRequest.class);
         mockResponse = mock(HttpServletResponse.class);
     }
@@ -38,7 +37,7 @@ class AnnotationControllerAdaptorTest {
     void canExecute() {
         assertAll(
                 () -> assertThat(adaptor.canExecute(mockAnnotationController)).isTrue(),
-                () -> assertThat(adaptor.canExecute(mockInterfaceController)).isFalse()
+                () -> assertThat(adaptor.canExecute(mockOtherController)).isFalse()
         );
     }
 
