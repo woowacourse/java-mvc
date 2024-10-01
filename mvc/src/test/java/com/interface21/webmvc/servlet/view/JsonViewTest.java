@@ -37,7 +37,7 @@ class JsonViewTest {
     }
 
     @Test
-    @DisplayName("단일 모델 값이 JSON으로 반환되는지 확인")
+    @DisplayName("단일 모델 값이 JSON으로 반환되는지 확인한다.")
     void render_singleValue() throws Exception {
         // given
         Map<String, Object> model = new HashMap<>();
@@ -52,7 +52,7 @@ class JsonViewTest {
     }
 
     @Test
-    @DisplayName("다중 모델 값이 JSON으로 반환되는지 확인")
+    @DisplayName("다중 모델 값이 JSON으로 반환되는지 확인한다.")
     void render_multipleValues() throws Exception {
         // given
         Map<String, Object> model = new HashMap<>();
