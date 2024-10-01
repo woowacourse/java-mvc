@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,12 +24,11 @@ class DispatcherServletTest {
     void setUp() {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        dispatcherServlet = new DispatcherServlet("com.techcourse");
+        dispatcherServlet = new DispatcherServlet("samples");
 
         dispatcherServlet.init();
     }
 
-    @Disabled
     @Test
     @DisplayName("요청과 응답을 파라미터로 받아 적절한 뷰를 렌더링한다.")
     void service() throws Exception {
@@ -39,7 +37,7 @@ class DispatcherServletTest {
         View view = mock(JspView.class);
         RequestDispatcher dispatcher = mock(RequestDispatcher.class);
 
-        when(request.getRequestURI()).thenReturn("/login");
+        when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher(anyString())).thenReturn(dispatcher);
         when(modelAndView.getView()).thenReturn(view);
