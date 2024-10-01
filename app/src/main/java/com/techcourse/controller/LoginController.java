@@ -15,8 +15,18 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String show(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return "redirect:/index.jsp";
+                })
+                .orElse("/login.jsp");
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
         }
