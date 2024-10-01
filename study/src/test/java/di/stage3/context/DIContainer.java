@@ -1,7 +1,8 @@
 package di.stage3.context;
 
+import di.ConsumerWrapper;
+import di.FunctionWrapper;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -20,47 +21,29 @@ class DIContainer {
 
     private Set<Object> getBeans(Set<Class<?>> classes) {
         return classes.stream()
-                .map(clazz -> {
-                    try {
-                        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-                        Constructor<?> constructor = Arrays.stream(constructors)
-                                .filter(constructor1 -> constructor1.getParameterTypes().length > 0)
-                                .findFirst()
-                                .orElse(clazz.getDeclaredConstructor());
-                        constructor.setAccessible(true);
-                        Object[] parameters = parameters(constructor, classes);
-                        return constructor.newInstance(parameters);
-                    } catch (InstantiationException |
-                             IllegalAccessException |
-                             InvocationTargetException |
-                             NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .map(FunctionWrapper.apply(this::getConstructor))
+                .peek(ConsumerWrapper.accept(constructor -> constructor.setAccessible(true)))
+                .map(FunctionWrapper.apply(
+                        constructor -> constructor.newInstance(getConstructorParameters(constructor, classes))))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    private Object[] parameters(Constructor<?> constructor, Set<Class<?>> classes) {
+    private Constructor<?> getConstructor(Class<?> clazz) throws NoSuchMethodException {
+        return Arrays.stream(clazz.getDeclaredConstructors())
+                .filter(constructor -> constructor.getParameterTypes().length > 0)
+                .findFirst()
+                .orElse(clazz.getDeclaredConstructor());
+    }
+
+    private Object[] getConstructorParameters(Constructor<?> constructor, Set<Class<?>> classes) {
         Class<?>[] parameterTypes = constructor.getParameterTypes();
         return classes.stream()
-                .filter(aClass -> {
-                    for (Class<?> parameterType : parameterTypes) {
-                        if (parameterType.isAssignableFrom(aClass)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-                .map(aClass -> {
-                    try {
-                        Constructor<?> declaredConstructor = aClass.getDeclaredConstructor();
-                        declaredConstructor.setAccessible(true);
-                        return declaredConstructor.newInstance();
-                    } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
-                             InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).toArray();
+                .filter(aClass -> Arrays.stream(parameterTypes)
+                        .anyMatch(parameterType -> parameterType.isAssignableFrom(aClass)))
+                .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
+                .peek(parameterConstructor -> parameterConstructor.setAccessible(true))
+                .map(FunctionWrapper.apply(Constructor::newInstance))
+                .toArray();
     }
 
     @SuppressWarnings("unchecked")

@@ -1,8 +1,10 @@
 package di.stage4.annotations;
 
+import di.ConsumerWrapper;
+import di.FunctionWrapper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -17,48 +19,34 @@ class DIContainer {
     private final Set<Object> beans;
 
     public DIContainer(final Set<Class<?>> classes) {
-        this.beans = classes.stream()
-                .map(clazz -> {
-                    try {
-                        Constructor<?> constructor = clazz.getDeclaredConstructor();
-                        constructor.setAccessible(true);
-                        Object instance = constructor.newInstance();
-                        Field[] fields = instance.getClass().getDeclaredFields();
-                        for (Field field : fields) {
-                            if (field.isAnnotationPresent(Inject.class)) {
-                                field.setAccessible(true);
-                                Object newField = findField(field, classes);
+        this.beans = getBeans(classes);
+    }
 
-                                field.set(instance, newField);
-                            }
-                        }
-                        return instance;
-                    } catch (InstantiationException |
-                             IllegalAccessException |
-                             InvocationTargetException |
-                             NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+    private Set<Object> getBeans(Set<Class<?>> classes) {
+        return classes.stream()
+                .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
+                .peek(constructor -> constructor.setAccessible(true))
+                .map(FunctionWrapper.apply(Constructor::newInstance))
+                .map(FunctionWrapper.apply(instance -> getBean(instance, classes)))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
+    private Object getBean(Object instance, Set<Class<?>> classes) {
+        Field[] fields = instance.getClass().getDeclaredFields();
+        Arrays.stream(fields)
+                .filter(field -> field.isAnnotationPresent(Inject.class))
+                .peek(ConsumerWrapper.accept(field -> field.setAccessible(true)))
+                .forEach(ConsumerWrapper.accept(field -> field.set(instance, findField(field, classes))));
+        return instance;
+    }
+
     private Object findField(Field field, Set<Class<?>> classes) {
-        Class<?> aClass = classes.stream()
+        return classes.stream()
                 .filter(clazz -> field.getType().isAssignableFrom(clazz))
                 .findFirst()
+                .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
+                .map(FunctionWrapper.apply(Constructor::newInstance))
                 .orElseThrow(() -> new NoSuchElementException("주입 가능한 빈 없음"));
-        try {
-            return aClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static DIContainer createContainerForPackage(final String rootPackageName) {
