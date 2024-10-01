@@ -39,7 +39,7 @@ class HandlerExecutionTest {
         HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
         Method method = TestViewController.class.getMethod("test", HttpServletRequest.class, HttpServletResponse.class);
-        HandlerExecution handlerExecution = new HandlerExecution(method);
+        HandlerExecution handlerExecution = new HandlerExecution(new TestViewController(), method);
 
         //when
         ModelAndView modelAndView = handlerExecution.handle(mockRequest, mockResponse);
