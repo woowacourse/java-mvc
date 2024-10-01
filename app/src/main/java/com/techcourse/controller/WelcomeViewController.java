@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class WelcomeViewController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
+    public String show(final HttpServletRequest request, final HttpServletResponse response) {
         return "index.jsp";
     }
 }
