@@ -31,4 +31,22 @@ class JsonViewTest {
 
         assertThat(stringWriter.toString()).isEqualTo("{\"key2\":1,\"key\":\"value\"}");
     }
+
+    @Test
+    @DisplayName("데이터가 하나면 그대로 데이터를 랜더링 한다.")
+    void renderOne() throws Exception {
+        JsonView jsonView = JsonView.getInstance();
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("key", "value");
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        Mockito.when(response.getWriter()).thenReturn(printWriter);
+
+        jsonView.render(model, request, response);
+
+        assertThat(stringWriter.toString()).isEqualTo("value");
+    }
 }

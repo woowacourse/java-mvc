@@ -6,6 +6,7 @@ import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.AbstractView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class JsonView extends AbstractView {
@@ -29,6 +30,11 @@ public class JsonView extends AbstractView {
     }
 
     private String modelToJson(Map<String, ?> model) throws JsonProcessingException {
+        if (model.keySet().size() == 1) {
+            ArrayList<?> values = new ArrayList<>(model.values());
+            Object first = values.getFirst();
+            return String.valueOf(first);
+        }
         return OBJECT_MAPPER.writeValueAsString(model);
     }
 }
