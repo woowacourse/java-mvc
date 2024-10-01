@@ -2,8 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -13,6 +11,8 @@ import java.lang.reflect.Method;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import samples.TestController;
 
 class HandlerExecutionTest {
@@ -33,9 +33,9 @@ class HandlerExecutionTest {
     @Test
     void handle() {
         // given
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getAttribute("none")).thenReturn("yes");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("none", "yes");
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
         // when
         ModelAndView modelAndView = handlerExecution.handle(request, response);
@@ -49,12 +49,16 @@ class HandlerExecutionTest {
     @DisplayName("잘못된 핸들러 메서드 호출시 에러 발생")
     void testInvocationTargetException() throws Exception {
         // given
-        Method exceptionMethod = ExceptionThrowingController.class.getMethod("testHandler", HttpServletRequest.class,
-                HttpServletResponse.class);
+
+        Method exceptionMethod = ExceptionThrowingController.class.getMethod(
+                "testHandler",
+                HttpServletRequest.class,
+                HttpServletResponse.class
+        );
         handlerExecution = new HandlerExecution(exceptionMethod);
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
         // when && then
         assertThatThrownBy(() -> handlerExecution.handle(request, response))
@@ -69,8 +73,8 @@ class HandlerExecutionTest {
                 HttpServletResponse.class);
         handlerExecution = new HandlerExecution(abstractMethod);
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
         assertThatThrownBy(() -> handlerExecution.handle(request, response))
                 .isInstanceOf(HandlerExecutionException.class)

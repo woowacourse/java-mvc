@@ -1,17 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 class AnnotationHandlerMappingTest {
 
@@ -25,45 +23,51 @@ class AnnotationHandlerMappingTest {
 
     @Test
     void get() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        // given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("id", "gugu");
+        request.setRequestURI("/get-test");
+        request.setMethod("GET");
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
+        // when
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @Test
     void post() {
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        // given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("id", "gugu");
+        request.setRequestURI("/post-test");
+        request.setMethod("POST");
 
-        when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
+        // when
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
         final var modelAndView = handlerExecution.handle(request, response);
 
+        // then
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
 
     @DisplayName("RequestMethod가 비어있으면, 모든 Method를 지원한다.")
     @EnumSource(RequestMethod.class)
     @ParameterizedTest
-    void methodName(RequestMethod method) {
+    void registerHandlers(RequestMethod method) {
         // given
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("none", "yes");
+        request.setRequestURI("/none-method");
+        request.setMethod(method.name());
 
-        when(request.getAttribute("none")).thenReturn("yes");
-        when(request.getRequestURI()).thenReturn("/none-method");
-        when(request.getMethod()).thenReturn(method.name());
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
         // when
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
