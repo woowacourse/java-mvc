@@ -3,6 +3,7 @@ package di.stage3.context;
 import di.User;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +17,8 @@ class Stage3Test {
      * 테스트가 통과하도록 DIContainer 클래스를 구현하자.
      */
     @Test
-    void stage3() {
+    void stage3()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         final var user = new User(1L, "gugu");
 
         final var diContainer = createDIContainer();
@@ -39,7 +41,8 @@ class Stage3Test {
     /**
      * DIContainer가 관리하는 객체는 빈(bean) 객체라고 부른다.
      */
-    private static DIContainer createDIContainer() {
+    private static DIContainer createDIContainer()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         var classes = new HashSet<Class<?>>();
         classes.add(InMemoryUserDao.class);
         classes.add(UserService.class);
