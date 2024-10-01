@@ -41,9 +41,17 @@ public class MainClassPackageNameFinder {
         boolean isStatic = Modifier.isStatic(method.getModifiers());
         boolean isMain = method.getName().equals("main");
         boolean isVoid = method.getReturnType().getName().equals("void");
+        boolean isValidMethod = isValidMethod(method);
+        return isStatic && isMain && isVoid && isValidMethod;
+    }
+
+    private static boolean isValidMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
+        boolean isValidCount = parameterTypes.length == 1;
+        if (!isValidCount) {
+            return false;
+        }
         Class<?> parameterType = parameterTypes[0];
-        boolean equals = parameterType.equals(String[].class);
-        return isStatic && isMain && isVoid && equals;
+        return parameterType.equals(String[].class);
     }
 }
