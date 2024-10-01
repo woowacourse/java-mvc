@@ -25,13 +25,20 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
+        }
+
         String account = request.getParameter("account");
-        String password = request.getParameter("password");
 
-        User user = InMemoryUserRepository.findByAccount(account)
+        return InMemoryUserRepository.findByAccount(account)
+                .map(user -> login(request, user))
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 사용자가 없습니다."));
+    }
 
-        if (user.checkPassword(password)) {
+    private ModelAndView login(HttpServletRequest request, User user) {
+        log.info("User : {}", user);
+        if (user.checkPassword(request.getParameter("password"))) {
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return new ModelAndView(new JspView("/index.jsp"));
