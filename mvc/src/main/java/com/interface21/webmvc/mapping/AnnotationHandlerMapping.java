@@ -1,10 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.mapping;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.RequestHandler;
+import com.interface21.webmvc.handler.AnnotationRequestHandler;
+import com.interface21.webmvc.handler.RequestHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,5 +67,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public RequestHandler getHandler(String requestMethod, final String requestURI) {
         return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+    }
+
+    @Override
+    public boolean canHandle(String requestMethod, String requestURI) {
+        return handlerExecutions.containsKey(new HandlerKey(requestURI, requestMethod));
     }
 }

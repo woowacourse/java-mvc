@@ -1,7 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.handler;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.RequestHandler;
+import com.interface21.webmvc.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -17,7 +16,8 @@ public class AnnotationRequestHandler implements RequestHandler {
     }
 
     @Override
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+            throws ReflectiveOperationException {
         return (ModelAndView) method.invoke(controllerInstance, request, response);
     }
 }

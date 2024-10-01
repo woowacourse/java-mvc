@@ -1,9 +1,8 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.adapter;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.RequestHandler;
+import com.interface21.webmvc.ModelAndView;
+import com.interface21.webmvc.handler.RequestHandler;
+import com.interface21.webmvc.mapping.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,8 @@ public class RequestHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, ReflectiveOperationException {
         Optional<RequestHandler> handlerOptional = getHandler(request);
         if (handlerOptional.isEmpty()) {
             throw new ServletException("No handler found for request URI: " + request.getRequestURI());
@@ -30,12 +30,10 @@ public class RequestHandlerAdapter implements HandlerAdapter {
     private Optional<RequestHandler> getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            RequestHandler handler = handlerMapping.getHandler(method, requestURI);
-            if (handler != null) {
-                return Optional.of(handler);
-            }
-        }
-        return Optional.empty();
+
+        return handlerMappings.stream()
+                .filter(handlerMapping -> handlerMapping.canHandle(method, requestURI))
+                .findFirst()
+                .map(handlerMapping -> handlerMapping.getHandler(method, requestURI));
     }
 }
