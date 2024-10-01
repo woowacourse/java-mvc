@@ -1,20 +1,21 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.interface21.webmvc.servlet.AbstractView;
+import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JspView extends AbstractView {
+public class JspView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
-
     private static final String REDIRECT_PREFIX = "redirect:";
 
+    private final String viewName;
+
     public JspView(String viewName) {
-        super(viewName);
+        this.viewName = viewName;
     }
 
     @Override

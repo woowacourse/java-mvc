@@ -3,22 +3,18 @@ package com.interface21.webmvc.servlet.view;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
-import com.interface21.webmvc.servlet.AbstractView;
+import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class JsonView extends AbstractView {
+public class JsonView implements View {
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public static JsonView getInstance() {
-        return new JsonView("jsonView");
-    }
-
-    public JsonView(String viewName) {
-        super(viewName);
+        return new JsonView();
     }
 
     @Override
