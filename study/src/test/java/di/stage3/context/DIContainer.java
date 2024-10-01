@@ -50,7 +50,7 @@ class DIContainer {
             ReflectionUtils.makeAccessible(field);
             field.set(bean, dependency);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("의조성 주입대상: " + dependency + ", 의존성 주입 실패 field: " + field.getName(), e);
+            throw new RuntimeException("의존성 주입대상: " + dependency + ", 의존성 주입 실패 field: " + field.getName(), e);
         }
     }
 
