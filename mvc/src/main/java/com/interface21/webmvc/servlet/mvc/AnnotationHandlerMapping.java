@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -37,7 +38,9 @@ public class AnnotationHandlerMapping {
 
     private void initializeByController(Class<?> controller)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Method[] methods = controller.getDeclaredMethods();
+        Method[] methods = Arrays.stream(controller.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toArray(Method[]::new);
         Object baseInstance = controller.getDeclaredConstructor()
                 .newInstance();
 
@@ -69,10 +72,6 @@ public class AnnotationHandlerMapping {
     public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), request.getMethod());
 
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new IllegalArgumentException("처리할 수 없는 요청입니다.");
-        }
-        return handlerExecution;
+        return handlerExecutions.get(handlerKey);
     }
 }
