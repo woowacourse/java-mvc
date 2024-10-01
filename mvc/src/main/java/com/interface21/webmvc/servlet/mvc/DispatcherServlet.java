@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +20,12 @@ public class DispatcherServlet extends HttpServlet {
     private final String basePackage;
 
     private final HandlerMappings handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private final HandlerAdapters handlerAdapters;
 
     public DispatcherServlet(String basePackage) {
         this.basePackage = basePackage;
         this.handlerMappings = new HandlerMappings();
+        this.handlerAdapters = new HandlerAdapters();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
             handlerMappings.addHandlerMappings(new AnnotationHandlerMapping(basePackage));
             handlerMappings.init();
 
-            handlerAdapters = List.of(new RequestMappingHandlerAdapter());
+            handlerAdapters.addHandlerAdapter(new RequestMappingHandlerAdapter());
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             log.info("Dispatcher Servlet을 초기화하던 중 오류가 발생했습니다. :: message = {}", e.getMessage(), e.getCause());
             throw new IllegalArgumentException(e);
@@ -49,7 +49,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             Object handler = handlerMappings.getHandler(request);
-            HandlerAdapter adapter = findHandlerAdapter(handler);
+            HandlerAdapter adapter = handlerAdapters.findHandlerAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(request, response, handler);
             render(modelAndView, request, response);
@@ -57,13 +57,6 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private HandlerAdapter findHandlerAdapter(Object handler) {
-        return handlerAdapters.stream()
-                .filter(a -> a.supports(handler))
-                .findAny()
-                .orElseThrow(() -> new UnsupportedOperationException("처리할 수 없는 요청입니다."));
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
