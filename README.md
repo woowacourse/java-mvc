@@ -33,7 +33,16 @@
   - [x] DispatchServlet 클래스의 service 메서드에서 뷰를 처리하는 부분을 JspView 클래스로 옮긴다.
 
 ### 2단계 - 점진적인 리팩터링
-- [ ] Legacy MVC와 @MVC 통합하기
-  - [ ] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하게 만들자
+- [x] Legacy MVC와 @MVC 통합하기
+  - [x] 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하게 만들자
   - [x] HandlerMapping 관리 클래스 생성
-  - [ ] handler 실행을 도와주는 HandlerAdaptor 생성
+  - [x] handler 실행을 도와주는 HandlerAdaptor 생성
+
+### 3단계 - JSON View 구현하기
+- [ ]  JsonView 클래스를 구현한다.
+  - [ ] HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현한다.
+- [ ] Legacy MVC 제거하기
+  - [ ] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
+  - [ ] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링한다.
+  - [ ] Legacy MVC를 제거하고 나서 DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 옮긴다.
+
