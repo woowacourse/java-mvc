@@ -11,6 +11,6 @@ public class RegisterViewController {
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return "redirect:/register";
+        return "/register";
     }
 }
