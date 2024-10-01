@@ -21,6 +21,8 @@ dependencies {
     implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
+    implementation 'org.springframework:spring-web:6.1.10'
+
     implementation 'org.reflections:reflections:0.10.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
     implementation 'ch.qos.logback:logback-classic:1.5.6'
