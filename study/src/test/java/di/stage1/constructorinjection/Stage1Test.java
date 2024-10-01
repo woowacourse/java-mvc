@@ -16,7 +16,7 @@ class Stage1Test {
     void stage1() {
         final User user = new User(1L, "gugu");
 
-        final InMemoryDao userDao = new UserDao();
+        final InMemoryDao userDao = new UserInMemoryDao();
 
         /**
          * 클래스 내부에서 직접 객체를 생성하지 말고 외부에서 객체를 전달 받도록 수정했다.
