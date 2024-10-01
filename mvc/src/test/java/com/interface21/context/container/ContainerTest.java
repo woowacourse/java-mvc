@@ -8,8 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
@@ -33,14 +31,10 @@ class ContainerTest {
         Container.run(TestApp.class);
 
         // then
-        List<Controller> asisControllers = sut.getInstancesOf(Controller.class);
         List<Object> tobeControllers = sut.getInstancesAnnotatedOf(com.interface21.context.stereotype.Controller.class);
         List<HandlerMapping> mappings = sut.getInstancesOf(HandlerMapping.class);
         List<HandlerAdapter> adapters = sut.getInstancesOf(HandlerAdapter.class);
         assertAll(
-                () -> assertThat(asisControllers)
-                        .hasSize(1)
-                        .hasOnlyElementsOfType(ForwardController.class),
                 () -> assertThat(tobeControllers)
                         .hasSize(2)
                         .hasOnlyElementsOfTypes(TestController.class, TestController2.class),
