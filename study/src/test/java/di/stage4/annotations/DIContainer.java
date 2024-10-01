@@ -24,8 +24,12 @@ class DIContainer {
         Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(rootPackageName);
         return allClassesInPackage.stream()
                 // @Service, @Repository가 존재하는 클래스만 객체로 생성한다.
-                .filter(aClass -> aClass.isAnnotationPresent(Service.class) || aClass.isAnnotationPresent(Repository.class))
+                .filter(DIContainer::supports)
                 .collect(Collectors.collectingAndThen(Collectors.toUnmodifiableSet(), DIContainer::new));
+    }
+
+    private static boolean supports(Class<?> aClass) {
+        return aClass.isAnnotationPresent(Service.class) || aClass.isAnnotationPresent(Repository.class);
     }
 
     // 기본 생성자로 빈을 생성한다.
