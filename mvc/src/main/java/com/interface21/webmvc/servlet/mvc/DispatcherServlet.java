@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,20 +20,19 @@ public class DispatcherServlet extends HttpServlet {
 
     private final String basePackage;
 
-    private List<HandlerMapping> handlerMappings;
+    private final HandlerMappings handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet(String basePackage) {
         this.basePackage = basePackage;
+        this.handlerMappings = new HandlerMappings();
     }
 
     @Override
     public void init() {
         try {
-            handlerMappings = List.of(new AnnotationHandlerMapping(basePackage));
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                handlerMapping.initialize();
-            }
+            handlerMappings.addHandlerMappings(new AnnotationHandlerMapping(basePackage));
+            handlerMappings.init();
 
             handlerAdapters = List.of(new RequestMappingHandlerAdapter());
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
@@ -50,11 +48,7 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = handlerMappings.stream()
-                    .map(mapping -> mapping.getHandler(request))
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElseThrow(() -> new IllegalArgumentException("처리할 수 없는 요청입니다."));
+            Object handler = handlerMappings.getHandler(request);
             HandlerAdapter adapter = findHandlerAdapter(handler);
 
             ModelAndView modelAndView = adapter.handle(request, response, handler);

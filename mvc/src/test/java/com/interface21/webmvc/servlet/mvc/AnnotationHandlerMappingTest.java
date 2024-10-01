@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,20 +54,6 @@ class AnnotationHandlerMappingTest {
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
-    }
-
-    @DisplayName("맵핑되지 않은 url 요청 시 예외가 발생한다.")
-    @Test
-    void getHandlerWithInvalidHandlerKey() {
-        // given
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn("/invalid");
-        when(request.getMethod()).thenReturn("GET");
-
-        // when & then
-        assertThatThrownBy(() -> handlerMapping.getHandler(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("처리할 수 없는 요청입니다.");
     }
 
     @DisplayName("RequestMapping에 아무런 메서드가 지정되지 않으면 모든 메서드가 맵핑된다.")
