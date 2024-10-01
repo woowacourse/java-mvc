@@ -25,7 +25,7 @@ class DispatcherServletTest {
     void setUp() {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("com.techcourse");
 
         dispatcherServlet.init();
     }
