@@ -24,6 +24,8 @@ public class JsonView implements View {
         String responseBody = parse(model);
         PrintWriter writer = response.getWriter();
         writer.write(responseBody);
+
+        log.info("렌더링 완료");
     }
 
     private String parse(Map<String, ?> model) throws JsonProcessingException {
@@ -40,6 +42,7 @@ public class JsonView implements View {
         ObjectMapper objectMapper = new ObjectMapper();
 
         if (parseResult.size() == 1) {
+            log.info("전달된 값이 하나입니다.");
             Object value = parseResult.values()
                     .stream()
                     .findFirst()
