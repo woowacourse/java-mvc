@@ -3,9 +3,10 @@ package com.techcourse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.RegisterController;
-import com.techcourse.handleradapter.ControllerHandlerAdapter;
 import com.techcourse.handleradapter.HandlerExecutionHandlerAdapter;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +18,7 @@ class HandlerAdapterRegistryTest {
     @Test
     void getHandlerAdapterSuccess() {
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
-                List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter()));
+                List.of(new HandlerExecutionHandlerAdapter()));
         RegisterController handler = new RegisterController();
 
         HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);

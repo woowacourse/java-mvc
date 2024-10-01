@@ -1,78 +1,58 @@
 package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.techcourse.handleradapter.ControllerHandlerAdapter;
-import com.techcourse.handleradapter.HandlerExecutionHandlerAdapter;
-import com.techcourse.handlermapping.ManualHandlerMapping;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.ViewResolver;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.viewresolver.SimpleViewResolver;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class DispatcherServletTest {
 
-    private DispatcherServlet dispatcherServlet;
-
-    @BeforeEach
-    void setUp() {
-        dispatcherServlet = getDispatcherServlet();
-    }
-
-    private DispatcherServlet getDispatcherServlet() {
-        HandlerRegistry handlerRegistry = getHandlerRegistry();
-        return new DispatcherServlet(handlerRegistry, new SimpleViewResolver());
-    }
-
-    private HandlerRegistry getHandlerRegistry() {
-        HandlerMappingRegistry handlerMappingRegistry = getHandlerMappingRegistry();
-        HandlerAdapterRegistry handlerAdapterRegistry = getHandlerAdapterRegistry();
-        return new HandlerRegistry(handlerMappingRegistry, handlerAdapterRegistry);
-    }
-
-    private HandlerMappingRegistry getHandlerMappingRegistry() {
-        return new HandlerMappingRegistry(
-                List.of(new AnnotationHandlerMapping("com.techcourse.controller"), new ManualHandlerMapping())
-        );
-    }
-
-    private HandlerAdapterRegistry getHandlerAdapterRegistry() {
-        return new HandlerAdapterRegistry(
-                List.of(new HandlerExecutionHandlerAdapter(), new ControllerHandlerAdapter())
-        );
-    }
-
-    @DisplayName("올바른 uri 요청을 보내면 요청을 처리한다.")
+    @DisplayName("올바른 uri 요청을 보내면 JSP를 랜더링하고 forward 한다.")
     @Test
-    void serviceSuccessWithValidRequest() throws ServletException, IOException {
+    void serviceSuccessWithValidRequest() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
+        RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
 
         given(request.getRequestURI()).willReturn("/register");
         given(request.getMethod()).willReturn("GET");
+        given(request.getRequestDispatcher("register.jsp")).willReturn(requestDispatcher);
+
+        HandlerRegistry handlerRegistry = mock(HandlerRegistry.class);
+        given(handlerRegistry.handle(any(), any())).willReturn(new ModelAndView(new JspView("register.jsp")));
+
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerRegistry, new SimpleViewResolver());
 
         dispatcherServlet.service(request, response);
 
-        verify(response).sendRedirect("/register.jsp");
+        then(requestDispatcher).should().forward(request, response);
     }
 
     @DisplayName("올바르지 않은 uri 요청을 보내면 에러를 던진다.")
     @Test
-    void serviceFailWithInvalidRequest() {
+    void serviceFailWithInvalidRequest() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        given(request.getRequestURI()).willReturn("/wrong");
-        given(request.getMethod()).willReturn("GET");
+        HandlerRegistry handlerRegistry = mock(HandlerRegistry.class);
+        ViewResolver viewResolver = mock(ViewResolver.class);
+        given(handlerRegistry.handle(request, response)).willThrow(new RuntimeException());
+
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerRegistry, viewResolver);
 
         assertThatCode(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(ServletException.class);

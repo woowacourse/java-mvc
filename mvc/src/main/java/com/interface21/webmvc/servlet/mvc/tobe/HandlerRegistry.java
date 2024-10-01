@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,5 +18,13 @@ public class HandlerRegistry {
         Object controller = handlerMappingRegistry.getHandler(request);
         HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(controller);
         return handlerAdapter.handle(request, response, controller);
+    }
+
+    @Override
+    public String toString() {
+        return "HandlerRegistry{" +
+                "handlerMappingRegistry=" + handlerMappingRegistry +
+                ", handlerAdapterRegistry=" + handlerAdapterRegistry +
+                '}';
     }
 }

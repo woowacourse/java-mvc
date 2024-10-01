@@ -1,15 +1,14 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
-    private final List<com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
 
-    public HandlerMappingRegistry(List<com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping> handlerMappings) {
+    public HandlerMappingRegistry(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
         handlerMappings.forEach(HandlerMapping::initialize);
     }
