@@ -18,8 +18,8 @@ public class JsonView implements View {
 
         if (model.size() == 1) {
             objectMapper.writeValue(response.getWriter(), model.values().iterator().next());
-        } else {
-            objectMapper.writeValue(response.getWriter(), model);
+            return;
         }
+        objectMapper.writeValue(response.getWriter(), model);
     }
 }
