@@ -21,7 +21,7 @@ public class RegisterController {
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("index.jsp"));
+        return new ModelAndView(new JspView("login.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
