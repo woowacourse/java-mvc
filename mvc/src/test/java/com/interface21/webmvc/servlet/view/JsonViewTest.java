@@ -22,7 +22,7 @@ class JsonViewTest {
         model.put("key2", 1);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        HttpServletResponse response = Mockito.spy(HttpServletResponse.class);
+        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         Mockito.when(response.getWriter()).thenReturn(printWriter);
