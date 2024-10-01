@@ -11,13 +11,24 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void render(Map<String, ?> model,
                        HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.setStatus(HttpServletResponse.SC_OK);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        ObjectMapper objectMapper = new ObjectMapper();
+
+        if (model.size() == 1) {
+            Object value = model.values()
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Has model size of 1, but there was an error getting the value."
+                    ));
+            objectMapper.writeValue(response.getWriter(), value);
+            return;
+        }
         objectMapper.writeValue(response.getWriter(), model);
     }
 }
