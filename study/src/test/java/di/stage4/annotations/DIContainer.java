@@ -5,7 +5,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
+/**
+ * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
+ */
 class DIContainer {
 
     private final Set<Object> beans;
@@ -13,13 +17,14 @@ class DIContainer {
     public DIContainer(final Set<Class<?>> classes)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         this.beans = new HashSet<>();
+
         for (Class<?> clazz : classes) {
             Constructor<?> declaredConstructor = clazz.getDeclaredConstructor();
             declaredConstructor.setAccessible(true);
-            Object instance = declaredConstructor.newInstance();
-            beans.add(instance);
-            injectDependencies(instance, beans);
+            beans.add(declaredConstructor.newInstance());
         }
+
+        beans.forEach(this::injectDependencies);
     }
 
     public static DIContainer createContainerForPackage(final String rootPackageName)
@@ -28,31 +33,35 @@ class DIContainer {
         return new DIContainer(allClassesInPackage);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getBean(final Class<T> aClass) {
-        for (Object bean : beans) {
-            if (aClass.isInstance(bean)) {
-                return (T) bean;
-            }
-        }
-        return null;
+    private void injectDependencies(Object instance) {
+        Stream.of(instance.getClass().getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Inject.class))
+                .forEach(field -> {
+                    field.setAccessible(true);
+                    setBeanIntoInstance(instance, field);
+                });
     }
 
-    private void injectDependencies(Object instance, Set<Object> beans) {
-        Field[] declaredFields = instance.getClass().getDeclaredFields();
-        for (Field declaredField : declaredFields) {
-            if (declaredField.isAnnotationPresent(Inject.class)) {
-                declaredField.setAccessible(true);
-                for (Object bean : beans) {
-                    if (declaredField.getType().isInstance(bean)) {
-                        try {
-                            declaredField.set(instance, bean);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException("Failed to inject dependency", e);
-                        }
-                    }
-                }
-            }
+    private void setBeanIntoInstance(Object instance, Field field) {
+        beans.stream()
+                .filter(bean -> field.getType().isAssignableFrom(bean.getClass()))
+                .findFirst()
+                .ifPresent(bean -> setBeanIntoField(instance, field, bean));
+    }
+
+    private void setBeanIntoField(Object instance, Field field, Object bean) {
+        try {
+            field.set(instance, bean);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Failed to inject dependency for field: " + field.getName(), e);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getBean(final Class<T> aClass) {
+        return (T) beans.stream()
+                .filter(aClass::isInstance)
+                .findAny()
+                .orElse(null);
     }
 }
