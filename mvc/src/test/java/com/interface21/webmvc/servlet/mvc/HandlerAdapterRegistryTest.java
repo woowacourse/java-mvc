@@ -14,9 +14,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.interface21.context.container.Container;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 
 import samples.TestApp;
+import samples.TestControllerInterface;
 import samples.TestHandlerAdapter;
 
 class HandlerAdapterRegistryTest {
@@ -45,7 +45,7 @@ class HandlerAdapterRegistryTest {
 
     static Stream<Arguments> getHandler() {
         return Stream.of(
-                Arguments.of(Controller.class, TestHandlerAdapter.class),
+                Arguments.of(TestControllerInterface.class, TestHandlerAdapter.class),
                 Arguments.of(HandlerExecution.class, AnnotationHandlerAdapter.class));
     }
 
