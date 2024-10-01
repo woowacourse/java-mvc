@@ -30,10 +30,10 @@
 
 ### 2단계 요구사항
 
-- [ ] AnnotationHandlerMapping 클래스 리팩토링
-    - [ ] initialize 메서드 리팩터링
-    - [ ] ControllerScanner 클래스 추가
-        - [ ] HandlerExecution 생성 메서드 구현
+- [x] AnnotationHandlerMapping 클래스 리팩토링
+    - [x] initialize 메서드 리팩터링
+    - [x] ControllerScanner 클래스 추가
+        - [x] HandlerExecution 생성 메서드 구현
 - [x] DispatcherServlet 클래스 구현
     - [x] HandlerMapping 인터페이스 구현
     - [x] HandlerAdapter 인터페이스 구현
