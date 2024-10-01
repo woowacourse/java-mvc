@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.mvc.exception.NonExistenceHandlerException;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
