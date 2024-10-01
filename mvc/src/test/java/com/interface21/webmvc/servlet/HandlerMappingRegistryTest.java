@@ -35,7 +35,7 @@ class HandlerMappingRegistryTest {
         Optional<Object> handler = registry.getHandler(request);
 
         assertThat(handler).isPresent();
-        assertThat(handler.get()).isEqualTo("jazz");
+        assertThat(handler.get()).isEqualTo(1130);
     }
 
     @DisplayName("요청과 매핑되는 핸들러를 찾지 못하면 Empty를 반환한다.")
