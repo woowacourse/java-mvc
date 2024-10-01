@@ -16,28 +16,30 @@ import org.slf4j.LoggerFactory;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final String ACCOUNT = "account";
+    private static final String PASSWORD = "password";
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return redirectToIndex();
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(req.getParameter(ACCOUNT))
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+                .orElse(redirectToUnauthorized());
     }
 
     private ModelAndView login(final HttpServletRequest request, final User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
+        if (user.checkPassword(request.getParameter(PASSWORD))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return redirectToIndex();
         }
-        return new ModelAndView(new JspView("redirect:/401.jsp"));
+        return redirectToUnauthorized();
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -45,8 +47,20 @@ public class LoginController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return redirectToIndex();
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse(redirectToLogin());
+    }
+
+    private ModelAndView redirectToIndex() {
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
+    }
+
+    private ModelAndView redirectToUnauthorized() {
+        return new ModelAndView(new JspView("redirect:/401.jsp"));
+    }
+
+    private ModelAndView redirectToLogin() {
+        return new ModelAndView(new JspView("/login.jsp"));
     }
 }
