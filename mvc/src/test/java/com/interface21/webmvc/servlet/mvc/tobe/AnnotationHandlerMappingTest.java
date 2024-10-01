@@ -96,4 +96,16 @@ class AnnotationHandlerMappingTest {
         assertThatThrownBy(annotationHandlerMapping::initialize)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("요청에 맞는 HandlerExecution 을 반환한다.")
+    @Test
+    void getHandlerExecution() throws ClassNotFoundException {
+        final var request = mock(HttpServletRequest.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("GET");
+
+        final Object handler = handlerMapping.getHandler(request);
+        assertThat(handler).isExactlyInstanceOf(HandlerExecution.class);
+    }
 }
