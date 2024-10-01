@@ -16,11 +16,10 @@ public class LoginViewController {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public Object showLoginView(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView showLoginView(HttpServletRequest req, HttpServletResponse res) {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    // Return a String for redirection
                     return new ModelAndView(new JspView("redirect:/"));
                 })
                 .orElseGet(() ->
