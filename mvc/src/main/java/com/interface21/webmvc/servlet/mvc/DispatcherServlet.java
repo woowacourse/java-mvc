@@ -1,6 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,7 +16,6 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
     private static final String BASE_PACKAGE = "com";
@@ -38,20 +37,15 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void setHandlerMappingRegistry() {
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
 
-        manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
     private void setHandlerAdapterRegistry() {
-        final ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
         final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        handlerAdapterRegistry.addHandlerAdapter(manualHandlerAdapter);
         handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
     }
 
@@ -65,11 +59,17 @@ public class DispatcherServlet extends HttpServlet {
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
-            final View view = modelAndView.getView();
-            view.render(new HashMap<>(), request, response);
+            render(request, response, modelAndView);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void render(final HttpServletRequest request, final HttpServletResponse response, final ModelAndView modelAndView) throws Exception {
+        final View view = modelAndView.getView();
+        final Map<String, Object> model = modelAndView.getModel();
+
+        view.render(model, request, response);
     }
 }

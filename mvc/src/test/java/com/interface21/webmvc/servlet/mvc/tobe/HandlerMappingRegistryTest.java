@@ -11,9 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import samples.TestController;
-import com.interface21.webmvc.servlet.mvc.tobe.fixture.FakeManualHandlerMapping;
-
 public class HandlerMappingRegistryTest {
     private static final String BASE_PACKAGE = "samples";
     private static final String REQUEST_URI_GET_TEST = "/get-test";
@@ -24,22 +21,6 @@ public class HandlerMappingRegistryTest {
     @BeforeEach
     void setup() {
         handlerMappingRegistry = new HandlerMappingRegistry();
-    }
-
-    @DisplayName("ManualHandlerMapping(Legacy MVC)이 요청을 처리할 수 있다.")
-    @Test
-    void test_GetHandler_When_Use_ManualHandlerMapping() {
-        // given
-        final var request = mock(HttpServletRequest.class);
-        when(request.getRequestURI()).thenReturn(REQUEST_URI_GET_TEST);
-
-        registerHandlerMapping(new FakeManualHandlerMapping());
-
-        // when
-        final Object handler = handlerMappingRegistry.getHandler(request);
-
-        // then
-        assertThat(handler).isInstanceOf(TestController.class);
     }
 
     @DisplayName("AnnotationHandlerMapping(@MVC)이 요청을 처리할 수 있다.")
