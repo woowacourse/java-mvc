@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,8 +13,6 @@ import java.io.OutputStream;
 import java.util.Map;
 
 public class JsonView implements View {
-
-    public static final String DEFAULT_CONTENT_TYPE = "application/json";
 
     private final ObjectMapper objectMapper;
     private final JsonEncoding encoding = JsonEncoding.UTF8;
@@ -34,17 +33,23 @@ public class JsonView implements View {
     }
 
     private void prepareResponse(HttpServletResponse response) {
-        response.setContentType(DEFAULT_CONTENT_TYPE);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding(this.encoding.getJavaName());
         if (this.disableCaching) {
             response.addHeader("Cache-Control", "no-store");
         }
     }
 
-    protected void writeContent(OutputStream stream, Object object) throws IOException {
+    private void writeContent(OutputStream stream, Map<String, ?> model) throws IOException {
         try (JsonGenerator generator = this.objectMapper.getFactory().createGenerator(stream, this.encoding)) {
             ObjectWriter objectWriter = this.objectMapper.writer();
-            objectWriter.writeValue(generator, object);
+
+            Object value = model;
+            if (model.size() == 1) {
+                value = model.values().iterator().next();
+            }
+
+            objectWriter.writeValue(generator, value);
 
             generator.flush();
         }
