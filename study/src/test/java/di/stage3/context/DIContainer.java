@@ -22,18 +22,24 @@ class DIContainer {
     private Set<Object> createBeans(final Set<Class<?>> classes) {
         final Set<Object> beans = new HashSet<>();
         for (Class<?> aClass : classes) {
-            try {
-                Constructor<?> constructor = aClass.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                beans.add(constructor.newInstance());
-            } catch (NoSuchMethodException |
-                     InvocationTargetException |
-                     InstantiationException |
-                     IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            Object instance = createBeanInstance(aClass);
+            beans.add(instance);
+
         }
         return beans;
+    }
+
+    private Object createBeanInstance(Class<?> aClass) {
+        try {
+            Constructor<?> constructor = aClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (NoSuchMethodException |
+                 InstantiationException |
+                 IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // 빈 내부에 선언된 필드를 각각 셋팅한다.
@@ -47,15 +53,23 @@ class DIContainer {
 
     private void setField(Object bean, Field field) {
         for (Object injectBean : beans) {
-            if (field.getType().isAssignableFrom(injectBean.getClass())) {
-                try {
-                    field.setAccessible(true);
-                    field.set(bean, injectBean);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
+            setBean(bean, field, injectBean);
+        }
+    }
+
+    private void setBean(Object bean, Field field, Object injectBean) {
+        if (isInjectable(field, injectBean)) {
+            field.setAccessible(true);
+            try {
+                field.set(bean, injectBean);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
         }
+    }
+
+    private boolean isInjectable(Field field, Object injectBean) {
+        return field.getType().isAssignableFrom(injectBean.getClass());
     }
 
     // 빈 컨텍스트(DI)에서 관리하는 빈을 찾아서 반환한다.
