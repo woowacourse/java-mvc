@@ -1,9 +1,9 @@
 package di.stage2.constructorwithinterfaces;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import di.User;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage2Test {
 
@@ -13,6 +13,8 @@ class Stage2Test {
      * 하지만 아직도 문제가 있다.
      * 인터페이스의 구현 객체를 누군가가 결정해줘야 한다.
      * 객체를 생성하고 연결해주는 역할이 필요하다.
+     *
+     * 인터페이스로 결합도가 낮아졌지만 객체를 생성하는 책임이 UserService에 있다.
      */
     @Test
     void stage2() {

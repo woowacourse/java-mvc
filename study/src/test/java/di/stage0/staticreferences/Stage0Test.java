@@ -1,9 +1,9 @@
 package di.stage0.staticreferences;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import di.User;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage0Test {
 
@@ -12,6 +12,8 @@ class Stage0Test {
      * 객체지향적이지 않은 코드는 변경에 취약하다.
      * UserService는 UserDao와 밀접하게 결합되어 있는데 이는 테스트하기 어렵게 만든다.
      * 테스트 DB를 사용하려면 코드의 많은 부분이 수정되어야 한다.
+     *
+     * static으로 선언된 UserDao를 사용하면 UserDao를 Mock으로 대체할 수 없다.
      */
     @Test
     void stage0() {
