@@ -17,13 +17,12 @@ public class JsonView implements View {
         PrintWriter writer = response.getWriter();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        if (model.size() == 1) {
-            for (Object value : model.values()) {
-                writer.write(objectMapper.writeValueAsString(value));
-            }
-        }
         if (model.size() > 1) {
             writer.write(objectMapper.writeValueAsString(model));
+            return;
+        }
+        for (Object value : model.values()) {
+            writer.write(objectMapper.writeValueAsString(value));
         }
     }
 }
