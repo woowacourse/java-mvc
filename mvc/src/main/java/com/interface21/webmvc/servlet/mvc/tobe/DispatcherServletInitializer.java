@@ -1,13 +1,14 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.core.util.MainClassPackageNameFinder;
+import com.interface21.web.WebApplicationInitializer;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
+ * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
+ * servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
@@ -17,7 +18,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        String mainClassPackageName = MainClassPackageNameFinder.getMainClassPackageName();
+
+        final var dispatcherServlet = new DispatcherServlet(mainClassPackageName);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
