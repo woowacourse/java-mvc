@@ -1,23 +1,22 @@
 package di.stage3.context;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import di.User;
-import org.junit.jupiter.api.Test;
-
 import java.util.HashSet;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
 
 class Stage3Test {
 
     /**
-     * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자.
-     * DIContainer는 애플리케이션을 구성하는 객체의 구조와 관계를 정의한 설계도 역할을 한다.
-     * 어떤 객체가 어떤 객체를 사용하는지 정의하는 역할을 한다.
-     * 테스트가 통과하도록 DIContainer 클래스를 구현하자.
+     * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자. DIContainer는 애플리케이션을 구성하는 객체의 구조와 관계를 정의한 설계도 역할을 한다. 어떤 객체가 어떤 객체를
+     * 사용하는지 정의하는 역할을 한다. 테스트가 통과하도록 DIContainer 클래스를 구현하자.
      */
     @Test
-    void stage3() {
-        final var user = new User(1L, "gugu");
+    void stage3() throws Exception {
+        final var user = new User(1L, "ever");
 
         final var diContainer = createDIContainer();
 
@@ -33,16 +32,29 @@ class Stage3Test {
 
         final var actual = userService.join(user);
 
-        assertThat(actual.getAccount()).isEqualTo("gugu");
+        assertThat(actual.getAccount()).isEqualTo("ever");
+    }
+
+    @Test
+    void stage3_invalid() throws Exception {
+        final var diContainer = createDIContainer();
+
+        assertThatThrownBy(() -> diContainer.getBean(Object.class))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 빈이 존재하지 않습니다: Object");
     }
 
     /**
      * DIContainer가 관리하는 객체는 빈(bean) 객체라고 부른다.
      */
     private static DIContainer createDIContainer() {
-        var classes = new HashSet<Class<?>>();
+        Set<Class<?>> classes = new HashSet<>();
         classes.add(InMemoryUserDao.class);
         classes.add(UserService.class);
-        return new DIContainer(classes);
+        try {
+            return new DIContainer(classes);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

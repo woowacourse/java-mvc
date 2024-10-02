@@ -1,27 +1,39 @@
 package ioc.decoupled;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 public final class ExchangeRateSupportFactory {
-    private static final ExchangeRateSupportFactory instance;
+
+    private static final ExchangeRateSupportFactory INSTANCE;
+
     private final ExchangeRateProvider exchangeRateProvider;
     private final ExchangeRateRenderer exchangeRateRenderer;
 
     static {
-        instance = new ExchangeRateSupportFactory();
+        INSTANCE = new ExchangeRateSupportFactory();
     }
 
     private ExchangeRateSupportFactory() {
         Properties properties = new Properties();
         try {
-            final var resourceStream = this.getClass().getResourceAsStream("/exchange-rate.properties");
+            // resource 디렉터리에서 exchange-rate.properties 파일 가져옴
+            final InputStream resourceStream = this.getClass().getResourceAsStream("/exchange-rate.properties");
+            // 불러온 파일 properties 객체에 저장
             properties.load(resourceStream);
 
-            final var providerClass = properties.getProperty("provider.class");
-            final var rendererClass = properties.getProperty("renderer.class");
+            // exchange-rate.properties 파일에서 provider.class, renderer.class 값을 가져옴
+            // providerClass, rendererClass 값은 객체로 만들 클래스 이름
+            final String providerClass = properties.getProperty("provider.class");
+            final String rendererClass = properties.getProperty("renderer.class");
 
-            this.exchangeRateProvider = (ExchangeRateProvider) Class.forName(providerClass).getDeclaredConstructor().newInstance();
-            this.exchangeRateRenderer = (ExchangeRateRenderer) Class.forName(rendererClass).getDeclaredConstructor().newInstance();
+            // 클래스 이름으로 ExchangeRateProvider, ExchangeRateRenderer 객체 생성
+            this.exchangeRateProvider = (ExchangeRateProvider) Class.forName(providerClass)
+                    .getDeclaredConstructor()
+                    .newInstance();
+            this.exchangeRateRenderer = (ExchangeRateRenderer) Class.forName(rendererClass)
+                    .getDeclaredConstructor()
+                    .newInstance();
 
             exchangeRateRenderer.setExchangeRateProvider(exchangeRateProvider);
         } catch (Exception e) {
@@ -30,7 +42,7 @@ public final class ExchangeRateSupportFactory {
     }
 
     public static ExchangeRateSupportFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public ExchangeRateProvider getExchangeRateProvider() {
