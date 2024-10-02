@@ -13,6 +13,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
+
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
@@ -23,7 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappingRegistry.initialize();
+        handlerMappingRegistry.initialize(CONTROLLER_BASE_PACKAGE);
         handlerAdapterRegistry.initialize();
     }
 
