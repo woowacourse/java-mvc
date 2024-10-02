@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMapping;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +16,9 @@ public class HandlerExecutions {
     }
 
     public void addHandlerExecution(Method[] methods) {
-        Arrays.stream(methods).forEach(this::addHandlerExecution);
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(this::addHandlerExecution);
     }
 
     private void addHandlerExecution(Method method) {
