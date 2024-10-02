@@ -80,7 +80,7 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    Optional<Object> getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(HttpServletRequest request) {
         HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.findMethod(request.getMethod()));
         return handlerExecutions.get(key);
     }
