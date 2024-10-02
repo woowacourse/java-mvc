@@ -23,7 +23,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         final var dispatcherServlet = new DispatcherServlet();
         dispatcherServlet.addHandlerMapping(0, new AnnotationHandlerMapping("com"));
         dispatcherServlet.addHandlerAdapter(0, new AnnotationHandlerAdapter());
-        dispatcherServlet.init();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
