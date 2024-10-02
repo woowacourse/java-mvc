@@ -5,7 +5,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -17,7 +16,6 @@ import org.mockito.ArgumentCaptor;
 
 class JsonViewTest {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static final ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
 
     private HttpServletRequest request;
@@ -50,14 +48,13 @@ class JsonViewTest {
     void renderOnlyData_When_ModelHasOnlyOneData() throws Exception {
         Dummy dummy = new Dummy("test");
         Map<String, ?> model = Map.of("testModel", dummy);
-        String expected = mapper.writeValueAsString(dummy);
 
         when(response.getWriter()).thenReturn(mockPrintWriter);
         doNothing().when(mockPrintWriter).write(argumentCaptor.capture());
 
         jsonView.render(model, request, response);
 
-        assertThat(argumentCaptor.getValue()).isEqualTo(expected);
+        assertThat(argumentCaptor.getValue()).isEqualTo("{\"value\":\"test\"}");
     }
 
     @DisplayName("데이터가 여러개일 때는 Map 형태로 반환한다")
@@ -66,13 +63,12 @@ class JsonViewTest {
         Dummy dummy1 = new Dummy("test1");
         Dummy dummy2 = new Dummy("test2");
         Map<String, Dummy> dummyData = Map.of("dummy1", dummy1, "dummy2", dummy2);
-        String expected = mapper.writeValueAsString(dummyData);
 
         when(response.getWriter()).thenReturn(mockPrintWriter);
         doNothing().when(mockPrintWriter).write(argumentCaptor.capture());
 
         jsonView.render(dummyData, request, response);
 
-        assertThat(argumentCaptor.getValue()).isEqualTo(expected);
+        assertThat(argumentCaptor.getValue()).isEqualTo("{\"dummy2\":{\"value\":\"test2\"},\"dummy1\":{\"value\":\"test1\"}}");
     }
 }
