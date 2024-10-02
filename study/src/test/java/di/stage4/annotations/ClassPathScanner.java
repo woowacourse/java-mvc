@@ -17,14 +17,6 @@ public class ClassPathScanner {
 
     public static Set<Class<?>> getAnnotatedClassesInPackage(
             final String packageName,
-            final Class<? extends Annotation> annotation
-    ) {
-        Reflections reflections = new Reflections(packageName, Scanners.TypesAnnotated);
-        return reflections.getTypesAnnotatedWith(annotation);
-    }
-
-    public static Set<Class<?>> getAnnotatedClassesInPackage(
-            final String packageName,
             final Class<? extends Annotation>... annotations
     ) {
         Reflections reflections = new Reflections(packageName, Scanners.TypesAnnotated);
