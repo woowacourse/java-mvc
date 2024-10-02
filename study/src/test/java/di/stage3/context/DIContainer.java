@@ -25,7 +25,7 @@ class DIContainer {
         return (T) beans.stream()
                 .filter(bean -> aClass.isAssignableFrom(bean.getClass()))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("해당 빈이 존재하지 않습니다."));
     }
 
     private Set<Object> createBeans(final Set<Class<?>> classes) {
@@ -43,7 +43,7 @@ class DIContainer {
             beans.add(instance);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("빈 생성에 실패했습니다.");
         }
     }
 
@@ -62,13 +62,13 @@ class DIContainer {
         Object inject = beans.stream()
                 .filter(type::isInstance)
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("주입할 빈이 존재하지 않습니다."));
 
         try {
             field.setAccessible(true);
             field.set(bean, inject);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("필드 주입에 실패했습니다.");
         }
     }
 }
