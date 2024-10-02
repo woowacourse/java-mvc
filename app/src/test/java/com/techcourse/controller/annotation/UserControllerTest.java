@@ -23,8 +23,8 @@ class UserControllerTest {
 
         when(request.getParameter(eq("account"))).thenReturn("gugu");
 
-        ModelAndView actual = userController.show(request, response);
-        User user = (User) actual.getObject("user");
+        ModelAndView modelAndView = userController.show(request, response);
+        User user = (User) modelAndView.getObject("user");
 
         assertThat(user.getAccount()).isEqualTo("gugu");
     }
