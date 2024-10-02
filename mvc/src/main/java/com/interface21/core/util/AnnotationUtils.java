@@ -40,7 +40,7 @@ public class AnnotationUtils {
         }
         boolean result = Arrays.stream(currentAnnotation.getDeclaredAnnotations())
                 .map(Annotation::annotationType)
-                .filter(annotation -> !visited.contains(annotation))
+                .filter(annotation -> !visited.contains(annotation) || annotation.equals(targetAnnotation))
                 .map(annotation -> hasMetaAnnotatedClasses(annotation, targetAnnotation, visited)) // Recursive call
                 .anyMatch(Predicate.isEqual(true));
         if (result) {

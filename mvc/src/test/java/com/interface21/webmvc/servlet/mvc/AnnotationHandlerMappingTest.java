@@ -2,33 +2,52 @@ package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.BeanContainer;
+import com.interface21.core.BeanContainerFactory;
 import com.interface21.core.BeanRegistrar;
+import com.interface21.core.FakeBeanContainer;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerExecution;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.MockedStatic;
 import samples.TestController;
 
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
 
+    MockedStatic<BeanContainerFactory> mockFactory;
+
     @BeforeEach
     void setUp() {
+        BeanContainer container = new FakeBeanContainer(new HashMap<>());
+        mockFactory = mockStatic(BeanContainerFactory.class);
+        mockFactory.when(BeanContainerFactory::getContainer)
+                .thenReturn(container);
         BeanRegistrar.registerBeans(getClass());
         BeanRegistrar.registerBeans(TestController.class);
+
         handlerMapping = new AnnotationHandlerMapping();
         handlerMapping.initialize();
+    }
+
+    @AfterEach
+    void tearDown() {
+        mockFactory.close();
     }
 
     @Test

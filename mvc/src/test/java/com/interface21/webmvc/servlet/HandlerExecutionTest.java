@@ -5,10 +5,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-import com.interface21.core.SingletonBeanContainer;
+import com.interface21.core.BeanContainer;
+import com.interface21.core.BeanContainerFactory;
+import com.interface21.core.FakeBeanContainer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +32,11 @@ class HandlerExecutionTest {
     @Test
     @DisplayName("핸들러의 메서드를 실행한다.")
     void executeHandler() throws Exception {
-        SingletonBeanContainer container = SingletonBeanContainer.getInstance();
+        var factory = mockStatic(BeanContainerFactory.class);
+        BeanContainer container = new FakeBeanContainer(new HashMap<>());
+        factory.when(BeanContainerFactory::getContainer)
+                .thenReturn(container);
+
         container.registerBean(DummyController.class);
         Method method = DummyController.class.getDeclaredMethod(
                 "test", HttpServletRequest.class, HttpServletResponse.class
@@ -37,5 +44,6 @@ class HandlerExecutionTest {
         HandlerExecution handlerExecution = new HandlerExecution(method);
         ModelAndView actual = handlerExecution.handle(null, null);
         assertThat(actual.getObject("test")).isEqualTo("test");
+        factory.close();
     }
 }

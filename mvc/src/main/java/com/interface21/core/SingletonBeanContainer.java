@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SingletonBeanContainer {
+public class SingletonBeanContainer implements BeanContainer {
 
     private static final SingletonBeanContainer instance = new SingletonBeanContainer();
 
@@ -20,6 +20,7 @@ public class SingletonBeanContainer {
         return instance;
     }
 
+    @Override
     public Object registerBean(Class<?> clazz) {
         if (singletonObjects.containsKey(clazz)) {
             return singletonObjects.get(clazz);
@@ -44,6 +45,7 @@ public class SingletonBeanContainer {
         return singletonObjects.get(clazz);
     }
 
+    @Override
     public Object getBean(Class<?> clazz) {
         if (singletonObjects.containsKey(clazz)) {
             return singletonObjects.get(clazz);
@@ -51,6 +53,7 @@ public class SingletonBeanContainer {
         throw new BeanNotFoundException(clazz);
     }
 
+    @Override
     public List<Object> getAnnotatedBeans(Class<? extends Annotation> annotation) {
         return singletonObjects.values()
                 .stream()

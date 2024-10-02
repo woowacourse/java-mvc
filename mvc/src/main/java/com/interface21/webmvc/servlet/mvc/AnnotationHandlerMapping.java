@@ -1,7 +1,8 @@
 package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.core.SingletonBeanContainer;
+import com.interface21.core.BeanContainer;
+import com.interface21.core.BeanContainerFactory;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerExecution;
@@ -24,7 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
-        SingletonBeanContainer beanContainer = SingletonBeanContainer.getInstance();
+        BeanContainer beanContainer = BeanContainerFactory.getContainer();
         beanContainer.getAnnotatedBeans(Controller.class)
                 .forEach(this::registerController);
         log.info("Initialized AnnotationHandlerMapping!");

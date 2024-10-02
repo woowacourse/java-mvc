@@ -1,11 +1,16 @@
 package com.interface21.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mockStatic;
 
 import com.interface21.context.stereotype.Component;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 class BeanRegistrarTest {
 
@@ -20,21 +25,40 @@ class BeanRegistrarTest {
         }
     }
 
+    MockedStatic<BeanContainerFactory> factory;
+
+    @BeforeEach
+    void setUp() {
+        factory = mockStatic(BeanContainerFactory.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        factory.close();
+    }
+
+
     @Test
     @DisplayName("Component 어노테이션의 빈을 등록한다.")
-    void registerBeans() {
-        SingletonBeanContainer container = SingletonBeanContainer.getInstance();
+    void
+    registerBeans() {
+        Map<Class<?>, Object> beans = new HashMap<>();
+        factory.when(BeanContainerFactory::getContainer)
+                .thenReturn(new FakeBeanContainer(beans));
+
         BeanRegistrar.registerBeans(getClass());
-        Object bean = container.getBean(Dummy.class);
-        assertThat(bean).isNotNull();
+        assertThat(beans).containsKey(Dummy.class);
+
     }
 
     @Test
     @DisplayName("Component 어노테이션이 없는 클래스는 빈으로 등록하지 않는다.")
     void registerBeansWithoutAnnotation() {
-        SingletonBeanContainer container = SingletonBeanContainer.getInstance();
+        Map<Class<?>, Object> beans = new HashMap<>();
+        factory.when(BeanContainerFactory::getContainer)
+                .thenReturn(new FakeBeanContainer(beans));
+
         BeanRegistrar.registerBeans(getClass());
-        assertThatThrownBy(() -> container.getBean(DummyWithoutAnnotation.class))
-                .isInstanceOf(BeanNotFoundException.class);
+        assertThat(beans).doesNotContainKey(BeanRegistrarTest.DummyWithoutAnnotation.class);
     }
 }
