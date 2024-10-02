@@ -44,9 +44,4 @@ public class JsonView implements View {
     public String getName() {
         return "json";
     }
-
-    @Override
-    public String getName() {
-        return "";
-    }
 }
