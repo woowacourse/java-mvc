@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlerMapping;
+package com.interface21.webmvc.servlet.mvc.handlerMapping;
 
 import java.util.HashMap;
 import java.util.Map;

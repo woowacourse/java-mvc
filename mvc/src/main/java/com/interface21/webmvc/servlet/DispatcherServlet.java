@@ -1,4 +1,4 @@
-package com.interface21;
+package com.interface21.webmvc.servlet;
 
 import java.util.Map;
 
@@ -11,13 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.handlerAdapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handlerAdapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.handlerMapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handlerMapping.HandlerMappingRegistry;
 
 public class DispatcherServlet extends HttpServlet {
 

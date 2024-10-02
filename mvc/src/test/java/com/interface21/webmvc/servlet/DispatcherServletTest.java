@@ -1,4 +1,4 @@
-package com.interface21;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;

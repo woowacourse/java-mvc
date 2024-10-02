@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter;
+package com.interface21.webmvc.servlet.mvc.handlerAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.handlerMapping.HandlerExecution;
 
 import samples.TestController;
 

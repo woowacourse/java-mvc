@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlerMapping;
+package com.interface21.webmvc.servlet.mvc.handlerMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
