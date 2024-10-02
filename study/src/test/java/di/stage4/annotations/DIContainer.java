@@ -22,7 +22,10 @@ class DIContainer {
 
     public static DIContainer createContainerForPackage(String rootPackageName) {
         Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(rootPackageName);
-        return new DIContainer(allClassesInPackage);
+        return new DIContainer(allClassesInPackage.stream()
+                .filter(clazz -> clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(
+                        Repository.class))
+                .collect(Collectors.toSet()));
     }
 
     private Set<Object> createBeans(Set<Class<?>> classes) {
