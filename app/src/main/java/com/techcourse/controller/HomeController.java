@@ -5,16 +5,13 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-@RequestMapping("/logout")
-public class LogoutController {
+@RequestMapping
+public class HomeController {
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView getLogout(final HttpServletRequest req) throws Exception {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+    public ModelAndView getHome() {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
