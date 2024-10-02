@@ -19,7 +19,7 @@ class JsonViewTest {
         String userName = "name";
         String userPassword = "password";
         Map<String, ?> model = Map.of("user", new User(userName, userPassword));
-        HttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         // when
@@ -42,7 +42,7 @@ class JsonViewTest {
         LinkedHashMap<String, User> model = new LinkedHashMap<>();
         model.put("user1", new User(userName1, userPassword1));
         model.put("user2", new User(userName2, userPassword2));
-        HttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         // when
