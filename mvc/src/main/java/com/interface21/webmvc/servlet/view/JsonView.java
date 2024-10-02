@@ -33,7 +33,8 @@ public class JsonView implements View {
         if (model.size() == ONE_MODEL_SIZE) {
             return model.values().stream()
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("모델이 비어있습니다. 데이터를 확인해주세요."));
+                    .orElse(null);
+
         }
 
         return model;
