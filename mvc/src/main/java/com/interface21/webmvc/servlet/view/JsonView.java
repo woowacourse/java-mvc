@@ -18,9 +18,7 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         Object body = convertToBody(model);
-        String json = objectMapper.writeValueAsString(body);
-
-        response.getWriter().write(json);
+        objectMapper.writeValue(response.getWriter(), body);
     }
 
     private Object convertToBody(final Map<String, ?> model) {
