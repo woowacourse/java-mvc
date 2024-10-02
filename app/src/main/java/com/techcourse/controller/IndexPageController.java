@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class IndexPageController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView register(HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView indexPage(HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
 }
