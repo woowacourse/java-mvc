@@ -13,7 +13,7 @@ class Stage4Test {
      * 해당 역할은 ClassPathScanner 클래스에게 맡기자.
      */
     @Test
-    void stage4() throws Exception{
+    void stage4() throws Exception {
         final var user = new User(1L, "gugu");
 
         final var diContext = createDIContainer();
