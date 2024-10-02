@@ -18,12 +18,21 @@ import samples.TestController;
 class AnnotationHandlerAdapterTest {
 
     @Test
-    @DisplayName("컨트롤러 어노테이션을 지원하는지 확인한다.")
+    @DisplayName("HandlerExecution 인스턴스를 지원하는지 확인한다.")
     void support() {
         var sut = new AnnotationHandlerAdapter();
-        var handlerExecutor = mock(HandlerExecution.class);
+        var handler = mock(HandlerExecution.class);
 
-        assertThat(sut.support(handlerExecutor)).isTrue();
+        assertThat(sut.support(handler)).isTrue();
+    }
+
+    @Test
+    @DisplayName("HandlerExecution 인스턴스를 지원하지 않는지 검증한다.")
+    void support_notSupport_Other_Instance() {
+        var sut = new AnnotationHandlerAdapter();
+        var handler = new Object();
+
+        assertThat(sut.support(handler)).isFalse();
     }
 
     @Test
