@@ -38,4 +38,10 @@ public class TestController {
         modelAndView.addObject("id", request.getAttribute("id"));
         return modelAndView;
     }
+
+    @RequestMapping(value = "/string-test", method = RequestMethod.GET)
+    public String string(final HttpServletRequest request, final HttpServletResponse response) {
+        log.info("test controller string method");
+        return "/string-test.jsp";
+    }
 }
