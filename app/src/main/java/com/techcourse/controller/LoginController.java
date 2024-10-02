@@ -17,7 +17,7 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping(value = "/login", method = {RequestMethod.POST})
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(JspView.from("/index.jsp"));
@@ -30,16 +30,16 @@ public class LoginController {
                 .orElse(new ModelAndView(JspView.from("/401.jsp")));
     }
 
-    private ModelAndView login(final HttpServletRequest request, final User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
-            final var session = request.getSession();
+    private ModelAndView login(final HttpServletRequest req, final User user) {
+        if (user.checkPassword(req.getParameter("password"))) {
+            final var session = req.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return new ModelAndView(JspView.from("/index.jsp"));
         }
         return new ModelAndView(JspView.from("/401.jsp"));
     }
 
-    @RequestMapping(value = "/login", method = {RequestMethod.GET})
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView getView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
