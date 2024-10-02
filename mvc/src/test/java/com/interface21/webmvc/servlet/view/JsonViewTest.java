@@ -34,6 +34,22 @@ class JsonViewTest {
     }
 
     @Test
+    @DisplayName("응답을 Json 형식으로 반환 성공: 데이터가 없다면 null 반환")
+    void renderNotData() throws Exception {
+        // given
+        Map<String, ?> model = Map.of();
+
+        // when
+        JsonView jsonView = new JsonView();
+        jsonView.render(model, request, response);
+
+        // then
+        verify(response).setContentType("application/json");
+        verify(response).setCharacterEncoding("UTF-8");
+        verify(writer).write("{}");
+    }
+
+    @Test
     @DisplayName("응답을 Json 형식으로 반환 성공: 데이터가 1개면 그대로 반환")
     void renderOneData() throws Exception {
         // given
