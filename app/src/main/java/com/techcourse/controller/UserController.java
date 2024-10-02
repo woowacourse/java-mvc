@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
