@@ -1,13 +1,17 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecutions;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -29,9 +33,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void scanClass(Class<?> c) {
-        for (Method method : c.getDeclaredMethods()) {
-            registerRequestMappingHandlerExecution(c, method);
-        }
+        Arrays.stream(c.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerRequestMappingHandlerExecution(c, method));
     }
 
     private void registerRequestMappingHandlerExecution(Class<?> c, Method method) {

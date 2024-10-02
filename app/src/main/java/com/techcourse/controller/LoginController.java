@@ -1,33 +1,60 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+@Controller
+public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
-            return "redirect:/index.jsp";
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView loginView(HttpServletRequest request, HttpServletResponse response) {
+        String loginView = resolveLoginView(request);
+
+        return new ModelAndView(new JspView(loginView));
+    }
+
+    private static String resolveLoginView(HttpServletRequest request) {
+        return UserSession.getUserFrom(request.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return "redirect:/index.jsp";
+                })
+                .orElse("/login.jsp");
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+        if (UserSession.isLoggedIn(request.getSession())) {
+            new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        String account = attemptLogin(request);
+
+        return new ModelAndView(new JspView(account));
+    }
+
+    private String attemptLogin(HttpServletRequest request) {
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return login(req, user);
+                    return performLogin(request, user);
                 })
                 .orElse("redirect:/401.jsp");
     }
 
-    private String login(HttpServletRequest request, User user) {
+    private String performLogin(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
