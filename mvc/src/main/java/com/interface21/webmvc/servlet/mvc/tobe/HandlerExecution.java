@@ -4,11 +4,15 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.registry.ControllerRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
+
+    private static final Logger log = LoggerFactory.getLogger(HandlerExecution.class);
 
     private final Method method;
 
@@ -23,8 +27,10 @@ public class HandlerExecution {
         try {
             return (ModelAndView) method.invoke(controller, request, response);
         } catch (InvocationTargetException e) {
+            log.error("Exception : {}", e.getMessage(), e);
             throw new IllegalArgumentException("메서드를 실행하던 도중 에러가 발생했습니다.");
         } catch (IllegalAccessException e) {
+            log.error("Exception : {}", e.getMessage(), e);
             throw new IllegalStateException("해당하는 메서드에 접근할 수 없습니다.");
         }
     }

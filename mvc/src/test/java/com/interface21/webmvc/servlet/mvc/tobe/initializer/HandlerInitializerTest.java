@@ -4,11 +4,12 @@ import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.pathfinder.RootPathStrategy;
 import com.interface21.webmvc.servlet.mvc.tobe.pathfinder.TestRootPathStrategy;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class HandlerInitializerTest {
 
@@ -19,7 +20,7 @@ class HandlerInitializerTest {
     void getInitMappings() {
         Set<HandlerMapping> handlerMappings = new HandlerInitializer(rootPathStrategy).getInitMappings();
 
-        Assertions.assertNotNull(handlerMappings);
+        assertNotNull(handlerMappings);
     }
 
     @Test
@@ -27,6 +28,6 @@ class HandlerInitializerTest {
     void getInitAdapters() {
         Set<HandlerAdapter> handlerAdapters = new HandlerInitializer(rootPathStrategy).getInitAdapters();
 
-        Assertions.assertNotNull(handlerAdapters);
+        assertNotNull(handlerAdapters);
     }
 }
