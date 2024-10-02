@@ -24,7 +24,7 @@ public class JsonView implements View {
     }
 
     private void handleResponse(HttpServletResponse response, Map<String, ?> model) {
-        if (model.values().size() == 1) {
+        if (model.size() == 1) {
             model.values()
                     .forEach(data -> writeJsonData(response, data));
             return;
