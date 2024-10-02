@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,7 +34,9 @@ public class DispatcherServletTest {
 
     @BeforeEach
     void setUp() {
-        sut = new DispatcherServlet("samples");
+        var servletContext = mock(ServletContext.class);
+        when(servletContext.getAttribute("basePackage")).thenReturn("samples");
+        sut = new DispatcherServlet(servletContext);
         sut.init();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);

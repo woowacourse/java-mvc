@@ -2,6 +2,7 @@ package com.interface21;
 
 import java.util.Map;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,8 +28,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet(String basePackage) {
-        this.basePackage = basePackage;
+    public DispatcherServlet(ServletContext servletContext) {
+        this.basePackage = servletContext.getAttribute("basePackage").toString();
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
