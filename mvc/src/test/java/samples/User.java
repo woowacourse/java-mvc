@@ -1,4 +1,4 @@
-package com.techcourse.domain;
+package samples;
 
 public class User {
 

@@ -1,17 +1,17 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
+import com.interface21.web.WebApplicationInitializer;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
+ * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
+ * servlet context.
  */
-public class DispatcherServletInitializer implements WebApplicationInitializer {
+public abstract class AbstractDispatcherServletInitializer implements WebApplicationInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractDispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
 

@@ -3,11 +3,11 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerExecutionHandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import samples.LegacyController;
+import samples.SampleController;
 
 public class HandlerAdapterRegistryTest {
 
@@ -17,14 +17,14 @@ public class HandlerAdapterRegistryTest {
     @BeforeEach
     void setUp() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapter = new ControllerHandlerAdapter();
+        handlerAdapter = new HandlerExecutionHandlerAdapter();
     }
 
     @Test
     void 지원하는_HandlerAdapter를_반환한다() {
         // given
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
-        Object handler = new LegacyController();
+        Object handler = new HandlerExecution(new SampleController(), SampleController.class.getMethods()[0]);
 
         // when
         HandlerAdapter result = handlerAdapterRegistry.getHandlerAdapter(handler);
