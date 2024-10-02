@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
+
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerMappingRegistry handlerMappingRegistry;
 
@@ -25,7 +27,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
