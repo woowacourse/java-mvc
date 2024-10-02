@@ -2,18 +2,17 @@ package com.techcourse.controller;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class LogoutController {
+public class RootViewController {
 
-    @RequestMapping(value = "/logout")
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new JspView("redirect:/"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView showRootPage(final HttpServletRequest req, final HttpServletResponse res) {
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
