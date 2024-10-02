@@ -3,8 +3,6 @@ package com.techcourse.controller;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,13 +11,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView render() {
-        JspView jspView = new JspView("/register.jsp");
-        return new ModelAndView(jspView);
+    public String render() {
+        return "register.jsp";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request) {
+    public String save(HttpServletRequest request) {
         final var user = new User(
                 2,
                 request.getParameter("account"),
@@ -28,7 +25,6 @@ public class RegisterController {
         );
         InMemoryUserRepository.save(user);
 
-        JspView jspView = new JspView("redirect:/index.jsp");
-        return new ModelAndView(jspView);
+        return "redirect:/index.jsp";
     }
 }

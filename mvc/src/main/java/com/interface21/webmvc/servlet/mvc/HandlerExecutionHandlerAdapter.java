@@ -3,7 +3,7 @@ package com.interface21.webmvc.servlet.mvc;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerExecution;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.resolver.ArgumentResolverRegistry;
+import com.interface21.webmvc.servlet.support.ArgumentResolverRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Parameter;
