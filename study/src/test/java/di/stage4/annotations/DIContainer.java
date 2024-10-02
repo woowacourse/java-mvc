@@ -81,6 +81,6 @@ class DIContainer {
                 .filter(bean -> aClass.isAssignableFrom(bean.getClass()))
                 .findFirst()
                 .map(aClass::cast)
-                .orElseThrow(() -> new RuntimeException("Bean을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("Bean을 찾을 수 없습니다."));
     }
 }
