@@ -12,7 +12,7 @@ class ControllerScanner {
 
     private final Map<Class<?>, Object> controllerRegistry = new HashMap<>();
 
-    public ControllerScanner(Object[] basePackage) {
+    public ControllerScanner(Object... basePackage) {
         initiateControllers(basePackage);
     }
 
