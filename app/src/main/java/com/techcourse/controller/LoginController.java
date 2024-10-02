@@ -20,13 +20,18 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView loginView(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JspView(UserSession.getUserFrom(request.getSession())
+        String loginView = resolveLoginView(request);
+
+        return new ModelAndView(new JspView(loginView));
+    }
+
+    private static String resolveLoginView(HttpServletRequest request) {
+        return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";
                 })
-                .orElse("/login.jsp")
-        ));
+                .orElse("/login.jsp");
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -35,16 +40,21 @@ public class LoginController {
             new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        return new ModelAndView(new JspView(InMemoryUserRepository.findByAccount(request.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(request, user);
-                })
-                .orElse("redirect:/401.jsp")
-        ));
+        String account = attemptLogin(request);
+
+        return new ModelAndView(new JspView(account));
     }
 
-    private String login(HttpServletRequest request, User user) {
+    private String attemptLogin(HttpServletRequest request) {
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
+                .map(user -> {
+                    log.info("User : {}", user);
+                    return performLogin(request, user);
+                })
+                .orElse("redirect:/401.jsp");
+    }
+
+    private String performLogin(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
