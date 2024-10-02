@@ -40,7 +40,6 @@ class JsonViewTest {
         // when
         Map<String, ?> model = Map.of("test-key", "test-value");
         jsonView.render(model, request, response);
-        printWriter.flush();
 
         // then
         String jsonResponse = stringWriter.toString();
@@ -60,7 +59,6 @@ class JsonViewTest {
         Map<String, ?> model = Map.of("test-key1", "test-value",
                 "test-key2", "test-value");
         jsonView.render(model, request, response);
-        printWriter.flush();
 
         // then
         String jsonResponse = stringWriter.toString();

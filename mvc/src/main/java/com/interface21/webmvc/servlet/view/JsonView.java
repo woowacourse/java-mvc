@@ -22,7 +22,6 @@ public class JsonView implements View {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         response.getWriter().write(json);
-//        response.getWriter().flush();
     }
 
     private String convertToJson(Map<String, ?> model) throws JsonProcessingException {
