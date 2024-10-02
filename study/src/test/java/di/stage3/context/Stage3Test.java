@@ -1,6 +1,7 @@
 package di.stage3.context;
 
 import di.User;
+import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -16,7 +17,8 @@ class Stage3Test {
      * 테스트가 통과하도록 DIContainer 클래스를 구현하자.
      */
     @Test
-    void stage3() {
+    void stage3()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final var user = new User(1L, "gugu");
 
         final var diContainer = createDIContainer();
