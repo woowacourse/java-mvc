@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
+import com.techcourse.domain.UserCreationException;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,17 +16,27 @@ public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(HttpServletRequest request, final HttpServletResponse response) {
-        User user = new User(2,
-                request.getParameter("account"),
-                request.getParameter("password"),
-                request.getParameter("email"));
-        InMemoryUserRepository.save(user);
+        try {
+            User user = new User(2,
+                    request.getParameter("account"),
+                    request.getParameter("password"),
+                    request.getParameter("email"));
+            System.out.println(user);
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+            InMemoryUserRepository.save(user);
+            return responsePage("redirect:/index.jsp");
+
+        } catch (UserCreationException e) {
+            return responsePage("/register.jsp");
+        }
     }
 
     @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView registerPage(HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/register.jsp"));
+        return responsePage("/register.jsp");
+    }
+
+    private ModelAndView responsePage(String viewName) {
+        return new ModelAndView(new JspView(viewName));
     }
 }

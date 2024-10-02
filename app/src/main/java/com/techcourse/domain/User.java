@@ -8,10 +8,17 @@ public class User {
     private final String email;
 
     public User(long id, String account, String password, String email) {
+        validateData(account, password, email);
         this.id = id;
         this.account = account;
         this.password = password;
         this.email = email;
+    }
+
+    private void validateData(String account, String password, String email) {
+        if (account.isEmpty() || password.isEmpty() || email.isEmpty()) {
+            throw new UserCreationException();
+        }
     }
 
     public boolean checkPassword(String password) {

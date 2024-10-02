@@ -20,7 +20,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return redirectPage("redirect:/index.jsp");
+            return responsePage("redirect:/index.jsp");
         }
 
         return InMemoryUserRepository.findByAccount(request.getParameter("account"))
@@ -28,23 +28,23 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(request, user);
                 })
-                .orElse(redirectPage("redirect:/401.jsp"));
+                .orElse(responsePage("redirect:/401.jsp"));
     }
 
     private ModelAndView login(HttpServletRequest request, User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return redirectPage("redirect:/index.jsp");
+            return responsePage("redirect:/index.jsp");
         }
-        return redirectPage("redirect:/401.jsp");
+        return responsePage("redirect:/401.jsp");
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
         final var session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return redirectPage("redirect:/");
+        return responsePage("redirect:/");
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
@@ -52,12 +52,12 @@ public class LoginController {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return redirectPage("redirect:/index.jsp");
+                    return responsePage("redirect:/index.jsp");
                 })
-                .orElse(redirectPage("/login.jsp"));
+                .orElse(responsePage("/login.jsp"));
     }
 
-    private ModelAndView redirectPage(String viewName) {
+    private ModelAndView responsePage(String viewName) {
         return new ModelAndView(new JspView(viewName));
     }
 }
