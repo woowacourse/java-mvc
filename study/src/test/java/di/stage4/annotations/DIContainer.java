@@ -38,6 +38,7 @@ class DIContainer {
 
     private void setFields(Object bean) {
         Arrays.stream(bean.getClass().getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Inject.class))
                 .forEach(field -> setField(bean, field));
     }
 
