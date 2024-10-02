@@ -20,16 +20,16 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView doLogin(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView doLogin(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         String viewName = "";
-        if (UserSession.isLoggedIn(req.getSession())) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             viewName = "redirect:/index.jsp";
         }
 
-        viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        viewName = InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return login(req, user);
+                    return login(request, user);
                 })
                 .orElse("redirect:/401.jsp");
 
@@ -46,8 +46,8 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        String viewName = UserSession.getUserFrom(req.getSession())
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        String viewName = UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";

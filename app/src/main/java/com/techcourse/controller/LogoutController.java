@@ -13,8 +13,8 @@ import com.interface21.webmvc.servlet.view.JspView;
 public class LogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
+    public ModelAndView logout(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final var session = request.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return new ModelAndView(new JspView("redirect:/"));
     }
