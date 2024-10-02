@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
@@ -24,7 +24,7 @@ class DispatcherServletTest {
     void setUp() {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new DispatcherServlet("samples");
 
         dispatcherServlet.init();
     }
@@ -37,7 +37,7 @@ class DispatcherServletTest {
         View view = mock(JspView.class);
         RequestDispatcher dispatcher = mock(RequestDispatcher.class);
 
-        when(request.getRequestURI()).thenReturn("/");
+        when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestDispatcher(anyString())).thenReturn(dispatcher);
         when(modelAndView.getView()).thenReturn(view);

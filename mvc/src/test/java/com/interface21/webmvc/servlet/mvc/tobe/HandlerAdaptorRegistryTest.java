@@ -1,7 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
 import com.interface21.web.servlet.HandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class HandlerAdaptorRegistryTest {
     @DisplayName("HandlerAdaptorRegistry에 해당 handlerAdaptor를 등록한다.")
     void addHandlerAdaptor() throws NoSuchFieldException, IllegalAccessException {
         //given
-        HandlerAdaptor handlerAdaptor = mock(ControllerHandlerAdaptor.class);
+        HandlerAdaptor handlerAdaptor = mock(HandlerExecutionAdaptor.class);
 
         //when
         handlerAdaptorRegistry.addHandlerAdaptors(handlerAdaptor);

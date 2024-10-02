@@ -30,13 +30,29 @@
 
 ### 2단계 요구사항
 
-- [ ] AnnotationHandlerMapping 클래스 리팩토링
-    - [ ] initialize 메서드 리팩터링
-    - [ ] ControllerScanner 클래스 추가
-        - [ ] HandlerExecution 생성 메서드 구현
+- [x] AnnotationHandlerMapping 클래스 리팩토링
+    - [x] initialize 메서드 리팩터링
+    - [x] ControllerScanner 클래스 추가
+        - [x] HandlerExecution 생성 메서드 구현
 - [x] DispatcherServlet 클래스 구현
     - [x] HandlerMapping 인터페이스 구현
     - [x] HandlerAdapter 인터페이스 구현
+
+    <br>
+
+### 3단계 요구사항
+
+- [x] JsonView 클래스 구현
+    - [x] HTML 이외에 JSON으로 응답할 수 있도록
+        - [x] ContentType은 MediaType.APPLICATION_JSON_UTF8_VALUE으로 반환
+        - [x] model에 데이터가 1개면 값을 그대로 반환하고 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환
+    - [x] UserController 추가
+- [x] Legacy MVC 제거
+    - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+    - [x] asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작하도록 리팩터링
+    - [X] DispatcherServlet app 패키지 -> mvc 패키지로 이동
+
+<br>
 
 ### 학습목표
 
