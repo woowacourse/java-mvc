@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 
 import static org.mockito.Mockito.mock;
@@ -43,8 +42,8 @@ class JsonViewTest {
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
+    @DisplayName("값이 2개 이상인 Map 형태의 응답을 JSON 형태로 변환하여 응답한다.")
     @Test
-    @DisplayName("Map 형태의 응답을 JSON 형태로 변환하여 응답한다..")
     void renderJson() throws Exception {
         // given
         JsonView jsonView = new JsonView();
@@ -56,8 +55,24 @@ class JsonViewTest {
         jsonView.render(model, request, response);
 
         // then
-        ObjectMapper objectMapper = new ObjectMapper();
-        String expectedJson = objectMapper.writeValueAsString(model);
+        String expectedJson = "{\"name\":\"John\",\"age\":30}";
+
+        verify(writer).write(expectedJson);
+    }
+
+    @DisplayName("값이 1개인 Model을 Json으로 파싱한다.")
+    @Test
+    void renderTest1() throws Exception {
+        // given
+        JsonView jsonView = new JsonView();
+        Map<String, Object> model = new HashMap<>();
+        model.put("name", "John");
+
+        // when
+        jsonView.render(model, request, response);
+
+        // then
+        String expectedJson = "\"John\"";
 
         verify(writer).write(expectedJson);
     }
