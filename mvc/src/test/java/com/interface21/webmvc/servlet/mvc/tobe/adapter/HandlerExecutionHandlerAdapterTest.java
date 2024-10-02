@@ -2,13 +2,10 @@ package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.mock.FakeHandler;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
 
 @DisplayName("HandlerExecutionHandlerAdapter Test")
@@ -33,10 +30,10 @@ class HandlerExecutionHandlerAdapterTest {
     void supportsFalse() {
         // Given
         final HandlerExecutionHandlerAdapter handlerExecutionHandlerAdapter = new HandlerExecutionHandlerAdapter();
-        final Controller handler = (final HttpServletRequest request, final HttpServletResponse response) -> "";
+        final FakeHandler fakeHandler = new FakeHandler();
 
         // When
-        final boolean supported = handlerExecutionHandlerAdapter.supports(handler);
+        final boolean supported = handlerExecutionHandlerAdapter.supports(fakeHandler);
 
         // Then
         assertThat(supported).isFalse();

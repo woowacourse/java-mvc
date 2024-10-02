@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe.handler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class HandlerExecutions {
 
@@ -16,11 +15,11 @@ public class HandlerExecutions {
         values.put(key, execution);
     }
 
-    public Optional<HandlerExecution> findHandlerExecution(final HandlerKey key) {
+    public HandlerExecution findHandlerExecution(final HandlerKey key) {
         if (!values.containsKey(key)) {
-            return Optional.empty();
+            return null;
         }
 
-        return Optional.of(values.get(key));
+        return values.get(key);
     }
 }

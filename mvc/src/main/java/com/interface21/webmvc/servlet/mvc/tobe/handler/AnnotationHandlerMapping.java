@@ -1,9 +1,8 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handler;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,11 +15,8 @@ import org.slf4j.LoggerFactory;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecutions;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerKey;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -49,6 +45,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Arrays.stream(basePackages).forEach(this::registerHandlers);
@@ -99,7 +96,8 @@ public class AnnotationHandlerMapping {
         return Arrays.asList(requestMethods);
     }
 
-    public Optional<HandlerExecution> findHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final String requestUri = request.getRequestURI();
         final String requestMethod = request.getMethod().toUpperCase();
         final HandlerKey handlerKey = new HandlerKey(requestUri, RequestMethod.valueOf(requestMethod));

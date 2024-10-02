@@ -18,6 +18,11 @@ class Stage2Test {
     void stage2() {
         final var user = new User(1L, "gugu");
 
+        /**
+         * 애플리케이션 코드에 구체 클래스를 결정하고, 의존성을 주입하는 코드를 계속 작성해야한다.
+         * 의존성을 변경하고 싶다면 결국 기존 애플리케이션 코드의 수정이 불가피하다는 문제가 존재한다.
+         * stage2만 놓고 본다면 여전히 DIP와 OCP를 위반하고 있다. (켈리 생각 ㅎ
+         */
         final UserDao userDao = new InMemoryUserDao();
         final var userService = new UserService(userDao);
 

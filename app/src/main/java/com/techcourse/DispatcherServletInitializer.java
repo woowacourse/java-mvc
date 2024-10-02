@@ -1,9 +1,16 @@
 package com.techcourse;
 
+import java.util.List;
+
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapters;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerMappings;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +24,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final HandlerMappings handlerMappings = new HandlerMappings(List.of(new AnnotationHandlerMapping("com")));
+        final HandlerAdapters handlerAdapters = new HandlerAdapters(List.of(new HandlerExecutionHandlerAdapter()));
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet(handlerMappings, handlerAdapters);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
