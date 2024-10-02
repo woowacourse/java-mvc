@@ -13,8 +13,6 @@ import java.util.Map;
 public class JsonView implements View {
 
     private static final int SINGLE_MODEL_SIZE = 1;
-    private static final String ENCODING_TYPE = "UTF-8";
-    private static final String CONTENT_TYPE = "application/json";
 
     private final JsonMapper jsonMapper;
 
