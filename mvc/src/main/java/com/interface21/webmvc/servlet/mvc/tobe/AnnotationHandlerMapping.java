@@ -33,6 +33,7 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controllerClass : controllerClasses) {
+            log.info("Register " + controllerClass.getName());
             registerRequestMappings(controllerClass);
         }
     }
