@@ -24,7 +24,7 @@ public class HandlerExecution {
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Object instance = clazz.getDeclaredConstructor().newInstance();
-        Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>();
         final Object responseData = method.invoke(instance, request, model);
         return convertModelAndView(responseData, model);
     }
