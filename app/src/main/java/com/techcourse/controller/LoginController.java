@@ -36,7 +36,6 @@ public class LoginController {
     }
 
     private String login(final HttpServletRequest request, final User user) {
-        JspView view;
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
