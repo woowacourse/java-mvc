@@ -1,7 +1,6 @@
 package com.interface21.web.bind.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import static com.interface21.web.bind.annotation.RequestMethod.GET;
 
@@ -15,7 +14,7 @@ class RequestMethodTest {
     void getRequestMethod() {
         var name = "GET";
 
-        assertThat(RequestMethod.of(name)).isEqualTo(GET);
+        assertThat(RequestMethod.getRequestMethod(name)).isEqualTo(GET);
     }
 
     @Test
@@ -23,6 +22,6 @@ class RequestMethodTest {
     void getRequestMethodNull() {
         var name = "GEET";
 
-        assertThat(RequestMethod.of(name)).isNull();
+        assertThat(RequestMethod.getRequestMethod(name)).isNull();
     }
 }
