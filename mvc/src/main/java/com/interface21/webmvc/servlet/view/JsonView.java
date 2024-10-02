@@ -6,12 +6,15 @@ import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final Logger log = LoggerFactory.getLogger(JsonView.class);
     private static final int SINGLE_MODEL_SIZE = 1;
 
     private final JsonMapper jsonMapper;
@@ -46,7 +49,7 @@ public class JsonView implements View {
 
             response.getWriter().write(writeValue.toString());
         } catch (IOException e) {
-            System.out.println(e);
+            log.error("Exception : {}", e.getMessage(), e);
             throw new IllegalArgumentException("response를 작성하는 것에 실패했습니다.");
         }
     }
