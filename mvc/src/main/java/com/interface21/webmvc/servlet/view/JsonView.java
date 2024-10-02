@@ -27,8 +27,8 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         String body = parseBody(model);
-        setBody(response, body);
         response.setContentType(APPLICATION_JSON_UTF8_VALUE);
+        setBody(response, body);
     }
 
     private static String parseBody(Map<String, ?> model) throws JsonProcessingException {
