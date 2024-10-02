@@ -44,7 +44,7 @@ class JsonViewTest {
         model.put("name", expected);
 
         jsonView.render(model, request, response);
-        assertThat(stringWriter.toString()).isEqualTo(expected);
+        assertThat(stringWriter).hasToString(expected);
     }
 
     @Test
@@ -65,6 +65,6 @@ class JsonViewTest {
                 {"name":"polla","comment":"집에 가고 싶어요."} """;
 
         jsonView.render(model, request, response);
-        assertThat(stringWriter.toString()).isEqualTo(expectedResult);
+        assertThat(stringWriter).hasToString(expectedResult);
     }
 }
