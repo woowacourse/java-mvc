@@ -1,10 +1,8 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -29,11 +27,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
 
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
@@ -58,10 +54,10 @@ public class DispatcherServlet extends HttpServlet {
         try {
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
-            JspView jspView = (JspView) modelAndView.getView();
-            jspView.render(modelAndView.getModel(), request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
-            throw new UncheckedServletException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -71,7 +67,7 @@ public class DispatcherServlet extends HttpServlet {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher(NOT_FOUND_FILE_PATH);
             requestDispatcher.forward(request, response);
         } catch (Exception e) {
-            throw new UncheckedServletException(e);
+            throw new RuntimeException(e);
         }
     }
 }

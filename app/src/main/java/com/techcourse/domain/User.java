@@ -22,13 +22,25 @@ public class User {
         return account;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+               "id=" + id +
+               ", account='" + account + '\'' +
+               ", email='" + email + '\'' +
+               ", password='" + password + '\'' +
+               '}';
     }
 }
