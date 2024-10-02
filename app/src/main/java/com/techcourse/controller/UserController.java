@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.BadRequestException;
 import com.interface21.webmvc.servlet.view.JsonView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -19,6 +20,9 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+        if (request.getParameter("account") == null) {
+            throw new BadRequestException("account 파라미터가 없습니다.");
+        }
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
