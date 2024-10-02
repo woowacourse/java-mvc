@@ -9,7 +9,6 @@ import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,15 +18,15 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(HttpServletRequest req, HttpServletResponse res) {
-        if (UserSession.isLoggedIn(req.getSession())) {
+    public ModelAndView login(HttpServletRequest request) {
+        if (UserSession.isLoggedIn(request.getSession())) {
             View view = new JspView("redirect:/index.jsp");
             return new ModelAndView(view);
         }
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return login(req, user);
+                    return login(request, user);
                 })
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
@@ -44,10 +43,10 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView render(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView render(HttpServletRequest request) {
         View indexView = new JspView("redirect:/index.jsp");
         View loginView = new JspView("/login.jsp");
-        return UserSession.getUserFrom(req.getSession())
+        return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return new ModelAndView(indexView);

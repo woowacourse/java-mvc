@@ -2,12 +2,14 @@ package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.HandlerExecution;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Parameter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,7 +25,9 @@ class HandlerExecutionHandlerAdapterTest {
         View view = Mockito.mock(View.class);
         ModelAndView modelAndView = new ModelAndView(view);
 
-        Mockito.when(handlerExecution.handle(any(), any()))
+        when(handlerExecution.getParameters())
+                .thenReturn(new Parameter[0]);
+        when(handlerExecution.handle(any(Object[].class)))
                 .thenReturn(modelAndView);
 
         HandlerExecutionHandlerAdapter handlerAdapter = new HandlerExecutionHandlerAdapter();
