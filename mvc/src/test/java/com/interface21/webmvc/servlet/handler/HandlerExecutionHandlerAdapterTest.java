@@ -1,12 +1,14 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.handler.HandlerExecutionHandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,10 +41,10 @@ class HandlerExecutionHandlerAdapterTest {
     @Test
     void support_false() {
         // given
-        Controller controller = mock(Controller.class);
+        Object nonHandlerExecution = new Object();
 
         // when
-        boolean actual = handlerAdapter.support(controller);
+        boolean actual = handlerAdapter.support(nonHandlerExecution);
 
         // then
         assertThat(actual).isFalse();
@@ -55,8 +57,8 @@ class HandlerExecutionHandlerAdapterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         HandlerExecution handlerExecution = mock(HandlerExecution.class);
-        View view = mock(View.class);
 
+        View view = mock(View.class);
         ModelAndView expectedModelAndView = new ModelAndView(view);
         when(handlerExecution.handle(request, response)).thenReturn(expectedModelAndView);
 
@@ -65,6 +67,7 @@ class HandlerExecutionHandlerAdapterTest {
 
         // then
         assertThat(actual).isNotNull();
-        assertThat(actual).isInstanceOf(ModelAndView.class);
+        assertThat(actual).isSameAs(expectedModelAndView);
+        verify(handlerExecution).handle(request, response);
     }
 }
