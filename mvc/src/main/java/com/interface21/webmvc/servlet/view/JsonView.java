@@ -15,6 +15,9 @@ public class JsonView implements View {
     public void render(
             final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response
     ) throws Exception {
+        if (model == null || model.isEmpty()) {
+            return;
+        }
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         PrintWriter writer = response.getWriter();
         writer.write(convertJson(model));
