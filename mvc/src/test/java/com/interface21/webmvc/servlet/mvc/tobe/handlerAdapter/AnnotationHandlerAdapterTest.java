@@ -19,7 +19,7 @@ class AnnotationHandlerAdapterTest {
 
     @Test
     @DisplayName("컨트롤러 어노테이션을 지원하는지 확인한다.")
-    void supoort() {
+    void support() {
         var sut = new AnnotationHandlerAdapter();
         var handlerExecutor = mock(HandlerExecution.class);
 
