@@ -20,15 +20,15 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView("redirect:/index.jsp");
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return new ModelAndView(new JspView(login(req, user)));
+                    return new ModelAndView(login(req, user));
                 })
-                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+                .orElse(new ModelAndView("redirect:/401.jsp"));
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
@@ -36,9 +36,9 @@ public class LoginController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return new ModelAndView("redirect:/index.jsp");
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse(new ModelAndView("/login.jsp"));
     }
 
     private String login(final HttpServletRequest request, final User user) {

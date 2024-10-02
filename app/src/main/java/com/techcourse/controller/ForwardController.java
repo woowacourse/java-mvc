@@ -13,6 +13,6 @@ public class ForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/index.jsp"));
+        return new ModelAndView("/index.jsp");
     }
 }
