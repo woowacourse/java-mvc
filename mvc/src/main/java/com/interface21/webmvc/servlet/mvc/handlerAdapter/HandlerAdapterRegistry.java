@@ -1,8 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter;
+package com.interface21.webmvc.servlet.mvc.handlerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import com.interface21.webmvc.servlet.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 

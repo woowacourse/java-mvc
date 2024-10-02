@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter;
+package com.interface21.webmvc.servlet.mvc.handlerAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,8 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.handlerMapping.HandlerExecution;
 
 class HandlerAdapterRegistryTest {
 
@@ -33,10 +32,11 @@ class HandlerAdapterRegistryTest {
         assertThat(actual).isInstanceOf(AnnotationHandlerAdapter.class);
     }
 
+
     @Test
-    @DisplayName("처리 가능한 어댑터가 없는 경우 예외를 던진다.")
-    void getHandlerAdapter_null() {
-        var handler = mock(Controller.class);
+    @DisplayName("처리할 수 있는 어댑터가 없으면 예외를 던진다.")
+    void getHandlerAdapter_throwsException() {
+        var handler = new Object();
 
         assertThatThrownBy(() -> sut.getHandlerAdapter(handler))
                 .isInstanceOf(NoSuchElementException.class)

@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlerMapping;
+package com.interface21.webmvc.servlet.mvc.handlerMapping;
 
 import java.lang.reflect.Method;
 
@@ -9,7 +9,7 @@ import com.interface21.webmvc.servlet.ModelAndView;
 
 public class HandlerExecution {
 
-    private Object handler;
+    private final Object handler;
     private final Method method;
 
     public HandlerExecution(Object handler, Method method) {
