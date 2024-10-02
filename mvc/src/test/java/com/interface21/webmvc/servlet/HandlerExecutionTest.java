@@ -42,7 +42,7 @@ class HandlerExecutionTest {
                 "test", HttpServletRequest.class, HttpServletResponse.class
         );
         HandlerExecution handlerExecution = new HandlerExecution(method);
-        ModelAndView actual = handlerExecution.handle(null, null);
+        ModelAndView actual = (ModelAndView) handlerExecution.handle(null, null);
         assertThat(actual.getObject("test")).isEqualTo("test");
         factory.close();
     }

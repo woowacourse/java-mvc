@@ -14,11 +14,11 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(Object... args) throws InvocationTargetException, IllegalAccessException {
+    public Object handle(Object... args) throws InvocationTargetException, IllegalAccessException {
         BeanContainer container = BeanContainerFactory.getContainer();
         Class<?> controllerClass = method.getDeclaringClass();
         Object controller = container.getBean(controllerClass);
-        return (ModelAndView) method.invoke(controller, args);
+        return method.invoke(controller, args);
     }
 
     public Parameter[] getParameters() {

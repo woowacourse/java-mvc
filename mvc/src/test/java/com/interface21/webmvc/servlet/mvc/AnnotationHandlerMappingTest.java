@@ -60,7 +60,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         HandlerExecution handlerExecution = handlerMapping.getHandler(request);
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -75,7 +75,7 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("POST");
 
         HandlerExecution handlerExecution = handlerMapping.getHandler(request);
-        ModelAndView modelAndView = handlerExecution.handle(request, response);
+        ModelAndView modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }

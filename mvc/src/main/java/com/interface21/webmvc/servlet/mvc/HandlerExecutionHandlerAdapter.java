@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerExecution;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.support.ArgumentResolverRegistry;
+import com.interface21.webmvc.servlet.support.ReturnValueAdapterRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Parameter;
@@ -11,6 +12,7 @@ import java.lang.reflect.Parameter;
 public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
 
     private final ArgumentResolverRegistry argumentResolverRegistry = new ArgumentResolverRegistry();
+    private final ReturnValueAdapterRegistry returnValueAdapterRegistry = new ReturnValueAdapterRegistry();
 
     @Override
     public boolean supports(Object handler) {
@@ -22,6 +24,7 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
             throws Exception {
         Parameter[] parameters = ((HandlerExecution) handler).getParameters();
         Object[] resolvedArguments = argumentResolverRegistry.resolveArguments(request, response, parameters);
-        return ((HandlerExecution) handler).handle(resolvedArguments);
+        Object returnValue = ((HandlerExecution) handler).handle(resolvedArguments);
+        return returnValueAdapterRegistry.adapt(returnValue);
     }
 }
