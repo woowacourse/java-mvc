@@ -34,8 +34,8 @@ public class JsonView implements View {
 
     private void writeJsonData(HttpServletResponse response, Object data) {
         try {
-            String jasonData = mapper.writeValueAsString(data);
-            response.getWriter().write(jasonData);
+            String jsonData = mapper.writeValueAsString(data);
+            response.getWriter().write(jsonData);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("json processing 과정에서 문제가 발생했습니다.", e);
         } catch (IOException e) {
