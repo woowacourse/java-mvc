@@ -27,6 +27,16 @@ class AppHandlerMappingTest {
         annotationHandlerMappings.initialize();
     }
 
+    @DisplayName("annotationMapping - GET / 의 핸들러를 찾을 수 있다")
+    @Test
+    void home() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        setUpMockRequest(request, RequestMethod.GET, "/");
+
+        assertThat(annotationHandlerMappings.getHandler(request))
+                .isInstanceOf(HandlerExecution.class);
+    }
+
     @DisplayName("annotationMapping - POST /login의 핸들러를 찾을 수 있다")
     @Test
     void login() throws Exception {
