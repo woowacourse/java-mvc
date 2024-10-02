@@ -18,7 +18,7 @@ public class JsonView implements View {
 
     private static final int SINGLE_SIZE = 1;
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public JsonView() {
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
