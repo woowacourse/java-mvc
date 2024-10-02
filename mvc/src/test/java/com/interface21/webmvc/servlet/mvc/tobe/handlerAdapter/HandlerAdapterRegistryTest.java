@@ -1,7 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe.handlerAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,5 +30,16 @@ class HandlerAdapterRegistryTest {
         var actual = sut.getHandlerAdapter(handler);
 
         assertThat(actual).isInstanceOf(AnnotationHandlerAdapter.class);
+    }
+
+
+    @Test
+    @DisplayName("처리할 수 있는 어댑터가 없으면 예외를 던진다.")
+    void getHandlerAdapter_throwsException() {
+        var handler = new Object();
+
+        assertThatThrownBy(() -> sut.getHandlerAdapter(handler))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("No handlerAdapter found");
     }
 }
