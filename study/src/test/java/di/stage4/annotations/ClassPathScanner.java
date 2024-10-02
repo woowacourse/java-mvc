@@ -10,11 +10,6 @@ import org.reflections.scanners.Scanners;
 
 public class ClassPathScanner {
 
-    public static Set<Class<?>> getAllClassesInPackage(final String packageName) {
-        Reflections reflections = new Reflections(packageName);
-        return reflections.getSubTypesOf(Object.class);
-    }
-
     public static Set<Class<?>> getAnnotatedClassesInPackage(
             final String packageName,
             final Class<? extends Annotation>... annotations
