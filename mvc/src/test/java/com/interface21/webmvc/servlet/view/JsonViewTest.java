@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ class JsonViewTest {
         given(response.getWriter()).willReturn(printWriter);
 
         // when
-        view.render(new HashMap<>(Map.of("fram", "handsome")), request, response);
+        view.render(Map.of("fram", "handsome"), request, response);
 
         // then
         assertThat(charArrayWriter.toString()).hasToString("handsome");
@@ -52,7 +51,7 @@ class JsonViewTest {
         given(response.getWriter()).willReturn(printWriter);
 
         // when
-        view.render(new HashMap<>(Map.of("fram", "handsome", "hello", "world")), request, response);
+        view.render(Map.of("fram", "handsome", "hello", "world"), request, response);
 
         // then
         assertThat(charArrayWriter.toString()).hasToString("{\"fram\":\"handsome\",\"hello\":\"world\"}");

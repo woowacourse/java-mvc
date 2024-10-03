@@ -1,11 +1,13 @@
 package di.stage4.annotations;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,7 +16,8 @@ public class BeanInitializer {
     private final Map<Class<?>, Object> instanceRegistry = new HashMap<>();
 
     public void initialize(final String basePackage) throws Exception {
-        final Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(basePackage);
+        final List<Class<? extends Annotation>> annotations = List.of(Repository.class, Service.class);
+        final Set<Class<?>> allClassesInPackage = ClassPathScanner.getAllClassesInPackage(basePackage, annotations);
         for (final Class<?> clazz : allClassesInPackage) {
             final Constructor<?> noArgsConstructor = clazz.getDeclaredConstructor();
             noArgsConstructor.setAccessible(true);
