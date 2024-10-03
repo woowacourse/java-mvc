@@ -10,7 +10,6 @@ import java.util.Map;
 public class JsonView implements View {
 
     private static final ObjectMapper DEFAULT_OBJECT_MAPPER = new ObjectMapper();
-    private static final int SINGLE_MODEL_SIZE = 1;
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -20,7 +19,7 @@ public class JsonView implements View {
     }
 
     private Object extractModel(Map<String, ?> model) {
-        if (model.size() == SINGLE_MODEL_SIZE) {
+        if (model.size() == 1) {
             return model.values().iterator().next();
         }
         return model;
