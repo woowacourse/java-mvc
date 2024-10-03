@@ -1,5 +1,6 @@
 package di.stage4.annotations;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +28,10 @@ class DIContainer {
     private Set<Object> createBeans(Set<Class<?>> classes) throws Exception {
         Set<Object> result = new HashSet<>();
         for (Class<?> aClass : classes) {
-            Object instance = aClass.getConstructor().newInstance();
+            Constructor<?> constructor = aClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            Object instance = constructor.newInstance();
+            constructor.setAccessible(false);
             result.add(instance);
         }
         return result;

@@ -8,7 +8,7 @@ class UserService {
     @Inject
     private UserDao userDao;
 
-    public UserService() {
+    private UserService() {
     }
 
     public User join(final User user) {
