@@ -20,7 +20,7 @@ import com.interface21.webmvc.servlet.mvc.NoMatchedHandlerException;
 
 class DispatcherServletTest {
 
-    private final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+    private final DispatcherServlet dispatcherServlet = new DispatcherServlet("samples");
 
     @BeforeEach
     void init() {
@@ -38,22 +38,7 @@ class DispatcherServletTest {
             final var response = mock(HttpServletResponse.class);
             final var requestDispatcher = mock(RequestDispatcher.class);
 
-            when(request.getRequestURI()).thenReturn("/register/view");
-            when(request.getMethod()).thenReturn("GET");
-            when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
-
-            assertThatCode(() -> dispatcherServlet.service(request, response))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        @DisplayName("인터페이스 기반 컨트롤러 요청을 처리할 수 있다.")
-        void serviceWithInterface() {
-            final var request = mock(HttpServletRequest.class);
-            final var response = mock(HttpServletResponse.class);
-            final var requestDispatcher = mock(RequestDispatcher.class);
-
-            when(request.getRequestURI()).thenReturn("/");
+            when(request.getRequestURI()).thenReturn("/get-test");
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
 
