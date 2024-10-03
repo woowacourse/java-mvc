@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.adapter;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
