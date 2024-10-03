@@ -1,14 +1,16 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.interface21.webmvc.servlet.View;
+import java.util.Map;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.webmvc.servlet.View;
 
 public class JsonView implements View {
 
+    private static final int ONE_MODEL_SIZE = 1;
     private static final String JSON_CONTENT_TYPE = "application/json";
     private static final String UTF_8_ENCODING = "UTF-8";
 
@@ -19,10 +21,22 @@ public class JsonView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        final String jsonFormattedData = objectMapper.writeValueAsString(getRawData(model));
+        response.getWriter().write(jsonFormattedData);
         response.setContentType(JSON_CONTENT_TYPE);
         response.setCharacterEncoding(UTF_8_ENCODING);
+    }
 
-        response.getWriter().write(objectMapper.writeValueAsString(model));
+    private Object getRawData(final Map<String, ?> model) {
+        if (model.size() == ONE_MODEL_SIZE) {
+            return model.values().stream()
+                    .findFirst()
+                    .orElse(null);
+
+        }
+
+        return model;
     }
 }

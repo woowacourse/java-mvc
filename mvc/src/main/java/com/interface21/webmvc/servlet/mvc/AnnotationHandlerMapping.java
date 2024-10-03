@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.HandlerMapping;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
