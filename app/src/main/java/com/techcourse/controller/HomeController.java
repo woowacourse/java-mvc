@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView home(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView showMainPage(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("index.jsp"));
     }
 }
