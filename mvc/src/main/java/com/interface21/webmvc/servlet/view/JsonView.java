@@ -18,13 +18,13 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        final String json = mapper.writeValueAsString(model);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         if (model.size() == PLAINT_TEXT_REND_THRESHOLD) {
             renderPlaintext(model, response);
             return;
         }
+        final ObjectMapper mapper = new ObjectMapper();
+        final String json = mapper.writeValueAsString(model);
         response.getWriter().write(json);
     }
 
