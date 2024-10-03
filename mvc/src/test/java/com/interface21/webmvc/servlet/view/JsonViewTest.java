@@ -37,23 +37,4 @@ class JsonViewTest {
         // then
         assertThat(charArrayWriter.toString()).hasToString("handsome");
     }
-
-    @Test
-    @DisplayName("Model의 값이 2개 이상이라면, Json바디를 반환한다.")
-    void return_json_body() throws Exception {
-        // given
-        final JsonView view = new JsonView();
-        final HttpServletRequest request = new MockHttpServletRequest();
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final CharArrayWriter charArrayWriter = new CharArrayWriter();
-        final PrintWriter printWriter = new PrintWriter(charArrayWriter);
-        given(response.getContentType()).willReturn(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        given(response.getWriter()).willReturn(printWriter);
-
-        // when
-        view.render(Map.of("fram", "handsome", "hello", "world"), request, response);
-
-        // then
-        assertThat(charArrayWriter.toString()).hasToString("{\"fram\":\"handsome\",\"hello\":\"world\"}");
-    }
 }

@@ -36,7 +36,7 @@ public class DispatcherServlet extends HttpServlet {
             final HandlerAdapter handlerAdapter = registry.get(request);
             final ModelAndView modelAndView = handlerAdapter.adapt(request, response);
             final ViewResolver viewResolver = new ViewResolver(modelAndView);
-            final View view = viewResolver.resolve(response);
+            final View view = viewResolver.resolve();
             view.render(Map.of(), request, response);
         } catch (final Exception e) {
             throw new ServletException(e.getMessage());

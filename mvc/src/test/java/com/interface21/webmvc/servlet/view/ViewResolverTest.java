@@ -25,7 +25,7 @@ class ViewResolverTest {
                 .willReturn(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         // when
-        final View resolve = viewResolver.resolve(response);
+        final View resolve = viewResolver.resolve();
 
         // then
         assertThat(resolve).isInstanceOf(JsonView.class);
@@ -41,7 +41,7 @@ class ViewResolverTest {
                 .willReturn("JSP");
 
         // when
-        final View resolve = viewResolver.resolve(response);
+        final View resolve = viewResolver.resolve();
 
         // then
         assertThat(resolve).isInstanceOf(JspView.class);
