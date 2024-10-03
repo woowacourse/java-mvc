@@ -1,7 +1,7 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,7 +19,8 @@ public class HandlerMappingRegistry {
 
     public Object getHandler(final HttpServletRequest request) {
         return handlerMappings.stream()
-                .flatMap(handlerMapping -> Stream.ofNullable(handlerMapping.getHandler(request)))
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No handler found for request URI: " + request.getRequestURI()));

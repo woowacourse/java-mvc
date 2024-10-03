@@ -2,7 +2,7 @@ package samples;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 
 public class TestHandlerMapping implements HandlerMapping {
 

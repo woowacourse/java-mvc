@@ -12,9 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.core.util.ReflectionUtils;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 
 public class Container {
 
@@ -45,7 +44,6 @@ public class Container {
     private void scan(final String packageName) {
         Reflections reflections = new Reflections(packageName);
         registerAnnotatedInstancesOf(reflections, com.interface21.context.stereotype.Controller.class);
-        registerInstancesOf(reflections, Controller.class);
         registerInstancesOf(reflections, HandlerMapping.class);
         registerInstancesOf(reflections, HandlerAdapter.class);
     }
