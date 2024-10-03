@@ -33,7 +33,6 @@ public class TomcatStarter {
         try {
             tomcat.start();
         } catch (LifecycleException e) {
-            await();
             throw new RuntimeException(e);
         }
     }
