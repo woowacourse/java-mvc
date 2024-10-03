@@ -1,13 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdaptorRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdaptor;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,18 +30,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initializeHandlerMappings() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
-
-        handlerMappingRegistry.add(manualHandlerMapping);
         handlerMappingRegistry.add(annotationHandlerMapping);
     }
 
     private void initializeHandlerAdaptors() {
         handlerAdaptorRegistry.add(new AnnotationHandlerAdaptor());
-        handlerAdaptorRegistry.add(new ManualHandlerAdaptor());
     }
 
     @Override

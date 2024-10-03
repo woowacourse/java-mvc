@@ -13,15 +13,19 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
+    private static final String ACCOUNT = "account";
+    private static final String PASSWORD = "password";
+    private static final String EMAIL = "email";
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
         final var user = new User(2,
-                request.getParameter("account"),
-                request.getParameter("password"),
-                request.getParameter("email"));
+                request.getParameter(ACCOUNT),
+                request.getParameter(PASSWORD),
+                request.getParameter(EMAIL));
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new JspView("index.jsp"));
+        return new ModelAndView(new JspView("login.jsp"));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
