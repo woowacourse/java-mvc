@@ -6,13 +6,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.http.MediaType;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 class JsonViewTest {
 
@@ -21,8 +21,7 @@ class JsonViewTest {
         StringWriter stringWriter = new StringWriter();
         final var jsonView = new JsonView();
         final var model = Map.of("testObject", new TestObject("test", 1));
-        final var request = new MockHttpServletRequest();
-
+        final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
@@ -42,8 +41,7 @@ class JsonViewTest {
         final Map<String, Object> model = new LinkedHashMap<>();
         model.put("testObject", new TestObject("test", 1));
         model.put("testObject2", new TestObject("test2", 2));
-        final var request = new MockHttpServletRequest();
-
+        final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
