@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.Map;
 import jakarta.servlet.ServletException;
@@ -9,9 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapters;
-import com.interface21.webmvc.servlet.mvc.HandlerMappings;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,14 +18,13 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappings handlerMappings;
     private final HandlerAdapters handlerAdapters;
 
-    public DispatcherServlet() {
-        handlerMappings = new HandlerMappings();
+    public DispatcherServlet(String basePackage) {
+        handlerMappings = new HandlerMappings(basePackage);
         handlerAdapters = new HandlerAdapters();
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.initialize();
         handlerAdapters.initialize();
     }

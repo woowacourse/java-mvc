@@ -5,6 +5,7 @@ import jakarta.servlet.ServletRegistration.Dynamic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.DispatcherServlet;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -15,10 +16,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(BASE_PACKAGE);
 
         Dynamic registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

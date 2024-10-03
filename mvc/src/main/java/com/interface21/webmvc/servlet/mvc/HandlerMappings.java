@@ -5,20 +5,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 
 public class HandlerMappings {
 
-    private static final String BASE_PACKAGE = "com.techcourse.controller";
-
     private final List<HandlerMapping> handlerMappings;
+    private final String basePackage;
 
-    public HandlerMappings() {
+    public HandlerMappings(String basePackage) {
         this.handlerMappings = new ArrayList<>();
+        this.basePackage = basePackage;
     }
 
     public void initialize() {
-        handlerMappings.add(new AnnotationHandlerMapping(BASE_PACKAGE));
+        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
