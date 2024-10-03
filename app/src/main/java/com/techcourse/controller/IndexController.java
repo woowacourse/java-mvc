@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class IndexController {
 
-    @RequestMapping(value = "/", method = {RequestMethod.GET})
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView showIndexView(final HttpServletRequest req, final HttpServletResponse res) {
         return ModelAndView.fromJsp("/index.jsp");
     }

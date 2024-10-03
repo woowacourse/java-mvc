@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
-    @RequestMapping(value = "/register", method = {RequestMethod.POST})
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
@@ -23,7 +23,7 @@ public class RegisterController {
         return ModelAndView.fromJsp("redirect:/index.jsp");
     }
 
-    @RequestMapping(value = "/register/view", method = {RequestMethod.GET})
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView showRegisterView(final HttpServletRequest req, final HttpServletResponse res) {
         return ModelAndView.fromJsp("/register.jsp");
     }
