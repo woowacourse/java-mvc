@@ -10,11 +10,13 @@ import java.util.Optional;
 
 public class JsonView implements View {
 
+    public static final int SINGLE_MODEL_SIZE = 1;
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        if (model.size() == 1) {
+        if (model.size() == SINGLE_MODEL_SIZE) {
             Optional<?> value = model.values().stream().findFirst();
             response.getWriter().write(value.get().toString());
             return;
