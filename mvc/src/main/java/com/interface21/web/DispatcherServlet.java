@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.web;
 
 import com.interface21.webmvc.servlet.ViewConverter;
 import com.interface21.webmvc.servlet.mvc.HandlerKeys;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -50,7 +49,8 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = handlerKeys.get(new HandlerKey(request));
             final var result = controller.handle(request, response);
             final var view = ViewConverter.convert(result);
-            view.render(Map.of(), request, response);
+
+            view.render(result.getModel(), request, response);
         } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

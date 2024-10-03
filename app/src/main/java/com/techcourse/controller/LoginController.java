@@ -43,7 +43,7 @@ public class LoginController {
         return new ModelAndView(new JspView("/401.jsp"));
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {

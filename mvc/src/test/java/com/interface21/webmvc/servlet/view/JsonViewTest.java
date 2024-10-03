@@ -56,8 +56,8 @@ class JsonViewTest {
         final Map<String, Object> model = Map.of("name", "potato", "age", 10);
         view.render(model, request, response);
         assertAll(()->{
-            assertThat(stringWriter.toString()).hasToString("name:");
-            assertThat(stringWriter.toString()).hasToString("age:");
+            assertThat(stringWriter.toString()).contains("\"name\":\"potato\"");
+            assertThat(stringWriter.toString()).contains("\"age\":10");
         });
     }
 }

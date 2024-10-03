@@ -30,11 +30,11 @@ class DIContainer {
                         throw new RuntimeException(e);
                     }
                 })
-                .peek(constructor -> constructor.setAccessible(true))
-                .map(constructor1 -> {
+                .map(constructor -> {
                     try {
-                        final Object instance = constructor1.newInstance();
-                        constructor1.setAccessible(false);
+                        constructor.setAccessible(true);
+                        final Object instance = constructor.newInstance();
+                        constructor.setAccessible(false);
                         return instance;
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
