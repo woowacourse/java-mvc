@@ -1,9 +1,12 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +20,10 @@ public class DispatcherServletTest {
 
     @BeforeEach
     public void setUp() {
-        dispatcherServlet = new DispatcherServlet();
+        ServletContext servletContext = mock(ServletContext.class);
+        when(servletContext.getAttribute("basePackage"))
+                .thenReturn("samples");
+        dispatcherServlet = new DispatcherServlet(servletContext);
         dispatcherServlet.init();
     }
 
@@ -29,28 +35,9 @@ public class DispatcherServletTest {
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         RequestDispatcher requestDispatcher = Mockito.mock(RequestDispatcher.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
+        when(request.getRequestURI()).thenReturn("/get-hi-jsp");
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/register.jsp")).thenReturn(requestDispatcher);
-
-        // When
-        dispatcherServlet.service(request, response);
-
-        // Then
-        verify(requestDispatcher).forward(request, response);
-    }
-
-    @DisplayName("레거시 컨트롤러 요청을 처리한다")
-    @Test
-    public void processLegacyController() throws Exception {
-        // Given
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        RequestDispatcher requestDispatcher = Mockito.mock(RequestDispatcher.class);
-
-        when(request.getRequestURI()).thenReturn("/");
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestDispatcher("/index.jsp")).thenReturn(requestDispatcher);
+        when(request.getRequestDispatcher(any())).thenReturn(requestDispatcher);
 
         // When
         dispatcherServlet.service(request, response);
