@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private static final String NOT_FOUND_PAGE = "404.jsp";
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -28,7 +27,7 @@ public class UserController {
 
         final Optional<User> user = InMemoryUserRepository.findByAccount(account);
         if (user.isEmpty()) {
-            response.sendError(404);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
 
