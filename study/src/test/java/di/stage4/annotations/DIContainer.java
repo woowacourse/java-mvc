@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
@@ -13,7 +14,10 @@ class DIContainer {
     private final Set<Object> beans;
 
     public static DIContainer createContainerForPackage(final String rootPackageName) throws Exception {
-        Set<Class<?>> classes = ClassPathScanner.getAllClassesInPackage(rootPackageName);
+        Set<Class<?>> allClasses = ClassPathScanner.getAllClassesInPackage(rootPackageName);
+        Set<Class<?>> classes = allClasses.stream()
+                .filter(c -> c.isAnnotationPresent(Service.class) || c.isAnnotationPresent(Repository.class))
+                .collect(Collectors.toUnmodifiableSet());
         return new DIContainer(classes);
     }
 
