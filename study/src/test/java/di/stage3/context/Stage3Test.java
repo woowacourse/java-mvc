@@ -51,10 +51,6 @@ class Stage3Test {
         Set<Class<?>> classes = new HashSet<>();
         classes.add(InMemoryUserDao.class);
         classes.add(UserService.class);
-        try {
-            return new DIContainer(classes);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return new DIContainer(classes);
     }
 }
