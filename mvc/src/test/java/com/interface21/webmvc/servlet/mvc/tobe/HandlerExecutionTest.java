@@ -22,7 +22,8 @@ class HandlerExecutionTest {
     void executeMethodThroughHandlerExecution() throws Exception {
         // given
         TestClass executionTarget = new TestClass();
-        Method targetMethod = TestClass.class.getDeclaredMethod("handle", HttpServletRequest.class, HttpServletResponse.class);
+        Method targetMethod = TestClass.class.getDeclaredMethod("handle", HttpServletRequest.class,
+                HttpServletResponse.class);
         HandlerExecution execution = new HandlerExecution(executionTarget, targetMethod);
 
         // when
