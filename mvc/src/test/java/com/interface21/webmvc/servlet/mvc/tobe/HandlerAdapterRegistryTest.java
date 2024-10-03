@@ -3,6 +3,10 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.HandlerExecution;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,6 +19,8 @@ class HandlerAdapterRegistryTest {
     @BeforeEach
     void setUp() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
+        AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
     }
 
     @Test

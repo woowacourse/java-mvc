@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handler;
 
 import java.lang.reflect.Method;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +21,9 @@ public class HandlerExecution {
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object result = method.invoke(instance, request, response);
+        if (result instanceof String) {
+            return new ModelAndView((String) result);
+        }
         return (ModelAndView) result;
     }
 }

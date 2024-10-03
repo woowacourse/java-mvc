@@ -9,17 +9,12 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 
 @Controller
-public class LoginViewController {
+public class DefaultController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultController.class);
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
-                })
-                .orElse("/login.jsp");
+        return "/index.jsp";
     }
 }

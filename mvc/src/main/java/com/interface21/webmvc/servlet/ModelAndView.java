@@ -9,14 +9,17 @@ public class ModelAndView {
     private final Object view;
     private final Map<String, Object> model;
 
-    public ModelAndView(final View view) {
+    public ModelAndView(Object view, Map<String, Object> model) {
         this.view = view;
-        this.model = new HashMap<>();
+        this.model = model;
+    }
+
+    public ModelAndView(final View view) {
+        this(view, new HashMap<>());
     }
 
     public ModelAndView(final String viewName) {
-        this.view = viewName;
-        this.model = new HashMap<>();
+        this(viewName, new HashMap<>());
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
