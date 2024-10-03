@@ -6,7 +6,6 @@ import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -19,27 +18,26 @@ public class JsonView implements View {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
-        handleResponse(response, model);
+        String jsonData = resolveJsonData(model);
+        response.getWriter().write(jsonData);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
-    private void handleResponse(HttpServletResponse response, Map<String, ?> model) {
+    private String resolveJsonData(Map<String, ?> model) {
         if (model.size() == 1) {
-            model.values()
-                    .forEach(data -> writeJsonData(response, data));
-            return;
+            Object singleData = model.values()
+                    .iterator()
+                    .next();
+            return writeJsonData(singleData);
         }
-        writeJsonData(response, model);
+        return writeJsonData(model);
     }
 
-    private void writeJsonData(HttpServletResponse response, Object data) {
+    private String writeJsonData(Object data) {
         try {
-            String jsonData = mapper.writeValueAsString(data);
-            response.getWriter().write(jsonData);
+            return mapper.writeValueAsString(data);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("json processing 과정에서 문제가 발생했습니다.", e);
-        } catch (IOException e) {
-            throw new RuntimeException("json write 과정에서 문제가 발생했습니다.", e);
         }
     }
 }
