@@ -8,6 +8,11 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+
 import samples.TestController;
 
 class HandlerAdapterRegistryTest {
