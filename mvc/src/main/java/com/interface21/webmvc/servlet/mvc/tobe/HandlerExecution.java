@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.ModelAndView;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -15,7 +14,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(controllerClass, request, response);
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return method.invoke(controllerClass, request, response);
     }
 }

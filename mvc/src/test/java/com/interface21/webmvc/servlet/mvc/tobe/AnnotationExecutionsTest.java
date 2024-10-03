@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -35,7 +36,7 @@ class AnnotationExecutionsTest {
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) annotationExecutions.getHandler(request.getRequestURI(), RequestMethod.GET);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -50,7 +51,7 @@ class AnnotationExecutionsTest {
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) annotationExecutions.getHandler(request.getRequestURI(), RequestMethod.POST);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -65,7 +66,7 @@ class AnnotationExecutionsTest {
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) annotationExecutions.getHandler(request.getRequestURI(), RequestMethod.GET);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -80,7 +81,7 @@ class AnnotationExecutionsTest {
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) annotationExecutions.getHandler(request.getRequestURI(), RequestMethod.POST);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -95,7 +96,7 @@ class AnnotationExecutionsTest {
         when(request.getMethod()).thenReturn("DELETE");
 
         final var handlerExecution = (HandlerExecution) annotationExecutions.getHandler(request.getRequestURI(), RequestMethod.DELETE);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
