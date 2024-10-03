@@ -23,11 +23,11 @@ class JsonViewTest {
     @DisplayName("JSON으로 응답할 때 ContentType을 MediaType.APPLICATION_JSON_UTF8_VALUE로 반환한다.")
     void return_json_utf8() throws IOException {
         //given
-        final var model = Map.of("account", "redddy");
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        final Map<String, String> model = Map.of("account", "redddy");
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final var print = mock(PrintWriter.class);
+        final PrintWriter print = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(print);
 
         //when
@@ -42,11 +42,11 @@ class JsonViewTest {
     @DisplayName("model에 데이터가 1개면 값을 그대로 반환한다")
     void one_data() throws IOException {
         //given
-        final var model = Map.of("account", "redddy");
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        final Map<String, String> model = Map.of("account", "redddy");
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final var print = mock(PrintWriter.class);
+        final PrintWriter print = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(print);
 
         //when
@@ -64,10 +64,10 @@ class JsonViewTest {
         final Map<String, String> model = new LinkedHashMap<>();
         model.put("account", "redddy");
         model.put("password", "486");
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final var print = mock(PrintWriter.class);
+        final PrintWriter print = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(print);
 
         //when
