@@ -3,7 +3,6 @@ package com.techcourse;
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.RequestMappingHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
@@ -43,7 +42,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.addHandlerAdapter(new RequestMappingHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
 
         return new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
     }
