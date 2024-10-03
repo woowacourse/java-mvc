@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.adapter;
+package com.interface21.webmvc.servlet.mvc.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
