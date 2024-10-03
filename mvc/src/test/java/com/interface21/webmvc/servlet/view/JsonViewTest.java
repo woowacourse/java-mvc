@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.interface21.web.http.MediaType;
+import com.interface21.webmvc.servlet.view.serialization.TargetWithGetter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -76,5 +77,28 @@ class JsonViewTest {
         // then
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(writer.toString()).isEqualTo("{\"key1\":\"value1\",\"key2\":\"value2\"}");
+    }
+
+    @DisplayName("model에 데이터가 2개 이상일 때, 객체는 JSON의 형태로 파싱해 반환한다.")
+    @Test
+    void should_parseUserInstanceToJson_when_givenModelMoreThanTwo() throws Exception {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        StringWriter writer = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("key1", "value1");
+        model.put("target", new TargetWithGetter(1L, "account", "password", "email"));
+
+        // when
+        view.render(model, request, response);
+
+        // then
+        verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        assertThat(writer.toString()).isEqualTo(
+                "{\"key1\":\"value1\",\"target\":{\"id\":1,\"account\":\"account\",\"password\":\"password\",\"email\":\"email\"}}");
     }
 }
