@@ -22,7 +22,7 @@ class DIContainer {
 
     public DIContainer(final Set<Class<?>> classes) {
         this.beans = createBeans(classes);
-        this.beans.forEach(this::setFields);
+        this.beans.forEach(this::setBeanField);
         logger.info("bean size = {}", this.beans.size());
     }
 
@@ -37,14 +37,14 @@ class DIContainer {
 
     // 빈 내부에 선언된 필드를 각각 셋팅한다.
     // 각 필드에 빈을 대입(assign)한다.
-    private void setFields(final Object bean) {
+    private void setBeanField(final Object bean) {
         Field[] declaredFields = bean.getClass().getDeclaredFields();
 
         Stream.of(declaredFields)
-                .forEach(field -> setFields(bean, field));
+                .forEach(field -> setBeanField(bean, field));
     }
 
-    private void setFields(final Object bean, final Field field) {
+    private void setBeanField(final Object bean, final Field field) {
         field.setAccessible(true);
         beans.stream()
                 .filter(field.getType()::isInstance)
@@ -55,10 +55,9 @@ class DIContainer {
     // 빈 컨텍스트(DI)에서 관리하는 빈을 찾아서 반환한다.
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
-        return beans.stream()
+        return (T) beans.stream()
                 .filter(aClass::isInstance)
                 .findAny()
-                .map(bean -> (T) bean)
                 .orElseThrow(() -> new NoSuchElementException(aClass.getSimpleName() + "빈을 찾을 수 없습니다."));
     }
 }

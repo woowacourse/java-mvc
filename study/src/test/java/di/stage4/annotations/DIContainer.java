@@ -18,7 +18,7 @@ class DIContainer {
 
     public DIContainer(final Set<Class<?>> classes) {
         this.beans = createBeans(classes);
-        this.beans.forEach(this::setFields);
+        this.beans.forEach(this::setBeanField);
     }
 
     private Set<Object> createBeans(Set<Class<?>> classes) {
@@ -29,15 +29,15 @@ class DIContainer {
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    private void setFields(Object bean) {
+    private void setBeanField(Object bean) {
         Field[] declaredFields = bean.getClass().getDeclaredFields();
 
         Stream.of(declaredFields)
                 .filter(field -> field.isAnnotationPresent(Inject.class))
-                .forEach(field -> setFields(bean, field));
+                .forEach(field -> setBeanField(bean, field));
     }
 
-    private void setFields(Object bean, Field field) {
+    private void setBeanField(Object bean, Field field) {
         field.setAccessible(true);
 
         beans.stream()
@@ -54,10 +54,9 @@ class DIContainer {
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
-        return beans.stream()
+        return (T) beans.stream()
                 .filter(aClass::isInstance)
                 .findAny()
-                .map(object -> (T) object)
                 .orElseThrow(() -> new NoSuchElementException(aClass.getSimpleName() + "클래스를 찾을 수 없습니다."));
     }
 }
