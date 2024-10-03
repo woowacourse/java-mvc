@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,7 +58,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(final HttpServletRequest request, final HttpServletResponse response,
-                      final ModelAndView modelAndView) throws Exception {
+                      final ModelAndView modelAndView) throws ServletException, IOException {
         final View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
     }
