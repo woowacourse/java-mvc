@@ -38,9 +38,9 @@ class DIContainer {
         Field[] declaredFields = bean.getClass().getDeclaredFields();
         for (Field field : declaredFields) {
             field.setAccessible(true);
-            Class<?> filedType = field.getType();
+            Class<?> typeOfFiled = field.getType();
             Optional<Object> beanField = beans.stream()
-                    .filter(filedType::isInstance)
+                    .filter(typeOfFiled::isInstance)
                     .findFirst();
             if (beanField.isPresent()) {
                 field.set(bean, beanField.get());
