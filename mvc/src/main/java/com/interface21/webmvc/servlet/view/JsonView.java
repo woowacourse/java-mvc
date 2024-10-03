@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class JsonView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            throws IOException {
 
         String result = serializeToJson(model);
         log.debug("data: {}", result);
@@ -31,9 +32,9 @@ public class JsonView implements View {
     private String serializeToJson(Map<String, ?> model) throws JsonProcessingException {
         Object target = model;
         if (model.size() == 1) {
-            target = model.values().stream()
-                    .findFirst()
-                    .orElseThrow(IllegalArgumentException::new);
+            target = model.values()
+                    .iterator()
+                    .next();
         }
         return objectMapper.writeValueAsString(target);
     }
