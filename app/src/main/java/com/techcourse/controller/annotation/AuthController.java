@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 @Controller
 public class AuthController {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-
     private final AuthService authService = new AuthService();
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

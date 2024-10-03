@@ -25,7 +25,12 @@ class HandlerMappingsTest {
     }
 
     private void setUpMockRequest(HttpServletRequest request, RequestMethod requestMethod, String requestUrl) {
-        doReturn(requestUrl).when(request).getRequestURI();
-        doReturn(requestMethod.name()).when(request).getMethod();
+        doReturn(requestUrl)
+                .when(request)
+                .getRequestURI();
+
+        doReturn(requestMethod.name())
+                .when(request)
+                .getMethod();
     }
 }
