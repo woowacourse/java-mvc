@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
@@ -7,24 +8,25 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 
-import java.io.File;
-
 public class TomcatStarter {
 
     public static final String WEBAPP_DIR_LOCATION = "app/src/main/webapp/";
+    public static final String APPLICATION_PATH_ATTRIBUTE = "applicationPath";
 
     private final Tomcat tomcat;
 
-    public TomcatStarter(final int port) {
-        this(WEBAPP_DIR_LOCATION, port);
+    public TomcatStarter(final int port, final Class<?> applicationPath) {
+        this(WEBAPP_DIR_LOCATION, port, applicationPath);
     }
 
-    public TomcatStarter(final String webappDirLocation, final int port) {
+    public TomcatStarter(final String webappDirLocation, final int port, final Class<?> applicationPath) {
         this.tomcat = new Tomcat();
         tomcat.setConnector(createConnector(port));
 
         final var docBase = new File(webappDirLocation).getAbsolutePath();
         final var context = (StandardContext) tomcat.addWebapp("", docBase);
+        final var servletContext = context.getServletContext();
+        servletContext.setAttribute(APPLICATION_PATH_ATTRIBUTE, applicationPath);
         skipJarScan(context);
         skipClearReferences(context);
     }

@@ -1,12 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.exception.HandlerNotFoundException;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -17,7 +14,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping implements ServletRequestHandler {
+public class AnnotationHandlerMapping {
 
     private static final List<Class<?>> AVAILABLE_PACKAGE_TYPE = List.of(String.class, Class.class);
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
@@ -49,14 +46,13 @@ public class AnnotationHandlerMapping implements ServletRequestHandler {
         }
     }
 
-    @Override
     public void initialize() {
         Reflections reflections = new Reflections(basePackages);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllerClasses) {
+            log.info("Initialized AnnotationHandlerMapping! - {}", controller);
             addAnnotatedHandlerExecutions(controller);
         }
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addAnnotatedHandlerExecutions(Class<?> controller) {
@@ -84,21 +80,8 @@ public class AnnotationHandlerMapping implements ServletRequestHandler {
                 .toList();
     }
 
-    Optional<Object> getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(HttpServletRequest request) {
         HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.findMethod(request.getMethod()));
         return handlerExecutions.get(key);
-    }
-
-    @Override
-    public boolean canHandle(HttpServletRequest request) {
-        return getHandler(request).isPresent();
-    }
-
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HandlerExecution handler = (HandlerExecution) getHandler(request)
-                .orElseThrow(() -> new HandlerNotFoundException(request));
-        ModelAndView modelAndView = handler.handle(request, response);
-        modelAndView.render(request, response);
     }
 }

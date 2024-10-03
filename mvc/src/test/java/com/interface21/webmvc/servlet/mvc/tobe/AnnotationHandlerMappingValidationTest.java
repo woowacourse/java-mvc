@@ -2,11 +2,8 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.exception.HandlerNotFoundException;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -28,22 +25,6 @@ class AnnotationHandlerMappingValidationTest {
         assertThatThrownBy(() -> testHandlerMapping.initialize())
                 // then
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("NoArgConstructorController");
-    }
-
-    @DisplayName("해당 URI을 처리할 수 있는 핸들러가 없을 경우 예외가 발생한다.")
-    @Test
-    void notRegisteredHandler() {
-        // given
-        AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("samples.possible");
-        final var request = mock(HttpServletRequest.class);
-
-        when(request.getRequestURI()).thenReturn("/not-registered-url");
-        when(request.getMethod()).thenReturn("GET");
-
-        // when
-        assertThatThrownBy(() -> handlerMapping.handle(request, null))
-                // then
-                .isInstanceOf(HandlerNotFoundException.class);
     }
 
     @DisplayName("AnnotationMapping을 지원하지 않은 객체 타입이 들어올 경우 예외가 발생한다.")
