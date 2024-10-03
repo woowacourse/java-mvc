@@ -10,10 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Stage3Test {
 
     /**
-     * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자.
-     * DIContainer는 애플리케이션을 구성하는 객체의 구조와 관계를 정의한 설계도 역할을 한다.
-     * 어떤 객체가 어떤 객체를 사용하는지 정의하는 역할을 한다.
-     * 테스트가 통과하도록 DIContainer 클래스를 구현하자.
+     * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자. DIContainer는 애플리케이션을 구성하는 객체의 구조와 관계를 정의한 설계도 역할을 한다. 어떤 객체가 어떤 객체를
+     * 사용하는지 정의하는 역할을 한다. 테스트가 통과하도록 DIContainer 클래스를 구현하자.
      */
     @Test
     void stage3() {

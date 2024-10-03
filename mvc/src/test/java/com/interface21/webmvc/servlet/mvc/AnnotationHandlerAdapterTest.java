@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.stream.Stream;
@@ -60,7 +59,6 @@ class AnnotationHandlerAdapterTest {
     private static Stream<Arguments> randomHandlers() {
         return Stream.of(
                 Arguments.of(new HandlerExecution(AnnotationHandlerMappingTest.class.getEnclosingMethod()), true),
-                Arguments.of(new ForwardController("/index.jsp"), false),
                 Arguments.of("1234", false)
         );
     }
