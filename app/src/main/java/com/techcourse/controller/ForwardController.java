@@ -9,18 +9,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class LogoutController {
+public class ForwardController {
 
-    private static final String REDIRECT_ROOT = "redirect:/";
+    public static final String INDEX_JSP = "/index.jsp";
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView getLogout(HttpServletRequest request, HttpServletResponse response) {
-        final var session = request.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return convertStringToMav(REDIRECT_ROOT);
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView getIndex(HttpServletRequest request, HttpServletResponse response) {
+        return convertStringToMav(INDEX_JSP);
     }
 
     private ModelAndView convertStringToMav(String viewName) {
         return new ModelAndView(new JspView(viewName));
     }
+
 }

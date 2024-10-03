@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class HandlerAdapterRegistry {
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
-                .filter(adapter -> adapter.support(handler))
+                .filter(handlerAdapter -> handlerAdapter.support(handler))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No HandlerAdapter found for handler: " + handler));
     }
