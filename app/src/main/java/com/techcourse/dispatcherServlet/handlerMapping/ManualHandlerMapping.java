@@ -1,12 +1,10 @@
-package com.techcourse;
+package com.techcourse.dispatcherServlet.handlerMapping;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.techcourse.controller.*;
+import com.interface21.webmvc.servlet.mvc.tobe.handlerMapping.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 
 import java.util.HashMap;
 import java.util.Map;

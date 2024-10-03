@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.dispatcherServlet.handlerAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.controller.RegisterViewController;
+import com.techcourse.dispatcherServlet.handlerAdapter.ManualHandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
