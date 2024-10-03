@@ -2,10 +2,10 @@ package di.stage3.context;
 
 import di.ConsumerWrapper;
 import di.FunctionWrapper;
+import di.stage3.BeanNotFoundException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +47,6 @@ class DIContainer {
         return (T) beans.stream()
                 .filter(bean -> aClass.isAssignableFrom(bean.getClass()))
                 .findAny()
-                .orElseThrow(() -> new NoSuchElementException("bean을 찾을 수 없습니다"));
+                .orElseThrow(() -> new BeanNotFoundException(aClass));
     }
 }
