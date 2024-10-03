@@ -18,7 +18,7 @@ public class JsonView implements View {
         if(model.size()!=1){
             response.setContentType("application/json");
             for (Entry<String, ?> entry : model.entrySet()) {
-                response.getWriter().println(objectMapper.writeValueAsString(entry.getValue()));
+                response.getWriter().println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(entry.getValue()));
             }
             return;
         }
