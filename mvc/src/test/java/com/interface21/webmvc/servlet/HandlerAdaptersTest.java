@@ -19,7 +19,8 @@ class HandlerAdaptersTest {
         HandlerAdapter handlerAdapter = mock(HandlerAdapter.class);
         when(handlerAdapter.supports(any()))
                 .thenReturn(true);
-        HandlerAdapters handlerAdapters = new HandlerAdapters(handlerAdapter);
+        HandlerAdapters handlerAdapters = new HandlerAdapters();
+        handlerAdapters.appendHandlerAdapter(handlerAdapter);
 
         HandlerAdapter actual = handlerAdapters.getHandlerAdapter(handler);
 

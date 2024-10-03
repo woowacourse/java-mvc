@@ -1,14 +1,8 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
-import com.interface21.webmvc.servlet.HandlerAdapters;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.HandlerMappings;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.ModelAndViewHandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.ViewNameHandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,12 +26,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
-        HandlerAdapter handlerExecutionAdapter = new HandlerExecutionAdapter();
-        HandlerAdapter controllerHandlerAdapter = new ControllerHandlerAdapter();
+        HandlerAdapter modelAndViewHandlerExecutionAdapter = new ModelAndViewHandlerExecutionAdapter();
+        HandlerAdapter viewNameHandlerExecutionAdapter = new ViewNameHandlerExecutionAdapter();
 
         handlerMappings.appendHandlerMapping(annotationHandlerMapping);
-        handlerAdapters.appendHandlerAdapter(handlerExecutionAdapter);
-        handlerAdapters.appendHandlerAdapter(controllerHandlerAdapter);
+        handlerAdapters.appendHandlerAdapter(modelAndViewHandlerExecutionAdapter);
+        handlerAdapters.appendHandlerAdapter(viewNameHandlerExecutionAdapter);
     }
 
     @Override
@@ -49,15 +43,15 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMappings.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler);
             ModelAndView mv = handlerAdapter.invoke(handler, request, response);
-            View view = mv.getView();
-            view.render(mv.getModel(), request, response);
+            renderView(request, response, mv);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    public void appendHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.appendHandlerMapping(handlerMapping);
+    private void renderView(HttpServletRequest request, HttpServletResponse response, ModelAndView mv) throws Exception {
+        View view = mv.getView();
+        view.render(mv.getModel(), request, response);
     }
 }

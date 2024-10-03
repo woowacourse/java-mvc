@@ -1,21 +1,25 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HandlerExecutionAdapter implements HandlerAdapter {
+public class ModelAndViewHandlerExecutionAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return handler instanceof HandlerExecution;
+        if (handler instanceof HandlerExecution handlerExecution) {
+            return handlerExecution.getReturnType() == ModelAndView.class;
+        }
+
+        return false;
     }
 
     @Override
     public ModelAndView invoke(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
         HandlerExecution handlerExecution = (HandlerExecution) handler;
 
-        return handlerExecution.handle(request, response);
+        return (ModelAndView) handlerExecution.handle(request, response);
     }
 }
