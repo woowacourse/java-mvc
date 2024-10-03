@@ -21,7 +21,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 
 class UserControllerTest {
 
-    DispatcherServlet dispatcherServlet = new DispatcherServlet();
+    DispatcherServlet dispatcherServlet = new DispatcherServlet("com.techcourse.controller");
 
     @BeforeEach
     void init() {
