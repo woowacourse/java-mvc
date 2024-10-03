@@ -1,13 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
+
     private final HandlerAdapterRegistry handlerAdapterRegistry;
     private final HandlerMappingRegistry handlerMappingRegistry;
 
@@ -27,14 +27,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(getClass().getPackageName());
-        HandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-        handlerAdapterRegistry.addHandlerAdapter(manualHandlerAdapter);
         handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
     }
 

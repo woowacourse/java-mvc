@@ -14,18 +14,18 @@ class Stage4Test {
      */
     @Test
     void stage4() {
-        final var user = new User(1L, "gugu");
+        User user = new User(1L, "gugu");
 
-        final var diContext = createDIContainer();
-        final var userService = diContext.getBean(UserService.class);
+        DIContainer diContext = createDIContainer();
+        UserService userService = diContext.getBean(UserService.class);
 
-        final var actual = userService.join(user);
+        User actual = userService.join(user);
 
         assertThat(actual.getAccount()).isEqualTo("gugu");
     }
 
     private static DIContainer createDIContainer() {
-        final var rootPackageName = Stage4Test.class.getPackage().getName();
+        String rootPackageName = Stage4Test.class.getPackage().getName();
         return DIContainer.createContainerForPackage(rootPackageName);
     }
 }
