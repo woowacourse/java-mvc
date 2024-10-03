@@ -31,16 +31,17 @@ public class LoginController {
         String account = request.getParameter("account");
 
         return InMemoryUserRepository.findByAccount(account)
-                .map(user -> login(request, user))
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 사용자가 없습니다."));
+                .map(user -> loginService(request, response, user))
+                .orElse(new ModelAndView(new JspView("/401.jsp")));
     }
 
-    private ModelAndView login(HttpServletRequest request, User user) {
+    private ModelAndView loginService(HttpServletRequest request, HttpServletResponse response, User user) {
         log.info("User : {}", user);
+
         if (user.checkPassword(request.getParameter("password"))) {
             HttpSession session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
         return new ModelAndView(new JspView("/401.jsp"));
     }
