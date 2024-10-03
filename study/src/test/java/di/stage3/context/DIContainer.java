@@ -50,13 +50,13 @@ class DIContainer {
 
     private Object findFieldBean(Field field) {
         return beans.stream()
-                .filter(b -> canAssign(field, b))
+                .filter(bean -> canAssign(field, bean))
                 .findAny()
                 .orElse(null);
     }
 
     private boolean canAssign(Field field, Object bean) {
-        return bean.getClass().equals(field.getType()) || field.getType().isAssignableFrom(bean.getClass());
+        return field.getType().isInstance(bean);
     }
 
     @SuppressWarnings("unchecked")
