@@ -22,13 +22,14 @@ public class UserController {
     private static final String NOT_FOUND_PAGE = "404.jsp";
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
         final Optional<User> user = InMemoryUserRepository.findByAccount(account);
         if (user.isEmpty()) {
-            return new ModelAndView(new JspView(NOT_FOUND_PAGE));
+            response.sendError(404);
+            return null;
         }
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
