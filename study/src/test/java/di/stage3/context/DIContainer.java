@@ -2,9 +2,6 @@ package di.stage3.context;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,35 +29,32 @@ class DIContainer {
     }
 
     // 빈 내부에 선언된 필드를 각각 셋팅한다.
-    // 각 필드에 빈을 대입(assign)한다.
     private void setFields(final Object bean) {
-        try {
-            Field[] fields = bean.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
-                field.setAccessible(true);
-                Object fieldBean = getBean(field.getType());
-                field.set(bean, fieldBean);
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalArgumentException();
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            setField(field, bean);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getBean(final Class<T> aClass)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private void setField(Field field, Object bean) {
+        field.setAccessible(true);
+        beans.stream()
+                .filter(matchBean -> field.getType().isInstance(matchBean))
+                .forEach(matchBean -> {
+                    try {
+                        field.set(bean, matchBean);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    public <T> T getBean(final Class<T> aClass) {
         for (Object bean : beans) {
             if (aClass.isInstance(bean)) {
                 return (T) bean;
             }
-        } // jdbc는 이미 초기화 과정에서 넣어주니까 이거 안타게 하면 될듯?
-        Constructor<?> constructor = aClass.getDeclaredConstructor(); // datasource의
-        constructor.setAccessible(true);
-        Object object = constructor.newInstance();
-        beans.add(object);
-        return (T) object;
+        }
+        throw new IllegalArgumentException("bean을 찾을 수 없습니다.");
     }
 }
