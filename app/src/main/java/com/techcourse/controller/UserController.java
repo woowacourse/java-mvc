@@ -23,7 +23,7 @@ public class UserController {
         log.debug("user id: {}", account);
 
         ModelAndView modelAndView = new ModelAndView(new JsonView());
-        User user = InMemoryUserRepository.findByAccount(account).orElseThrow();
+        User user = InMemoryUserRepository.findByAccount(account).orElseThrow(IllegalArgumentException::new);
 
         modelAndView.addObject("user", user);
         return modelAndView;
