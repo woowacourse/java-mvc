@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 
 public class JsonView implements View {
@@ -20,7 +21,7 @@ public class JsonView implements View {
         PrintWriter writer = response.getWriter();
         writer.write(value);
         writer.flush();
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 
     private String getModelAsString(Map<String, ?> model) throws JsonProcessingException {
