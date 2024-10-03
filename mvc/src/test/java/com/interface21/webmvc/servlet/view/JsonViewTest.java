@@ -54,7 +54,7 @@ class JsonViewTest {
     @Test
     void viewMoreThanOneModel() throws Exception {
         // given
-        String expected = "\"{\"user1\":{\"name\":\"poke\"},\"user2\":{\"name\":\"TACAN\"}}\"";
+        String expected = "{\"user1\":{\"name\":\"poke\"},\"user2\":{\"name\":\"TACAN\"}}";
         Map<String, Object> model = new HashMap<>();
         model.put("user1", new TestUser("poke", 500));
         model.put("user2", new TestUser("TACAN", 5000));
