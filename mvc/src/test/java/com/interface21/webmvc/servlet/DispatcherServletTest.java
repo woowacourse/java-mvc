@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.mapper.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,16 +23,17 @@ class DispatcherServletTest {
     @BeforeEach
     void setUp() {
         dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.init();
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("samples"));
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionAdapter());
     }
 
     @Test
-    void annotation_MVC_기반_회원가입_뷰_페이지_반환() throws ServletException {
+    void 매핑되는_URI가_있으면_페이지_반환() throws ServletException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getRequestURI()).thenReturn("/register");
-        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/post-test");
+        when(request.getMethod()).thenReturn("POST");
         when(request.getRequestDispatcher(any())).thenReturn(mock());
 
         ArgumentCaptor<String> viewNameCaptor = ArgumentCaptor.forClass(String.class);
@@ -40,26 +43,7 @@ class DispatcherServletTest {
         verify(request).getRequestDispatcher(viewNameCaptor.capture());
         String actual = viewNameCaptor.getValue();
 
-        assertThat(actual).isEqualTo("/register.jsp");
-    }
-
-    @Test
-    void legacy_MVC_기반_로그인_뷰_페이지_반환() throws ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/login/view");
-        when(request.getSession()).thenReturn(mock());
-        when(request.getRequestDispatcher(any())).thenReturn(mock());
-
-        ArgumentCaptor<String> viewNameCaptor = ArgumentCaptor.forClass(String.class);
-
-        dispatcherServlet.service(request, response);
-
-        verify(request).getRequestDispatcher(viewNameCaptor.capture());
-        String actual = viewNameCaptor.getValue();
-
-        assertThat(actual).isEqualTo("/login.jsp");
+        assertThat(actual).isEqualTo("/post-test.jsp");
     }
 
     @Test
@@ -76,6 +60,19 @@ class DispatcherServletTest {
     }
 
     @Test
+    void 지원하는_method가_없으면_예외_발생() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getRequestURI()).thenReturn("/get-test");
+        when(request.getMethod()).thenReturn("invalid-method");
+
+        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("지원하지 않는 request method 입니다.");
+    }
+
+    @Test
     void request_URI가_null이면_예외_발생() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -84,20 +81,7 @@ class DispatcherServletTest {
 
         assertThatThrownBy(() -> dispatcherServlet.service(request, response))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("request URI는 null일 수 없습니다.");
-    }
-
-    @Test
-    void 지원하는_method가_없으면_예외_발생() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-
-        when(request.getRequestURI()).thenReturn("/register");
-        when(request.getMethod()).thenReturn("invalid-method");
-
-        assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessage("지원하지 않는 request method 입니다.");
+                .hasMessage("request URI와 http method는 null일 수 없습니다.");
     }
 
     @Test
