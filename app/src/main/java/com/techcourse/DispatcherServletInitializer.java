@@ -1,5 +1,7 @@
-package com.interface21.web;
+package com.techcourse;
 
+import com.interface21.web.DispatcherServlet;
+import com.interface21.web.WebApplicationInitializer;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
+        log.warn("INFO : {}",servletContext.getContextPath());
         final var dispatcherServlet = new DispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
