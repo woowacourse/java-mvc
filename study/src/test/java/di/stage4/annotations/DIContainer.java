@@ -47,7 +47,9 @@ class DIContainer {
         field.setAccessible(true);
         beans.stream()
                 .filter(fieldType::isInstance)
-                .forEach(ConsumerWrapper.accept(fieldBean -> field.set(bean, fieldBean)));
+                .peek(ConsumerWrapper.accept(fieldBean -> field.set(bean, fieldBean)))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(fieldType + "에 해당하는 빈을 찾을 수 없습니다."));
     }
 
     @SuppressWarnings("unchecked")
@@ -55,6 +57,6 @@ class DIContainer {
         return (T) beans.stream()
                 .filter(bean -> bean.getClass().isAssignableFrom(aClass))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException(aClass + "에 해당하는 빈을 찾을 수 없습니다."));
     }
 }
