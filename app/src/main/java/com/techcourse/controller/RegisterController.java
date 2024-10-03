@@ -1,21 +1,42 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
+import com.techcourse.domain.UserCreationException;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
-        InMemoryUserRepository.save(user);
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView register(HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            User user = new User(2,
+                    request.getParameter("account"),
+                    request.getParameter("password"),
+                    request.getParameter("email"));
+            System.out.println(user);
 
-        return "redirect:/index.jsp";
+            InMemoryUserRepository.save(user);
+            return responsePage("redirect:/index.jsp");
+
+        } catch (UserCreationException e) {
+            return responsePage("/register.jsp");
+        }
+    }
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView registerPage(HttpServletRequest request, final HttpServletResponse response) {
+        return responsePage("/register.jsp");
+    }
+
+    private ModelAndView responsePage(String viewName) {
+        return new ModelAndView(new JspView(viewName));
     }
 }

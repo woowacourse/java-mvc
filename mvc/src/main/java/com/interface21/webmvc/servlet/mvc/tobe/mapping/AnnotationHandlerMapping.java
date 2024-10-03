@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +21,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping() {
         this.handlerExecutions = new HashMap<>();
     }
 
@@ -32,7 +32,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return;
         }
 
-        Reflections reflections = new Reflections(basePackage);
+        Reflections reflections = new Reflections(
+                new ConfigurationBuilder()
+                        .forPackages("")
+                        .addScanners(Scanners.TypesAnnotated));
         Set<Class<?>> controllerTypeClass = reflections.getTypesAnnotatedWith(Controller.class);
         log.info("Controller type class count : {}", controllerTypeClass.size());
 

@@ -15,15 +15,11 @@ public class AnnotationHandlerAdapter implements HandlerAdapter{
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        HandlerExecution handlerExecution = convertHandler(handler);
-        return handlerExecution.handle(request, response);
-    }
-
-    private HandlerExecution convertHandler(Object handler) {
-        if (!supports(handler)) {
+        try {
+            HandlerExecution handlerExecution = (HandlerExecution) handler;
+            return handlerExecution.handle(request, response);
+        } catch (ClassCastException e) {
             throw new UnprocessableHandlerException(handler.getClass().getName());
         }
-
-        return (HandlerExecution) handler;
     }
 }

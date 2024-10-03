@@ -19,7 +19,7 @@ class HandlerMappingRegistryTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
         // when
         Object actual = handlerMappingRegistry.getHandler(request);
@@ -37,7 +37,7 @@ class HandlerMappingRegistryTest {
         HandlerMapping customHandlerMapping = mock(HandlerMapping.class);
         when(customHandlerMapping.getHandler(request)).thenReturn(customHandler);
 
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
         // when
         handlerMappingRegistry.addHandlerMapping(customHandlerMapping);
@@ -51,7 +51,7 @@ class HandlerMappingRegistryTest {
     void 요청을_처리할_수_있는_핸들러가_없다면_예외_발생() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry("samples");
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
         // when, then
         assertThatThrownBy(() -> handlerMappingRegistry.getHandler(request))

@@ -13,11 +13,9 @@ public class HandlerMappingRegistry {
 
     private static final String BASE_PACKAGE = "com.interface21.webmvc.servlet.mvc.tobe.mapping";
 
-    private final Object[] applicationPackage;
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public HandlerMappingRegistry(Object... applicationPackage) {
-        this.applicationPackage = applicationPackage;
+    public HandlerMappingRegistry() {
         initHandlerMapping();
     }
 
@@ -43,11 +41,7 @@ public class HandlerMappingRegistry {
 
     private HandlerMapping createWithConstructor(Class<? extends HandlerMapping> handlerMappingClass)
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        try {
-            return handlerMappingClass.getDeclaredConstructor(Object[].class).newInstance((Object) applicationPackage);
-        } catch (NoSuchMethodException e) {
-            return handlerMappingClass.getDeclaredConstructor().newInstance();
-        }
+        return handlerMappingClass.getDeclaredConstructor().newInstance();
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
