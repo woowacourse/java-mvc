@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class JsonView implements View {
 
+    private static final int MONO_MODEL_SIZE = 1;
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -22,7 +24,7 @@ public class JsonView implements View {
     }
 
     private Object getRenderObject(Map<String, ?> model) {
-        if (model.size() == 1) {
+        if (model.size() == MONO_MODEL_SIZE) {
             return model.values().iterator().next();
         }
         return model;
