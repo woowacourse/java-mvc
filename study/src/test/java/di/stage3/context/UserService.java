@@ -10,10 +10,11 @@ class UserService {
         this.userDao = userDao;
     }
 
+    private UserService() {
+    }
+
     public User join(final User user) {
         userDao.insert(user);
         return userDao.findById(user.getId());
     }
-
-    private UserService() {}
 }

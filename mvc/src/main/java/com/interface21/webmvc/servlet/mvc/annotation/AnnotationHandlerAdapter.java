@@ -1,17 +1,16 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.annotation;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ManualHandlerAdapter implements HandlerAdapter {
+public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public boolean support(Object handler) {
-        return handler instanceof Controller;
+        return handler instanceof HandlerExecution;
     }
 
     @Override
@@ -20,7 +19,6 @@ public class ManualHandlerAdapter implements HandlerAdapter {
         if (!support(handler)) {
             throw new IllegalArgumentException("지원하지 않는 핸들러입니다.");
         }
-        String viewName = ((Controller) handler).execute(request, response);
-        return new ModelAndView(JspView.from(viewName));
+        return ((HandlerExecution) handler).handle(request, response);
     }
 }

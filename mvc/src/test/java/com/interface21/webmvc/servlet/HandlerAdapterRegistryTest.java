@@ -1,11 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.annotation.AnnotationHandlerAdapter;
-import com.techcourse.controller.LoginController;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,19 +20,6 @@ class HandlerAdapterRegistryTest {
         handlerAdapterRegistry.initialize();
     }
 
-    @DisplayName("Controller 타입의 핸들러의 경우 ManualHandlerAdapter를 반환한다.")
-    @Test
-    void should_getManualHandlerAdapter_when_givenControllerHandler() {
-        // given
-        Object handler = new LoginController();
-
-        // when
-        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-
-        // then
-        assertThat(handlerAdapter).isInstanceOf(ManualHandlerAdapter.class);
-    }
-
     @DisplayName("HandlerExecution 타입의 핸들러의 경우 AnnotationHandlerAdapter를 반환한다.")
     @Test
     void should_getAnnotationHandlerAdapter_when_givenHandlerExecution() {
@@ -44,5 +31,17 @@ class HandlerAdapterRegistryTest {
 
         // then
         assertThat(handlerAdapter).isInstanceOf(AnnotationHandlerAdapter.class);
+    }
+
+    @DisplayName("HandlerExecution 타입이 아닌 핸들러의 경우 예외가 발생한다.")
+    @Test
+    void should_throwException_when_givenNotHandlerExecution() {
+        // given
+        Object handler = new Object();
+
+        // when & then
+        assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(handler))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 핸들러를 수행하는 어댑터가 없습니다.");
     }
 }
