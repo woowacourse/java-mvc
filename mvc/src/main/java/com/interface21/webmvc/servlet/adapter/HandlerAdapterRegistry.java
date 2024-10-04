@@ -1,4 +1,4 @@
-package com.techcourse.handleradapter;
+package com.interface21.webmvc.servlet.adapter;
 
 import java.util.ArrayList;
 import java.util.List;

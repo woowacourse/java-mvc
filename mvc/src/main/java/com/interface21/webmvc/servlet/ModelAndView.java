@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.interface21.webmvc.servlet.view.View;
+
 public class ModelAndView {
 
     private final View view;

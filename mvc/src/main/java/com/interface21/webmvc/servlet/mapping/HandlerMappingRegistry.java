@@ -1,11 +1,10 @@
-package com.techcourse.handlermapping;
+package com.interface21.webmvc.servlet.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.ManualHandlerMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -13,14 +12,11 @@ public class HandlerMappingRegistry {
 
 	private final List<HandlerMapping> handlerMappings;
 
-	public HandlerMappingRegistry() {
+	public HandlerMappingRegistry(Object ... basePackages) {
 		this.handlerMappings = new ArrayList<>();
-
-		ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-		manualHandlerMapping.initialize();
-
-		this.handlerMappings.add(manualHandlerMapping);
-		this.handlerMappings.add(new AnnotationHandlerMapping("com.techcourse"));
+		AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackages);
+		annotationHandlerMapping.initialize();
+		this.handlerMappings.add(annotationHandlerMapping);
 	}
 
 	public HandlerMapping getHandlerMapping(HttpServletRequest request) {

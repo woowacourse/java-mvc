@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -17,18 +18,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-		this.basePackage = basePackage;
-        this.handlerExecutions = ControllerScanner.scan(basePackage);
+        this.basePackage = basePackage;
+        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        log.info("Initializing AnnotationHandlerMapping...");
+        handlerExecutions.putAll(ControllerScanner.scan(basePackage));
     }
 
     public Object getHandler(final HttpServletRequest request) {
         HandlerExecution handlerExecution = handlerExecutions.get(
             new HandlerKey(request.getRequestURI(), RequestMethod.find(request.getMethod())));
-        if(handlerExecution == null) {
+        if (handlerExecution == null) {
             throw new IllegalArgumentException("No handler found for " + request.getRequestURI());
         }
         return handlerExecution;

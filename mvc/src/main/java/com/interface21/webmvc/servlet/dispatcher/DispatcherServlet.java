@@ -1,12 +1,12 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.dispatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mapping.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.techcourse.handleradapter.HandlerAdapterRegistry;
-import com.techcourse.handlermapping.HandlerMappingRegistry;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -18,15 +18,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackages;
     private HandlerMappingRegistry handlerMappingRegistry;
     private HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(Object ... basePackages) {
+        this.basePackages = basePackages;
     }
 
     @Override
     public void init() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerMappingRegistry = new HandlerMappingRegistry(basePackages);
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
