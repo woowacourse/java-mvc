@@ -1,10 +1,12 @@
 package di.stage4.annotations;
 
+import di.ConsumerWrapper;
+import di.FunctionWrapper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
@@ -19,50 +21,43 @@ class DIContainer {
     }
 
     private Set<Object> createBeans(final Set<Class<?>> classes) {
-        final Set<Object> beans = new HashSet<>();
-        for (Class<?> clazz : classes) {
-            beans.add(instantiateClass(clazz));
-        }
-        return beans;
+        return classes.stream()
+                .map(FunctionWrapper.apply(this::instantiateClass))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private Object instantiateClass(final Class<?> clazz) {
         try {
             Constructor<?> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
-            return constructor.newInstance();
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
-                 InvocationTargetException e) {
+            Object instance = constructor.newInstance();
+            constructor.setAccessible(false);
+            return instance;
+        } catch (ReflectiveOperationException e) {
             throw new IllegalArgumentException("인스턴스화 할 수 없습니다.");
         }
     }
 
     private void initFields(final Object bean) {
         final Field[] fields = bean.getClass().getDeclaredFields();
-        try {
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(Inject.class)) {
-                    initField(bean, field);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("초기화할 수 없는 필드입니다.");
-        }
+        Arrays.stream(fields)
+                .forEach(ConsumerWrapper.accept(field -> initField(bean, field)));
     }
 
-    private void initField(Object bean, Field field) throws IllegalAccessException {
+    private void initField(Object bean, Field field) {
         field.setAccessible(true);
         final Class<?> fieldType = field.getType();
-        for (Object o : beans) {
-            if (fieldType.isAssignableFrom(o.getClass())) {
-                field.set(bean, o);
-            }
-        }
+        beans.stream()
+                .filter(o -> fieldType.isAssignableFrom(o.getClass()))
+                .forEach(ConsumerWrapper.accept(o -> field.set(bean, o)));
+        field.setAccessible(false);
     }
 
     public static DIContainer createContainerForPackage(final String rootPackageName) {
         Set<Class<?>> classes = ClassPathScanner.getAllClassesInPackage(rootPackageName);
-        return new DIContainer(classes);
+        return classes.stream()
+                .filter(c -> c.isAnnotationPresent(Repository.class) || c.isAnnotationPresent(Service.class))
+                .collect(Collectors.collectingAndThen(Collectors.toUnmodifiableSet(), DIContainer::new));
     }
 
     @SuppressWarnings("unchecked")

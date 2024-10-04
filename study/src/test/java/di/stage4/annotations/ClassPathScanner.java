@@ -1,18 +1,13 @@
 package di.stage4.annotations;
 
-import java.util.HashSet;
 import java.util.Set;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 
 public class ClassPathScanner {
 
     public static Set<Class<?>> getAllClassesInPackage(final String packageName) {
-        Reflections reflections = new Reflections(packageName);
-        Set<Class<?>> classes = new HashSet<>();
-
-        classes.addAll(reflections.getTypesAnnotatedWith(Repository.class));
-        classes.addAll(reflections.getTypesAnnotatedWith(Service.class));
-
-        return classes;
+        Reflections reflections = new Reflections(packageName, Scanners.SubTypes.filterResultsBy(filter -> true));
+        return reflections.getSubTypesOf(Object.class);
     }
 }
