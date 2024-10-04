@@ -23,15 +23,15 @@ public class LoginController {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return getModelAndViewByViewName("redirect:/index.jsp");
+                    return redirectToIndex();
                 })
-                .orElse(getModelAndViewByViewName("/login.jsp"));
+                .orElse(getLoginPage());
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return getModelAndViewByViewName("redirect:/index.jsp");
+            return redirectToIndex();
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -39,16 +39,28 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(getModelAndViewByViewName("redirect:/401.jsp"));
+                .orElse(redirectTo401());
     }
 
     private ModelAndView login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return getModelAndViewByViewName("redirect:/index.jsp");
+            return redirectToIndex();
         }
+        return redirectTo401();
+    }
+
+    private ModelAndView redirectToIndex() {
+        return getModelAndViewByViewName("redirect:/index.jsp");
+    }
+
+    private ModelAndView redirectTo401() {
         return getModelAndViewByViewName("redirect:/401.jsp");
+    }
+
+    private ModelAndView getLoginPage() {
+        return getModelAndViewByViewName("/login.jsp");
     }
 
     private ModelAndView getModelAndViewByViewName(String viewName) {
