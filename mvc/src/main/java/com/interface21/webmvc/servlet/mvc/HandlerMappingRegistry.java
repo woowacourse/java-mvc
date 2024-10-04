@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerMapping;
@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
-    public static final String BASE_PACKAGE = "com.techcourse.controller";
+    private static final String BASE_PACKAGE = "com.techcourse.controller";
 
     private final List<HandlerMapping> handlerMappings;
 
@@ -18,7 +18,6 @@ public class HandlerMappingRegistry {
     }
 
     public void initialize() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping(BASE_PACKAGE));
 
         handlerMappings.forEach(HandlerMapping::initialize);

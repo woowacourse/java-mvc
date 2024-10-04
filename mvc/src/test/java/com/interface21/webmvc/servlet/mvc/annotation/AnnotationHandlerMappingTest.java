@@ -5,9 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Field;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,12 +20,24 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class AnnotationHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private HandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
         handlerMapping.initialize();
+    }
+
+    @Test
+    @DisplayName("매핑은 HTTP 요청을 처리할 핸들러 목록을 초기화한다.")
+    void getHandler() throws NoSuchFieldException, IllegalAccessException {
+        Field field = handlerMapping.getClass().getDeclaredField("handlerExecutions");
+        field.setAccessible(true);
+
+        final var handlerExecutions = (Map<HandlerKey, HandlerExecution>) field.get(handlerMapping);
+        field.setAccessible(false);
+
+        assertThat(handlerExecutions).hasSize(12);
     }
 
     @Test
