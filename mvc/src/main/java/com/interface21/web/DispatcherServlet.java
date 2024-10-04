@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
@@ -23,10 +24,18 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final HandlerKeys handlerKeys;
+    private final String[] basePackages;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Package... packages) {
+        this(Arrays.stream(packages)
+                .map(Package::getName)
+                .toArray(String[]::new));
+    }
+
+    public DispatcherServlet(final String... basePackages) {
         this.handlerKeys = new HandlerKeys();
         this.handlerMappings = new ArrayList<>();
+        this.basePackages = basePackages;
     }
 
     @Override
@@ -36,7 +45,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initialize() {
-        final ControllerContainer container = new ControllerContainer("com.techcourse.controller");
+        final ControllerContainer container = new ControllerContainer(basePackages);
         container.initialize();
         handlerMappings.add(new AnnotationHandlerMapping(handlerKeys, container));
     }

@@ -18,8 +18,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        log.warn("INFO : {}",servletContext.getContextPath());
-        final var dispatcherServlet = new DispatcherServlet();
+        log.warn("INFO : {}", servletContext.getContextPath());
+        final var dispatcherServlet = new DispatcherServlet(Application.class.getPackage());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
