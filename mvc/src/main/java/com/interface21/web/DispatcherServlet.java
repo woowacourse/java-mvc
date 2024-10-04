@@ -1,17 +1,11 @@
-package com.techcourse;
+package com.interface21.web;
 
-import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ViewConverter;
 import com.interface21.webmvc.servlet.mvc.HandlerKeys;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.interface21.webmvc.servlet.mvc.asis.MapHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerContainer;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -30,10 +24,18 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerMapping> handlerMappings;
     private final HandlerKeys handlerKeys;
+    private final String[] basePackages;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Package... packages) {
+        this(Arrays.stream(packages)
+                .map(Package::getName)
+                .toArray(String[]::new));
+    }
+
+    public DispatcherServlet(final String... basePackages) {
         this.handlerKeys = new HandlerKeys();
         this.handlerMappings = new ArrayList<>();
+        this.basePackages = basePackages;
     }
 
     @Override
@@ -43,16 +45,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initialize() {
-        final ControllerContainer container = new ControllerContainer("com.techcourse.controller");
+        final ControllerContainer container = new ControllerContainer(basePackages);
         container.initialize();
-
-        handlerMappings.add(new MapHandlerMapping(handlerKeys,
-                Map.of(
-                        new HandlerKey("/"), new ForwardController("/index.jsp"),
-                        new HandlerKey("/login", RequestMethod.POST), new LoginController(),
-                        new HandlerKey("/login", RequestMethod.GET), new LoginViewController(),
-                        new HandlerKey("/logout", RequestMethod.GET), new LogoutController()
-                )));
         handlerMappings.add(new AnnotationHandlerMapping(handlerKeys, container));
     }
 
@@ -64,7 +58,8 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = handlerKeys.get(new HandlerKey(request));
             final var result = controller.handle(request, response);
             final var view = ViewConverter.convert(result);
-            view.render(Map.of(), request, response);
+
+            view.render(result.getModel(), request, response);
         } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
