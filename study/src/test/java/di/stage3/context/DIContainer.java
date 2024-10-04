@@ -1,9 +1,11 @@
 package di.stage3.context;
 
+import di.ConsumerWrapper;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
+import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,44 +16,44 @@ class DIContainer {
     private final Set<Object> beans;
 
     public DIContainer(final Set<Class<?>> classes) throws Exception {
-        this.beans = new LinkedHashSet<>();
-        initializeBeans(classes);
+        beans = generateBeans(classes);
+        injectFields(beans);
     }
 
-    private void initializeBeans(Set<Class<?>> classes) throws Exception {
-        for (Class<?> clazz : classes) {
-            Constructor<?> constructor = Arrays.stream(clazz.getDeclaredConstructors())
-                    .filter(this::isConstructorEligible)
-                    .findFirst()
-                    .orElseThrow(IllegalStateException::new);
-
+    private Set<Object> generateBeans(Set<Class<?>> classes) throws Exception {
+        Set<Object> beans = new LinkedHashSet<>();
+        for (Class<?> aClass : classes) {
+            Constructor<?> constructor = aClass.getDeclaredConstructor();
             constructor.setAccessible(true);
-            Object[] parameters = resolveConstructorParameters(constructor.getParameterTypes());
-            beans.add(constructor.newInstance(parameters));
+            Object bean = constructor.newInstance();
+            beans.add(bean);
+        }
+        return beans;
+    }
+
+    private void injectFields(Set<Object> beans) {
+        beans.stream()
+                .collect(Collectors.toMap(bean -> bean, bean -> bean.getClass().getDeclaredFields()))
+                .forEach(this::injectField);
+    }
+
+    private void injectField(Object bean, Field[] fields) {
+        for (Field field : fields) {
+            setField(bean, field);
         }
     }
 
-    private boolean isConstructorEligible(Constructor<?> constructor) {
-        Class<?>[] parameterTypes = constructor.getParameterTypes();
-        return countMatchedParameters(parameterTypes) == parameterTypes.length;
-    }
-
-    private int countMatchedParameters(Class<?>[] parameterTypes) {
-        return (int) Arrays.stream(parameterTypes)
-                .filter(parameterType -> getBean(parameterType) != null)
-                .count();
-    }
-
-    private Object[] resolveConstructorParameters(Class<?>[] parameterTypes) {
-        return Arrays.stream(parameterTypes)
-                .map(this::getBean)
-                .toArray();
+    private void setField(Object bean, Field field) {
+        beans.stream()
+                .filter(matchBean -> field.getType().isInstance(matchBean))
+                .peek(matchBean -> field.setAccessible(true))
+                .forEach(ConsumerWrapper.accept(matchBean -> field.set(bean, matchBean)));
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
         return (T) beans.stream()
-                .filter(bean -> aClass.isAssignableFrom(bean.getClass()))
+                .filter(aClass::isInstance)
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }
