@@ -2,6 +2,7 @@ package di.stage3.context;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -13,39 +14,26 @@ class DIContainer {
 
     private final Set<Object> beans = new HashSet<>();
 
-
     public DIContainer(Set<Class<?>> classes) {
         classes.forEach(this::registerBean);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getBean(final Class<T> aClass) {
-        return (T) this.beans.stream()
-                .filter(aClass::isInstance)
-                .findAny()
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 빈입니다."));
-    }
-
     private void registerBean(Class<?> clazz) {
-        clazz = getImplementClass(clazz);
-        Constructor<?> constructor = getConstructor(clazz);
-        Parameter[] parameters = constructor.getParameters();
-
-        if (parameters.length == 0) {
-            beans.add(createInstance(clazz));
+        clazz = getImplementor(clazz);
+        if(isRegistered(clazz)) {
             return;
         }
 
-        for (Parameter parameter : parameters) {
-            Class<?> parameterType = parameter.getType();
-            if (isNotRegistered(parameterType)) {
-                registerBean(parameterType);
-            }
-        }
-        beans.add(createInstanceWithInjection(constructor));
+        Constructor<?> constructor = getConstructor(clazz);
+        Parameter[] parameters = constructor.getParameters();
+        Arrays.stream(parameters)
+                .map(Parameter::getType)
+                .forEach(this::registerBean);
+
+        beans.add(createInstanceWithInjections(constructor));
     }
 
-    private Class<?> getImplementClass(Class<?> clazz) {
+    private Class<?> getImplementor(Class<?> clazz) {
         if (clazz.isInterface()) {
             Reflections reflection = new Reflections(clazz.getPackageName());
             return reflection.getSubTypesOf(clazz).stream()
@@ -57,26 +45,20 @@ class DIContainer {
 
     private Constructor<?> getConstructor(Class<?> clazz) {
         Constructor<?>[] constructors = clazz.getConstructors();
-
         if (constructors.length > 1) {
             throw new IllegalStateException(clazz.getName() + "의 생성자가 1개 이상입니다.");
+        } else if (constructors.length == 0) {
+            throw new IllegalStateException(clazz.getName() + "의 생성자가 존재하지 않습니다.");
         }
         return constructors[0];
     }
 
-    private Object createInstance(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("인스턴스 생성에 실패했습니다.");
-        }
+    private boolean isRegistered(Class<?> parameterType) {
+        return beans.stream()
+                .anyMatch(parameterType::isInstance);
     }
 
-    private boolean isNotRegistered(Class<?> parameterType) {
-        return beans.stream().noneMatch(parameterType::isInstance);
-    }
-
-    private Object createInstanceWithInjection(Constructor<?> constructor) {
+    private Object createInstanceWithInjections(Constructor<?> constructor) {
         Object[] args = getInjections(constructor);
         try {
             return constructor.newInstance(args);
@@ -95,5 +77,13 @@ class DIContainer {
             args[i] = bean;
         }
         return args;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getBean(final Class<T> aClass) {
+        return (T) this.beans.stream()
+                .filter(aClass::isInstance)
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 빈입니다."));
     }
 }
