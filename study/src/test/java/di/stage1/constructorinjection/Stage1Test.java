@@ -1,9 +1,9 @@
 package di.stage1.constructorinjection;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import di.User;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage1Test {
 
@@ -24,6 +24,8 @@ class Stage1Test {
          * 하지만 아직도 테스트하기 어려운 코드다.
          * UserDao라는 구현 클래스에 의존하고 있다.
          * 유연한 변경이 필요한 부분은 인터페이스를 사용하면 결합을 감소시킬 수 있다.
+         *
+         * 여전히 UserDao를 의존하므로 UserDao를 Mock으로 대체하기 쉽지 않다.
          */
         final var userService = new UserService(userDao);
 

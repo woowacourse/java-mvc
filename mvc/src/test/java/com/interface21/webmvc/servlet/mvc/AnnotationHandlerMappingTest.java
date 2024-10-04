@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,7 +67,7 @@ class AnnotationHandlerMappingTest {
     @Test
     @DisplayName("중복된 url과 http method를 등록할 수 없다.")
     void initializeWithDuplicateUrlAndMethod() {
-        handlerMapping = new AnnotationHandlerMapping(handlers, "com.interface21.webmvc.servlet.mvc.tobe");
+        handlerMapping = new AnnotationHandlerMapping(handlers, "com.interface21.webmvc.servlet.mvc");
         assertThatThrownBy(() -> handlerMapping.initialize())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("중복된 url과 http method 입니다.");

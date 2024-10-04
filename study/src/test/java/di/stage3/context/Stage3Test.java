@@ -1,13 +1,22 @@
 package di.stage3.context;
 
-import di.User;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashSet;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
+import di.User;
+import java.util.HashSet;
+import org.junit.jupiter.api.Test;
+
 class Stage3Test {
+
+    /**
+     * DIContainer가 관리하는 객체는 빈(bean) 객체라고 부른다.
+     */
+    private static DIContainer createDIContainer() {
+        var classes = new HashSet<Class<?>>();
+        classes.add(InMemoryUserDao.class);
+        classes.add(UserService.class);
+        return new DIContainer(classes);
+    }
 
     /**
      * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자.
@@ -28,21 +37,13 @@ class Stage3Test {
          * 모든 제어 권한을 자신이 아닌 다른 대상에게 위임한다.
          * UserService는 DIContainer에게 모든 제어 권한을 위임한 상태다.
          * DIContainer가 객체를 생성하고 관계를 설정하도록 구현해보자.
+         *
+         * IoC 개념을 적용해서 DIContainer가 객체를 생성하고 관계를 설정하도록 구현했다.
          */
         final var userService = diContainer.getBean(UserService.class);
 
         final var actual = userService.join(user);
 
         assertThat(actual.getAccount()).isEqualTo("gugu");
-    }
-
-    /**
-     * DIContainer가 관리하는 객체는 빈(bean) 객체라고 부른다.
-     */
-    private static DIContainer createDIContainer() {
-        var classes = new HashSet<Class<?>>();
-        classes.add(InMemoryUserDao.class);
-        classes.add(UserService.class);
-        return new DIContainer(classes);
     }
 }
