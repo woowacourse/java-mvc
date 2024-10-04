@@ -19,19 +19,17 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private static final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    static {
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+
+    public DispatcherServlet(String basePackage) {
+        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
         handlerMappings.add(new ManualHandlerMapping());
 
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
         handlerAdapters.add(new ControllerHandlerAdapter());
-    }
-
-    public DispatcherServlet() {
     }
 
     @Override
