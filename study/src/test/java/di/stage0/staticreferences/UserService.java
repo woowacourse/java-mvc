@@ -4,8 +4,14 @@ import di.User;
 
 class UserService {
 
-    public static User join(User user) {
-        UserDao.insert(user);
-        return UserDao.findById(user.getId());
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    private UserDao userDao;
+
+    public User join(User user) {
+        userDao.insert(user);
+        return userDao.findById(user.getId());
     }
 }

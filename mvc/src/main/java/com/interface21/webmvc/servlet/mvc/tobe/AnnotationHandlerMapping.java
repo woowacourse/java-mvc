@@ -5,7 +5,9 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -43,9 +45,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             throws ReflectiveOperationException {
         Map<HandlerKey, HandlerExecution> handlerMappings = new HashMap<>();
 
-        Method[] methods = controllerClass.getDeclaredMethods();
+        Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+        List<Method> methods = Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+
         for (Method method : methods) {
-            Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
             handlerMappings.putAll(initializeWithRequestMapping(method, controllerInstance));
         }
 
@@ -54,9 +59,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private Map<HandlerKey, HandlerExecution> initializeWithRequestMapping(Method targetMethod,
                                                                            Object controllerClass) {
-        if (!targetMethod.isAnnotationPresent(RequestMapping.class)) {
-            throw new InternalError("Internal error: Failed to initialize handler mapping");
-        }
         Map<HandlerKey, HandlerExecution> handlerMappings = new HashMap<>();
 
         RequestMapping requestMapping = targetMethod.getAnnotation(RequestMapping.class);

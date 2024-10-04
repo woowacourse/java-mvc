@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-class UserDao {
+class UserInMemoryDao implements InMemoryDao {
 
     private static final Map<Long, User> users = new HashMap<>();
 
     private final JdbcDataSource dataSource;
 
-    public UserDao() {
+    public UserInMemoryDao() {
         final var jdbcDataSource = new JdbcDataSource();
         jdbcDataSource.setUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;");
         jdbcDataSource.setUser("");
