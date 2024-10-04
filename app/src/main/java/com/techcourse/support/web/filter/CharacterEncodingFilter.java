@@ -1,6 +1,12 @@
 package com.techcourse.support.web.filter;
 
-import jakarta.servlet.*;
+import com.interface21.web.http.MediaType;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 
 import java.io.IOException;
@@ -19,6 +25,7 @@ public class CharacterEncodingFilter implements Filter {
             throws IOException, ServletException {
         request.setCharacterEncoding(DEFAULT_ENCODING);
         response.setCharacterEncoding(DEFAULT_ENCODING);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         chain.doFilter(request, response);
     }
 

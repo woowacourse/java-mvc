@@ -65,7 +65,6 @@ class AnnotationHandlerMappingTest {
     void givenDuplicatedHandlerKey_whenMappingHandler_thenThrowException() {
         handlerMapping = new AnnotationHandlerMapping("samples.duplicate");
 
-
         assertThatThrownBy(() -> handlerMapping.initialize())
                 .isInstanceOf(IllegalArgumentException.class);
     }

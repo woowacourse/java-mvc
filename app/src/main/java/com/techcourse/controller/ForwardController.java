@@ -1,4 +1,4 @@
-package com.samples;
+package com.techcourse.controller;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class AnnotationController {
+public class ForwardController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
 }
