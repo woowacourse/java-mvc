@@ -21,7 +21,10 @@ public class JsonView implements View {
     }
 
     private String convertToJson(Map<String, ?> model) throws JsonProcessingException {
-        if (model == null || model.isEmpty()) {
+        if (model == null) {
+            throw new IllegalArgumentException("model은 널일 수 없습니다.");
+        }
+        if (model.isEmpty()) {
             return "{}";
         }
         if (model.size() == 1) {
