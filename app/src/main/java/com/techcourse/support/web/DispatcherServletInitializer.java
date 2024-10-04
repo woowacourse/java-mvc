@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.support;
+package com.techcourse.support.web;
 
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.DispatcherServlet;
