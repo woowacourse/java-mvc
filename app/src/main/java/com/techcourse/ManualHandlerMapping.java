@@ -1,6 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
@@ -9,7 +14,7 @@ import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
@@ -21,15 +26,23 @@ public class ManualHandlerMapping {
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
-        controllers.put("/register", new RegisterController());
 
-        log.info("Initialized Handler Mapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+        log.info("Initialized Handler Mapping!");
     }
 
-    public Controller getHandler(final String requestURI) {
+    @Override
+    public HandlerExecution getHandler(HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        Controller controller = controllers.get(requestURI);
+
+        try {
+            return new HandlerExecution(controller, controller.getClass()
+                    .getDeclaredMethod("execute", HttpServletRequest.class, HttpServletResponse.class));
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
