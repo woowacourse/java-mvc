@@ -25,14 +25,14 @@ public class LoginController {
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return login(req, user);
+                    return redirectOnPasswordMatch(req, user);
                 })
                 .orElse(ModelAndView.createJspView("redirect:/401.jsp"));
     }
 
-    private ModelAndView login(final HttpServletRequest request, final User user) {
-        if (user.checkPassword(request.getParameter("password"))) {
-            final var session = request.getSession();
+    private ModelAndView redirectOnPasswordMatch(final HttpServletRequest req, final User user) {
+        if (user.checkPassword(req.getParameter("password"))) {
+            final var session = req.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return ModelAndView.createJspView("redirect:/index.jsp");
         }
