@@ -20,7 +20,7 @@ public class JsonView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object json = getJson(model);
+        Object json = resolveJsonContent(model);
         String jsonResponse = objectMapper.writeValueAsString(json);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -29,7 +29,7 @@ public class JsonView implements View {
         writer.flush();
     }
 
-    private Object getJson(Map<String, ?> model) {
+    private Object resolveJsonContent(Map<String, ?> model) {
         if (model.size() == 1) {
             return model.values().iterator().next();
         }
