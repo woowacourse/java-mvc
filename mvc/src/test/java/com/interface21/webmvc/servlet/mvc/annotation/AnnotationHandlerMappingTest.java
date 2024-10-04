@@ -31,12 +31,13 @@ class AnnotationHandlerMappingTest {
     @Test
     @DisplayName("매핑은 HTTP 요청을 처리할 핸들러 목록을 초기화한다.")
     void getHandler() throws NoSuchFieldException, IllegalAccessException {
-        Field filed = handlerMapping.getClass().getDeclaredField("handlerExecutions");
-        filed.setAccessible(true);
+        Field field = handlerMapping.getClass().getDeclaredField("handlerExecutions");
+        field.setAccessible(true);
 
-        final var handlerExecutions = (Map<HandlerKey, HandlerExecution>) filed.get(handlerMapping);
+        final var handlerExecutions = (Map<HandlerKey, HandlerExecution>) field.get(handlerMapping);
+        field.setAccessible(false);
 
-        assertThat(handlerExecutions.keySet()).hasSize(12);
+        assertThat(handlerExecutions).hasSize(12);
     }
 
     @Test
