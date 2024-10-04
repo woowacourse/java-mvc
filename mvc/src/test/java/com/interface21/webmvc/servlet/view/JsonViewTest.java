@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +54,10 @@ class JsonViewTest {
         when(response.getWriter()).thenReturn(writer);
 
         // when
-        Map<String, ?> model = Map.of("test", "value", "hello", "world");
+        Map<String, Object> model = new HashMap<>();
+        model.put("test", "value");
+        model.put("hello", "world");
+
         jsonView.render(model, request, response);
 
         // then
