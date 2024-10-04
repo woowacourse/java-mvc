@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.UncheckedServletException;
+import com.interface21.webmvc.servlet.exception.UncheckedServletException;
 import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;

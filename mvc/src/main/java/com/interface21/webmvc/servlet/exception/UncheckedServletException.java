@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet;
+package com.interface21.webmvc.servlet.exception;
 
 public class UncheckedServletException extends RuntimeException {
 
