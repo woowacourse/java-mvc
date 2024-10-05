@@ -35,10 +35,10 @@ public class LoginController {
             return new ModelAndView(view);
         }
 
-        return doLogin(req, resp);
+        return doLogin(req);
     }
 
-    public ModelAndView doLogin(final HttpServletRequest req, final HttpServletResponse resp) {
+    private ModelAndView doLogin(final HttpServletRequest req) {
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
