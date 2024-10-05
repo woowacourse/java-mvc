@@ -11,11 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class LogoutController {
 
+    private static final String BASE_PATH = "redirect:/";
+
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        return redirect("redirect:/");
+        return redirect(BASE_PATH);
     }
 
     private ModelAndView redirect(String path) {
