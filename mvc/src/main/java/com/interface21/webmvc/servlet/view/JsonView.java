@@ -14,6 +14,8 @@ public class JsonView implements View {
 
     private static final int PLAINT_TEXT_REND_THRESHOLD = 1;
 
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -22,7 +24,6 @@ public class JsonView implements View {
             renderSingle(model, response);
             return;
         }
-        final ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(model);
         response.getWriter().write(json);
     }
@@ -32,7 +33,6 @@ public class JsonView implements View {
                 .stream()
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("모델을 찾을 수 없습니다."));
-        final ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(value);
         response.getWriter().write(json);
     }
