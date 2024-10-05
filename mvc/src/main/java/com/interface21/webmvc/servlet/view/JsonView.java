@@ -1,12 +1,12 @@
 package com.interface21.webmvc.servlet.view;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
@@ -24,13 +24,16 @@ public class JsonView implements View {
             throws IOException {
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        final Writer writer = response.getWriter();
+        final String value = convertToJson(model);
+        response.getWriter().write(value);
+    }
 
+    private String convertToJson(final Map<String, ?> model) throws JsonProcessingException {
         if (hasOnlyOneKey(model)) {
-            writer.write(mapper.writeValueAsString(model.values().iterator().next()));
-            return;
+            final Object value = model.values().iterator().next();
+            return mapper.writeValueAsString(value);
         }
-        writer.write(mapper.writeValueAsString(model));
+        return mapper.writeValueAsString(model);
     }
 
     private boolean hasOnlyOneKey(final Map<String, ?> model) {
