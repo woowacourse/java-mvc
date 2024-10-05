@@ -62,8 +62,8 @@ class DIContainer {
 
     private void injectField(Object bean, Field field) throws Exception {
         field.setAccessible(true);
-        Object dependency = getBean(field.getType());
-        if (dependency != null) {
+        if (field.isAnnotationPresent(Inject.class)) {
+            Object dependency = getBean(field.getType());
             field.set(bean, dependency);
         }
     }
@@ -75,6 +75,6 @@ class DIContainer {
                 return (T)bean;
             }
         }
-        return null;
+        throw new IllegalStateException("no match bean");
     }
 }
