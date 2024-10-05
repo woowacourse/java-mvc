@@ -22,9 +22,7 @@ class DIContainer {
         this.beans = new HashSet<>();
         try {
             createBeans(classes);
-            for (Object bean : beans) {
-                setFields(bean);
-            }
+            initBeans(beans);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -51,7 +49,13 @@ class DIContainer {
         }
     }
 
-    private void setFields(Object bean) throws IllegalAccessException {
+    private void initBeans(Set<Object> beans) throws IllegalAccessException {
+        for (Object bean : beans) {
+            setFields(bean);
+        }
+    }
+
+    private void setFields(Object bean) {
         Field[] declaredFields = bean.getClass().getDeclaredFields();
         for (Field field : declaredFields) {
             field.setAccessible(true);
