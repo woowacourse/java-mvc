@@ -1,12 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.handler.adapter.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.annotation.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.controller.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.controller.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,19 +19,17 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private static final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    static {
-        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+
+    public DispatcherServlet(String basePackage) {
+        handlerMappings.add(new AnnotationHandlerMapping(basePackage));
         handlerMappings.add(new ManualHandlerMapping());
 
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
         handlerAdapters.add(new ControllerHandlerAdapter());
-    }
-
-    public DispatcherServlet() {
     }
 
     @Override

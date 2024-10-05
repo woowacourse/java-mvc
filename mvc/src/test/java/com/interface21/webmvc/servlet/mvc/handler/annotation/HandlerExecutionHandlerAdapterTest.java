@@ -1,9 +1,9 @@
-package com.interface21.webmvc.servlet.mvc.handler.adapter;
+package com.interface21.webmvc.servlet.mvc.handler.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
