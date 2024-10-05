@@ -20,7 +20,7 @@ import com.interface21.web.http.MediaType;
 class JsonViewTest {
 
     @Test
-    @DisplayName("Model의 값이 1 개라면, Model의 값이 1개라면 평문을 반환한다.")
+    @DisplayName("Model의 값이 1 개라면, 해당 값을 출력한다.")
     void return_plaintext_when_model_size_is_one() throws Exception {
         // given
         final JsonView view = new JsonView();
@@ -35,6 +35,6 @@ class JsonViewTest {
         view.render(Map.of("fram", "handsome"), request, response);
 
         // then
-        assertThat(charArrayWriter.toString()).hasToString("handsome");
+        assertThat(charArrayWriter.toString()).hasToString("\"handsome\"");
     }
 }
