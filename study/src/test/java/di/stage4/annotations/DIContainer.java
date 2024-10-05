@@ -1,5 +1,6 @@
 package di.stage4.annotations;
 
+import di.ConsumerWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -7,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Set;
 import org.reflections.Reflections;
 
@@ -61,14 +61,12 @@ class DIContainer {
         }
     }
 
-    private void setFiled(Object bean, Field field) throws IllegalAccessException {
+    private void setFiled(Object bean, Field field) {
         Class<?> typeOfFiled = field.getType();
-        Optional<Object> beanField = beans.stream()
+        beans.stream()
                 .filter(typeOfFiled::isInstance)
-                .findFirst();
-        if (beanField.isPresent()) {
-            field.set(bean, beanField.get());
-        }
+                .findFirst()
+                .ifPresent(ConsumerWrapper.accept(target -> field.set(bean, target)));
     }
 
     @SuppressWarnings("unchecked")
