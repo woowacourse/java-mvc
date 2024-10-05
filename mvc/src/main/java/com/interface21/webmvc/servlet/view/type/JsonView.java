@@ -22,7 +22,7 @@ public class JsonView implements View {
         try {
             PrintWriter writer = response.getWriter();
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-            String responseJson = convertToJson(model, response);
+            String responseJson = convertToJson(model);
 
             writer.println(responseJson);
         } catch (IOException e) {
@@ -30,7 +30,7 @@ public class JsonView implements View {
         }
     }
 
-    private String convertToJson(Map<String, ?> model, HttpServletResponse response) throws IOException {
+    private String convertToJson(Map<String, ?> model) throws IOException {
         if (model.size() == 1) {
             return objectMapper.writeValueAsString(model.values().iterator().next());
         }
