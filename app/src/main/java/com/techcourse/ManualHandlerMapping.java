@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 
+@Deprecated(since = "step3")
 public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
