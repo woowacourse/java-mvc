@@ -17,7 +17,7 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
-    public static ModelAndView fromJson(String viewName) {
+    public static ModelAndView fromJsp(String viewName) {
         return new ModelAndView(new JspView(viewName));
     }
 

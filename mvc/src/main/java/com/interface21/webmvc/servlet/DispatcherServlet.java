@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapters;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappings;
