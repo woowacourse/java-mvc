@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.view;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ public class JsonView implements View {
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         if (model.size() == PLAINT_TEXT_REND_THRESHOLD) {
-            renderPlaintext(model, response);
+            renderSingle(model, response);
             return;
         }
         final ObjectMapper mapper = new ObjectMapper();
@@ -28,13 +27,13 @@ public class JsonView implements View {
         response.getWriter().write(json);
     }
 
-    private void renderPlaintext(final Map<String, ?> model, final HttpServletResponse response) throws IOException {
-        final List<String> values = model.values()
+    private void renderSingle(final Map<String, ?> model, final HttpServletResponse response) throws IOException {
+        final Object value = model.values()
                 .stream()
-                .map(String.class::cast)
-                .toList();
-        for (String value : values) {
-            response.getWriter().write(value);
-        }
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("모델을 찾을 수 없습니다."));
+        final ObjectMapper mapper = new ObjectMapper();
+        final String json = mapper.writeValueAsString(value);
+        response.getWriter().write(json);
     }
 }

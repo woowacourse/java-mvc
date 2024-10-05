@@ -1,7 +1,5 @@
 package com.interface21.handler;
 
-import java.util.Map;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerAdapter.adapt(request, response);
             final ViewResolver viewResolver = new ViewResolver(modelAndView);
             final View view = viewResolver.resolve();
-            view.render(Map.of(), request, response);
+            view.render(modelAndView.getModel(), request, response);
         } catch (final Exception e) {
             throw new ServletException(e.getMessage());
         }
