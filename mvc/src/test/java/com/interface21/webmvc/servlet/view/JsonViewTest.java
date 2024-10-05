@@ -42,8 +42,7 @@ class JsonViewTest {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final PrintWriter print = mock(PrintWriter.class);
-        when(response.getWriter()).thenReturn(print);
+        when(response.getWriter()).thenReturn(new PrintWriter(System.out));
 
         //when
         final JsonView jsonView = new JsonView();
