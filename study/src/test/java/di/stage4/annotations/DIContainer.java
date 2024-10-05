@@ -1,15 +1,12 @@
 package di.stage4.annotations;
 
 import di.ConsumerWrapper;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.reflections.Reflections;
 
 /**
  * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
@@ -29,13 +26,7 @@ class DIContainer {
     }
 
     public static DIContainer createContainerForPackage(final String rootPackageName) {
-        Reflections reflections = new Reflections(rootPackageName);
-        HashSet<Class<?>> annotatedClasses = new HashSet<>();
-        List<Class<? extends Annotation>> classes = List.of(Repository.class, Service.class);
-        for (Class<? extends Annotation> aClass : classes) {
-            Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(aClass);
-            annotatedClasses.addAll(typesAnnotatedWith);
-        }
+        Set<Class<?>> annotatedClasses = ClassPathScanner.getAllClassesInPackage(rootPackageName);
         return new DIContainer(annotatedClasses);
     }
 
