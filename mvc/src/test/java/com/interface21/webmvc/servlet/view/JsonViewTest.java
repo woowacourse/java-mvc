@@ -54,7 +54,7 @@ class JsonViewTest {
     }
 
     @Test
-    @DisplayName("model에 데이터가 1개면 값을 그대로 반환한다")
+    @DisplayName("model에 데이터가 1개면 값을 그대로 작성한다.")
     void one_data() throws IOException {
         //given
         final Map<String, String> model = Map.of("account", "redddy");
@@ -74,7 +74,7 @@ class JsonViewTest {
     }
 
     @Test
-    @DisplayName("model에 데이터가 2개면 Map 형태로 반환한다.")
+    @DisplayName("model에 데이터가 2개면 Map 형태로 작성한다.")
     void two_data() throws IOException {
         //given
         final Map<String, String> model = new LinkedHashMap<>();
