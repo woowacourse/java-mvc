@@ -1,10 +1,14 @@
 package com.interface21.webmvc.servlet.view;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,12 +16,23 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.interface21.web.http.MediaType;
 
 class JsonViewTest {
+
+    ByteArrayOutputStream outputStream;
+    PrintStream out;
+
+    @BeforeEach
+    void setUp() {
+        out = System.out;
+        outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+    }
 
     @Test
     @DisplayName("JSON으로 응답할 때 ContentType을 MediaType.APPLICATION_JSON_UTF8_VALUE로 반환한다.")
@@ -45,16 +60,17 @@ class JsonViewTest {
         final Map<String, String> model = Map.of("account", "redddy");
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
+        final JsonView jsonView = new JsonView();
 
-        final PrintWriter print = mock(PrintWriter.class);
-        when(response.getWriter()).thenReturn(print);
+        when(response.getWriter()).thenReturn(new PrintWriter(new OutputStreamWriter(System.out)));
+        System.setOut(out);
 
         //when
-        final JsonView jsonView = new JsonView();
         jsonView.render(model, request, response);
 
         //then
-        verify(response.getWriter()).write("\"redddy\"");
+        response.getWriter().flush();
+        assertThat(outputStream.toString()).isEqualTo("\"redddy\"");
     }
 
     @Test
@@ -66,15 +82,17 @@ class JsonViewTest {
         model.put("password", "486");
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
+        final JsonView jsonView = new JsonView();
 
-        final PrintWriter print = mock(PrintWriter.class);
-        when(response.getWriter()).thenReturn(print);
+        when(response.getWriter()).thenReturn(new PrintWriter(new OutputStreamWriter(System.out)));
+
+        System.setOut(out);
 
         //when
-        final JsonView jsonView = new JsonView();
         jsonView.render(model, request, response);
 
         //then
-        verify(response.getWriter()).write("{\"account\":\"redddy\",\"password\":\"486\"}");
+        response.getWriter().flush();
+        assertThat(outputStream.toString()).isEqualTo("{\"account\":\"redddy\",\"password\":\"486\"}");
     }
 }
