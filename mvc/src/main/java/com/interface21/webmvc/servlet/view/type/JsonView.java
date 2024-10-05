@@ -24,7 +24,7 @@ public class JsonView implements View {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             String responseJson = convertToJson(model);
 
-            writer.println(responseJson);
+            writer.write(responseJson);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
