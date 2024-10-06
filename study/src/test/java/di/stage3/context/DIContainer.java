@@ -22,7 +22,7 @@ class DIContainer {
 
     public DIContainer(final Set<Class<?>> classes) {
         this.beans = createBeans(classes);
-        this.beans.forEach(this::setBeanField);
+        this.beans.forEach(this::setBeanFields);
         logger.info("bean size = {}", this.beans.size());
     }
 
@@ -37,14 +37,14 @@ class DIContainer {
 
     // 빈 내부에 선언된 필드를 각각 셋팅한다.
     // 각 필드에 빈을 대입(assign)한다.
-    private void setBeanField(final Object bean) {
+    private void setBeanFields(final Object bean) {
         Field[] declaredFields = bean.getClass().getDeclaredFields();
 
         Stream.of(declaredFields)
-                .forEach(field -> setBeanField(bean, field));
+                .forEach(field -> setField(bean, field));
     }
 
-    private void setBeanField(final Object bean, final Field field) {
+    private void setField(final Object bean, final Field field) {
         field.setAccessible(true);
         beans.stream()
                 .filter(field.getType()::isInstance)

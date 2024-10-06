@@ -18,7 +18,7 @@ class DIContainer {
 
     public DIContainer(final Set<Class<?>> classes) {
         this.beans = createBeans(classes);
-        this.beans.forEach(this::setBeanField);
+        this.beans.forEach(this::setBeanFields);
     }
 
     private Set<Object> createBeans(Set<Class<?>> classes) {
@@ -29,15 +29,15 @@ class DIContainer {
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    private void setBeanField(Object bean) {
+    private void setBeanFields(Object bean) {
         Field[] declaredFields = bean.getClass().getDeclaredFields();
 
         Stream.of(declaredFields)
                 .filter(field -> field.isAnnotationPresent(Inject.class))
-                .forEach(field -> setBeanField(bean, field));
+                .forEach(field -> setField(bean, field));
     }
 
-    private void setBeanField(Object bean, Field field) {
+    private void setField(Object bean, Field field) {
         field.setAccessible(true);
 
         beans.stream()
