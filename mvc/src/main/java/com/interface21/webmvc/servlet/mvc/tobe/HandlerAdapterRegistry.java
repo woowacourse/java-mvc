@@ -15,11 +15,9 @@ public class HandlerAdapterRegistry {
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.support(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new IllegalArgumentException("No suitable HandlerAdapter found for handler: " + handler.getClass().getName());
+        return handlerAdapters.stream()
+            .filter(handlerAdapter -> handlerAdapter.support(handler))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("No suitable HandlerAdapter found for handler: " + handler.getClass().getName()));
     }
 }

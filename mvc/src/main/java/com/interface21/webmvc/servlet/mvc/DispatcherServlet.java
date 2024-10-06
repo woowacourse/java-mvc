@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.Map;
 import java.util.Optional;
@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.view.JspView;
 
@@ -29,30 +29,20 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
-
-        initializeHandlerMappings();
-        initializeHandlerAdapters();
     }
 
-    private void initializeHandlerMappings() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappingRegistry.addHandlerMapping(handlerMapping);
     }
 
-    private void initializeHandlerAdapters() {
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 
     @Override
@@ -86,7 +76,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        JspView view = (JspView)modelAndView.getView();
+        View view = modelAndView.getView();
         view.render(modelAndView.getModel(), request, response);
     }
 }

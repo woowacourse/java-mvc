@@ -1,5 +1,8 @@
 package di.stage3.context;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -7,14 +10,66 @@ import java.util.Set;
  */
 class DIContainer {
 
-    private final Set<Object> beans;
+    private final Set<Object> beans = new HashSet<>();
 
     public DIContainer(final Set<Class<?>> classes) {
-        this.beans = Set.of();
+        initialize(classes);
+    }
+
+    private void initialize(final Set<Class<?>> classes) {
+        try {
+            createInstances(classes);
+            injectFieldsToBeans();
+        } catch (Exception e) {
+            throw new RuntimeException("cannot initialize DIContainer", e);
+        }
+    }
+
+    private void createInstances(final Set<Class<?>> classes) throws Exception {
+        for (Class<?> aClass : classes) {
+            beans.add(createInstance(aClass));
+        }
+    }
+
+    private Object createInstance(Class<?> aClass) throws Exception {
+        Constructor<?> constructor = getNoArgsConstructor(aClass);
+        return constructor.newInstance();
+    }
+
+    private Constructor<?> getNoArgsConstructor(Class<?> aClass) throws NoSuchMethodException {
+        Constructor<?> declaredConstructor = aClass.getDeclaredConstructor();
+        declaredConstructor.setAccessible(true);
+        return declaredConstructor;
+    }
+
+    private void injectFieldsToBeans() throws Exception {
+        for (Object bean : beans) {
+            injectFields(bean);
+        }
+    }
+
+    private void injectFields(Object bean) throws Exception {
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            injectField(bean, field);
+        }
+    }
+
+    private void injectField(Object bean, Field field) throws Exception {
+        field.setAccessible(true);
+        Object dependency = getBean(field.getType());
+        if (dependency != null) {
+            field.set(bean, dependency);
+        }
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
+        for (Object bean : beans) {
+            if (aClass.isInstance(bean)) {
+                return (T)bean;
+            }
+        }
         return null;
     }
 }
