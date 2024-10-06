@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.interface21.webmvc.servlet.mvc.ControllerScanner;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 

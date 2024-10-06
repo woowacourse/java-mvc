@@ -5,18 +5,18 @@ import static org.mockito.Mockito.when;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.adater.AnnotationHandlerAdapter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class AnnotationHandlerAdaptorTest {
+class AnnotationHandlerAdapterTest {
 
     @Test
     void 입력받은_handler가_HandlerExecution의_instance인지_검증한다() {
         // given
-        AnnotationHandlerAdaptor handlerAdaptor = new AnnotationHandlerAdaptor();
+        AnnotationHandlerAdapter handlerAdaptor = new AnnotationHandlerAdapter();
         HandlerExecution handler = new HandlerExecution(null, null);
 
         // when & then
@@ -26,7 +26,7 @@ class AnnotationHandlerAdaptorTest {
     @Test
     void handler를_실행시키고_ModelAndView를_반환한다() {
         // given
-        AnnotationHandlerAdaptor handlerAdaptor = new AnnotationHandlerAdaptor();
+        AnnotationHandlerAdapter handlerAdaptor = new AnnotationHandlerAdapter();
         HandlerExecution handler = mock(HandlerExecution.class);
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);

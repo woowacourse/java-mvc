@@ -1,12 +1,12 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.servlet.mvc.adater;
 
 import com.interface21.webmvc.servlet.HandlerAdaptor;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class AnnotationHandlerAdaptor implements HandlerAdaptor {
+public class AnnotationHandlerAdapter implements HandlerAdaptor {
 
     @Override
     public boolean supports(Object handler) {
