@@ -2,7 +2,11 @@ package com.techcourse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,5 +47,24 @@ class DispatcherServletTest {
 
         // then
         assertThat(InMemoryUserRepository.findByAccount("kargo")).isNotEmpty();
+    }
+
+    @DisplayName("GET /api/user 요청을 보내면 유저 정보를 Json으로 응답한다..")
+    @Test
+    void getUserInfoInJson() throws ServletException, IOException {
+        // given
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURI()).thenReturn("/api/user");
+        when(request.getParameter("account")).thenReturn("gugu");
+        PrintWriter writer = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(writer);
+
+        // when
+        dispatcherServlet.service(request, response);
+
+        // then
+        String expected = """
+                {"id":1,"account":"gugu","email":"hkkang@woowahan.com"}""";
+        verify(writer).write(expected);
     }
 }

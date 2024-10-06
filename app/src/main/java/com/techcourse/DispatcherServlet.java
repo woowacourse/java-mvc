@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.handler.adapter.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerExecutionAdapter;
@@ -33,9 +32,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         addHandlerMapping(new AnnotationHandlerMapping());
-        addHandlerMapping(new ManualHandlerMapping());
         addHandlerAdapter(new HandlerExecutionAdapter());
-        addHandlerAdapter(new ControllerAdapter());
     }
 
     private void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -54,7 +51,7 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMappingRegistry.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.getView().render(Map.of(), request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
