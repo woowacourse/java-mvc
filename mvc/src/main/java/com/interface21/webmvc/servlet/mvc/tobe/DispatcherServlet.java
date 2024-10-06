@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,9 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.Handler;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -24,15 +21,16 @@ public class DispatcherServlet extends HttpServlet {
 	private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
 	private final List<HandlerMapping> handlerMappings;
+	private final String basePackage;
 
-	public DispatcherServlet() {
+	public DispatcherServlet(String basePackage) {
 		this.handlerMappings = new ArrayList<>();
+		this.basePackage = basePackage;
 	}
 
 	@Override
 	public void init() {
-		handlerMappings.add(new ManualHandlerMapping(new HashMap<>()));
-		handlerMappings.add(new AnnotationHandlerMapping(new HashMap<>()));
+		handlerMappings.add(new AnnotationHandlerMapping(new HashMap<>(), basePackage));
 		handlerMappings.forEach(HandlerMapping::initialize);
 	}
 
