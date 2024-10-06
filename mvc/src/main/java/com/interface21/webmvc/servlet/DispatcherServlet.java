@@ -1,7 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.handler.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.handler.HandlerAdapter;
 import com.interface21.webmvc.servlet.handler.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.handler.HandlerExecutor;
@@ -23,11 +21,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final int NOT_FOUND_STATUS = 404;
     private static final List<HandlerAdapter> DEFAULT_HANDLER_ADAPTERS =
-            List.of(new ControllerHandlerAdapter(), new HandlerExecutionHandlerAdapter());
+            List.of(new HandlerExecutionHandlerAdapter());
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerExecutor handlerExecutor;
-    private ManualHandlerMapping manualHandlerMapping;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
