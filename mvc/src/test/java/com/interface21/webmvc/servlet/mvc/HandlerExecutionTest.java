@@ -3,7 +3,7 @@ package com.interface21.webmvc.servlet.mvc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -34,7 +34,7 @@ class HandlerExecutionTest {
 
         public ModelAndView countUp(HttpServletRequest request, HttpServletResponse response) {
             count++;
-            return null;
+            return new ModelAndView(new JspView("/countUp"));
         }
 
         public int getCount() {
