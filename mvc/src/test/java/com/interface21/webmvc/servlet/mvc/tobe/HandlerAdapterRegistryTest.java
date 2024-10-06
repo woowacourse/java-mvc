@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +28,7 @@ class HandlerAdapterRegistryTest {
         // given
         HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        Controller controller = mock(Controller.class);
+        Object controller = mock(Object.class);
 
         // when & then
         assertThatThrownBy(() -> handlerAdapterRegistry.getHandlerAdapter(controller))
