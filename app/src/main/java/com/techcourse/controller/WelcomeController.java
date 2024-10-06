@@ -1,4 +1,4 @@
-package support;
+package com.techcourse.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,10 +10,10 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 
 @Controller
-public class SampleController {
+public class WelcomeController {
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ModelAndView get(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView(""));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView handleWelcomePage(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

@@ -1,6 +1,4 @@
-package com.techcourse;
-
-import java.util.Map;
+package com.interface21.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,10 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
-import com.techcourse.handler.HandlerAdapterRegistry;
-import com.techcourse.handler.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.view.ViewResolver;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -26,7 +23,6 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        registry.addAdapter(new ManualHandlerAdapter());
         registry.addAdapter(new AnnotationHandlerAdapter("com.techcourse.controller"));
     }
 
@@ -37,8 +33,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final HandlerAdapter handlerAdapter = registry.get(request);
             final ModelAndView modelAndView = handlerAdapter.adapt(request, response);
-            final View view = modelAndView.getView();
-            view.render(Map.of(), request, response);
+            final ViewResolver viewResolver = new ViewResolver(modelAndView);
+            final View view = viewResolver.resolve();
+            view.render(modelAndView.getModel(), request, response);
         } catch (final Exception e) {
             throw new ServletException(e.getMessage());
         }
