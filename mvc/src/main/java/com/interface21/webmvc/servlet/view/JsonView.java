@@ -1,11 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
-import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
@@ -14,33 +10,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class JsonView implements View {
+	private static final int SINGLE_MODEL_SIZE = 1;
 
-	public JsonView() {
-	}
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
-		throws Exception {
+	public void render(final Map<String, ?> model, final HttpServletRequest request,
+		HttpServletResponse response) throws Exception {
 		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+		response.setCharacterEncoding("UTF-8");
 
-		String body = parseBody(model);
-		PrintWriter writer = response.getWriter();
-		writer.write(body);
-	}
-
-	private String parseBody(Map<String, ?> model) throws JsonProcessingException {
-		Set<String> keySet = model.keySet();
-
-		Map<String, Object> results = new HashMap<>();
-		for (String key : keySet) {
-			results.put(key, model.get(key));
+		if (model.size() == SINGLE_MODEL_SIZE) {
+			final Object singleValue = model.values().iterator().next();
+			objectMapper.writeValue(response.getWriter(), singleValue);
+			return;
 		}
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		if (results.size() == 1) {
-			return results.values().iterator().next().toString();
-		}
-
-		return objectMapper.writeValueAsString(results);
+		objectMapper.writeValue(response.getWriter(), model);
 	}
 }
