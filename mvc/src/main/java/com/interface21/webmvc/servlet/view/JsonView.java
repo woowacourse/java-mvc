@@ -15,6 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JsonView implements View {
 
+	public JsonView() {
+	}
+
 	@Override
 	public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
@@ -35,7 +38,7 @@ public class JsonView implements View {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		if (results.size() == 1) {
-			return (String)results.values().iterator().next();
+			return results.values().iterator().next().toString();
 		}
 
 		return objectMapper.writeValueAsString(results);
