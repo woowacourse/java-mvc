@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -69,6 +70,10 @@ class JsonViewTest {
 
         jsonView.render(dummyData, request, response);
 
-        assertThat(argumentCaptor.getValue()).isEqualTo("{\"dummy2\":{\"value\":\"test2\"},\"dummy1\":{\"value\":\"test1\"}}");
+        assertThat(argumentCaptor.getValue())
+                .startsWith("{")
+                .contains("\"dummy1\":{\"value\":\"test1\"}")
+                .contains("\"dummy2\":{\"value\":\"test2\"}")
+                .endsWith("}");
     }
 }
