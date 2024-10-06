@@ -1,9 +1,9 @@
 package di.stage3.context;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -16,49 +16,42 @@ class DIContainer {
 
     public DIContainer(final Set<Class<?>> classes) {
         this.beans = new HashSet<>();
-        initializeBean(classes);
+        initializeBeans(classes);
     }
 
-    private void initializeBean(Set<Class<?>> beanClasses) {
-        Queue<Class<?>> queue = new LinkedList<>(beanClasses);
-        while (!queue.isEmpty()) {
-            Class<?> beanClass = queue.poll();
-            Object bean = initializeBean(beanClass);
-            if (bean == null) {
-                queue.add(beanClass);
-                continue;
-            }
-            beans.add(bean);
+    private void initializeBeans(Set<Class<?>> beanClasses) {
+        for (Class<?> beanClass : beanClasses) {
+            beans.add(createBean(beanClass));
+        }
+        for (Object bean : beans) {
+            injectBeanAtField(bean);
         }
     }
 
-    private Object initializeBean(Class<?> beanClass) {
-        Object bean = getBean(beanClass);
-        if (bean != null) {
-            return bean;
-        }
-
-        Constructor<?>[] constructors = beanClass.getDeclaredConstructors();
-        if (constructors.length == 0) {
-            return null;
-        }
-
-        Constructor<?> constructor = constructors[0]; // 생성자는 1개만 있다고 가정
-        Class<?>[] parameterTypes = constructor.getParameterTypes();
-        Object[] parameters = new Object[parameterTypes.length];
+    private Object createBean(Class<?> beanClass) {
         try {
-            for (int i = 0; i < parameterTypes.length; i++) {
-                Object parameter = initializeBean(parameterTypes[i]);
-                if (parameter == null) {
-                    return null;
-                }
-                parameters[i] = parameter;
-            }
-            bean = constructor.newInstance(parameters);
+            Constructor<?> constructor = beanClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
         } catch (Exception e) {
             throw new RuntimeException("해당 빈을 만드는 데 실패했습니다." + beanClass.getName(), e);
         }
-        return bean;
+    }
+
+    private void injectBeanAtField(Object bean) {
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            Object fieldBean = getBean(field.getType());
+            if (Modifier.isStatic(field.getModifiers()) || fieldBean == null) {
+                continue;
+            }
+            try {
+                field.setAccessible(true);
+                field.set(bean, fieldBean);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("필드 주입에 실패했습니다: " + field.getName(), e);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
