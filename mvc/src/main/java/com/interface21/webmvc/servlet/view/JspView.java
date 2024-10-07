@@ -2,8 +2,10 @@ package com.interface21.webmvc.servlet.view;
 
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,19 +23,22 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request,
-                       final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
+                response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+                return;
+            }
+
+            model.keySet().forEach(key -> {
+                log.debug("attribute name : {}, value : {}", key, model.get(key));
+                request.setAttribute(key, model.get(key));
+            });
+
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+            requestDispatcher.forward(request, response);
+        } catch (ServletException | IOException e) {
+            throw new RuntimeException("failed to render JSP view.", e);
         }
-
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
-
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
