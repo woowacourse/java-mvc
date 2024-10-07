@@ -39,7 +39,6 @@ class DIContainer {
             if (isFieldInjected(bean, field)) {
                 continue;
             }
-            field.setAccessible(true);
             injectField(bean, field);
         }
 
