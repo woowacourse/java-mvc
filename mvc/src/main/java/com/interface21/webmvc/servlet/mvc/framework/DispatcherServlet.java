@@ -44,16 +44,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            HandlerAdapter handlerAdapter = handlerMappingAdapters.stream()
-                    .map(handlerMappingAdapter -> handlerMappingAdapter.getHandler(request))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow(() -> new NoMatchedHandlerException(request));
+            HandlerAdapter handlerAdapter = getHandlerAdapter(request);
             ModelAndView modelAndView = handlerAdapter.handle(request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
+    }
+
+    private HandlerAdapter getHandlerAdapter(HttpServletRequest request) {
+        return handlerMappingAdapters.stream()
+                .map(handlerMappingAdapter -> handlerMappingAdapter.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new NoMatchedHandlerException(request));
     }
 }
