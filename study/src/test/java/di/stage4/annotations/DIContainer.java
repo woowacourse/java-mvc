@@ -1,12 +1,14 @@
 package di.stage4.annotations;
 
+import di.ConsumerWrapper;
+import di.FunctionWrapper;
 import java.lang.reflect.Constructor;
-import java.util.HashSet;
+import java.lang.reflect.Field;
 import java.util.Set;
-import org.reflections.Reflections;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import reflection.annotation.Controller;
-import reflection.annotation.Repository;
-import reflection.annotation.Service;
 
 /**
  * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
@@ -16,64 +18,68 @@ class DIContainer {
     private final Set<Object> beans;
 
     public DIContainer(final Set<Class<?>> classes) {
-        this.beans = new HashSet<>();
-        for (Class<?> aClass : classes) {
-            for (Class<?> anInterface : aClass.getInterfaces()) {
-                beans.add(anInterface);
+        this.beans = createBeans(classes);
+        this.beans.forEach(this::setFields);
+    }
+
+    // 기본 생성자로 빈을 생성한다.
+    private Set<Object> createBeans(final Set<Class<?>> classes) {
+        return classes.stream()
+                .filter(this::isBeanObject)
+                .map(this::createBean)
+                .collect(Collectors.toSet());
+    }
+
+    private boolean isBeanObject(Class<?> aClass) {
+        System.out.println(aClass.getName());
+        return aClass.isAnnotationPresent(Controller.class) || aClass.isAnnotationPresent(Service.class) ||
+                aClass.isAnnotationPresent(Repository.class);
+    }
+
+    private Object createBean(Class<?> aClass) {
+        Constructor<?> constructor = aClass.getDeclaredConstructors()[0];
+        constructor.setAccessible(true);
+        Function<Object, Object> functionWrapper = FunctionWrapper.apply(
+                function -> constructor.newInstance()
+        );
+        return functionWrapper.apply(constructor);
+    }
+
+    // 빈 내부에 선언된 필드를 각각 셋팅한다.
+    // 각 필드에 빈을 대입(assign)한다.
+    private void setFields(final Object bean) {
+        System.out.println("필드실행");
+        Field[] declaredFields = bean.getClass().getDeclaredFields();
+        for (Field declaredField : declaredFields) {
+            Class<?> type = declaredField.getType();
+            declaredField.setAccessible(true);
+            for (Object candidateBean : beans) {
+                System.out.println("빈찾기");
+                System.out.println(candidateBean.getClass().getName());
+                if(type.isInstance(candidateBean)){
+                    System.out.println("후보찾움");
+                    Consumer<Object> fieldInjector = ConsumerWrapper.accept(
+                            injectableBean -> declaredField.set(bean, injectableBean)
+                    );
+                    fieldInjector.accept(candidateBean);
+                }
             }
-            beans.add(aClass);
         }
     }
 
-    public static DIContainer createContainerForPackage(final String rootPackageName) {
-        Reflections reflections = new Reflections(rootPackageName);
-        Set<Class<?>> typesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
-        Set<Class<?>> typesAnnotatedWithService = reflections.getTypesAnnotatedWith(Service.class);
-        Set<Class<?>> typesAnnotatedWithRepository = reflections.getTypesAnnotatedWith(Repository.class, true);
-        return null;
+    public static DIContainer createContextForPackage(final String rootPackageName) {
+        return new DIContainer(ClassPathScanner.getAllClassesInPackage(rootPackageName));
     }
 
+    // 빈 컨텍스트(DI)에서 관리하는 빈을 찾아서 반환한다.
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
-        try {
-            if (beans.contains(aClass)) {
-                // 인터페이스 일 경우 구현체를 찾아 인스턴스 반환
-                if (aClass.isInterface()) {
-                    System.out.println("인터페이스다:" + aClass.getName());
-                    for (Object bean : beans) {
-                        Class<?> bClass = (Class<?>) bean;
-                        Class<?>[] interfaces = bClass.getInterfaces();
-                        for (Class<?> anInterface : interfaces) {
-                            if (anInterface.getName() == aClass.getName()) {
-                                System.out.println("구현체 찾음");
-                                return (T) getBean(bClass);
-                            }
-                        }
-                    }
-                }
-
-                // 클래스 일 경우 인스턴스 반환
-                for (Constructor<?> constructor : aClass.getConstructors()) {
-                    int parameterCount = constructor.getParameterCount();
-                    System.out.println(aClass.getName() + ", paramCount = " + parameterCount);
-                    if (parameterCount == 0) {
-//                        return (T) constructor.newInstance();
-                        Object instance = constructor.newInstance();
-                    }
-
-                    // 파라미터타입들
-                    Object[] classes = new Object[parameterCount];
-                    Class<?>[] parameterTypes = constructor.getParameterTypes();
-                    for (int i = 0; i < parameterCount; i++) {
-                        System.out.println(parameterTypes[i]);
-                        classes[i] = getBean(parameterTypes[i]);
-                    }
-                    return (T) constructor.newInstance(classes);
-                }
+        for (Object bean : beans) {
+            if (aClass.isInstance(bean)) {
+                return (T) bean;
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
         return null;
     }
+
 }
