@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +30,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappingAdapters = List.of(
-                new AnnotationHandlerMappingAdapter(basePackage)
-        );
-        for (HandlerMappingAdapter handlerMappingAdapter : handlerMappingAdapters) {
-            handlerMappingAdapter.initialize();
-        }
+        handlerMappingAdapters = Stream.of(new AnnotationHandlerMappingAdapter(basePackage))
+                .map(adapter -> {
+                    adapter.initialize();
+                    return (HandlerMappingAdapter) adapter;
+                }).toList();
     }
 
     @Override
