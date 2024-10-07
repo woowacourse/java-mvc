@@ -19,8 +19,6 @@ public class AnnotationHandlerMappingAdapter implements HandlerMappingAdapter {
     }
 
     @Override
-    //todo Optional??
-    //지금은 예외가 터질거임
     public HandlerAdapter getHandler(HttpServletRequest request) {
         HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(request);
         if (handlerExecution == null) {
