@@ -1,5 +1,6 @@
-package com.techcourse;
+package com.techcourse.dispatcherServlet;
 
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

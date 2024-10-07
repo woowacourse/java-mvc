@@ -26,6 +26,6 @@ class Stage4Test {
 
     private static DIContainer createDIContainer() {
         final var rootPackageName = Stage4Test.class.getPackage().getName();
-        return DIContainer.createContainerForPackage(rootPackageName);
+        return DIContainer.createContextForPackage(rootPackageName);
     }
 }
