@@ -22,16 +22,19 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws IOException {
+        final Object value = convertToJson(model);
 
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        final String value = convertToJson(model);
-        response.getWriter().write(value);
+        write(response, value);
     }
 
-    private String convertToJson(final Map<String, ?> model) throws JsonProcessingException {
+    private void write(final HttpServletResponse response, final Object value) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.getWriter().write(value.toString());
+    }
+
+    private Object convertToJson(final Map<String, ?> model) throws JsonProcessingException {
         if (hasOnlyOneKey(model)) {
-            final Object value = model.values().iterator().next();
-            return mapper.writeValueAsString(value);
+            return model.values().iterator().next();
         }
         return mapper.writeValueAsString(model);
     }
