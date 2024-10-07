@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView execute(HttpServletRequest request, HttpServletResponse response) {
         User user = new User(2,
                 request.getParameter("account"),
