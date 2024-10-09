@@ -25,7 +25,7 @@ class DIContainer {
         Set<Class<?>> classes = ClassPathScanner.getAllClassesInPackage(rootPackageName);
         return classes.stream()
                 .filter(DIContainer::hasServiceOrRepositoryAnnotation)
-                .collect(Collectors.collectingAndThen(Collectors.toSet(), DIContainer::new));
+                .collect(Collectors.collectingAndThen(Collectors.toUnmodifiableSet(), DIContainer::new));
     }
 
     private static boolean hasServiceOrRepositoryAnnotation(Class<?> aClass) {
@@ -37,7 +37,7 @@ class DIContainer {
                 .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
                 .peek(constructor -> constructor.setAccessible(true))
                 .map(FunctionWrapper.apply(Constructor::newInstance))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private void assignFields(Object bean) {

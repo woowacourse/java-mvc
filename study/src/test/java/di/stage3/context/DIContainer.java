@@ -25,7 +25,7 @@ class DIContainer {
                 .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
                 .peek(constructor -> constructor.setAccessible(true))
                 .map(FunctionWrapper.apply(Constructor::newInstance))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private void assignFields(Object bean) {
