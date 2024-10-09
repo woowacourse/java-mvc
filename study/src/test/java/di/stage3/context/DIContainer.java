@@ -24,14 +24,21 @@ class DIContainer {
         return classes.stream()
                 .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
                 .peek(constructor -> constructor.setAccessible(true))
-                .map(FunctionWrapper.apply(Constructor::newInstance))
+                .map(FunctionWrapper.apply(constructor -> {
+                    Object instance = constructor.newInstance();
+                    constructor.setAccessible(false);
+                    return instance;
+                }))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
     private void assignFields(Object bean) {
         Arrays.stream(bean.getClass().getDeclaredFields())
                 .peek(field -> field.setAccessible(true))
-                .forEach(field -> assignField(field, bean));
+                .forEach(field -> {
+                    assignField(field, bean);
+                    field.setAccessible(false);
+                });
     }
 
     private void assignField(Field field, Object bean) {

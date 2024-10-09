@@ -1,9 +1,7 @@
 package di.stage4.annotations;
 
 import di.ConsumerWrapper;
-
 import di.FunctionWrapper;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Set;
@@ -36,7 +34,11 @@ class DIContainer {
         return classes.stream()
                 .map(FunctionWrapper.apply(Class::getDeclaredConstructor))
                 .peek(constructor -> constructor.setAccessible(true))
-                .map(FunctionWrapper.apply(Constructor::newInstance))
+                .map(FunctionWrapper.apply(constructor -> {
+                    Object instance = constructor.newInstance();
+                    constructor.setAccessible(false);
+                    return instance;
+                }))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
@@ -44,7 +46,10 @@ class DIContainer {
         Arrays.stream(bean.getClass().getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Inject.class))
                 .peek(field -> field.setAccessible(true))
-                .forEach(field -> assignField(field, bean));
+                .forEach(field -> {
+                    assignField(field, bean);
+                    field.setAccessible(false);
+                });
     }
 
     private void assignField(Field field, Object bean) {
