@@ -13,8 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var user = new User(2,
+    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+        User user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
@@ -23,7 +23,7 @@ public class RegisterController {
         return ModelAndView.createJspView("redirect:/index.jsp");
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
         return ModelAndView.createJspView("/register.jsp");
     }

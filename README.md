@@ -51,3 +51,17 @@
 ### 미션 
 
 - [x] Legacy MVC와 @MVC 통합
+
+<br>
+
+## 3단계
+
+### 학습 테스트
+
+### 미션
+
+- [x] JsonView 클래스 구현
+- [x] Legacy MVC 제거
+  - [x] app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+  - [x] asis 패키지에 있는 레거시 코드 삭제
+  - [x] DispatcherServlet을 mvc 패키지로 이동
