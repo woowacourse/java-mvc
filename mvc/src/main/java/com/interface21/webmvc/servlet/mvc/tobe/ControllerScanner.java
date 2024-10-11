@@ -11,8 +11,8 @@ public class ControllerScanner {
     private final Map<Class<?>, Object> controllers;
 
 
-    public ControllerScanner(Object... objects) {
-        this.reflections = new Reflections(objects);
+    public ControllerScanner(Object... basePackages) {
+        this.reflections = new Reflections(basePackages);
         this.controllers = mapControllers();
     }
 

@@ -7,10 +7,10 @@ import static org.mockito.Mockito.mock;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.techcourse.controller.LoginViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,22 +23,7 @@ class HandlerMappingRegistryTest {
     @BeforeEach
     void setUp() {
         handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
-    }
-
-    @DisplayName("ManualHandlerMapping을 찾을 수 있다.")
-    @Test
-    void getHandler_Manual() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        doReturn("/login/view")
-                .when(request).getRequestURI();
-        doReturn("GET")
-                .when(request).getMethod();
-
-        assertThat(handlerMappingRegistry.getHandler(request))
-                .containsInstanceOf(LoginViewController.class);
     }
 
     @DisplayName("AnnotationHandlerMapping을 찾을 수 있다.")
