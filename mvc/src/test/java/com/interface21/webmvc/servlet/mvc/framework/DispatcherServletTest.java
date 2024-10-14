@@ -1,12 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.framework;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.interface21.webmvc.servlet.mvc.NoMatchedHandlerException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,8 +44,8 @@ class DispatcherServletTest {
         }
 
         @Test
-        @DisplayName("모든 컨트롤러 모두 처리할 수 없는 요청에는 예외가 발생한다.")
-        void noMatchedHandlerTest() {
+        @DisplayName("모든 컨트롤러 모두 처리할 수 없는 요청에는 404 응답이 반환된다.")
+        void noMatchedHandlerTest() throws ServletException {
             final var request = mock(HttpServletRequest.class);
             final var response = mock(HttpServletResponse.class);
             final var requestDispatcher = mock(RequestDispatcher.class);
@@ -55,9 +54,9 @@ class DispatcherServletTest {
             when(request.getMethod()).thenReturn("GET");
             when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
 
-            assertThatThrownBy(() -> dispatcherServlet.service(request, response))
-                    .isInstanceOf(ServletException.class)
-                    .hasCauseExactlyInstanceOf(NoMatchedHandlerException.class);
+            dispatcherServlet.service(request, response);
+
+            verify(response).setStatus(404);
         }
     }
 }

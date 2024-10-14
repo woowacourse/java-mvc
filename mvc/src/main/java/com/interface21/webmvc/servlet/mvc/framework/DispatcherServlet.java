@@ -60,7 +60,7 @@ public class DispatcherServlet extends HttpServlet {
     private void renderToErrorPage(HttpServletRequest request, HttpServletResponse response) {
         try {
             response.setStatus(404);
-            new JspView("/404.jsp").render(new HashMap<>(), request, response);
+            new JspView("/404").render(new HashMap<>(), request, response);
         } catch (Exception e) {
             throw new CantRenderException(e);
         }

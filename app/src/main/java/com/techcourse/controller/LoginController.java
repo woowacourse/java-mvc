@@ -22,7 +22,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index"));
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -30,16 +30,16 @@ public class LoginController {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
+                .orElse(new ModelAndView(new JspView("redirect:/401")));
     }
 
     private ModelAndView login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index"));
         }
-        return new ModelAndView(new JspView("redirect:/401.jsp"));
+        return new ModelAndView(new JspView("redirect:/401"));
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
@@ -47,9 +47,9 @@ public class LoginController {
         JspView view = UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new JspView("redirect:/index.jsp");
+                    return new JspView("redirect:/index");
                 })
-                .orElse(new JspView("/login.jsp"));
+                .orElse(new JspView("/login"));
         return new ModelAndView(view);
     }
 }

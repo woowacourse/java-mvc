@@ -16,7 +16,7 @@ public class JspView implements View {
     private final String viewName;
 
     public JspView(String viewName) {
-        this.viewName = viewName;
+        this.viewName = viewName + ".jsp";
     }
 
     @Override
