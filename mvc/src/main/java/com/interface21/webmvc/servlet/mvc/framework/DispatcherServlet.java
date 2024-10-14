@@ -1,14 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.framework;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.CantRenderException;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingAdapter;
 import com.interface21.webmvc.servlet.mvc.NoMatchedHandlerException;
 import com.interface21.webmvc.servlet.mvc.annotation.AnnotationHandlerMappingAdapter;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -46,9 +49,20 @@ public class DispatcherServlet extends HttpServlet {
             HandlerAdapter handlerAdapter = getHandlerAdapter(request);
             ModelAndView modelAndView = handlerAdapter.handle(request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
+        } catch (NoMatchedHandlerException e) {
+            renderToErrorPage(request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
+        }
+    }
+
+    private void renderToErrorPage(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            response.setStatus(404);
+            new JspView("/404.jsp").render(new HashMap<>(), request, response);
+        } catch (Exception e) {
+            throw new CantRenderException(e);
         }
     }
 
