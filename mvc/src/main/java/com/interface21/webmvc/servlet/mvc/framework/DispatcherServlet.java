@@ -31,10 +31,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingAdapters = Stream.of(new AnnotationHandlerMappingAdapter(basePackage))
-                .map(adapter -> {
-                    adapter.initialize();
-                    return (HandlerMappingAdapter) adapter;
-                }).toList();
+                .peek(AnnotationHandlerMappingAdapter::initialize)
+                .map(adapter -> (HandlerMappingAdapter) adapter)
+                .toList();
     }
 
     @Override
