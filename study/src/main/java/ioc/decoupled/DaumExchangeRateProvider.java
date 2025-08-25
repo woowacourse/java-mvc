@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.util.regex.Pattern;
 
 public class DaumExchangeRateProvider implements ExchangeRateProvider {
@@ -41,7 +41,7 @@ public class DaumExchangeRateProvider implements ExchangeRateProvider {
 
     private static HttpURLConnection connect(final String url) {
         try {
-            final var httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
+            final var httpURLConnection = (HttpURLConnection) URI.create(url).toURL().openConnection();
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.setRequestProperty("referer", DAUM_EXCHANGES_URL);
             int responseCode = httpURLConnection.getResponseCode();
