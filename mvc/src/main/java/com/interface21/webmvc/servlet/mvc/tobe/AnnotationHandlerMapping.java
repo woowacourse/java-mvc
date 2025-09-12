@@ -31,14 +31,14 @@ public class AnnotationHandlerMapping {
         for (final Object basePackage : basePackage) {
             final Reflections reflections = new Reflections(basePackage);
             final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            
+
             initializeControllers(controllers);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
     // 2. 각 Controller마다 객체 생성 및 메서드 목록을 가져와서
-    private void initializeControllers(Set<Class<?>> controllers) {
+    private void initializeControllers(final Set<Class<?>> controllers) {
         for (Class<?> controller : controllers) {
             try {
                 initializeMethods(controller.getDeclaredConstructor().newInstance(), controller.getMethods()); // Controller 세팅
@@ -49,26 +49,26 @@ public class AnnotationHandlerMapping {
     }
 
     // 3. 각 메서드마다
-    private void initializeMethods(Object controller, Method[] methods) {
+    private void initializeMethods(final Object controller, final Method[] methods) {
         for (Method method : methods) {
             initializeMethod(controller, method);
         }
     }
 
     // 4. @RequestMapping을 확인한 후
-    private void initializeMethod(Object controller, Method method) {
+    private void initializeMethod(final Object controller, final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping == null) {
             return;
         }
 
-        String url = requestMapping.value(); // 5. 해당 요청 경로와
-        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+        final String url = requestMapping.value(); // 5. 해당 요청 경로와
+        final RequestMethod[] requestMethods = getRequestMethods(requestMapping);
         initializeHandlerExecution(controller, method, requestMethods, url);
     }
 
     // 6. http 메서드 목록을 가져온 다음에
-    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
             requestMethods = RequestMethod.values();
@@ -77,19 +77,19 @@ public class AnnotationHandlerMapping {
         return requestMethods;
     }
 
-    private void initializeHandlerExecution(Object controller, Method method, RequestMethod[] requestMethods, String url) {
+    private void initializeHandlerExecution(final Object controller, final Method method, final RequestMethod[] requestMethods, final String url) {
         for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod); // 7. url과 http method로 key를 만들어서
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method); // 8. 매핑된 객체를 실행하는 핸들러 세팅 후
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod); // 7. url과 http method로 key를 만들어서
+            final HandlerExecution handlerExecution = new HandlerExecution(controller, method); // 8. 매핑된 객체를 실행하는 핸들러 세팅 후
             handlerExecutions.put(handlerKey, handlerExecution); // 9. map 목록에 추가!
         }
     }
 
     // 실제로 요청이 들어온다면
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI(); // URI를 가져오고
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod()); // Http Method를 확인한 다음에
-        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod); // 두 정보를 가지고 key를 만들어서
+        final String requestURI = request.getRequestURI(); // URI를 가져오고
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod()); // Http Method를 확인한 다음에
+        final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod); // 두 정보를 가지고 key를 만들어서
 
         return handlerExecutions.get(handlerKey); // 핸들러 객체를 가져오기!!
     }
