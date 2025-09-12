@@ -3,18 +3,18 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -44,7 +44,7 @@ public class AnnotationHandlerMapping {
     private Map<HandlerKey, HandlerExecution> findHandlerExecutions() throws Exception {
         // basePackages에서 Controller 어노테이션이 붙은 클래스 찾기
         Set<Class<?>> controllerClasses = new Reflections(basePackages)
-                        .getTypesAnnotatedWith(Controller.class);
+                .getTypesAnnotatedWith(Controller.class);
 
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
