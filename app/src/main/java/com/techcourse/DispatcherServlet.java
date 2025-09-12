@@ -56,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("요청을 처리할 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("cannot handle request"));
     }
 
     private ModelAndView executeHandler(final Object handler, final HttpServletRequest request,
