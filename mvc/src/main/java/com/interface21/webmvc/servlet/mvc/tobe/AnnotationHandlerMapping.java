@@ -1,11 +1,10 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -23,7 +22,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         return null;
     }
 }
