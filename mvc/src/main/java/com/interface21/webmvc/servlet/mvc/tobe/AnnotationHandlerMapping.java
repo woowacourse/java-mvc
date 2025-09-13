@@ -22,7 +22,7 @@ public class AnnotationHandlerMapping {
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new ConcurrentHashMap<>();;
+        this.handlerExecutions = new ConcurrentHashMap<>();
     }
 
     /**
