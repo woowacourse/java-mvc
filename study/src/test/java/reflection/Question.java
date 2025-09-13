@@ -13,6 +13,7 @@ public class Question {
 
     private String contents;
 
+
     private Date createdDate;
 
     private int countOfComment;
