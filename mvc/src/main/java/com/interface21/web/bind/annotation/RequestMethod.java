@@ -10,7 +10,7 @@ public enum RequestMethod {
     private static final Map<String, RequestMethod> lookup = new HashMap<>();
 
     static {
-        for (RequestMethod method : values()) {
+        for (final var method : values()) {
             lookup.put(method.name(), method);
         }
     }
