@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -33,8 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final var modelAndView = new ModelAndView(new JspView(viewName));
+            final var modelAndView = controller.execute(request, response);
             final var view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
