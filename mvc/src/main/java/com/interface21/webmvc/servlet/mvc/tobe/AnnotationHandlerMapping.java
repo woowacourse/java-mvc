@@ -26,28 +26,14 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            final Constructor<?> constructor = ReflectionUtils.accessibleConstructor(controller);
-            final Object handler = constructor.newInstance();
-            final Method[] methods = controller.getDeclaredMethods();
-            for (Method method : methods) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-                final String url = requestMapping.value();
-                final RequestMethod[] requestMethods = requestMapping.method();
-                for (RequestMethod requestMethod : requestMethods) {
-                    final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                    final HandlerExecution handlerExecution = new HandlerExecution(method, handler);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-            }
+    public void initialize() {
+        try {
+            final Set<Class<?>> controllers = findControllerClasses();
+            initHandlerExecutions(controllers);
+            log.info("Initialized AnnotationHandlerMapping!");
+        } catch (final Exception e) {
+            log.error("Failed to initialize AnnotationHandlerMapping");
         }
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -55,5 +41,43 @@ public class AnnotationHandlerMapping {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), method);
 
         return handlerExecutions.get(handlerKey);
+    }
+
+    private Set<Class<?>> findControllerClasses() {
+        final Reflections reflections = new Reflections(basePackage);
+
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private void initHandlerExecutions(final Set<Class<?>> controllers) throws Exception {
+        for (Class<?> controller : controllers) {
+            initHandlerExecution(controller);
+        }
+    }
+
+    private void initHandlerExecution(final Class<?> controller) throws Exception {
+        final Constructor<?> constructor = ReflectionUtils.accessibleConstructor(controller);
+        final Object handler = constructor.newInstance();
+        final Method[] methods = controller.getDeclaredMethods();
+        for (Method method : methods) {
+            initHandlerExecutionByMethod(method, handler);
+        }
+    }
+
+    private void initHandlerExecutionByMethod(
+            final Method method,
+            final Object handler
+    ) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return;
+        }
+        final String url = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(method, handler);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 }
