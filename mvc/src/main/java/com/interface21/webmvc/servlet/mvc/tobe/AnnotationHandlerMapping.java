@@ -3,10 +3,13 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,11 +45,8 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void registerHandlerMethods(
-            final Object controller,
-            final Method method
-    ) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
+    private void registerHandlerMethods(final Object controller, final Method method) {
+        if (!isHandlerMethodCandidate(method)) {
             return;
         }
 
@@ -57,6 +57,21 @@ public class AnnotationHandlerMapping {
         for (final var requestMethod : requestMethods) {
             registerHandler(url, requestMethod, controller, method);
         }
+    }
+
+    private boolean isHandlerMethodCandidate(final Method method) {
+        return method.isAnnotationPresent(RequestMapping.class)
+                && Modifier.isPublic(method.getModifiers())
+                && isValidHandlerMethod(method);
+    }
+
+    private boolean isValidHandlerMethod(final Method method) {
+        final var params = method.getParameterTypes();
+        if (params.length != 2 || params[0] != HttpServletRequest.class || params[1] != HttpServletResponse.class) {
+            return false;
+        }
+
+        return method.getReturnType() == ModelAndView.class;
     }
 
     private void registerHandler(
