@@ -87,6 +87,9 @@ public class AnnotationHandlerMapping {
     private void registerHandlerExecution(final Method method, final RequestMethod[] requestMethods, final String url, final Object controller) {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("이미 존재하는 HandlerKey 입니다.");
+            }
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
