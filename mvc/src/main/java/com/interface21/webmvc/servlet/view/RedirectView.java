@@ -6,12 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Map;
 
-public class JspView implements View {
+public class RedirectView implements View {
 
-    private final String viewName;
+    private final String redirectUrl;
 
-    public JspView(final String viewName) {
-        this.viewName = viewName;
+    public RedirectView(final String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 
     @Override
@@ -20,9 +20,6 @@ public class JspView implements View {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        model.forEach(request::setAttribute);
-        final var dispatcher = request.getRequestDispatcher(viewName);
-
-        dispatcher.forward(request, response);
+        response.sendRedirect(redirectUrl);
     }
 }
