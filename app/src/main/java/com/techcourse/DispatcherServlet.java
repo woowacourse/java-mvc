@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMapping = new AnnotationHandlerMapping();
+        handlerMapping = new AnnotationHandlerMapping("com.techcourse");
         handlerMapping.initialize();
     }
 
@@ -30,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handlerExecution = handlerMapping.getHandler(request);
+            final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
             final var modelAndView = handlerExecution.handle(request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
