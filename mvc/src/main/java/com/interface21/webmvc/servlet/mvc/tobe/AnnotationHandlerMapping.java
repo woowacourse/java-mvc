@@ -68,7 +68,7 @@ public class AnnotationHandlerMapping {
         for (final var requestMethod : requestMethods) {
             final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             final var handlerExecution = new HandlerExecution(handler, handlerMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
         }
     }
 
