@@ -1,6 +1,8 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,19 +28,39 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final var jspView = new JspView(viewName);
-            final var modelAndView = new ModelAndView(jspView);
-            jspView.render(modelAndView.getModel(), request, response);
+            final ModelAndView modelAndView = invokeHandler(controller, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private ModelAndView invokeHandler(
+            final Object handler,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        if (handler instanceof Controller) {
+            final String viewName = ((Controller) handler).execute(request, response);
+            final JspView jspView = new JspView(viewName);
+
+            return new ModelAndView(jspView);
+        }
+
+        if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
+        }
+
+        throw new IllegalArgumentException("Invalid type of Handler");
     }
 }
