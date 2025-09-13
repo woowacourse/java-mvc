@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 컨트롤러가 처리한 결과 데이터(Model)와 그 데이터를 보여줄 뷰 정보를 함께 담음
+ */
 public class ModelAndView {
 
     private final View view;
