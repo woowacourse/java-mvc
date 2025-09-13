@@ -41,7 +41,9 @@ public class AnnotationHandlerMapping {
                 final var url = annotation.value();
                 final var requestMethods = annotation.method();
                 for (RequestMethod requestMethod : requestMethods) {
-                    handlerExecutions.put(new HandlerKey(url, requestMethod), new HandlerExecution(controllerInstance, method));
+                    final var handlerKey = new HandlerKey(url, requestMethod);
+                    if (handlerExecutions.containsKey(handlerKey)) throw new IllegalStateException("HandlerKey Conflict For " + handlerKey);
+                    handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
                 }
             }
         }
