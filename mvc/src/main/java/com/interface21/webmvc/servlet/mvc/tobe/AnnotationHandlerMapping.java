@@ -61,12 +61,22 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void addHandlerMapping(final Object handler, final Method method) throws Exception {
-        final var requestMapping = method.getAnnotation(RequestMapping.class);
-        for (final var httpMethod : requestMapping.method()) {
-            final var handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
-            final var handlerExecution = new HandlerExecution(handler, method);
+    private void addHandlerMapping(final Object handler, final Method handlerMethod) throws Exception {
+        final var requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
+        final var requestMethods = scanRequestMethods(requestMapping);
+
+        for (final var requestMethod : requestMethods) {
+            final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            final var handlerExecution = new HandlerExecution(handler, handlerMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
+
+    private RequestMethod[] scanRequestMethods(final RequestMapping requestMapping) {
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMapping.method();
+    }
+
 }
