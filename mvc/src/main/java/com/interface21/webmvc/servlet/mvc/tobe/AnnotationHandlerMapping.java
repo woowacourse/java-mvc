@@ -32,13 +32,17 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        for (Object basePackage : basePackages) {
-            Reflections reflections = new Reflections(basePackage);
-            // @Controller 어노테이션이 붙은 클래스들 가져오기
-            final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            final Map<Class<?>, Object> controllers = createControllerInstances(controllerClasses);
-            initializeHandlerExecutions(controllers);
+    public void initialize() {
+        try {
+            for (Object basePackage : basePackages) {
+                Reflections reflections = new Reflections(basePackage);
+                // @Controller 어노테이션이 붙은 클래스들 가져오기
+                final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+                final Map<Class<?>, Object> controllers = createControllerInstances(controllerClasses);
+                initializeHandlerExecutions(controllers);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("AnnotationHandlerMapping 초기화에 실패했습니다.", e);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
