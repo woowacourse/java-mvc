@@ -13,11 +13,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+/**
+ * HTTP 요청을 처리할 컨트롤러 메서드를 등록하고 찾아주는 매핑 클래스.
+ *
+ * - URL + HTTP Method 조합을 기준으로 요청을 컨트롤러 메서드에 매핑한다.
+ * - 스캔 대상은 @Controller 애노테이션이 붙은 클래스만 해당된다.
+ * - 매핑된 컨트롤러 메서드는 이후 Dispatcher 역할을 하는 컴포넌트가 호출하여 실제 요청을 처리한다.
+ */
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackage; // 내가 만든 컨트롤러들이 들어있는 패키지 위치
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
