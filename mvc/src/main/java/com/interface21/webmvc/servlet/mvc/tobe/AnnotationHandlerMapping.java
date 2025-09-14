@@ -74,12 +74,20 @@ public class AnnotationHandlerMapping {
         }
 
         for (RequestMethod requestMethod : resolveRequestMethods(mapping)) {
-            HandlerKey handlerKey = new HandlerKey(mapping.value(), requestMethod);
+            HandlerKey handlerKey = new HandlerKey(getPath(mapping), requestMethod);
             if (handlerExecutions.containsKey(handlerKey)) {
                 throw new IllegalStateException("중복 매핑 발견: " + handlerKey);
             }
             handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
         }
+    }
+
+    private String getPath(RequestMapping mapping) {
+        String path = mapping.value();
+        if (path.isBlank()) {
+            return "/";
+        }
+        return mapping.value();
     }
 
     private RequestMethod[] resolveRequestMethods(RequestMapping mapping) {
