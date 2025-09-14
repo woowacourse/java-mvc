@@ -1,6 +1,10 @@
 package reflection;
 
+import org.junit.jupiter.api.Test;
+
 public class Junit3Test {
+
+    @Test
     public void test1() throws Exception {
         System.out.println("Running Test1");
     }
