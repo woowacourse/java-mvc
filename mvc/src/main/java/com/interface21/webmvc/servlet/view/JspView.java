@@ -21,27 +21,28 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        model.keySet().forEach(key -> {
-            log.debug("attribute name : {}, value : {}", key, model.get(key));
-            request.setAttribute(key, model.get(key));
-        });
+    public void render(
+            final Map<String, ?> model,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        model.keySet()
+                .forEach(key -> {
+                    log.debug("attribute name : {}, value : {}", key, model.get(key));
+                    request.setAttribute(key, model.get(key));
+                });
 
-        if(viewName.startsWith(REDIRECT_PREFIX)){
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
             String redirectUrl = viewName.substring(REDIRECT_PREFIX.length());
             response.sendRedirect(redirectUrl);
             return;
         }
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        if(requestDispatcher == null){
+        if (requestDispatcher == null) {
             request.getRequestDispatcher("/404.jsp");
         }
-        request.getRequestDispatcher(viewName).forward(request,response);
-    }
-
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        throw new UnsupportedOperationException("JspView는 렌더링 전용 뷰입니다.");
+        request.getRequestDispatcher(viewName)
+                .forward(request, response);
     }
 }
