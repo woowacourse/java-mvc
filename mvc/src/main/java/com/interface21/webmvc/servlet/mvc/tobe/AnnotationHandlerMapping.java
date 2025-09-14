@@ -43,22 +43,27 @@ public class AnnotationHandlerMapping {
                     break;
                 }
 
-                RequestMapping handlerAnnotation = method.getAnnotation(RequestMapping.class);
-                String url = handlerAnnotation.value();
-                RequestMethod[] httpMethods = handlerAnnotation.method();
-
-                for (RequestMethod httpMethod : httpMethods) {
-                    HandlerKey handlerKey = new HandlerKey(url, httpMethod);
-
-                    HandlerExecution handlerExecution = new HandlerExecution((request, response) -> {
-                        return (ModelAndView) method.invoke(handler, request, response);
-                    });
-
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
+                registerHandlerExecution(method, handler);
             }
         }
 
+    }
+
+    private void registerHandlerExecution(Method method, Object handler) {
+        RequestMapping handlerAnnotation = method.getAnnotation(RequestMapping.class);
+        String url = handlerAnnotation.value();
+        RequestMethod[] httpMethods = handlerAnnotation.method();
+
+        for (RequestMethod httpMethod : httpMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, httpMethod);
+
+            HandlerExecution handlerExecution = new HandlerExecution(
+                    (request, response) ->
+                            (ModelAndView) method.invoke(handler, request, response)
+            );
+
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
