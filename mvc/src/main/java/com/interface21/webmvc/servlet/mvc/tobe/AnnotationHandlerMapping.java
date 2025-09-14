@@ -42,7 +42,11 @@ public final class AnnotationHandlerMapping {
 
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
-        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final RequestMethod requestMethod = RequestMethod.of(request.getMethod());
+        if (requestMethod == null) {
+            log.warn("지원하지 않는 HTTP 메서드: {}", request.getMethod());
+            return null;
+        }
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
         log.debug("요청 URI: {}, Method: {}", requestURI, requestMethod);
         return handlerExecutions.get(handlerKey);
