@@ -19,10 +19,15 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+    }
+
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> clazz : types) {
@@ -31,6 +36,7 @@ public class AnnotationHandlerMapping {
                 addHandlerExecutions(clazz, handler);
             }
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void addHandlerExecutions(Class<?> clazz, Method handler) {
@@ -42,10 +48,6 @@ public class AnnotationHandlerMapping {
             HandlerKey handlerKey = new HandlerKey(mappingAnnotation.value(), requestMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(clazz, handler));
         }
-    }
-
-    public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
