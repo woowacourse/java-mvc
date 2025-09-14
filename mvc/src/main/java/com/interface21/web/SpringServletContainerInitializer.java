@@ -22,7 +22,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
             for (Class<?> waiClass : webAppInitializerClasses) {
                 try {
                     initializers.add((WebApplicationInitializer)
-                            ReflectionUtils.accessibleConstructor(waiClass).newInstance());
+                    ReflectionUtils.accessibleConstructor(waiClass).newInstance());
                 } catch (Throwable ex) {
                     throw new ServletException("Failed to instantiate WebApplicationInitializer class", ex);
                 }
