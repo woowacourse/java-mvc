@@ -27,26 +27,30 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
 
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerType : controllerTypes) {
-            Constructor<?> constructor = controllerType.getConstructor();
-            Object handler = constructor.newInstance();
-            Method[] controllerMethods = controllerType.getDeclaredMethods();
 
-            for (Method method : controllerMethods) {
-                if(!method.isAnnotationPresent(RequestMapping.class)){
-                    continue;
+        try {
+            for (Class<?> controllerType : controllerTypes) {
+                Constructor<?> constructor = controllerType.getConstructor();
+                Object handler = constructor.newInstance();
+                Method[] controllerMethods = controllerType.getDeclaredMethods();
+
+                for (Method method : controllerMethods) {
+                    if (!method.isAnnotationPresent(RequestMapping.class)) {
+                        continue;
+                    }
+
+                    registerHandlerExecution(method, handler);
                 }
-
-                registerHandlerExecution(method, handler);
             }
+        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     private void registerHandlerExecution(Method method, Object handler) {
