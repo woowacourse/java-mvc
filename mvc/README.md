@@ -4,3 +4,4 @@
 
 - [x] @RequestMapping의 URL + HTTP 메서드에 대한 실팽 Controller 클래스를 매핑할 수 있다.
 - [x] @RequestMapping에 메서드 설정이 되어 있지 않으면 모든 HTTP 메서드를 지원해야 한다.
+- [x] DispatcherServlet.class의 뷰 처리 부분을 JspView.class로 리팩터링한다.
