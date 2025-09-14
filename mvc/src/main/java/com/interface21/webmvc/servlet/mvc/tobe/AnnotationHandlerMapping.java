@@ -59,7 +59,13 @@ public class AnnotationHandlerMapping {
 
             HandlerExecution handlerExecution = new HandlerExecution(
                     (request, response) ->
-                            (ModelAndView) method.invoke(handler, request, response)
+                    {
+                        try {
+                            return (ModelAndView) method.invoke(handler, request, response);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
             );
 
             handlerExecutions.put(handlerKey, handlerExecution);

@@ -7,6 +7,5 @@ import java.lang.reflect.InvocationTargetException;
 
 public interface Handler {
 
-    ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
-            throws InvocationTargetException, IllegalAccessException;
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response);
 }
