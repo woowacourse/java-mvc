@@ -30,31 +30,37 @@ public class AnnotationHandlerMapping {
             Set<Class<?>> controllerClasses = getControllersWithBasePackage();
 
             for (Class<?> controller : controllerClasses) {
+                Object handler = controller.getConstructor().newInstance();
+
                 for (Method method : controller.getMethods()) {
-                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    if (annotation == null) {
-                        continue;
-                    }
-
-                    String value = annotation.value();
-                    RequestMethod[] requestMethods = annotation.method();
-
-                    if (requestMethods.length == 0) {
-                        requestMethods = RequestMethod.values();
-                    }
-
-                    Object handler = controller.getConstructor().newInstance();
-                    for (RequestMethod requestMethod : requestMethods) {
-                        HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                        handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
-                    }
+                    registerHandlerExecutions(method, handler);
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
             log.error("Handler 매핑 중 오류가 발생했습니다.");
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerHandlerExecutions(Method method, Object handler) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        if (annotation == null) {
+            return;
+        }
+
+        String value = annotation.value();
+        RequestMethod[] requestMethods = annotation.method();
+
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("{}: {}", handlerKey, handlerExecution);
+        }
     }
 
     private Set<Class<?>> getControllersWithBasePackage() {
