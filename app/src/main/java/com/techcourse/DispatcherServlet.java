@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -33,8 +34,8 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
             final var jspView = new JspView(viewName);
-            //FIXME : 현재는 Controller가 String을 반환하므로 model 매개변수를 null 처리
-            jspView.render(null, request, response);
+            //FIXME : 현재는 Controller가 String을 반환하므로 model 매개변수를 빈 Map 처리
+            jspView.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

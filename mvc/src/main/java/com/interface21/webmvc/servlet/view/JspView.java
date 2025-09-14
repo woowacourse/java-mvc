@@ -27,8 +27,7 @@ public class JspView implements View {
             return;
         }
 
-        //FIXME : 현재는 Controller가 String을 반환하므로 model 매개변수를 null 처리
-        //bindModelToRequest(model, request);
+        bindModelToRequest(model, request);
 
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
