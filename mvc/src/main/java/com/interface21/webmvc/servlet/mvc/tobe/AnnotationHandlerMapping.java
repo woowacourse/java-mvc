@@ -24,7 +24,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws InstantiationException, IllegalAccessException {
+    public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         for (Object base : basePackage) {
             Reflections reflections = new Reflections((String) base);
@@ -33,23 +33,42 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void addHandlerExecutions(Set<Class<?>> typesAnnotatedWith)
-            throws InstantiationException, IllegalAccessException {
-        for (Class<?> aClass : typesAnnotatedWith) {
-            Method[] methods = aClass.getMethods();
-            for (Method method : methods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    String url = requestMapping.value();
-                    RequestMethod[] httpMethod = requestMapping.method();
-                    for (RequestMethod requestMethod : httpMethod) {
-                        Object o = aClass.newInstance();
-                        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                        HandlerExecution handlerExecution = new HandlerExecution(o, method);
-                        handlerExecutions.put(handlerKey, handlerExecution);
-                    }
-                }
+    private void addHandlerExecutions(Set<Class<?>> typesAnnotatedWith) {
+        try {
+            for (Class<?> controllerClass : typesAnnotatedWith) {
+                processController(controllerClass);
             }
+        } catch (Exception e) {
+            log.error("Failed to initialize handler mappings", e);
+            throw new RuntimeException("Failed to initialize handler mappings.", e);
+        }
+    }
+
+    private void processController(Class<?> controllerClass) throws Exception {
+        Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                addMappingsForMethod(controllerInstance, method);
+            }
+        }
+    }
+
+    private void addMappingsForMethod(Object controllerInstance, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
+        RequestMethod[] httpMethods = requestMapping.method();
+
+        for (RequestMethod requestMethod : httpMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
+            }
+
+            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+            log.info("Mapped [{}] -> {}", handlerKey, method.getName());
         }
     }
 
@@ -58,7 +77,9 @@ public class AnnotationHandlerMapping {
         HandlerExecution handlerExecution = handlerExecutions.getOrDefault(handlerKey, null);
 
         if (handlerExecution == null) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException(
+                    "No handler found for " + request.getMethod() + " " + request.getRequestURI()
+            );
         }
 
         return handlerExecution;
