@@ -34,15 +34,20 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
+        String path = request.getRequestURI();
+        if(request.getContextPath() != null) {
+            path = path.substring(request.getContextPath().length());
+        }
+
         final HandlerKey requestHandlerKey = new HandlerKey(
-                request.getRequestURI(),
+                path,
                 RequestMethod.valueOf(request.getMethod())
         );
         return handlerExecutions.get(requestHandlerKey);
     }
 
     private void registerController(Class<?> controllerClass) {
-        Object controller = createControllerInstance(controllerClass);
+        final Object controller = createControllerInstance(controllerClass);
 
         Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
