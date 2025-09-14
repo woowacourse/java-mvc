@@ -9,11 +9,10 @@ import java.util.Map;
 public class JsonView implements View {
 
     @Override
-    public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
-    }
-
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return "";
+    public void render(
+            final Map<String, ?> model,
+            final HttpServletRequest request,
+            HttpServletResponse response
+    ) throws Exception {
     }
 }
