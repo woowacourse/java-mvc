@@ -38,10 +38,16 @@ public class AnnotationHandlerMapping {
 
                     String value = annotation.value();
                     RequestMethod[] requestMethods = annotation.method();
-                    HandlerKey handlerKey = new HandlerKey(value, requestMethods[0]);
-                    Object handler = controller.getConstructor().newInstance();
 
-                    handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
+                    if (requestMethods.length == 0) {
+                        requestMethods = RequestMethod.values();
+                    }
+
+                    Object handler = controller.getConstructor().newInstance();
+                    for (RequestMethod requestMethod : requestMethods) {
+                        HandlerKey handlerKey = new HandlerKey(value, requestMethod);
+                        handlerExecutions.put(handlerKey, new HandlerExecution(handler, method));
+                    }
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
