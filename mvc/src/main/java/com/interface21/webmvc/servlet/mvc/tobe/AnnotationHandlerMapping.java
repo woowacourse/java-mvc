@@ -26,33 +26,54 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
         for (Class<?> controller : controllers) {
             final Method[] methods = controller.getDeclaredMethods();
-            for (Method method : methods) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-
-                if (requestMapping == null) {
-                    continue;
-                }
-
-                final RequestMethod[] allMethods = requestMapping.method();
-
-                for (RequestMethod singleMethod : allMethods) {
-                    final HandlerKey handlerKey = new HandlerKey(requestMapping.value(),
-                            singleMethod);
-                    Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-                    final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-            }
+            registerRequestMappings(controller, methods);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void registerRequestMappings(final Class<?> controller, final Method[] methods) {
+        for (Method method : methods) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping == null) {
+                continue;
+            }
+            final RequestMethod[] httpMethods = requestMapping.method();
+            registerHandlerExecution(controller, method, httpMethods, requestMapping);
+        }
+    }
+
+    private void registerHandlerExecution(
+            final Class<?> controller,
+            final Method method,
+            final RequestMethod[] httpMethods,
+            final RequestMapping requestMapping
+    ) {
+        for (RequestMethod httpMethod : httpMethods) {
+            final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
+            final HandlerExecution handlerExecution = createHandlerExecution(
+                    controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
+    }
+
+    private HandlerExecution createHandlerExecution(final Class<?> controller, final Method method) {
+        try {
+            Object controllerInstance = controller.getDeclaredConstructor().newInstance();
+            return new HandlerExecution(controllerInstance, method);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
