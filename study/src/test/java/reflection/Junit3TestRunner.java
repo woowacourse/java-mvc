@@ -13,13 +13,10 @@ class Junit3TestRunner {
         Junit3Test junit3Test = clazz.getConstructor()
             .newInstance();
 
-        Method test1 = clazz.getMethod("test1");
-        test1.invoke(junit3Test);
-
-        Method test2 = clazz.getMethod("test2");
-        test2.invoke(junit3Test);
-
-        Method test3 = clazz.getMethod("three");
-        test3.invoke(junit3Test);
+        for (Method method : clazz.getMethods()) {
+            if (method.getName().contains("test")) {
+                method.invoke(junit3Test);
+            }
+        }
     }
 }
