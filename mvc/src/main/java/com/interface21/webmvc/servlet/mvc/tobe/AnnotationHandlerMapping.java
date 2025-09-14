@@ -6,7 +6,6 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -30,45 +29,6 @@ public class AnnotationHandlerMapping {
         initializeHandlerExecutions();
     }
 
-    private void initializeHandlerExecutions() throws Exception {
-        Set<Class<?>> controllersInPackage = getControllersInPackage();
-
-        for (Class<?> controller : controllersInPackage) {
-            Set<Method> methodsWithRequestMapping = getMethodsAnnotatedRequestMapping(controller);
-            for (Method method : methodsWithRequestMapping) {
-                registerHandlerMethod(controller, method);
-            }
-        }
-    }
-
-    private Set<Class<?>> getControllersInPackage() {
-        Reflections reflections = new Reflections(this.basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private static Set<Method> getMethodsAnnotatedRequestMapping(Class<?> controller) {
-        Set<Method> result = new HashSet<>();
-        for (Method method : controller.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                result.add(method);
-            }
-        }
-        return result;
-    }
-
-    private void registerHandlerMethod(Class<?> controller, Method method) throws Exception {
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        RequestMethod[] requestMethods = annotation.method();
-        String uri = annotation.value();
-
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            Object handler = controller.getConstructor().newInstance();
-            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
@@ -80,5 +40,43 @@ public class AnnotationHandlerMapping {
         }
 
         return handlerExecutions.get(handlerKey);
+    }
+
+    private void initializeHandlerExecutions() throws Exception {
+        Set<Class<?>> controllersInPackage = getControllersInPackage();
+
+        for (Class<?> controller : controllersInPackage) {
+            registerHandlerMethods(controller, controller.getMethods());
+        }
+    }
+
+    private Set<Class<?>> getControllersInPackage() {
+        Reflections reflections = new Reflections(this.basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private void registerHandlerMethods(Class<?> controller, Method[] methods) throws Exception {
+        for (Method method : controller.getMethods()) {
+            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+            if (annotation == null) {
+                continue;
+            }
+            registerHandlerMethod(controller, method, annotation);
+        }
+
+    }
+
+    private void registerHandlerMethod(Class<?> controller, Method method, RequestMapping annotation)
+            throws Exception {
+        RequestMethod[] requestMethods = annotation.method();
+        String uri = annotation.value();
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            Object handler = controller.getConstructor().newInstance();
+            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 }
