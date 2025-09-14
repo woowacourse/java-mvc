@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -42,16 +43,25 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
-                        final HttpServletResponse response) throws Exception {
-        String viewName = modelAndView.getView().toString();
+    private void render(ModelAndView mav,
+                        HttpServletRequest request,
+                        HttpServletResponse response) throws Exception {
+        Object view = mav.getView();
 
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+        if (view instanceof String viewName) {
+            if (viewName.startsWith(REDIRECT_PREFIX)) {
+                response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+                return;
+            }
+            new JspView(viewName).render(mav.getModel(), request, response);
             return;
         }
 
-        JspView jspView = new JspView(viewName);
-        jspView.render(modelAndView.getModel(), request, response);
+        if (view instanceof View v) {
+            v.render(mav.getModel(), request, response);
+            return;
+        }
+
+        throw new IllegalStateException("지원하지 않는 뷰 타입: " + view);
     }
 }
