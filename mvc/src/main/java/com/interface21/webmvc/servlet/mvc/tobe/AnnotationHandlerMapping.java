@@ -29,24 +29,38 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> types = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> clazz : types) {
-            Method[] handlers = clazz.getMethods();
-            for (Method handler : handlers) {
-                addHandlerExecutions(clazz, handler);
-            }
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controller : controllers) {
+            registerHandlers(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void addHandlerExecutions(Class<?> clazz, Method handler) {
+    private void registerHandlers(Class<?> clazz) {
+        Method[] handlers = clazz.getMethods();
+        for (Method handler : handlers) {
+            try {
+                registerHandler(clazz, handler);
+            } catch (Exception e) {
+                log.error("error occurred while register " + handler.getName(), e);
+            }
+        }
+    }
+
+    private void registerHandler(Class<?> clazz, Method handler) throws Exception {
         RequestMapping mappingAnnotation = handler.getAnnotation(RequestMapping.class);
         if (mappingAnnotation == null) {
             return;
         }
-        for (RequestMethod requestMethod : mappingAnnotation.method()) {
+
+        RequestMethod[] requestMethods = mappingAnnotation.method();
+        if (requestMethods.length == 0) { // method 미설정 시 모든 HTTP method 지원
+            requestMethods = RequestMethod.values();
+        }
+        for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(mappingAnnotation.value(), requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(clazz, handler));
+            Object controllerInstance = clazz.getDeclaredConstructor().newInstance();
+            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, handler));
         }
     }
 
