@@ -67,9 +67,6 @@ public class AnnotationHandlerMapping {
         String method = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
 
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            return null;
-        }
         return handlerExecutions.get(handlerKey);
     }
 }
