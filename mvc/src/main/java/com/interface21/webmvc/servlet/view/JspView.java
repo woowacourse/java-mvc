@@ -49,8 +49,18 @@ public final class JspView implements View {
 
     private void handleRedirect(final HttpServletResponse response) throws Exception {
         final String redirectUrl = viewName.substring(REDIRECT_PREFIX.length());
+        validateRedirectUrl(redirectUrl);
         log.info("Redirecting to {}", redirectUrl);
         response.sendRedirect(redirectUrl);
+    }
+
+    private void validateRedirectUrl(final String redirectUrl) {
+        if (redirectUrl == null || redirectUrl.trim().isEmpty()) {
+            throw new IllegalStateException("리다이렉트 URL은 비어있을 수 없습니다.");
+        }
+        if (!redirectUrl.startsWith("/")) {
+            throw new IllegalStateException("외부 URL 또는 상대 경로로는 리다이렉트할 수 없습니다. '/'로 시작하는 절대 경로만 사용해주세요.");
+        }
     }
 
     private void handleForward(
