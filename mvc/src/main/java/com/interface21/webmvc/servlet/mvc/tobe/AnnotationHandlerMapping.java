@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,9 +62,12 @@ public final class AnnotationHandlerMapping {
     private Object getControllerInstance(final Class<?> controllerClass) {
         try {
             return controllerClass.getConstructor().newInstance();
-        } catch (final Exception exception) {
-            log.error("Controller '{}' 인스턴스 생성 실패", controllerClass.getName(), exception);
-            throw new IllegalArgumentException(exception);
+        } catch (final NoSuchMethodException exception) {
+            log.error("Controller '{}'에서 기본 생성자를 찾을 수 없습니다.", controllerClass.getName(), exception);
+            throw new RuntimeException("기본 생성자가 없는 컨트롤러는 인스턴스화할 수 없습니다.", exception);
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException exception) {
+            log.error("Controller '{}' 인스턴스 생성에 실패했습니다. (추상 클래스, 접근 불가 생성자 등)", controllerClass.getName(), exception);
+            throw new RuntimeException("컨트롤러 인스턴스 생성에 실패했습니다. 클래스 설정을 확인해주세요.", exception);
         }
     }
 
