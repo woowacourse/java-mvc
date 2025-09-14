@@ -63,7 +63,6 @@ public class AnnotationHandlerMapping {
             }
             registerHandlerMethod(controller, method, annotation);
         }
-
     }
 
     private void registerHandlerMethod(Class<?> controller, Method method, RequestMapping annotation)

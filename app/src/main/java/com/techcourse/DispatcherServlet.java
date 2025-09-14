@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private ManualHandlerMapping manualHandlerMapping;
@@ -32,22 +34,24 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            ModelAndView modelAndView = controller.execute(request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
+                        final HttpServletResponse response) throws Exception {
+        String viewName = modelAndView.getView().toString();
+
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        JspView jspView = new JspView(viewName);
+        jspView.render(modelAndView.getModel(), request, response);
     }
 }
