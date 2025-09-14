@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,8 +63,12 @@ public class AnnotationHandlerMapping {
             for (Method method : controllerClass.getDeclaredMethods()) {
                 registerHandlerMethod(controllerInstance, method);
             }
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to initialize controller: " + controllerClass.getName(), e);
+        }catch (NoSuchMethodException e) {
+            throw new IllegalStateException("기본 생성자가 없습니다, 기본 생성자를 꼭 가져야합니다: " + controllerClass.getName(), e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("생성자 실행 중 에러: " + controllerClass.getName(), e.getCause());
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("컨트롤러를 인스턴스화할 수 없습니다: " + controllerClass.getName(), e);
         }
     }
 
