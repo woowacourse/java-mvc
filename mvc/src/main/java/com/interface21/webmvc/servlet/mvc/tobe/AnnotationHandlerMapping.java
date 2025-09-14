@@ -81,6 +81,11 @@ public class AnnotationHandlerMapping {
     private void registerSingleHandler(String path, RequestMethod httpMethod, Object controller, Method handlerMethod) {
         final HandlerKey handlerKey = new HandlerKey(path, httpMethod);
         final HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
+
+        if(handlerExecutions.containsKey(handlerKey)){
+            log.warn("중복되는 핸들러가 존재합니다: {}", handlerKey);
+        }
+
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 }

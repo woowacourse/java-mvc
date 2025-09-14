@@ -33,7 +33,7 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
 }
