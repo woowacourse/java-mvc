@@ -34,22 +34,11 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
-
-            Map<String, Object> model = extractModel(request);
-
             JspView jspView = new JspView(viewName);
-            jspView.render(model, request, response);
+            jspView.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Map<String, Object> extractModel(final HttpServletRequest request) {
-        Map<String, Object> model = new HashMap<>();
-        request.getAttributeNames().asIterator()
-            .forEachRemaining(name -> model.put(name, request.getAttribute(name)));
-
-        return model;
     }
 }
