@@ -40,7 +40,7 @@ public class AnnotationHandlerMapping {
 
             for (Method method : controllerMethods) {
                 if(!method.isAnnotationPresent(RequestMapping.class)){
-                    break;
+                    continue;
                 }
 
                 registerHandlerExecution(method, handler);
