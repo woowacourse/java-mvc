@@ -32,13 +32,10 @@ public class AnnotationHandlerMapping {
 
     private void initializeHandlerExecutions() throws Exception {
         Set<Class<?>> controllersInPackage = getControllersInPackage();
-        System.out.println("controllersInPackage = " + controllersInPackage);
 
         for (Class<?> controller : controllersInPackage) {
-            System.out.println("controller.getName() = " + controller.getName());
             Set<Method> methodsWithRequestMapping = getMethodsAnnotatedRequestMapping(controller);
             for (Method method : methodsWithRequestMapping) {
-                System.out.println("method.getName() = " + method.getName());
                 registerHandlerMethod(controller, method);
             }
         }
