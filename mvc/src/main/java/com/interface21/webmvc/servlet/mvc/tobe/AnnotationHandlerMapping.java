@@ -34,7 +34,12 @@ public class AnnotationHandlerMapping {
                     final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                     final String url = annotation.value();
                     for (final RequestMethod requestMethod : resolveRequestMethods(annotation)) {
-                        registerHandler(new HandlerKey(url, requestMethod), new HandlerExecution());
+                        final HandlerKey key = new HandlerKey(url, requestMethod);
+                        if (isHandlerAlreadyRegistered(key)) {
+                            throw new IllegalArgumentException(
+                                    "Duplicate mapping found for " + url + " " + requestMethod);
+                        }
+                        registerHandler(key, new HandlerExecution());
                     }
                 }
             }
@@ -66,5 +71,9 @@ public class AnnotationHandlerMapping {
 
     private void registerHandler(final HandlerKey key, final HandlerExecution execution) {
         handlerExecutions.put(key, execution);
+    }
+
+    private boolean isHandlerAlreadyRegistered(final HandlerKey key) {
+        return handlerExecutions.containsKey(key);
     }
 }
