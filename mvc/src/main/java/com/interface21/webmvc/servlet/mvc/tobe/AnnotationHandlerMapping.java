@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,6 +30,7 @@ public class AnnotationHandlerMapping {
 
     // 1. @Controller 붙어있는 클래스를 찾아서
     // 2. 각 Controller마다 객체 생성 및 메서드 목록을 가져와서 -> ControllerScanner에 위임
+    @Override
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackages);
         Map<Class<?>, Object> controllers = controllerScanner.scan();
@@ -79,6 +81,7 @@ public class AnnotationHandlerMapping {
     }
 
     // 실제로 요청이 들어온다면
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI(); // URI를 가져오고
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod()); // Http Method를 확인한 다음에
