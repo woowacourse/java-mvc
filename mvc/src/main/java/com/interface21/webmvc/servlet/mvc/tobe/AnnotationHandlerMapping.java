@@ -15,10 +15,10 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackages;
+    private final String[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackages) {
+    public AnnotationHandlerMapping(final String... basePackages) {
         this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
@@ -26,7 +26,7 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        for (final Object basePackage : basePackages) {
+        for (final String basePackage : basePackages) {
             scanBasePackage(basePackage);
         }
     }

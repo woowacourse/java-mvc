@@ -26,8 +26,8 @@ public class HandlerExecution {
                     request,
                     response);
         } catch (final InvocationTargetException e) {
-            log.error("내부 예외 발생", e);
-            throw (Exception) e.getCause();
+            log.error("내부 예외 발생", e.getCause());
+            throw e;
         } catch (final InstantiationException e) {
             log.error("인스턴스 생성 실패 ", e);
             throw e;
@@ -36,6 +36,9 @@ public class HandlerExecution {
             throw e;
         } catch (final IllegalAccessException e) {
             log.error("접근 불가 ", e);
+            throw e;
+        } catch (final ClassCastException e) {
+            log.error("잘못된 반환 타입 ", e);
             throw e;
         }
     }
