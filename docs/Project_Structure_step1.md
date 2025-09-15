@@ -1,3 +1,5 @@
+## @MVC Framework 테스트 통과하기
+
 ### AnnotationHandlerMapping 구조
 
 - 주어진 basePackage 내부에 있는 모든 컨트롤러 탐색 (@Controller가 적용된 클래스 탐색)
@@ -19,3 +21,16 @@
       동일한 종류의 컨트롤러 인스턴스를 각각 따로 생성해야합니다!
     - 이 부분이 부자연스럽다고 판단했고, 결국 지금 구조처럼 하나의 컨트롤러 인스턴스를 생성하고 여러 HandlerExecution가 이를 참조하는 구조로 설계를
       진행했습니다!
+
+## JspView 클래스를 구현한다.
+
+### JspView의 구조
+
+- viewName을 생성 인자로 받아 필드로 저장
+- render() 메서드를 통해 클라이언트에게 전달할 응답 데이터를 구성
+    - viewName이 REDIRECT_PREFIX("redirect:")로 시작할 경우
+      -> 단순히 리다이렉션 응답 처리
+    - viewName이 REDIRECT_PREFIX("redirect:")로 시작하지 않을 경우
+      -> 요청에 모델 정보를 담아 JSP 파일로 포워딩
+      -> JSP 파일에서는 요청의 모델 정보를 참조해 동적 페이지를 랜더링
+      -> 완성된 동적 페이지를 응답 객체 등록
