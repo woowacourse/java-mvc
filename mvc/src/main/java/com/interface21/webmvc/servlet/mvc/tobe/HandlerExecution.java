@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -22,8 +23,19 @@ public class HandlerExecution {
         try {
             final Object result = method.invoke(handler, request, response);
             return convertToModelAndView(result);
+        } catch (final InvocationTargetException e) {
+            // 실제 메서드에서 발생한 예외 꺼내기
+            final Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                throw (Exception) cause;  // 원본 예외 그대로 던지기
+            }
+            throw new Exception("Handler method threw an error: " + method.getName(), cause);
+        } catch (final IllegalAccessException e) {
+            throw new Exception("Cannot access handler method: " + method.getName(), e);
+        } catch (final IllegalArgumentException e) {
+            throw new Exception("Invalid arguments for handler method: " + method.getName(), e);
         } catch (final Exception e) {
-            throw new Exception("Handler execution failed for method: " + method.getName(), e);
+            throw new Exception("Unexpected error invoking handler method: " + method.getName(), e);
         }
     }
 
