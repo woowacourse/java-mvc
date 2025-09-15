@@ -4,6 +4,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -40,12 +43,20 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+        final Map<String, Object> model = buildModel(request);
+        JspView jspView = new JspView(viewName);
+        jspView.render(model, request, response);
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private Map<String, Object> buildModel(final HttpServletRequest request) {
+        final var model = new HashMap<String, Object>();
+        final Enumeration<String> attributeNames = request.getAttributeNames();
+
+        while (attributeNames.hasMoreElements()) {
+            final String attributeName = attributeNames.nextElement();
+            final Object attributeValue = request.getAttribute(attributeName);
+            model.put(attributeName, attributeValue);
+        }
+        return model;
     }
 }
