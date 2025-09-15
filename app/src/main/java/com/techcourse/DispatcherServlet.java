@@ -1,10 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.SimpleControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ public final class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -30,6 +32,7 @@ public final class DispatcherServlet extends HttpServlet {
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
         this.handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+        this.handlerAdapters = List.of(new SimpleControllerHandlerAdapter());
     }
 
     @Override
@@ -39,31 +42,48 @@ public final class DispatcherServlet extends HttpServlet {
     ) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Controller controller = null;
-            for (final HandlerMapping handlerMapping : handlerMappings) {
-                controller = (Controller) handlerMapping.getHandler(request);
-                if (controller != null) {
-                    break;
-                }
+            final Object handler = getHandler(request);
+            if (handler == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
-            final String viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            if (handlerAdapter == null) {
+                throw new ServletException("요청을 처리할 수 있는 어댑터를 찾을 수 없습니다. handler=" + handler.getClass().getName());
+            }
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            move(modelAndView, request, response);
         } catch (final Throwable exception) {
             log.error("요청 처리 중 예외 발생", exception);
             throw new ServletException(exception.getMessage());
         }
     }
 
+    private Object getHandler(final HttpServletRequest request) {
+        for (final HandlerMapping handlerMapping : handlerMappings) {
+            final Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
+        }
+        return null;
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        for (final HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
+        }
+        return null;
+    }
+
     private void move(
-            final String viewName,
+            final ModelAndView modelAndView,
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        final View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
