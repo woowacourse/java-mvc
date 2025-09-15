@@ -16,8 +16,6 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        //method.invoke(controllerInstance, request, response);
-        //TODO
-        return null;
+        return (ModelAndView) method.invoke(controllerInstance, request, response);
     }
 }

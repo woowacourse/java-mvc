@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping {
                         for (RequestMethod requestMethod : requestMethods) {
                             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
                             HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-
+                            handlerExecutions.put(handlerKey, handlerExecution);
                         }
                     }
                 }
