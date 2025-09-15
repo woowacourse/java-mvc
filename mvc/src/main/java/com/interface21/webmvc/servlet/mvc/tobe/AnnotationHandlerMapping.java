@@ -27,52 +27,73 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (Object basePackage : basePackages) {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            for (Class<?> controller : controllers) {
-                Object findController;
-                try {
-                    findController = controller.getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-                    throw new IllegalStateException("기본 생성자가 존재하지 않습니다.");
-                }
-                Method[] declaredMethods = controller.getDeclaredMethods();
-                Method[] requestMappingMethods = Arrays.stream(declaredMethods)
-                        .filter(declaredMethod -> declaredMethod.isAnnotationPresent(RequestMapping.class))
-                        .toArray(Method[]::new);
-                for (Method method : requestMappingMethods) {
-                    RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    final String url = annotation.value();
-                    RequestMethod[] requestMethods;
-                    if (annotation.method().length == 0) {
-                        requestMethods = RequestMethod.values();
-                    } else {
-                        requestMethods = annotation.method();
-                    }
-                    for (RequestMethod requestMethod : requestMethods) {
-                        log.info("등록 완료 : url ={}, method = {}, handlerMethod = {}", url, requestMethod.name(),
-                                 method.getName()
-                        );
-                        handlerExecutions.put(
-                                new HandlerKey(url, requestMethod),
-                                new HandlerExecution(findController, method)
-                        );
-                    }
-                }
-            }
+        for (final Object basePackage : basePackages) {
+            registerControllersInPackage(basePackage);
         }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String url = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-
-        HandlerExecution findHandlerExecution = handlerExecutions.getOrDefault(handlerKey, null);
+        final String url = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        final HandlerExecution findHandlerExecution = handlerExecutions.getOrDefault(handlerKey, null);
         if (findHandlerExecution == null) {
             throw new NoSuchElementException("해당 요청을 처리활 수 있는 핸들러가 없습니다.");
         }
         return findHandlerExecution;
+    }
+
+    private void registerControllersInPackage(final Object basePackage) {
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (final Class<?> controller : controllers) {
+            registerController(controller);
+        }
+    }
+
+    private void registerController(final Class<?> controller) {
+        final Object instance = createControllerInstance(controller);
+        final Method[] requestMappingMethods = findRequestMappingMethods(controller);
+        for (final Method method : requestMappingMethods) {
+            registerHandlerMethod(method, instance);
+        }
+    }
+
+    private void registerHandlerMethod(final Method method, final Object instance) {
+        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        final String url = annotation.value();
+        final RequestMethod[] requestMethods = getRequestMethods(annotation);
+
+        for (final RequestMethod requestMethod : requestMethods) {
+            log.info("등록 완료 : url ={}, method = {}, handlerMethod = {}", url, requestMethod.name(),
+                     method.getName()
+            );
+            handlerExecutions.put(
+                    new HandlerKey(url, requestMethod),
+                    new HandlerExecution(instance, method)
+            );
+        }
+    }
+
+    private Method[] findRequestMappingMethods(final Class<?> controller) {
+        final Method[] declaredMethods = controller.getDeclaredMethods();
+        return Arrays.stream(declaredMethods)
+                .filter(declaredMethod -> declaredMethod.isAnnotationPresent(RequestMapping.class))
+                .toArray(Method[]::new);
+    }
+
+    private RequestMethod[] getRequestMethods(final RequestMapping annotation) {
+        if (annotation.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return annotation.method();
+    }
+
+    private Object createControllerInstance(final Class<?> controller) {
+        try {
+            return controller.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("기본 생성자가 존재하지 않습니다.");
+        }
     }
 }
