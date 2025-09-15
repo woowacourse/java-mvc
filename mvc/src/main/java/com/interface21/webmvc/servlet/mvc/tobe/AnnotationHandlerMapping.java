@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +38,14 @@ public class AnnotationHandlerMapping {
                             RequestMapping.class);
                         RequestMethod[] httpMethods = requestMappingAnnotation.method();
                         String path = requestMappingAnnotation.value();
+                        if (httpMethods.length == 0) {
+                            for (RequestMethod httpMethod : RequestMethod.values()) {
+                                HandlerKey handlerKey = new HandlerKey(path, httpMethod);
+                                HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, controllerMethod);
+                                this.handlerExecutions.put(handlerKey, handlerExecution);
+                                System.out.println(path + " " + httpMethod);
+                            }
+                        }
                         for (RequestMethod httpMethod : httpMethods) {
                             HandlerKey handlerKey = new HandlerKey(path, httpMethod);
                             HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, controllerMethod);
