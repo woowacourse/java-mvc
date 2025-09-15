@@ -45,6 +45,7 @@ public class SharedCounterServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         getServletContext().log("service() 호출");
+        System.out.println("Thread name = " + Thread.currentThread().getName());
         sharedCounter++;
         response.getWriter().write(String.valueOf(sharedCounter));
     }
