@@ -10,9 +10,8 @@ public class HandlerExecution {
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-        ModelAndView modelAndView = new ModelAndView(new JsonView());
-
-        Enumeration<String> attributes = request.getAttributeNames();
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        final Enumeration<String> attributes = request.getAttributeNames();
         while (attributes.hasMoreElements()) {
             final String name = attributes.nextElement();
             final Object value = request.getAttribute(name);

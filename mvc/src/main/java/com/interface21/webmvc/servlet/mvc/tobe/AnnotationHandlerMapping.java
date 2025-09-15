@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,23 +26,15 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (Object basePackage :basePackages){
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            for (Class<?> controller : controllers) {
-                Method[] declaredMethods = controller.getDeclaredMethods();
-                for (Method declaredMethod : declaredMethods) {
-                    if (declaredMethod.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
-                        RequestMethod[] methods = annotation.method();
-                        String url = annotation.value();
-                        if (methods.length == 0) {
-                            methods = RequestMethod.values();
-                        }
-                        for (RequestMethod method : methods) {
-                            HandlerKey handlerKey = new HandlerKey(url, method);
-                            handlerExecutions.put(handlerKey, new HandlerExecution());
-                        }
+        for (final Object basePackage : basePackages) {
+            final Set<Class<?>> controllers = scanControllers(basePackage);
+            for (final Class<?> controller : controllers) {
+                final Method[] requestMappingMethods = getRequestMappingMethods(controller);
+                for (final Method method : requestMappingMethods) {
+                    final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+                    final String url = annotation.value();
+                    for (final RequestMethod requestMethod : resolveRequestMethods(annotation)) {
+                        registerHandler(new HandlerKey(url, requestMethod), new HandlerExecution());
                     }
                 }
             }
@@ -50,8 +43,28 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        final String requestURI = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
+    }
+
+    private Set<Class<?>> scanControllers(final Object basePackage) {
+        final Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private Method[] getRequestMappingMethods(final Class<?> controller) {
+        return Arrays.stream(controller.getDeclaredMethods())
+                .filter(m -> m.isAnnotationPresent(RequestMapping.class))
+                .toArray(Method[]::new);
+    }
+
+    private RequestMethod[] resolveRequestMethods(final RequestMapping annotation) {
+        final RequestMethod[] methods = annotation.method();
+        return (methods.length == 0) ? RequestMethod.values() : methods;
+    }
+
+    private void registerHandler(final HandlerKey key, final HandlerExecution execution) {
+        handlerExecutions.put(key, execution);
     }
 }
