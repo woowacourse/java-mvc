@@ -4,41 +4,20 @@ import com.interface21.web.bind.annotation.RequestMethod;
 
 import java.util.Objects;
 
-public final class HandlerKey {
-
-    private final String url;
-    private final RequestMethod requestMethod;
-
-    public HandlerKey(
-            final String url,
-            final RequestMethod requestMethod
-    ) {
-        this.url = url;
-        this.requestMethod = requestMethod;
-    }
-
-    @Override
-    public String toString() {
-        return "HandlerKey{" +
-                "url='" + url + '\'' +
-                ", requestMethod=" + requestMethod +
-                '}';
-    }
+public record HandlerKey(
+        String url,
+        RequestMethod requestMethod
+) {
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof final HandlerKey that)) {
+        if (!(o instanceof HandlerKey(String otherUrl, RequestMethod method))) {
             return false;
         }
-        return Objects.equals(url, that.url)
-                && requestMethod == that.requestMethod;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(url, requestMethod);
+        return Objects.equals(url, otherUrl)
+                && requestMethod == method;
     }
 }
