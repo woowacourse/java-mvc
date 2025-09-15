@@ -68,10 +68,10 @@ public class AnnotationHandlerMapping {
             final Method method,
             final Object handler
     ) {
-        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        if (requestMapping == null) {
+        if (method.isAnnotationPresent(RequestMapping.class)) {
             return;
         }
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String url = requestMapping.value();
         final RequestMethod[] requestMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMethods) {
