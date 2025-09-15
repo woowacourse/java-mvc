@@ -59,7 +59,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private static Object instantiateController(Class<?> controller) {
+    private Object instantiateController(Class<?> controller) {
         Object controllerInstance;
         try {
             controllerInstance = controller.getConstructor().newInstance();
@@ -69,7 +69,7 @@ public class AnnotationHandlerMapping {
         return controllerInstance;
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String url = request.getRequestURI();
         String method = request.getMethod();
         RequestMethod requestMethod = RequestMethod.getRequestMethod(method);
