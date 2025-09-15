@@ -83,7 +83,7 @@ public class AnnotationHandlerMapping {
         final HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
 
         if(handlerExecutions.containsKey(handlerKey)){
-            log.warn("중복되는 핸들러가 존재합니다: {}", handlerKey);
+            throw new IllegalStateException("해당 경로에 대한 요청에 대해 중복되는 핸들러가 존재합니다: " + handlerKey);
         }
 
         handlerExecutions.put(handlerKey, handlerExecution);
