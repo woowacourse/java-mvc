@@ -24,6 +24,10 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    /**
+     * @Controller 어노테이션이 붙은 클래스 중
+     * @RequestMapping 어노테이션이 붙은 메서드를 찾아서 handlerExecutions을 구성하는 메서드입니다.
+     */
     public void initialize() {
         try {
             Reflections reflections = new Reflections((Object[]) basePackage);
@@ -31,24 +35,7 @@ public class AnnotationHandlerMapping {
 
             for (Class<?> controllerClass : controllers) {
                 Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
-                for (Method method : controllerClass.getDeclaredMethods()) {
-                    RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-                    if (mapping == null) {
-                        continue;
-                    }
-                    String path = mapping.value();
-                    RequestMethod[] methods = mapping.method();
-                    // method 속성이 비어 있으면 모든 메서드를 지원하는 매핑으로 저장
-                    if (methods.length == 0) {
-                        handlerExecutions.put(new HandlerKey(path, null),
-                                new HandlerExecution(controllerInstance, method));
-                    } else {
-                        for (RequestMethod httpMethod : methods) {
-                            handlerExecutions.put(new HandlerKey(path, httpMethod),
-                                    new HandlerExecution(controllerInstance, method));
-                        }
-                    }
-                }
+                requestMappingMethodToHandlerExecution(controllerClass, controllerInstance);
             }
             log.info("Initialized AnnotationHandlerMapping!");
         } catch (Exception e) {
@@ -56,6 +43,32 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    /**
+     * @RequestMapping 어노테이션이 붙은 메서드를 찾아서 value와 method를 통해 HandlerExecution을 생성하고 저장하는 메서드입니다.
+     */
+    private void requestMappingMethodToHandlerExecution(Class<?> controllerClass, Object controllerInstance) {
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+            if (mapping == null) {
+                continue;
+            }
+            String path = mapping.value();
+            RequestMethod[] methods = mapping.method();
+            if (methods.length == 0) {
+                handlerExecutions.put(new HandlerKey(path, null),
+                        new HandlerExecution(controllerInstance, method));
+                return;
+            }
+            for (RequestMethod httpMethod : methods) {
+                handlerExecutions.put(new HandlerKey(path, httpMethod),
+                        new HandlerExecution(controllerInstance, method));
+            }
+        }
+    }
+
+    /**
+     * HttpServletRequest의 uri와 method를 기반으로 알맞은 HandlerExecution을 찾아서 반환하는 메서드입니다.
+     */
     public Object getHandler(final HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         RequestMethod reqMethod = RequestMethod.valueOf(request.getMethod());
