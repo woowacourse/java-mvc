@@ -35,18 +35,10 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Controller controller = manualHandlerMapping.getHandler(requestURI);
             JspView view = new JspView(controller.execute(request, response));
-            Map<String, Object> model = extractModelForView(request);
-            view.render(model, request, response);
+            view.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Map<String, Object> extractModelForView(final HttpServletRequest request) {
-        Map<String, Object> model = new HashMap<>();
-        request.getAttributeNames().asIterator()
-                .forEachRemaining(name -> model.put(name, request.getAttribute(name)));
-        return model;
     }
 }
