@@ -8,10 +8,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,44 +39,58 @@ public class AnnotationHandlerMapping {
 
         for (Class<?> clazz : classes) {
             try {
-                final Method[] methods = clazz.getDeclaredMethods();
-                final Object controllerInstance = clazz.getDeclaredConstructor().newInstance();
+                final Map<HandlerKey, HandlerExecution> foundExecutions = Arrays.stream(clazz.getDeclaredMethods())
+                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                        .flatMap(method -> {
+                            final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                            final HandlerExecution execution = createHandlerExecution(clazz, method);
 
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-                        final String value = requestMapping.value();
-
-                        BiFunction<HttpServletRequest, HttpServletResponse, ModelAndView> targetMethod =
-                                (request, response) -> {
-                                    try {
-                                        return (ModelAndView) method.invoke(controllerInstance, request, response);
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        throw new IllegalArgumentException("Handler method invocation failed", e);
-                                    }
-                                };
-                        for (RequestMethod requestMethod : requestMapping.method()) {
-                            handlerExecutions.put(new HandlerKey(value, requestMethod),
-                                    new HandlerExecution(targetMethod));
-                        }
-                    }
-                }
-            } catch (InvocationTargetException | InstantiationException |
-                     IllegalAccessException | NoSuchMethodException e) {
-                throw new IllegalArgumentException(e);
+                            return Arrays.stream(mapping.method())
+                                    .map(requestMethod -> {
+                                        HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+                                        return new SimpleEntry<>(key, execution);
+                                    });
+                        })
+                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                this.handlerExecutions.putAll(foundExecutions);
+            } catch (final Exception e) {
+                log.error("Failed to initialize controller: {}", clazz.getName(), e);
             }
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
-        handlerExecutions.keySet()
-                .forEach(path -> log.info("Path : {}, handlerExecution : {}", path,
-                        handlerExecutions.get(path).getClass()));
+        handlerExecutions.forEach((handlerKey, handlerExecution)
+                -> log.info("Path : {}, handlerExecution : {}", handlerKey, handlerExecution));
+    }
+
+    private HandlerExecution createHandlerExecution(Class<?> clazz, Method method) {
+        final Object instance = getInstance(clazz);
+        final BiFunction<HttpServletRequest, HttpServletResponse, ModelAndView> targetMethod = (req, res) -> {
+            try {
+                return (ModelAndView) method.invoke(instance, req, res);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalArgumentException("Handler method invocation failed", e);
+            }
+        };
+        return new HandlerExecution(method, targetMethod);
+    }
+
+    private Object getInstance(final Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+                 InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("Not found handlerExecution by %s".formatted(handlerKey));
+        }
         return handlerExecutions.get(handlerKey);
     }
 }
