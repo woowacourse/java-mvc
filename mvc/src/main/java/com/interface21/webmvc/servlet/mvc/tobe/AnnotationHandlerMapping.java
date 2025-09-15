@@ -31,33 +31,35 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
             try {
-                Constructor<?> constructor = controller.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                Object controllerInstance = constructor.newInstance();
-                Method[] methods = controller.getDeclaredMethods();
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                        String url = requestMapping.value();
-                        RequestMethod[] requestMethods = requestMapping.method();
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
-                    }
-                }
+                Object controllerInstance = createControllerInstance(controller);
+                registerRequestMappings(controllerInstance, controller);
             } catch (Exception e) {
-                log.error("컨트롤러 시작 에러" + controller.getName(), e);
+                log.error("컨트롤러 시작 에러: {}", controller.getName(), e);
             }
-
         }
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey key = new HandlerKey(requestUri, requestMethod);
+        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(key);
+    }
+
+    private Object createControllerInstance(Class<?> controller) throws Exception {
+        Constructor<?> constructor = controller.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        return constructor.newInstance();
+    }
+
+    private void registerRequestMappings(Object controllerInstance, Class<?> controllerClass) {
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(RequestMapping.class)) {
+                continue;
+            }
+            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+            for (RequestMethod httpMethod : mapping.method()) {
+                HandlerKey key = new HandlerKey(mapping.value(), httpMethod);
+                handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
+            }
+        }
     }
 }
