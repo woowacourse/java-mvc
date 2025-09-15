@@ -33,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = manualHandlerMapping.getHandler(request);
             final var modelAndView = controller.execute(request, response);
             final var view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
