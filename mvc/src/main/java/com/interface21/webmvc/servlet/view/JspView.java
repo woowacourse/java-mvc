@@ -25,6 +25,7 @@ public class JspView implements View {
         // todo
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
+            return;
         }
 
         model.keySet().forEach(key -> {
