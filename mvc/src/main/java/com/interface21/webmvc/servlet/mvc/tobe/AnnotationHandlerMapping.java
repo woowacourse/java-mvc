@@ -62,12 +62,20 @@ public class AnnotationHandlerMapping {
         String path = mapping.value();
         RequestMethod[] requestMethods = mapping.method();
 
+        requestMethods = resolveRequestMethods(requestMethods);
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(path, requestMethod);
             validateDuplicatedKey(key);
             HandlerExecution execution = new HandlerExecution(controller, method);
             handlerExecutions.put(key, execution);
         }
+    }
+
+    private RequestMethod[] resolveRequestMethods(RequestMethod[] requestMethods) {
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     private void validateDuplicatedKey(HandlerKey key) {
