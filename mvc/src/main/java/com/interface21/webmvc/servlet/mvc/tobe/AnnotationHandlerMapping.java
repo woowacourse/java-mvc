@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,9 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
             try {
+                Constructor<?> constructor = controller.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                Object controllerInstance = constructor.newInstance();
                 Method[] methods = controller.getDeclaredMethods();
                 for (Method method : methods) {
                     if (method.isAnnotationPresent(RequestMapping.class)) {
@@ -38,7 +42,8 @@ public class AnnotationHandlerMapping {
                         RequestMethod[] requestMethods = requestMapping.method();
                         for (RequestMethod requestMethod : requestMethods) {
                             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                            //TODO handlerExecutions 에 등록하기
+                            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+
                         }
                     }
                 }
@@ -49,7 +54,10 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        return null;
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey key = new HandlerKey(requestUri, requestMethod);
+        return handlerExecutions.get(key);
     }
 }
