@@ -59,7 +59,8 @@ public class AnnotationHandlerMapping {
     // 단일 컨트롤러 메서드 등록
     private void registerHandler(Class<?> controller, Method method) {
         RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-        String path = mapping.value();
+        String path = normalizePath(mapping.value());
+
         RequestMethod[] requestMethods = mapping.method();
 
         requestMethods = resolveRequestMethods(requestMethods);
@@ -70,6 +71,26 @@ public class AnnotationHandlerMapping {
             handlerExecutions.put(key, execution);
         }
     }
+
+    private String normalizePath(String path) {
+        // path가 비었다면 루트 경로로 지정
+        if (path.isEmpty()) {
+            return "/";
+        }
+
+        // 앞 / 추가
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
+        // 뒤 / 제거 (루트 경로는 제외)
+        if (path.length() > 1 && path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+
+        return path;
+    }
+
 
     private RequestMethod[] resolveRequestMethods(RequestMethod[] requestMethods) {
         if (requestMethods.length == 0) {
