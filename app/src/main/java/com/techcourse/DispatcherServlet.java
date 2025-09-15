@@ -1,9 +1,10 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ManualHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,13 +20,13 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private final HandlerAdapter handlerAdapter = new HandlerAdapter();
-
-    public DispatcherServlet() {
-    }
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     @Override
     public void init() {
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+
         final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
         handlerMappings.add(manualHandlerMapping);
@@ -42,10 +43,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = getHandler(request, requestURI);
-            final var modelAndView = handlerAdapter.execute(controller, request, response);
+            final var handler = getHandler(request, requestURI);
+            final var adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final var modelAndView = adapter.execute(handler, request, response);
+
             final var view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
+
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
