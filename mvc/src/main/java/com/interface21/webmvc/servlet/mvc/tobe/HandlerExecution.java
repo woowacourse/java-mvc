@@ -24,7 +24,10 @@ public class HandlerExecution {
         for (final Parameter parameter : parameters) {
             if (parameter.getType().equals(HttpServletRequest.class)) {
                 args.add(request);
-            } else if (parameter.getType().equals(HttpServletResponse.class)) {
+                continue;
+            }
+
+            if (parameter.getType().equals(HttpServletResponse.class)) {
                 args.add(response);
             }
         }

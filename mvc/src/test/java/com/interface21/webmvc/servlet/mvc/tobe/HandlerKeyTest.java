@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class HandlerKeyTest {
 
@@ -15,9 +16,12 @@ class HandlerKeyTest {
         final var handlerKey2 = new HandlerKey("/get-test", RequestMethod.GET);
         final var handlerKey3 = new HandlerKey("/post-test", RequestMethod.POST);
 
-        assertThat(handlerKey1).isEqualTo(handlerKey2);
-        assertThat(handlerKey1).hasSameHashCodeAs(handlerKey2);
-        assertThat(handlerKey1).isNotEqualTo(handlerKey3);
-        assertThat(handlerKey1).doesNotHaveSameHashCodeAs(handlerKey3);
+        assertSoftly(softly -> {
+                    softly.assertThat(handlerKey1).isEqualTo(handlerKey2);
+                    softly.assertThat(handlerKey1).hasSameHashCodeAs(handlerKey2);
+                    softly.assertThat(handlerKey1).isNotEqualTo(handlerKey3);
+                    softly.assertThat(handlerKey1).doesNotHaveSameHashCodeAs(handlerKey3);
+                }
+        );
     }
 }
