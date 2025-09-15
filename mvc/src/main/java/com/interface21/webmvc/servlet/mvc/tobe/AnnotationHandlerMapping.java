@@ -1,13 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Set;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +32,7 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         try {
-            final Map<Class<?>, Object> controllers = findControllers();
+            final Map<Class<?>, Object> controllers = ControllerScanner.getControllers(basePackages);
             initializeHandlerExecutions(controllers);
         } catch (Exception e) {
             throw new RuntimeException("AnnotationHandlerMapping 초기화에 실패했습니다.", e);
@@ -42,29 +40,9 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    /**
-     * basePackages에서 @Controller 어노테이션이 붙은 클래스를 찾아 인스턴스를 생성하고 맵으로 반환
-     */
-    private Map<Class<?>, Object> findControllers() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        final Reflections reflections = new Reflections(basePackages);
-        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        return createControllerInstances(controllerClasses);
-    }
-
     public Object getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
-    }
-
-    /**
-     * 주어진 클래스 Set의 인스턴스를 생성하여 맵 형태로 반환
-     */
-    private Map<Class<?>, Object> createControllerInstances(final Set<Class<?>> controllerClasses) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        final Map<Class<?>, Object> controllers = new HashMap<>();
-        for (final Class<?> controllerClass : controllerClasses) {
-            controllers.put(controllerClass, controllerClass.getDeclaredConstructor().newInstance());
-        }
-        return controllers;
     }
 
     /**
