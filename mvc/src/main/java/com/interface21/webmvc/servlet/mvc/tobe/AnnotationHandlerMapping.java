@@ -64,8 +64,15 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey key = new HandlerKey(path, requestMethod);
+            validateDuplicatedKey(key);
             HandlerExecution execution = new HandlerExecution(controller, method);
             handlerExecutions.put(key, execution);
+        }
+    }
+
+    private void validateDuplicatedKey(HandlerKey key) {
+        if (handlerExecutions.containsKey(key)) {
+            throw new IllegalStateException("Handler Key already exists :" + key);
         }
     }
 }
