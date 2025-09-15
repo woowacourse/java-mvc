@@ -39,9 +39,9 @@ public class AnnotationHandlerMapping {
     }
 
     private void mapController(final Class<?> controller) {
-        List<Method> annotatedMethods = findMappedMethods(controller);
+        List<Method> mappedMethods = findMappedMethods(controller);
 
-        for (Method method : annotatedMethods) {
+        for (Method method : mappedMethods) {
             try {
                 addHandlerExecution(controller, method);
             } catch (Exception e) {
