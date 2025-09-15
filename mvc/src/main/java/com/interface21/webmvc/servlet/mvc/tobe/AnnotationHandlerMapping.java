@@ -26,21 +26,15 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (Object basePkg : basePackage) {
-            Set<Class<?>> controllers = findControllers(basePkg);
-            controllers.forEach(controller -> {
-                Object instance = toInstance(controller);
-                Map<HandlerKey, HandlerExecution> handlerMapping = mapHandlerMethods(instance);
-                handlerExecutions.putAll(handlerMapping);
-
-                handlerMapping.forEach((key, execution) -> log.info("Mapped {}:{}", key, execution));
-            });
-        }
-    }
-
-    private Set<Class<?>> findControllers(Object basePackage) {
         Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        controllers.forEach(controller -> {
+            Object instance = toInstance(controller);
+            Map<HandlerKey, HandlerExecution> handlerMapping = mapHandlerMethods(instance);
+            handlerExecutions.putAll(handlerMapping);
+
+            handlerMapping.forEach((key, execution) -> log.info("Mapped {}:{}", key, execution));
+        });
     }
 
     private Object toInstance(Class<?> controller) {
