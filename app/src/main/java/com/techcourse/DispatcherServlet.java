@@ -34,8 +34,8 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Controller controller = manualHandlerMapping.getHandler(requestURI);
-            Map<String, Object> model = extractModelForView(request);
             JspView view = new JspView(controller.execute(request, response));
+            Map<String, Object> model = extractModelForView(request);
             view.render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
