@@ -14,18 +14,48 @@ public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
 
+    private final String viewName;
+
     public JspView(final String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
+        setModelAttributes(model, request);
+        
+        if (isRedirectView()) {
+            handleRedirect(response);
+            return;
+        }
+        
+        if (isValidViewName()) {
+            forwardToJsp(request, response);
+        }
+    }
 
+    private void setModelAttributes(final Map<String, ?> model, final HttpServletRequest request) {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+    }
 
-        // todo
+    private boolean isRedirectView() {
+        return viewName != null && viewName.startsWith(REDIRECT_PREFIX);
+    }
+
+    private boolean isValidViewName() {
+        return viewName != null && !viewName.trim().isEmpty();
+    }
+
+    private void handleRedirect(final HttpServletResponse response) throws Exception {
+        final String redirectUrl = viewName.substring(REDIRECT_PREFIX.length());
+        response.sendRedirect(redirectUrl);
+    }
+
+    private void forwardToJsp(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 }
