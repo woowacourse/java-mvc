@@ -52,9 +52,8 @@ public class AnnotationHandlerMapping {
     private void registerHandlerExecutionsByController(Class<?> controllerClass) {
         try {
             Object controller = controllerClass.getConstructor().newInstance();
-            HandlerExecution handlerExecution = new HandlerExecution(controller);
             List<Method> apiMethods = findApiMethod(controllerClass);
-            apiMethods.forEach(method -> registerHandlerExecutionsByMethod(method, handlerExecution));
+            apiMethods.forEach(method -> registerHandlerExecutionsByMethod(method, controller));
         } catch (NoSuchMethodException | InvocationTargetException
                  | InstantiationException | IllegalAccessException e
         ) {
@@ -68,10 +67,11 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void registerHandlerExecutionsByMethod(Method method, HandlerExecution handlerExecution) {
+    private void registerHandlerExecutionsByMethod(Method method, Object controller) {
         validateRequestMappingAnnotation(method);
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
