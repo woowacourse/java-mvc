@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 /**
@@ -44,7 +43,8 @@ public class SharedCounterServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        getServletContext().log("service() 호출");
+        Thread thread = Thread.currentThread();
+        getServletContext().log("service() 호출 " +  thread.getName());
         sharedCounter++;
         response.getWriter().write(String.valueOf(sharedCounter));
     }
