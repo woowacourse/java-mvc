@@ -8,6 +8,9 @@ import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * 직접 구현한 Controller 타입의 핸들러(HandlerExecution)를 실행할 수 있도록 지원
+ */
 public class ManualHandlerAdaptor implements HandlerAdaptor {
     private static final String EXTENSION_SEPARATOR = ".";
     private static final String JSP_EXTENSION = ".jsp";

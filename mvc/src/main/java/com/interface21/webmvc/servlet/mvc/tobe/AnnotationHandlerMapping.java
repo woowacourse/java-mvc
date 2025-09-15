@@ -19,8 +19,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackages;
-    // HandlerKey: 요청 매핑을 위해 사용되는 키
-    // HandlerExecution: 매핑된 컨트롤러 메서드를 실제 실행하는 역할을 가지는 객체
+    /**
+     * HandlerKey: 요청 매핑을 위해 사용되는 키
+     * HandlerExecution: 매핑된 컨트롤러 메서드를 실제 실행하는 역할을 가지는 객체
+     */
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
@@ -28,8 +30,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    // 1. @Controller 붙어있는 클래스를 찾아서
-    // 2. 각 Controller마다 객체 생성 및 메서드 목록을 가져와서 -> ControllerScanner에 위임
+    /**
+     * @Controller 붙어있는 클래스를 찾아서 각 Controller마다 객체 생성 및 메서드 목록을 가져오기 -> ControllerScanner에 위임
+     */
     @Override
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackages);

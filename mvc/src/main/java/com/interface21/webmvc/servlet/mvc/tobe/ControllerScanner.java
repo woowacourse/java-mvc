@@ -17,7 +17,9 @@ public class ControllerScanner {
         this.basePackages = basePackages;
     }
 
-    // 1. @Controller 붙어있는 클래스를 찾아서
+    /**
+     * @Controller 붙어있는 클래스를 찾기
+     */
     public Map<Class<?>, Object> scan() {
         Map<Class<?>, Object> controllers = new HashMap<>();
 
@@ -32,7 +34,9 @@ public class ControllerScanner {
         return controllers;
     }
 
-    // 2. 각 Controller마다 객체 생성 및 메서드 목록을 가져오기
+    /**
+     * 각 Controller마다 객체 생성 및 메서드 목록을 가져오기
+     */
     private void initializeControllers(Set<Class<?>> controllerClasses, Map<Class<?>, Object> controllers) {
         for (Class<?> controllerClass : controllerClasses) {
             try {

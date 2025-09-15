@@ -6,7 +6,9 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-// 매핑된 컨트롤러 객체의 메서드를 실행하는 역할
+/**
+ * 매핑된 컨트롤러 객체의 메서드를 실행하는 역할
+ */
 public class HandlerExecution {
 
     private final Object controller;
