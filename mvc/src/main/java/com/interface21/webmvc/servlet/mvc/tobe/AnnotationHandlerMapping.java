@@ -27,34 +27,46 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         for (var pack : basePackage) {
-            Reflections reflections = new Reflections(pack.toString());
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+            registerControllersInPackage(pack);
+        }
+    }
 
-            for (Class<?> controller : controllers) {
-                Object controllerInstance;
-                try {
-                    controllerInstance = controller.getConstructor().newInstance();
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("excetion occured" + e.getMessage());
-                }
+    private void registerControllersInPackage(Object pack) {
+        Reflections reflections = new Reflections(pack.toString());
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-                Method[] methods = controller.getDeclaredMethods();
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(RequestMapping.class)) {
-                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                        String url = requestMapping.value();
-                        RequestMethod[] requestMethods = requestMapping.method();
+        for (Class<?> controller : controllers) {
+            Object controllerInstance = instantiateController(controller);
+            Method[] methods = controller.getDeclaredMethods();
+            registerHandlerMethod(methods, controllerInstance);
+        }
+    }
 
-                        for (var requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+    private void registerHandlerMethod(Method[] methods, Object controllerInstance) {
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                String url = requestMapping.value();
+                RequestMethod[] requestMethods = requestMapping.method();
 
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
-                    }
+                for (var requestMethod : requestMethods) {
+                    HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+                    HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+
+                    handlerExecutions.put(handlerKey, handlerExecution);
                 }
             }
         }
+    }
+
+    private static Object instantiateController(Class<?> controller) {
+        Object controllerInstance;
+        try {
+            controllerInstance = controller.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("excetion occured" + e.getMessage());
+        }
+        return controllerInstance;
     }
 
     public Object getHandler(final HttpServletRequest request) {
