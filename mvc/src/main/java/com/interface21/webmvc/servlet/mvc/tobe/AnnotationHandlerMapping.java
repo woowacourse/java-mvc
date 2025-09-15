@@ -42,7 +42,7 @@ public class AnnotationHandlerMapping {
                 new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
     }
 
-    private static Object createController(final Class<?> controllerClass) {
+    private Object createController(final Class<?> controllerClass) {
         Object controllerInstance;
         try {
             controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
