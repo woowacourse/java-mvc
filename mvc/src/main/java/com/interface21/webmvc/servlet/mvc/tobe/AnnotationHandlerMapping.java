@@ -48,10 +48,10 @@ public class AnnotationHandlerMapping {
     private Map<HandlerKey, HandlerExecution> mapHandlerMethods(Object controller) {
         Map<HandlerKey, HandlerExecution> result = new HashMap<>();
         for (Method method : controller.getClass().getDeclaredMethods()) {
-            RequestMapping rm = method.getAnnotation(RequestMapping.class);
-            if (rm != null) {
-                String url = rm.value();
-                RequestMethod[] requestMethods = getAppliedRequestMethods(rm);
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping != null) {
+                String url = requestMapping.value();
+                RequestMethod[] requestMethods = getAppliedRequestMethods(requestMapping);
 
                 for (RequestMethod requestMethod : requestMethods) {
                     HandlerKey key = new HandlerKey(url, requestMethod);
@@ -72,9 +72,9 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        String url = request.getRequestURI();
+        String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey key = new HandlerKey(url, requestMethod);
+        HandlerKey key = new HandlerKey(uri, requestMethod);
 
         return handlerExecutions.get(key);
     }
