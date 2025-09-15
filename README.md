@@ -18,3 +18,18 @@
 ## 학습 테스트
 1. [Reflection API](study/src/test/java/reflection)
 2. [Servlet](study/src/test/java/servlet)
+
+
+# 요구사항 목록
+
+## STEP 1
+
+비즈니스 로직 구현에만 집중 할 수 있도록 어노테이션 기반의 MVC 프레임워크로 개선해보자.
+그리고 URL을 컨트롤러에 매핑하면서 HTTP 메서드(GET, POST, PUT, DELETE 등)도 매핑 조건에 포함시키자.
+@RequestMapping()에 method 설정이 되어 있지 않으면 모든 HTTP method를 지원해야 한다.
+HTTP 메서드와 URL를 매핑 조건으로 만들어보자.
+mvc 모듈은 프레임워크, app 모듈은 프로덕션 영역
+- [ ] MVC Framework 테스트 통과
+  - `AnnotationHandlerMappingTest` 통과
+- [ ] `JspView` 클래스 구현 
+  - `DispatcherServlet.service`에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮겨보자.
