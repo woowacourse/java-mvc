@@ -65,6 +65,14 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String url = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+
+        HandlerExecution findHandlerExecution = handlerExecutions.getOrDefault(handlerKey, null);
+        if (findHandlerExecution == null) {
+            throw new NoSuchElementException("해당 요청을 처리활 수 있는 핸들러가 없습니다.");
+        }
+        return findHandlerExecution;
     }
 }
