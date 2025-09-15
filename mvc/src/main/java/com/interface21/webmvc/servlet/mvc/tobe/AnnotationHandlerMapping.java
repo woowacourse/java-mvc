@@ -29,18 +29,24 @@ public class AnnotationHandlerMapping {
         for (final Object basePackage : basePackages) {
             final Set<Class<?>> controllers = scanControllers(basePackage);
             for (final Class<?> controller : controllers) {
-                final Method[] requestMappingMethods = getRequestMappingMethods(controller);
-                for (final Method method : requestMappingMethods) {
-                    final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                    final String url = annotation.value();
-                    for (final RequestMethod requestMethod : resolveRequestMethods(annotation)) {
-                        final HandlerKey key = new HandlerKey(url, requestMethod);
-                        if (isHandlerAlreadyRegistered(key)) {
-                            throw new IllegalArgumentException(
-                                    "Duplicate mapping found for " + url + " " + requestMethod);
+                try {
+                    final Object target = controller.getDeclaredConstructor().newInstance();
+                    final Method[] requestRequestMappingMethods = getRequestMappingMethods(controller);
+                    for (final Method method : requestRequestMappingMethods) {
+                        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+                        final String url = annotation.value();
+                        for (final RequestMethod requestMethod : resolveRequestMethods(annotation)) {
+                            final HandlerKey key = new HandlerKey(url, requestMethod);
+                            if (isHandlerAlreadyRegistered(key)) {
+                                throw new IllegalArgumentException(
+                                        "Duplicate mapping found for " + url + " " + requestMethod);
+                            }
+                            registerHandler(key, new HandlerExecution(target, method));
                         }
-                        registerHandler(key, new HandlerExecution());
                     }
+                } catch (final Exception e) {
+                    log.error("Error while instantiating controller", e);
+                    throw new RuntimeException(e);
                 }
             }
         }

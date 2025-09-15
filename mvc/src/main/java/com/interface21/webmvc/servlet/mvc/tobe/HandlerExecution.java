@@ -1,23 +1,21 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JsonView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
+import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
+    private final Object controller;
+    private final Method method;
+
+    public HandlerExecution(final Object controller, final Method method) {
+        this.controller = controller;
+        this.method = method;
+    }
+
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final Enumeration<String> attributes = request.getAttributeNames();
-        while (attributes.hasMoreElements()) {
-            final String name = attributes.nextElement();
-            final Object value = request.getAttribute(name);
-            modelAndView.addObject(name, value);
-        }
-
-        return modelAndView;
+        return (ModelAndView) method.invoke(controller, request, response);
     }
 }
