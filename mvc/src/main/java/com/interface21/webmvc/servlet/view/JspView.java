@@ -27,12 +27,18 @@ public class JspView implements View {
             return;
         }
 
+        if (model != null) {
+            addAttributeToRequest(model, request);
+        }
+
+        final var requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
+    }
+
+    private void addAttributeToRequest(Map<String, ?> model, HttpServletRequest request) {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
