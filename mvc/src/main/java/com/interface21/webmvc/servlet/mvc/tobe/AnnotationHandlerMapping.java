@@ -65,7 +65,9 @@ public class AnnotationHandlerMapping {
         final RequestMethod[] requestMethods = getRequestMethods(annotation);
 
         for (final RequestMethod requestMethod : requestMethods) {
-            log.info("등록 완료 : url ={}, method = {}, handlerMethod = {}", url, requestMethod.name(),
+            log.info("등록 완료 : url ={}, method = {}, handlerMethod = {}",
+                     url,
+                     requestMethod.name(),
                      method.getName()
             );
             handlerExecutions.put(
