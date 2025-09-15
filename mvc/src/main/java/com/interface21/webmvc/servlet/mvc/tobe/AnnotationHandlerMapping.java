@@ -1,13 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +23,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         try {
-            scanHandlerMappings();
+            scanControllers();
             log.info("Initialized AnnotationHandlerMapping!");
-            System.out.println("handlerExecutions = " + handlerExecutions);
+
         } catch (Exception e) {
             log.error("an error occurred while scanning handler mappings.", e);
             throw new RuntimeException(e);
@@ -41,33 +39,30 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void scanHandlerMappings() throws Exception {
-        final var reflections = new Reflections(basePackage);
-        final var handlerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+    private void scanControllers() throws Exception {
+        final var scanner = new ControllerScanner(basePackage);
+        final var controllers = scanner.getControllers();
 
-        for (final var clazz : handlerClasses) {
-            scanHandlerMethods(clazz);
+        for (final var clazz : controllers.keySet()) {
+            scanControllerMethods(clazz, controllers.get(clazz));
         }
     }
 
-    private void scanHandlerMethods(final Class<?> handlerClasses) throws Exception {
-        for (final var method : handlerClasses.getMethods()) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
+    private void scanControllerMethods(final Class<?> clazz, final Object controller) throws Exception {
+        for (final var method : clazz.getMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                addHandlerMappings(controller, method);
             }
-
-            final Object handler = handlerClasses.getDeclaredConstructor().newInstance();
-            addHandlerMapping(handler, method);
         }
     }
 
-    private void addHandlerMapping(final Object handler, final Method handlerMethod) throws Exception {
+    private void addHandlerMappings(final Object controller, final Method handlerMethod) throws Exception {
         final var requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
         final var requestMethods = scanRequestMethods(requestMapping);
 
         for (final var requestMethod : requestMethods) {
             final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-            final var handlerExecution = new HandlerExecution(handler, handlerMethod);
+            final var handlerExecution = new HandlerExecution(controller, handlerMethod);
             handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
         }
     }
