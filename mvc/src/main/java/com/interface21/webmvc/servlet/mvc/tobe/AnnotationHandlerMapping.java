@@ -34,17 +34,21 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         try {
-            for (Object basePackage : basePackages) {
-                Reflections reflections = new Reflections(basePackage);
-                // @Controller 어노테이션이 붙은 클래스들 가져오기
-                final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-                final Map<Class<?>, Object> controllers = createControllerInstances(controllerClasses);
-                initializeHandlerExecutions(controllers);
-            }
+            final Map<Class<?>, Object> controllers = findControllers();
+            initializeHandlerExecutions(controllers);
         } catch (Exception e) {
             throw new RuntimeException("AnnotationHandlerMapping 초기화에 실패했습니다.", e);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    /**
+     * basePackages에서 @Controller 어노테이션이 붙은 클래스를 찾아 인스턴스를 생성하고 맵으로 반환
+     */
+    private Map<Class<?>, Object> findControllers() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        final Reflections reflections = new Reflections(basePackages);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        return createControllerInstances(controllerClasses);
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -53,7 +57,7 @@ public class AnnotationHandlerMapping {
     }
 
     /**
-     * @Controller 어노테이션이 붙은 클래스들의 인스턴스를 생성하여 맵 형태로 반환
+     * 주어진 클래스 Set의 인스턴스를 생성하여 맵 형태로 반환
      */
     private Map<Class<?>, Object> createControllerInstances(final Set<Class<?>> controllerClasses) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Map<Class<?>, Object> controllers = new HashMap<>();
@@ -75,7 +79,7 @@ public class AnnotationHandlerMapping {
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 // @RequestMapping이 안붙은 메서드이면 null
                 if (requestMapping != null) {
-                    registerHandlerExecution(method, requestMapping.method(), requestMapping.value(), controller);
+                    registerHandlerExecution(method, requestMapping, controller);
                 }
             }
         }
@@ -84,13 +88,19 @@ public class AnnotationHandlerMapping {
     /**
      * 핸들러 메서드 정보를 handlerExecutions 맵에 등록
      */
-    private void registerHandlerExecution(final Method method, final RequestMethod[] requestMethods, final String url, final Object controller) {
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+    private void registerHandlerExecution(final Method method, final RequestMapping requestMapping, final Object controller) {
+        final String url = requestMapping.value();
+        RequestMethod[] targetMethods = requestMapping.method();
+        if (targetMethods.length == 0) {
+            targetMethods = new RequestMethod[]{RequestMethod.GET};
+        }
+
+        final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+        for (final RequestMethod requestMethod : targetMethods) {
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             if (handlerExecutions.containsKey(handlerKey)) {
-                throw new IllegalStateException("이미 존재하는 HandlerKey 입니다.");
+                throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
             }
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
