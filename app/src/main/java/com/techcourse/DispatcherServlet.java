@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
@@ -32,7 +33,7 @@ public final class DispatcherServlet extends HttpServlet {
         final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
         this.handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
-        this.handlerAdapters = List.of(new SimpleControllerHandlerAdapter());
+        this.handlerAdapters = List.of(new SimpleControllerHandlerAdapter(), new AnnotationHandlerAdapter());
     }
 
     @Override
