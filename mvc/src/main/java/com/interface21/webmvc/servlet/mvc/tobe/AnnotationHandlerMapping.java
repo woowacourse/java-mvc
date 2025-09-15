@@ -1,15 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -26,28 +28,32 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         try {
-            Class<?> clazz = Class.forName("samples.TestController");
-            Object controller = clazz.getConstructor().newInstance();
+            Reflections reflections = new Reflections(basePackage);
+            Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
 
-            Method[] declaredMethods = clazz.getDeclaredMethods();
-            for (Method method : declaredMethods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+            for (Class<?> controllerType : controllerTypes) {
+                Constructor<?> constructor = controllerType.getConstructor();
+                Object controller = constructor.newInstance();
 
-                    String url = mapping.value();
-                    RequestMethod[] methods = mapping.method();
+                Method[] declaredMethods = controllerType.getDeclaredMethods();
+                for (Method method : declaredMethods) {
+                    if (method.isAnnotationPresent(RequestMapping.class)) {
+                        RequestMapping mapping = method.getAnnotation(RequestMapping.class);
 
-                    for (RequestMethod requestMethod : methods) {
-                        HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+                        String url = mapping.value();
+                        RequestMethod[] methods = mapping.method();
 
-                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                        handlerExecutions.put(handlerKey, handlerExecution);
+                        for (RequestMethod requestMethod : methods) {
+                            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+
+                            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                            handlerExecutions.put(handlerKey, handlerExecution);
+                        }
                     }
                 }
             }
-        
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
