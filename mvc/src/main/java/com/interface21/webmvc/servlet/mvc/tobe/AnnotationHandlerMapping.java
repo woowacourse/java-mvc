@@ -57,10 +57,9 @@ public class AnnotationHandlerMapping {
 
         try {
             // 6. requestMethod 마다 HandlerKey, HandlerExecution 생성 후 등록
+            final Object controllerInstance = controller.getConstructor().newInstance();
             for (RequestMethod requestMethod : requestMethods) {
                 final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-
-                final Object controllerInstance = controller.getConstructor().newInstance();
                 final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
                 handlerExecutions.put(handlerKey, handlerExecution);
                 log.info("mapped: {} {}", requestMethod, uri);
