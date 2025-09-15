@@ -61,11 +61,15 @@ public class AnnotationHandlerMapping {
             for (RequestMethod requestMethod : requestMethods) {
                 final HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
                 final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+
+                if (handlerExecutions.containsKey(handlerKey)) {
+                    throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
+                }
                 handlerExecutions.put(handlerKey, handlerExecution);
                 log.info("mapped: {} {}", requestMethod, uri);
             }
         } catch (Exception e) {
-            log.warn("initialize exception: {}", e.getMessage());
+            log.warn("initialize exception", e);
             throw new RuntimeException(e);
         }
     }
