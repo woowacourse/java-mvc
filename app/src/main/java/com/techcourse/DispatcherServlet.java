@@ -1,10 +1,11 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +20,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings = new ArrayList<>();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
     @Override
     public void init() {
@@ -29,11 +30,11 @@ public class DispatcherServlet extends HttpServlet {
 
         final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
 
         final var annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
-        handlerMappings.add(annotationHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
     }
 
     @Override
@@ -43,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handler = getHandler(request, requestURI);
+            final var handler = handlerMappingRegistry.getHandler(request);
             final var adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final var modelAndView = adapter.execute(handler, request, response);
 
@@ -54,12 +55,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request, final String requestURI) throws ServletException {
-        return handlerMappings.stream()
-                .map(hm -> hm.getHandler(request))
-                .findAny()
-                .orElseThrow(() -> new ServletException("Handler not found for URI : " + requestURI));
     }
 }
