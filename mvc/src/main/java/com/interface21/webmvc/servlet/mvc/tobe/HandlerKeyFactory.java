@@ -8,7 +8,11 @@ import java.util.List;
 public class HandlerKeyFactory {
 
     public static List<HandlerKey> from(final RequestMapping requestMapping) {
-        final RequestMethod[] methods = requestMapping.method();
+        RequestMethod[] methods = requestMapping.method();
+        if (methods.length == 0) {
+            methods = RequestMethod.values();
+        }
+
         return Arrays.stream(methods)
                 .map(method -> new HandlerKey(requestMapping.value(), method))
                 .toList();
