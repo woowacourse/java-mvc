@@ -62,6 +62,9 @@ public class AnnotationHandlerMapping {
 
     private void registerMethod(final Method controllerMethod, final Object controller) {
         RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return;
+        }
         String path = requestMapping.value();
         RequestMethod[] requestMappingMethods = requestMapping.method();
         for (RequestMethod requestMethod : requestMappingMethods) {
