@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -42,20 +43,21 @@ public class DispatcherServlet extends HttpServlet {
         try {
             for (HandlerMapping handlerMapping : handlerMappings) {
                 final var handler = handlerMapping.getHandler(request);
+                ModelAndView modelAndView;
                 switch (handler) {
                     case null -> {
                         continue;
                     }
                     case HandlerExecution handlerExecution -> {
-                        final var modelAndView = handlerExecution.handle(request, response);
-                        modelAndView.getView().render(modelAndView.getModel(), request, response);
+                        modelAndView = handlerExecution.handle(request, response);
                     }
                     case Controller controller -> {
                         String viewName = controller.execute(request, response);
-                        move(viewName, request, response);
+                        modelAndView = new ModelAndView(new JspView(viewName));
                     }
                     default -> throw new IllegalStateException("HandlerType Not Supported, type=" + handler.getClass().getSimpleName());
                 }
+                modelAndView.getView().render(modelAndView.getModel(), request, response);
                 return;
             }
             throw new IllegalArgumentException("No Handler Found For " + requestURI);
@@ -63,14 +65,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
