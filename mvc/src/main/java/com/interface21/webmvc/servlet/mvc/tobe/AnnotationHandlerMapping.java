@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping {
 
         for (Method method : mappedMethods) {
             try {
-                addHandlerExecution(controller, method);
+                addHandlerExecutions(controller, method);
             } catch (Exception e) {
                 log.error("Failed to add handler execution.");
                 throw new RuntimeException(e);
@@ -58,7 +58,7 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void addHandlerExecution(final Class<?> controllerClass, final Method method) throws Exception {
+    private void addHandlerExecutions(final Class<?> controllerClass, final Method method) throws Exception {
         Constructor<?> controllerConstructor = controllerClass.getDeclaredConstructor();
         Object controller = controllerConstructor.newInstance();
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
@@ -68,8 +68,15 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            addExecution(handlerKey, handlerExecution);
         }
+    }
+
+    private void addExecution(final HandlerKey handlerKey, final HandlerExecution handlerExecution) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalArgumentException("Mapping already exists: " + handlerKey.toString());
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     public Object getHandler(final HttpServletRequest request) {
