@@ -33,7 +33,7 @@ public class AnnotationHandlerMapping {
             final Set<Class<?>> controllerClasses = samples.getTypesAnnotatedWith(Controller.class);
             for (Class<?> controllerClass : controllerClasses) {
                 final List<Method> requestMappingMethods = getRequestMappingMethods(controllerClass);
-                final Object targetClass = controllerClass.getDeclaredConstructor().newInstance();
+                final Object targetClass = controllerClass.getConstructor().newInstance();
                 for (Method requestMappingMethod : requestMappingMethods) {
                     final var handlerExecution = new HandlerExecution(requestMappingMethod, targetClass);
                     putHandlerExecutions(requestMappingMethod, handlerExecution);
@@ -52,15 +52,15 @@ public class AnnotationHandlerMapping {
 
     private void putHandlerExecutions(final Method requestMappingMethod, final HandlerExecution handlerExecution) {
         final RequestMapping annotation = requestMappingMethod.getAnnotation(RequestMapping.class);
-        final String value = annotation.value();
-        final RequestMethod[] methods = getRequestMethods(annotation.method());
-        for (RequestMethod method : methods) {
-            final var handlerKey = new HandlerKey(value, method);
+        final String url = annotation.value();
+        final RequestMethod[] httpMethods = getAnnotationHttpMethods(annotation.method());
+        for (RequestMethod httpMethod : httpMethods) {
+            final var handlerKey = new HandlerKey(url, httpMethod);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 
-    private RequestMethod[] getRequestMethods(final RequestMethod[] methods) {
+    private RequestMethod[] getAnnotationHttpMethods(final RequestMethod[] methods) {
         if (methods.length == 0) {
             return RequestMethod.allValues();
         }
