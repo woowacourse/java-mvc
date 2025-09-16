@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping {
                         //요청을 실제 컨트롤러 메서드에 연결하고 실행해ㅐ야하니까,
                         //컨트롤러랑 메서드를 알야야함.
                         HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                        handlerExecutions.put(handlerKey, handlerExecution);
+                        handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
                     }
                 }
             }
