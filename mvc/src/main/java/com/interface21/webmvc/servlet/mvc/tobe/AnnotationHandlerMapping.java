@@ -79,8 +79,8 @@ public class AnnotationHandlerMapping {
         RequestMethod[] requestMethods = requestMapping.method();
 
         if (requestMethods.length == 0) {
-            // 5. 메서드에 requestMethod가 없다면 GET을 기본으로 함
-            requestMethods = new RequestMethod[]{RequestMethod.GET};
+            // 5. 메서드에 requestMethod가 없다면 모든 HTTP method를 지원한다.
+            requestMethods = RequestMethod.values();
         }
         return requestMethods;
     }
