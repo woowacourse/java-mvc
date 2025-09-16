@@ -63,10 +63,10 @@ public class DispatcherServlet extends HttpServlet {
         for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(request);
 
-            if (handler instanceof Controller) {
-                return ((Controller) handler).execute(request, response);
-            } else if (handler instanceof HandlerExecution) {
-                return ((HandlerExecution) handler).handle(request, response);
+            if (handler instanceof Controller controller) {
+                return controller.execute(request, response);
+            } else if (handler instanceof HandlerExecution handlerExecution) {
+                return handlerExecution.handle(request, response);
             }
         }
 
