@@ -3,8 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
@@ -16,26 +14,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
-
-    private static final String DEFAULT_BASE_PACKAGE = "com.techcourse";
-    private static final ControllerScanner DEFAULT_CONTROLLER_SCANNER = new ControllerScanner();
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
-                DEFAULT_CONTROLLER_SCANNER,
-                DEFAULT_BASE_PACKAGE
-        );
-
-        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
