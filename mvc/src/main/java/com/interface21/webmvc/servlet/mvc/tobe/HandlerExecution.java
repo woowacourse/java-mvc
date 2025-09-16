@@ -16,7 +16,6 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // 찾아낸 controller의 method 실행하기(invoke)
         return (ModelAndView) method.invoke(controllerInstance, request, response);
     }
 }
