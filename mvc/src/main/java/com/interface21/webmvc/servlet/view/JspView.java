@@ -23,18 +23,18 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (model != null) {
-            model.keySet().forEach(key -> {
-                log.debug("attribute name : {}, value : {}", key, model.get(key));
-                request.setAttribute(key, model.get(key));
-            });
-        }
-
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             final String redirectPath = viewName.substring(REDIRECT_PREFIX.length());
             log.debug("Redirecting to: {}", redirectPath);
             response.sendRedirect(redirectPath);
             return;
+        }
+
+        if (model != null) {
+            model.keySet().forEach(key -> {
+                log.debug("attribute name : {}, value : {}", key, model.get(key));
+                request.setAttribute(key, model.get(key));
+            });
         }
 
         log.debug("Forwarding to view: {}", viewName);
