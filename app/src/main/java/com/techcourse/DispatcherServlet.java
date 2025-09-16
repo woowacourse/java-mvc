@@ -1,9 +1,9 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -20,21 +20,24 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
 
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
-                "com.techcourse"
-        );
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
+
+        handlerMappings.add(manualHandlerMapping);
         handlerMappings.add(annotationHandlerMapping);
+
+        handlerAdapters.add(new ControllerHandlerAdapter());
+        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
@@ -49,19 +52,11 @@ public class DispatcherServlet extends HttpServlet {
                 return;
             }
 
-            ModelAndView modelAndView = null;
-            if (handler instanceof Controller) {
-                modelAndView = ((Controller) handler).execute(request, response);
-            }
+            final var handlerAdapter = getHandlerAdapter(handler);
+            final var modelAndView = handlerAdapter.handle(request, response, handler);
 
-            if (handler instanceof HandlerExecution) {
-                modelAndView = ((HandlerExecution) handler).handle(request, response);
-            }
-
-            if (modelAndView != null) {
-                final var view = modelAndView.getView();
-                view.render(modelAndView.getModel(), request, response);
-            }
+            final var view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -69,12 +64,21 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
-        for (final HandlerMapping handlerMapping : handlerMappings) {
+        for (final var handlerMapping : handlerMappings) {
             final var handler = handlerMapping.getHandler(request);
             if (handler != null) {
                 return handler;
             }
         }
         return null;
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        for (final var handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new IllegalArgumentException("No adapter for handler " + handler);
     }
 }
