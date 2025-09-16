@@ -72,6 +72,9 @@ public final class AnnotationHandlerMapping implements HandlerMapping {
         final RequestMethod[] effectiveMethods = getRequestMethods(requestMapping);
         for (final RequestMethod requestMethod : effectiveMethods) {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("중복된 핸들러가 존재합니다. " + handlerKey);
+            }
             final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
