@@ -1,11 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +26,48 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        controllers.forEach(controller -> {
+            Object instance = toInstance(controller);
+            Map<HandlerKey, HandlerExecution> handlerMapping = mapHandlerMethods(instance);
+            handlerExecutions.putAll(handlerMapping);
+
+            handlerMapping.forEach((key, execution) -> log.info("Mapped {}:{}", key, execution));
+        });
+    }
+
+    private Object toInstance(Class<?> controller) {
+        try {
+            return controller.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to instantiate controller: " + controller, e);
+        }
+    }
+
+    private Map<HandlerKey, HandlerExecution> mapHandlerMethods(Object controller) {
+        Map<HandlerKey, HandlerExecution> result = new HashMap<>();
+        for (Method method : controller.getClass().getDeclaredMethods()) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping != null) {
+                String url = requestMapping.value();
+                RequestMethod[] requestMethods = requestMapping.method();
+
+                for (RequestMethod requestMethod : requestMethods) {
+                    HandlerKey key = new HandlerKey(url, requestMethod);
+                    HandlerExecution execution = new HandlerExecution(controller, method);
+                    result.put(key, execution);
+                }
+            }
+        }
+        return result;
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String uri = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey key = new HandlerKey(uri, requestMethod);
+
+        return handlerExecutions.get(key);
     }
 }
