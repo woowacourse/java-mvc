@@ -31,6 +31,7 @@ public class JspView implements View {
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             final String redirectUrl = viewName.substring(REDIRECT_PREFIX.length());
             response.sendRedirect(redirectUrl);
+            return;
         }
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(viewName);
