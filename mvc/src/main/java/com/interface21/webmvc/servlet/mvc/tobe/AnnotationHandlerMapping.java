@@ -54,6 +54,13 @@ public class AnnotationHandlerMapping {
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 String uri = requestMapping.value();
                 RequestMethod[] requestMethods = requestMapping.method();
+                if (requestMethods.length == 0) {
+                    for (RequestMethod requestMethod : RequestMethod.values()) {
+                        HandlerKey key = new HandlerKey(uri, requestMethod);
+                        HandlerExecution execution = new HandlerExecution(object, method);
+                        handlerExecutions.put(key, execution);
+                    }
+                }
 
                 for (RequestMethod requestMethod : requestMethods) {
                     HandlerKey key = new HandlerKey(uri, requestMethod); // URI + HTTP Request Method
