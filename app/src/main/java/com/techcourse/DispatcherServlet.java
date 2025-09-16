@@ -1,11 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -33,6 +34,10 @@ public class DispatcherServlet extends HttpServlet {
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
+        handlerAdapters = List.of(
+                new AnnotationHandlerAdapter(),
+                new ManualHandlerAdapter()
+        );
     }
 
     @Override
@@ -43,24 +48,15 @@ public class DispatcherServlet extends HttpServlet {
         try {
             for (HandlerMapping handlerMapping : handlerMappings) {
                 final var handler = handlerMapping.getHandler(request);
-                ModelAndView modelAndView;
-                switch (handler) {
-                    case null -> {
-                        continue;
+                if (handler != null) {
+                    for (HandlerAdapter handlerAdapter : handlerAdapters) {
+                        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+                        if (modelAndView != null) modelAndView.getView().render(modelAndView.getModel(), request, response);
                     }
-                    case HandlerExecution handlerExecution -> {
-                        modelAndView = handlerExecution.handle(request, response);
-                    }
-                    case Controller controller -> {
-                        String viewName = controller.execute(request, response);
-                        modelAndView = new ModelAndView(new JspView(viewName));
-                    }
-                    default -> throw new IllegalStateException("HandlerType Not Supported, type=" + handler.getClass().getSimpleName());
+                    throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
                 }
-                modelAndView.getView().render(modelAndView.getModel(), request, response);
-                return;
             }
-            throw new IllegalArgumentException("No Handler Found For " + requestURI);
+            throw new IllegalArgumentException("No HandlerMapping Found For " + requestURI);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
