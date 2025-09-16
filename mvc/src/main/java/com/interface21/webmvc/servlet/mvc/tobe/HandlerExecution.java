@@ -9,15 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class HandlerExecution {
 
-    private final Object object;
+    private final Object handler;
     private final Method method;
 
-    public HandlerExecution(final Object object, final Method method) {
-        this.object = object;
+    public HandlerExecution(final Object handler, final Method method) {
+        this.handler = handler;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView)method.invoke(object, request, response);
+        return (ModelAndView)method.invoke(handler, request, response);
     }
 }
