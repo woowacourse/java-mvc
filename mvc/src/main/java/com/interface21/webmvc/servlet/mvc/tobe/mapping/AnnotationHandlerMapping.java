@@ -1,12 +1,15 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
+import java.util.Arrays;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
@@ -50,18 +53,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
      * 각 컨트롤러의 메서드를 스캔하고 @RequestMapping 정보를 기반으로 핸들러 맵을 초기화
      */
     private void initializeHandlerExecutions(final Map<Class<?>, Object> controllers) {
-        for (final Class<?> controllerClass : controllers.keySet()) {
-            final Object controller = controllers.get(controllerClass);
-            final Method[] methods = controllerClass.getDeclaredMethods();
-            for (final Method method : methods) {
-                //메서드에 붙은 @RequestMapping 어노테이션 가져오기
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                // @RequestMapping이 안붙은 메서드이면 null
-                if (requestMapping != null) {
-                    registerHandlerExecution(method, requestMapping, controller);
-                }
-            }
-        }
+        controllers.forEach((clazz, controller) ->
+                Arrays.stream(clazz.getDeclaredMethods())
+                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                        .forEach(method -> registerHandlerExecution(method, method.getAnnotation(RequestMapping.class), controller))
+        );
     }
 
     /**
