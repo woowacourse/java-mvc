@@ -6,8 +6,10 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
@@ -18,11 +20,14 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+    public AnnotationHandlerMapping() {
+        this.basePackage = new String[]{"/"};
+    }
+
+    public AnnotationHandlerMapping(final String basePackage, final String... others) {
+        this.basePackage = Stream.concat(Stream.of(basePackage), Arrays.stream(others)).toArray(String[]::new);
     }
 
     @Override
