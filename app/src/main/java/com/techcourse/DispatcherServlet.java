@@ -1,10 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,6 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -34,6 +35,12 @@ public class DispatcherServlet extends HttpServlet {
                 new AnnotationHandlerMapping("com.techcourse.controller");
         handlerMappings.add(manualHandlerMapping);
         handlerMappings.add(annotationHandlerMapping);
+
+        handlerAdapters = new ArrayList<>();
+        final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        final ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+        handlerAdapters.add(annotationHandlerAdapter);
+        handlerAdapters.add(manualHandlerAdapter);
     }
 
     @Override
@@ -68,15 +75,10 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        if (handler instanceof Controller) {
-            final String viewName = ((Controller) handler).execute(request, response);
-            final JspView jspView = new JspView(viewName);
-
-            return new ModelAndView(jspView);
-        }
-
-        if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter.handle(request, response, handler);
+            }
         }
 
         throw new IllegalArgumentException("Invalid type of Handler");
