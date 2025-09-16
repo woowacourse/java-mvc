@@ -1,16 +1,20 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,6 +25,8 @@ public class DispatcherServlet extends HttpServlet {
     private ManualHandlerMapping manualHandlerMapping;
     private AnnotationHandlerMapping annotationHandlerMapping;
 
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+
     public DispatcherServlet() {
     }
 
@@ -28,9 +34,11 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        handlerMappings.add(manualHandlerMapping);
 
         annotationHandlerMapping = new AnnotationHandlerMapping(APPLICATION_BASE_PACKAGE);
         annotationHandlerMapping.initialize();
+        handlerMappings.add(annotationHandlerMapping);
     }
 
     @Override
@@ -39,23 +47,28 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            if(manualHandlerMapping.containsHandlerByRequestURI(requestURI)){
-                final var controller = manualHandlerMapping.getHandler(requestURI);
-                final var viewName = controller.execute(request, response);
-                move(viewName, request, response);
-                return;
+            Object handler = getHandler(request);
+            if(handler instanceof Controller controller) {
+                move(controller.execute(request, response), request, response);
             }
-            if(annotationHandlerMapping.containsHandlerByHttpServletRequest(request)){
-                HandlerExecution handler = (HandlerExecution) annotationHandlerMapping.getHandler(request);
-                ModelAndView modelAndView = handler.handle(request, response);
-                View view = modelAndView.getView();
-                view.render(modelAndView.getModel(), request, response);
+            else if (handler instanceof HandlerExecution handlerExecution){
+                ModelAndView modelAndView = handlerExecution.handle(request, response);
+                Map<String, Object> model = modelAndView.getModel();
+                modelAndView.getView().render(model, request, response);
             }
 
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(handler -> handler != null)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 요청입니다."));
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
