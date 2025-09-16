@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -28,8 +29,9 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Arrays.stream(basePackages)
-                .forEach(this::initHandlerExecutions);
+        for (Object basePackage : basePackages) {
+            initHandlerExecutions(basePackage);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
@@ -74,6 +76,11 @@ public class AnnotationHandlerMapping {
         String url = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey key = new HandlerKey(url, method);
-        return handlerExecutions.get(key);
+        HandlerExecution handlerExecution = handlerExecutions.get(key);
+        if (handlerExecution == null) {
+            log.error("Cannot find matching controller. url : {}, method: {}", url, method);
+            throw new NoSuchElementException();
+        }
+        return handlerExecution;
     }
 }
