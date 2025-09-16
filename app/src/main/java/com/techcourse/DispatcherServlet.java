@@ -11,12 +11,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.Serial;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DispatcherServlet extends HttpServlet {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
@@ -54,9 +56,9 @@ public final class DispatcherServlet extends HttpServlet {
             }
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             move(modelAndView, request, response);
-        } catch (final Throwable exception) {
+        } catch (final Exception exception) {
             log.error("요청 처리 중 예외 발생", exception);
-            throw new ServletException(exception.getMessage());
+            throw new ServletException("요청 처리 중 예외 발생", exception);
         }
     }
 
