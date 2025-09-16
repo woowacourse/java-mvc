@@ -109,9 +109,15 @@ public class AnnotationHandlerMapping {
         String requestURI = request.getRequestURI();
         String methodName = request.getMethod();
 
-        RequestMethod requestMethod = RequestMethod.valueOf(methodName.toUpperCase());
-        HandlerKey key = new HandlerKey(requestURI, requestMethod);
+        try {
+            RequestMethod requestMethod = RequestMethod.valueOf(methodName.toUpperCase());
+            HandlerKey key = new HandlerKey(requestURI, requestMethod);
 
-        return handlerExecutions.get(key);
+            return handlerExecutions.get(key);
+        } catch (IllegalArgumentException e) {
+            log.error("405 Method Not Allowed - URI exists but method not supported: {}", requestURI);
+
+            return null;
+        }
     }
 }
