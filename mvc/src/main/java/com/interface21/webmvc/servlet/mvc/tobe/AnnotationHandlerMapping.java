@@ -28,7 +28,6 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
 
         Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
@@ -51,6 +50,7 @@ public class AnnotationHandlerMapping {
                  IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void registerHandlerExecution(Method method, Object handler) {
@@ -72,6 +72,8 @@ public class AnnotationHandlerMapping {
                     }
             );
 
+            log.info("Path : {}, Method : {} ,Controller : {}", url, httpMethod.name(),
+                    method.getDeclaringClass().getCanonicalName());
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
@@ -81,5 +83,12 @@ public class AnnotationHandlerMapping {
         RequestMethod httpMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(url, httpMethod);
         return handlerExecutions.get(handlerKey);
+    }
+
+    public boolean containsHandlerByHttpServletRequest(final HttpServletRequest request) {
+        String url = request.getRequestURI();
+        RequestMethod httpMethod = RequestMethod.valueOf(request.getMethod());
+        HandlerKey handlerKey = new HandlerKey(url, httpMethod);
+        return handlerExecutions.containsKey(handlerKey);
     }
 }
