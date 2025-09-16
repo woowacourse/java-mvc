@@ -66,7 +66,7 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(path, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution());
+            handlerExecutions.put(handlerKey, new HandlerExecution(method));
         }
     }
 
