@@ -5,11 +5,11 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,10 @@ public class AnnotationHandlerMapping {
 
     private void registerController(final Class<?> controller) {
         final Object instance = createControllerInstance(controller);
-        final Method[] requestMappingMethods = findRequestMappingMethods(controller);
+        final Set<Method> requestMappingMethods = ReflectionUtils.getAllMethods(
+                controller,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
         for (final Method method : requestMappingMethods) {
             registerHandlerMethod(method, instance);
         }
@@ -65,23 +68,17 @@ public class AnnotationHandlerMapping {
         final RequestMethod[] requestMethods = getRequestMethods(annotation);
 
         for (final RequestMethod requestMethod : requestMethods) {
-            log.info("등록 완료 : url ={}, method = {}, handlerMethod = {}",
-                     url,
-                     requestMethod.name(),
-                     method.getName()
+            log.info(
+                    "등록 완료 : url ={}, method = {}, handlerMethod = {}",
+                    url,
+                    requestMethod.name(),
+                    method.getName()
             );
             handlerExecutions.put(
                     new HandlerKey(url, requestMethod),
                     new HandlerExecution(instance, method)
             );
         }
-    }
-
-    private Method[] findRequestMappingMethods(final Class<?> controller) {
-        final Method[] declaredMethods = controller.getDeclaredMethods();
-        return Arrays.stream(declaredMethods)
-                .filter(declaredMethod -> declaredMethod.isAnnotationPresent(RequestMapping.class))
-                .toArray(Method[]::new);
     }
 
     private RequestMethod[] getRequestMethods(final RequestMapping annotation) {
