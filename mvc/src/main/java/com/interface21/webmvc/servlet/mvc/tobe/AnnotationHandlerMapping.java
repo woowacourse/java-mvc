@@ -32,8 +32,8 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackages);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         controllerClasses.forEach(controllerClass -> {
-            Object instance = toInstance(controllerClass);
-            registerHandler(instance);
+            Object controllerInstance = toInstance(controllerClass);
+            registerHandler(controllerInstance);
         });
     }
 
@@ -47,28 +47,33 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void registerHandler(final Object object) {
-        Method[] declaredMethods = object.getClass().getDeclaredMethods();
+    private void registerHandler(final Object handler) {
+        Method[] declaredMethods = handler.getClass().getDeclaredMethods();
         for (Method method : declaredMethods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                String uri = requestMapping.value();
-                RequestMethod[] requestMethods = requestMapping.method();
-                if (requestMethods.length == 0) {
-                    for (RequestMethod requestMethod : RequestMethod.values()) {
-                        HandlerKey key = new HandlerKey(uri, requestMethod);
-                        HandlerExecution execution = new HandlerExecution(object, method);
-                        handlerExecutions.put(key, execution);
-                    }
-                }
-
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerKey key = new HandlerKey(uri, requestMethod); // URI + HTTP Request Method
-                    HandlerExecution execution = new HandlerExecution(object, method); // controller + method
-                    handlerExecutions.put(key, execution);
-                }
+                registerRequestMappingMethod(handler, method);
             }
         }
+    }
+
+    private void registerRequestMappingMethod(final Object handler, final Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String uri = requestMapping.value();
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey key = new HandlerKey(uri, requestMethod);
+            HandlerExecution execution = new HandlerExecution(handler, method);
+            handlerExecutions.put(key, execution);
+        }
+    }
+
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
