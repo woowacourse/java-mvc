@@ -1,11 +1,15 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
+import com.interface21.webmvc.servlet.HandlerResolver;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.ViewResolver;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,31 +18,32 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private ViewResolver viewResolver;
+    private List<HandlerMapping> handlerMappings;
+    private HandlerResolver handlerResolver;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        this.viewResolver = new ViewResolver();
+        this.handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        this.handlerMappings.forEach(HandlerMapping::initialize);
+        this.handlerResolver = new HandlerResolver(new ViewResolver());
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final View view = viewResolver.getView(viewName);
-            ModelAndView modelAndView = new ModelAndView(view);
-            view.render(modelAndView.getModel(), request, response);
+            final Object handler = handlerMappings.stream()
+                    .map(handlerMapping -> handlerMapping.getHandler(request))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "not supported uri: %s %s".formatted(request.getMethod(), request.getRequestURI())));
+            final ModelAndView modelAndView = handlerResolver.resolve(handler, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
