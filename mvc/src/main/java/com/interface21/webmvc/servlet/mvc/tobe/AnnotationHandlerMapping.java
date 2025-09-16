@@ -8,7 +8,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +29,11 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final var controllers = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
-        controllers.forEach(controller -> Arrays.stream(controller.getMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(requestMappingMethod -> {
-                    var handlerExecution = createHandlerExecution(controller, requestMappingMethod);
-                    var requestMappingAnnotation = requestMappingMethod.getAnnotation(RequestMapping.class);
-                    extractHandlerExecutions(handlerExecution, requestMappingAnnotation);
-                })
-        );
+        final var controllers = scanControllers();
+        for (final Class<?> controller : controllers) {
+            final var methods = scanRequestMappingMethods(controller);
+            registerHandlerForController(controller, methods);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -45,37 +43,64 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
+    private Set<Class<?>> scanControllers() {
+        return new Reflections(basePackage)
+                .getTypesAnnotatedWith(Controller.class);
+    }
+
+    private List<Method> scanRequestMappingMethods(final Class<?> controller) {
+        return Arrays.stream(controller.getMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
+    }
+
+    private void registerHandlerForController(final Class<?> controller, final List<Method> methods) {
+        for (final Method method : methods) {
+            final var handlerKeys = createHandlerKeys(method);
+            final var handlerExecution = createHandlerExecution(controller, method);
+            registerHandler(handlerKeys, handlerExecution);
+        }
+    }
+
+    private List<HandlerKey> createHandlerKeys(final Method method) {
+        final var requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
+        var url = requestMappingAnnotation.value();
+        var httpMethods = requestMappingAnnotation.method();
+
+        if (httpMethods.length == 0) {
+            return Arrays.stream(RequestMethod.values())
+                    .map(requestMethod -> new HandlerKey(url, requestMethod))
+                    .toList();
+        }
+        return Arrays.stream(httpMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .toList();
+    }
+
     private HandlerExecution createHandlerExecution(final Class<?> controller, final Method method) {
         try {
             final Constructor<?> constructor = controller.getDeclaredConstructor();
             return new HandlerExecution(constructor.newInstance(), method);
+        } catch (NoSuchMethodException e) {
+            log.error("Exception : 컨트롤러 기본 생성자가 필요합니다. | {}", e.getMessage(), e);
+            throw new RuntimeException(e);
         } catch (final Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
-    private void extractHandlerExecutions(
-            final HandlerExecution handlerExecution,
-            final RequestMapping requestMappingMethod
-    ) {
-        try {
-            final var value = requestMappingMethod.value();
-            final var httpMethods = requestMappingMethod.method();
-            if (httpMethods.length == 0) {
-                for (RequestMethod requestMethod : RequestMethod.values()) {
-                    final var handlerKey = new HandlerKey(value, requestMethod);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-                return;
-            }
-            for (RequestMethod requestMethod : httpMethods) {
-                final var handlerKey = new HandlerKey(value, requestMethod);
-                handlerExecutions.put(handlerKey, handlerExecution);
-            }
-        } catch (final Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+    private void registerHandler(final List<HandlerKey> handlerKeys, final HandlerExecution handlerExecution) {
+        for (final HandlerKey handlerKey : handlerKeys) {
+            registerHandler(handlerKey, handlerExecution);
         }
+    }
+
+    private void registerHandler(final HandlerKey handlerKey, final HandlerExecution handlerExecution) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            log.warn("Handler Key : {} 가 이미 등록되어 있습니다. | {}", handlerKey, handlerExecutions.get(handlerKey));
+            throw new IllegalArgumentException();
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 }
