@@ -4,9 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
@@ -15,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -53,6 +50,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                     });
                         })
                         .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                
                 this.handlerExecutions.putAll(foundExecutions);
             } catch (final Exception e) {
                 log.error("Failed to initialize controller: {}", clazz.getName(), e);
@@ -66,14 +64,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private HandlerExecution createHandlerExecution(Class<?> clazz, Method method) {
         final Object instance = getInstance(clazz);
-        final BiFunction<HttpServletRequest, HttpServletResponse, ModelAndView> targetMethod = (req, res) -> {
-            try {
-                return (ModelAndView) method.invoke(instance, req, res);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalArgumentException("Handler method invocation failed", e);
-            }
-        };
-        return new HandlerExecution(method, targetMethod);
+        return new HandlerExecution(instance, method);
     }
 
     private Object getInstance(final Class<?> clazz) {

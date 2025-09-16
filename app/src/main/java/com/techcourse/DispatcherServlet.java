@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final Object handler = handlerMappings.stream()
                     .map(handlerMapping -> handlerMapping.getHandler(request))
+                    .filter(Objects::nonNull)
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException(
                             "not supported uri: %s %s".formatted(request.getMethod(), request.getRequestURI())));
