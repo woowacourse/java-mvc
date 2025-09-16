@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +21,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -88,9 +89,7 @@ public class AnnotationHandlerMapping {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("Not found handlerExecution by %s".formatted(handlerKey));
-        }
+        log.debug("[AnnotationHandlerMapping] Request Mapping Uri : {}", requestURI);
         return handlerExecutions.get(handlerKey);
     }
 }
