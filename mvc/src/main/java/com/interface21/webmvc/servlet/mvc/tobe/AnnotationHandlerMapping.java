@@ -63,13 +63,27 @@ public class AnnotationHandlerMapping {
     private void addHandlerMapping(Object controller, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = requestMapping.method();
+        /*
+         * 빈 request method일 경우, default로 모든 HTTP 메서드 매핑
+         */
+        if (requestMethods == null || requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
         Arrays.stream(requestMethods)
-                .forEach(requestMethod ->
-                        handlerExecutions.put(
-                                new HandlerKey(requestMapping.value(), requestMethod),
-                                new HandlerExecution(controller, method)
-                        )
+                .forEach(requestMethod -> {
+                            HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
+                            validateDuplicatedMethod(requestMethod, key, requestMapping);
+                            handlerExecutions.put(key, new HandlerExecution(controller, method));
+                        }
                 );
+    }
+
+    private void validateDuplicatedMethod(RequestMethod requestMethod, HandlerKey key, RequestMapping requestMapping) {
+        if (handlerExecutions.containsKey(key)) {
+            log.error("Already initialized for method. uri:{}, method: {}",
+                    requestMapping.value(), requestMethod);
+            throw new IllegalArgumentException();
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
