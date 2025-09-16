@@ -21,9 +21,9 @@ public class HandlerMappingRegistry {
         for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(request);
             if (handler != null) {
-                return handler;
+                return Optional.of(handler);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }
