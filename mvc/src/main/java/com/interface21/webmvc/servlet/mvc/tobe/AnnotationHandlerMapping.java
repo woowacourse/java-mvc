@@ -51,7 +51,7 @@ public class AnnotationHandlerMapping {
             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
             if (requestMapping != null) {
                 String url = requestMapping.value();
-                RequestMethod[] requestMethods = getAppliedRequestMethods(requestMapping);
+                RequestMethod[] requestMethods = requestMapping.method();
 
                 for (RequestMethod requestMethod : requestMethods) {
                     HandlerKey key = new HandlerKey(url, requestMethod);
@@ -61,14 +61,6 @@ public class AnnotationHandlerMapping {
             }
         }
         return result;
-    }
-
-    private RequestMethod[] getAppliedRequestMethods(RequestMapping rm) {
-        RequestMethod[] requestMethods = rm.method();
-        if (requestMethods.length == 0) {
-            return RequestMethod.values();
-        }
-        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
