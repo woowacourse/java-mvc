@@ -67,12 +67,8 @@ public class AnnotationHandlerMapping {
             return new HandlerExecution(controllerInstance, method);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            throw new IllegalStateException("리플렉션 중 예외 발생");
         }
     }
 
