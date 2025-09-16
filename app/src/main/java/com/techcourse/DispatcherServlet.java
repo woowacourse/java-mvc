@@ -49,20 +49,24 @@ public class DispatcherServlet extends HttpServlet {
             Object foundHandler = null;
             for (HandlerMapping handlerMapping : handlerMappings) {
                 final var handler = handlerMapping.getHandler(request);
-                if (handler != null) foundHandler = handler;
+                if (handler != null) {
+                    foundHandler = handler;
+                    break;
+                }
             }
-
             if (foundHandler == null) throw new IllegalArgumentException("No HandlerMapping Found For " + requestURI);
 
-            ModelAndView resultModelAndView = null;
+            HandlerAdapter foundHandlerAdapter = null;
             for (HandlerAdapter handlerAdapter : handlerAdapters) {
-                ModelAndView modelAndView = handlerAdapter.handle(request, response, foundHandler);
-                if (modelAndView != null) resultModelAndView = modelAndView;
+                if (handlerAdapter.supports(foundHandler)) {
+                    foundHandlerAdapter = handlerAdapter;
+                    break;
+                }
             }
+            if (foundHandlerAdapter == null) throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
 
-            if (resultModelAndView == null) throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
-
-            resultModelAndView.getView().render(resultModelAndView.getModel(), request, response);
+            final ModelAndView modelAndView = foundHandlerAdapter.handle(request, response, foundHandler);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
