@@ -1,18 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Set;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -27,14 +22,12 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> typesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = ControllerScanner.of(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        for (Class<?> controllerClass : typesAnnotatedWithController) {
-            Object controller = getNewInstance(controllerClass);
+        for (Class<?> controllerClass : controllers.keySet()) {
             Method[] methods = controllerClass.getMethods();
-
-            addHandlerMappings(controller, methods);
+            addHandlerMappings(controllers.get(controllerClass), methods);
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
@@ -46,14 +39,6 @@ public class AnnotationHandlerMapping {
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
 
         return handlerExecutions.get(handlerKey);
-    }
-
-    private Object getNewInstance(Class<?> controller) {
-        try {
-            return controller.getDeclaredConstructor().newInstance();
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void addHandlerMappings(Object controller, Method[] methods) {
