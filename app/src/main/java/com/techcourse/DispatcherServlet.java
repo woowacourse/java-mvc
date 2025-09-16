@@ -11,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private List<HandlerMapping> handlerMappings;
 
     public DispatcherServlet() {
     }
@@ -31,15 +30,13 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
-
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
                 DEFAULT_CONTROLLER_SCANNER,
                 DEFAULT_BASE_PACKAGE
         );
-        annotationHandlerMapping.initialize();
-        handlerMappings.add(annotationHandlerMapping);
+
+        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override
