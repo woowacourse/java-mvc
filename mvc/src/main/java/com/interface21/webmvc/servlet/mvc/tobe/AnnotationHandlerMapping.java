@@ -108,7 +108,8 @@ public class AnnotationHandlerMapping {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
 
-        final RequestMethod requestMethod = RequestMethod.valueOf(method);
+        final RequestMethod requestMethod = RequestMethod.from(method);
+
         final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
 
         return handlerExecutions.get(handlerKey);
