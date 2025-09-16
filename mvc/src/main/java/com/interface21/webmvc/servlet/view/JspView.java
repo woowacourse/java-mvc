@@ -24,14 +24,12 @@ public class JspView implements View {
             throws Exception {
         if (viewName.startsWith(REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(REDIRECT_PREFIX.length()));
-            log.debug("Redirecting");
             return;
         }
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
-        log.debug("Forwarding");
         request.getRequestDispatcher(viewName).forward(request, response);
     }
 }
