@@ -45,7 +45,7 @@ public class AnnotationHandlerMapping {
             try {
                 addHandlerExecutions(controller, method);
             } catch (Exception e) {
-                log.error("Failed to add handler execution.");
+                log.error("Failed to add handler execution.", e);
                 throw new RuntimeException(e);
             }
         }
