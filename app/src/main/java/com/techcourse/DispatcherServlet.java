@@ -40,7 +40,16 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
             final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            if (handlerAdapter == null) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
             final ModelAndView mav = handlerAdapter.handle(request, response, handler);
             renderView(mav, request, response);
         } catch (Throwable e) {
@@ -57,7 +66,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handler;
             }
         }
-        throw new IllegalArgumentException("No handler found for request URI: " + request.getRequestURI());
+        return null;
     }
 
     private HandlerAdapter getHandlerAdapter(final Object handler) {
@@ -66,7 +75,7 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerAdapter;
             }
         }
-        throw new IllegalArgumentException("No adapter found for handler: " + handler);
+        return null;
     }
 
     private void renderView(final ModelAndView mav, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
