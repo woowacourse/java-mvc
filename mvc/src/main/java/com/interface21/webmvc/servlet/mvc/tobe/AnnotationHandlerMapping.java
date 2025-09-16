@@ -1,17 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,52 +25,33 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner();
+        Set<Class<?>> controllerClasses = controllerScanner.scan(basePackage);
+        Map<Class<?>, Object> controllers = ReflectionUtils.newInstances(controllerClasses);
 
-        Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controllerClass : controllerClasses) {
+            Object controller = controllers.get(controllerClass);
+            List<Method> handlers = ReflectionUtils.getAllMethods(controllerClass, RequestMapping.class);
 
-        try {
-            for (Class<?> controllerType : controllerTypes) {
-                Constructor<?> constructor = controllerType.getConstructor();
-                Object handler = constructor.newInstance();
-                Method[] controllerMethods = controllerType.getDeclaredMethods();
-
-                for (Method method : controllerMethods) {
-                    if (!method.isAnnotationPresent(RequestMapping.class)) {
-                        continue;
-                    }
-
-                    registerHandlerExecution(method, handler);
-                }
+            for (Method handler : handlers) {
+                registerHandlerExecution(handler, controller);
             }
-        } catch (InvocationTargetException | NoSuchMethodException | InstantiationException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandlerExecution(Method method, Object handler) {
-        RequestMapping handlerAnnotation = method.getAnnotation(RequestMapping.class);
+    private void registerHandlerExecution(Method handler, Object controller) {
+        RequestMapping handlerAnnotation = handler.getAnnotation(RequestMapping.class);
         String url = handlerAnnotation.value();
         RequestMethod[] httpMethods = handlerAnnotation.method();
 
         for (RequestMethod httpMethod : httpMethods) {
             HandlerKey handlerKey = new HandlerKey(url, httpMethod);
 
-            HandlerExecution handlerExecution = new HandlerExecution(
-                    (request, response) ->
-                    {
-                        try {
-                            return (ModelAndView) method.invoke(handler, request, response);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-            );
+            HandlerExecution handlerExecution = new HandlerExecution(controller, handler);
 
             log.info("Path : {}, Method : {} ,Controller : {}", url, httpMethod.name(),
-                    method.getDeclaringClass().getCanonicalName());
+                    handler.getDeclaringClass().getCanonicalName());
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
