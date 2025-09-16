@@ -17,7 +17,7 @@ public class LoginController implements Controller {
     @Override
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
-            return new ModelAndView(new JspView("/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
@@ -25,15 +25,15 @@ public class LoginController implements Controller {
                     log.info("User : {}", user);
                     return login(req, user);
                 })
-                .orElse(new ModelAndView(new JspView("/401.jsp")));
+                .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
     private ModelAndView login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
-            return new ModelAndView(new JspView("/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
-        return new ModelAndView(new JspView("/401.jsp"));
+        return new ModelAndView(new JspView("redirect:/401.jsp"));
     }
 }
