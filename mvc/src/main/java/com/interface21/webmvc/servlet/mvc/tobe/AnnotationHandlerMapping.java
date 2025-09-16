@@ -31,7 +31,7 @@ public class AnnotationHandlerMapping {
         Set<Class<?>> typesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : typesAnnotatedWithController) {
-            Object controller = getController(controllerClass);
+            Object controller = getNewInstance(controllerClass);
             Method[] methods = controllerClass.getMethods();
 
             addHandlerMappings(controller, methods);
@@ -48,7 +48,7 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private Object getController(Class<?> controller) {
+    private Object getNewInstance(Class<?> controller) {
         try {
             return controller.getDeclaredConstructor().newInstance();
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
