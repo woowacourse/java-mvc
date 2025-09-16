@@ -14,6 +14,12 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
+    public ModelAndView(final View view, final Map<String, Object> model) {
+        this.view = view;
+        this.model = model;
+    }
+
+
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
         return this;

@@ -1,24 +1,23 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerAdapter;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private HandlerMappingRegistry handlerMappingRegistry;
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
     }
@@ -31,32 +30,16 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
+        Object handler = handlerMappingRegistry.getHandler(request)
+                .orElseThrow(IllegalStateException::new);
+        HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         try {
-            final var controller = manualHandlerMapping.getHandler(request);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            View view = modelAndView.getView();
+            Map<String, Object> model = modelAndView.getModel();
+            view.render(model, request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Map<String, Object> model = buildModel(request);
-        JspView jspView = new JspView(viewName);
-        jspView.render(model, request, response);
-    }
-
-    private Map<String, Object> buildModel(final HttpServletRequest request) {
-        final var model = new HashMap<String, Object>();
-        final Enumeration<String> attributeNames = request.getAttributeNames();
-
-        while (attributeNames.hasMoreElements()) {
-            final String attributeName = attributeNames.nextElement();
-            final Object attributeValue = request.getAttribute(attributeName);
-            model.put(attributeName, attributeValue);
-        }
-        return model;
     }
 }
