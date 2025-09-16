@@ -19,4 +19,8 @@ public class HandlerExecution {
         // TODO : 여러 형태의 HandlerExecution을 지원하면 좋을 듯
         return (ModelAndView) method.invoke(handler, request, response);
     }
+
+    public Object getHandler() {
+        return handler;
+    }
 }

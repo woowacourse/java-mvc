@@ -55,6 +55,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("Path : {}, Controller : {}", handlerKey.url(), handlerExecutions.get(handlerKey).getHandler().getClass()));
     }
 
     @Override
