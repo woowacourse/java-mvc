@@ -2,12 +2,13 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 public class HandlerMappingRegistry {
-    List<HandlerMapping> handlerMappings;
+    private List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMapping.initialize();

@@ -35,7 +35,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        String requestPath = request.getRequestURI();
+        String requestPath = request.getRequestURI().substring(request.getContextPath().length());
+
+        if (requestPath.isBlank() || !requestPath.startsWith("/")) {
+            requestPath = "/" + requestPath;
+        }
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
         return handlerExecutions.get(handlerKey);
@@ -45,13 +49,25 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)){
                 RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                String path = getRequestMappingValue(mapping);
                 for (RequestMethod requestMethod : mapping.method()) {
                     handlerExecutions.put(
-                            new HandlerKey(mapping.value(), requestMethod),
+                            new HandlerKey(path, requestMethod),
                             new HandlerExecution(controllerInstance, method)
                     );
                 }
             }
         }
+    }
+
+    private static String getRequestMappingValue(RequestMapping mapping) {
+        String path = mapping.value();
+        if (path.isEmpty()) {
+            path = "/";
+        }
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+        return path;
     }
 }

@@ -20,6 +20,11 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String viewName = ((Controller) handler).execute(request, response);
+
+        if (viewName == null || viewName.isBlank()) {
+            throw new IllegalArgumentException();
+        }
+
         JspView jspView = new JspView(viewName);
         Map<String, Object> model = buildModel(request);
         return new ModelAndView(jspView, model);
