@@ -23,7 +23,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put("/login/view", new LoginViewController());
         controllers.put("/register/view", new RegisterViewController());
 
-        log.info("Initialized Handler Mapping!");
+        log.info("Initialized ManualHandlerMapping!");
         controllers.keySet()
                 .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
