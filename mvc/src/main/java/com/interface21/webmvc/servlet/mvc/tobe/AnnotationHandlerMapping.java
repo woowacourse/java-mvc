@@ -58,15 +58,16 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void addHandlerExecution(final Class<?> controller, final Method method) throws Exception {
+    private void addHandlerExecution(final Class<?> controllerClass, final Method method) throws Exception {
+        Constructor<?> controllerConstructor = controllerClass.getDeclaredConstructor();
+        Object controller = controllerConstructor.newInstance();
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            Constructor<?> controllerConstructor = controller.getDeclaredConstructor();
-            HandlerExecution handlerExecution = new HandlerExecution(controllerConstructor.newInstance(), method);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
