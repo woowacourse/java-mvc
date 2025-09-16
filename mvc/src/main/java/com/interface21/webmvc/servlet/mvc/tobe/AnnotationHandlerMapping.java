@@ -1,11 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
@@ -21,9 +28,50 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
+        final Reflections reflections = new Reflections(basePackage);
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+
+        for (Class<?> clazz : controllerClasses) {
+            try {
+                final Object controllerInstance = clazz.getDeclaredConstructor().newInstance();
+                final Method[] methods = clazz.getDeclaredMethods();
+
+                for (Method method : methods) {
+                    addMethodToHandlerExecutions(method, controllerInstance);
+                }
+            } catch (Exception e) {
+                log.error("Initializing handler" + clazz.getName(), e);
+            }
+        }
+    }
+
+    private void addMethodToHandlerExecutions(final Method method, final Object controllerInstance) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        final String uri = requestMapping.value();
+        final RequestMethod[] requestMethods = requestMapping.method();
+
+        final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+
+        if (requestMethods.length == 0) {
+            Arrays.stream(RequestMethod.values())
+                    .forEach(requestMethod ->
+                            handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution));
+            return;
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final String requestUri = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        log.debug("Looking for handler for: {} {}", request.getMethod(), request.getRequestURI());
+        return handlerExecutions.get(new HandlerKey(requestUri, requestMethod));
     }
 }
