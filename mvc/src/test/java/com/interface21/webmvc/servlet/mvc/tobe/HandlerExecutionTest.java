@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 class HandlerExecutionTest {
 
     @Test
-    void handle() throws Exception {
+    void doHandle() throws Exception {
         final var testController = new TestController();
         final var method = testController.getClass().getMethod("findUserId", HttpServletRequest.class, HttpServletResponse.class);
         final var handlerExecution = new HandlerExecution(testController, method);
@@ -23,7 +23,7 @@ class HandlerExecutionTest {
 
         when(request.getAttribute("id")).thenReturn("gugu");
 
-        final ModelAndView modelAndView = handlerExecution.handle(request, response);
+        final ModelAndView modelAndView = handlerExecution.doHandle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
