@@ -51,6 +51,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 RequestMapping mapping = method.getAnnotation(RequestMapping.class);
                 String path = getRequestMappingValue(mapping);
                 for (RequestMethod requestMethod : mapping.method()) {
+                    if (mapping.method().length == 0) {
+                        log.warn("method가 등록되지 않았습니다.");
+                        continue;
+                    }
+
                     handlerExecutions.put(
                             new HandlerKey(path, requestMethod),
                             new HandlerExecution(controllerInstance, method)
