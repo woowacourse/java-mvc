@@ -44,6 +44,9 @@ public class AnnotationHandlerMapping {
 
                     for (RequestMethod requestMethod : requestMethods) {
                         final var handlerKey = new HandlerKey(url, requestMethod);
+                        if (handlerExecutions.containsKey(handlerKey)) {
+                            throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
+                        }
                         final var handlerExecution = new HandlerExecution(controller, method);
                         handlerExecutions.put(handlerKey, handlerExecution);
                         log.info("Mapping {} {}", requestMethod, url);
