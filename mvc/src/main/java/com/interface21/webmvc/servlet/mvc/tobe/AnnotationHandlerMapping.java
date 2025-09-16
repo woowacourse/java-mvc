@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,23 +29,15 @@ public class AnnotationHandlerMapping {
 
         for (Object pkg : basePackage) {
             Reflections reflections = new Reflections(pkg);
+            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class, true);
 
-            for (Class<?> clazz : reflections.getTypesAnnotatedWith(Controller.class)) {
-                Object controller = getController(clazz);
-                for (Method controllerMethod : clazz.getDeclaredMethods()) {
-                    RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
-                    String path = requestMapping.value();
-                    RequestMethod[] requestMappingMethods = requestMapping.method();
-                    for (RequestMethod requestMethod : requestMappingMethods) {
-                        HandlerKey handlerKey = new HandlerKey(path, requestMethod);
-                        handlerExecutions.put(handlerKey, new HandlerExecution(controller, controllerMethod));
-                    }
-                }
+            for (Class<?> clazz : controllers) {
+                registerController(clazz);
             }
         }
     }
 
-    private Object getController(final Class<?> clazz) {
+    private Object initializeController(final Class<?> clazz) {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
@@ -58,5 +51,22 @@ public class AnnotationHandlerMapping {
             return handlerExecutions.get(handlerKey);
         }
         throw new UnsupportedOperationException();
+    }
+
+    private void registerController(final Class<?> clazz) {
+        Object controller = initializeController(clazz);
+        for (Method controllerMethod : clazz.getDeclaredMethods()) {
+            registerMethod(controllerMethod, controller);
+        }
+    }
+
+    private void registerMethod(final Method controllerMethod, final Object controller) {
+        RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+        String path = requestMapping.value();
+        RequestMethod[] requestMappingMethods = requestMapping.method();
+        for (RequestMethod requestMethod : requestMappingMethods) {
+            HandlerKey handlerKey = new HandlerKey(path, requestMethod);
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, controllerMethod));
+        }
     }
 }
