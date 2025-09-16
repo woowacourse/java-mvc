@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,8 @@ public class AnnotationHandlerMapping {
 
     private void scanHandlerMethods(final Class<?> controller, final List<Method> methods) {
         for (final Method method : methods) {
-            final RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+            final RequestMapping requestMapping = Objects.requireNonNull(
+                    method.getDeclaredAnnotation(RequestMapping.class));
             final List<HandlerKey> keys = HandlerKeyFactory.from(requestMapping);
             for (final HandlerKey key : keys) {
                 handlerExecutions.put(key, createHandlerExecution(controller, method));
