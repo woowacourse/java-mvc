@@ -1,6 +1,13 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +27,52 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> typesAnnotatedWithController = reflections.getTypesAnnotatedWith(Controller.class);
+
+        for (Class<?> controllerClass : typesAnnotatedWithController) {
+            Object controller = getNewInstance(controllerClass);
+            Method[] methods = controllerClass.getMethods();
+
+            addHandlerMappings(controller, methods);
+        }
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        String requestURI = request.getRequestURI();
+        String method = request.getMethod();
+        HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
+
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private Object getNewInstance(Class<?> controller) {
+        try {
+            return controller.getDeclaredConstructor().newInstance();
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void addHandlerMappings(Object controller, Method[] methods) {
+        for(Method method : methods) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+                registerRequestMapping(controller, method, requestMapping);
+            }
+        }
+    }
+
+    private void registerRequestMapping(Object controller, Method method, RequestMapping requestMapping) {
+        for (RequestMethod requestMethod : requestMapping.method()) {
+            String value = requestMapping.value();
+            handlerExecutions.put(
+                    new HandlerKey(value, requestMethod),
+                    new HandlerExecution(controller, method)
+            );
+        }
     }
 }
