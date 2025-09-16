@@ -1,10 +1,17 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
@@ -14,15 +21,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        handlerMappings.add(manualHandlerMapping);
+
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
+        handlerMappings.add(annotationHandlerMapping);
+
         manualHandlerMapping.initialize();
+        annotationHandlerMapping.initialize();
     }
 
     @Override
@@ -31,13 +44,26 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            JspView jspView = new JspView(viewName);
-            jspView.render(new HashMap<>(), request, response);
+            ModelAndView modelAndView = executeHandler(request, response);
+            modelAndView.getView().render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            Object handler = handlerMapping.getHandler(request);
+
+            if (handler instanceof Controller) {
+                return ((Controller) handler).execute(request, response);
+            }
+
+            if (handler instanceof HandlerExecution) {
+                return ((HandlerExecution) handler).handle(request, response);
+            }
+        }
+        throw new ServletException("[ERROR] no such handler");
     }
 }
