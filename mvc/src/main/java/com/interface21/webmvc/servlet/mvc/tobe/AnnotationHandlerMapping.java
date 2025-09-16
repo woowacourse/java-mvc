@@ -30,6 +30,11 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private Set<Class<?>> findControllers() {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
     private void registerHandlerExecutions(Set<Class<?>> controllers) {
         for (Class<?> controller : controllers) {
             try {
@@ -39,11 +44,6 @@ public class AnnotationHandlerMapping {
                 log.error("Failed to instantiate controller: {}", controller, e);
             }
         }
-    }
-
-    private Set<Class<?>> findControllers() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private void addHandlers(Object controllerInstance) {
@@ -59,14 +59,20 @@ public class AnnotationHandlerMapping {
         }
 
         RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+        if (mapping == null) {
+            return;
+        }
+
         String uri = mapping.value();
         RequestMethod[] requestMethods = getRequestMethods(mapping);
-
         for (RequestMethod requestMethod : requestMethods) {
+            if (requestMethod == null) {
+                continue;
+            }
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("Mapped [{}] {} -> {}", requestMethod, uri, method);
+            log.debug("Mapped [{}] {} -> {}", requestMethod, uri, method);
         }
     }
 
@@ -83,6 +89,11 @@ public class AnnotationHandlerMapping {
         RequestMethod requestMethod = RequestMethod.valueOf(method);
         String uri = request.getRequestURI();
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-        return handlerExecutions.get(handlerKey);
+        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+        if (handlerExecution == null) {
+            log.debug("No handler found for {}", handlerKey);
+            return null;
+        }
+        return handlerExecution;
     }
 }
