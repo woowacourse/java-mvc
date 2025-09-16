@@ -1,9 +1,8 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
@@ -47,23 +46,17 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = getHandler(request);
-            if(handler instanceof Controller controller) {
-                move(controller.execute(request, response), request, response);
-            }
-            else if (handler instanceof HandlerExecution handlerExecution){
-                ModelAndView modelAndView = handlerExecution.handle(request, response);
-                Map<String, Object> model = modelAndView.getModel();
-                modelAndView.getView().render(model, request, response);
-            }
-
+            HandlerAdapter handler = getHandler(request);
+            ModelAndView modelAndView = handler.handle(request, response);
+            Map<String, Object> model = modelAndView.getModel();
+            modelAndView.getView().render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private Object getHandler(HttpServletRequest request) {
+    private HandlerAdapter getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(handler -> handler != null)

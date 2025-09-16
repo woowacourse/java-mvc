@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
@@ -34,7 +35,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest request) {
+    public HandlerAdapter getHandler(HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request.getRequestURI());
         return controllers.get(request.getRequestURI());
     }
