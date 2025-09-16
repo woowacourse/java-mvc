@@ -21,11 +21,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-
-    public AnnotationHandlerMapping() {
-        this.basePackage = new String[]{"/"};
-    }
-
+    
     public AnnotationHandlerMapping(final String basePackage, final String... others) {
         this.basePackage = Stream.concat(Stream.of(basePackage), Arrays.stream(others)).toArray(String[]::new);
     }
