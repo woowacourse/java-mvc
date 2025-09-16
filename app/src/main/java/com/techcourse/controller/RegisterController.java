@@ -26,7 +26,6 @@ public final class RegisterController {
                 request.getParameter("email")
         );
         InMemoryUserRepository.save(user);
-        modelAndView.addObject("user", user);
         return modelAndView;
     }
 }
