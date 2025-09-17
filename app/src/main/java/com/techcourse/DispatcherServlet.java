@@ -1,7 +1,14 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,38 +21,48 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        initializeHandlerMappingRegistry();
+        initializeHandlerAdapterRegistry();
+        handlerExecutor = new HandlerExecutor(handlerMappingRegistry, handlerAdapterRegistry);
+    }
+
+    private void initializeHandlerMappingRegistry() {
+        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        handlerMappingRegistry.register(manualHandlerMapping);
+
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotationHandlerMapping.initialize();
+        handlerMappingRegistry.register(annotationHandlerMapping);
+    }
+
+    private void initializeHandlerAdapterRegistry() {
+        HandlerAdapter controllerAdapter = new ControllerAdapter();
+        handlerAdapterRegistry.register(controllerAdapter);
+
+        HandlerAdapter handlerExecutionAdapter = new HandlerExecutionAdapter();
+        handlerAdapterRegistry.register(handlerExecutionAdapter);
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            log.info("요청 URI: {}, Method: {}", request.getRequestURI(), request.getMethod());
+            ModelAndView modelAndView = handlerExecutor.execute(request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        //TODO: controller가 바로 ModelAndView 반환하게 해야 될 것 같은데 명세가 asis에 있는 걸 보니 아직 과도기라 그런듯..놔두자  (2025-09-15, 월, 3:32)
-        JspView jspView = new JspView(viewName);
-        ModelAndView modelAndView = new ModelAndView(jspView);
-        jspView.render(modelAndView.getModel(), request, response);
     }
 }
