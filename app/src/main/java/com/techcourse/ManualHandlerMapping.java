@@ -2,7 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.interface21.webmvc.servlet.mvc.tobe.MappingHandler;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping implements MappingHandler {
+public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
