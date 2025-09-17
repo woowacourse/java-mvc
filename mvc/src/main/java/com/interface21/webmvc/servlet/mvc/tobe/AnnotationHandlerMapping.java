@@ -16,17 +16,17 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        for (final Object packageName : basePackage) {
-            final Reflections reflections = new Reflections(packageName.toString());
+        for (final String packageName : basePackage) {
+            final Reflections reflections = new Reflections(packageName);
 
             final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
