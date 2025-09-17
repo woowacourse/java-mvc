@@ -9,6 +9,6 @@ public enum RequestMethod {
         return Arrays.stream(values())
                 .filter(rm -> rm.name().equalsIgnoreCase(httpMethod))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Unknown HTTP method: " + httpMethod));
     }
 }
