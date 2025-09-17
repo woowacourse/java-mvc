@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,8 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,27 +24,21 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (final Object basePackage : basePackages) {
-            final Set<Class<?>> controllers = scanControllers(basePackage);
-            for (final Class<?> controller : controllers) {
-                try {
-                    final Object target = controller.getDeclaredConstructor().newInstance();
-                    final Method[] requestRequestMappingMethods = getRequestMappingMethods(controller);
-                    for (final Method method : requestRequestMappingMethods) {
-                        final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                        final String url = annotation.value();
-                        for (final RequestMethod requestMethod : resolveRequestMethods(annotation)) {
-                            final HandlerKey key = new HandlerKey(url, requestMethod);
-                            if (isHandlerAlreadyRegistered(key)) {
-                                throw new IllegalArgumentException(
-                                        "Duplicate mapping found for " + url + " " + requestMethod);
-                            }
-                            registerHandler(key, new HandlerExecution(target, method));
-                        }
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        for (Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
+            final Object target = controllerEntry.getValue();
+            final Method[] requestMappingMethods = getRequestMappingMethods(controllerEntry.getKey());
+            for (final Method method : requestMappingMethods) {
+                final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+                final String url = annotation.value();
+                for (final RequestMethod requestMethod : resolveRequestMethods(annotation)) {
+                    final HandlerKey key = new HandlerKey(url, requestMethod);
+                    if (isHandlerAlreadyRegistered(key)) {
+                        throw new IllegalArgumentException(
+                                "Duplicate mapping found for " + url + " " + requestMethod);
                     }
-                } catch (final Exception e) {
-                    log.error("Error while instantiating controller", e);
-                    throw new RuntimeException(e);
+                    registerHandler(key, new HandlerExecution(target, method));
                 }
             }
         }
@@ -57,11 +49,6 @@ public class AnnotationHandlerMapping {
         final String requestURI = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
-    }
-
-    private Set<Class<?>> scanControllers(final Object basePackage) {
-        final Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     private Method[] getRequestMappingMethods(final Class<?> controller) {
