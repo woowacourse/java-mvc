@@ -49,7 +49,7 @@ public class AnnotationHandlerMapping {
     }
 
     private List<Method> scanRequestMappingMethods(final Class<?> controller) {
-        return Arrays.stream(controller.getMethods())
+        return Arrays.stream(controller.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .toList();
     }
