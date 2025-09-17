@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.view;
+package com.interface21.webmvc.servlet.mvc.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
