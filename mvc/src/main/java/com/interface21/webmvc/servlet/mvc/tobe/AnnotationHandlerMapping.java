@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -12,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //TODO: https://github.com/woowacourse/java-mvc/pull/894#discussion_r2347502619  (2025-09-15, 월, 17:21)
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,19 +25,21 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         Map<Class<?>, Object> controllerRegistry = scanControllers();
         registerHandlers(controllerRegistry);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
+        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod())));
+    }
+
     private Map<Class<?>, Object> scanControllers() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         return controllerScanner.getControllers();
-    }
-
-    public HandlerExecution getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod())));
     }
 
     // 전체 컨트롤러를 순회하며 등록
