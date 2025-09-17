@@ -26,47 +26,62 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    // 초기화 메서드
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackages);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+
+        Set<Class<?>> controllerClasses = findControllerClasses(reflections);
         for (Class<?> controllerClass : controllerClasses) {
-            Object controller = createInstance(controllerClass);
-            for (Method method : controllerClass.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    String uri = requestMapping.value();
-                    RequestMethod[] requestMethods = requestMapping.method();
+            registerController(controllerClass);
+        }
+    }
 
-                    if (requestMethods.length == 0) {
-                        //모든 메서드 지원해야함
-                        requestMethods = RequestMethod.values();
-                    }
+    // 컨트롤러 클래스 조회
+    private Set<Class<?>> findControllerClasses(Reflections reflections) {
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
 
-                    for (RequestMethod requestMethod : requestMethods) {
-                        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-
-                        //요청을 실제 컨트롤러 메서드에 연결하고 실행해ㅐ야하니까,
-                        //컨트롤러랑 메서드를 알야야함.
-                        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-                        handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
-                    }
-                }
+    // 컨트롤러 등록
+    private void registerController(Class<?> controllerClass) {
+        Object controller = createInstance(controllerClass);
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                registerHandlerMethod(controller, method);
             }
         }
     }
 
+    // 핸들러 메서드 등록
+    private void registerHandlerMethod(Object controller, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String uri = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values(); // 모든 메서드 허용
+        }
+
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+            log.debug("Handler registered: {} {}", requestMethod, uri);
+        }
+    }
+
+    // 컨트롤러 인스턴스 생성
     private Object createInstance(final Class<?> controllerClass) {
         try {
             return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+        } catch (Exception e) {
             log.info("인스턴스 생성에 실패했습니다. {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    // 요청으로부터 핸들러 조회
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.from(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
@@ -74,3 +89,4 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 }
+
