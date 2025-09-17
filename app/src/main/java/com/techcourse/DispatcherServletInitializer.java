@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,10 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
+        final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
+                "com.interface21.webmvc.servlet.mvc.handler.adapter");
+        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
