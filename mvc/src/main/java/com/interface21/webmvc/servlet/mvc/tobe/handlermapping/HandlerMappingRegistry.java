@@ -17,7 +17,7 @@ public class HandlerMappingRegistry {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
+        for (final HandlerMapping handlerMapping : handlerMappings) {
             final var handler = handlerMapping.getHandler(request);
             if (handler != null) {
                 return handler;

@@ -18,7 +18,7 @@ public class ControllerScanner {
         final var handlerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         final var controllers = new HashMap<Class<?>, Object>();
 
-        for (final var clazz : handlerClasses) {
+        for (final Class<?> clazz : handlerClasses) {
             final Object controller = clazz.getDeclaredConstructor().newInstance();
             controllers.put(clazz, controller);
         }
