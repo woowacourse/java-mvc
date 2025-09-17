@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collections;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
             JspView view = new JspView(viewName);
-            view.render(Collections.emptyMap(), request, response);
+            view.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
