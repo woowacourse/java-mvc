@@ -30,7 +30,6 @@ public class AnnotationHandlerMapping {
             final Object controllerInstance = entry.getValue();
             registerRequestMappings(controllerInstance, controllerClass);
         }
-
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
@@ -46,6 +45,9 @@ public class AnnotationHandlerMapping {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
             for (RequestMethod httpMethod : mapping.method()) {
                 HandlerKey key = new HandlerKey(mapping.value(), httpMethod);
+                if (handlerExecutions.containsKey(key)) {
+                    throw new IllegalStateException("중복 매핑");
+                }
                 handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
             }
         }
