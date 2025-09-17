@@ -9,6 +9,7 @@ import java.io.IOException;
 public class CharacterEncodingFilter implements Filter {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
+    private static final String DEFAULT_CONTENT_TYPE = "text/html; charset=UTF-8";
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -19,6 +20,7 @@ public class CharacterEncodingFilter implements Filter {
             throws IOException, ServletException {
         request.setCharacterEncoding(DEFAULT_ENCODING);
         response.setCharacterEncoding(DEFAULT_ENCODING);
+        response.setContentType(DEFAULT_CONTENT_TYPE);
         chain.doFilter(request, response);
     }
 
