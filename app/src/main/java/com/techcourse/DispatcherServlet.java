@@ -64,6 +64,7 @@ public class DispatcherServlet extends HttpServlet {
                 return ((HandlerExecution) handler).handle(request, response);
             }
         }
-        throw new ServletException("[ERROR] no such handler");
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return null;
     }
 }
