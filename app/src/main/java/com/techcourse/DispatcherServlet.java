@@ -1,11 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,9 +20,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -35,21 +37,16 @@ public class DispatcherServlet extends HttpServlet {
                 "com.techcourse.controller");
         annotationHandlerMapping.initialize();
         this.handlerMappings.add(annotationHandlerMapping);
+
+        handlerAdapters.addAll(List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) {
-        // TODO : 어댑터 분리
         try {
-            Object handler = getHandler(request);
-            if (handler instanceof Controller) {
-                final String viewName = ((Controller) handler).execute(request, response);
-                final ModelAndView mav = new ModelAndView(new JspView(viewName));
-                render(mav, request, response); // TODO : 모델 값 채우기
-            } else if (handler instanceof HandlerExecution) {
-                final ModelAndView mav = ((HandlerExecution) handler).handle(request, response);
-                render(mav, request, response); // TODO : 모델 값 채우기
-            }
+            final Object handler = getHandler(request);
+            final ModelAndView mav = handle(handler, request, response);
+            render(mav, request, response);
         } catch (Exception e) {
             throw new IllegalArgumentException("핸들러를 처리하는데 실패했습니다.");
         }
@@ -61,7 +58,22 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerMapping.getHandler(request);
             }
         }
-        throw new IllegalArgumentException("요청에 대한 핸들러를 찾을 수 없습니다.");
+        throw new IllegalStateException("요청에 대한 핸들러를 찾을 수 없습니다.");
+    }
+
+    private ModelAndView handle(final Object handler, final HttpServletRequest request,
+                                final HttpServletResponse response) {
+        try {
+            // TODO : 스트림으로 바꾸기
+            for (HandlerAdapter handlerAdapter : handlerAdapters) {
+                if (handlerAdapter.isAdaptable(handler)) {
+                    return handlerAdapter.handle(handler, request, response);
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("핸들러를 실행하는데 실패했습니다.");
+        }
+        throw new IllegalStateException("핸들러를 실행하는데 실패했습니다.");
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request,
@@ -69,7 +81,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
-            throw new IllegalArgumentException("렌더링에 실패했습니다.");
+            throw new IllegalStateException("렌더링에 실패했습니다.");
         }
     }
 }
