@@ -1,11 +1,17 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +20,19 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerAdapter handlerAdapter;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerAdapter = new HandlerAdapter(
+                List.of(
+                        new ManualHandlerMapping(),
+                        new AnnotationHandlerMapping()
+                )
+        );
     }
 
     @Override
@@ -31,13 +41,23 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            final View view = new JspView(viewName);
+            ModelAndView modelAndView = executeHandler(request, response);
+            final View view = new JspView(modelAndView.getView().toString());
             view.render(null, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        Object handler = handlerAdapter.findHandler(request);
+        if (handler instanceof Controller) {
+            return ((Controller) handler).execute(request, response);
+        } else if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
+        } else {
+            throw new RuntimeException();
         }
     }
 }

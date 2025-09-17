@@ -11,7 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -23,6 +23,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
@@ -71,6 +72,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         String method = request.getMethod();
