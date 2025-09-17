@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class AnnotationHandlerMapping {
     private void registerController(final Class<?> controllerClass) {
         Object controller = createInstance(controllerClass);
         for (Method method : controllerClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
+            if (method.isAnnotationPresent(RequestMapping.class) && Modifier.isPublic(method.getModifiers())) {
                 registerHandlerMethod(controller, method);
             }
         }
