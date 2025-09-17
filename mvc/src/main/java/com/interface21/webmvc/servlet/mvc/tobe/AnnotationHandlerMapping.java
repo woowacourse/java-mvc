@@ -1,7 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,12 +27,32 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     public void initialize() {
         try {
             Map<Class<?>, Object> controllers = controllerScanner.instantiateControllers();
-            handlerExecutions.putAll(controllerScanner.scanHandlerExecutions(controllers));
+            scanHandlerExecutions(controllers);
 
             log.info("Handler mappings initialized: {} handlers registered", handlerExecutions.size());
         } catch (final Exception e) {
             log.error("Failed to initialize handler", e);
         }
+    }
+
+    private void scanHandlerExecutions(Map<Class<?>, Object> controllers) {
+        controllers.forEach((clazz, instance) ->
+                ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
+                        .forEach(method -> registerHandler(instance, method))
+        );
+    }
+
+    private void registerHandler(Object controllerInstance, Method method) {
+        RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+        HandlerExecution execution = new HandlerExecution(controllerInstance, method);
+
+        Arrays.stream(resolveHttpMethods(mapping))
+                .map(httpMethod -> new HandlerKey(mapping.value(), httpMethod))
+                .forEach(key -> handlerExecutions.put(key, execution));
+    }
+
+    private RequestMethod[] resolveHttpMethods(RequestMapping mapping) {
+        return mapping.method().length == 0 ? RequestMethod.values() : mapping.method();
     }
 
     public Object getHandler(final HttpServletRequest request) {
