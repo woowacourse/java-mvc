@@ -25,7 +25,8 @@ public class JsonView implements View {
         final String jsonOutput = objectMapper.writeValueAsString(model);
         log.debug("json body: {}", jsonOutput);
 
-        response.setHeader("media-type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8);
 
         final ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(jsonOutput.getBytes(StandardCharsets.UTF_8));
