@@ -5,13 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
 
 public class ControllerScanner {
 
     public static Map<Class<?>, Object> scanControllers(final Object... basePackage) {
-        final Reflections reflections = new Reflections(basePackage);
-        final Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+        final Set<Class<?>> controllerTypes = AnnotationScanner.scanClassesOfBasePackage(Controller.class, basePackage);
 
         final Map<Class<?>, Object> controllers = new HashMap<>();
         for (Class<?> controller : controllerTypes) {
