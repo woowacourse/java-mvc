@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,14 +114,11 @@ public class DispatcherServlet extends HttpServlet {
      * @throws IllegalArgumentException 매핑 가능한 핸들러가 없으면 예외 던짐
      */
     private Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if(handler != null) {
-                return handler;
-            }
-        }
-        throw new IllegalArgumentException("매핑 가능한 Handler가 존재하지 않습니다. (Request URI : %s"
-                .formatted(request.getRequestURI()));
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("매핑 가능한 Handler가 존재하지 않습니다. (Request URI : %s".formatted(request.getRequestURI())));
     }
 
     /**
