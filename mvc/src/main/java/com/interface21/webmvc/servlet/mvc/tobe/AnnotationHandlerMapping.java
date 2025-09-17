@@ -38,6 +38,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         final HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+        if (!handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("해당 uri와 method에 대한 핸들러가 존재하지 않습니다.");
+        }
         return handlerExecutions.get(handlerKey);
     }
 
