@@ -9,3 +9,5 @@
 ### 2단계 - 점진적인 리팩터링
 
 - [x] ManualHandlerMapping / AnnotationHandlerMapping 추상화
+- [x] ManualHandlerMapping / AnnotationHandlerMapping의 Controller 추상화
+- [x] HandlerMappingRegistry / HandlerAdapterRegistry 추가
