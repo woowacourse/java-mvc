@@ -1,15 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,21 +21,11 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    private static class ControllerInfo {
-        private Class<?> clazz;
-        private Object object;
-
-        public ControllerInfo(Class<?> clazz, Object object) {
-            this.clazz = clazz;
-            this.object = object;
-        }
-    }
-
     public void initialize() {
         try {
             log.info("Initialized AnnotationHandlerMapping!");
-            Set<ControllerInfo> controllerInfos = scanControllers();
-            Map<Method, Object> methods = scanRequestMappingMethod(controllerInfos);
+            Map<Class<?>, Object> classObjectMap = ControllerScanner.scanControllers(basePackage);
+            Map<Method, Object> methods = scanRequestMappingMethod(classObjectMap);
             addMappingsForMethod(methods);
         } catch (Exception e) {
             log.error("Failed to initialize handler mappings", e);
@@ -47,24 +33,14 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Set<ControllerInfo> scanControllers() throws Exception {
-        Set<ControllerInfo> controllerInfos = new HashSet<>();
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> controller : controllers) {
-            Object object = controller.getDeclaredConstructor().newInstance();
-            controllerInfos.add(new ControllerInfo(controller, object));
-        }
-        return controllerInfos;
-    }
-
-    private Map<Method, Object> scanRequestMappingMethod(Set<ControllerInfo> controllerInfos) {
+    private Map<Method, Object> scanRequestMappingMethod(Map<Class<?>, Object> classObjectMap) throws Exception {
         Map<Method, Object> methods = new HashMap<>();
-        for (ControllerInfo controllerInfo : controllerInfos) {
-            for (Method method : controllerInfo.clazz.getDeclaredMethods()) {
+        for (Class<?> clazz : classObjectMap.keySet()) {
+            Object object = clazz.getDeclaredConstructor().newInstance();
+            Method[] declaredMethods = clazz.getDeclaredMethods();
+            for (Method method : declaredMethods) {
                 if (method.isAnnotationPresent(RequestMapping.class)) {
-                    methods.put(method, controllerInfo.object);
+                    methods.put(method, object);
                 }
             }
         }
