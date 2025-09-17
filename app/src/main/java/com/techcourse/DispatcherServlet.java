@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
@@ -23,8 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final String ERROR_404_PAGE = "/404.jsp";
     private static final String ERROR_500_PAGE = "/500.jsp";
 
-    private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
@@ -53,19 +52,17 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request);
-            if(handler == null) {
-                 throw new IllegalArgumentException("요청 URI에 대한 핸들러가 등록되지 않았습니다: " + requestURI);
-            }
+            final Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new IllegalArgumentException("요청 URI에 대한 핸들러가 등록되지 않았습니다: " + requestURI));
 
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            if(handlerAdapter == null) {
-                throw new IllegalStateException("핸들러 타입에 대한 어댑터를 찾을 수 없습니다: " + handler.getClass().getName());
-            }
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "핸들러 타입에 대한 어댑터를 찾을 수 없습니다: " + handler.getClass().getName()));
 
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
             render(modelAndView, request, response);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
             renderErrorPage(ERROR_404_PAGE, request, response);
         } catch (IllegalStateException e) {
@@ -77,7 +74,8 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
         if (modelAndView == null) {
             throw new IllegalStateException("HandlerAdapter가 ModelAndView를 반환하지 않았습니다");
