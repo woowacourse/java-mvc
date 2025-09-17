@@ -5,6 +5,7 @@ import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,7 +51,8 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMapping.getHandler(request);
 
             if (handler instanceof Controller controller) {
-                return controller.execute(request, response);
+                String viewName = controller.execute(request, response);
+                return new ModelAndView(new JspView(viewName));
             } else if (handler instanceof HandlerExecution handlerExecution) {
                 return handlerExecution.handle(request, response);
             }
