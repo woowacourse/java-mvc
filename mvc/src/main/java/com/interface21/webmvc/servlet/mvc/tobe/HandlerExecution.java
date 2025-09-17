@@ -7,11 +7,6 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    // private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    // HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.findByName(request.getMethod()));
-    // 이미 url, method로 handlerExecution을 찾은 상태
-    // 근데 그러면 handle 내에서 controller 동작하도록 처리를 해줘야 할 것 같은데 어떻게 하는 거지?
-
     private final Object controller;
     private final Method method;
 
