@@ -39,7 +39,8 @@ public class ManualHandlerMapping implements HandlerMapping {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
         if (!controllers.containsKey(requestURI)) {
-            throw new IllegalStateException("해당 uri에 대한 핸들러가 존재하지 않습니다.");
+            throw new IllegalStateException(
+                    String.format("%s %s 요청에 대한 핸들러를 찾을 수 없습니다.", request.getRequestURI(), request.getMethod()));
         }
         return controllers.get(requestURI);
     }

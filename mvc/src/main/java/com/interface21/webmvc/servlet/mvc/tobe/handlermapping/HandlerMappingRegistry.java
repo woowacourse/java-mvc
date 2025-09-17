@@ -23,6 +23,7 @@ public class HandlerMappingRegistry {
                 return handlerMapping;
             }
         }
-        throw new IllegalStateException("요청에 대한 핸들러를 찾을 수 없습니다.");
+        throw new IllegalStateException(
+                String.format("%s %s 요청에 대한 핸들러를 찾을 수 없습니다.", request.getRequestURI(), request.getMethod()));
     }
 }

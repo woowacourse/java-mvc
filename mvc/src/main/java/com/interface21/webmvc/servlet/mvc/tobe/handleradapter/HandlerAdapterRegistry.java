@@ -21,6 +21,6 @@ public class HandlerAdapterRegistry {
                 return handlerAdapter;
             }
         }
-        throw new IllegalStateException("핸들러를 실행하는데 실패했습니다.");
+        throw new IllegalStateException(handler.getClass().getSimpleName() + "를 실행할 수 있는 어댑터가 등록되어 있지 않습니다: ");
     }
 }

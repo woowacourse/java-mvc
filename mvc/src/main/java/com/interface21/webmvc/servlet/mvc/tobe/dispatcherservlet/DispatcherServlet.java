@@ -36,7 +36,8 @@ public class DispatcherServlet extends HttpServlet {
 
             render(mav, request, response);
         } catch (Exception e) {
-            throw new IllegalArgumentException("핸들러를 처리하는데 실패했습니다.");
+            throw new IllegalStateException(
+                    String.format("%s %s 요청에 대한 핸들러를 처리하는데 실패했습니다.", request.getRequestURI(), request.getMethod()));
         }
     }
 
@@ -45,7 +46,9 @@ public class DispatcherServlet extends HttpServlet {
         try {
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
-            throw new IllegalStateException("렌더링에 실패했습니다.");
+            throw new IllegalStateException(
+                    String.format("%s %s 요청에 대한 응답을 렌더링하는데 실패했습니다.", request.getRequestURI(),
+                            request.getMethod()));
         }
     }
 }
