@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 
         final var annotationHandlerMapping = new AnnotationHandlerMapping();
         annotationHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 
     @Override
