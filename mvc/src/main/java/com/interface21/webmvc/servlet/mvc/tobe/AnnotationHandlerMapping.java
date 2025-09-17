@@ -5,9 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -32,26 +30,35 @@ public class AnnotationHandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> annotatedControllers = findAnnotatedControllers(reflections);
 
-        // @RequestMapping 이 달린 메서드 찾기
-        for (Class<?> annotatedController : annotatedControllers) {
-            List<Method> annotatedMethods = Arrays.stream(annotatedController.getDeclaredMethods())
-                    .filter(m -> m.isAnnotationPresent(RequestMapping.class))
-                    .toList();
-
-            annotatedMethods.forEach(m -> {
-                RequestMapping requestMapping = m.getAnnotation(RequestMapping.class);
-                RequestMethod[] methods = requestMapping.method();
-                for (RequestMethod method : methods) {
-                    handlerExecutions.put(new HandlerKey(requestMapping.value(), method),
-                            new HandlerExecution(annotatedController, m));
-                }
-            });
-        }
+        setHandlerExecutions(annotatedControllers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private Set<Class<?>> findAnnotatedControllers(Reflections reflections) {
         return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private void setHandlerExecutions(Set<Class<?>> annotatedControllers) {
+        annotatedControllers.forEach(this::processControllerMethods);
+    }
+
+    private void processControllerMethods(Class<?> controller) {
+        for (Method method : controller.getDeclaredMethods()) {
+            registerHandler(controller, method);
+        }
+    }
+    
+    private void registerHandler(Class<?> controller, Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+        RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+        HandlerExecution execution = new HandlerExecution(controller, method);
+
+        for (RequestMethod httpMethod : mapping.method()) {
+            HandlerKey key = new HandlerKey(mapping.value(), httpMethod);
+            handlerExecutions.put(key, execution);
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
