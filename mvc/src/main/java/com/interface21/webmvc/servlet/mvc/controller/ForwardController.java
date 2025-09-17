@@ -1,8 +1,7 @@
-package com.interface21.webmvc.servlet.mvc.asis;
+package com.interface21.webmvc.servlet.mvc.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 
 public class ForwardController implements Controller {
