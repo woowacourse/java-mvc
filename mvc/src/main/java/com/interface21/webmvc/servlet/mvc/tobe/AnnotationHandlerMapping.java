@@ -56,6 +56,10 @@ public class AnnotationHandlerMapping {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] requestMethods = requestMapping.method();
 
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
