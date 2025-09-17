@@ -37,12 +37,12 @@ public class AnnotationHandlerMapping {
     }
 
     // 컨트롤러 클래스 조회
-    private Set<Class<?>> findControllerClasses(Reflections reflections) {
+    private Set<Class<?>> findControllerClasses(final Reflections reflections) {
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
     // 컨트롤러 등록
-    private void registerController(Class<?> controllerClass) {
+    private void registerController(final Class<?> controllerClass) {
         Object controller = createInstance(controllerClass);
         for (Method method : controllerClass.getDeclaredMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping {
     }
 
     // 핸들러 메서드 등록
-    private void registerHandlerMethod(Object controller, Method method) {
+    private void registerHandlerMethod(final Object controller, final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String uri = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
