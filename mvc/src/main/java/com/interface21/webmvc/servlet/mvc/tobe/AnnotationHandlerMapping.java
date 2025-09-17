@@ -27,7 +27,11 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     public void initialize() {
         try {
             Map<Class<?>, Object> controllers = controllerScanner.instantiateControllers();
-            scanHandlerExecutions(controllers);
+
+            controllers.forEach((clazz, instance) ->
+                    ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
+                            .forEach(method -> registerHandlerExecution(instance, method))
+            );
 
             log.info("Handler mappings initialized: {} handlers registered", handlerExecutions.size());
         } catch (final Exception e) {
@@ -35,20 +39,13 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         }
     }
 
-    private void scanHandlerExecutions(Map<Class<?>, Object> controllers) {
-        controllers.forEach((clazz, instance) ->
-                ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
-                        .forEach(method -> registerHandler(instance, method))
-        );
-    }
-
-    private void registerHandler(Object controllerInstance, Method method) {
-        RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+    private void registerHandlerExecution(Object controllerInstance, Method method) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         HandlerExecution execution = new HandlerExecution(controllerInstance, method);
 
-        Arrays.stream(resolveHttpMethods(mapping))
-                .map(httpMethod -> new HandlerKey(mapping.value(), httpMethod))
-                .forEach(key -> handlerExecutions.put(key, execution));
+        Arrays.stream(resolveHttpMethods(requestMapping))
+                .map(httpMethod -> new HandlerKey(requestMapping.value(), httpMethod))
+                .forEach(handlerKey -> handlerExecutions.put(handlerKey, execution));
     }
 
     private RequestMethod[] resolveHttpMethods(RequestMapping mapping) {
