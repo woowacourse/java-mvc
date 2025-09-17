@@ -48,18 +48,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Map<Class<?>, Object> controllerClasses = controllerScanner.getControllers();
 
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-        for (Class<?> controllerClass : controllerClasses.keySet()) {
+        for (Map.Entry<Class<?>, Object> entry : controllerClasses.entrySet()) {
             // controllerClass에 대한 handlerExecutions 찾기
-            handlerExecutions.putAll(findHandlerMethods(controllerClass));
+            handlerExecutions.putAll(findHandlerMethods(entry.getKey(), entry.getValue()));
         }
 
         return handlerExecutions;
     }
 
-    private Map<HandlerKey, HandlerExecution> findHandlerMethods(final Class<?> controllerClass) throws Exception {
-        // controller 객체 생성
-        var controller = controllerClass.getDeclaredConstructor().newInstance();
-
+    private Map<HandlerKey, HandlerExecution> findHandlerMethods(
+            final Class<?> controllerClass,
+            final Object controller
+    ) {
         // getMethods(): public 메서드만 가져옴, 상속된 메서드도 포함
         // getDeclaredMethods(): 클래스 코드 안에 선언된 모든 메서드를 접근제어자 상관없이 가져옴
         // ReflectionUtils.getAllMethods(): 선언된 메서드 + 상속된 메서드를 접근제어자 상관없이 가져옴(오버라이드한 경우, 부모/자식 메서드 둘 다 가져옴)
