@@ -19,6 +19,9 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
+    /**
+     * viewName과 model을 받아서 http response를 완성하는 메서드입니다.
+     */
     @Override
     public void render(
             final Map<String, ?> model,
