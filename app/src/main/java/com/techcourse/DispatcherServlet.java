@@ -1,18 +1,16 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +21,11 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -36,6 +36,10 @@ public class DispatcherServlet extends HttpServlet {
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+        final ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+        final AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        handlerAdapterRegistry.addHandlerAdapter(manualHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
     }
 
     @Override
@@ -49,37 +53,22 @@ public class DispatcherServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        final Object handler = handlerOptional.get();
 
+        final Object handler = handlerOptional.get();
+        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         try {
-            if (handler instanceof Controller) {
-                final String execute = ((Controller) handler).execute(request, response);
-                final var view = new JspView(execute);
-                view.render(buildModel(request), request, response);
-            } else if (handler instanceof HandlerExecution) {
-                final ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                modelAndView.getView().render(modelAndView.getModel(), request, response);
-            } else {
-                throw new IllegalArgumentException("Unknown handler type: " + handler.getClass());
-            }
+            handlerAdapter.handle(request, response, handler);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private HashMap<String, Object> buildModel(final HttpServletRequest request) {
-        final var model = new HashMap<String, Object>();
-        final Enumeration<String> attributeNames = request.getAttributeNames();
-        while (attributeNames.hasMoreElements()) {
-            final String attributeName = attributeNames.nextElement();
-            final Object attributeValue = request.getAttribute(attributeName);
-            model.put(attributeName, attributeValue);
-        }
-        return model;
-    }
-
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappingRegistry.addHandlerMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
 }
