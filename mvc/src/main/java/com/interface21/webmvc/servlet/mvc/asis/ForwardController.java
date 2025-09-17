@@ -1,8 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.asis;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 
 public class ForwardController implements Controller {
@@ -14,7 +14,7 @@ public class ForwardController implements Controller {
     }
 
     @Override
-    public String execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return path;
+    public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(path);
     }
 }
