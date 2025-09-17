@@ -4,10 +4,11 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,16 +29,13 @@ public class AnnotationHandlerMapping {
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         for (Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
             final Object target = controllerEntry.getValue();
-            final Method[] requestMappingMethods = getRequestMappingMethods(controllerEntry.getKey());
+            final Set<Method> requestMappingMethods = getRequestMappingMethods(controllerEntry.getKey());
             for (final Method method : requestMappingMethods) {
                 final RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                 final String url = annotation.value();
                 for (final RequestMethod requestMethod : resolveRequestMethods(annotation)) {
                     final HandlerKey key = new HandlerKey(url, requestMethod);
-                    if (isHandlerAlreadyRegistered(key)) {
-                        throw new IllegalArgumentException(
-                                "Duplicate mapping found for " + url + " " + requestMethod);
-                    }
+                    checkHandlerIsAlreadyRegistered(key);
                     registerHandler(key, new HandlerExecution(target, method));
                 }
             }
@@ -51,10 +49,8 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(new HandlerKey(requestURI, requestMethod));
     }
 
-    private Method[] getRequestMappingMethods(final Class<?> controller) {
-        return Arrays.stream(controller.getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(RequestMapping.class))
-                .toArray(Method[]::new);
+    private Set<Method> getRequestMappingMethods(final Class<?> controller) {
+        return ReflectionUtils.getAllMethods(controller, ReflectionUtils.withAnnotation(RequestMapping.class));
     }
 
     private RequestMethod[] resolveRequestMethods(final RequestMapping annotation) {
@@ -66,7 +62,10 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(key, execution);
     }
 
-    private boolean isHandlerAlreadyRegistered(final HandlerKey key) {
-        return handlerExecutions.containsKey(key);
+    private void checkHandlerIsAlreadyRegistered(HandlerKey key) {
+        if (handlerExecutions.containsKey(key)) {
+            throw new IllegalArgumentException(
+                    "Duplicate mapping found for " + key.getUrl() + " " + key.getRequestMethod());
+        }
     }
 }
