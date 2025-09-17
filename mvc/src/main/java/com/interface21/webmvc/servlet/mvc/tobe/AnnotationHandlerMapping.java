@@ -26,13 +26,11 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (var pack : basePackage) {
-            registerControllersInPackage(pack);
-        }
+        registerControllersInPackage(basePackage);
     }
 
-    private void registerControllersInPackage(Object pack) {
-        Reflections reflections = new Reflections(pack.toString());
+    private void registerControllersInPackage(final Object[] basePackage) {
+        Reflections reflections = new Reflections(basePackage);
         Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controller : controllers) {
@@ -42,7 +40,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void registerHandlerMethod(Method[] methods, Object controllerInstance) {
+    private void registerHandlerMethod(final Method[] methods, final Object controllerInstance) {
         for (Method method : methods) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
@@ -63,7 +61,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private Object instantiateController(Class<?> controller) {
+    private Object instantiateController(final Class<?> controller) {
         Object controllerInstance;
         try {
             controllerInstance = controller.getConstructor().newInstance();

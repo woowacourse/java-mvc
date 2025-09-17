@@ -4,9 +4,9 @@ public enum RequestMethod {
     GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
 
     public static RequestMethod getRequestMethod(String method) {
-        for (var m : RequestMethod.values()) {
-            if (m.name().equals(method)) {
-                return m;
+        for (var requestMethod : RequestMethod.values()) {
+            if (requestMethod.name().equals(method)) {
+                return requestMethod;
             }
         }
         throw new IllegalArgumentException("method does no found");
