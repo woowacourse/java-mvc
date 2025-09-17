@@ -45,13 +45,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final var scanner = new ControllerScanner(basePackage);
         final var controllers = scanner.getControllers();
 
-        for (final var clazz : controllers.keySet()) {
+        for (final Class<?> clazz : controllers.keySet()) {
             scanControllerMethods(clazz, controllers.get(clazz));
         }
     }
 
     private void scanControllerMethods(final Class<?> clazz, final Object controller) throws Exception {
-        for (final var method : clazz.getMethods()) {
+        for (final Method method : clazz.getMethods()) {
             if (method.isAnnotationPresent(RequestMapping.class)) {
                 addHandlerMappings(controller, method);
             }
@@ -62,7 +62,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final var requestMapping = handlerMethod.getAnnotation(RequestMapping.class);
         final var requestMethods = scanRequestMethods(requestMapping);
 
-        for (final var requestMethod : requestMethods) {
+        for (final RequestMethod requestMethod : requestMethods) {
             final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             final var handlerExecution = new HandlerExecution(controller, handlerMethod);
             handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
