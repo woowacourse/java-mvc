@@ -20,8 +20,8 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        ModelAndView modelAndView = (ModelAndView) method.invoke(controller, request, response);
 
-        Object mv = method.invoke(controller, request, response);
-        return (ModelAndView) mv;
+        return modelAndView;
     }
 }
