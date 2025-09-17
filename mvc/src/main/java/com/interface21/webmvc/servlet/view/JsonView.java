@@ -29,7 +29,7 @@ public class JsonView implements View {
         response.getWriter().write(json);
     }
 
-    private Object extractBodyFromModel(final Map<String, ?> model) throws Exception {
+    private Object extractBodyFromModel(final Map<String, ?> model) {
         if (model.size() == 1) {
             return model.values().iterator().next();
         }
