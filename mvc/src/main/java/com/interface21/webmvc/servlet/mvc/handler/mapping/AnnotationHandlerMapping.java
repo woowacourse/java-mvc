@@ -27,6 +27,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         try {
             final Reflections reflections = new Reflections(basePackage);
