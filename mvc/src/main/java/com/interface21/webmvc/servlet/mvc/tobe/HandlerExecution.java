@@ -15,7 +15,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    // 찾음 메서드를 실행한다.
+    // 찾은 메서드를 실행해서 Model 데이터들과 View가 담긴 객체로 만든다.
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ModelAndView modelAndView;
 
