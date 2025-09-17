@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,10 +36,17 @@ public class AnnotationHandlerMapping {
 
         for (Class<?> handler : handlers) {
             Object handlerInstance = extractHandlerInstance(handler);
-            for (Method handlerMethod : handler.getDeclaredMethods()) {
+            Method[] publicMethods = extractPublicMethods(handler.getDeclaredMethods());
+            for (Method handlerMethod : publicMethods) {
                 registerHandlerExecution(handlerInstance, handlerMethod);
             }
         }
+    }
+
+    private Method[] extractPublicMethods(final Method[] declaredMethods) {
+        return Arrays.stream(declaredMethods)
+                .filter(method -> Modifier.isPublic(method.getModifiers()))
+                .toArray(Method[]::new);
     }
 
     private void registerHandlerExecution(final Object handlerInstance, final Method handlerMethod) {
