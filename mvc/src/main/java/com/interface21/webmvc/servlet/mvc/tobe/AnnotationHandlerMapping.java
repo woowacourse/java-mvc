@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,20 +26,21 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
-        try {
-            Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-            for (Class<?> controllerClass : controllers.keySet()) {
-                mapController(controllerClass);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        mapControllers(controllerScanner.getControllers());
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void mapController(final Class<?> controller) {
-        List<Method> mappedMethods = findMappedMethods(controller);
+    private void mapControllers(final Map<Class<?>, Object> controllers) {
+        for (Map.Entry<Class<?>, Object> entrySet : controllers.entrySet()) {
+            mapControllerMethods(entrySet.getKey(), entrySet.getValue());
+        }
+    }
+
+    private void mapControllerMethods(final Class<?> controllerClass, final Object controller) {
+        List<Method> mappedMethods = Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .toList();
 
         for (Method method : mappedMethods) {
             try {
@@ -52,16 +52,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private List<Method> findMappedMethods(final Class<?> controller) {
-        Method[] declaredMethods = controller.getDeclaredMethods();
-        return Arrays.stream(declaredMethods)
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .toList();
-    }
-
-    private void addHandlerExecutions(final Class<?> controllerClass, final Method method) throws Exception {
-        Constructor<?> controllerConstructor = controllerClass.getDeclaredConstructor();
-        Object controller = controllerConstructor.newInstance();
+    private void addHandlerExecutions(final Object controller, final Method method) {
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
         String url = annotation.value();
         RequestMethod[] requestMethods = annotation.method();
