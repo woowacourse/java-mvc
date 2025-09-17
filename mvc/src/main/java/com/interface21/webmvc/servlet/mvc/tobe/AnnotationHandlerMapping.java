@@ -30,11 +30,11 @@ public class AnnotationHandlerMapping {
      */
     public void initialize() {
         try {
-            Reflections reflections = new Reflections((Object[]) basePackage);
+            Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
             for (Class<?> controllerClass : controllers) {
-                Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+                Object controllerInstance = controllerClass.getConstructor().newInstance();
                 requestMappingMethodToHandlerExecution(controllerClass, controllerInstance);
             }
             log.info("Initialized AnnotationHandlerMapping!");
@@ -43,9 +43,6 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    /**
-     * @RequestMapping 어노테이션이 붙은 메서드를 찾아서 value와 method를 통해 HandlerExecution을 생성하고 저장하는 메서드입니다.
-     */
     private void requestMappingMethodToHandlerExecution(Class<?> controllerClass, Object controllerInstance) {
         for (Method method : controllerClass.getDeclaredMethods()) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
