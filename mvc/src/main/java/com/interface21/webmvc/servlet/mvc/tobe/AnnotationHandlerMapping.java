@@ -3,48 +3,46 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
-    // HandlerKey: 요청 매핑을 위해 사용되는 키
-    // HandlerExecution: 매핑된 컨트롤러 메서드를 실제 실행하는 역할을 가지는 객체
+    private final Object[] basePackages;
+    /**
+     * HandlerKey: 요청 매핑을 위해 사용되는 키
+     * HandlerExecution: 매핑된 컨트롤러 메서드를 실제 실행하는 역할을 가지는 객체
+     */
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
-    // 1. @Controller 붙어있는 클래스를 찾아서
+    /**
+     * @Controller 붙어있는 클래스를 찾아서 각 Controller마다 객체 생성 및 메서드 목록을 가져오기 -> ControllerScanner에 위임
+     */
+    @Override
     public void initialize() {
-        for (final Object basePackage : basePackage) {
-            final Reflections reflections = new Reflections(basePackage);
-            final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.scan();
 
-            initializeControllers(controllers);
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
+        for (Entry<Class<?>, Object> classAndInstance : controllers.entrySet()) {
+            Class<?> clazz = classAndInstance.getKey();
+            Object instance = classAndInstance.getValue();
 
-    // 2. 각 Controller마다 객체 생성 및 메서드 목록을 가져와서
-    private void initializeControllers(final Set<Class<?>> controllers) {
-        for (Class<?> controller : controllers) {
-            try {
-                initializeMethods(controller.getDeclaredConstructor().newInstance(), controller.getMethods()); // Controller 세팅
-            } catch (Exception e) {
-                log.error("Handler의 Method를 매핑하는 과정에서 오류가 발생했습니다.", e);
-            }
+            initializeMethods(instance, clazz.getMethods());
         }
     }
 
@@ -86,6 +84,7 @@ public class AnnotationHandlerMapping {
     }
 
     // 실제로 요청이 들어온다면
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI(); // URI를 가져오고
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod()); // Http Method를 확인한 다음에
