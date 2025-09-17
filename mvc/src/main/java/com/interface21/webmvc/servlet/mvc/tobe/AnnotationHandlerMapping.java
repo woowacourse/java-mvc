@@ -65,9 +65,19 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.putIfAbsent(handlerKey, handlerExecution);
+
+            validateDuplicateHandlerKey(handlerKey, handlerExecution);
             log.debug("Handler registered: {} {}", requestMethod, uri);
         }
+    }
+
+    // 중복 핸들러 키 검사
+    private void validateDuplicateHandlerKey(final HandlerKey handlerKey, final HandlerExecution handlerExecution) {
+        if(handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("Duplicate mapping detected: " + handlerKey);
+        }
+
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     // 컨트롤러 인스턴스 생성
