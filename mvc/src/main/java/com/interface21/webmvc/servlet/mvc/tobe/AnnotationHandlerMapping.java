@@ -1,21 +1,16 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * 애노테이션 기반 핸들러 매핑 관리 - @Controller가 붙은 클래스 스캔 - @RequestMapping이 붙은 메서드 추출 - Key: URL + HTTP Method -> Value:
- * HandlerExecution 매핑
- */
 //TODO: https://github.com/woowacourse/java-mvc/pull/894#discussion_r2347502619  (2025-09-15, 월, 17:21)
 public class AnnotationHandlerMapping {
 
@@ -30,73 +25,51 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        Set<Class<?>> controllers = scanControllers();
-        registerHandlers(controllers);
+        Map<Class<?>, Object> controllerRegistry = scanControllers();
+        registerHandlers(controllerRegistry);
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private Map<Class<?>, Object> scanControllers() {
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        return controllerScanner.getControllers();
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod())));
     }
 
-    // basePackage에서 @Controller가 붙은 클래스 스캔
-    private Set<Class<?>> scanControllers() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
+    // 전체 컨트롤러를 순회하며 등록
+    private void registerHandlers(Map<Class<?>, Object> controllerRegistry) {
+        Set<Class<?>> controllers = controllerRegistry.keySet();
+        controllers.forEach(controller -> registerControllerMethods(controller, controllerRegistry.get(controller)));
     }
 
-    // 컨트롤러 클래스에서 @RequestMapping 메서드를 찾아 HandlerExecution 등록
-    private void registerHandlers(Set<Class<?>> controllers) {
-        // 뎁스가 깊긴한데.. 메서드 분리나 스트림 쓰는거보다 가독성 더 좋은 듯
-        for (Class<?> controller : controllers) {
-            for (Method method : controller.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    registerHandler(controller, method);
-                }
-            }
-        }
+    // 단일 컨트롤러의 모든 RequestMapping 메서드를 등록
+    private void registerControllerMethods(Class<?> controllerClass, Object controllerInstance) {
+        Method[] methods = controllerClass.getDeclaredMethods();
+        Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .forEach(method -> registerHandler(controllerInstance, method));
     }
 
-    //TODO: https://github.com/woowacourse/java-mvc/pull/894#discussion_r2347502621  (2025-09-15, 월, 17:20)
     // 단일 컨트롤러 메서드 등록
-    private void registerHandler(Class<?> controller, Method method) {
+    private void registerHandler(Object controllerInstance, Method method) {
         RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-        String path = normalizePath(mapping.value());
+        RequestPath path = new RequestPath(mapping.value());
+        RequestMethod[] requestMethods = resolveRequestMethods(mapping.method());
 
-        RequestMethod[] requestMethods = mapping.method();
-
-        requestMethods = resolveRequestMethods(requestMethods);
         for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey key = new HandlerKey(path, requestMethod);
+            HandlerKey key = new HandlerKey(path.getValue(), requestMethod);
             validateDuplicatedKey(key);
-            HandlerExecution execution = new HandlerExecution(controller, method);
+            HandlerExecution execution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(key, execution);
         }
     }
 
-    private String normalizePath(String path) {
-        // path가 비었다면 루트 경로로 지정
-        if (path.isEmpty()) {
-            return "/";
-        }
-
-        // 앞 / 추가
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-
-        // 뒤 / 제거 (루트 경로는 제외)
-        if (path.length() > 1 && path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
-
-        return path;
-    }
-
-
     private RequestMethod[] resolveRequestMethods(RequestMethod[] requestMethods) {
         if (requestMethods.length == 0) {
-            requestMethods = RequestMethod.values();
+            return RequestMethod.values();
         }
         return requestMethods;
     }
