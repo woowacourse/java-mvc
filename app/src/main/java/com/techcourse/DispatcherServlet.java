@@ -42,7 +42,6 @@ public class DispatcherServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
         final Object handler = handlerOptional.get();
         final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
         try {
