@@ -6,6 +6,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,24 +20,21 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings;
+    private final HandlerMappingRegistry handlerMappingRegistry;
     private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
         this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
     public void init() {
         final HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        this.handlerMappings.add(manualHandlerMapping);
+        this.handlerMappingRegistry.register(manualHandlerMapping);
 
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
-                "com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-        this.handlerMappings.add(annotationHandlerMapping);
+        final HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        this.handlerMappingRegistry.register(annotationHandlerMapping);
 
         handlerAdapters.addAll(List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
     }
@@ -44,21 +42,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            final Object handler = getHandler(request);
+            final Object handler = handlerMappingRegistry.getHandler(request);
             final ModelAndView mav = handle(handler, request, response);
             render(mav, request, response);
         } catch (Exception e) {
             throw new IllegalArgumentException("핸들러를 처리하는데 실패했습니다.");
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            if (handlerMapping.getHandler(request) != null) {
-                return handlerMapping.getHandler(request);
-            }
-        }
-        throw new IllegalStateException("요청에 대한 핸들러를 찾을 수 없습니다.");
     }
 
     private ModelAndView handle(final Object handler, final HttpServletRequest request,
