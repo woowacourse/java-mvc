@@ -23,9 +23,10 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         Set<Class<?>> controllerClasses = ReflectionUtils.scanAnnotatedClass(Controller.class, basePackage);
         Map<Class<?>, Object> controllers = ReflectionUtils.newInstances(controllerClasses);
 
