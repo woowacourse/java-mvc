@@ -6,6 +6,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -24,51 +25,68 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        for (Object base : basePackage) {
-            Reflections reflections = new Reflections((String) base);
-            Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
-            addHandlerExecutions(typesAnnotatedWith);
+    private static class ControllerInfo {
+        private Class<?> clazz;
+        private Object object;
+
+        public ControllerInfo(Class<?> clazz, Object object) {
+            this.clazz = clazz;
+            this.object = object;
         }
     }
 
-    private void addHandlerExecutions(Set<Class<?>> typesAnnotatedWith) {
+    public void initialize() {
         try {
-            for (Class<?> controllerClass : typesAnnotatedWith) {
-                processController(controllerClass);
-            }
+            log.info("Initialized AnnotationHandlerMapping!");
+            Set<ControllerInfo> controllerInfos = scanControllers();
+            Map<Method, Object> methods = scanRequestMappingMethod(controllerInfos);
+            addMappingsForMethod(methods);
         } catch (Exception e) {
             log.error("Failed to initialize handler mappings", e);
             throw new RuntimeException("Failed to initialize handler mappings.", e);
         }
     }
 
-    private void processController(Class<?> controllerClass) throws Exception {
-        Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+    private Set<ControllerInfo> scanControllers() throws Exception {
+        Set<ControllerInfo> controllerInfos = new HashSet<>();
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                addMappingsForMethod(controllerInstance, method);
-            }
+        for (Class<?> controller : controllers) {
+            Object object = controller.getDeclaredConstructor().newInstance();
+            controllerInfos.add(new ControllerInfo(controller, object));
         }
+        return controllerInfos;
     }
 
-    private void addMappingsForMethod(Object controllerInstance, Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        String url = requestMapping.value();
-        RequestMethod[] httpMethods = requestMapping.method();
-
-        for (RequestMethod requestMethod : httpMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-
-            if (handlerExecutions.containsKey(handlerKey)) {
-                throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
+    private Map<Method, Object> scanRequestMappingMethod(Set<ControllerInfo> controllerInfos) {
+        Map<Method, Object> methods = new HashMap<>();
+        for (ControllerInfo controllerInfo : controllerInfos) {
+            for (Method method : controllerInfo.clazz.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(RequestMapping.class)) {
+                    methods.put(method, controllerInfo.object);
+                }
             }
+        }
+        return methods;
+    }
 
-            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
-            log.info("Mapped [{}] -> {}", handlerKey, method.getName());
+    private void addMappingsForMethod(Map<Method, Object> methods) {
+        for (Map.Entry<Method, Object> entry : methods.entrySet()) {
+            Method method = entry.getKey();
+            Object controllerInstance = entry.getValue();
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+
+            for (RequestMethod requestMethod : requestMapping.method()) {
+                HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+                if (handlerExecutions.containsKey(handlerKey)) {
+                    throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
+                }
+
+                HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+                handlerExecutions.put(handlerKey, handlerExecution);
+                log.info("Mapped [{}] -> {}", handlerKey, method.getName());
+            }
         }
     }
 
