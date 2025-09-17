@@ -1,15 +1,19 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletResponse;
+import org.reflections.Reflections;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AnnotationHandlerMapping {
-
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -20,10 +24,82 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
+        final var reflections = new Reflections(basePackage);
+        final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
+
+        for (final var controllerClass : controllers) {
+            registerController(controllerClass);
+        }
+    }
+
+    private void registerController(final Class<?> controllerClass) {
+        try {
+            final var controller = controllerClass.getDeclaredConstructor()
+                    .newInstance();
+
+            for (final var method : controllerClass.getDeclaredMethods()) {
+                registerHandlerMethods(controller, method);
+            }
+        } catch (final Exception e) {
+            throw new IllegalStateException("Failed to instantiate controller: " + controllerClass.getName(), e);
+        }
+    }
+
+    private void registerHandlerMethods(final Object controller, final Method method) {
+        if (!isHandlerMethodCandidate(method)) {
+            return;
+        }
+
+        final var mapping = method.getAnnotation(RequestMapping.class);
+        final var url = mapping.value();
+        final var requestMethods = mapping.method().length > 0 ? mapping.method() : RequestMethod.values();
+
+        for (final var requestMethod : requestMethods) {
+            registerHandler(url, requestMethod, controller, method);
+        }
+    }
+
+    private boolean isHandlerMethodCandidate(final Method method) {
+        return method.isAnnotationPresent(RequestMapping.class)
+                && Modifier.isPublic(method.getModifiers())
+                && isValidHandlerMethod(method);
+    }
+
+    private boolean isValidHandlerMethod(final Method method) {
+        final var params = method.getParameterTypes();
+        if (params.length != 2 || params[0] != HttpServletRequest.class || params[1] != HttpServletResponse.class) {
+            return false;
+        }
+
+        return method.getReturnType() == ModelAndView.class;
+    }
+
+    private void registerHandler(
+            final String url,
+            final RequestMethod requestMethod,
+            final Object controller,
+            final Method method
+    ) {
+        final var handlerKey = new HandlerKey(url, requestMethod);
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("Duplicate mapping: " + requestMethod + " " + url);
+        }
+
+        handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        final var uri = request.getRequestURI();
+        final var methodName = request.getMethod();
+
+        final var method = RequestMethod.from(methodName)
+                .orElseThrow(() -> new IllegalStateException("Unsupported HTTP method: " + methodName + " for " + uri));
+
+        final var handler = handlerExecutions.get(new HandlerKey(uri, method));
+        if (handler == null) {
+            throw new IllegalStateException("No handler found: " + method + " " + uri);
+        }
+
+        return handler;
     }
 }
