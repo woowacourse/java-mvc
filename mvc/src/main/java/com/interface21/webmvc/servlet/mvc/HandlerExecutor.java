@@ -12,7 +12,7 @@ public class HandlerExecutor {
         this.adapterRegistry = adapterRegistry;
     }
 
-    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
         HandlerAdapter adapter = adapterRegistry.getHandlerAdapter(handler);
         return adapter.handle(handler, request, response);
     }

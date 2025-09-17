@@ -11,12 +11,10 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object handler) {
-        for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
-            }
-        }
-        throw new IllegalArgumentException("제공하지 않는 핸들러입니다: " + handler);
+    public HandlerAdapter getHandlerAdapter(final Object handler) {
+        return handlerAdapters.stream()
+                .filter(a -> a.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No HandlerAdapter for handler: " + handler));
     }
 }

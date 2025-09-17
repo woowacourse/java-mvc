@@ -11,3 +11,4 @@
 - [x] ManualHandlerMapping / AnnotationHandlerMapping 추상화
 - [x] ManualHandlerMapping / AnnotationHandlerMapping의 Controller 추상화
 - [x] HandlerMappingRegistry / HandlerAdapterRegistry 추가
+- [x] AnnotationHandlerMapping -> ControllerScanner 적용

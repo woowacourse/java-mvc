@@ -13,11 +13,7 @@ public class HandlerExecutionHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) {
-        try {
-            return ((HandlerExecution) handler).handle(request, response);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return ((HandlerExecution) handler).handle(request, response);
     }
 }
