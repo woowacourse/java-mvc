@@ -47,7 +47,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                     method.getDeclaredAnnotation(RequestMapping.class));
             final List<HandlerKey> keys = HandlerKeyFactory.from(requestMapping);
             for (final HandlerKey key : keys) {
-                handlerExecutions.put(key, new HandlerExecution(controller, method));
+                final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                handlerExecutions.put(key, handlerExecution);
+                log.info("HandlerKey : {}, HandlerExecution : {}", key, handlerExecution);
             }
         }
     }
