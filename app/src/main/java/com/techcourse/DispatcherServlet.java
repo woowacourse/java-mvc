@@ -1,5 +1,11 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,20 +13,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DispatcherServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
-
-    public DispatcherServlet() {
-    }
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        final var manualInitializer = new ManualHandlerMappingInitializer();
+        final var manual = manualInitializer.initialize();
+
+        final var annotation = new AnnotationHandlerMapping("com.techcourse");
+        annotation.initialize();
+
+        handlerMappings.add(manual);
+        handlerMappings.add(annotation);
+
+        handlerAdapters.add(new ControllerHandlerAdapter());
+        handlerAdapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
@@ -28,27 +43,49 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-//            move(viewName, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
-    }
-/*  TODO. Step2 - Legacy MVC와 @MVC 통합하기
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+            final var handler = getHandler(request);
+            if (handler == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+            final var adapter = getHandlerAdapter(handler);
+            final var modelAndView = adapter.handle(request, response, handler);
+
+            render(modelAndView, request, response);
+        } catch (final Exception e) {
+            log.error("Exception while handling request", e);
+            throw new ServletException(e);
+        }
     }
- */
+
+    private Object getHandler(final HttpServletRequest request) {
+        for (final var mapping : handlerMappings) {
+            final var handler = mapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
+        }
+        return null;
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) {
+        for (final var adapter : handlerAdapters) {
+            if (adapter.supports(handler)) {
+                return adapter;
+            }
+        }
+        throw new IllegalStateException("No HandlerAdapter found for handler: " + handler.getClass());
+    }
+
+    private void render(
+            final ModelAndView modelAndView,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        final var view = modelAndView.getView();
+
+        view.render(modelAndView.getModel(), request, response);
+    }
 }
