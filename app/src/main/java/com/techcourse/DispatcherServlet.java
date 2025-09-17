@@ -51,14 +51,13 @@ public class DispatcherServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-
             final var handlerAdapter = getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
 
             final var view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            log.error("Failed to execute dispatcherServlet : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
