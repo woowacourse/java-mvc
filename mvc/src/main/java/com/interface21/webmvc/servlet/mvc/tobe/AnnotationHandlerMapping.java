@@ -32,7 +32,6 @@ public class AnnotationHandlerMapping implements HandlerMapping{
                     ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))
                             .forEach(method -> registerHandlerExecution(instance, method))
             );
-
             log.info("Handler mappings initialized: {} handlers registered", handlerExecutions.size());
         } catch (final Exception e) {
             log.error("Failed to initialize handler", e);
