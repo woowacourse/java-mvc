@@ -30,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapter = new HandlerAdapter(
                 List.of(
                         new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping()
+                        new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.tobe")
                 )
         );
     }
@@ -42,10 +42,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView modelAndView = executeHandler(request, response);
-            final View view = new JspView(modelAndView.getView().toString());
-            view.render(null, request, response);
+            final View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
+            log.error("Exception for [{}] request at '{}' : {}", request.getMethod(), request.getRequestURI(), e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
@@ -53,11 +53,12 @@ public class DispatcherServlet extends HttpServlet {
     private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Object handler = handlerAdapter.findHandler(request);
         if (handler instanceof Controller) {
-            return ((Controller) handler).execute(request, response);
+            String res = ((Controller) handler).execute(request, response);
+            return new ModelAndView(new JspView(res));
         } else if (handler instanceof HandlerExecution) {
             return ((HandlerExecution) handler).handle(request, response);
         } else {
-            throw new RuntimeException();
+            throw new IllegalArgumentException("No handler to handle the request");
         }
     }
 }
