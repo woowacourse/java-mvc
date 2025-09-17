@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -103,6 +103,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(key, execution);
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String methodName = request.getMethod();
