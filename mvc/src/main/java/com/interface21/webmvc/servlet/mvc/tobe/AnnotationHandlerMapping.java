@@ -27,7 +27,6 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
@@ -39,8 +38,9 @@ public class AnnotationHandlerMapping implements HandlerMapping{
                 for (Method method : methods) {
                     addMethodToHandlerExecutions(method, controllerInstance);
                 }
+                log.info("Initialized AnnotationHandlerMapping");
             } catch (Exception e) {
-                log.error("Initializing handler" + clazz.getName(), e);
+                log.error("Failed to initialize handler: " + clazz.getName(), e);
             }
         }
     }
@@ -57,12 +57,11 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
 
         if (requestMethods.length == 0) {
-            Arrays.stream(RequestMethod.values())
-                    .forEach(requestMethod ->
-                            handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution));
+            Arrays.stream(RequestMethod.values()).forEach(
+                    requestMethod -> handlerExecutions.put(
+                            new HandlerKey(uri, requestMethod), handlerExecution));
             return;
         }
-
         for (RequestMethod requestMethod : requestMethods) {
             handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution);
         }
@@ -72,6 +71,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         final String requestUri = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         log.debug("Looking for handler for: {} {}", request.getMethod(), request.getRequestURI());
+
         return handlerExecutions.get(new HandlerKey(requestUri, requestMethod));
     }
 }
