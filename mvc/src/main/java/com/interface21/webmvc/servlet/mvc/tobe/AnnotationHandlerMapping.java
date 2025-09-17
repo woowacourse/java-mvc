@@ -56,15 +56,9 @@ public class AnnotationHandlerMapping implements HandlerMapping{
 
         final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
 
-        if (requestMethods.length == 0) {
-            Arrays.stream(RequestMethod.values()).forEach(
-                    requestMethod -> handlerExecutions.put(
-                            new HandlerKey(uri, requestMethod), handlerExecution));
-            return;
-        }
-        for (RequestMethod requestMethod : requestMethods) {
-            handlerExecutions.put(new HandlerKey(uri, requestMethod), handlerExecution);
-        }
+        Arrays.stream(requestMethods.length == 0 ? RequestMethod.values() : requestMethods)
+                .forEach(requestMethod -> handlerExecutions.put(
+                        new HandlerKey(uri, requestMethod), handlerExecution));
     }
 
     public Object getHandler(final HttpServletRequest request) {
