@@ -21,6 +21,10 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
+    public void initialize() {
+        handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
     public Optional<Object> getHandler(final HttpServletRequest request) {
         if (request == null) {
             return Optional.empty();
