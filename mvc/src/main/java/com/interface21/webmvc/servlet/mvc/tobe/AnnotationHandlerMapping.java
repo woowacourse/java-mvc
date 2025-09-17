@@ -12,7 +12,7 @@ import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,10 +24,11 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final ControllerScanner controllerScanner = new ControllerScanner(basePackages);
         final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        for (Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
+        for (final Entry<Class<?>, Object> controllerEntry : controllers.entrySet()) {
             final Object target = controllerEntry.getValue();
             final Set<Method> requestMappingMethods = getRequestMappingMethods(controllerEntry.getKey());
             for (final Method method : requestMappingMethods) {
@@ -43,6 +44,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
@@ -62,7 +64,7 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(key, execution);
     }
 
-    private void checkHandlerIsAlreadyRegistered(HandlerKey key) {
+    private void checkHandlerIsAlreadyRegistered(final HandlerKey key) {
         if (handlerExecutions.containsKey(key)) {
             throw new IllegalArgumentException(
                     "Duplicate mapping found for " + key.getUrl() + " " + key.getRequestMethod());
