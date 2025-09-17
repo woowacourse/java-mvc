@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
@@ -25,8 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     public void initialize() {
-        ControllerScanner controllerScanner = new ControllerScanner();
-        Set<Class<?>> controllerClasses = controllerScanner.scan(basePackage);
+        Set<Class<?>> controllerClasses = ReflectionUtils.scanAnnotatedClass(Controller.class, basePackage);
         Map<Class<?>, Object> controllers = ReflectionUtils.newInstances(controllerClasses);
 
         for (Class<?> controllerClass : controllerClasses) {

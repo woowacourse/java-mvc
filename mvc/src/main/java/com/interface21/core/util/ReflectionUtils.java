@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.reflections.Reflections;
 
 public abstract class ReflectionUtils {
 
@@ -43,6 +44,11 @@ public abstract class ReflectionUtils {
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);
         }
+    }
+
+    public static Set<Class<?>> scanAnnotatedClass(Class<? extends Annotation> annotation, Object... basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(annotation);
     }
 
     public static List<Method> getAllMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
