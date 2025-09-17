@@ -1,11 +1,8 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe.dispatcherservlet;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServlet;
@@ -22,21 +19,10 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
-        this.handlerMappingRegistry = new HandlerMappingRegistry();
-        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
-    }
-
-    @Override
-    public void init() {
-        final HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        this.handlerMappingRegistry.register(manualHandlerMapping);
-
-        final HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        this.handlerMappingRegistry.register(annotationHandlerMapping);
-
-        handlerAdapterRegistry.register(new ControllerHandlerAdapter());
-        handlerAdapterRegistry.register(new HandlerExecutionAdapter());
+    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
+                             final HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
