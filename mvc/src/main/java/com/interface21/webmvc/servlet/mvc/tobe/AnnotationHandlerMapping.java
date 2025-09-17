@@ -68,7 +68,7 @@ public class AnnotationHandlerMapping {
         try {
             controllerInstance = controller.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new IllegalArgumentException("excetion occured" + e.getMessage());
+            throw new IllegalArgumentException("Failed to instantiate controller: " + controller.getName(), e);
         }
         return controllerInstance;
     }
