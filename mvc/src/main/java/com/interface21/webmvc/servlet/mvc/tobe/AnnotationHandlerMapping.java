@@ -32,8 +32,8 @@ public class AnnotationHandlerMapping implements HandlerMapping{
 
         for (Class<?> clazz : controllerClasses) {
             try {
-                final Object controllerInstance = clazz.getDeclaredConstructor().newInstance();
-                final Method[] methods = clazz.getDeclaredMethods();
+                final Object controllerInstance = clazz.getConstructor().newInstance();
+                final Method[] methods = clazz.getMethods();
 
                 for (Method method : methods) {
                     addMethodToHandlerExecutions(method, controllerInstance);
