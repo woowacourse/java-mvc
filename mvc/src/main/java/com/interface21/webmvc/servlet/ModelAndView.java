@@ -1,10 +1,17 @@
 package com.interface21.webmvc.servlet;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModelAndView {
+
+    private static final Logger log = LoggerFactory.getLogger(ModelAndView.class);
 
     private final View view;
     private final Map<String, Object> model;
@@ -12,6 +19,17 @@ public class ModelAndView {
     public ModelAndView(final View view) {
         this.view = view;
         this.model = new HashMap<>();
+    }
+
+    public void render(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        model.keySet().forEach(key -> {
+            log.debug("attribute name : {}, value : {}", key, model.get(key));
+            request.setAttribute(key, model.get(key));
+        });
+        view.render(request, response);
+
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(view.getViewName());
+        requestDispatcher.forward(request, response);
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
