@@ -3,7 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
@@ -36,11 +35,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         try {
-            final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-            final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
-            addHandlerMapping(manualHandlerMapping);
-            addHandlerMapping(annotationHandlerMapping);
+            handlerMappingRegistry.initialize();
             handlerAdapterRegistry.initialize();
+
+            // 사용자 지정 HandlerMapping은 따로 초기화
+            final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+            addHandlerMapping(manualHandlerMapping);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
