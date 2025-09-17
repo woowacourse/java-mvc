@@ -4,7 +4,6 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,10 +28,19 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final var controllers = scanControllers();
-        for (final Class<?> controller : controllers) {
-            final var methods = scanRequestMappingMethods(controller);
-            registerHandlerForController(controller, methods);
+        try {
+            final var controllers = scanControllers();
+            for (final Class<?> controllerClass : controllers) {
+                final var methods = scanRequestMappingMethods(controllerClass);
+                final var controllerObject = controllerClass.getDeclaredConstructor().newInstance();
+                registerHandlerForController(controllerObject, methods);
+            }
+        } catch (final NoSuchMethodException e) {
+            log.error("Exception : 컨트롤러 기본 생성자가 필요합니다. | {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (final Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -54,10 +62,10 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void registerHandlerForController(final Class<?> controller, final List<Method> methods) {
+    private void registerHandlerForController(final Object controller, final List<Method> methods) {
         for (final Method method : methods) {
             final var handlerKeys = createHandlerKeys(method);
-            final var handlerExecution = createHandlerExecution(controller, method);
+            final var handlerExecution = new HandlerExecution(controller, method);
             registerHandler(handlerKeys, handlerExecution);
         }
     }
@@ -75,19 +83,6 @@ public class AnnotationHandlerMapping {
         return Arrays.stream(httpMethods)
                 .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .toList();
-    }
-
-    private HandlerExecution createHandlerExecution(final Class<?> controller, final Method method) {
-        try {
-            final Constructor<?> constructor = controller.getDeclaredConstructor();
-            return new HandlerExecution(constructor.newInstance(), method);
-        } catch (NoSuchMethodException e) {
-            log.error("Exception : 컨트롤러 기본 생성자가 필요합니다. | {}", e.getMessage(), e);
-            throw new RuntimeException(e);
-        } catch (final Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
     }
 
     private void registerHandler(final List<HandlerKey> handlerKeys, final HandlerExecution handlerExecution) {
