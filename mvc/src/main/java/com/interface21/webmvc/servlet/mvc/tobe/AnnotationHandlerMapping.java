@@ -1,20 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,58 +17,49 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+        this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
-
-        for (Class<?> clazz : classes) {
+        controllers.forEach((clazz, instance) -> {
             try {
-                final Map<HandlerKey, HandlerExecution> foundExecutions = Arrays.stream(clazz.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                        .flatMap(method -> {
-                            final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-                            final HandlerExecution execution = createHandlerExecution(clazz, method);
+                final Map<HandlerKey, HandlerExecution> foundExecutions = createHandlerExecutions(clazz, instance);
 
-                            return Arrays.stream(mapping.method())
-                                    .map(requestMethod -> {
-                                        HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
-                                        return new SimpleEntry<>(key, execution);
-                                    });
-                        })
-                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-                
                 this.handlerExecutions.putAll(foundExecutions);
             } catch (final Exception e) {
                 log.error("Failed to initialize controller: {}", clazz.getName(), e);
             }
-        }
+        });
 
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.forEach((handlerKey, handlerExecution)
                 -> log.info("Path : {}, handlerExecution : {}", handlerKey, handlerExecution));
     }
 
-    private HandlerExecution createHandlerExecution(Class<?> clazz, Method method) {
-        final Object instance = getInstance(clazz);
-        return new HandlerExecution(instance, method);
-    }
+    private Map<HandlerKey, HandlerExecution> createHandlerExecutions(
+            final Class<?> clazz,
+            final Object instance
+    ) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .flatMap(method -> {
+                    final RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                    final HandlerExecution execution = new HandlerExecution(instance, method);
 
-    private Object getInstance(final Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
-        }
+                    return Arrays.stream(mapping.method())
+                            .map(requestMethod -> {
+                                HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+                                return new SimpleEntry<>(key, execution);
+                            });
+                })
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     public Object getHandler(final HttpServletRequest request) {
