@@ -4,13 +4,11 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,74 +26,15 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         for (final Object packageName : basePackage) {
-            scanPackageForControllers(packageName.toString());
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
+            final Reflections reflections = new Reflections(packageName.toString());
 
-    private void scanPackageForControllers(final String packageName) {
-        final List<Class<?>> classes = getClassesInPackage(packageName);
+            final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (final Class<?> clazz : classes) {
-            if (clazz.isAnnotationPresent(Controller.class)) {
+            for (final Class<?> clazz : controllerClasses) {
                 registerHandlerMethods(clazz);
             }
         }
-    }
-
-    private List<Class<?>> getClassesInPackage(final String packageName) {
-        final List<Class<?>> classes = new ArrayList<>();
-        final String path = packageName.replace('.', '/');
-
-        try {
-            final URL resource = Thread.currentThread()
-                    .getContextClassLoader()
-                    .getResource(path);
-
-            if (resource == null) {
-                log.warn("Package not found: {}", packageName);
-                return classes;
-            }
-
-            final File directory = new File(resource.getFile());
-            if (directory.exists()) {
-                scanDirectory(directory, packageName, classes);
-            }
-        } catch (Exception e) {
-            log.error("Error scanning package: {}", packageName, e);
-        }
-
-        return classes;
-    }
-
-    private void scanDirectory(final File directory, final String packageName, final List<Class<?>> classes) {
-        final File[] files = directory.listFiles();
-        if (files == null) {
-            return;
-        }
-
-        for (final File file : files) {
-            final String fileName = file.getName();
-
-            if (file.isDirectory()) {
-                scanDirectory(file, packageName + "." + fileName, classes);
-                continue;
-            }
-
-            if (fileName.endsWith(".class")) {
-                addPackageClass(packageName, classes, fileName);
-            }
-        }
-    }
-
-    private void addPackageClass(final String packageName, final List<Class<?>> classes, final String fileName) {
-        final String className = packageName + "." + fileName.substring(0, fileName.length() - 6);
-        try {
-            final Class<?> clazz = Class.forName(className);
-            classes.add(clazz);
-        } catch (ClassNotFoundException e) {
-            log.warn("Could not load class: {}", className);
-        }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void registerHandlerMethods(final Class<?> controllerClass) {
