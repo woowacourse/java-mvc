@@ -17,10 +17,10 @@ public class HandlerMappingRegistry {
         this.handlerMappings.add(handlerMapping);
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerMapping getHandlerMapping(final HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             if (handlerMapping.getHandler(request) != null) {
-                return handlerMapping.getHandler(request);
+                return handlerMapping;
             }
         }
         throw new IllegalStateException("요청에 대한 핸들러를 찾을 수 없습니다.");

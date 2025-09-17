@@ -3,6 +3,7 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
@@ -41,8 +42,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request);
-            final ModelAndView mav = handlerAdapterRegistry.handle(handler, request, response);
+            final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
+            final Object handler = handlerMapping.getHandler(request);
+
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView mav = handlerAdapter.handle(handler, request, response);
+
             render(mav, request, response);
         } catch (Exception e) {
             throw new IllegalArgumentException("핸들러를 처리하는데 실패했습니다.");
