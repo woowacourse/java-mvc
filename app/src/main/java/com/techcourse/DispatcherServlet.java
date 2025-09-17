@@ -92,7 +92,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             view.render(model, request, response);
         } catch (Exception e) {
-            throw new IllegalArgumentException("exception occurred" + e.getMessage());
+            throw new IllegalArgumentException("Failed to render view" + e.getMessage());
         }
     }
 }
