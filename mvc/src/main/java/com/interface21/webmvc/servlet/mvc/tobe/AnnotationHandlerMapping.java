@@ -66,7 +66,9 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        final var handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod()));
+        final var method = RequestMethod.from(request.getMethod())
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + request.getMethod()));
+        final var handlerKey = new HandlerKey(request.getRequestURI(), method);
         log.debug("Target HandlerKey : {}", handlerKey);
         return handlerExecutions.get(handlerKey);
     }

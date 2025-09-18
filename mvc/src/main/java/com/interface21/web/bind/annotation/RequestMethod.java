@@ -1,14 +1,24 @@
 package com.interface21.web.bind.annotation;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public enum RequestMethod {
     GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
 
-    public static RequestMethod from(final String method) {
-        return Arrays.stream(values())
-                .filter(requestMethod -> requestMethod.name().equals(method))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + method));
+    private static final Map<String, RequestMethod> lookup = new HashMap<>();
+
+    static {
+        for (final var method : values()) {
+            lookup.put(method.name(), method);
+        }
+    }
+
+    public static Optional<RequestMethod> from(final String name) {
+        if (name == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(lookup.get(name.toUpperCase()));
     }
 }
