@@ -1,7 +1,17 @@
 package com.interface21.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.reflections.Reflections;
 
 public abstract class ReflectionUtils {
 
@@ -33,6 +43,35 @@ public abstract class ReflectionUtils {
         if ((!Modifier.isPublic(ctor.getModifiers()) ||
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);
+        }
+    }
+
+    public static Set<Class<?>> scanAnnotatedClass(Class<? extends Annotation> annotation, Object... basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(annotation);
+    }
+
+    public static List<Method> getAllMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        return Arrays.stream(clazz.getMethods())
+                .filter(method -> method.isAnnotationPresent(annotationClass))
+                .toList();
+    }
+
+    public static Map<Class<?>, Object> newInstances(Set<Class<?>> classes) {
+        return classes.stream()
+                .map(ReflectionUtils::newInstance)
+                .collect(Collectors.toMap(
+                        Object::getClass,
+                        Function.identity()
+                ));
+    }
+
+    private static Object newInstance(Class<?> clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 }
