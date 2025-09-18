@@ -1,23 +1,31 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.Controller;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView save(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         final var user = new User(2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email"));
+            httpServletRequest.getParameter("account"),
+            httpServletRequest.getParameter("password"),
+            httpServletRequest.getParameter("email"));
         InMemoryUserRepository.save(user);
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 }
