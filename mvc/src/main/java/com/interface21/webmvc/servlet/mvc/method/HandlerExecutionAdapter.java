@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.method;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
@@ -17,21 +17,14 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) 
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
+                               final Object handler)
             throws Exception {
-        validateHandler(handler);
-        
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
-        log.debug("Executing handler: {}", handlerExecution.getClass().getSimpleName());
-        
-        return handlerExecution.handle(request, response);
-    }
+        log.debug("Executing handler: {}.{}", 
+                handlerExecution.getHandler().getClass().getSimpleName(), 
+                handlerExecution.getMethod().getName());
 
-    private void validateHandler(final Object handler) {
-        if (!supports(handler)) {
-            throw new IllegalArgumentException(
-                String.format("Handler of type %s is not supported by HandlerExecutionAdapter", 
-                    handler.getClass().getName()));
-        }
+        return handlerExecution.handle(request, response);
     }
 }

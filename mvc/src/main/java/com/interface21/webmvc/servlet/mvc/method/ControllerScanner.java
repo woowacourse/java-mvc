@@ -1,13 +1,12 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.method;
 
 import com.interface21.context.stereotype.Controller;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControllerScanner {
 
@@ -28,16 +27,16 @@ public class ControllerScanner {
         log.info("Scanning for @Controller classes in package: {}", basePackage);
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        
+
         log.info("Found {} @Controller classes", controllers.size());
         controllers.forEach(clazz -> log.debug("Found controller: {}", clazz.getName()));
-        
+
         return controllers;
     }
 
     private Map<Class<?>, Object> createControllerInstances(final Set<Class<?>> controllerClasses) {
         final Map<Class<?>, Object> controllerInstances = new HashMap<>();
-        
+
         for (final Class<?> controllerClass : controllerClasses) {
             try {
                 final Object instance = createControllerInstance(controllerClass);
@@ -47,7 +46,7 @@ public class ControllerScanner {
                 log.error("Failed to create instance for controller: {}", controllerClass.getName(), e);
             }
         }
-        
+
         return controllerInstances;
     }
 
