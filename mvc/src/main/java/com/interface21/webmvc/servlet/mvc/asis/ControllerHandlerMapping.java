@@ -14,6 +14,7 @@ public class ControllerHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    @Override
     public void initialize() {
         log.info("Initialized Handler Mapping!");
         controllers.keySet()

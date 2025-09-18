@@ -15,6 +15,10 @@ public record HandlerMappingRegistry(List<HandlerMapping> handlerMappings) {
         this(new ArrayList<>());
     }
 
+    public void init() {
+        handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         this.handlerMappings.add(handlerMapping);
     }

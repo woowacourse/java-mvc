@@ -16,11 +16,9 @@ public class WebMvcConfiguration {
 
         final var controllerHandlerMappingInitializer = new ControllerHandlerMappingInitializer();
         final var controllerHandlerMapping = controllerHandlerMappingInitializer.handle();
-        controllerHandlerMapping.initialize();
 
         final var controllerScanner = new ControllerScanner(APPLICATION_PACKAGE);
         final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
-        annotationHandlerMapping.initialize();
 
         handlerMappingRegistry.addHandlerMapping(controllerHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);

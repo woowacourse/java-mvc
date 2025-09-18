@@ -26,6 +26,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.controllerScanner = controllerScanner;
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final var controllers = controllerScanner.scan();

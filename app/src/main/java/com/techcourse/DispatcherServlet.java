@@ -15,16 +15,18 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private HandlerMappingRegistry handlerMappingRegistry;
-    private HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
+                             final HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry = WebMvcConfiguration.handlerMappingRegistry();
-        handlerAdapterRegistry = WebMvcConfiguration.handlerAdapterRegistry();
+        handlerMappingRegistry.init();
     }
 
     @Override
