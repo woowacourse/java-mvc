@@ -35,13 +35,20 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
-        String requestPath = request.getRequestURI().substring(request.getContextPath().length());
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
 
-        if (requestPath.isBlank() || !requestPath.startsWith("/")) {
-            requestPath = "/" + requestPath;
+        if (contextPath == null || contextPath.isEmpty()) {
+            contextPath = "";
+        }
+
+        String path = uri.substring(contextPath.length());
+
+        if (path.isEmpty()) {
+            path = "/";
         }
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestPath, requestMethod);
+        HandlerKey handlerKey = new HandlerKey(path, requestMethod);
         return handlerExecutions.get(handlerKey);
     }
 
