@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void get() throws Exception {
+    void get() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
@@ -35,7 +36,7 @@ class AnnotationHandlerMappingTest {
     }
 
     @Test
-    void post() throws Exception {
+    void post() {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
 
