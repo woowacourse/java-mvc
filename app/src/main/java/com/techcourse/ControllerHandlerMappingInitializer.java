@@ -1,17 +1,17 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
-import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerMapping;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
 import com.techcourse.controller.RegisterController;
 import com.techcourse.controller.RegisterViewController;
 
-public class ManualHandlerMappingInitializer {
+public class ControllerHandlerMappingInitializer {
 
-    public static ManualHandlerMapping initialize() {
-        final var handlerMapping = new ManualHandlerMapping();
+    public static ControllerHandlerMapping handle() {
+        final var handlerMapping = new ControllerHandlerMapping();
 
         handlerMapping.addController("/", new ForwardController("/index.jsp"));
         handlerMapping.addController("/login", new LoginController());

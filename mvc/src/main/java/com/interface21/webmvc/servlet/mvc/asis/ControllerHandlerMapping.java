@@ -8,9 +8,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ManualHandlerMapping implements HandlerMapping {
+public class ControllerHandlerMapping implements HandlerMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerHandlerMapping.class);
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 

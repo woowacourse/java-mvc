@@ -1,9 +1,12 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
-import jakarta.servlet.ServletException;
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,44 +15,64 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMapping handlerMapping;
+    private static final String APPLICATION_PACKAGE = "com.techcourse";
+    private static final long serialVersionUID = 1L;
+
+    private HandlerMappingRegistry handlerMappingRegistry;
+    private HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        handlerMapping = ManualHandlerMappingInitializer.initialize();
     }
 
     @Override
     public void init() {
-        handlerMapping.initialize();
+        final var controllerHandlerMapping = ControllerHandlerMappingInitializer.handle();
+        controllerHandlerMapping.initialize();
+
+        final var controllerScanner = new ControllerScanner(APPLICATION_PACKAGE);
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
+        annotationHandlerMapping.initialize();
+
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerMappingRegistry.addHandlerMapping(controllerHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+
+        final var controllerHandlerAdapter = new ControllerHandlerAdapter();
+        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
+
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
+        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
+        handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
-        try {
-            final var controller = (Controller) handlerMapping.getHandler(request);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+    protected void service(final HttpServletRequest req, final HttpServletResponse res) {
+        final var optionalHandler = handlerMappingRegistry.getHandler(req);
+        if (optionalHandler.isEmpty()) {
+            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            log.debug("Handler is not Found : {}", req.getRequestURI());
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        final var handler = optionalHandler.get();
+        final var adapter = handlerAdapterRegistry.getAdapter(handler);
+
+        try {
+            final var modelAndView = adapter.handle(handler, req, res);
+            render(modelAndView, req, res);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void render(final ModelAndView modelAndView,
+                        final HttpServletRequest req,
+                        final HttpServletResponse res) throws Exception {
+
+        final var view = modelAndView.getView();
+        view.render(modelAndView.getModel(), req, res);
+
     }
 }
