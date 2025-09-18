@@ -1,11 +1,8 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.MappingHandler;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,35 +10,42 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<MappingHandler> mappingHandlerList;
+    private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerMapping> handlerMappingList;
 
     public DispatcherServlet() {
-        this.mappingHandlerList =
+        this.handlerMappingList =
                 List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse.controller"));
+        this.handlerAdapters = List.of(
+                new ControllerAdapter(),
+                new AnnotatedHandlerAdapter()
+        );
     }
 
-    private Object findHandler(HttpServletRequest request) {
-        for (MappingHandler mappingHandler : mappingHandlerList) {
-            Object handler = mappingHandler.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
+    private static void redirectInternalError(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException {
+        try {
+            request.getRequestDispatcher("/500.jsp")
+                    .forward(request, response);
+        } catch (IOException ex) {
+            throw new ServletException(ex.getMessage());
         }
-        throw new IllegalArgumentException("처리할 수 없는 요청입니다.");
     }
 
     @Override
     public void init() {
-        for (MappingHandler mappingHandler : mappingHandlerList) {
-            mappingHandler.initialize();
+        for (HandlerMapping handlerMapping : handlerMappingList) {
+            handlerMapping.initialize();
         }
     }
 
@@ -54,42 +58,32 @@ public class DispatcherServlet extends HttpServlet {
             doHandle(request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            redirectInternalError(request, response);
         }
     }
 
     private void doHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object handler = findHandler(request);
 
-        if (handler instanceof Controller) {
-            final var viewName = ((Controller) handler).execute(request, response);
-            move(viewName, request, response);
-            return;
-        }
-
-        if (handler instanceof AnnotationHandlerMapping) {
-            HandlerExecution handlerExecution = ((AnnotationHandlerMapping) handler).getHandler(request);
-            ModelAndView modelAndView = handlerExecution.handle(request);
-            Map<String, ?> model = modelAndView.getModel();
-            modelAndView.getView()
-                    .render(model, request, response);
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (!handlerAdapter.isProcessable(handler)) {
+                continue;
+            }
+            handlerAdapter.doHandle(handler, request, response);
             return;
         }
 
         throw new IllegalArgumentException("지원하지 않는 핸들러입니다..");
     }
 
-    private void move(
-            final String viewName,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
+    private Object findHandler(HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : handlerMappingList) {
+            Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        throw new IllegalArgumentException("처리할 수 없는 요청입니다.");
     }
 }

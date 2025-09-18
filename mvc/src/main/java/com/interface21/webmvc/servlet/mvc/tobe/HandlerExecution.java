@@ -14,8 +14,10 @@ public class HandlerExecution {
 
         ModelAndView modelAndView = new ModelAndView(jspView);
 
-        String id = (String) request.getAttribute("id");
-        modelAndView.addObject("id", id);
+        if (request.getAttribute("id") != null) {
+            String id = (String) request.getAttribute("id");
+            modelAndView.addObject("id", id);
+        }
 
         return modelAndView;
     }
