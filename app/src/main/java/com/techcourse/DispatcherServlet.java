@@ -48,8 +48,10 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappingRegistry.getHandlerMapping(request);
             if (handler.isEmpty()) {
-                throw new IllegalAccessError("처리할 컨트롤러가 없습니다.");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
+
             Object actualHandler = handler.get();
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(actualHandler);
 
