@@ -1,14 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +20,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
-        this.controllerScanner = new ControllerScanner();
+        this.controllerScanner = new ControllerScanner(basePackage);
     }
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final Set<Class<?>> controllerTypes = scanControllers();
-        instantiateControllers(controllerTypes);
         registerHandlers();
     }
 
@@ -41,15 +36,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
         return handlerExecution;
-    }
-
-    private Set<Class<?>> scanControllers() {
-        final Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private void instantiateControllers(Set<Class<?>> controllers) {
-        controllerScanner.instantiateControllers(controllers);
     }
 
     private void registerHandlers() {
