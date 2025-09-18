@@ -1,11 +1,19 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 
 public class AnnotationHandlerMapping {
 
@@ -20,10 +28,46 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
+        Reflections reflections = new Reflections(basePackage);
+        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controller : controllers) {
+            registerHandlers(controller);
+        }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    private void registerHandlers(Class<?> clazz) {
+        Method[] handlers = clazz.getMethods();
+        for (Method handler : handlers) {
+            try {
+                registerHandler(clazz, handler);
+            } catch (Exception e) {
+                log.error("error occurred while register " + handler.getName(), e);
+            }
+        }
+    }
+
+    private void registerHandler(Class<?> clazz, Method handler) throws Exception {
+        RequestMapping mappingAnnotation = handler.getAnnotation(RequestMapping.class);
+        if (mappingAnnotation == null) {
+            return;
+        }
+
+        RequestMethod[] requestMethods = mappingAnnotation.method();
+        if (requestMethods.length == 0) { // method 미설정 시 모든 HTTP method 지원
+            requestMethods = RequestMethod.values();
+        }
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(mappingAnnotation.value(), requestMethod);
+            Object controllerInstance = clazz.getDeclaredConstructor().newInstance();
+            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, handler));
+        }
+    }
+
     public Object getHandler(final HttpServletRequest request) {
-        return null;
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+        String requestURI = request.getRequestURI();
+        HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+        return handlerExecutions.get(handlerKey);
     }
 }
