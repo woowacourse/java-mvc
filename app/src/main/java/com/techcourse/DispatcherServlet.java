@@ -1,7 +1,10 @@
 package com.techcourse;
 
+
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.RedirectView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +17,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String REDIRECT_PREFIX = "redirect:";
 
     private ManualHandlerMapping manualHandlerMapping;
 
@@ -36,11 +40,22 @@ public class DispatcherServlet extends HttpServlet {
             Controller controller = manualHandlerMapping.getHandler(requestURI);
             String viewName = controller.execute(request, response);
 
-            JspView jspView = new JspView(viewName);
-            jspView.render(new HashMap<>(), request, response);
+            View view = resolveView(viewName);
+            view.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private View resolveView(final String viewName) {
+        if (viewName == null || viewName.isBlank()) {
+            throw new IllegalArgumentException("viewName must not be null or blank");
+        }
+
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            return new RedirectView(viewName.substring(REDIRECT_PREFIX.length())); // ex "redirect:/login"
+        }
+        return new JspView(viewName); // ex "stadiums/fan-rates"
     }
 }

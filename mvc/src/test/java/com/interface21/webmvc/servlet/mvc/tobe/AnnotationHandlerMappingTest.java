@@ -28,8 +28,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request); // url에 맞는 핸들러 찾아와야함
-        final var modelAndView = handlerExecution.handle(request, response); // 메서드 실행하고 결과를 modelAndView로 반환해야함
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
