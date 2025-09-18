@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,12 @@ public class AnnotationHandlerMapping {
 
     public void initialize() throws Exception {
         log.info("Initialized AnnotationHandlerMapping!");
-        initializeHandlerExecutions();
+
+        final Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+
+        Map<Class<?>, Object> scannedControllers = controllerScanner.getClasses();
+        scannedControllers.keySet().forEach(type -> registerHandlerExecutionByType(type, scannedControllers.get(type)));
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -42,38 +47,18 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void initializeHandlerExecutions() throws Exception {
-        Set<Class<?>> controllersInPackage = getControllersInPackage();
-
-        for (Class<?> controller : controllersInPackage) {
-            registerHandlerMethods(controller, controller.getMethods());
-        }
+    private void registerHandlerExecutionByType(Class<?> type, Object instance) {
+        Set<Method> methods = ReflectionUtils.getAllMethods(type,
+                ReflectionUtils.withAnnotation(RequestMapping.class));
+        methods.forEach(method -> registerHandlerExecutionForMethod(type, method, instance));
     }
 
-    private Set<Class<?>> getControllersInPackage() {
-        Reflections reflections = new Reflections(this.basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
+    private void registerHandlerExecutionForMethod(Class<?> type, Method method, Object instance) {
+        final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 
-    private void registerHandlerMethods(Class<?> controller, Method[] methods) throws Exception {
-        for (Method method : controller.getMethods()) {
-            RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-            if (annotation == null) {
-                continue;
-            }
-            registerHandlerMethod(controller, method, annotation);
-        }
-    }
-
-    private void registerHandlerMethod(Class<?> controller, Method method, RequestMapping annotation)
-            throws Exception {
-        RequestMethod[] requestMethods = annotation.method();
-        String uri = annotation.value();
-
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            Object handler = controller.getConstructor().newInstance();
-            HandlerExecution handlerExecution = new HandlerExecution(handler, method);
+        for (RequestMethod httpMethod : requestMapping.method()) {
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(instance, method);
 
             handlerExecutions.put(handlerKey, handlerExecution);
         }
