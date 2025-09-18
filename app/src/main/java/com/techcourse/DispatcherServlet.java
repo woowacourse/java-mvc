@@ -63,9 +63,11 @@ public class DispatcherServlet extends HttpServlet {
             render(modelAndView, request, response);
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             renderErrorPage(ERROR_404_PAGE, request, response);
         } catch (IllegalStateException e) {
             log.error(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             renderErrorPage(ERROR_500_PAGE, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
