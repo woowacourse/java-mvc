@@ -1,20 +1,22 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.adapter.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.asis.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.exception.NoHandlerFoundException;
 import com.interface21.webmvc.servlet.mvc.execution.HandlerExecutor;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.mapping.asis.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +25,15 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackage;
+    private final Properties properties;
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
     private HandlerExecutor handlerExecutor;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(Properties properties, Object... basePackage) {
+        this.basePackage = basePackage;
+        this.properties = properties;
     }
 
     @Override
@@ -38,11 +44,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initializeHandlerMappingRegistry() {
-        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        HandlerMapping manualHandlerMapping = new ManualHandlerMapping(properties);
         manualHandlerMapping.initialize();
         handlerMappingRegistry.register(manualHandlerMapping);
 
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.register(annotationHandlerMapping);
     }
