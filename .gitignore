@@ -173,3 +173,6 @@ tomcat.*
 tomcat.*/**
 
 **/WEB-INF/classes/**
+
+# 학습 테스트
+study/**
