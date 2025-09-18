@@ -1,10 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
