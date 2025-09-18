@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mapping;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.Optional;
 public class HandlerMappingRegistry {
     private List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    void addHandlerMapping(HandlerMapping handlerMapping) {
+    public void addHandlerMapping(HandlerMapping handlerMapping) {
         handlerMapping.initialize();
         this.handlerMappings.add(handlerMapping);
     }

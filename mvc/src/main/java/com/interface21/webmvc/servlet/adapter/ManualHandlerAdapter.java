@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.adapter;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
