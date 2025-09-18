@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
             ModelAndView mav = adapter.handle(request, response, handler);
 
             // 4. View 렌더링
-            render(mav, request, response);
+            move(mav, request, response);
 
         } catch (Throwable e) {
             log.error("DispatcherServlet 처리 중 에러: {}", e.getMessage(), e);
@@ -48,23 +48,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void render(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (mav == null) return;
-
-        View view = mav.getView();
-        if (view instanceof JspView jspView) {
-            String viewName = jspView.getViewName();
-
-            if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-                response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-                return;
-            }
-
-            mav.getModel().forEach(request::setAttribute);
-
-            request.getRequestDispatcher(viewName).forward(request, response);
-        } else {
-            throw new RuntimeException("지원하지 않는 View 타입: " + view.getClass());
+    private void move(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (mav == null) {
+            return;
         }
+        View view = mav.getView();
+        view.render(mav.getModel(), request, response);
     }
 }
