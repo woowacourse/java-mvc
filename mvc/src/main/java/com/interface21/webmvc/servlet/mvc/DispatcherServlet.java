@@ -27,7 +27,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        this.handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.controller", "com.techcourse")
+        );
         this.handlerMappings.forEach(HandlerMapping::initialize);
         this.handlerResolver = new HandlerResolver(new ViewResolver());
     }
