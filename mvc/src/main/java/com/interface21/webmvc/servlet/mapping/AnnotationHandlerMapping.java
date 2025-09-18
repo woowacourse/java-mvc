@@ -55,6 +55,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Object controller = controllers.get(declaringClass);
 
         for (HandlerKey handlerKey : mapHandlerKeys(url, methods)) {
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new RuntimeException("중복된 handlerKey 입니다.");
+            }
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
