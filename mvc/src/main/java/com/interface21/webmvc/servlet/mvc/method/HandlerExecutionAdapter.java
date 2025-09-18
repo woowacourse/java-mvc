@@ -21,7 +21,9 @@ public class HandlerExecutionAdapter implements HandlerAdapter {
                                final Object handler)
             throws Exception {
         final HandlerExecution handlerExecution = (HandlerExecution) handler;
-        log.debug("Executing handler: {}", handlerExecution.getClass().getSimpleName());
+        log.debug("Executing handler: {}.{}", 
+                handlerExecution.getHandler().getClass().getSimpleName(), 
+                handlerExecution.getMethod().getName());
 
         return handlerExecution.handle(request, response);
     }
