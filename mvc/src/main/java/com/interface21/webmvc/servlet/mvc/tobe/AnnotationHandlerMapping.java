@@ -5,9 +5,13 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +35,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             final var contollerClass = controllerEntry.getKey();
             final var controllerInstance = controllerEntry.getValue();
             log.debug("Controller: {}", contollerClass);
-            final var methods = contollerClass.getDeclaredMethods();
-            for (final var method : methods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    putHandlerExecutions(method, controllerInstance);
-                }
-            }
+            final var requestMappingMethods = getRequestMappingMethods(contollerClass);
+            addHandlerExecutions(requestMappingMethods, controllerInstance);
         }
     }
 
@@ -49,17 +49,37 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
+    private Set<Method> getRequestMappingMethods(final Class<?> contollerClass) {
+        final var methods = contollerClass.getDeclaredMethods();
+        return Arrays.stream(methods)
+                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
+                .collect(Collectors.toSet());
+    }
 
-    private void putHandlerExecutions(final Method method, final Object controllerInstance) {
-        final var mapping = method.getAnnotation(RequestMapping.class);
-        final var value = Objects.requireNonNull(mapping).value();
-        final var requestMethods = mapping.method();
-
-        for (final var requestMethod : requestMethods) {
-            final var handlerKey = new HandlerKey(value, requestMethod);
-            log.debug("HandlerKey : {}", handlerKey);
+    private void addHandlerExecutions(final Set<Method> methods, Object controllerInstance) {
+        for (final var method : methods) {
+            final var handlerKeys = mapHandlerKeys(method);
             final var handlerExecution = new HandlerExecution(controllerInstance, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
         }
+    }
+
+    private Set<HandlerKey> mapHandlerKeys(final Method method) {
+        final var mappedAnnotation = method.getAnnotation(RequestMapping.class);
+        if (mappedAnnotation == null) {
+            return Collections.emptySet();
+        }
+
+        final var url = Objects.requireNonNull(mappedAnnotation).value();
+        final var requestMethods = mappedAnnotation.method();
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> createHandlerKey(url, requestMethod))
+                .collect(Collectors.toSet());
+    }
+
+    private HandlerKey createHandlerKey(String url, RequestMethod method) {
+        final var handlerKey = new HandlerKey(url, method);
+        log.debug("HandlerKey : {}", handlerKey);
+        return handlerKey;
     }
 }
