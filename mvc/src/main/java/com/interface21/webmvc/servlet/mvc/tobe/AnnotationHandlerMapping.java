@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,19 +30,19 @@ public class AnnotationHandlerMapping {
         final var reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (final Class<?> controllerClass : controllerClasses) {
-            try {
+        try {
+            for (final Class<?> controllerClass : controllerClasses) {
                 final Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
-                populateHandlerExecutions(controllerInstance, controllerClass.getDeclaredMethods());
-            } catch (Exception e) {
-                log.error("Error creating controller instance: {}", controllerClass.getName(), e);
-                throw new RuntimeException(e);
+                registerControllerMethods(controllerInstance, controllerClass.getDeclaredMethods());
             }
+        } catch (Exception e) {
+            log.error("Error creating controller instance", e);
+            throw new RuntimeException(e);
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void populateHandlerExecutions(final Object controllerInstance, final java.lang.reflect.Method[] methods) {
+    private void registerControllerMethods(final Object controllerInstance, final java.lang.reflect.Method[] methods) {
         for (final java.lang.reflect.Method method : methods) {
             if (!method.isAnnotationPresent(RequestMapping.class)) {
                 continue;
@@ -51,12 +52,24 @@ public class AnnotationHandlerMapping {
             final Stream<RequestMethod> requestMethods = getRequestMethods(requestMapping);
 
             requestMethods.forEach(requestMethod -> {
-                final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
-                final var handlerExecution = new HandlerExecution(controllerInstance, method);
-                handlerExecutions.put(handlerKey, handlerExecution);
-                log.info("Mapped handler: {} -> {}", handlerKey, method);
+                registerHandler(controllerInstance, method, requestMethod, requestMapping);
             });
         }
+    }
+
+    private void registerHandler(Object controllerInstance, Method method, RequestMethod requestMethod,
+                                 RequestMapping requestMapping) {
+        final var handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+
+        if (handlerExecutions.containsKey(handlerKey)) {
+            HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
+            log.error("Duplicate mapping found. Cannot map {}. It is already mapped to {}",
+                    method, handlerExecution.getMethod());
+            throw new IllegalStateException("Mapping conflict: The path '" + handlerKey + "' is already in use.");
+        }
+
+        final var handlerExecution = new HandlerExecution(controllerInstance, method);
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     private Stream<RequestMethod> getRequestMethods(final RequestMapping requestMapping) {
