@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,8 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,21 +25,13 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        try {
-            final var controllers = scanControllers();
-            for (final Class<?> controllerClass : controllers) {
-                final var methods = scanRequestMappingMethods(controllerClass);
-                final var controllerObject = controllerClass.getDeclaredConstructor().newInstance();
-                registerHandlerForController(controllerObject, methods);
-            }
-        } catch (final NoSuchMethodException e) {
-            log.error("Exception : 컨트롤러 기본 생성자가 필요합니다. | {}", e.getMessage(), e);
-            throw new RuntimeException(e);
-        } catch (final Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+        var controllerScanner = new ControllerScanner(basePackage);
+        var controllers = controllerScanner.getControllers();
+        for (Entry<Class<?>, Object> controller : controllers.entrySet()) {
+            var methods = scanRequestMappingMethods(controller.getKey());
+            registerHandlerForController(controller.getValue(), methods);
         }
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -49,11 +39,6 @@ public class AnnotationHandlerMapping {
         final var method = request.getMethod();
         final var handlerKey = new HandlerKey(requestURI, RequestMethod.valueOf(method));
         return handlerExecutions.get(handlerKey);
-    }
-
-    private Set<Class<?>> scanControllers() {
-        return new Reflections(basePackage)
-                .getTypesAnnotatedWith(Controller.class);
     }
 
     private List<Method> scanRequestMappingMethods(final Class<?> controller) {
