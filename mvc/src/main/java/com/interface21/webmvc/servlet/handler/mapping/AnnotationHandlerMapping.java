@@ -13,27 +13,34 @@ import org.reflections.ReflectionUtils;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private final Object[] basePackage;
+    private final String basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final String basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        Map<Class<?>, Object> controllerInstances = ControllerScanner.createAllControllerInstances();
+        Map<Class<?>, Object> controllerInstances = ControllerScanner.createAllControllerInstances(basePackage);
         for (Class<?> controllerClass : controllerInstances.keySet()) {
-            Set<Method> requestMappingMethods = ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class));
-            for (Method requestMappingMethod : requestMappingMethods) {
-                RequestMapping requestMappingAnnotation = requestMappingMethod.getAnnotation(RequestMapping.class);
-                RequestMethod[] requestMappingHttpMethods = requestMappingAnnotation.method();
-                for (RequestMethod requestMappingHttpMethod : requestMappingHttpMethods) {
-                    HandlerKey handlerKey = new HandlerKey(requestMappingAnnotation.value(), requestMappingHttpMethod);
-                    HandlerExecution handlerExecution = new HandlerExecution(controllerClass, requestMappingMethod);
-                    handlerExecutions.put(handlerKey, handlerExecution);
-                }
-            }
+            registerController(controllerClass, controllerInstances.get(controllerClass));
+        }
+    }
+
+    private void registerController(Class<?> controllerClass, Object controllerInstance) {
+        Set<Method> requestMappingMethods = ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class));
+        for (Method requestMappingMethod : requestMappingMethods) {
+            registerRequestMappingMethod(requestMappingMethod, controllerInstance);
+        }
+    }
+
+    private void registerRequestMappingMethod(Method requestMappingMethod, Object controllerInstance) {
+        RequestMapping requestMappingAnnotation = requestMappingMethod.getAnnotation(RequestMapping.class);
+        for (RequestMethod requestMappingHttpMethod : requestMappingAnnotation.method()) {
+            HandlerKey handlerKey = new HandlerKey(requestMappingAnnotation.value(), requestMappingHttpMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, requestMappingMethod);
+            handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
 

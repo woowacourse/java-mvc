@@ -12,10 +12,17 @@ public class ControllerScanner {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerScanner.class);
 
-    public static Map<Class<?>, Object> createAllControllerInstances() {
-        Reflections reflections = new Reflections("com.techcourse.controller");
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+    public static Map<Class<?>, Object> createAllControllerInstances(String basePackage) {
+        Set<Class<?>> controllerClasses = scanControllerClasses(basePackage);
+        return createControllerInstances(controllerClasses);
+    }
 
+    private static Set<Class<?>> scanControllerClasses(String basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
+    private static Map<Class<?>, Object> createControllerInstances(Set<Class<?>> controllerClasses) {
         Map<Class<?>, Object> controllerInstances = new HashMap<>();
         for (Class<?> controllerClass : controllerClasses) {
             try {

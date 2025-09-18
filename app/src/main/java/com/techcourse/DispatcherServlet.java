@@ -1,9 +1,9 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.Controller;
-import com.interface21.webmvc.servlet.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.handler.mapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.Controller;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +18,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    public static final String DEFAULT_PATH_OF_CONTROLLERS = "com.techcourse.controller";
 
     private List<HandlerMapping> handlerMappings;
 
@@ -27,12 +28,20 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings = new ArrayList<>();
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
-        annotationHandlerMapping.initialize();
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(annotationHandlerMapping);
-        handlerMappings.add(manualHandlerMapping);
+        handlerMappings.add(createAnnotationHandlerMappings());
+        handlerMappings.add(createManualHandlerMappings());
+    }
+
+    private AnnotationHandlerMapping createAnnotationHandlerMappings() {
+        AnnotationHandlerMapping mapping = new AnnotationHandlerMapping(DEFAULT_PATH_OF_CONTROLLERS);
+        mapping.initialize();
+        return mapping;
+    }
+
+    private ManualHandlerMapping createManualHandlerMappings() {
+        ManualHandlerMapping mapping = new ManualHandlerMapping();
+        mapping.initialize();
+        return mapping;
     }
 
     @Override
@@ -40,21 +49,9 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = httpServletRequest.getRequestURI();
         log.debug("Method : {}, Request URI : {}", httpServletRequest.getMethod(), requestURI);
 
-        try {
-            Object handler = getHandler(httpServletRequest);
-            ModelAndView modelAndView;
-            if (handler instanceof Controller) {
-                modelAndView = ((Controller) handler).execute(httpServletRequest, httpServletResponse);
-            } else if (handler instanceof HandlerExecution) {
-                modelAndView = ((HandlerExecution) handler).handle(httpServletRequest, httpServletResponse);
-            } else {
-                throw new ServletException("지원하지 않는 응답 방식입니다.");
-            }
-            modelAndView.render(httpServletRequest, httpServletResponse);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
+        Object handler = getHandler(httpServletRequest);
+        ModelAndView modelAndView = executeHandler(handler, httpServletRequest, httpServletResponse);
+        modelAndView.render(httpServletRequest, httpServletResponse);
     }
 
     private Object getHandler(HttpServletRequest httpServletRequest) throws ServletException {
@@ -65,5 +62,20 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         throw new ServletException("제공하지 않는 URI입니다.");
+    }
+
+    private ModelAndView executeHandler(Object handler, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
+        try {
+            if (handler instanceof Controller) {
+                return ((Controller) handler).execute(httpServletRequest, httpServletResponse);
+            } else if (handler instanceof HandlerExecution) {
+                return ((HandlerExecution) handler).handle(httpServletRequest, httpServletResponse);
+            } else {
+                throw new ServletException("지원하지 않는 응답 방식입니다.");
+            }
+        } catch (Exception exception) {
+            log.error("Exception : {}", exception.getMessage(), exception);
+            throw new ServletException(exception.getMessage());
+        }
     }
 }
