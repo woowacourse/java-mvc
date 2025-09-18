@@ -12,7 +12,7 @@ public class HandlerAdapterRegistry {
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
         for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.supports(handler)) {
+            if (adapter.canHandle(handler)) {
                 return adapter;
             }
         }
