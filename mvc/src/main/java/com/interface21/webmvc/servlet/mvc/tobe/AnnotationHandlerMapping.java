@@ -6,11 +6,9 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -40,13 +38,8 @@ public class AnnotationHandlerMapping {
     }
 
     private List<Class<?>> findAllControllerClasses() {
-        List<Class<?>> controllerClasses = new ArrayList<>();
-        for (Object basePackage : basePackage) {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-            controllerClasses.addAll(controllers);
-        }
-        return controllerClasses;
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class).stream().toList();
     }
 
     private void registerHandlerExecutionsByController(Class<?> controllerClass) {
@@ -68,20 +61,23 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerHandlerExecutionsByMethod(Method method, Object controller) {
-        validateRequestMappingAnnotation(method);
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        HandlerKey handlerKey = new HandlerKey(annotation.value(), annotation.method()[0]);
-        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-        handlerExecutions.put(handlerKey, handlerExecution);
+        List<RequestMethod> requestMethods = getRequestMethodByRequestMapping(annotation);
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(annotation.value(), requestMethod);
+            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            handlerExecutions.put(handlerKey, handlerExecution);
+        }
     }
 
-    private void validateRequestMappingAnnotation(Method method) {
-        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-        if (annotation == null) {
-            throw new IllegalArgumentException("RequestMapping 애노테이션이 적용되지 않은 메서드를 등록하려고 시도하고 있습니다.");
+    private List<RequestMethod> getRequestMethodByRequestMapping(RequestMapping annotation) {
+        List<RequestMethod> requestMethods = List.of(annotation.method());
+        if (requestMethods.isEmpty()) {
+            return List.of(RequestMethod.values());
         }
-        if (annotation.value() == null || annotation.value().isEmpty() || annotation.method().length == 0) {
-            throw new IllegalArgumentException("RequestMapping 애노테이션의 값이 올바르지 않습니다.");
-        }
+        return requestMethods;
     }
 }
