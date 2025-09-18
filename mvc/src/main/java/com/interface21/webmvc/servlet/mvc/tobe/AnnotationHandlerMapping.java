@@ -28,8 +28,19 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Reflections reflections = new Reflections(basePackage);
+
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Controller.class);
+
         for (Class<?> aClass : typesAnnotatedWith) {
+
+            Object handler;
+            try {
+                handler = aClass.getDeclaredConstructor().newInstance();
+            }catch (Exception e) {
+                log.info("handler 생성 실패!");
+                throw new RuntimeException(e);
+            }
+
             Method[] declaredMethods = aClass.getDeclaredMethods();
             for (Method declaredMethod : declaredMethods) {
                 RequestMapping annotation = declaredMethod.getAnnotation(RequestMapping.class);
@@ -40,12 +51,12 @@ public class AnnotationHandlerMapping {
                     RequestMethod[] values = RequestMethod.values();
                     for (RequestMethod requestMethod : values) {
                         HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                        handlerExecutions.put(handlerKey, new HandlerExecution());
+                        handlerExecutions.put(handlerKey, new HandlerExecution(handler,declaredMethod));
                     }
                 } else {
                     for (RequestMethod requestMethod : method) {
                         HandlerKey handlerKey = new HandlerKey(value, requestMethod);
-                        handlerExecutions.put(handlerKey, new HandlerExecution());
+                        handlerExecutions.put(handlerKey, new HandlerExecution(handler,declaredMethod));
                     }
                 }
             }
