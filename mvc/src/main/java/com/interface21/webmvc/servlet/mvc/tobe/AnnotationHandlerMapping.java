@@ -1,16 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +27,9 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        List<Class<?>> allControllerClasses = findAllControllerClasses();
-        allControllerClasses.forEach(this::registerHandlerExecutionsByController);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        registerHandlerExecutionsByControllers(controllers);
     }
 
     public Object getHandler(final HttpServletRequest request) {
@@ -37,20 +37,13 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private List<Class<?>> findAllControllerClasses() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class).stream().toList();
-    }
-
-    private void registerHandlerExecutionsByController(Class<?> controllerClass) {
-        try {
-            Object controller = controllerClass.getConstructor().newInstance();
+    private void registerHandlerExecutionsByControllers(Map<Class<?>, Object> controllers) {
+        Set<Entry<Class<?>, Object>> keyValues = controllers.entrySet();
+        for (Entry<Class<?>, Object> keyValue : keyValues) {
+            Class<?> controllerClass = keyValue.getKey();
+            Object controllerInstance = keyValue.getValue();
             List<Method> apiMethods = findApiMethod(controllerClass);
-            apiMethods.forEach(method -> registerHandlerExecutionsByMethod(method, controller));
-        } catch (NoSuchMethodException | InvocationTargetException
-                 | InstantiationException | IllegalAccessException e
-        ) {
-            throw new IllegalArgumentException("핸들러를 등록하는 과정에서 예상치 못한 오류가 발생했습니다.");
+            apiMethods.forEach(method -> registerHandlerExecutionsByMethod(method, controllerInstance));
         }
     }
 
