@@ -32,24 +32,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
     }
 
+    private void registerRequestMappings(Object controllerInstance, Class<?> controllerClass) {
+        for (Method method : controllerClass.getDeclaredMethods()) {
+            registerMethod(controllerInstance, method);
+        }
+    }
+
+    private void registerMethod(Object controllerInstance, Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+        RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+        for (RequestMethod httpMethod : mapping.method()) {
+            addHandlerExecution(controllerInstance, method, mapping, httpMethod);
+        }
+    }
+
+    private void addHandlerExecution(Object controllerInstance, Method method, RequestMapping mapping,
+                                     RequestMethod httpMethod) {
+        HandlerKey key = new HandlerKey(mapping.value(), httpMethod);
+        if (handlerExecutions.containsKey(key)) {
+            throw new IllegalStateException("중복된 핸들러 매핑이 존재합니다: ");
+        }
+        handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
+    }
+
     public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(key);
-    }
-
-    private void registerRequestMappings(Object controllerInstance, Class<?> controllerClass) {
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            if (!method.isAnnotationPresent(RequestMapping.class)) {
-                continue;
-            }
-            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-            for (RequestMethod httpMethod : mapping.method()) {
-                HandlerKey key = new HandlerKey(mapping.value(), httpMethod);
-                if (handlerExecutions.containsKey(key)) {
-                    throw new IllegalStateException("중복 매핑");
-                }
-                handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
-            }
-        }
     }
 }
