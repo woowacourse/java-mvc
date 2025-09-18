@@ -1,9 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +17,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
@@ -26,34 +25,47 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         this.handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        this.handlerAdapters = List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter());
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                final Object handler = handlerMapping.getHandler(request);
-
-                if (handler instanceof Controller) {
-                    final Controller controller = (Controller) handler;
-                    ModelAndView modelAndView = controller.execute(request, response);
-                    modelAndView.render(request, response);
-                    break;
-                }
-
-                if (handler instanceof HandlerExecution) {
-                    final HandlerExecution controller = (HandlerExecution) handler;
-                    final ModelAndView modelAndView = controller.handle(request, response);
-                    modelAndView.render(request, response);
-                    break;
-                }
+            final Object handler = getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
+            final HandlerAdapter adapter = getHandlerAdapter(handler);
+            final ModelAndView modelAndView = adapter.handle(request, response, handler);
+            modelAndView.render(request, response);
+
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        for (HandlerMapping mapping : handlerMappings) {
+            Object handler = mapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
+        }
+        return null;
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        for (HandlerAdapter adapter : handlerAdapters) {
+            if (adapter.supports(handler)) {
+                return adapter;
+            }
+        }
+        throw new IllegalStateException("No adapter found for handler: " + handler);
     }
 }
