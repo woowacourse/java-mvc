@@ -27,6 +27,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         }
 
         registration.setLoadOnStartup(1);
+        registration.setInitParameter("basePackage", getClass().getPackageName());
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
