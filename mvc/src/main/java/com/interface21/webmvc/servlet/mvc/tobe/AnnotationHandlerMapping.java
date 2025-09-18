@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -57,10 +57,11 @@ public class AnnotationHandlerMapping {
         return methods;
     }
 
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         final var handlerKey = convertRequestToHandlerKey(request);
         if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("잘못된 요청입니다. : " + handlerKey);
+            return null;
         }
         return handlerExecutions.get(handlerKey);
     }
