@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.asis;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
