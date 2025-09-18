@@ -70,6 +70,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             validateDuplicatedKey(key);
             HandlerExecution execution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(key, execution);
+
+            log.info("Registered Handler - Controller: {}, Method: {}, Path: {}, HTTP Method: {}",
+                    controllerInstance.getClass().getSimpleName(),
+                    method.getName(),
+                    path.getValue(),
+                    requestMethod);
         }
     }
 
