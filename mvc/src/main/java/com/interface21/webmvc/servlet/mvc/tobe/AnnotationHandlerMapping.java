@@ -34,7 +34,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.from(request.getMethod())));
+        RequestPath path = new RequestPath(request.getRequestURI());
+        String method = request.getMethod();
+        return handlerExecutions.get(new HandlerKey(path.getValue(), RequestMethod.from(method)));
     }
 
     private Map<Class<?>, Object> scanControllers() {
