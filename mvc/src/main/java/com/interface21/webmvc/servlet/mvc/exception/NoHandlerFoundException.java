@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.servlet.mvc.exception;
 
 public class NoHandlerFoundException extends Exception {
     public NoHandlerFoundException(String httpMethod, String requestURL) {
