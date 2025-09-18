@@ -29,6 +29,7 @@ public class LocalCounterServlet extends HttpServlet {
         int localCounter = 0;
         localCounter++;
         response.getWriter().write(String.valueOf(localCounter));
+        System.out.println(Thread.currentThread().getName());
     }
 
     @Override
