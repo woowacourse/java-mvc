@@ -8,6 +8,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,6 +75,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private List<HandlerKey> mapHandlerKeys(String uri, RequestMethod[] methods) {
         List<HandlerKey> handlerKeys = new ArrayList<>();
+        if (methods == null) {
+            Arrays.stream(RequestMethod.values()).forEach(method ->
+                    handlerKeys.add(new HandlerKey(uri, method))
+            );
+            return handlerKeys;
+        }
         for (RequestMethod method : methods) {
             handlerKeys.add(new HandlerKey(uri, method));
         }
