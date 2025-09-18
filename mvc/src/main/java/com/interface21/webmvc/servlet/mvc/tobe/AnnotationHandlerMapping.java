@@ -4,19 +4,15 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Set;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import org.reflections.ReflectionUtils;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping {
 
@@ -31,23 +27,19 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for(String basePackage : (String[]) basePackages) {
-            ConfigurationBuilder config = new ConfigurationBuilder()
-                    .setUrls(ClasspathHelper.forPackage(basePackage.toString()))
-                    .setScanners(Scanners.TypesAnnotated, Scanners.MethodsAnnotated);
-
-            Reflections reflections = new Reflections(config);
+        for (Object basePackage : basePackages) {
+            Reflections reflections = new Reflections(basePackage);
             Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
             try {
                 for (Class<?> controllerClass : controllerClasses) {
                     Object handler = controllerClass.getDeclaredConstructor().newInstance();
-                    for (Method method : controllerClass.getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(RequestMapping.class)) {
-                            registerHandler(handler, method);
-                        }
+                    for (Method method : ReflectionUtils.getAllMethods(controllerClass,
+                            ReflectionUtils.withAnnotation(RequestMapping.class))) {
+                        registerHandler(handler, method);
                     }
                 }
-            } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
+            } catch (InvocationTargetException | IllegalAccessException | InstantiationException |
+                     NoSuchMethodException e) {
                 log.info(e.getMessage());
             }
         }
@@ -81,7 +73,7 @@ public class AnnotationHandlerMapping {
     }
 
     private String determinePath(RequestMapping requestMapping) {
-        if(requestMapping.value().isEmpty()) {
+        if (requestMapping.value().isEmpty()) {
             return "/";
         }
         return requestMapping.value();
