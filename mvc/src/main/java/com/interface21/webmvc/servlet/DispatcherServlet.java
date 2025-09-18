@@ -1,17 +1,14 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.HandlerAdaptor;
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +40,6 @@ public class DispatcherServlet extends HttpServlet {
      */
     private void initHandlerAdaptor() {
         this.handlerAdaptors = List.of(
-                new ManualHandlerAdaptor(), // 직접 구현한 수동 어댑터
                 new AnnotationHandlerAdaptor() // Annotation 기반 컨트롤러 어댑터
         );
     }
@@ -54,7 +50,6 @@ public class DispatcherServlet extends HttpServlet {
      */
     private void initHandlerMapping() {
         handlerMappings = List.of(
-                new ManualHandlerMapping(), // 수동 핸들러 매핑
                 new AnnotationHandlerMapping("com.techcourse.controller") // Annotation 매핑, 특정 패키지 스캔
         );
 
@@ -113,14 +108,11 @@ public class DispatcherServlet extends HttpServlet {
      * @throws IllegalArgumentException 매핑 가능한 핸들러가 없으면 예외 던짐
      */
     private Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if(handler != null) {
-                return handler;
-            }
-        }
-        throw new IllegalArgumentException("매핑 가능한 Handler가 존재하지 않습니다. (Request URI : %s"
-                .formatted(request.getRequestURI()));
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("매핑 가능한 Handler가 존재하지 않습니다. (Request URI : %s".formatted(request.getRequestURI())));
     }
 
     /**
