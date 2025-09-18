@@ -11,6 +11,7 @@ import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +36,8 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
         log.debug("Request Mapping Uri : {}", request.getRequestURI());
-        return controllers.get(request.getRequestURI());
+        return Optional.ofNullable(controllers.get(request.getRequestURI()));
     }
 }

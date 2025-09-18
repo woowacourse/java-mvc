@@ -4,6 +4,7 @@ import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
@@ -16,8 +17,8 @@ public class HandlerMappingRegistry {
 
     public Object getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
+            Optional<Object> handler = handlerMapping.getHandler(request);
+            if (handler.isPresent()) {
                 return handler;
             }
         }
