@@ -17,6 +17,7 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         String json = toJson(model);
+        //PrintWriter를 가져옴. **텍스트 데이터**를 응답 본문에 쓸 수 있게 해줌
         response.getWriter().write(json);
     }
 
