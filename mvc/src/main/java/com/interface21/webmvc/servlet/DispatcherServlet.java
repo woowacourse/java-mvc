@@ -1,12 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.ControllerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +34,8 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -52,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             final ModelAndView mav = handlerAdapter.handle(request, response, handler);
             renderView(mav, request, response);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
@@ -78,7 +78,8 @@ public class DispatcherServlet extends HttpServlet {
         return null;
     }
 
-    private void renderView(final ModelAndView mav, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void renderView(final ModelAndView mav, final HttpServletRequest request,
+                            final HttpServletResponse response) throws Exception {
         final View view = mav.getView();
         view.render(mav.getModel(), request, response);
     }
