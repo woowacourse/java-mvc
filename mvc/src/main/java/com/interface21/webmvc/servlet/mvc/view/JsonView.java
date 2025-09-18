@@ -14,14 +14,18 @@ public class JsonView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
 
+    private final ObjectMapper objectMapper;
+
+    public JsonView() {
+        this.objectMapper = new ObjectMapper();
+    }
+
     @Override
     public void render(
             final Map<String, ?> model,
             final HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         final String jsonOutput = objectMapper.writeValueAsString(model);
         log.debug("json body: {}", jsonOutput);
 
