@@ -17,6 +17,6 @@ public class ForwardController implements Controller {
 
     @Override
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("forward:" + path));
+        return new ModelAndView(new JspView(path));
     }
 }
