@@ -12,11 +12,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Object getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) throws NoHandlerFoundException {
         return handlerMappings.stream()
                 .map(mapping -> mapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("처리할 Handler가 없습니다."));
+                .orElseThrow(() -> new NoHandlerFoundException(request.getMethod(), request.getRequestURI()));
     }
 }

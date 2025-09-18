@@ -6,6 +6,7 @@ import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.NoHandlerFoundException;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
@@ -13,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +57,14 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
         try {
             log.info("요청 URI: {}, Method: {}", request.getRequestURI(), request.getMethod());
             ModelAndView modelAndView = handlerExecutor.execute(request, response);
             modelAndView.render(request, response);
+        } catch (NoHandlerFoundException e) {
+            log.warn(e.getMessage(), e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

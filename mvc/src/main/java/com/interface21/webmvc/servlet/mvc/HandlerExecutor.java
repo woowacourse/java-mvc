@@ -16,7 +16,8 @@ public class HandlerExecutor {
         this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
-    public ModelAndView execute(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView execute(HttpServletRequest request, HttpServletResponse response)
+            throws NoHandlerFoundException {
         Object handler = handlerMappingRegistry.getHandler(request);
         log.info("Handler 반환 타입: {}", handler.getClass().getSimpleName());
 
