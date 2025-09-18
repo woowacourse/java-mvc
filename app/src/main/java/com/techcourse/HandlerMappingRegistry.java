@@ -15,13 +15,13 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public Object getHandler(HttpServletRequest request) {
+    public Optional<Object> getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             Optional<Object> handler = handlerMapping.getHandler(request);
             if (handler.isPresent()) {
-                return handler.get();
+                return handler;
             }
         }
-        throw new IllegalArgumentException("요청을 처리할 수 있는 핸들러가 존재하지 않습니다.");
+        return Optional.empty();
     }
 }

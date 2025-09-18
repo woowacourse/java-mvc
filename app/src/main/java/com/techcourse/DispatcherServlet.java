@@ -6,10 +6,12 @@ import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +41,22 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object handler = handlerMappingRegistry.getHandler(request);
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handler(handler, request, response);
+            ModelAndView modelAndView = processRequest(request, response);
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private ModelAndView processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Optional<Object> handlerOptional = handlerMappingRegistry.getHandler(request);
+        if (handlerOptional.isPresent()) {
+            Object handler = handlerOptional.get();
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            return handlerAdapter.handler(handler, request, response);
+        }
+        return new ModelAndView(new JspView("redirect:/404.jsp"));
     }
 
     private void move(
