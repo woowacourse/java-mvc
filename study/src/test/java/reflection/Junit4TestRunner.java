@@ -1,5 +1,6 @@
 package reflection;
 
+import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
 class Junit4TestRunner {
@@ -8,6 +9,13 @@ class Junit4TestRunner {
     void run() throws Exception {
         Class<Junit4Test> clazz = Junit4Test.class;
 
-        // TODO Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        // Junit4Test에서 @MyTest 애노테이션이 있는 메소드 실행
+        Object testInstance = clazz.getDeclaredConstructor().newInstance();
+        for (Method method : clazz.getDeclaredMethods()) {
+            // annotaion이 존재하는지 확인
+            if (method.isAnnotationPresent(MyTest.class)) {
+                method.invoke(testInstance);
+            }
+        }
     }
 }
