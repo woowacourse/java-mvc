@@ -1,12 +1,16 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +18,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
+            List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter()));
 
     private ManualHandlerMapping manualHandlerMapping;
 
@@ -33,18 +39,22 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = (Controller) manualHandlerMapping.getHandler(request);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            final var handler = (Controller) manualHandlerMapping.getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handler(handler, request, response);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-        JspView view = new JspView(viewName);
-        view.render(new HashMap<>(), request, response);
+    private void move(
+            final ModelAndView modelAndView,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws Exception {
+        View view = modelAndView.getView();
+        view.render(modelAndView.getModel(), request, response);
     }
 }
