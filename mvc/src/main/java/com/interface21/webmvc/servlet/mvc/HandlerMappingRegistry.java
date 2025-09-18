@@ -20,13 +20,16 @@ public record HandlerMappingRegistry(List<HandlerMapping> handlerMappings) {
     }
 
     public Optional<Object> getHandler(final HttpServletRequest req) {
-        final String requestURI = req.getRequestURI();
+        final var requestURI = req.getRequestURI();
         log.debug("Method : {}, Request URI : {}", req.getMethod(), requestURI);
 
-        final var handlerMapping = handlerMappings.stream()
-                .filter(hm -> hm.getHandler(req).isPresent())
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No handler for request URI: " + requestURI));
-        return handlerMapping.getHandler(req);
+        for (final var handlerMapping : handlerMappings) {
+            final var handler = handlerMapping.getHandler(req);
+            if (handler.isPresent()) {
+                return handler;
+            }
+        }
+
+        return Optional.empty();
     }
 }

@@ -19,10 +19,14 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(final Object handler,
                                final HttpServletRequest request,
-                               final HttpServletResponse response) throws Exception {
-        final var handlerExecution = (HandlerExecution) handler;
-        final var handle = handlerExecution.handle(request, response);
-        log.debug("Annotation Handler / method : {} ", handlerExecution.method());
-        return handle;
+                               final HttpServletResponse response) {
+        try {
+            final var handlerExecution = (HandlerExecution) handler;
+            final var handle = handlerExecution.handle(request, response);
+            log.debug("Annotation Handler / method : {} ", handlerExecution.method());
+            return handle;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

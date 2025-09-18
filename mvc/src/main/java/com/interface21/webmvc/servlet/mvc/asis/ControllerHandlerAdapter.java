@@ -21,15 +21,20 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(final Object handler,
                                final HttpServletRequest request,
-                               final HttpServletResponse response) throws Exception {
-        final var controller = (Controller) handler;
-        final var viewName = controller.execute(request, response);
-        log.debug("Controller Handler / View Name : {}", viewName);
-        final var view = getView(viewName);
-        return new ModelAndView(view);
+                               final HttpServletResponse response) {
+        try {
+            final var controller = (Controller) handler;
+            final var viewName = controller.execute(request, response);
+            log.debug("Controller Handler / View Name : {}", viewName);
+            final var view = getView(viewName);
+            return new ModelAndView(view);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private View getView(String viewName) {
+    // TODO: View 생성 로직을 ViewResolver로 분리 필요 = Step 3 [2025-09-18]
+    private View getView(final String viewName) {
         return new JspView(viewName);
     }
 }

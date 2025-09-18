@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
 import java.util.HashMap;
+import java.util.Map;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackages);
     }
 
-    public HashMap<Class<?>, Object> scan() {
+    public Map<Class<?>, Object> scan() {
         final var lookup = new HashMap<Class<?>, Object>();
         final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (final var controller : controllers) {
@@ -31,7 +32,7 @@ public class ControllerScanner {
         try {
             return aClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Failed to create controller instance: " + aClass.getName(), e);
         }
     }
 }

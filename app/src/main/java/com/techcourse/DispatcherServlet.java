@@ -28,7 +28,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final var controllerHandlerMapping = ControllerHandlerMappingInitializer.handle();
+        // TODO: 초기화 로직을 별도 Configuration 클래스로 분리 필요 [2025-09-18]
+        final var controllerHandlerMappingInitializer = new ControllerHandlerMappingInitializer();
+        final var controllerHandlerMapping = controllerHandlerMappingInitializer.handle();
         controllerHandlerMapping.initialize();
 
         final var controllerScanner = new ControllerScanner(APPLICATION_PACKAGE);
@@ -59,20 +61,23 @@ public class DispatcherServlet extends HttpServlet {
         final var handler = optionalHandler.get();
         final var adapter = handlerAdapterRegistry.getAdapter(handler);
 
-        try {
-            final var modelAndView = adapter.handle(handler, req, res);
-            render(modelAndView, req, res);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        final var modelAndView = adapter.handle(handler, req, res);
+
+        render(modelAndView, req, res);
     }
 
+    // TODO: View 랜더링 로직을 ViewResolver로 분리 필요 = Step 3 [2025-09-18]
     private void render(final ModelAndView modelAndView,
                         final HttpServletRequest req,
-                        final HttpServletResponse res) throws Exception {
+                        final HttpServletResponse res) {
+        try {
+            log.debug("Rendering View: {}", req.getRequestURI());
 
-        final var view = modelAndView.getView();
-        view.render(modelAndView.getModel(), req, res);
-
+            final var view = modelAndView.getView();
+            view.render(modelAndView.getModel(), req, res);
+        } catch (Exception e) {
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IllegalArgumentException("Rendering fail: " + req.getRequestURI(), e);
+        }
     }
 }

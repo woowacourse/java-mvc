@@ -13,10 +13,10 @@ public record HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
         this.handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getAdapter(Object handler) {
+    public HandlerAdapter getAdapter(final Object handler) {
         return handlerAdapters.stream()
                 .filter(adapter -> adapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No adapter for handler " + handler));
+                .orElseThrow(() -> new IllegalArgumentException("No adapter for handler: " + handler));
     }
 }

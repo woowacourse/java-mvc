@@ -10,7 +10,7 @@ import com.techcourse.controller.RegisterViewController;
 
 public class ControllerHandlerMappingInitializer {
 
-    public static ControllerHandlerMapping handle() {
+    public ControllerHandlerMapping handle() {
         final var handlerMapping = new ControllerHandlerMapping();
 
         handlerMapping.addController("/", new ForwardController("/index.jsp"));

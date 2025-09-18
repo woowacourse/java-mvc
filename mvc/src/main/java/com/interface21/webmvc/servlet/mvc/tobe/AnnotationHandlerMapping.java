@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.web.bind.annotation.RequestMethodFactory;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -9,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,10 +31,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
         final var controllers = controllerScanner.scan();
         for (final var controllerEntry : controllers.entrySet()) {
-            final var contollerClass = controllerEntry.getKey();
+            final var controllerClass = controllerEntry.getKey();
             final var controllerInstance = controllerEntry.getValue();
-            log.debug("Controller: {}", contollerClass);
-            final var requestMappingMethods = getRequestMappingMethods(contollerClass);
+            log.debug("Controller: {}", controllerClass);
+            final var requestMappingMethods = getRequestMappingMethods(controllerClass);
             addHandlerExecutions(requestMappingMethods, controllerInstance);
         }
     }
@@ -68,21 +68,21 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             return Collections.emptySet();
         }
 
-        final var url = Objects.requireNonNull(mappedAnnotation).value();
+        final var url = mappedAnnotation.value();
         final var requestMethods = mappedAnnotation.method();
         return Arrays.stream(requestMethods)
                 .map(requestMethod -> createHandlerKey(url, requestMethod))
                 .collect(Collectors.toSet());
     }
 
-    private HandlerKey createHandlerKey(String url, RequestMethod method) {
+    private HandlerKey createHandlerKey(final String url, final RequestMethod method) {
         final var handlerKey = new HandlerKey(url, method);
         log.debug("HandlerKey : {}", handlerKey);
         return handlerKey;
     }
 
-    private HandlerKey getHandlerKey(HttpServletRequest request) {
-        final var method = RequestMethod.from(request.getMethod())
+    private HandlerKey getHandlerKey(final HttpServletRequest request) {
+        final var method = RequestMethodFactory.from(request.getMethod())
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + request.getMethod()));
         return new HandlerKey(request.getRequestURI(), method);
     }
