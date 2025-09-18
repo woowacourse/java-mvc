@@ -4,8 +4,8 @@ import com.interface21.webmvc.servlet.HandlerAdaptor;
 import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +44,6 @@ public class DispatcherServlet extends HttpServlet {
      */
     private void initHandlerAdaptor() {
         this.handlerAdaptors = List.of(
-                new ManualHandlerAdaptor(), // 직접 구현한 수동 어댑터
                 new AnnotationHandlerAdaptor() // Annotation 기반 컨트롤러 어댑터
         );
     }
@@ -55,7 +54,6 @@ public class DispatcherServlet extends HttpServlet {
      */
     private void initHandlerMapping() {
         handlerMappings = List.of(
-                new ManualHandlerMapping(), // 수동 핸들러 매핑
                 new AnnotationHandlerMapping("com.techcourse.controller") // Annotation 매핑, 특정 패키지 스캔
         );
 
