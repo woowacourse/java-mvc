@@ -17,7 +17,7 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackages);
     }
 
-    public HashMap<Class<?>, Object> getControllers() {
+    public HashMap<Class<?>, Object> scan() {
         final var lookup = new HashMap<Class<?>, Object>();
         final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (final var controller : controllers) {

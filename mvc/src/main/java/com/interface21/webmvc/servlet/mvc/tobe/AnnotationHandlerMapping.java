@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -19,18 +20,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
     private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final ControllerScanner controllerScanner) {
         this.controllerScanner = controllerScanner;
-        this.handlerExecutions = new HashMap<>();
     }
 
-    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        final var controllers = controllerScanner.getControllers();
+        final var controllers = controllerScanner.scan();
         for (final var controllerEntry : controllers.entrySet()) {
             final var contollerClass = controllerEntry.getKey();
             final var controllerInstance = controllerEntry.getValue();
@@ -41,12 +40,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
-        final var method = RequestMethod.from(request.getMethod())
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + request.getMethod()));
-        final var handlerKey = new HandlerKey(request.getRequestURI(), method);
+    public Optional<Object> getHandler(final HttpServletRequest request) {
+        final var handlerKey = getHandlerKey(request);
         log.debug("Target HandlerKey : {}", handlerKey);
-        return handlerExecutions.get(handlerKey);
+        return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 
     private Set<Method> getRequestMappingMethods(final Class<?> contollerClass) {
@@ -60,7 +57,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (final var method : methods) {
             final var handlerKeys = mapHandlerKeys(method);
             final var handlerExecution = new HandlerExecution(controllerInstance, method);
-            handlerKeys.forEach(handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+            handlerKeys.forEach(
+                    handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
         }
     }
 
@@ -82,4 +80,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         log.debug("HandlerKey : {}", handlerKey);
         return handlerKey;
     }
+
+    private HandlerKey getHandlerKey(HttpServletRequest request) {
+        final var method = RequestMethod.from(request.getMethod())
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + request.getMethod()));
+        return new HandlerKey(request.getRequestURI(), method);
+    }
+
 }
