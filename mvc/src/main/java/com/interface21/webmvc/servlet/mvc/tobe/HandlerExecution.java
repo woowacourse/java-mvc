@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    Object controller;
-    Method method;
+    private final Object controller;
+    private final Method method;
 
     public HandlerExecution(Object controller, Method method) {
         this.controller = controller;
