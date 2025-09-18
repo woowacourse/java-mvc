@@ -1,10 +1,10 @@
 package com.techcourse.controller;
 
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +16,10 @@ public class LoginController implements Controller {
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return "redirect:/index.jsp";
+        }
+
+        if (req.getParameter("account") == null) {
+            return "redirect:/404.jsp";
         }
 
         return InMemoryUserRepository.findByAccount(req.getParameter("account"))
