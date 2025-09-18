@@ -6,7 +6,9 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -50,9 +52,11 @@ public class AnnotationHandlerMapping {
     private void registerHandlerMethod(final Class<?> controllerClass, final Method declaredMethod) {
         if (isAnnotationPresent(declaredMethod)) {
             final RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
-            final HandlerKey handlerKey = getHandlerKey(requestMapping);
+            final List<HandlerKey> handlerKey = getHandlerKey(requestMapping);
             final HandlerExecution handlerExecution = getHandlerExecution(controllerClass, declaredMethod);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            for (HandlerKey key : handlerKey) {
+                handlerExecutions.put(key, handlerExecution);
+            }
         }
     }
 
@@ -60,10 +64,27 @@ public class AnnotationHandlerMapping {
         return declaredMethod.isAnnotationPresent(RequestMapping.class);
     }
 
-    private HandlerKey getHandlerKey(final RequestMapping requestMapping) {
+    private List<HandlerKey> getHandlerKey(final RequestMapping requestMapping) {
         final String url = requestMapping.value();
         final RequestMethod[] method = requestMapping.method();
-        return new HandlerKey(url, method[0]);
+
+        if (isEmptyHttpMethod(method)) {
+            return getHandlerKeysForAllHttpMethod(url);
+        }
+
+        return Arrays.stream(method)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .toList();
+    }
+
+    private boolean isEmptyHttpMethod(final RequestMethod[] method) {
+        return method.length == 0;
+    }
+
+    private List<HandlerKey> getHandlerKeysForAllHttpMethod(final String url) {
+        return Arrays.stream(RequestMethod.values())
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .toList();
     }
 
     private HandlerExecution getHandlerExecution(final Class<?> controllersClass, final Method declaredMethod) {
