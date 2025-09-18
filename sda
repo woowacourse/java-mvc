@@ -1,0 +1,171 @@
+[33mcommit 60f5647e5a17b3d464ae14571f44bf1c1f1e69f1[m[33m ([m[1;31mupstream/main[m[33m)[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Mon Sep 15 00:19:57 2025 +0900
+
+    Revert "feat: AnnotationHandlerMapping 구현"
+    
+    This reverts commit a8be79ca461484242b03b0616c942c2ae9bf8d8b.
+
+[33mcommit 17d605894a20961f288f4e2abda9ba07742d1db9[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Mon Sep 15 00:19:56 2025 +0900
+
+    Revert "feat: DispatchServlet AnnotationHandler 도입"
+    
+    This reverts commit 5764cae6e137b8939f50839461595d9fdf4788c7.
+
+[33mcommit 8bb5219b60b20fac62400da92dc94c355cc579da[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Mon Sep 15 00:19:56 2025 +0900
+
+    Revert "refactor: 인터페이스 관계 리팩터링"
+    
+    This reverts commit 7d8b2f45fb2345651828aec8eb6e2431a8af5116.
+
+[33mcommit adcca294a8eb1e477a6576ab206773ba734f6b94[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Mon Sep 15 00:19:56 2025 +0900
+
+    Revert "refactor: 패키지 이동"
+    
+    This reverts commit 19e722428c2d0e675a3fe251c5f3240e8a2746f0.
+
+[33mcommit 07a1bba2bdf620cbed189cf2325b950be7126cf8[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Mon Sep 15 00:19:56 2025 +0900
+
+    Revert "refactor: 잘못구현된 예외처리 구현"
+    
+    This reverts commit 7628e10c8f3ac8c2818bcf8890d82c422b6717df.
+
+[33mcommit 7628e10c8f3ac8c2818bcf8890d82c422b6717df[m[33m ([m[1;31mupstream/minssan[m[33m)[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Sun Sep 14 21:07:37 2025 +0900
+
+    refactor: 잘못구현된 예외처리 구현
+
+[33mcommit 19e722428c2d0e675a3fe251c5f3240e8a2746f0[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Sun Sep 14 21:04:53 2025 +0900
+
+    refactor: 패키지 이동
+
+[33mcommit 7d8b2f45fb2345651828aec8eb6e2431a8af5116[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Sun Sep 14 21:01:29 2025 +0900
+
+    refactor: 인터페이스 관계 리팩터링
+
+[33mcommit 5764cae6e137b8939f50839461595d9fdf4788c7[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Sun Sep 14 20:58:43 2025 +0900
+
+    feat: DispatchServlet AnnotationHandler 도입
+
+[33mcommit a8be79ca461484242b03b0616c942c2ae9bf8d8b[m
+Author: PraiseBak <60121346+PraiseBak@users.noreply.github.com>
+Date:   Sun Sep 14 19:00:38 2025 +0900
+
+    feat: AnnotationHandlerMapping 구현
+
+[33mcommit 75de864d647470939620d2a737bda56c43786c16[m[33m ([m[1;31mupstream/starlight258[m[33m, [m[1;31mupstream/ppparkta[m[33m, [m[1;31mupstream/minjae8563[m[33m, [m[1;31mupstream/kysub99[m[33m, [m[1;31mupstream/kimdevv[m[33m, [m[1;31mupstream/joon6093[m[33m, [m[1;31mupstream/eueo8259[m[33m, [m[1;31mupstream/dongchannn[m[33m, [m[1;31mupstream/cheche903[m[33m, [m[1;31mupstream/bowook[m[33m, [m[1;31mupstream/astro-yu[m[33m)[m
+Author: Claude Code Review Bot <claude-code-review@noreply.github.com>
+Date:   Fri Sep 12 15:34:09 2025 +0900
+
+    JUnit Platform Launcher 의존성 추가로 테스트 실행 오류 해결
+    
+    🤖 Generated with [Claude Code](https://claude.ai/code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+
+[33mcommit d436f6109a23fafa6cda0841a6ab1668d9c93925[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31mupstream/yuyoungrhee[m[33m, [m[1;31mupstream/ykmxxi[m[33m, [m[1;31mupstream/yesjuhee[m[33m, [m[1;31mupstream/yeong0jae[m[33m, [m[1;31mupstream/yeezy-com[m[33m, [m[1;31mupstream/wodnd0131[m[33m, [m[1;31mupstream/unh6unh6[m[33m, [m[1;31mupstream/threepebbles[m[33m, [m[1;31mupstream/taek2222[m[33m, [m[1;31mupstream/supernovamk[m[33m, [m[1;31mupstream/songsunkook[m[33m, [m[1;31mupstream/soeun2537[m[33m, [m[1;31mupstream/seaniiio[m[33m, [m[1;31mupstream/saera-yook[m[33m, [m[1;31mupstream/ryan-dia[m[33m, [m[1;31mupstream/rladmstn[m[33m, [m[1;31mupstream/razel713[m[33m, [m[1;31mupstream/praisebak[m[33m, [m[1;31mupstream/phk1128[m[33m, [m[1;31mupstream/nourzoo[m[33m, [m[1;31mupstream/minuring[m[33m, [m[1;31mupstream/m-a-king[m[33m, [m[1;31mupstream/ljhee92[m[33m, [m[1;31mupstream/kwonkeonhyeong[m[33m, [m[1;31mupstream/koseonje[m[33m, [m[1;31mupstream/kjyyjk[m[33m, [m[1;31mupstream/kjungw[m[33m, [m[1;31mupstream/kiwoook[m[33m, [m[1;31mupstream/jye326[m[33m, [m[1;31mupstream/junhaa[m[33m, [m[1;31mupstream/jumdo12[m[33m, [m[1;31mupstream/jo-eusan[m[33m, [m[1;31mupstream/jjunh0[m[33m, [m[1;31mupstream/jin409[m[33m, [m[1;31mupstream/jbilee[m[33m, [m[1;31mupstream/jaehyeon2650[m[33m, [m[1;31mupstream/horizonpioneer[m[33m, [m[1;31mupstream/hongkikii[m[33m, [m[1;31mupstream/goohong[m[33m, [m[1;31mupstream/gabean13[m[33m, [m[1;31mupstream/firedrago95[m[33m, [m[1;31mupstream/eunseongu[m[33m, [m[1;31mupstream/eoehd1ek[m[33m, [m[1;31mupstream/egaeng09[m[33m, [m[1;31mupstream/dye0p[m[33m, [m[1;31mupstream/dompoo[m[33m, [m[1;31mupstream/dlfmadlanjwl[m[33m, [m[1;31mupstream/dbsdndcks[m[33m, [m[1;31mupstream/cookie-meringue[m[33m, [m[1;31mupstream/codingmasterlsw[m[33m, [m[1;31mupstream/chaeyoung714[m[33m, [m[1;31mupstream/byesol[m[33m, [m[1;31mupstream/applemint98[m[33m, [m[1;31mupstream/abc5259[m[33m, [m[1;31mupstream/2jin1031[m[33m, [m[1;31mupstream/20hyeonsulee[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Claude Code Review Bot <claude-code-review@noreply.github.com>
+Date:   Wed Sep 3 17:08:57 2025 +0900
+
+    claude code review 제거
+
+[33mcommit e3c2a8d9f1b9b239bdf8b031cd922d51406bd4a2[m
+Author: Claude Code Review Bot <claude-code-review@noreply.github.com>
+Date:   Sat Aug 30 19:04:33 2025 +0900
+
+    서블릿 종료 방식 개선 - await 대신 키 입력 대기로 변경
+
+[33mcommit 2289b2b11e3d763e3151caef81b2b5a66ecd94db[m
+Author: Claude Code Review Bot <claude-code-review@noreply.github.com>
+Date:   Mon Aug 25 17:08:34 2025 +0900
+
+    chore: add GitHub workflows and upgrade dependencies
+    
+    - Add GitHub Actions workflows for automated code review
+    - Tomcat: 10.1.25 → 11.0.10
+    - Jakarta Servlet API: 5.0.0 → 6.1.0
+    - Jakarta JSP API: 2.3.6 → 4.0.0
+    - Jakarta JSTL API: 3.0.0 → 3.0.2
+    - logback-classic: 1.5.6 → 1.5.18
+    - commons-lang3: 3.14.0 → 3.18.0
+    - jackson-databind: 2.17.1 → 2.19.0
+    - assertj-core: 3.26.0 → 3.27.3
+    - mockito-core: 5.12.0 → 5.19.0
+    - junit-jupiter: 5.10.2 → 5.13.4
+    - spring-test: 6.1.10 → 6.2.10
+    - spring-context: 6.1.10 → 6.2.10
+    - h2: 2.2.224 → 2.3.232
+    - Remove deprecated setClearReferencesObjectStreamClassCaches calls
+    - Replace URL with URI.create() for better compatibility
+
+[33mcommit 2506520d08ac6398105fb8028fb248b437b2f04e[m
+Author: kang-hyungu <hkkang@woowahan.com>
+Date:   Thu Aug 29 16:42:16 2024 +0900
+
+    변경 사항
+    - 패키지 경로 변경
+    - 라이브러리 버전 업데이트
+    - 소나큐브 설정 제거
+
+[33mcommit e7c21ab067b56fde67900cb4088c2a8ca3bf4016[m[33m ([m[1;31mupstream/liar[m[33m)[m
+Author: kang-hyungu <hkkang@woowahan.com>
+Date:   Mon Sep 11 17:09:04 2023 +0900
+
+    서블릿 학습 테스트 코드 개선
+
+[33mcommit 52ee7781beea99fa939f155e3948ebd2531730fd[m
+Author: kang-hyungu <hkkang@woowahan.com>
+Date:   Mon Sep 11 15:29:28 2023 +0900
+
+    패키지 위치 변경 및 코드 정리
+
+[33mcommit b16924ab0fd212f93d2108379f3b32f1fe102635[m
+Author: kang-hyungu <hkkang@woowahan.com>
+Date:   Mon Aug 28 15:17:45 2023 +0900
+
+    라이브러리 버전 정리 및 실습 코드 추가
+
+[33mcommit 10a03b38585a43def5e1b8f7ab446924e2a8bbf8[m
+Author: kang-hyungu <hkkang@woowahan.com>
+Date:   Tue Sep 13 11:11:08 2022 +0900
+
+    @MVC 구현하기
+
+[33mcommit 2dc0c3927b31249823562841477d2bb4313b7ffb[m
+Author: KangHyunGu <hkkang@woowahan.com>
+Date:   Thu Sep 2 17:36:01 2021 +0900
+
+    learning 패키지 > build.gradle 정리
+
+[33mcommit 31102c0d18495ced8735f2e303bd60b3b4e235d9[m
+Author: KangHyunGu <hkkang@woowahan.com>
+Date:   Thu Sep 2 17:32:56 2021 +0900
+
+    learning 패키지에 Reflection 라이브러리 추가
+
+[33mcommit fbcbe17b5c44d973053fedd23a2124b445bc9daa[m
+Author: KangHyunGu <hkkang@woowahan.com>
+Date:   Thu Sep 2 17:23:45 2021 +0900
+
+    sonarcloud 빠진 설정 추가
+
+[33mcommit 310039a25ac24b559df7240ae0759d2e6ca23bbf[m
+Author: KangHyunGu <hkkang@woowahan.com>
+Date:   Wed Sep 1 15:19:57 2021 +0900
+
+    first commit
