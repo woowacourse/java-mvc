@@ -106,8 +106,13 @@ public class DispatcherServlet extends HttpServlet {
 
     private void renderErrorPage(String errorPage, HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
-        final View errorView = new JspView(errorPage);
-        final ModelAndView modelAndView = new ModelAndView(errorView);
-        render(modelAndView, request, response);
+        try {
+            final View errorView = new JspView(errorPage);
+            final ModelAndView modelAndView = new ModelAndView(errorView);
+            errorView.render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
+            log.error("에러 페이지 렌더링에 실패하였습니다: {}", e.getMessage());
+            throw new ServletException("에러 페이지 렌더링에 실패하였습니다", e);
+        }
     }
 }
