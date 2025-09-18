@@ -26,7 +26,7 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
             log.debug("Annotation Handler / method : {} ", handlerExecution.method());
             return handle;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Annotation Handler Invoke Error: ", e);
         }
     }
 }

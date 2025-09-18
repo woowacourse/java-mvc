@@ -3,10 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +13,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private static final String APPLICATION_PACKAGE = "com.techcourse";
     private static final long serialVersionUID = 1L;
 
     private HandlerMappingRegistry handlerMappingRegistry;
@@ -28,25 +23,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        // TODO: 초기화 로직을 별도 Configuration 클래스로 분리 필요 [2025-09-18]
-        final var controllerHandlerMappingInitializer = new ControllerHandlerMappingInitializer();
-        final var controllerHandlerMapping = controllerHandlerMappingInitializer.handle();
-        controllerHandlerMapping.initialize();
-
-        final var controllerScanner = new ControllerScanner(APPLICATION_PACKAGE);
-        final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
-        annotationHandlerMapping.initialize();
-
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerMappingRegistry.addHandlerMapping(controllerHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-
-        final var controllerHandlerAdapter = new ControllerHandlerAdapter();
-        final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
-
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
-        handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
+        handlerMappingRegistry = WebMvcConfiguration.handlerMappingRegistry();
+        handlerAdapterRegistry = WebMvcConfiguration.handlerAdapterRegistry();
     }
 
     @Override

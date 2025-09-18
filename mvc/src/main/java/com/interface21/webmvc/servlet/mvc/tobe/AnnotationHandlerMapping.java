@@ -46,8 +46,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return Optional.ofNullable(handlerExecutions.get(handlerKey));
     }
 
-    private Set<Method> getRequestMappingMethods(final Class<?> contollerClass) {
-        final var methods = contollerClass.getDeclaredMethods();
+    private Set<Method> getRequestMappingMethods(final Class<?> controllerClass) {
+        final var methods = controllerClass.getDeclaredMethods();
         return Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toSet());
@@ -83,7 +83,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private HandlerKey getHandlerKey(final HttpServletRequest request) {
         final var method = RequestMethodFactory.from(request.getMethod())
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + request.getMethod()));
+                .orElseThrow(() -> new IllegalStateException("not found Http Method" + request.getMethod()));
         return new HandlerKey(request.getRequestURI(), method);
     }
 }
