@@ -34,6 +34,15 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    public Object getHandler(final HttpServletRequest request) {
+        final String url = request.getRequestURI();
+        final String method = request.getMethod();
+        final RequestMethod requestMethod = RequestMethod.valueOf(method);
+
+        final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+        return handlerExecutions.get(handlerKey);
+    }
+
     private void scanControllers(final Object packageName) {
         final Reflections reflections = new Reflections(packageName);
         final Set<Class<?>> controllersClasses = reflections.getTypesAnnotatedWith(Controller.class);
@@ -99,14 +108,5 @@ public class AnnotationHandlerMapping {
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        final String url = request.getRequestURI();
-        final String method = request.getMethod();
-        final RequestMethod requestMethod = RequestMethod.valueOf(method);
-
-        final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-        return handlerExecutions.get(handlerKey);
     }
 }
