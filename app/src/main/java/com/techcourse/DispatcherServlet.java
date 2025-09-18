@@ -10,7 +10,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +19,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private static final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-    private static final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(
-            List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter()));
+    private static final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     public DispatcherServlet() {
     }
@@ -30,6 +28,8 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override

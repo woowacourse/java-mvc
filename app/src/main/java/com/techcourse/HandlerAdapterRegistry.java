@@ -1,14 +1,15 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerAdapterRegistry {
 
-    private final List<HandlerAdapter> handlerAdapters;
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public HandlerAdapterRegistry(List<HandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+    public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
+        handlerAdapters.add(handlerAdapter);
     }
 
     HandlerAdapter getHandlerAdapter(Object handler) {
