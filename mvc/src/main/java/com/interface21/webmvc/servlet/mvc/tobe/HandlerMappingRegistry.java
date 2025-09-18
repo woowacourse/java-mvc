@@ -9,13 +9,13 @@ public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
-    public void addHandlerMapping(HandlerMapping handlerMapping) {
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            if(handlerMapping.getHandler(request) != null) {
+    public Optional<Object> getHandler(final HttpServletRequest request) {
+        for (final HandlerMapping handlerMapping : handlerMappings) {
+            if (handlerMapping.getHandler(request) != null) {
                 return Optional.ofNullable(handlerMapping.getHandler(request));
             }
         }

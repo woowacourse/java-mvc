@@ -9,14 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ManualHandlerAdaptor implements HandlerAdaptor {
 
     @Override
-    public boolean support(Object handler) {
+    public boolean support(final Object handler) {
         return handler instanceof Controller;
     }
 
     @Override
-    public ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response)
+    public ModelAndView handle(final Object handler, final HttpServletRequest request,
+                               final HttpServletResponse response)
             throws Exception {
-        String viewName = ((Controller) handler).execute(request, response);
+        final String viewName = ((Controller) handler).execute(request, response);
         return new ModelAndView(new JspView(viewName));
     }
 }

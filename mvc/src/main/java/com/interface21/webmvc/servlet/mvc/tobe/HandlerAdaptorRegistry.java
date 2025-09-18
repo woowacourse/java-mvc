@@ -5,14 +5,14 @@ import java.util.List;
 
 public class HandlerAdaptorRegistry {
 
-    List<HandlerAdaptor> handlerAdaptors = new ArrayList<>();
+    private final List<HandlerAdaptor> handlerAdaptors = new ArrayList<>();
 
-    public void addHandlerAdaptor(HandlerAdaptor handlerAdaptor) {
+    public void addHandlerAdaptor(final HandlerAdaptor handlerAdaptor) {
         handlerAdaptors.add(handlerAdaptor);
     }
 
-    public HandlerAdaptor getHandlerAdaptor(Object handler) {
-        for (HandlerAdaptor handlerAdaptor : handlerAdaptors) {
+    public HandlerAdaptor getHandlerAdaptor(final Object handler) {
+        for (final HandlerAdaptor handlerAdaptor : handlerAdaptors) {
             if (handlerAdaptor.support(handler)) {
                 return handlerAdaptor;
             }

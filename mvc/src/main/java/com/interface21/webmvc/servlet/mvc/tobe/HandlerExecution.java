@@ -10,7 +10,7 @@ public class HandlerExecution {
     private final Method method;
     private final Object targetClass;
 
-    public HandlerExecution(Method method, Object targetClass) {
+    public HandlerExecution(final Method method, final Object targetClass) {
         this.method = method;
         this.targetClass = targetClass;
     }

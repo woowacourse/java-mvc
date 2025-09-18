@@ -24,8 +24,8 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdaptorRegistry handlerAdaptorRegistry;
 
-    public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry,
-                             HandlerAdaptorRegistry handlerAdaptorRegistry) {
+    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,
+                             final HandlerAdaptorRegistry handlerAdaptorRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
         this.handlerAdaptorRegistry = handlerAdaptorRegistry;
     }
@@ -33,10 +33,10 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         // init handlerMapping
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        final var manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
@@ -52,14 +52,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Optional<Object> handlerOptional = handlerMappingRegistry.getHandler(request);
+            final Optional<Object> handlerOptional = handlerMappingRegistry.getHandler(request);
             if (handlerOptional.isEmpty()) {
                 throw new IllegalStateException("지원하지 않는 요청입니다. :" + requestURI);
             }
-            Object handler = handlerOptional.get();
-            HandlerAdaptor handlerAdaptor = handlerAdaptorRegistry.getHandlerAdaptor(handler);
-            ModelAndView modelAndView = handlerAdaptor.handle(handler, request, response);
-            View view = modelAndView.getView();
+            final Object handler = handlerOptional.get();
+            final HandlerAdaptor handlerAdaptor = handlerAdaptorRegistry.getHandlerAdaptor(handler);
+            final ModelAndView modelAndView = handlerAdaptor.handle(handler, request, response);
+            final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());

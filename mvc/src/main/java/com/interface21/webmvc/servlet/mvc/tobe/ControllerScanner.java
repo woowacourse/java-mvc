@@ -13,8 +13,8 @@ public class ControllerScanner {
 
     private final Reflections reflections;
 
-    public ControllerScanner(Object... basePackage) {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+    public ControllerScanner(final Object... basePackage) {
+        final var configurationBuilder = new ConfigurationBuilder()
                 .forPackages(Arrays.stream(basePackage)
                         .map(Object::toString)
                         .toArray(String[]::new));
@@ -26,8 +26,8 @@ public class ControllerScanner {
         return instantiateControllers(controllerClasses);
     }
 
-    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerClasses) {
-        HashMap<Class<?>, Object> controllerInstances = new HashMap<>();
+    private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllerClasses) {
+        final HashMap<Class<?>, Object> controllerInstances = new HashMap<>();
         try {
             for (Class<?> controllerClass : controllerClasses) {
                 final Object controllerInstance = controllerClass.getConstructor().newInstance();

@@ -66,7 +66,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private HandlerKey convertRequestToHandlerKey(HttpServletRequest request) {
+    private HandlerKey convertRequestToHandlerKey(final HttpServletRequest request) {
         final var requestMethod = RequestMethod.getByName(request.getMethod());
         final var url = request.getRequestURI();
         return new HandlerKey(url, requestMethod);
