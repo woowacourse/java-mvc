@@ -3,27 +3,30 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    
+    public AnnotationHandlerMapping(final String basePackage, final String... others) {
+        this.basePackage = Stream.concat(Stream.of(basePackage), Arrays.stream(others)).toArray(String[]::new);
     }
 
+    @Override
     public void initialize() {
         final var reflections = new Reflections(basePackage);
         final var controllers = reflections.get(Scanners.TypesAnnotated.of(Controller.class).asClass());
@@ -48,13 +51,15 @@ public class AnnotationHandlerMapping {
             }
         }
         log.info("Initialized AnnotationHandlerMapping!");
+        handlerExecutions.keySet()
+                .forEach(handlerKey -> log.info("Path : {}, Controller : {}", handlerKey.url(), handlerExecutions.get(handlerKey).getHandler().getClass()));
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final var uri = request.getRequestURI();
         final var method = request.getMethod();
         final var handlerKey = new HandlerKey(uri, RequestMethod.valueOf(method.toUpperCase()));
-        if (!handlerExecutions.containsKey(handlerKey)) throw new IllegalArgumentException("No Handler For " + handlerKey);
         return handlerExecutions.get(handlerKey);
     }
 }

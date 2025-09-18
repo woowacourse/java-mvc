@@ -1,11 +1,17 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,16 +19,28 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final List<HandlerMapping> DEFAULT_HANDLER_MAPPINGS = List.of(
+            new AnnotationHandlerMapping("com.techcourse.controller"),
+            new ManualHandlerMapping()
+    );
+    private static final List<HandlerAdapter> DEFAULT_HANDLER_ADAPTERS = List.of(
+            new AnnotationHandlerAdapter(),
+            new ManualHandlerAdapter()
+    );
 
-    private AnnotationHandlerMapping handlerMapping;
+    private List<HandlerMapping> handlerMappings;
+    private List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMapping = new AnnotationHandlerMapping("com.techcourse");
-        handlerMapping.initialize();
+        handlerMappings = new ArrayList<>(DEFAULT_HANDLER_MAPPINGS);
+        handlerAdapters = new ArrayList<>(DEFAULT_HANDLER_ADAPTERS);
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
     }
 
     @Override
@@ -31,12 +49,38 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-            final var modelAndView = handlerExecution.handle(request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            final Object foundHandler = findHandler(request, requestURI);
+            final HandlerAdapter foundHandlerAdapter = findHandlerAdapter(foundHandler, requestURI);
+            final ModelAndView modelAndView = foundHandlerAdapter.handle(request, response, foundHandler);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object findHandler(HttpServletRequest request, String requestURI) {
+        Object foundHandler = null;
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            final var handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                foundHandler = handler;
+                break;
+            }
+        }
+        if (foundHandler == null) throw new IllegalArgumentException("No HandlerMapping Found For " + requestURI);
+        return foundHandler;
+    }
+
+    private HandlerAdapter findHandlerAdapter(Object foundHandler, String requestURI) {
+        HandlerAdapter foundHandlerAdapter = null;
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(foundHandler)) {
+                foundHandlerAdapter = handlerAdapter;
+                break;
+            }
+        }
+        if (foundHandlerAdapter == null) throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
+        return foundHandlerAdapter;
     }
 }
