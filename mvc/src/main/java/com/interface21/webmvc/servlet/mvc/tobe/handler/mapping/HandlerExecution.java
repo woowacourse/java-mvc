@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handler.mapping;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,15 +7,16 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Object handler;
+    private final Object declaredObject;
     private final Method method;
 
-    public HandlerExecution(final Object handler, final Method method) {
-        this.handler = handler;
+    public HandlerExecution(final Object declaredObject, final Method method) {
+        this.declaredObject = declaredObject;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(handler, request, response);
+        method.setAccessible(true);
+        return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 }
