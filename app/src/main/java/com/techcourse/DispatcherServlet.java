@@ -49,30 +49,38 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            Object foundHandler = null;
-            for (HandlerMapping handlerMapping : handlerMappings) {
-                final var handler = handlerMapping.getHandler(request);
-                if (handler != null) {
-                    foundHandler = handler;
-                    break;
-                }
-            }
-            if (foundHandler == null) throw new IllegalArgumentException("No HandlerMapping Found For " + requestURI);
-
-            HandlerAdapter foundHandlerAdapter = null;
-            for (HandlerAdapter handlerAdapter : handlerAdapters) {
-                if (handlerAdapter.supports(foundHandler)) {
-                    foundHandlerAdapter = handlerAdapter;
-                    break;
-                }
-            }
-            if (foundHandlerAdapter == null) throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
-
+            final Object foundHandler = findHandler(request, requestURI);
+            final HandlerAdapter foundHandlerAdapter = findHandlerAdapter(foundHandler, requestURI);
             final ModelAndView modelAndView = foundHandlerAdapter.handle(request, response, foundHandler);
             modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object findHandler(HttpServletRequest request, String requestURI) {
+        Object foundHandler = null;
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            final var handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                foundHandler = handler;
+                break;
+            }
+        }
+        if (foundHandler == null) throw new IllegalArgumentException("No HandlerMapping Found For " + requestURI);
+        return foundHandler;
+    }
+
+    private HandlerAdapter findHandlerAdapter(Object foundHandler, String requestURI) {
+        HandlerAdapter foundHandlerAdapter = null;
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(foundHandler)) {
+                foundHandlerAdapter = handlerAdapter;
+                break;
+            }
+        }
+        if (foundHandlerAdapter == null) throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
+        return foundHandlerAdapter;
     }
 }
