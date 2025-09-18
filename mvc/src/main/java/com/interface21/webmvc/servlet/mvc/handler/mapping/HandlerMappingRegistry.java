@@ -13,7 +13,7 @@ public class HandlerMappingRegistry {
 
     public void initialize() {
         final HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
-        handlerMappings.add(annotationHandlerMapping);
+        addHandlerMapping(annotationHandlerMapping);
     }
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
