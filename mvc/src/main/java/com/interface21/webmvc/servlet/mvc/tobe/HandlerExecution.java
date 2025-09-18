@@ -1,18 +1,21 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
-import java.util.Enumeration;
+import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
+    private final Object handler;
+    private final Method method;
+
+    public HandlerExecution(Object handler, Method method) {
+        this.handler = handler;
+        this.method = method;
+    }
+
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        String requestURI = request.getRequestURI();
-        ModelAndView modelAndView = new ModelAndView(new JspView(requestURI + ".jsp"));
-        modelAndView.addObject("id", request.getAttribute("id"));
-        return modelAndView;
+        return (ModelAndView) method.invoke(handler, request, response);
     }
 }
