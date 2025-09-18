@@ -16,6 +16,7 @@ public class HandlerExecution {
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        method.setAccessible(true);
         return (ModelAndView) method.invoke(declaredObject, request, response);
     }
 }
