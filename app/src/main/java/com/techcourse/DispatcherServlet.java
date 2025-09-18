@@ -61,17 +61,8 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
             render(modelAndView, request, response);
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            renderErrorPage(ERROR_404_PAGE, request, response);
-        } catch (IllegalStateException e) {
-            log.error(e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            renderErrorPage(ERROR_500_PAGE, request, response);
         } catch (Exception e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            handleError(e, request, response);
         }
     }
 
@@ -92,6 +83,25 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void handleError(Exception ex, HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        if(ex instanceof IllegalArgumentException) {
+            log.error(ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            renderErrorPage(ERROR_404_PAGE, request, response);
+            return;
+        }
+
+        if (ex instanceof IllegalStateException) {
+            log.error(ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            renderErrorPage(ERROR_500_PAGE, request, response);
+            return;
+        }
+
+        log.error("Exception : {}", ex.getMessage(), ex);
+        throw new ServletException(ex.getMessage());
     }
 
     private void renderErrorPage(String errorPage, HttpServletRequest request, HttpServletResponse response)
