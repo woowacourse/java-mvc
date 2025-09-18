@@ -53,4 +53,12 @@ public class HandlerExecution {
                 String.format("Handler method %s must return ModelAndView, but returned: %s",
                         method.getName(), result == null ? "null" : result.getClass().getSimpleName()));
     }
+
+    public Object getHandler() {
+        return handler;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
 }
