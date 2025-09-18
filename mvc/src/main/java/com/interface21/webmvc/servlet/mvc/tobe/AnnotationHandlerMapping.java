@@ -31,7 +31,7 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for(Object basePackage : basePackages) {
+        for(String basePackage : (String[]) basePackages) {
             ConfigurationBuilder config = new ConfigurationBuilder()
                     .setUrls(ClasspathHelper.forPackage(basePackage.toString()))
                     .setScanners(Scanners.TypesAnnotated, Scanners.MethodsAnnotated);
@@ -54,7 +54,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(handlerKey);
     }
@@ -82,7 +82,7 @@ public class AnnotationHandlerMapping {
 
     private String determinePath(RequestMapping requestMapping) {
         if(requestMapping.value().isEmpty()) {
-            return "";
+            return "/";
         }
         return requestMapping.value();
     }
