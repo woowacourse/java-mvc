@@ -1,7 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
-import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.web.bind.annotation.RequestMethodFactory;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
@@ -77,14 +76,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final var url = mappedAnnotation.value();
         final var requestMethods = mappedAnnotation.method();
         return Arrays.stream(requestMethods)
-                .map(requestMethod -> createHandlerKey(url, requestMethod))
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
                 .collect(Collectors.toSet());
-    }
-
-    private HandlerKey createHandlerKey(final String url, final RequestMethod method) {
-        final var handlerKey = new HandlerKey(url, method);
-        log.debug("HandlerKey : {}", handlerKey);
-        return handlerKey;
     }
 
     private HandlerKey getHandlerKey(final HttpServletRequest request) {
