@@ -31,7 +31,6 @@ public class LoginController {
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
     private ModelAndView login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
