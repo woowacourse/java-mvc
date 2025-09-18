@@ -12,7 +12,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,25 +24,26 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
-        log.info("Initialized AnnotationHandlerMapping!");
+    public void initialize() {
+        try {
+            log.info("Initialized AnnotationHandlerMapping!");
 
-        final Reflections reflections = new Reflections(basePackage);
-        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+            final Reflections reflections = new Reflections(basePackage);
+            ControllerScanner controllerScanner = new ControllerScanner(reflections);
 
-        Map<Class<?>, Object> scannedControllers = controllerScanner.getClasses();
-        scannedControllers.keySet().forEach(type -> registerHandlerExecutionByType(type, scannedControllers.get(type)));
+            Map<Class<?>, Object> scannedControllers = controllerScanner.getClasses();
+            scannedControllers.keySet()
+                    .forEach(type -> registerHandlerExecutionByType(type, scannedControllers.get(type)));
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
-
-        if (!handlerExecutions.containsKey(handlerKey)) {
-            throw new IllegalArgumentException("요청 ["
-                    + requestMethod + " " + requestURI + "] 에 매핑된 핸들러가 없습니다.");
-        }
 
         return handlerExecutions.get(handlerKey);
     }

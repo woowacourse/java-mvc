@@ -2,11 +2,16 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +21,22 @@ public class DispatcherServlet extends HttpServlet {
     public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        handlerMappings = new ArrayList<>();
+
+        addHandlerMapping(new ManualHandlerMapping());
+        addHandlerMapping(new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.handler.adapter"));
+    }
+
+    private void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
+        handlerMappings.add(handlerMapping);
     }
 
     @Override
@@ -34,13 +46,25 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
+            final var controller = getHandler(request);
             ModelAndView modelAndView = controller.execute(request, response);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Controller getHandler(final HttpServletRequest request) {
+        for (HandlerMapping handlerMappings : handlerMappings) {
+            Object handler = handlerMappings.getHandler(request);
+
+            if (handler != null) {
+                return (Controller) handler;
+            }
+        }
+
+        throw new IllegalArgumentException("처리할 수 없는 요청입니다.");
     }
 
     private void render(ModelAndView mav,
