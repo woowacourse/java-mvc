@@ -28,11 +28,11 @@ public class ControllerScanner {
         return lookup;
     }
 
-    private Object getInstanceBy(final Class<?> aClass) {
+    private Object getInstanceBy(final Class<?> controllerClass) {
         try {
-            return aClass.getDeclaredConstructor().newInstance();
+            return controllerClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to create controller instance: " + aClass.getName(), e);
+            throw new IllegalStateException("Failed to create controller instance: " + controllerClass.getName(), e);
         }
     }
 }

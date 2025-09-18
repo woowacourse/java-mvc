@@ -47,7 +47,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private Set<Method> getRequestMappingMethods(final Class<?> controllerClass) {
-        final var methods = controllerClass.getDeclaredMethods();
+        final var methods = controllerClass.getMethods();
         return Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .collect(Collectors.toSet());
@@ -57,9 +57,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (final var method : methods) {
             final var handlerKeys = mapHandlerKeys(method);
             final var handlerExecution = new HandlerExecution(controllerInstance, method);
-            handlerKeys.forEach(
-                    handlerKey -> handlerExecutions.put(handlerKey, handlerExecution));
+            handlerKeys.forEach(handlerKey -> addHandlerExecution(handlerKey, handlerExecution));
         }
+    }
+
+    private void addHandlerExecution(HandlerKey handlerKey, HandlerExecution handlerExecution) {
+        if (handlerExecutions.containsKey(handlerKey)) {
+            throw new IllegalStateException("Duplicate Handler Key : " + handlerKey);
+        }
+        handlerExecutions.put(handlerKey, handlerExecution);
     }
 
     private Set<HandlerKey> mapHandlerKeys(final Method method) {
