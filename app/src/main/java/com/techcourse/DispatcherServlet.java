@@ -18,11 +18,11 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMapping handlerMapping;
 
     public DispatcherServlet() {
+        handlerMapping = ManualHandlerMappingInitializer.initialize();
     }
 
     @Override
     public void init() {
-        handlerMapping = new ManualHandlerMapping();
         handlerMapping.initialize();
     }
 
