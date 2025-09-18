@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,9 +24,19 @@ public class AnnotationHandlerMapping {
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        initialize();
     }
 
-    public void initialize() {
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        final String requestUri = request.getRequestURI();
+        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+        HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
+        return handlerExecutions.get(handlerKey);
+    }
+
+    private void initialize() {
         Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : controllers) {
@@ -70,13 +80,5 @@ public class AnnotationHandlerMapping {
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new IllegalStateException("리플렉션 중 예외 발생");
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        final String requestUri = request.getRequestURI();
-        final RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-
-        HandlerKey handlerKey = new HandlerKey(requestUri, requestMethod);
-        return handlerExecutions.get(handlerKey);
     }
 }
