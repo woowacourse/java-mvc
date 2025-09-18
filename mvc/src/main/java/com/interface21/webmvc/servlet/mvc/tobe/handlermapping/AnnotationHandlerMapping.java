@@ -26,6 +26,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         try {
             scanControllers();
+            handlerExecutions.keySet()
+                    .forEach(hk -> log.info("mapped HandlerKey : {}", hk));
             log.info("Initialized AnnotationHandlerMapping!");
 
         } catch (Exception e) {
