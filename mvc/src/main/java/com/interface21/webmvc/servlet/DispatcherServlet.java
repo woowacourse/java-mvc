@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
@@ -23,8 +22,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+    private String basePackage;
 
     public DispatcherServlet() {
+        this("com.techcourse.controller");
+    }
+
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
@@ -39,13 +44,8 @@ public class DispatcherServlet extends HttpServlet {
     private void initializeHandlerMappings() {
         handlerMappings = new ArrayList<>();
         
-        // Manual HandlerMapping 추가
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
-        
-        // Annotation HandlerMapping 추가
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        // Annotation HandlerMapping만 추가 (Legacy 제거)
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
         
@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
     private void initializeHandlerAdapters() {
         handlerAdapters = new ArrayList<>();
         
-        // Controller HandlerAdapter 추가
+        // Controller HandlerAdapter 추가 (ForwardController 때문에 필요)
         handlerAdapters.add(new ControllerHandlerAdapter());
         
         // HandlerExecution HandlerAdapter 추가
