@@ -12,7 +12,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,6 +24,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         for (final var basePackage : basePackages) {
@@ -42,6 +43,15 @@ public class AnnotationHandlerMapping {
                 }
             }
         }
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        final var method = RequestMethod.from(request.getMethod())
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + request.getMethod()));
+        final var handlerKey = new HandlerKey(request.getRequestURI(), method);
+        log.debug("Target HandlerKey : {}", handlerKey);
+        return handlerExecutions.get(handlerKey);
     }
 
     private Object getInstanceBy(final Class<?> aClass) {
@@ -63,13 +73,5 @@ public class AnnotationHandlerMapping {
             final var handlerExecution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        final var method = RequestMethod.from(request.getMethod())
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 http 메서드입니다: " + request.getMethod()));
-        final var handlerKey = new HandlerKey(request.getRequestURI(), method);
-        log.debug("Target HandlerKey : {}", handlerKey);
-        return handlerExecutions.get(handlerKey);
     }
 }
