@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,29 +24,22 @@ public class AnnotationHandlerMapping {
     }
 
     public void initialize() {
-        for (final String packageName : basePackage) {
-            final Reflections reflections = new Reflections(packageName);
+        final Map<Class<?>, Object> controllers = ControllerScanner.scan(basePackage);
 
-            final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-
-            for (final Class<?> clazz : controllerClasses) {
-                registerHandlerMethods(clazz);
-            }
+        for (final Class<?> clazz : controllers.keySet()) {
+            registerHandlerMethods(clazz, controllers.get(clazz));
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandlerMethods(final Class<?> controllerClass) {
-        try {
-            final Object controller = controllerClass.getDeclaredConstructor().newInstance();
+    private void registerHandlerMethods(final Class<?> clazz, final Object controller) {
+        final Set<Method> allMethods = ReflectionUtils.getAllMethods(
+                clazz,
+                ReflectionUtils.withAnnotation(RequestMapping.class)
+        );
 
-            for (final Method method : controllerClass.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    registerHandlerMethod(method, controller);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error registering handler methods for class: {}", controllerClass.getName(), e);
+        for (final Method method : allMethods) {
+            registerHandlerMethod(method, controller);
         }
     }
 
