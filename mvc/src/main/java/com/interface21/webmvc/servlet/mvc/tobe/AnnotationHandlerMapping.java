@@ -64,6 +64,10 @@ public class AnnotationHandlerMapping {
         String url = mapping.value(); // ex "/get-test"
         RequestMethod[] requestMethods = mapping.method(); // ex GET, POST, ...
 
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
             HandlerExecution execution = new HandlerExecution(instance, method);
@@ -76,7 +80,6 @@ public class AnnotationHandlerMapping {
      * 조회
      */
     public Object getHandler(final HttpServletRequest request) {
-        // url에 맞는 핸들러 찾기
         String requestURI = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, method);
