@@ -18,6 +18,18 @@ public class User {
         return this.password.equals(password);
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public String getAccount() {
         return account;
     }
