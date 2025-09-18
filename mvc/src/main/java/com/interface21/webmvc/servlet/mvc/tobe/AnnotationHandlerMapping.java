@@ -39,9 +39,12 @@ public class AnnotationHandlerMapping {
         } catch (Exception e) {
             throw new RuntimeException("컨트롤러를 생성할 수 없습니다.", e);
         }
-        Arrays.stream(clazz.getMethods())
+        Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .forEach(method -> registerHandlerMethod(controller, method));
+                .forEach(method -> {
+                    method.setAccessible(true);
+                    registerHandlerMethod(controller, method);
+                });
     }
 
     private void registerHandlerMethod(Object controller, Method handlerMethod) {
