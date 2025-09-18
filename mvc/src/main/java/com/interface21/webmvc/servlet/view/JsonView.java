@@ -22,14 +22,12 @@ public class JsonView implements View {
 
             Object object = model.get(key);
             String body = OBJECT_MAPPER.writeValueAsString(object);
-            response.setContentLength(body.length());
             response.getWriter().write(body);
 
             return;
         }
 
         String body = OBJECT_MAPPER.writeValueAsString(model);
-        response.setContentLength(body.length());
         response.getWriter().write(body);
     }
 }
