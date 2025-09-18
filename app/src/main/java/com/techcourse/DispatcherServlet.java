@@ -68,36 +68,35 @@ public class DispatcherServlet extends HttpServlet {
         } catch (IllegalStateException e) {
             log.error(e.getMessage());
             renderErrorPage(ERROR_500_PAGE, request, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            throws ServletException {
+        try {
+            if (modelAndView == null) {
+                throw new IllegalStateException("HandlerAdapter가 ModelAndView를 반환하지 않았습니다");
+            }
 
-        if (modelAndView == null) {
-            throw new IllegalStateException("HandlerAdapter가 ModelAndView를 반환하지 않았습니다");
+            if (modelAndView.getView() == null) {
+                throw new IllegalStateException("ModelAndView에 View가 설정되지 않았습니다");
+            }
+
+            final View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
+        } catch (Exception e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new ServletException(e.getMessage());
         }
-
-        if (modelAndView.getView() == null) {
-            throw new IllegalStateException("ModelAndView에 View가 설정되지 않았습니다");
-        }
-
-        final View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
     }
 
     private void renderErrorPage(String errorPage, HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
-        try {
-            final View errorView = new JspView(errorPage);
-            final ModelAndView modelAndView = new ModelAndView(errorView);
-            render(modelAndView, request, response);
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
+        final View errorView = new JspView(errorPage);
+        final ModelAndView modelAndView = new ModelAndView(errorView);
+        render(modelAndView, request, response);
     }
 }
