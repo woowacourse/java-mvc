@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,14 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final List<HandlerMapping> DEFAULT_HANDLER_MAPPINGS = List.of(
+            new AnnotationHandlerMapping("com.techcourse.controller"),
+            new ManualHandlerMapping()
+    );
+    private static final List<HandlerAdapter> DEFAULT_HANDLER_ADAPTERS = List.of(
+            new AnnotationHandlerAdapter(),
+            new ManualHandlerAdapter()
+    );
 
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
@@ -27,17 +36,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings = List.of(
-                new AnnotationHandlerMapping("com.techcourse.controller"),
-                new ManualHandlerMapping()
-        );
+        handlerMappings = new ArrayList<>(DEFAULT_HANDLER_MAPPINGS);
+        handlerAdapters = new ArrayList<>(DEFAULT_HANDLER_ADAPTERS);
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
-        handlerAdapters = List.of(
-                new AnnotationHandlerAdapter(),
-                new ManualHandlerAdapter()
-        );
     }
 
     @Override
