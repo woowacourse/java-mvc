@@ -1,14 +1,11 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -18,31 +15,33 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackages;
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackages = basePackage;
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        for (Object basePackage : basePackages) {
-            Reflections reflections = new Reflections(basePackage);
-            Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-            try {
-                for (Class<?> controllerClass : controllerClasses) {
-                    Object handler = controllerClass.getDeclaredConstructor().newInstance();
-                    for (Method method : ReflectionUtils.getAllMethods(controllerClass,
-                            ReflectionUtils.withAnnotation(RequestMapping.class))) {
-                        registerHandler(handler, method);
-                    }
+        Reflections reflections = new Reflections(basePackage);
+        ControllerScanner controllerScanner = new ControllerScanner(reflections);
+        Map<Class<?>, Object> controllerClasses = controllerScanner.getControllers();
+
+        try {
+            for (Map.Entry<Class<?>, Object> entry : controllerClasses.entrySet()) {
+                Class<?> controllerClass = entry.getKey();
+                Object handler = entry.getValue();
+
+                for (Method method : ReflectionUtils.getAllMethods(controllerClass,
+                        ReflectionUtils.withAnnotation(RequestMapping.class))) {
+                    registerHandler(handler, method);
                 }
-            } catch (InvocationTargetException | IllegalAccessException | InstantiationException |
-                     NoSuchMethodException e) {
-                log.info(e.getMessage());
             }
+        } catch (Exception e) {
+            log.error("컨트롤러 초기화 중 오류 발생", e);
         }
+
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
