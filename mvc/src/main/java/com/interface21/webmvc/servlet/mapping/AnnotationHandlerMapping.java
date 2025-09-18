@@ -34,13 +34,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             ControllerScanner controllerScanner = new ControllerScanner(basePackage);
             Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-            Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
-
-            for (Method method : requestMappingMethods) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    addHandlerExecutions(controllers, method, requestMapping);
+            for (Class<?> controllerClass : controllers.keySet()) {
+                Method[] declaredMethods = controllerClass.getDeclaredMethods();
+                for (Method method : declaredMethods) {
+                    if (method.isAnnotationPresent(RequestMapping.class)) {
+                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                        addHandlerExecutions(controllers, method, requestMapping);
+                    }
+                }
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -61,19 +63,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             HandlerExecution handlerExecution = new HandlerExecution(controller, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
-    }
-
-    private Set<Method> getRequestMappingMethods(Set<Class<?>> controllers) {
-        Set<Method> methods = new HashSet<>();
-        for (Class<?> controllerTypes : controllers) {
-            Method[] declaredMethods = controllerTypes.getDeclaredMethods();
-            for (Method method : declaredMethods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    methods.add(method);
-                }
-            }
-        }
-        return methods;
     }
 
     private List<HandlerKey> mapHandlerKeys(String uri, RequestMethod[] methods) {
