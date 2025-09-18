@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
@@ -55,10 +54,7 @@ public class DispatcherServlet extends HttpServlet {
     private void initializeHandlerAdapters() {
         handlerAdapters = new ArrayList<>();
         
-        // Controller HandlerAdapter 추가 (ForwardController 때문에 필요)
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        
-        // HandlerExecution HandlerAdapter 추가
+        // HandlerExecution HandlerAdapter만 사용 (어노테이션 기반)
         handlerAdapters.add(new HandlerExecutionAdapter());
         
         log.info("Initialized {} HandlerAdapters", handlerAdapters.size());
