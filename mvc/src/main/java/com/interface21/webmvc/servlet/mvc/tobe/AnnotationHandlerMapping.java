@@ -58,7 +58,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
-        HandlerKey key = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
+        HandlerKey key = new HandlerKey(request.getServletPath(), RequestMethod.valueOf(request.getMethod()));
         return handlerExecutions.get(key);
     }
 }
