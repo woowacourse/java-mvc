@@ -16,29 +16,26 @@ public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        for (final Object basePackage : basePackage) {
-            log.info("basePackage : {}", basePackage);
+        for (final var basePackage : basePackages) {
+            log.info("basePackages : {}", basePackage);
             final var reflections = new Reflections(basePackage);
-            // 각 basePackage 위치에서 @Controller 어노테이션이 붙은 클래스 스캔
             final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
-            // @Controller 클래스 중 @RequestMapping이 붙은 핸들러 메서드 스캔
             for (final var controller : controllers) {
                 final var controllerInstance = getInstanceBy(controller);
                 log.debug("Controller: {}", controller.getName());
                 final var methods = controller.getDeclaredMethods();
                 for (final var method : methods) {
-                    // 핸들러 메서드와 URL, HTTP Method 맵핑 정보 생성
                     if (method.isAnnotationPresent(RequestMapping.class)) {
                         putHandlerExecutions(method, controllerInstance);
                     }
