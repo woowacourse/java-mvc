@@ -1,5 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe.handler.adapter;
 
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import jakarta.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
