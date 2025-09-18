@@ -7,6 +7,7 @@ import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +21,15 @@ public class LoginController implements Controller {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
+        return Optional.ofNullable(req.getParameter("account"))
+                .flatMap(InMemoryUserRepository::findByAccount)
+                .map(user -> login(req, user))
                 .orElse(new ModelAndView(new JspView("redirect:/401.jsp")));
     }
 
     private ModelAndView login(final HttpServletRequest request, final User user) {
         if (user.checkPassword(request.getParameter("password"))) {
+            log.info("User : {}", user);
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
             return new ModelAndView(new JspView("redirect:/index.jsp"));
