@@ -76,18 +76,18 @@ public class AnnotationHandlerMapping {
     }
 
     private String normalize(String base, String path) {
-        String a = (base == null) ? "" : base.trim();
-        String b = (path == null) ? "" : path.trim();
-        if (!a.startsWith("/")) {
-            a = "/" + a;
+        String normalizedBase = (base == null) ? "" : base.trim();
+        String normalizedPath = (path == null) ? "" : path.trim();
+        if (!normalizedBase.startsWith("/")) {
+            normalizedBase = "/" + normalizedBase;
         }
-        if (a.endsWith("/")) {
-            a = a.substring(0, a.length() - 1);
+        if (normalizedBase.endsWith("/")) {
+            normalizedBase = normalizedBase.substring(0, normalizedBase.length() - 1);
         }
-        if (!b.startsWith("/")) {
-            b = "/" + b;
+        if (!normalizedPath.startsWith("/")) {
+            normalizedPath = "/" + normalizedPath;
         }
-        return (a + b).replaceAll("//+", "/");
+        return (normalizedBase + normalizedPath).replaceAll("//+", "/");
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
