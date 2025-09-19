@@ -27,48 +27,52 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         final Map<Class<?>, Object> controllers = ControllerScanner.scan(basePackage);
-
-        for (final Entry<Class<?>, Object> entry : controllers.entrySet()) {
-            registerHandlerMethods(entry.getKey(), entry.getValue());
-        }
+        registerHandlers(controllers);
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandlerMethods(final Class<?> clazz, final Object controller) {
-        final Set<Method> allMethods = ReflectionUtils.getAllMethods(
-                clazz,
+    private void registerHandlers(final Map<Class<?>, Object> controllers) {
+        for (final Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            registerHandlersForController(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void registerHandlersForController(final Class<?> controllerClass, final Object controllerInstance) {
+        final Set<Method> requestMappingMethods = getRequestMappingMethods(controllerClass);
+
+        for (final Method method : requestMappingMethods) {
+            registerHandlersForMethod(controllerInstance, method);
+        }
+    }
+
+    private Set<Method> getRequestMappingMethods(final Class<?> controllerClass) {
+        return ReflectionUtils.getAllMethods(
+                controllerClass,
                 ReflectionUtils.withAnnotation(RequestMapping.class)
         );
-
-        for (final Method method : allMethods) {
-            registerHandlerMethod(method, controller);
-        }
     }
 
-    private void registerHandlerMethod(final Method method, final Object controller) {
+    private void registerHandlersForMethod(final Object controllerInstance, final Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String url = requestMapping.value();
-        RequestMethod[] requestMethods = requestMapping.method();
+        final RequestMethod[] requestMethods = getRequestMethods(requestMapping);
 
-        if (requestMethods.length == 0) {
-            requestMethods = RequestMethod.values();
-        }
-
-        registerMapping(controller, method, url, requestMethods);
-    }
-
-    private void registerMapping(
-            final Object controller,
-            final Method method,
-            final String url,
-            final RequestMethod[] requestMethods
-    ) {
         for (final RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
         }
     }
+
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+        final RequestMethod[] requestMethods = requestMapping.method();
+
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
+    }
+
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
