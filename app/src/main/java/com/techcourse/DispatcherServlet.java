@@ -34,14 +34,14 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var controller = manualHandlerMapping.getHandler(requestURI);
             final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            render(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
+    private void render(final String viewName, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         final JspView jspView = new JspView(viewName);
         jspView.render(Collections.emptyMap(), request, response);
