@@ -1,11 +1,14 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.ViewResolver;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.viewResolver.JspViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,9 +30,13 @@ public class DispatcherServlet extends HttpServlet {
             new AnnotationHandlerAdapter(),
             new ManualHandlerAdapter()
     );
+    private static final List<ViewResolver> DEFAULT_VIEW_RESOLVERS = List.of(
+            new JspViewResolver()
+    );
 
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+    private List<ViewResolver> viewResolvers;
 
     public DispatcherServlet() {
     }
@@ -38,6 +45,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerMappings = new ArrayList<>(DEFAULT_HANDLER_MAPPINGS);
         handlerAdapters = new ArrayList<>(DEFAULT_HANDLER_ADAPTERS);
+        viewResolvers = new ArrayList<>(DEFAULT_VIEW_RESOLVERS);
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }
@@ -52,7 +60,7 @@ public class DispatcherServlet extends HttpServlet {
             final Object foundHandler = findHandler(request, requestURI);
             final HandlerAdapter foundHandlerAdapter = findHandlerAdapter(foundHandler, requestURI);
             final ModelAndView modelAndView = foundHandlerAdapter.handle(request, response, foundHandler);
-            modelAndView.render(request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -82,5 +90,31 @@ public class DispatcherServlet extends HttpServlet {
         }
         if (foundHandlerAdapter == null) throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
         return foundHandlerAdapter;
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object viewObject = modelAndView.getView();
+        if (viewObject instanceof View view) {
+            view.render(modelAndView.getModel(), request, response);
+            return;
+        } else if (viewObject instanceof String viewName) {
+            ViewResolver viewResolver = findViewResolver(viewName);
+            View view = viewResolver.resolve(viewName);
+            view.render(modelAndView.getModel(), request, response);
+            return;
+        }
+        throw new IllegalStateException("Cannot Resolve ModelAndView " + modelAndView);
+    }
+
+    private ViewResolver findViewResolver(String viewName) {
+        ViewResolver foundViewResolver = null;
+        for (ViewResolver viewResolver : viewResolvers) {
+            if (viewResolver.canResolve(viewName)) {
+                foundViewResolver = viewResolver;
+                break;
+            }
+        }
+        if (foundViewResolver == null) throw new IllegalArgumentException("No ViewResolver Found For " + viewName);
+        return foundViewResolver;
     }
 }
