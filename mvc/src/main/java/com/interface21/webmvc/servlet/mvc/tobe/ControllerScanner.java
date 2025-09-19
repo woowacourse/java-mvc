@@ -11,13 +11,8 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Reflections reflections;
-
-    public ControllerScanner(final Object... basePackage) {
-        this.reflections = new Reflections(basePackage);
-    }
-
-    public Set<Class<?>> getControllers() {
+    public Set<Class<?>> getControllers(final Object... basePackage) {
+        Reflections reflections = new Reflections(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
