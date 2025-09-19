@@ -8,6 +8,7 @@ import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.viewResolver.JspViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ public class DispatcherServlet extends HttpServlet {
             new ManualHandlerAdapter()
     );
     private static final List<ViewResolver> DEFAULT_VIEW_RESOLVERS = List.of(
+            new JspViewResolver()
     );
 
     private List<HandlerMapping> handlerMappings;
