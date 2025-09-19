@@ -54,7 +54,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (Entry<Class<?>, Object> entry : controllerMap.entrySet()) {
             Set<Method> requestMappingMethods = getRequestMappingMethods(entry.getKey());
             for (Method method : requestMappingMethods) {
-                RequestMapping requestMapping = entry.getKey().getAnnotation(RequestMapping.class);
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
                 handlerKeys.forEach(handlerKey ->
                         handlerExecutions.put(
