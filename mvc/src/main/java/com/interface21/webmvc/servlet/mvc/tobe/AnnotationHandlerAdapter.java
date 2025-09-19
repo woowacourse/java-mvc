@@ -12,8 +12,7 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    public ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) {
         return ((HandlerExecution) handler).handle(request, response);
     }
 }
