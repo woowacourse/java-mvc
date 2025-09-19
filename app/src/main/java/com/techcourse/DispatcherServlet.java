@@ -18,32 +18,37 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
 
     public DispatcherServlet() {
+        handlerMappings.add(new ManualHandlerMapping());
+        handlerMappings.add(new AnnotationHandlerMapping("com/techcourse/controller"));
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        annotationHandlerMapping = new AnnotationHandlerMapping("com/techcourse/controller");
-        annotationHandlerMapping.initialize();
-
-        handlerMappings.add(manualHandlerMapping);
-        handlerMappings.add(annotationHandlerMapping);
+        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
+    /**
+     * 모든 handlerMapping을 확인하며 요청을 처리할 핸들러가 있는지 찾습니다.
+     * 요청을 처리할 핸들러를 찾았으면, HandlerAdapter를 통해 핸들러에 적합한 방식으로 요청을 처리합니다.
+     * 적절한 핸들러를 찾을 수 없는 경우 에러 응답을 보냅니다.
+     */
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
+            Object handler = null;
             for (HandlerMapping handlerMapping : handlerMappings){
-                HandlerAdapter.handle(request, response, handlerMapping);
+                handler = handlerMapping.getHandler(request);
+                if(handler == null){
+                    continue;
+                }
+                HandlerAdapter.handle(request, response, handler);
+            }
+            if (handler == null){
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);

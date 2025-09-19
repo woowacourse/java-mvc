@@ -8,9 +8,8 @@ import java.util.Map;
 
 public class HandlerAdapter {
     public static void handle(HttpServletRequest request, HttpServletResponse response,
-                               HandlerMapping handlerMapping) throws Exception {
+                               Object handler) throws Exception {
         ModelAndView mav;
-        Object handler = handlerMapping.getHandler(request);
         if (handler instanceof Controller) {
             mav = ((Controller)handler).execute(request, response);
         } else if (handler instanceof HandlerExecution) {
