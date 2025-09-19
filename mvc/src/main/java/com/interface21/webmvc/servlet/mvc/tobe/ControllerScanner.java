@@ -9,19 +9,19 @@ import org.reflections.Reflections;
 
 public final class ControllerScanner {
 
-    public static Map<Class<?>, Object> scan(final Object[] packages) {
-        final Set<Class<?>> controllerClasses = getControllerClasses(packages);
+    private final Reflections reflections;
 
-        return instantiate(controllerClasses);
+    public ControllerScanner(final Object[] packages) {
+        this.reflections = new Reflections(packages);
     }
 
-    private static Set<Class<?>> getControllerClasses(final Object[] packages) {
-        final Reflections reflections = new Reflections(packages);
+    public Map<Class<?>, Object> getControllers() {
+        final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
-        return reflections.getTypesAnnotatedWith(Controller.class);
+        return instantiateControllers(controllerClasses);
     }
 
-    private static Map<Class<?>, Object> instantiate(final Set<Class<?>> controllerClasses) {
+    private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllerClasses) {
         final Map<Class<?>, Object> controllers = new HashMap<>();
 
         for (final Class<?> clazz : controllerClasses) {
