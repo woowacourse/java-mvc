@@ -3,7 +3,7 @@ package com.techcourse;
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +36,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     }
 
     private void initializeHandlerParts(final DispatcherServlet dispatcherServlet) {
-        dispatcherServlet.addHandlerAdapter(new ManualHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
-        dispatcherServlet.addHandlerMapping(new ManualHandlerMapping());
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping());
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
     }
 }

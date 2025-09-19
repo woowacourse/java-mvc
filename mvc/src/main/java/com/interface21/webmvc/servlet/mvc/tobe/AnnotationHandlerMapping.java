@@ -66,7 +66,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void checkHandlerIsAlreadyRegistered(final HandlerKey key) {
         if (handlerExecutions.containsKey(key)) {
-            throw new IllegalArgumentException(
+            throw new RuntimeException(
                     "Duplicate mapping found for " + key.getUrl() + " " + key.getRequestMethod());
         }
     }

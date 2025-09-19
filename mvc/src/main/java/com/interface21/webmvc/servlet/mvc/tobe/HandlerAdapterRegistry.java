@@ -23,6 +23,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No adapter for handler " + handler));
+                .orElseThrow(() -> new RuntimeException("No adapter for handler " + handler));
     }
 }
