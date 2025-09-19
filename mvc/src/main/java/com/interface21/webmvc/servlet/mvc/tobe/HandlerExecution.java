@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.interface21.webmvc.servlet.ModelAndView;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class HandlerExecution {
@@ -15,13 +16,11 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // 리플렉션으로 컨트롤러 메서드 실행
-        Object result = method.invoke(target, request, response);
-
-        if (result instanceof ModelAndView) {
-            return (ModelAndView) result;
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            return (ModelAndView) method.invoke(target, request, response);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("핸들러 실행 실패: " + method, e);
         }
-        throw new IllegalStateException("Controller 메서드가 ModelAndView를 반환하지 않았습니다." + method.getName());
     }
 }
