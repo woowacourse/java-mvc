@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
@@ -42,7 +41,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView modelAndView = processRequest(request, response);
-            move(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -57,14 +56,5 @@ public class DispatcherServlet extends HttpServlet {
             return handlerAdapter.handler(handler, request, response);
         }
         return new ModelAndView(new JspView("redirect:/404.jsp"));
-    }
-
-    private void move(
-            final ModelAndView modelAndView,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws Exception {
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
     }
 }
