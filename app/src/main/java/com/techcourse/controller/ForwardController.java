@@ -13,14 +13,8 @@ import java.util.Objects;
 @Controller
 public class ForwardController {
 
-    private final String path;
-
-    public ForwardController(final String path) {
-        this.path = Objects.requireNonNull(path);
-    }
-
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse rep) {
-        return ModelAndViewFactory.createModelAndViewByViewName(req, path);
+        return ModelAndViewFactory.createModelAndViewByViewName(req, "/index.jsp");
     }
 }
