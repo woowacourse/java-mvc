@@ -2,7 +2,6 @@ package com.techcourse.controller;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -17,8 +16,8 @@ public class LoginViewController implements Controller {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                    return ModelAndView.ofJspView("redirect:/index.jsp");
                 })
-                .orElse(new ModelAndView(new JspView("/login.jsp")));
+                .orElse(ModelAndView.ofJspView("/login.jsp"));
     }
 }

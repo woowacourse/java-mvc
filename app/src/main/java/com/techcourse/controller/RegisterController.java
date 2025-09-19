@@ -2,7 +2,6 @@ package com.techcourse.controller;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +23,6 @@ public class RegisterController implements Controller {
         StringBuilder builder = new StringBuilder();
         log.info(builder.append("회원가입 성공 : ").append(user).toString());
 
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return ModelAndView.ofJspView("redirect:/index.jsp");
     }
 }
