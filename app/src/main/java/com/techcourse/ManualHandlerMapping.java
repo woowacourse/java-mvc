@@ -1,6 +1,8 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mapping.HandlerMapping;
 import com.techcourse.controller.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
@@ -9,7 +11,7 @@ import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerMapping {
+public class ManualHandlerMapping  implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(ManualHandlerMapping.class);
 
@@ -30,6 +32,12 @@ public class ManualHandlerMapping {
 
     public Controller getHandler(final String requestURI) {
         log.debug("Request Mapping Uri : {}", requestURI);
+        return controllers.get(requestURI);
+    }
+
+    @Override
+    public Object getHandler(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
         return controllers.get(requestURI);
     }
 }

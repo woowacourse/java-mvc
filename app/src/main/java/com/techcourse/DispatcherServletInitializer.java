@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.techcourse.config.MvcServletConfig;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        MvcServletConfig servletConfig = new MvcServletConfig();
+        final var dispatcherServlet = new DispatcherServlet(
+                servletConfig.createHandlerMappingRegistry(),
+                servletConfig.createHandlerAdapterRegistry()
+        );
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {

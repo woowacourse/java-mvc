@@ -1,51 +1,58 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final HandlerMappingRegistry handlerMappingRegistry,final HandlerAdapterRegistry handlerAdapterRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
-    public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-    }
-
-    @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            // 1. 요청에 맞는 핸들러 찾기
+            Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new RuntimeException("핸들러가 없습니다. URI: " + request.getRequestURI()));
+
+            // 2. 핸들러에 맞는 Adapter 가져오기
+            HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+
+            // 3. 핸들러 실행 → ModelAndView 반환
+            ModelAndView mav = adapter.handle(request, response, handler);
+
+            // 4. View 렌더링
+            move(mav, request, response);
+
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            log.error("DispatcherServlet 처리 중 에러: {}", e.getMessage(), e);
+            throw new ServletException(e);
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
+    private void move(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (mav == null) {
             return;
         }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        View view = mav.getView();
+        view.render(mav.getModel(), request, response);
     }
 }
