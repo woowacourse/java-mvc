@@ -13,12 +13,7 @@ import org.slf4j.LoggerFactory;
 public class JsonView implements View {
 
     private static final Logger log = LoggerFactory.getLogger(JsonView.class);
-
-    private final ObjectMapper objectMapper;
-
-    public JsonView() {
-        this.objectMapper = new ObjectMapper();
-    }
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public void render(
@@ -26,7 +21,7 @@ public class JsonView implements View {
             final HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
-        final String jsonOutput = objectMapper.writeValueAsString(model);
+        final String jsonOutput = OBJECT_MAPPER.writeValueAsString(model);
         log.debug("json body: {}", jsonOutput);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
