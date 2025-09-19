@@ -21,7 +21,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-    
+
     public AnnotationHandlerMapping(final String basePackage, final String... others) {
         this.basePackage = Stream.concat(Stream.of(basePackage), Arrays.stream(others)).toArray(String[]::new);
     }
@@ -52,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
         log.info("Initialized AnnotationHandlerMapping!");
         handlerExecutions.keySet()
-                .forEach(handlerKey -> log.info("Path : {}, Controller : {}", handlerKey.url(), handlerExecutions.get(handlerKey).getHandler().getClass()));
+                .forEach(handlerKey -> log.info("{} {}, Controller={}", handlerKey.requestMethod(), handlerKey.url(), handlerExecutions.get(handlerKey).getHandler().getClass()));
     }
 
     @Override
