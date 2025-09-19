@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings = new ArrayList<>();
 
         addHandlerMapping(new ManualHandlerMapping());
-        addHandlerMapping(new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.handler.adapter"));
+        addHandlerMapping(new AnnotationHandlerMapping("com.interface21"));
 
         handlerAdapters = new ArrayList<>();
 
