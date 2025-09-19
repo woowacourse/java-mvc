@@ -1,17 +1,20 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
@@ -19,5 +22,10 @@ public class RegisterController implements Controller {
         InMemoryUserRepository.save(user);
 
         return new ModelAndView(new JspView("redirect:/index.jsp"));
+    }
+
+    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
+    public ModelAndView registerView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return new ModelAndView(new JspView("/register.jsp"));
     }
 }
