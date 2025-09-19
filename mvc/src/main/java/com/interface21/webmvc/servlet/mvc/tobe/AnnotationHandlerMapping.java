@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,16 +27,21 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        final HandlerKey handlerKey = new HandlerKey(
+                request.getRequestURI(),
+                RequestMethod.valueOf(request.getMethod())
+        );
+        return handlerExecutions.get(handlerKey);
+    }
+
+    @Override
     public void initialize() {
         final Set<Class<?>> controllers = scanController();
         final Set<Method> requestMappingMethods = scanRequestMappingAnnotatedMethod(controllers);
         registerRequestMapping(requestMappingMethods);
         log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        return handlerExecutions.get(handlerKey);
     }
 
     private Set<Class<?>> scanController() {
@@ -80,9 +85,7 @@ public class AnnotationHandlerMapping {
     private Object generateInstance(Method method) {
         try {
             return method.getDeclaringClass().newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
