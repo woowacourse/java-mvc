@@ -47,22 +47,32 @@ public class AnnotationHandlerMapping {
         final Reflections reflections = new Reflections(packageName);
         final Set<Class<?>> controllersClasses = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controllerClass : controllersClasses) {
-            registerControllerMethods(controllerClass);
+            final Object controllerInstance = getInstanceBy(controllerClass);
+            registerControllerMethods(controllerInstance);
         }
     }
 
-    private void registerControllerMethods(final Class<?> controllerClass) {
-        final Method[] declaredMethods = controllerClass.getDeclaredMethods();
+    private Object getInstanceBy(final Class<?> controllersClass) {
+        try {
+            return controllersClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void registerControllerMethods(final Object controllerInstance) {
+        final Method[] declaredMethods = controllerInstance.getClass().getDeclaredMethods();
         for (Method declaredMethod : declaredMethods) {
-            registerHandlerMethod(controllerClass, declaredMethod);
+            registerHandlerMethod(controllerInstance, declaredMethod);
         }
     }
 
-    private void registerHandlerMethod(final Class<?> controllerClass, final Method declaredMethod) {
+    private void registerHandlerMethod(final Object controllerInstance, final Method declaredMethod) {
         if (isAnnotationPresent(declaredMethod)) {
             final RequestMapping requestMapping = declaredMethod.getAnnotation(RequestMapping.class);
             final List<HandlerKey> handlerKey = getHandlerKey(requestMapping);
-            final HandlerExecution handlerExecution = getHandlerExecution(controllerClass, declaredMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, declaredMethod);
             for (HandlerKey key : handlerKey) {
                 handlerExecutions.put(key, handlerExecution);
             }
@@ -76,7 +86,6 @@ public class AnnotationHandlerMapping {
     private List<HandlerKey> getHandlerKey(final RequestMapping requestMapping) {
         final String url = requestMapping.value();
         final RequestMethod[] method = requestMapping.method();
-
         if (isEmptyHttpMethod(method)) {
             return getHandlerKeysForAllHttpMethod(url);
         }
@@ -96,17 +105,4 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private HandlerExecution getHandlerExecution(final Class<?> controllersClass, final Method declaredMethod) {
-        final Object controllerInstance = getInstanceBy(controllersClass);
-        return new HandlerExecution(controllerInstance, declaredMethod);
-    }
-
-    private Object getInstanceBy(final Class<?> controllersClass) {
-        try {
-            return controllersClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
