@@ -45,16 +45,18 @@ public class AnnotationHandlerMapping {
                     String fullPath = normalize(basePath, methodRequestMapping.value());
                     RequestMethod[] requestMethods = getRequestMethods(methodRequestMapping);
                     for (RequestMethod requestMethod : requestMethods) {
-                        handlerExecutions.put(new HandlerKey(fullPath, requestMethod),
-                                new HandlerExecution(controller, method));
+                        HandlerExecution handlerExecution = handlerExecutions.putIfAbsent(new HandlerKey(fullPath, requestMethod), new HandlerExecution(controller, method));
+                        if (handlerExecution != null) {
+                            throw new IllegalStateException("Duplicate handler mapping detected");
+                        }
                     }
                 }
             }
             return Collections.unmodifiableMap(handlerExecutions);
         } catch (RuntimeException e) {
-            throw e;
+            throw new IllegalStateException("AnnotationHandlerMapping runtime failure = " + e);
         } catch (Exception e) {
-            throw new IllegalStateException("annotationHandlerMapping initialization failure");
+            throw new IllegalStateException("annotationHandlerMapping initialization failure = " + e);
         }
     }
 
