@@ -71,9 +71,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerRequestMapping(Method method) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
-            return;
-        }
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         Arrays.stream(requestMapping.method()).forEach(requestMethod -> {
             final HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
