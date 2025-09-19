@@ -29,13 +29,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        handlerMappings.add(manualHandlerMapping);
+        addHandlerMapping(manualHandlerMapping);
 
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMappings.add(annotationHandlerMapping);
+        addHandlerMapping(annotationHandlerMapping);
 
-        manualHandlerMapping.initialize();
-        annotationHandlerMapping.initialize();
+        initializeHandlerMapping();
     }
 
     @Override
@@ -50,6 +49,14 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void initializeHandlerMapping() {
+        handlerMappings.forEach(HandlerMapping::initialize);
+    }
+
+    private void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMappings.add(handlerMapping);
     }
 
     private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
