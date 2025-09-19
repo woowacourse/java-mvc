@@ -9,24 +9,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class AnnotationHandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackages;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final HandlerExecutions handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
         this.basePackages = basePackages;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = HandlerExecutions.empty();
     }
 
     public void initialize() {
         try {
             for (Object basePackage : basePackages) {
-                handlerExecutions.putAll(getHandlerExecutions(basePackage));
+                handlerExecutions.addAll(getHandlerExecutions(basePackage));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -34,8 +36,8 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Map<HandlerKey, HandlerExecution> getHandlerExecutions(Object basePackage) throws Exception {
-        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    public HandlerExecutions getHandlerExecutions(Object basePackage) throws Exception {
+        HandlerExecutions handlerExecutions = HandlerExecutions.empty();
         Set<Class<?>> controllerClasses = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllerClasses) {
@@ -51,11 +53,12 @@ public class AnnotationHandlerMapping {
                     String path = basePath + requestMapping.value();
                     List<RequestMethod> requestMethods = Arrays.asList(requestMapping.method());
 
-                    requestMethods.stream()
-                            .map(requestMethod -> new HandlerKey(path, requestMethod))
-                            .forEach(handlerKey ->
-                                    handlerExecutions.put(handlerKey, new HandlerExecution(instance, method))
-                            );
+                    requestMethods.forEach(requestMethod ->
+                            handlerExecutions.add(
+                                    new HandlerKey(path, requestMethod),
+                                    new HandlerExecution(instance, method)
+                            )
+                    );
                 }
             }
         }
@@ -64,9 +67,8 @@ public class AnnotationHandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-
-        return handlerExecutions.get(
-                new HandlerKey(request.getRequestURI(), RequestMethod.fromString(request.getMethod()))
-        );
+        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.fromString(request.getMethod()));
+        return handlerExecutions.get(handlerKey)
+                .orElseThrow(() -> new IllegalArgumentException("No handler execution found for: " + handlerKey));
     }
 }
