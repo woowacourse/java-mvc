@@ -23,7 +23,7 @@ public class ControllerScanner {
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllerClasses) {
         final Map<Class<?>, Object> controllers = new HashMap<>();
         try {
-            for (Class<?> controllerClass : controllerClasses) {
+            for (final Class<?> controllerClass : controllerClasses) {
                 final Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
                 controllers.put(controllerClass, controllerInstance);
             }
