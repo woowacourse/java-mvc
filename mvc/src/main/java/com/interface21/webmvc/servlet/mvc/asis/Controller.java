@@ -6,3 +6,4 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface Controller {
     String execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception;
 }
+
