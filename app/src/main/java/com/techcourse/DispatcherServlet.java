@@ -1,12 +1,14 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.view.JspView;
-import com.interface21.webmvc.servlet.view.ViewResolver;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +17,9 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
     private ManualHandlerMapping manualHandlerMapping;
+    private AnnotationHandlerMapping annotationHandlerMapping;
 
     public DispatcherServlet() {
     }
@@ -24,6 +28,12 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+
+        annotationHandlerMapping = new AnnotationHandlerMapping("com/techcourse/controller");
+        annotationHandlerMapping.initialize();
+
+        handlerMappings.add(manualHandlerMapping);
+        handlerMappings.add(annotationHandlerMapping);
     }
 
     @Override
@@ -31,14 +41,11 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-
-            ViewResolver.checkRedirect(viewName, response);
-            new JspView(viewName).render(Map.of(), request, response);
-        } catch (Throwable e) {
+            for (HandlerMapping handlerMapping : handlerMappings){
+                HandlerAdapter.handle(request, response, handlerMapping);
+            }
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
