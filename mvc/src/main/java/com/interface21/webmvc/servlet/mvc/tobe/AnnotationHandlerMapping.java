@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,10 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void registerHandler(Class<?> controller) throws Exception {
+    private void registerHandler(Class<?> controller)
+            throws InstantiationException,IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException {
         Object controllerInstance = controller.getDeclaredConstructor().newInstance();
         Method[] methods = controller.getDeclaredMethods();
 
