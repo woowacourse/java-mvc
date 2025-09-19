@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -34,13 +35,9 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         try {
-            for (Object basePackage : basePackages) {
-                Reflections reflections = new Reflections(basePackage);
-                // @Controller 어노테이션이 붙은 클래스들 가져오기
-                final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-                final Map<Class<?>, Object> controllers = createControllerInstances(controllerClasses);
-                initializeHandlerExecutions(controllers);
-            }
+            final Map<Class<?>, Object> controllers = initializeControllerInstances();
+            final Map<HandlerKey, HandlerExecution> executions = buildHandlerExecutions(controllers);
+            handlerExecutions.putAll(executions);
         } catch (Exception e) {
             throw new RuntimeException("AnnotationHandlerMapping 초기화에 실패했습니다.", e);
         }
@@ -52,31 +49,52 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
+    private Map<Class<?>, Object> initializeControllerInstances() throws Exception {
+        final Map<Class<?>, Object> controllers = new HashMap<>();
+        for (Object basePackage : basePackages) {
+            final Set<Class<?>> controllerClasses = scanControllerClasses(basePackage);
+            final Map<Class<?>, Object> controllerInstances = createControllerInstances(controllerClasses);
+            controllers.putAll(controllerInstances);
+        }
+        return controllers;
+    }
+
+    private Set<Class<?>> scanControllerClasses(Object basePackage) {
+        Reflections reflections = new Reflections(basePackage);
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
+
     /**
      * @Controller 어노테이션이 붙은 클래스들의 인스턴스를 생성하여 맵 형태로 반환
      */
     private Map<Class<?>, Object> createControllerInstances(final Set<Class<?>> controllerClasses) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Map<Class<?>, Object> controllers = new HashMap<>();
         for (final Class<?> controllerClass : controllerClasses) {
-            controllers.put(controllerClass, controllerClass.getDeclaredConstructor().newInstance());
+            Constructor<?> constructor = controllerClass.getDeclaredConstructor();
+            controllers.put(controllerClass, constructor.newInstance());
         }
         return controllers;
     }
 
     /**
-     * 각 컨트롤러의 메서드를 스캔하고 @RequestMapping 정보를 기반으로 핸들러 맵을 초기화
+     * 각 컨트롤러의 메서드를 스캔하고 @RequestMapping 정보를 기반으로 핸들러 맵을 구성
      */
-    private void initializeHandlerExecutions(final Map<Class<?>, Object> controllers) {
+    private Map<HandlerKey, HandlerExecution> buildHandlerExecutions(final Map<Class<?>, Object> controllers) {
+        final Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
         for (final Class<?> controllerClass : controllers.keySet()) {
             final Object controller = controllers.get(controllerClass);
-            final Method[] methods = controllerClass.getDeclaredMethods();
-            for (final Method method : methods) {
-                //메서드에 붙은 @RequestMapping 어노테이션 가져오기
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                // @RequestMapping이 안붙은 메서드이면 null
-                if (requestMapping != null) {
-                    registerHandlerExecution(method, requestMapping.method(), requestMapping.value(), controller);
-                }
+            processControllerMethods(executions, controllerClass, controller);
+        }
+        return executions;
+    }
+
+    private void processControllerMethods(final Map<HandlerKey, HandlerExecution> executions, final Class<?> controllerClass, final Object controller) {
+        final Method[] methods = controllerClass.getDeclaredMethods();
+        for (final Method method : methods) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping != null) {
+                final HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                registerHandlerExecution(executions, requestMapping, handlerExecution);
             }
         }
     }
@@ -84,14 +102,28 @@ public class AnnotationHandlerMapping {
     /**
      * 핸들러 메서드 정보를 handlerExecutions 맵에 등록
      */
-    private void registerHandlerExecution(final Method method, final RequestMethod[] requestMethods, final String url, final Object controller) {
+    private void registerHandlerExecution(
+            final Map<HandlerKey, HandlerExecution> handlerExecutionMap,
+            final RequestMapping requestMapping,
+            final HandlerExecution handlerExecution
+    ) {
+        final String url = requestMapping.value();
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping);
+
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-            if (handlerExecutions.containsKey(handlerKey)) {
+            if (handlerExecutionMap.containsKey(handlerKey)) {
                 throw new IllegalStateException("이미 존재하는 HandlerKey 입니다.");
             }
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
-            handlerExecutions.put(handlerKey, handlerExecution);
+            handlerExecutionMap.put(handlerKey, handlerExecution);
         }
+    }
+
+    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+        RequestMethod[] requestMethods = requestMapping.method();
+        if (requestMethods.length == 0) {
+            requestMethods = new RequestMethod[]{RequestMethod.GET};
+        }
+        return requestMethods;
     }
 }
