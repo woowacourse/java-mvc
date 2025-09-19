@@ -3,7 +3,6 @@ package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
