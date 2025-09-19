@@ -8,7 +8,6 @@ import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView get(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView get(final HttpServletRequest request) {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
@@ -28,7 +27,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView post(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView post(final HttpServletRequest request) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
