@@ -18,7 +18,6 @@ public class AnnotationHandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
-    private final Map<Class<?>, Object> controllerCache = new HashMap<>();
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
@@ -34,7 +33,7 @@ public class AnnotationHandlerMapping {
             for (Class<?> controllerClass : reflections.getTypesAnnotatedWith(Controller.class)) {
                 String basePath = getBasePath(controllerClass);
 
-                Object controller = getController(controllerClass);
+                Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
                 for (Method method : controllerClass.getMethods()) {
                     RequestMapping methodRequestMapping = method.getAnnotation(RequestMapping.class);
@@ -57,17 +56,6 @@ public class AnnotationHandlerMapping {
             throw new IllegalStateException("AnnotationHandlerMapping runtime failure = " + e);
         } catch (Exception e) {
             throw new IllegalStateException("annotationHandlerMapping initialization failure = " + e);
-        }
-    }
-
-    private Object getController(Class<?> controllerClass) {
-        try {
-            Object controller = controllerClass.getDeclaredConstructor().newInstance();
-            controllerCache.putIfAbsent(controllerClass, controller);
-
-            return controllerCache.get(controllerClass);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
