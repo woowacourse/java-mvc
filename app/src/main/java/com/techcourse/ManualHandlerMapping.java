@@ -35,7 +35,8 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(HttpServletRequest httpServletRequest) {
-        String requestURI = httpServletRequest.getRequestURI();
+        String requestUriWithContextPath = httpServletRequest.getRequestURI();
+        String requestURI = requestUriWithContextPath.substring(httpServletRequest.getContextPath().length());
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
