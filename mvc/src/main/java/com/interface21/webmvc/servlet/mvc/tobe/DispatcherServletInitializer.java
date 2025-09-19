@@ -1,8 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.WebApplicationInitializer;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
