@@ -67,7 +67,7 @@ public class DispatcherServlet extends HttpServlet {
     private ModelAndView execute(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.supports(adapter)) {
+            if (adapter.supports(handler)) {
                 return adapter.handle(request, response, handler);
             }
         }
