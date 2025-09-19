@@ -1,24 +1,21 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    public HandlerExecution() {
+    private final Object handler;
+    private final Method method;
+
+    public HandlerExecution(final Object handler, final Method method) {
+        this.handler = handler;
+        this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request) {
-        JspView jspView = new JspView(request.getRequestURI());
-
-        ModelAndView modelAndView = new ModelAndView(jspView);
-
-        if (request.getAttribute("id") != null) {
-            String id = (String) request.getAttribute("id");
-            modelAndView.addObject("id", id);
-        }
-
-        return modelAndView;
+    public ModelAndView handle(final HttpServletRequest request) throws Exception {
+        return (ModelAndView) method.invoke(handler, request);
     }
 }

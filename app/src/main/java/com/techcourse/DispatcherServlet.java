@@ -23,9 +23,8 @@ public class DispatcherServlet extends HttpServlet {
 
     public DispatcherServlet() {
         this.handlerMappingList =
-                List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse.controller"));
+                List.of(new AnnotationHandlerMapping("com.techcourse.controller"));
         this.handlerAdapters = List.of(
-                new ControllerAdapter(),
                 new AnnotatedHandlerAdapter()
         );
     }
