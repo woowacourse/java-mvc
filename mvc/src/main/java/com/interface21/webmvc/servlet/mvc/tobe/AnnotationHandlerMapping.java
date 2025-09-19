@@ -6,12 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -23,11 +24,12 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Map<Class<?>, Object> controllers = ControllerScanner.scan(basePackage);
 
-        for (final Class<?> clazz : controllers.keySet()) {
-            registerHandlerMethods(clazz, controllers.get(clazz));
+        for (final Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            registerHandlerMethods(entry.getKey(), entry.getValue());
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -68,6 +70,7 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String httpMethod = request.getMethod();
