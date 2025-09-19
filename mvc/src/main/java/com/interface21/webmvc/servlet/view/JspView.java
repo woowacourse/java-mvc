@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JspView : 스프링 초창기 프레임워크에서 등장했던 뷰 구현체. JSP 파일을 이용해서 화면을 그린다. JSP(JavaServerPage) : 자바 진영의 오래된 웹 뷰 기술. HTML 안에 자바 코드를
- * 삽입할 수 있는 서버 사이드 템플릿 언어.
+ * JspView : 스프링 초창기 프레임워크에서 등장했던 뷰 구현체. JSP 파일을 이용해서 화면을 그린다.
+ * JSP(JavaServerPage) : 자바 진영의 오래된 웹 뷰 기술. HTML 안에 자바 코드를 삽입할 수 있는 서버 사이드 템플릿 언어.
  */
 public class JspView implements View {
 
@@ -42,7 +42,7 @@ public class JspView implements View {
          */
         bindRequestAttribute(model, request);
 
-        // view를 직접 그리는 부분 : JSP Servlet 으로 forward 처리
+        // JSP Servlet 으로 forward 처리
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
