@@ -1,13 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.handler.mapping.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.Controller;
-import com.interface21.webmvc.servlet.mvc.ForwardController;
+import com.interface21.webmvc.servlet.controller.Controller;
+import com.interface21.webmvc.servlet.controller.ForwardController;
 import com.techcourse.controller.LoginController;
 import com.techcourse.controller.LoginViewController;
 import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;

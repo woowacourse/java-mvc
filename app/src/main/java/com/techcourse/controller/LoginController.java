@@ -7,7 +7,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.Controller;
+import com.interface21.webmvc.servlet.controller.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

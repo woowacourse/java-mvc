@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.view;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -21,11 +22,11 @@ public class ModelAndView {
         return this;
     }
 
-    public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
         try {
             this.view.render(this.model, httpServletRequest, httpServletResponse);
         } catch (Exception exception) {
-            throw new RuntimeException("View 렌더링 도중 오류가 발생하였습니다.");
+            throw new ServletException("View 렌더링 도중 오류가 발생하였습니다.");
         }
     }
 

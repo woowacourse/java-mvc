@@ -3,7 +3,7 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.handler.HandlerExecution;
 import com.interface21.webmvc.servlet.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.handler.mapping.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.Controller;
+import com.interface21.webmvc.servlet.controller.Controller;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
