@@ -17,7 +17,6 @@ public class ManualHandlerAdaptor implements HandlerAdaptor {
     public ModelAndView handle(final Object handler, final HttpServletRequest request,
                                final HttpServletResponse response)
             throws Exception {
-        final String viewName = ((Controller) handler).execute(request, response);
-        return new ModelAndView(new JspView(viewName));
+        return ((Controller) handler).execute(request, response);
     }
 }

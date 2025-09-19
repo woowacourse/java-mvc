@@ -22,7 +22,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public void initialize() {
         final var controllerScanner = new ControllerScanner(basePackage);
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
         for (Entry<Class<?>, Object> controllerMap : controllers.entrySet()) {
             final Class<?> controllerClass = controllerMap.getKey();
             final Object controllerInstance = controllerMap.getValue();
