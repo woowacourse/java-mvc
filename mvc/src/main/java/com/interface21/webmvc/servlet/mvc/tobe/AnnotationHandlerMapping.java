@@ -34,9 +34,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        controllers.entrySet().forEach(entry -> registerHandler(
-            entry.getKey(), entry.getValue()
-        ));
+        controllers.forEach(this::registerHandler);
     }
 
     private void registerHandler(final Class<?> clazz, final Object handler) {
