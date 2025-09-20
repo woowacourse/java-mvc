@@ -1,10 +1,11 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.NotFoundHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 public class HandlerMappingRegistry {
 
@@ -15,13 +16,11 @@ public class HandlerMappingRegistry {
         this.handlerMappings.add(handlerMapping);
     }
 
-    public Optional<Object> getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return Optional.of(handler);
-            }
-        }
-        return Optional.empty();
+    public Object getHandler(final HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(new NotFoundHandler());
     }
 }

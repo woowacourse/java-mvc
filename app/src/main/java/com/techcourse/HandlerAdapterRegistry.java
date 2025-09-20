@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.NotFoundHandlerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,6 @@ public class HandlerAdapterRegistry {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.canHandle(handler))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No Adapter found for handler"));
+                .orElse(new NotFoundHandlerAdapter());
     }
 }

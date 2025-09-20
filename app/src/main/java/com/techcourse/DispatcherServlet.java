@@ -50,8 +50,7 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletResponse response
     ) throws ServletException {
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow(() -> new ServletException("No handler found for request"));
+            final Object handler = handlerMappingRegistry.getHandler(request);
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
