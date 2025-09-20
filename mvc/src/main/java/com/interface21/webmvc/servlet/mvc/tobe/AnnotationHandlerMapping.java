@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod httpMethod : httpMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
-            System.out.println(handlerKey);
+
             if (handlerExecutions.containsKey(handlerKey)) {
                 throw new IllegalStateException("중복된 핸들러 매핑이 존재합니다: " + handlerKey);
             }
