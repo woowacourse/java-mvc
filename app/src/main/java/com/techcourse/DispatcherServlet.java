@@ -30,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapter = new HandlerAdapter(
                 List.of(
                         new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.tobe")
+                        new AnnotationHandlerMapping("com.techcourse")
                 )
         );
     }
