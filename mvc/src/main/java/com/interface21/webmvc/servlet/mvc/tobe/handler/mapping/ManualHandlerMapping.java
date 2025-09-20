@@ -1,7 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe.handler.mapping;
 
-import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.HandlerMapping;
-import com.techcourse.controller.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
