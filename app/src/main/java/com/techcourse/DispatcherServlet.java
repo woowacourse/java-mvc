@@ -39,17 +39,15 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
-            Object handler = null;
             for (HandlerMapping handlerMapping : handlerMappings){
-                handler = handlerMapping.getHandler(request);
+                var handler = handlerMapping.getHandler(request);
                 if(handler == null){
                     continue;
                 }
                 HandlerAdapter.handle(request, response, handler);
+                return;
             }
-            if (handler == null){
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            }
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
