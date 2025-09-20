@@ -9,6 +9,7 @@ import com.techcourse.controller.LogoutController;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +33,10 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest httpServletRequest) {
+    public Optional<Object> getHandler(HttpServletRequest httpServletRequest) {
         String requestURI = parseUriFromHttpServletRequest(httpServletRequest);
         log.debug("Request Mapping Uri : {}", requestURI);
-        return controllers.get(requestURI);
+        return Optional.ofNullable(controllers.get(requestURI));
     }
 
     private String parseUriFromHttpServletRequest(HttpServletRequest httpServletRequest) {

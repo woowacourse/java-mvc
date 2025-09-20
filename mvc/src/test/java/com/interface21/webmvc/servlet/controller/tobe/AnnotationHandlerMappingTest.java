@@ -31,7 +31,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/get-test");
         when(request.getMethod()).thenReturn("GET");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request)
+            .orElseThrow(() -> new IllegalArgumentException("잘못된 URI입니다."));
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -46,7 +47,8 @@ class AnnotationHandlerMappingTest {
         when(request.getRequestURI()).thenReturn("/post-test");
         when(request.getMethod()).thenReturn("POST");
 
-        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final HandlerExecution handlerExecution = (HandlerExecution) handlerMapping.getHandler(request)
+            .orElseThrow(() -> new IllegalArgumentException("잘못된 URI입니다."));
         final ModelAndView modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");

@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.reflections.ReflectionUtils;
 
@@ -45,10 +46,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(HttpServletRequest httpServletRequest) {
+    public Optional<Object> getHandler(HttpServletRequest httpServletRequest) {
         String requestURI = parseUriFromHttpServletRequest(httpServletRequest);
         HandlerKey handlerKey = new HandlerKey(requestURI, RequestMethod.from(httpServletRequest.getMethod()));
-        return this.handlerExecutions.get(handlerKey);
+        return Optional.ofNullable(this.handlerExecutions.get(handlerKey));
     }
 
     private String parseUriFromHttpServletRequest(HttpServletRequest httpServletRequest) {
