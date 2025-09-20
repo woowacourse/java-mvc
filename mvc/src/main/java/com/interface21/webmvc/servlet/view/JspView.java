@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
 import com.interface21.webmvc.servlet.View;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,6 +20,8 @@ public class JspView implements View {
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
         }
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(getViewName());
+        requestDispatcher.forward(request, response);
     }
 
     @Override
