@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.asis;
 
-import com.interface21.context.stereotype.Controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;

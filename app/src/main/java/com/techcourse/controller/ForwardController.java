@@ -8,11 +8,13 @@ import com.techcourse.factory.ModelAndViewFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Controller
-public class RegisterViewController {
+import java.util.Objects;
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return ModelAndViewFactory.createModelAndViewByViewName( req,"/register.jsp");
+@Controller
+public class ForwardController {
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse rep) {
+        return ModelAndViewFactory.createModelAndViewByViewName(req, "/index.jsp");
     }
 }

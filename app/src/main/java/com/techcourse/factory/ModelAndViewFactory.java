@@ -1,36 +1,24 @@
-package com.techcourse;
+package com.techcourse.factory;
 
-import com.interface21.webmvc.servlet.HandlerAdapter;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualHandlerAdapter implements HandlerAdapter {
-    @Override
-    public boolean supports(Object handler) {
-        return handler instanceof Controller;
+public class ModelAndViewFactory {
+
+    private ModelAndViewFactory() {
     }
 
-    @Override
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        String viewName = ((Controller) handler).execute(request, response);
-
-        if (viewName == null || viewName.isBlank()) {
-            throw new IllegalArgumentException();
-        }
-
+    public static ModelAndView createModelAndViewByViewName(HttpServletRequest request, String viewName) {
         JspView jspView = new JspView(viewName);
         Map<String, Object> model = buildModel(request);
         return new ModelAndView(jspView, model);
     }
 
-    private Map<String, Object> buildModel(final HttpServletRequest request) {
+    private static Map<String, Object> buildModel(final HttpServletRequest request) {
         final var model = new HashMap<String, Object>();
         final Enumeration<String> attributeNames = request.getAttributeNames();
 
