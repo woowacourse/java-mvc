@@ -1,21 +1,21 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handlermapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,43 +27,39 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controller : controllers) {
-            registerHandlers(controller);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        for (Class<?> controller : controllerScanner.getClasses()) {
+            Method[] handlers = controller.getMethods();
+            for (Method handler : handlers) {
+                try {
+                    Object controllerInstance = controllerScanner.getInstance(controller);
+                    registerHandlerExecution(controllerInstance, handler);
+                } catch (Exception e) {
+                    log.error("error occurred while register " + handler.getName(), e);
+                }
+            }
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private void registerHandlers(Class<?> clazz) {
-        Method[] handlers = clazz.getMethods();
-        for (Method handler : handlers) {
-            try {
-                registerHandler(clazz, handler);
-            } catch (Exception e) {
-                log.error("error occurred while register " + handler.getName(), e);
-            }
-        }
-    }
-
-    private void registerHandler(Class<?> clazz, Method handler) throws Exception {
+    private void registerHandlerExecution(Object controllerInstance, Method handler) {
         RequestMapping mappingAnnotation = handler.getAnnotation(RequestMapping.class);
         if (mappingAnnotation == null) {
             return;
         }
-
         RequestMethod[] requestMethods = mappingAnnotation.method();
         if (requestMethods.length == 0) { // method 미설정 시 모든 HTTP method 지원
             requestMethods = RequestMethod.values();
         }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(mappingAnnotation.value(), requestMethod);
-            Object controllerInstance = clazz.getDeclaredConstructor().newInstance();
             handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, handler));
         }
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         String requestURI = request.getRequestURI();
