@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
-    private static final String APP_CONTROLLER_PACKAGE = "app.src.main.java.com.techcourse.controller";
+    private static final String APP_CONTROLLER_PACKAGE = "com.techcourse";
 
     private final Object[] basePackages;
     private final ControllerScanner controllerScanner;

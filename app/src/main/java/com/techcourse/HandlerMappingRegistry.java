@@ -14,6 +14,7 @@ public class HandlerMappingRegistry {
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
         handlerMappings.add(handlerMapping);
+        handlerMapping.initialize();
     }
 
     Optional<Object> getHandler(final HttpServletRequest request) {
