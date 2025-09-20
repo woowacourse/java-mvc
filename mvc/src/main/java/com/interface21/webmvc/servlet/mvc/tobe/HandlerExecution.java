@@ -9,12 +9,14 @@ import java.lang.reflect.Method;
 public class HandlerExecution {
 
     private final Method method;
+    private final Object executor;
 
-    public HandlerExecution(Method method) {
+    public HandlerExecution(Object executor, Method method) {
+        this.executor = executor;
         this.method = method;
     }
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), request, response);
+        return (ModelAndView) method.invoke(executor, request, response);
     }
 }

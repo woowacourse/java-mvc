@@ -47,9 +47,14 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerControllerMappings(Class<?> controller) {
-        final List<Method> methods = findRequestMappingMethods(controller);
-        for (Method method : methods) {
-            registerMethodMapping(method);
+        try {
+            final List<Method> methods = findRequestMappingMethods(controller);
+            final Object executor = controller.getDeclaredConstructor().newInstance();
+            for (Method method : methods) {
+                registerMethodMapping(executor, method);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 
@@ -59,14 +64,14 @@ public class AnnotationHandlerMapping {
                 .toList();
     }
 
-    private void registerMethodMapping(Method method) {
+    private void registerMethodMapping(Object controller, Method method) {
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String path = requestMapping.value();
         final RequestMethod[] requestMethods = resolveRequestMethods(requestMapping);
 
         for (RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(path, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(method));
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
     }
 
