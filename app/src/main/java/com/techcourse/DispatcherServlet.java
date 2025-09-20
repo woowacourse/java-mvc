@@ -1,11 +1,9 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +29,11 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            JspView view = new JspView(viewName);
-            view.render(new HashMap<>(), request, response);
+            final var controller = manualHandlerMapping.getHandler(request);
+            // todo: handler adapter 이용해서 실행 가능하게 수정
+//            final var viewName = controller.execute(request, response);
+//            JspView view = new JspView(viewName);
+//            view.render(new HashMap<>(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
