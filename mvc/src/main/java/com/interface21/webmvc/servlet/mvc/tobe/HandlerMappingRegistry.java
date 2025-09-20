@@ -10,6 +10,7 @@ public class HandlerMappingRegistry {
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
         this.handlerMappings.add(handlerMapping);
     }
 
