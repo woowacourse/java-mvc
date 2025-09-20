@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.controller.Controller;
 import com.interface21.webmvc.servlet.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -30,19 +31,16 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = httpServletRequest.getRequestURI();
         log.debug("Method : {}, Request URI : {}", httpServletRequest.getMethod(), requestURI);
 
-        Object handler = getHandler(httpServletRequest);
+        Object handler = this.handlerMappings.getHandler(httpServletRequest);
         ModelAndView modelAndView = executeHandler(handler, httpServletRequest, httpServletResponse);
         modelAndView.render(httpServletRequest, httpServletResponse);
-    }
-
-    private Object getHandler(HttpServletRequest httpServletRequest) throws ServletException {
-        return this.handlerMappings.getHandler(httpServletRequest);
     }
 
     private ModelAndView executeHandler(Object handler, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
         try {
             if (handler instanceof Controller) {
-                return ((Controller) handler).execute(httpServletRequest, httpServletResponse);
+                String viewName = ((Controller) handler).execute(httpServletRequest, httpServletResponse);
+                return new ModelAndView(new JspView(viewName));
             } else if (handler instanceof HandlerExecution) {
                 return ((HandlerExecution) handler).handle(httpServletRequest, httpServletResponse);
             } else {
