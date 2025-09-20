@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.interface21.web.http.MediaType;
@@ -19,19 +18,13 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        final String json = convertModelToJson(model);
-        response.getWriter().write(json);
+        objectWriter.writeValue(response.getWriter(), getModelResponse(model));
     }
 
-    private String convertModelToJson(Map<String, ?> model) {
-        try {
-            if (model.size() == 1) {
-                final Object singleValue = model.values().iterator().next();
-                return objectWriter.writeValueAsString(singleValue);
-            }
-            return objectWriter.writeValueAsString(model);
-        } catch (JsonProcessingException ex) {
-            throw new IllegalArgumentException("json 응답 생성에 실패하였습니다.");
+    private Object getModelResponse(Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().iterator().next();
         }
+        return model;
     }
 }
