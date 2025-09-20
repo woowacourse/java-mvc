@@ -56,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
                 String path = k.substring("controller.".length());
                 try {
                     log.info("컨트롤러 등록 시도: {} -> {}", path, v);
-                    Class<?> clazz = Class.forName(v);
+                    Class<?> clazz = Class.forName(v, true, Thread.currentThread().getContextClassLoader());
                     Controller controller = (Controller) clazz.getDeclaredConstructor().newInstance();
                     manualHandlerMapping.register(path, controller);
                     log.info("컨트롤러 등록 성공: {}", path);
