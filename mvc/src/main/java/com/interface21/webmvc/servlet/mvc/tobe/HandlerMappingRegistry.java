@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +24,7 @@ public class HandlerMappingRegistry {
         for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(request);
 
-            if (handler instanceof Controller controller) {
-                return controller;
-            } else if (handler instanceof HandlerExecution handlerExecution) {
+            if (handler instanceof HandlerExecution handlerExecution) {
                 return handlerExecution;
             }
         }
