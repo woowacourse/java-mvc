@@ -8,6 +8,10 @@ import org.reflections.Reflections;
 
 import com.interface21.context.stereotype.Controller;
 
+/**
+ * basePackages 하위에 @Controller 클래스를 스캔하고,
+ * 인스턴스를 생성해 보관한다.
+ */
 public class ControllerScanner {
 
     Object[] basePackages;

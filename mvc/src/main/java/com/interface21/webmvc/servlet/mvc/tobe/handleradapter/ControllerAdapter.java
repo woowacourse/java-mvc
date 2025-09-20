@@ -7,6 +7,9 @@ import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Controller의 구현체인 핸들러를 실행하기 위한 어댑터
+ */
 public class ControllerAdapter implements HandlerAdapter{
 
     @Override
