@@ -3,16 +3,14 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,15 +27,28 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         Map<Class<?>, Object> controllers = componentScanner.scan(Controller.class, basePackage);
-        for (Class<?> clazz : controllers.keySet()) {
+
+        for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Class<?> clazz = entry.getKey();
+            Object instance = entry.getValue();
+
             for (Method controllerMethod : clazz.getDeclaredMethods()) {
-                registerMethod(controllerMethod, clazz);
+                registerMethod(controllerMethod, instance);
             }
         }
     }
 
-    private void registerMethod(final Method controllerMethod, final Object controller) {
-        RequestMapping requestMapping = controllerMethod.getAnnotation(RequestMapping.class);
+    @Override
+    public Object getHandler(final String path, final RequestMethod requestMethod) {
+        HandlerKey handlerKey = new HandlerKey(path, requestMethod);
+        if (handlerExecutions.containsKey(handlerKey)) {
+            return handlerExecutions.get(handlerKey);
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    private void registerMethod(final Method method, final Object instance) {
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         if (requestMapping == null) {
             return;
         }
@@ -46,18 +57,10 @@ public class AnnotationHandlerMapping {
         for (RequestMethod requestMethod : requestMappingMethods) {
             HandlerKey handlerKey = new HandlerKey(path, requestMethod);
             HandlerExecution existing = handlerExecutions.putIfAbsent(handlerKey,
-                    new HandlerExecution(controller, controllerMethod));
+                    new HandlerExecution(instance, method));
             if (existing != null) {
                 throw new IllegalStateException("Duplicate mapping");
             }
         }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()));
-        if (handlerExecutions.containsKey(handlerKey)) {
-            return handlerExecutions.get(handlerKey);
-        }
-        throw new UnsupportedOperationException();
     }
 }
