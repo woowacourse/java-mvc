@@ -32,6 +32,6 @@ public class ControllerScanner {
     }
 
     public Map<Class<?>, Object> getControllers(){
-        return this.controllers;
+        return new HashMap<>(controllers);
     }
 }
