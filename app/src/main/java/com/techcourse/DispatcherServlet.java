@@ -1,9 +1,18 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.adapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,15 +21,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
+        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -29,11 +45,13 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
-            final var controller = manualHandlerMapping.getHandler(request);
-            // todo: handler adapter 이용해서 실행 가능하게 수정
-//            final var viewName = controller.execute(request, response);
-//            JspView view = new JspView(viewName);
-//            view.render(new HashMap<>(), request, response);
+            Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new IllegalArgumentException("handler not found: " + request.getRequestURI()));
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            Map<String, Object> model = modelAndView.getModel();
+            View view = modelAndView.getView();
+            view.render(model, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
