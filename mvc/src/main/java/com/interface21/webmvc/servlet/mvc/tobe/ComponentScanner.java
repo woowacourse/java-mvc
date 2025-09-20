@@ -1,22 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
 
-public class ControllerScanner {
+public class ComponentScanner {
 
-    private final Map<Class<?>, Object> controllers = findControllers();
-
-    public Map<Class<?>, Object> findControllers() {
-        Reflections reflections = new Reflections("com.techcourse.controller");
-        Set<Class<?>> types = reflections.getTypesAnnotatedWith(Controller.class);
-
+    public Map<Class<?>, Object> scan(final Class clazz, final Object[] basePackages) {
         final Map<Class<?>, Object> instances = new HashMap<>();
+        Reflections reflections = new Reflections(basePackages);
+        Set<Class<?>> types = reflections.getTypesAnnotatedWith(clazz);
+
         for (Class<?> type : types) {
             try {
                 Constructor<?> constructor = type.getDeclaredConstructor();
@@ -24,13 +20,11 @@ public class ControllerScanner {
                 instances.put(type, instance);
             } catch (NoSuchMethodException e) {
                 System.out.println("No Such Method");
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new IllegalStateException();
             }
         }
 
         return instances;
     }
-
 }
-
