@@ -23,10 +23,23 @@ public class UserController {
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+        final User user = getUserByAccount(account);
 
         modelAndView.addObject("user", user);
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView showUsers(HttpServletRequest request, HttpServletResponse response) {
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("gugu", getUserByAccount("gugu"));
+        modelAndView.addObject("free", getUserByAccount("free"));
+        modelAndView.addObject("gakong", getUserByAccount("gakong"));
+        return modelAndView;
+    }
+
+    private User getUserByAccount(String account) {
+        return InMemoryUserRepository.findByAccount(account)
+                .orElseThrow();
     }
 }
