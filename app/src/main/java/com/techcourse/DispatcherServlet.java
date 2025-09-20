@@ -5,14 +5,11 @@ import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +18,10 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
+    private HandlerMappingRegistry handlerMappingRegistry;
 
     public DispatcherServlet() {
+        handlerMappingRegistry = new HandlerMappingRegistry();
     }
 
     @Override
@@ -34,7 +32,8 @@ public class DispatcherServlet extends HttpServlet {
                     "com.techcourse.annotationController");
             manualHandlerMapping.initialize();
             annotationHandlerMapping.initialize();
-            handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
+            handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+            handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
         } catch (Exception e) {
             log.warn(e.getMessage());
             System.exit(1);
@@ -47,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
-            Object handler = getHandler(request);
+            Object handler = handlerMappingRegistry.getHandler(request);
             ModelAndView modelAndView = handle(handler, request, response);
             render(modelAndView, request, response);
         } catch (Throwable e) {
@@ -61,13 +60,6 @@ public class DispatcherServlet extends HttpServlet {
         View view = modelAndView.getView();
         Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
-    }
-
-    private Object getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
-                .findFirst().orElseThrow(() -> new RuntimeException("요청을 처리할 컨트롤러가 없습니다:" + request.getRequestURI()));
     }
 
     private ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response)
