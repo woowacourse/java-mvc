@@ -2,9 +2,9 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +18,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
         handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -34,6 +36,11 @@ public class DispatcherServlet extends HttpServlet {
             annotationHandlerMapping.initialize();
             handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
             handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
+
+            ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+            AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+            handlerAdapterRegistry.add(manualHandlerAdapter);
+            handlerAdapterRegistry.add(annotationHandlerAdapter);
         } catch (Exception e) {
             log.warn(e.getMessage());
             System.exit(1);
@@ -45,9 +52,11 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+
         try {
             Object handler = handlerMappingRegistry.getHandler(request);
-            ModelAndView modelAndView = handle(handler, request, response);
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -60,16 +69,5 @@ public class DispatcherServlet extends HttpServlet {
         View view = modelAndView.getView();
         Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
-    }
-
-    private ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        if (handler instanceof Controller) {
-            return ((Controller) handler).execute(request, response);
-        } else if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        } else {
-            throw new RuntimeException("잘못된 핸들러입니다.");
-        }
     }
 }
