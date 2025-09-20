@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
         final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
@@ -47,8 +47,9 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request);
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(request);
+            final Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(IllegalStateException::new);
+            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
 
