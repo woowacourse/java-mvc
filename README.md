@@ -37,7 +37,7 @@ mvc 모듈은 프레임워크, app 모듈은 프로덕션 영역
   - `DispatcherServlet.service`에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮겨보자.
 
 ## STEP 2
-- [ ] Legacy MVC와 @MVC 통합
+- [x] Legacy MVC와 @MVC 통합
   - 컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존
 ```java
 @Controller
