@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 public class HandlerAdapter {
     public static void handle(HttpServletRequest request, HttpServletResponse response,
@@ -17,6 +16,6 @@ public class HandlerAdapter {
         } else {
             throw new NoHandlerFoundException("No Handler Found!");
         }
-        mav.getView().render(Map.of(), request, response);
+        mav.getView().render(mav.getModel(), request, response);
     }
 }
