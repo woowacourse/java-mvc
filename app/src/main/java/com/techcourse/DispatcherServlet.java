@@ -47,16 +47,20 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow(IllegalStateException::new);
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
-            render(modelAndView, request, response);
+            doDispatch(request, response);
 
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final Object handler = handlerMappingRegistry.getHandler(request)
+                .orElseThrow(IllegalStateException::new);
+        final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+        render(modelAndView, request, response);
     }
 
     private void render(final ModelAndView modelAndView, final HttpServletRequest request, HttpServletResponse response)
