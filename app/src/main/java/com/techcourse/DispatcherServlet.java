@@ -2,11 +2,9 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +27,6 @@ public class DispatcherServlet extends HttpServlet {
     public void init() {
         handlerAdapter = new HandlerAdapter(
                 List.of(
-                        new ManualHandlerMapping(),
                         new AnnotationHandlerMapping("com.techcourse")
                 )
         );
@@ -51,14 +48,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Object handler = handlerAdapter.findHandler(request);
-        if (handler instanceof Controller) {
-            String res = ((Controller) handler).execute(request, response);
-            return new ModelAndView(new JspView(res));
-        } else if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        } else {
+        HandlerExecution handler = handlerAdapter.findHandler(request);
+        if (handler == null) {
             throw new IllegalArgumentException("No handler to handle the request");
         }
+        return handler.handle(request, response);
     }
 }
