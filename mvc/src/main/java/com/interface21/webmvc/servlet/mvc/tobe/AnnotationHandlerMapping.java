@@ -32,11 +32,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         // @Controller 클래스 - 인스턴스 맵
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
-        controllers.keySet().forEach(clazz -> {
+        Map<Class<?>, Object> controllerRegistry = controllerScanner.getControllerRegistry();
+        controllerRegistry.keySet().forEach(clazz -> {
             Set<Method> allMethods = ReflectionUtils.getAllMethods(clazz,
                     ReflectionUtils.withAnnotation(RequestMapping.class));
-            mappingAllHandlerMethods(clazz, allMethods, controllers);
+            mappingAllHandlerMethods(clazz, allMethods, controllerRegistry);
         });
         log.info("Initialized AnnotationHandlerMapping!");
     }
@@ -46,10 +46,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return getHandler(request) != null;
     }
 
-    private void mappingAllHandlerMethods(Class<?> clazz, Set<Method> allMethods, Map<Class<?>, Object> controllers) {
+    private void mappingAllHandlerMethods(Class<?> clazz, Set<Method> allMethods, Map<Class<?>, Object> controllerRegistry) {
         allMethods.forEach(method -> handlerMapping(
                         method,
-                        controllers.get(clazz),
+                        controllerRegistry.get(clazz),
                         method.getDeclaredAnnotation(RequestMapping.class)
                 )
         );

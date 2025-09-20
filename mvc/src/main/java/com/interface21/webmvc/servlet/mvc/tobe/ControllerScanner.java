@@ -8,14 +8,14 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    private final Map<Class<?>, Object> controllers;
+    private final Map<Class<?>, Object> controllerRegistry;
 
     public ControllerScanner(Object[] basePackage) {
         Reflections reflections = new Reflections(basePackage);
         // @Controller 클래스 스캔
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         // (요청을 실제로 처리할) 인스턴스 매핑
-        controllers = instantiateControllers(controllerClasses);
+        controllerRegistry = instantiateControllers(controllerClasses);
     }
 
     private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> classSet){
@@ -31,7 +31,7 @@ public class ControllerScanner {
         return controllers;
     }
 
-    public Map<Class<?>, Object> getControllers(){
-        return new HashMap<>(controllers);
+    public Map<Class<?>, Object> getControllerRegistry(){
+        return new HashMap<>(controllerRegistry);
     }
 }
