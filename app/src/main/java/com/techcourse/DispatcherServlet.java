@@ -3,10 +3,11 @@ package com.techcourse;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapterExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ComponentScanner;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
@@ -25,6 +26,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String BASE_PACKAGE = "com.techcourse.controller";
     private static final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private static final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
     }
@@ -39,6 +41,9 @@ public class DispatcherServlet extends HttpServlet {
                 BASE_PACKAGE);
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
+
+        handlerAdapters.add(new ControllerHandlerAdapter());
+        handlerAdapters.add(new AnnotationHandlerAdapterExecution());
     }
 
     @Override
@@ -80,13 +85,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response,
                                         final Object handler) throws Exception {
-        if (handler instanceof Controller controller) {
-            return controller.execute(request, response);
-        } else if (handler instanceof HandlerExecution execution) {
-            return execution.handle(request, response);
-        } else {
-            throw new RuntimeException();
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            return handlerAdapter.handle(request, response, handler);
         }
+        throw new ServletException("No HandlerAdapter for handler: " + handler.getClass().getName());
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request,
