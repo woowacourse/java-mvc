@@ -23,33 +23,69 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.handlerExecutions = initialize(controllerScanner.scan());
     }
 
-    public Map<HandlerKey, HandlerExecution> initialize(Map<Class<?>, Object> controllerByClasses) {
+    private Map<HandlerKey, HandlerExecution> initialize(Map<Class<?>, Object> controllerByClasses) {
         log.info("Initialized AnnotationHandlerMapping!");
 
-        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
-        for (Class<?> controllerClass : controllerByClasses.keySet()) {
-            Object controller = controllerByClasses.get(controllerClass);
+        Map<HandlerKey, HandlerExecution> mapping = new HashMap<>();
+        for (Map.Entry<Class<?>, Object> entry : controllerByClasses.entrySet()) {
+            Class<?> controllerClass = entry.getKey();
+            Object controller = entry.getValue();
 
-            Set<Method> allMethods = ReflectionUtils.getAllMethods(controllerClass,
-                    ReflectionUtils.withAnnotation(RequestMapping.class));
+            RequestMapping classMapping = controllerClass.getAnnotation(RequestMapping.class);
+            String classPath = getPath(classMapping);
+
+            Set<Method> allMethods = ReflectionUtils.getAllMethods(
+                    controllerClass,
+                    ReflectionUtils.withAnnotation(RequestMapping.class)
+            );
+
             for (Method method : allMethods) {
-                final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
+                RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
+                if (methodMapping == null) {
                     continue;
                 }
 
-                RequestMethod[] requestMethods = getRequestMethods(requestMapping);
-                for (RequestMethod requestMethod : requestMethods) {
-                    HandlerExecution handlerExecution = handlerExecutions.putIfAbsent(
-                            new HandlerKey(requestMapping.value(), requestMethod),
-                            new HandlerExecution(controller, method));
-                    if (handlerExecution != null) {
-                        throw new IllegalStateException("Duplicate handler mapping detected");
+                String methodPath = getPath(methodMapping);
+                RequestMethod[] requestMethods = getRequestMethods(methodMapping);
+
+                String fullPath = normalize(classPath, methodPath);
+                for (RequestMethod httpMethod : requestMethods) {
+                    HandlerKey key = new HandlerKey(fullPath, httpMethod);
+                    HandlerExecution prev = mapping.putIfAbsent(key, new HandlerExecution(controller, method));
+                    if (prev != null) {
+                        throw new IllegalStateException("Duplicate handler mapping detected: " + key);
                     }
                 }
             }
         }
-        return Collections.unmodifiableMap(handlerExecutions);
+        return Collections.unmodifiableMap(mapping);
+    }
+
+    private String getPath(RequestMapping mapping) {
+        if (mapping == null) {
+            return "";
+        }
+        String path = mapping.value();
+        if (path == null || path.isEmpty()) {
+            return "";
+        }
+        return path;
+    }
+
+    private String normalize(String base, String path) {
+        String normalizedBase = (base == null) ? "" : base.trim();
+        String normalizePath = (path == null) ? "" : path.trim();
+        if (!normalizedBase.startsWith("/")) {
+            normalizedBase = "/" + normalizedBase;
+        }
+        if (normalizedBase.endsWith("/")) {
+            normalizedBase = normalizedBase.substring(0, normalizedBase.length() - 1);
+        }
+        if (!normalizePath.startsWith("/")) {
+            normalizePath = "/" + normalizePath;
+        }
+        String joined = (normalizedBase + normalizePath).replaceAll("//+", "/");
+        return joined.isEmpty() ? "/" : joined;
     }
 
     private RequestMethod[] getRequestMethods(RequestMapping methodMapping) {
