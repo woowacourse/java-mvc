@@ -48,6 +48,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappingRegistry.getHandlerMapping(request);
             if (handler.isEmpty()) {
+                log.warn("handler is empty: {}", request.getRequestURI());
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
