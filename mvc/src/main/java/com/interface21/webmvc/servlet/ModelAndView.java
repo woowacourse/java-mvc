@@ -1,22 +1,30 @@
 package com.interface21.webmvc.servlet;
 
+import com.interface21.webmvc.servlet.view.JspView;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ModelAndView {
 
+    @Getter
     private final View view;
+
     private final Map<String, Object> model;
 
-    public ModelAndView(final View view) {
-        this.view = view;
-        this.model = new HashMap<>();
+    public static ModelAndView of(final View view, final Map<String, Object> model) {
+        return new ModelAndView(view, model);
     }
 
-    public ModelAndView addObject(final String attributeName, final Object attributeValue) {
-        model.put(attributeName, attributeValue);
-        return this;
+    public static ModelAndView withoutModel(final View view) {
+        return new ModelAndView(view, Collections.emptyMap());
+    }
+
+    public static ModelAndView redirect(final String url) {
+        return new ModelAndView(JspView.redirect(url), Collections.emptyMap());
     }
 
     public Object getObject(final String attributeName) {
@@ -25,9 +33,5 @@ public class ModelAndView {
 
     public Map<String, Object> getModel() {
         return Collections.unmodifiableMap(model);
-    }
-
-    public View getView() {
-        return view;
     }
 }
