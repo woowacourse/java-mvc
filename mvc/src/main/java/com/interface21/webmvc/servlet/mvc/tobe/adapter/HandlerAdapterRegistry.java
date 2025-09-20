@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe.adapter;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(adapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object handler) throws NoHandlerAdapterFoundException {
+    public HandlerAdapter getHandlerAdapter(Object handler) {
         for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
                 return adapter;
