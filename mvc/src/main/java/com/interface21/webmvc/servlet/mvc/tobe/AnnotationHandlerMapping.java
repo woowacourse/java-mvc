@@ -4,8 +4,8 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = new ConcurrentHashMap<>();
     }
 
     public void initialize() {
@@ -51,10 +51,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private void addHandlerExecution(Object controllerInstance, Method method, RequestMapping mapping,
                                      RequestMethod httpMethod) {
         HandlerKey key = new HandlerKey(mapping.value(), httpMethod);
-        if (handlerExecutions.containsKey(key)) {
+        HandlerExecution newHandler = new HandlerExecution(controllerInstance, method);
+        HandlerExecution existingHandler = handlerExecutions.putIfAbsent(key, newHandler);
+        if (existingHandler != null) {
             throw new IllegalStateException("중복된 핸들러 매핑이 존재합니다: ");
         }
-        handlerExecutions.put(key, new HandlerExecution(controllerInstance, method));
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
