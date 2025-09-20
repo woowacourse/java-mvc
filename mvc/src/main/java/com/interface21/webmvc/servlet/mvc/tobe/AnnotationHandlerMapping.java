@@ -24,10 +24,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     /**
-     * ControllerScanner 클래스를 통해 베이스 패키지 내부의 컨트롤러 클래스와 해당 인스턴스들을 가져옵니다.
-     * 리플랙션을 통해 컨트롤러 클래스 내부를 스캔하며 RequestMapping 어노테이션이 붙은 메서드들을 가져옵니다.
-     * 각 메서드마다 RequestMapping 어노테이션의 경로와 요청 메서드(Get, Put..)를 HandlerKey로 사용하고,
-     * 해당 요청을 처리할 메서드와 클래스의 인스턴스 정보를 Handler로 HandlerExecutions 에 매핑합니다.
+     * ControllerScanner 클래스를 통해 베이스 패키지 내부의 컨트롤러 클래스와 해당 인스턴스들을 가져옵니다. 리플랙션을 통해 컨트롤러 클래스 내부를 스캔하며 RequestMapping 어노테이션이
+     * 붙은 메서드들을 가져옵니다. 각 메서드마다 RequestMapping 어노테이션의 경로와 요청 메서드(Get, Put..)를 HandlerKey로 사용하고, 해당 요청을 처리할 메서드와 클래스의 인스턴스
+     * 정보를 Handler로 HandlerExecutions 에 매핑합니다.
      */
     @Override
     public void initialize() {
@@ -40,6 +39,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             mappingAllHandlerMethods(clazz, allMethods, controllers);
         });
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    @Override
+    public boolean support(HttpServletRequest request) {
+        return getHandler(request) != null;
     }
 
     private void mappingAllHandlerMethods(Class<?> clazz, Set<Method> allMethods, Map<Class<?>, Object> controllers) {

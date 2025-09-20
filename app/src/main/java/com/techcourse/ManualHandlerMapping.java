@@ -33,6 +33,11 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     @Override
+    public boolean support(HttpServletRequest request) {
+        return getHandler(request) != null;
+    }
+
+    @Override
     public Object getHandler(HttpServletRequest request) {
         String requestURI = UriUtils.getResourcePath(request);
         log.debug("Request Mapping Uri : {}", requestURI);

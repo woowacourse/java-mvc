@@ -40,12 +40,11 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             for (HandlerMapping handlerMapping : handlerMappings){
-                var handler = handlerMapping.getHandler(request);
-                if(handler == null){
-                    continue;
+                if(handlerMapping.support(request)){
+                    var handler = handlerMapping.getHandler(request);
+                    HandlerAdapter.handle(request, response, handler);
+                    return;
                 }
-                HandlerAdapter.handle(request, response, handler);
-                return;
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (Exception e) {
