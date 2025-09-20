@@ -30,9 +30,9 @@ public class ControllerScanner {
                 controllerInstances.put(controllerClass, controllerInstance);
             } catch (Exception exception) {
                 log.error("알 수 없는 오류가 발생했습니다: " + exception.getMessage());
+                throw new RuntimeException(exception.getMessage());
             }
         }
         return controllerInstances;
     }
-
 }
