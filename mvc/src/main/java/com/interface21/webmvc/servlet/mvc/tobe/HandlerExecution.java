@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
-public class HandlerExecution {
+public abstract class HandlerExecution {
 
     private final Object handler;
     private final Method method;
@@ -18,4 +18,6 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return (ModelAndView) method.invoke(handler, request, response);
     }
+
+    public abstract ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception;
 }
