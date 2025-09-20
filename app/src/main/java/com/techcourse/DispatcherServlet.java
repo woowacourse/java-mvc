@@ -1,12 +1,18 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMapping> handlerMappings;
 
     public DispatcherServlet() {
     }
@@ -23,10 +29,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         try {
-            manualHandlerMapping = new ManualHandlerMapping();
+            ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+            AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
+                    "com.techcourse.annotationController");
             manualHandlerMapping.initialize();
-            AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
             annotationHandlerMapping.initialize();
+            handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
         } catch (Exception e) {
             log.warn(e.getMessage());
             System.exit(1);
@@ -38,14 +46,38 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            new JspView(viewName).render(Map.of(), request, response);
+            Object handler = getHandler(request);
+            ModelAndView modelAndView = handle(handler, request, response);
+            render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        View view = modelAndView.getView();
+        Map<String, Object> model = modelAndView.getModel();
+        view.render(model, request, response);
+    }
+
+    private Object getHandler(HttpServletRequest request) {
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst().orElseThrow(() -> new RuntimeException("요청을 처리할 컨트롤러가 없습니다:" + request.getRequestURI()));
+    }
+
+    private ModelAndView handle(Object handler, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        if (handler instanceof Controller) {
+            return ((Controller) handler).execute(request, response);
+        } else if (handler instanceof HandlerExecution) {
+            return ((HandlerExecution) handler).handle(request, response);
+        } else {
+            throw new RuntimeException("잘못된 핸들러입니다.");
         }
     }
 }
