@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.ExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
@@ -24,11 +23,10 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         final String basePackage = "com.techcourse";
-        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
 
         List<HandlerMapping> mappings = List.of(
                 new ManualHandlerMapping(),
-                new AnnotationHandlerMapping(controllerScanner.scan())
+                new AnnotationHandlerMapping(basePackage)
         );
         this.handlerMappings.addAll(mappings);
 
