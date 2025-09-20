@@ -1,39 +1,38 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>(List.of(
+            new ManualHandlerMapping(), new AnnotationHandlerMapping("samples")
+    ));
+    private final List<HandlerAdapter> handlerAdapters = new ArrayList<>(List.of(
+            new AnnotationHandlerAdapter(),
+            new ManualHandlerAdapter()
+    ));
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        addHandlerMapping(manualHandlerMapping);
-
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("samples");
-        addHandlerMapping(annotationHandlerMapping);
-
         initializeHandlerMapping();
     }
 
@@ -55,23 +54,28 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.forEach(HandlerMapping::initialize);
     }
 
-    private void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+    private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        Object handler = getHandler(request);
+        HandlerAdapter adapter = getAdapter(handler);
+
+
+        return adapter.handle(request, response, handler);
     }
 
-    private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private Object getHandler(final HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
             Object handler = handlerMapping.getHandler(request);
-
-            if (handler instanceof Controller) {
-                return ((Controller) handler).execute(request, response);
-            }
-
-            if (handler instanceof HandlerExecution) {
-                return ((HandlerExecution) handler).handle(request, response);
+            if (handler != null) {
+                return handler;
             }
         }
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        return null;
+        throw new IllegalArgumentException("no such handler: " + request.getRequestURI());
+    }
+
+    private HandlerAdapter getAdapter(Object handler) {
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(handler))
+                .findFirst()
+                .orElseThrow();
     }
 }
