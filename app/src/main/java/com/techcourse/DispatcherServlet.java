@@ -1,27 +1,58 @@
 package com.techcourse;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ControllerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMapping;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        initHandlerMapping();
+        initHandlerAdapter();
+    }
+
+    private void initHandlerMapping() {
+        handlerMappings = List.of(
+            new ManualHandlerMapping(),
+            new AnnotationHandlerMapping("com.techcourse.controller")
+        );
+
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
+    }
+
+    private void initHandlerAdapter() {
+        handlerAdapters = List.of(
+            new ControllerAdapter(),
+            new HandlerExecutionAdapter()
+        );
     }
 
     @Override
@@ -30,22 +61,29 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
+            View view = modelAndView.getView();
+            view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
+    private Object getHandler(HttpServletRequest request) throws ServletException {
+        return handlerMappings.stream()
+            .map(handlerMapping -> handlerMapping.getHandler(request))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElseThrow(() -> new ServletException("Handler not found"));
+    }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        return handlerAdapters.stream()
+            .filter(adapter -> adapter.supports(handler))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Handler Adapter not found"));
     }
 }
