@@ -12,7 +12,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,6 +24,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object packageName : basePackage) {
             final Reflections reflections = new Reflections(packageName);
@@ -36,6 +37,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String url = request.getRequestURI();
         final String method = request.getMethod();
