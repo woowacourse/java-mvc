@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.RedirectView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -22,9 +23,9 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
         final Controller controller = (Controller) handler;
         final String viewName = controller.execute(request, response);
 
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            final String redirectUrl = viewName.substring(JspView.REDIRECT_PREFIX.length());
-            return new ModelAndView(new JspView(redirectUrl));
+        if (viewName.startsWith(RedirectView.REDIRECT_PREFIX)) {
+            final String redirectUrl = viewName.substring(RedirectView.REDIRECT_PREFIX.length());
+            return new ModelAndView(new RedirectView(redirectUrl));
         }
 
         return new ModelAndView(new JspView(viewName));
