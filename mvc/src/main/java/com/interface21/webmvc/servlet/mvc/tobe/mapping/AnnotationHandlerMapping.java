@@ -1,7 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -11,7 +14,7 @@ import org.reflections.ReflectionUtils;
 import java.util.Map;
 
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
@@ -26,11 +29,17 @@ public class AnnotationHandlerMapping {
         registerControllers(controllers);
     }
 
+    @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
         HandlerKey key = new HandlerKey(requestURI, requestMethod);
         return handlerExecutions.get(key);
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 
     private void registerControllers(Map<Class<?>, Object> controllers) {

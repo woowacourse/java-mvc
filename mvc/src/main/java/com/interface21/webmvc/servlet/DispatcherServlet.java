@@ -31,7 +31,7 @@ public class DispatcherServlet extends HttpServlet {
         log.info("DispatcherServlet 초기화 시작");
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
-        
+
         log.info("Properties 로드 시작");
 
         Properties props = new Properties();
@@ -44,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
             log.error("application.properties 로드 실패", e);
             throw new RuntimeException("application.properties 로드 실패", e);
         }
-        
+
         log.info("Properties 로드 완료. 총 {} 개 속성", props.size());
 
         // ManualHandlerMapping 등록
