@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import java.util.Collections;
-
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -27,9 +25,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
-
-    public DispatcherServlet() {
-    }
 
     @Override
     public void init() {
@@ -40,12 +35,9 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerMappings() {
         handlerMappings = new ArrayList<>();
 
-        ManualHandlerMapping manualMapping = new ManualHandlerMapping();
-        manualMapping.initialize();
-        handlerMappings.add(manualMapping);
-
         AnnotationHandlerMapping annotationMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationMapping.initialize();
+        
         handlerMappings.add(annotationMapping);
     }
 
