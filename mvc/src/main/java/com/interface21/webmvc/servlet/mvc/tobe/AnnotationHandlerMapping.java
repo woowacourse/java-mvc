@@ -54,8 +54,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HandlerExecution newHandler = new HandlerExecution(controllerInstance, method);
         HandlerExecution existingHandler = handlerExecutions.putIfAbsent(key, newHandler);
         if (existingHandler != null) {
-            throw new IllegalStateException("중복된 핸들러 매핑이 존재합니다: ");
+            throw new IllegalStateException("중복된 핸들러 매핑이 존재합니다: " + key);
         }
+        log.info("Mapped [{} {}] to {}", httpMethod, mapping.value(), method.getName());
+
     }
 
     public HandlerExecution getHandler(final HttpServletRequest request) {

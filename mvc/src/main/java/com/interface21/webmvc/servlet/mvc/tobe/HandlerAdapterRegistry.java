@@ -16,6 +16,6 @@ public class HandlerAdapterRegistry {
                 return adapter;
             }
         }
-        throw new IllegalArgumentException("지원하지 않는 핸들러입니다: ");
+        throw new IllegalArgumentException("지원하지 않는 핸들러 타입입니다: " + handler.getClass().getName());
     }
 }
