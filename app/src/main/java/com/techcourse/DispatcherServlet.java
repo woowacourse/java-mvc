@@ -1,44 +1,49 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public static DispatcherServlet initialize() {
+        final HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.initialize();
+        final HandlerAdapterRegistry handlerAdapterRegistry = HandlerAdapterRegistry.initialize();
+        return new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        log.debug("I love immutability");
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+    protected void service(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws ServletException {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Controller controller = manualHandlerMapping.getHandler(requestURI);
+            final ModelAndView modelAndView = handlerAdapterRegistry.handle(
+                    handlerMappingRegistry.getHandler(request),
+                    request,
+                    response);
 
-            // 아마도 나중에 ModelAndView를 반환하지 않을까...
-            final String viewName = controller.execute(request, response);
-            final JspView jspView = new JspView(viewName);
-
-            jspView.render(null, request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
