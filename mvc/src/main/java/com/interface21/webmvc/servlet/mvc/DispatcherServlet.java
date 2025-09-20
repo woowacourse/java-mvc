@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
@@ -26,9 +26,6 @@ public class DispatcherServlet extends HttpServlet {
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
-    }
-
     @Override
     public void init() {
         initHandlerMappings();
@@ -38,12 +35,9 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerMappings() {
         handlerMappings = new ArrayList<>();
 
-        ManualHandlerMapping manualMapping = new ManualHandlerMapping();
-        manualMapping.initialize();
-        handlerMappings.add(manualMapping);
-
         AnnotationHandlerMapping annotationMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationMapping.initialize();
+        
         handlerMappings.add(annotationMapping);
     }
 
