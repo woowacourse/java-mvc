@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,12 +7,11 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,12 +25,12 @@ public class AnnotationHandlerMapping {
 
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        controllerClasses.forEach(this::registerController);
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        controllers.forEach(this::registerController);
     }
 
-    private void registerController(Class<?> clazz) {
+    private void registerController(Class<?> clazz, Object instance) {
         final Object controller;
         try {
             controller = clazz.getConstructor().newInstance();
@@ -56,6 +54,7 @@ public class AnnotationHandlerMapping {
         for (RequestMethod httpMethod : httpMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
+
             if (handlerExecutions.containsKey(handlerKey)) {
                 throw new IllegalStateException("중복된 핸들러 매핑이 존재합니다: " + handlerKey);
             }
