@@ -1,13 +1,14 @@
 package com.techcourse;
 
+import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.DispatcherServlet;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
+ * Base class for {@link WebApplicationInitializer} implementations that register a {@link DispatcherServlet} in the
+ * servlet context.
  */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
@@ -26,6 +27,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         }
 
         registration.setLoadOnStartup(1);
+        registration.setInitParameter("basePackage", getClass().getPackageName());
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");

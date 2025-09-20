@@ -1,10 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.webmvc.servlet.HandlerMapping;
-import com.interface21.webmvc.servlet.HandlerResolver;
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.ViewResolver;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.ManualHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.resolver.HandlerResolver;
+import com.interface21.webmvc.servlet.mvc.view.resolver.ViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
+        final String basePackage = getServletConfig().getInitParameter("basePackage");
+
+        this.handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.controller", basePackage)
+        );
         this.handlerMappings.forEach(HandlerMapping::initialize);
         this.handlerResolver = new HandlerResolver(new ViewResolver());
     }
