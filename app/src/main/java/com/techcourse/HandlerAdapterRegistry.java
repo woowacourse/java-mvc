@@ -1,5 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
