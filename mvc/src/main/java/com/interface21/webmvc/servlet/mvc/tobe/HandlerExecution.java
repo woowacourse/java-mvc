@@ -7,20 +7,15 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Class<?> controllerClass;
+    private final Object controller;
     private final Method method;
 
-    public HandlerExecution(final Class<?> controllerClass, final Method method) {
-        this.controllerClass = controllerClass;
+    public HandlerExecution(Object controller, Method method) {
+        this.controller = controller;
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final Object controller = controllerClass.getDeclaredConstructor().newInstance();
-        final Object returnValue = method.invoke(controller, request, response);
-        if (returnValue instanceof ModelAndView modelAndView) {
-            return modelAndView;
-        }
-        throw new IllegalStateException("Unexpected return type: " + returnValue);
+    public ModelAndView handle(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        return (ModelAndView) method.invoke(controller, req, resp);
     }
 }
