@@ -20,8 +20,8 @@ public class DispatcherServlet extends HttpServlet {
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public DispatcherServlet() {
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com/techcourse/controller"));
+        handlerMappings.add(new ManualHandlerMapping());
     }
 
     @Override
