@@ -2,6 +2,7 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.techcourse.controller.*;
+import com.techcourse.util.UriUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
+        String requestURI = UriUtils.getResourcePath(request);
         log.debug("Request Mapping Uri : {}", requestURI);
         return controllers.get(requestURI);
     }
