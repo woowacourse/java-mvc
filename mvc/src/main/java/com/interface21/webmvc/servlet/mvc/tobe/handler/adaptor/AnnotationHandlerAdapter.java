@@ -12,7 +12,7 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
         try {
             return ((HandlerExecution) handler).handle(request, response);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

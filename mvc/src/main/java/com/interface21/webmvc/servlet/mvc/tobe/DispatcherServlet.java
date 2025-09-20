@@ -1,12 +1,12 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize(new ControllerScanner());
 
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
@@ -48,6 +48,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappingRegistry.getHandlerMapping(request);
             if (handler.isEmpty()) {
+                log.warn("handler is empty: {}", request.getRequestURI());
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }

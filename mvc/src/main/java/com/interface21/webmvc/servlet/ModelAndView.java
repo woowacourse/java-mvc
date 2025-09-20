@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
@@ -27,9 +26,6 @@ public class ModelAndView {
             request.setAttribute(key, model.get(key));
         });
         view.render(request, response);
-
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(view.getViewName());
-        requestDispatcher.forward(request, response);
     }
 
     public ModelAndView addObject(final String attributeName, final Object attributeValue) {
