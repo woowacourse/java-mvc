@@ -1,19 +1,22 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -76,7 +79,7 @@ public class AnnotationHandlerMapping {
 
     private void registerController(Class<?> controllerClass) {
         try {
-            Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
+            Object controllerInstance = createControllerInstance(controllerClass);
             Method[] methods = controllerClass.getDeclaredMethods();
 
             for (Method method : methods) {
@@ -118,6 +121,16 @@ public class AnnotationHandlerMapping {
         } catch (IllegalArgumentException e) {
             log.warn("지원하지 않는 HTTP method: {}", methodName);
             return null;
+        }
+    }
+
+    private Object createControllerInstance(Class<?> controllerClass) throws Exception {
+        try {
+            Constructor<?> constructor = ReflectionUtils.accessibleConstructor(controllerClass);
+            return constructor.newInstance();
+        } catch (NoSuchMethodException e) {
+            log.error("기본 생성자를 찾을 수 없음: {}", controllerClass.getName());
+            throw new RuntimeException("Controller에 기본 생성자가 필요합니다: " + controllerClass.getName(), e);
         }
     }
 }
