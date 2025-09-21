@@ -61,7 +61,10 @@ public class DispatcherServlet extends HttpServlet {
 
     private Object getHandler(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            return handlerMapping.getHandler(request);
+            Object mappingHandler = handlerMapping.getHandler(request);
+            if (mappingHandler != null) {
+                return mappingHandler;
+            }
         }
         throw new IllegalStateException("no handler ");
     }
