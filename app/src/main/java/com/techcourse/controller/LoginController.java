@@ -18,7 +18,12 @@ public class LoginController implements Controller {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        final String account = req.getParameter("account");
+        if (account == null || account.isBlank()) {
+            return "redirect:/login.jsp";
+        }
+
+        return InMemoryUserRepository.findByAccount(account)
                 .map(user -> {
                     log.info("User : {}", user);
                     return login(req, user);
