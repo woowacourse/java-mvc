@@ -26,16 +26,20 @@ public class JsonView implements View {
 
         Object dataToWrite;
 
-        if (model != null && model.size() == 1) {
-            Object singleValue = model.values().iterator().next();
-            dataToWrite = validateNull(singleValue);
-        } else {
-            dataToWrite = model;
-        }
+        dataToWrite = extractData(model);
         objectMapper.writeValue(response.getWriter(), dataToWrite);
     }
 
-    private static Object validateNull(Object singleValue) {
+    private Object extractData(Map<String, ?> model) {
+        if (model != null && model.size() == 1) {
+            Object singleValue = model.values().iterator().next();
+            return validateSingleValue(singleValue);
+        } else {
+            return model;
+        }
+    }
+
+    private Object validateSingleValue(Object singleValue) {
         Object dataToWrite;
         if (singleValue == null) {
             dataToWrite = Collections.emptyMap();
