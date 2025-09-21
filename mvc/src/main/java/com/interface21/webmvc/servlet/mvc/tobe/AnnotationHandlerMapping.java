@@ -1,22 +1,22 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -28,65 +28,8 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() {
-        for (Object basePackage : basePackages) {
-            initHandlerExecutions(basePackage);
-        }
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
-
-    private void initHandlerExecutions(Object basePackage) {
-        Set<Class<?>> controllerClasses = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
-        controllerClasses.forEach(controllerClass -> {
-            Object controller = getController(controllerClass);
-            List<Method> methods = getMethods(controllerClass);
-            methods.forEach(method -> addHandlerMapping(controller, method));
-        });
-    }
-
-    private Object getController(Class<?> controllerType) {
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 InvocationTargetException | NoSuchMethodException e) {
-            log.error("Cannot create controller instance: {}", controllerType.getTypeName());
-            throw new RuntimeException(e);
-        }
-    }
-
-    private List<Method> getMethods(Class<?> controllerClass) {
-        return Arrays.stream(controllerClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .toList();
-    }
-
-    private void addHandlerMapping(Object controller, Method method) {
-        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-        RequestMethod[] requestMethods = requestMapping.method();
-        /*
-         * 빈 request method일 경우, default로 모든 HTTP 메서드 매핑
-         */
-        if (requestMethods == null || requestMethods.length == 0) {
-            requestMethods = RequestMethod.values();
-        }
-        Arrays.stream(requestMethods)
-                .forEach(requestMethod -> {
-                            HandlerKey key = new HandlerKey(requestMapping.value(), requestMethod);
-                            validateDuplicatedMethod(requestMethod, key, requestMapping);
-                            handlerExecutions.put(key, new HandlerExecution(controller, method));
-                        }
-                );
-    }
-
-    private void validateDuplicatedMethod(RequestMethod requestMethod, HandlerKey key, RequestMapping requestMapping) {
-        if (handlerExecutions.containsKey(key)) {
-            log.error("Already initialized for method. uri:{}, method: {}",
-                    requestMapping.value(), requestMethod);
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public Object getHandler(HttpServletRequest request) {
         String url = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey key = new HandlerKey(url, method);
@@ -96,5 +39,51 @@ public class AnnotationHandlerMapping {
             throw new NoSuchElementException();
         }
         return handlerExecution;
+    }
+
+    public void initialize() {
+        for (Object basePackage : basePackages) {
+            ControllerScanner controllerScanner = new ControllerScanner(new Reflections(basePackage));
+            Map<Class<?>, Object> controllers = controllerScanner.getControllers(); // @Controller가 붙어있는 모든 클래스 스캔해옴
+            addHandlerExecutions(controllers);
+        }
+        log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void addHandlerExecutions(Map<Class<?>, Object> controllerMap) {
+        for (Entry<Class<?>, Object> entry : controllerMap.entrySet()) {
+            Set<Method> requestMappingMethods = getRequestMappingMethods(entry.getKey());
+            for (Method method : requestMappingMethods) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
+                handlerKeys.forEach(handlerKey ->
+                        handlerExecutions.put(
+                                handlerKey,
+                                new HandlerExecution(entry.getValue(), method))
+                );
+            }
+        }
+    }
+
+    private Set<Method> getRequestMappingMethods(Class<?> controller) {
+        Set<Method> methods = new HashSet<>();
+        for (Method method : controller.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(RequestMapping.class)) {
+                methods.add(method);
+            }
+        }
+        return methods;
+    }
+
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        /*
+         * 빈 request method일 경우, default로 모든 HTTP 메서드 매핑
+         */
+        if (requestMethods == null || requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        return Arrays.stream(requestMethods)
+                .map(requestMethod -> new HandlerKey(url, requestMethod))
+                .toList();
     }
 }
