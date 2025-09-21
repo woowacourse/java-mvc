@@ -36,5 +36,4 @@ public class ControllerScanner {
             throw new RuntimeException(e);
         }
     }
-
 }
