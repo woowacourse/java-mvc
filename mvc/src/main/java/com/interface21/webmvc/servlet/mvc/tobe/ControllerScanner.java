@@ -29,9 +29,6 @@ public class ControllerScanner {
         Map<Class<?>, Object> controllers = new HashMap<>();
         for (Class<?> eachClass : classes) {
             Object instance = createInstance(eachClass);
-            if (controllers.containsKey(eachClass)) {
-                throw new IllegalArgumentException("이미 존재하는 컨트롤러 인스턴스 입니다.");
-            }
             controllers.put(eachClass, instance);
         }
 
