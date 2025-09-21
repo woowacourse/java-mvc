@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings = new ArrayList<>();
 
         addHandlerMapping(new ManualHandlerMapping());
-        addHandlerMapping(new AnnotationHandlerMapping("com.interface21"));
+        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
 
         handlerAdapters = new ArrayList<>();
 
