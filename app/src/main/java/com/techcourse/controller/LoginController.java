@@ -13,15 +13,15 @@ public class LoginController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        if (UserSession.isLoggedIn(req.getSession())) {
+    public String execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        if (UserSession.isLoggedIn(request.getSession())) {
             return "redirect:/index.jsp";
         }
 
-        return InMemoryUserRepository.findByAccount(req.getParameter("account"))
+        return InMemoryUserRepository.findByAccount(request.getParameter("account"))
                 .map(user -> {
                     log.info("User : {}", user);
-                    return login(req, user);
+                    return login(request, user);
                 })
                 .orElse("redirect:/401.jsp");
     }
