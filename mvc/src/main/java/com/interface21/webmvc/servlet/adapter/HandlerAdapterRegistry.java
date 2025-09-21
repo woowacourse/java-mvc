@@ -18,8 +18,8 @@ public class HandlerAdapterRegistry {
     public static HandlerAdapterRegistry initialize() {
         final Map<HandlerType, HandlerAdapter> handlerAdapters = new HashMap<>();
         // todo reflection
-        handlerAdapters.put(HandlerType.CONTROLLER, new ControllerHandlerAdapter());
-        handlerAdapters.put(HandlerType.HANDLER_EXECUTION, new HandlerExecutionHandlerAdapter());
+        handlerAdapters.put(HandlerType.CONTROLLER, new ControllerAdapter());
+        handlerAdapters.put(HandlerType.HANDLER_EXECUTION, new HandlerExecutionAdapter());
         return new HandlerAdapterRegistry(handlerAdapters);
     }
 
