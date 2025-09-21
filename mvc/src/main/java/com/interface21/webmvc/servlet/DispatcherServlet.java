@@ -59,7 +59,6 @@ public class DispatcherServlet extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
-
         try {
             final Object handler = handlerMappingRegistry.getHandler(request);
             log.info("핸들러 조회 결과: {}", handler != null ? handler.getClass().getSimpleName() : "null");
