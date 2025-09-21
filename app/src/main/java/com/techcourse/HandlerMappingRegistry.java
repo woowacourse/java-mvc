@@ -20,7 +20,7 @@ public class HandlerMappingRegistry {
         manualHandlerMapping.initialize();
         adHandlerMapping(manualHandlerMapping);
 
-        final var annotationHandlerMapping = new AnnotationHandlerMapping();
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
         adHandlerMapping(annotationHandlerMapping);
     }
