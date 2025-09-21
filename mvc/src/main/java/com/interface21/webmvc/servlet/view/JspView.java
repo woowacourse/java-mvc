@@ -1,15 +1,12 @@
 package com.interface21.webmvc.servlet.view;
 
 import com.interface21.webmvc.servlet.View;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.NoSuchFileException;
 import java.util.Map;
 
 public class JspView implements View {
@@ -32,28 +29,19 @@ public class JspView implements View {
             return;
         }
 
+        // model의 속성을 HttpServletRequest의 속성으로 옮긴다.
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
-        String path = "/webapp/" + viewName + ".jsp";
-        String fileContent = new String(readFile(path), StandardCharsets.UTF_8);
-
-        response.getWriter().write(fileContent);
+        // 실제 Jsp로 포워딩된다.
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
     }
 
     @Override
     public String getViewName() {
         return viewName;
-    }
-
-    private byte[] readFile(String path) throws IOException {
-        try (final InputStream fileStream = getClass().getClassLoader().getResourceAsStream(path)) {
-            if (fileStream == null) {
-                throw new NoSuchFileException(String.format("No Such file : location = %s", path));
-            }
-            return fileStream.readAllBytes();
-        }
     }
 }

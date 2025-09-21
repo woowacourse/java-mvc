@@ -1,6 +1,7 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
@@ -15,6 +16,7 @@ import com.interface21.webmvc.servlet.view.JspView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -44,18 +46,18 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            String viewName = executeController(request, response);
-            if (viewName == null) {
+            ModelAndView modelAndView = executeController(request, response);
+            if (modelAndView == null) {
                 throw new IllegalArgumentException(String.format("Not found : %s", request.getRequestURI()));
             }
 
-            move(viewName, request, response);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage());
         }
     }
 
-    private String executeController(HttpServletRequest request, HttpServletResponse response) {
+    private ModelAndView executeController(HttpServletRequest request, HttpServletResponse response) {
         try {
             for (HandlerMapping handlerMapping : this.handlerMappings) {
                 Object handler = handlerMapping.getHandler(request);
@@ -64,8 +66,7 @@ public class DispatcherServlet extends HttpServlet {
                     continue; // 다음 handlerMapping에 매핑될 수 있음.
                 }
                 if (handler instanceof HandlerExecution) {
-                    ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
-                    return modelAndView.getView().getViewName();
+                    return ((HandlerExecution) handler).handle(request, response);
                 }
                 if (handler instanceof Controller) {
                     return ((Controller) handler).execute(request, response);
@@ -77,13 +78,15 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        View view = modelAndView.getView();
+        String viewName = view.getViewName();
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        Map<String, Object> model = modelAndView.getModel();
+        view.render(model, request, response);
     }
 }
