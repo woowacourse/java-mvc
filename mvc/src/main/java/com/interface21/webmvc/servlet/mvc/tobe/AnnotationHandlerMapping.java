@@ -12,7 +12,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -24,22 +24,27 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         final Reflections reflections = new Reflections(basePackage);
         final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (final Class<?> controller : controllerClasses) {
-            try {
-                final Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-                final Method[] methods = controller.getDeclaredMethods();
-                for (final Method method : methods) {
-                    addHandlerExecutions(controllerInstance, method);
-                }
-            } catch (Exception e) {
-                log.error("Error initializing controller", e);
-            }
+            initializeController(controller);
         }
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    private void initializeController(final Class<?> controller) {
+        try {
+            final Object controllerInstance = controller.getDeclaredConstructor().newInstance();
+            final Method[] methods = controller.getDeclaredMethods();
+            for (final Method method : methods) {
+                addHandlerExecutions(controllerInstance, method);
+            }
+        } catch (Exception e) {
+            log.error("Error initializing controller", e);
+        }
     }
 
     private void addHandlerExecutions(final Object controller, final Method method) {
@@ -65,6 +70,7 @@ public class AnnotationHandlerMapping {
         return requestMethods;
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod()))
         );
