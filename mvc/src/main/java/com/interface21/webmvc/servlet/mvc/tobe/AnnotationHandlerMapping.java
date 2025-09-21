@@ -48,7 +48,7 @@ public class AnnotationHandlerMapping {
         }
         final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         final String path = requestMapping.value();
-        final RequestMethod[] requestMethods = requestMapping.method();
+        RequestMethod[] requestMethods = getRequestMethods(requestMapping.method());
 
         for (final RequestMethod requestMethod : requestMethods) {
             final HandlerKey handlerKey = new HandlerKey(path, requestMethod);
@@ -56,6 +56,13 @@ public class AnnotationHandlerMapping {
             handlerExecutions.put(handlerKey, handlerExecution);
             log.info("Mapped {} {} to {}", requestMethod, path, method);
         }
+    }
+
+    private RequestMethod[] getRequestMethods(final RequestMethod[] requestMethods) {
+        if (requestMethods.length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMethods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
