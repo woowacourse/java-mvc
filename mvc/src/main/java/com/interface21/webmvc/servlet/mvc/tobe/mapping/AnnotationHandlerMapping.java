@@ -67,7 +67,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
 
         for (RequestMethod requestMethod : resolveRequestMethods(mapping)) {
-            HandlerKey handlerKey = new HandlerKey(mapping.value(), requestMethod);
+            HandlerKey handlerKey = new HandlerKey(getPath(mapping), requestMethod);
             if (handlerExecutions.containsKey(handlerKey)) {
                 throw new IllegalStateException("중복 매핑 발견: " + handlerKey);
             }
@@ -82,5 +82,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             methods = RequestMethod.values();
         }
         return methods;
+    }
+
+    private String getPath(RequestMapping mapping) {
+        String path = mapping.value();
+        if (path.isBlank()) {
+            return "/";
+        }
+        return path;
     }
 }
