@@ -1,19 +1,17 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.reflections.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -35,8 +33,6 @@ public class AnnotationHandlerMapping {
     }
 
     private void scanAndRegisterControllers(Object packageName) {
-        Reflections reflections = new Reflections(packageName);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
         Set<Class<?>> controllerClasses = controllerScanner.scanControllers(packageName);
 
         for (Class<?> controllerClass : controllerClasses) {
@@ -65,14 +61,6 @@ public class AnnotationHandlerMapping {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
             HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
             handlerExecutions.put(handlerKey, handlerExecution);
-        }
-    }
-
-    private Object createInstance(Class<?> clazz) {
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
