@@ -33,3 +33,24 @@
 - [x] JspView 클래스를 구현한다.
     - webmvc.org.springframework.web.servlet.view 패키지에서 JspView 클래스를 찾을 수 있다.
     - DispatcherServlet 클래스의 service 메서드에서 어떤 부분이 뷰에 대한 처리를 하고 있는지 파악해서 JspView 클래스로 옮겨보자.
+
+## 🚀 2단계 - 점진적인 리팩터링
+
+### 기능 요구 사항
+
+- [x] Legacy MVC와 @MVC 통합하기 (기존 코드를 유지하면서 신규 기능을 추가)
+  컨트롤러 인터페이스 기반 MVC 프레임워크와 @MVC 프레임워크가 공존하도록 만들자.
+  예를 들면, 회원가입 컨트롤러를 아래처럼 어노테이션 기반 컨트롤러로 변경해도 정상 동작해야 한다.
+
+```java
+
+@Controller
+public class RegisterController {
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {...}
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {...}
+}
+```
