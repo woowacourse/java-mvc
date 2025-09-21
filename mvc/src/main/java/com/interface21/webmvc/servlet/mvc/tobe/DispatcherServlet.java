@@ -18,20 +18,20 @@ public class DispatcherServlet extends HttpServlet {
     public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
+
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
         handlerMappings = new ArrayList<>();
-
-        addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-
+        addHandlerMapping(new AnnotationHandlerMapping(basePackage));
         handlerAdapters = new ArrayList<>();
-
         handlerAdapters.add(new AnnotationHandlerAdapter());
     }
 
