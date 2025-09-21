@@ -1,68 +1,57 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
     public DispatcherServlet() {
-        handlerMappings = new ArrayList<>();
-        handlerAdapters = new ArrayList<>();
+        handlerMappingRegistry = new HandlerMappingRegistry();
+        handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        handlerMappings.add(new ManualHandlerMapping());
-        handlerMappings.add(new AnnotationHandlerMapping("com.interface21.webmvc.controller"));
-        handlerMappings.forEach(HandlerMapping::initialize);
+        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.interface21.webmvc.controller"));
+        handlerMappingRegistry.initialize();
 
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new HandlerExecutionHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            Object handler = getHandler(req);
-            HandlerAdapter adapter = getHandlerAdapter(handler);
+            Object handler = handlerMappingRegistry.getHandler(req);
+            HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = adapter.handle(req, resp, handler);
-            modelAndView.render(req, resp);
+            render(modelAndView, req, resp);
         } catch (Exception e) {
             throw new ServletException("DispatcherServlet service error", e);
         }
     }
 
-    private HandlerAdapter getHandlerAdapter(Object handler) {
-        for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
-            }
-        }
-        throw new IllegalArgumentException("No adapter found for handler: " + handler);
+    private void render(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        final View view = modelAndView.getView();
+        final Map<String, Object> model = modelAndView.getModel();
+        view.render(model, req, resp);
     }
 
-    private Object getHandler(HttpServletRequest req) {
-        for (HandlerMapping mapping : handlerMappings) {
-            Object handler = mapping.getHandler(req);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        return null;
-    }
 }

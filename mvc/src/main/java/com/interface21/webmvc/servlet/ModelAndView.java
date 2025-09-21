@@ -32,8 +32,4 @@ public class ModelAndView {
     public View getView() {
         return view;
     }
-
-    public void render(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        view.render(model, request, response);
-    }
 }
