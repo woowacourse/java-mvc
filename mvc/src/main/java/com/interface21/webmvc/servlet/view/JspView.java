@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -31,7 +30,7 @@ public class JspView implements View {
         requestDispatcher.forward(request, response);
     }
 
-    private static void addModelAttributes(Map<String, ?> model, HttpServletRequest request) {
+    private void addModelAttributes(Map<String, ?> model, HttpServletRequest request) {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
