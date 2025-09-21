@@ -1,8 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,31 +12,29 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackages;
+    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackages = basePackage;
+        this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
-        requireBasePackages(basePackages);
+        requireBasePackages(basePackage);
 
         try {
-            final Reflections reflections = new Reflections(this.basePackages);
-            final Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-
-            registerControllers(controllerClasses);
+            final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+            Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+            registerControllers(controllers);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -48,11 +48,15 @@ public class AnnotationHandlerMapping {
         }
     }
 
-    private void registerControllers(Set<Class<?>> controllerClasses)
+    private void registerControllers(final Map<Class<?>, Object> controllers)
             throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        for (Class<?> controllerClass : controllerClasses) {
-            final Object handler = controllerClass.getConstructor().newInstance();
-            final Method[] methods = controllerClass.getMethods();
+        if (controllers.isEmpty()) {
+            log.warn("basePackge 내에 컨트롤러를 찾을 수 없습니다");
+        }
+
+        for (Class<?> controller : controllers.keySet()) {
+            final Object handler = controllers.get(controller);
+            final Method[] methods = controller.getDeclaredMethods();
 
             scanHandlerMethods(methods, handler);
         }
@@ -104,6 +108,7 @@ public class AnnotationHandlerMapping {
         return targetMethods;
     }
 
+    @Override
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String method = request.getMethod();
