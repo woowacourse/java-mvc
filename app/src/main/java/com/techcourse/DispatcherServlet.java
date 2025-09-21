@@ -30,7 +30,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         try {
-            AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+            AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
+                    "com.techcourse.controller");
             ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
 
             handlerMappingRegistry.addHandler(annotationHandlerMapping);
