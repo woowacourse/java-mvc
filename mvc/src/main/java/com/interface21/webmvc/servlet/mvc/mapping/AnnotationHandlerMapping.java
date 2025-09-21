@@ -50,12 +50,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                       RequestMapping requestMapping) {
         RequestMethod[] requestMethods = requestMapping.method();
         if (requestMethods.length == 0) {
-            handlerExecutions.put(new HandlerKey(requestMapping.value(), null),
-                    new HandlerExecution(controller, method));
+            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), null);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
+            }
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
             return;
         }
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(requestMapping.value(), requestMethod);
+            if (handlerExecutions.containsKey(handlerKey)) {
+                throw new IllegalStateException("Duplicate mapping found: " + handlerKey);
+            }
             handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
     }
