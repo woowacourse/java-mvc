@@ -9,6 +9,7 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,16 @@ public class UserController {
             .orElseThrow();
 
         modelAndView.addObject("user", user);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response) {
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        List<User> users = InMemoryUserRepository.findAll();
+        for (User user : users) {
+            modelAndView.addObject(user.getAccount(), user);
+        }
         return modelAndView;
     }
 }
