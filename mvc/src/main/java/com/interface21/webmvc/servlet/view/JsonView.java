@@ -32,21 +32,9 @@ public class JsonView implements View {
 
         log.debug("Rendering JSON view with model: {}", model);
 
-        try (PrintWriter writer = response.getWriter()) {
-            String jsonResponse = getJsonResponse(model);
-            writer.print(jsonResponse);
-
-            writer.flush();
-        } catch (Exception e) {
-            log.error("Error rendering JSON response", e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            try (PrintWriter writer = response.getWriter()) {
-                writer.print(ERROR_JSON);
-
-                writer.flush();
-            }
-        }
+        PrintWriter writer = response.getWriter();
+        String jsonResponse = getJsonResponse(model);
+        writer.print(jsonResponse);
     }
 
     private String getJsonResponse(Map<String, ?> model) throws Exception {
