@@ -55,14 +55,14 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            ModelAndView modelAndView = executeController(request, response);
+            ModelAndView modelAndView = handle(request, response);
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage());
         }
     }
 
-    private ModelAndView executeController(HttpServletRequest request, HttpServletResponse response) {
+    private ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
         try {
             Object handler = handlerMappings.getHandler(request);
             HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler, request, response);
