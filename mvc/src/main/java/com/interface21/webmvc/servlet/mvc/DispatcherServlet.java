@@ -71,7 +71,7 @@ public class DispatcherServlet extends HttpServlet {
         } catch (NoHandlerFoundException e) {
             log.warn(e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
