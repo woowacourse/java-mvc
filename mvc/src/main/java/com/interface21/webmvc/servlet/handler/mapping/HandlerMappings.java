@@ -1,7 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.handler.mapping;
 
-import com.interface21.webmvc.servlet.handler.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.handler.mapping.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -10,7 +8,7 @@ import java.util.Optional;
 public class HandlerMappings {
 
     private static final String DEFAULT_PATH_OF_CONTROLLERS = "com.techcourse.controller";
-    private List<HandlerMapping> handlerMappings;
+    private final List<HandlerMapping> handlerMappings;
 
     private HandlerMappings(List<HandlerMapping> handlerMappings) {
         this.handlerMappings = handlerMappings;
