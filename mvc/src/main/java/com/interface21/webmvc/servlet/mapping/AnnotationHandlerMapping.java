@@ -1,7 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mapping;
 
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;

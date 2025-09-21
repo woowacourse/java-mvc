@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mapping;
 
-import com.interface21.webmvc.servlet.mapping.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
@@ -14,10 +13,12 @@ public class HandlerMappingRegistry {
 
     private final List<HandlerMapping> handlerMappings;
 
-    public static HandlerMappingRegistry initialize() {
+    public static HandlerMappingRegistry initialize(
+            final String basePackage,
+            final ManualHandlerMapping manualHandlerMapping
+    ) {
         // todo reflection
-        final AnnotationHandlerMapping annotationHandlerMapping = AnnotationHandlerMapping.from("com.techcourse.controller");
-        final ManualHandlerMapping manualHandlerMapping = ManualHandlerMapping.initialize();
+        final AnnotationHandlerMapping annotationHandlerMapping = AnnotationHandlerMapping.from(basePackage);
         return new HandlerMappingRegistry(List.of(annotationHandlerMapping, manualHandlerMapping));
     }
 
