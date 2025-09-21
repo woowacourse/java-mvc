@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handleradapter;
+package com.interface21.webmvc.servlet.mvc.handleradapter;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 
