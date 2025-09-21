@@ -48,8 +48,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-
-            ModelAndView modelAndView = execute(request, response, handler);
+            ModelAndView modelAndView = handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -57,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private ModelAndView execute(HttpServletRequest request, HttpServletResponse response, Object handler)
+    private ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
@@ -80,9 +79,7 @@ public class DispatcherServlet extends HttpServlet {
         throw new IllegalArgumentException("처리할 수 없는 요청입니다.");
     }
 
-    private void render(ModelAndView mav,
-                        HttpServletRequest request,
-                        HttpServletResponse response) throws Exception {
+    private void render(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object view = mav.getView();
 
         if (view instanceof String viewName) {
