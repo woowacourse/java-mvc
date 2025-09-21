@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public class JsonView implements View {
 
     private final static Logger log = LoggerFactory.getLogger(JsonView.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void render(final Map<String, ?> model,
