@@ -55,6 +55,9 @@ public class DispatcherServlet extends HttpServlet {
             Map<String, Object> model = modelAndView.getModel();
             View view = modelAndView.getView();
             view.render(model, request, response);
+        } catch (IllegalArgumentException e) {
+            log.warn("Handler not found for request URI: {}", request.getRequestURI());
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
