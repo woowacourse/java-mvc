@@ -17,21 +17,20 @@ public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
+    private final String[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
+    public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
         handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        for (Object bp : basePackage) {
-            Reflections reflections = new Reflections(bp, Scanners.TypesAnnotated);
-            Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
+        for (String bp : basePackage) {
+            Set<Class<?>> controllerTypes = ControllerScanner.getControllerTypes(bp);
 
             for (Class<?> controllerType : controllerTypes) {
-                Object controller = getControllerInstance(controllerType);
+                Object controller = ControllerScanner.getControllerInstance(controllerType);
 
                 List<Method> methods = ReflectionUtils.getAllMethods(controllerType, RequestMapping.class);
 
@@ -65,13 +64,5 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, method);
         return handlerExecutions.get(handlerKey);
-    }
-
-    private Object getControllerInstance(Class<?> controllerType) {
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
     }
 }
