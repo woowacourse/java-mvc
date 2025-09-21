@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
@@ -23,7 +24,7 @@ public class ControllerScanner {
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> controllersClasses) {
         return controllersClasses.stream()
                 .collect(Collectors.toMap(
-                        controllerClass -> controllerClass,
+                        Function.identity(),
                         this::getInstanceBy
                 ));
     }
