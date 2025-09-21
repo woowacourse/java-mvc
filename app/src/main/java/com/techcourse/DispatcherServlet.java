@@ -1,51 +1,71 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappingRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(
+            final HandlerMappingRegistry handlerMappingRegistry,
+            final HandlerAdapterRegistry handlerAdapterRegistry
+    ) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdapterRegistry = handlerAdapterRegistry;
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        ManualHandlerMapping manual = new ManualHandlerMapping();
+        manual.initialize();
+        handlerMappingRegistry.addHandlerMapping(manual);
+
+        AnnotationHandlerMapping annotation = new AnnotationHandlerMapping("com.techcourse");
+        annotation.initialize();
+        handlerMappingRegistry.addHandlerMapping(annotation);
+
+        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+    protected void service(final HttpServletRequest req, final HttpServletResponse res)
+            throws ServletException {
+        final String requestURI = req.getRequestURI();
+        log.debug("Method : {}, Request URI : {}", req.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            Object handler = handlerMappingRegistry.getHandler(req);
+            HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView mav = adapter.handle(req, res, handler);
+            render(mav, req, res);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+    private void render(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        View view = modelAndView.getView();
+        Map<String, Object> model = modelAndView.getModel();
+        view.render(model, req, resp);
     }
 }
