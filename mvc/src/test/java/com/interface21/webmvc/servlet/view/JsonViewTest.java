@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,9 +37,11 @@ class JsonViewTest {
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final var objectMapper = new ObjectMapper();
         final var user = objectMapper.readValue(stringWriter.toString(), User.class);
-        assertThat(user.getAccount()).isEqualTo("gugu");
-        assertThat(user.getPassword()).isEqualTo("password");
-        assertThat(user.getEmail()).isEqualTo("hkkang@woowahan.com");
+        assertAll(
+                () -> assertThat(user.getAccount()).isEqualTo("gugu"),
+                () -> assertThat(user.getPassword()).isEqualTo("password"),
+                () -> assertThat(user.getEmail()).isEqualTo("hkkang@woowahan.com")
+        );
     }
 
     @DisplayName("model에 다수의 객체가 존재할 경우 map 전체를 JSON으로 변환하여 반환한다.")
@@ -62,11 +65,13 @@ class JsonViewTest {
         verify(response).setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         final var objectMapper = new ObjectMapper();
         final Map<String, Object> json = objectMapper.readValue(stringWriter.toString(), new TypeReference<>() {});
-        assertThat(json.get("message")).isEqualTo("Hello");
         final var userMap = (Map<String, String>) json.get("user");
-        assertThat(userMap.get("account")).isEqualTo("gugu");
-        assertThat(userMap.get("password")).isEqualTo("password");
-        assertThat(userMap.get("email")).isEqualTo("hkkang@woowahan.com");
+        assertAll(
+                () -> assertThat(json.get("message")).isEqualTo("Hello"),
+                () -> assertThat(userMap.get("account")).isEqualTo("gugu"),
+                () -> assertThat(userMap.get("password")).isEqualTo("password"),
+                () -> assertThat(userMap.get("email")).isEqualTo("hkkang@woowahan.com")
+        );
     }
 
     // 테스트용 User
