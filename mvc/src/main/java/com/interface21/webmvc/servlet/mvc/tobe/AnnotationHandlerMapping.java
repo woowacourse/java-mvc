@@ -19,10 +19,12 @@ public class AnnotationHandlerMapping {
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        this.controllerScanner = new ControllerScanner();
     }
 
     public void initialize() {
@@ -35,6 +37,7 @@ public class AnnotationHandlerMapping {
     private void scanAndRegisterControllers(Object packageName) {
         Reflections reflections = new Reflections(packageName);
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> controllerClasses = controllerScanner.scanControllers(packageName);
 
         for (Class<?> controllerClass : controllerClasses) {
             registerController(controllerClass);
@@ -42,13 +45,11 @@ public class AnnotationHandlerMapping {
     }
 
     private void registerController(Class<?> controllerClass) {
-        Object controllerInstance = createInstance(controllerClass);
-        Method[] methods = controllerClass.getDeclaredMethods();
-
+        Object controllerInstance = controllerScanner.getInstance(controllerClass);
+        Set<Method> methods = ReflectionUtils.getAllMethods(
+                controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class));
         for (Method method : methods) {
-            if (method.isAnnotationPresent(RequestMapping.class)) {
-                registerHandlerMethod(controllerInstance, method);
-            }
+            registerHandlerMethod(controllerInstance, method);
         }
     }
 
