@@ -1,20 +1,25 @@
 package com.interface21.webmvc.servlet.adapter;
 
+import com.interface21.webmvc.servlet.Handler;
+import com.interface21.webmvc.servlet.HandlerType;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HandlerExecutionAdapter implements HandlerAdapter {
+public class HandlerExecutionAdapter extends AbstractHandlerAdapter {
+
     @Override
-    public ModelAndView handle(
-            final Object handler,
+    protected HandlerType supportedType() {
+        return HandlerType.HANDLER_EXECUTION;
+    }
+
+    @Override
+    protected ModelAndView doHandle(
+            final Handler handler,
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        if (!(handler instanceof HandlerExecution)) {
-            throw new IllegalStateException("AnnotationHandlerAdapter HandlerExecution 클래스만을 실행할 수 있습니다");
-        }
-        return ((HandlerExecution) handler).handle(request, response);
+        return ((HandlerExecution) handler.instance()).handle(request, response);
     }
 }

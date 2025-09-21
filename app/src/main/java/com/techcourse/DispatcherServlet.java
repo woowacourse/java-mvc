@@ -6,6 +6,8 @@ import com.interface21.webmvc.servlet.mapping.HandlerMappingRegistry;
 
 public class DispatcherServlet extends AbstractDispatcherServlet {
 
+    public static final String CONTROLLER_PACKAGE = "com.techcourse.controller";
+
     private DispatcherServlet(
             final HandlerMappingRegistry handlerMappingRegistry,
             final HandlerAdapterRegistry handlerAdapterRegistry
@@ -15,7 +17,7 @@ public class DispatcherServlet extends AbstractDispatcherServlet {
 
     public static DispatcherServlet initialize() {
         final HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.initialize(
-                "com.techcourse.controller",
+                CONTROLLER_PACKAGE,
                 ManualMappingConfig.createManualMapping()
         );
         final HandlerAdapterRegistry handlerAdapterRegistry = HandlerAdapterRegistry.initialize();
