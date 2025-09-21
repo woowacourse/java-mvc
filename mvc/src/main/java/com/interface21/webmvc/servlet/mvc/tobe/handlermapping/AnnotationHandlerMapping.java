@@ -30,6 +30,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        log.info("Initialized AnnotationHandlerMapping!");
         for (Class<?> controller : controllerScanner.getClasses()) {
             Method[] handlers = controller.getMethods();
             for (Method handler : handlers) {
@@ -41,7 +42,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                 }
             }
         }
-        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private void registerHandlerExecution(Object controllerInstance, Method handler) {
@@ -56,6 +56,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(mappingAnnotation.value(), requestMethod);
             handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, handler));
+            log.info("Method: {}, Path : {}, Controller : {}", handlerKey.getRequestMethod(), handlerKey.getUrl(),
+                controllerInstance.getClass().getName());
         }
     }
 
