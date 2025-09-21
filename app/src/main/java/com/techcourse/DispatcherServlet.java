@@ -66,7 +66,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = getHandler(request);
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler, request, response);
-            return handlerAdapter.handle(handlerAdapter, request, response);
+            return handlerAdapter.handle(handler, request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
