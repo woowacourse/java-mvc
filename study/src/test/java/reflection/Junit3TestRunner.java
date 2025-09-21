@@ -8,6 +8,8 @@ class Junit3TestRunner {
     void run() throws Exception {
         Class<Junit3Test> clazz = Junit3Test.class;
 
-        // TODO Junit3Test에서 test로 시작하는 메소드 실행
+        clazz.getMethod("test1").invoke(clazz.getDeclaredConstructor().newInstance());
+        clazz.getMethod("test2").invoke(clazz.getDeclaredConstructor().newInstance());
+        clazz.getMethod("three").invoke(clazz.getDeclaredConstructor().newInstance());
     }
 }
