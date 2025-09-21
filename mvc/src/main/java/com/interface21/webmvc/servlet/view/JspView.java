@@ -18,6 +18,10 @@ public class JspView implements View {
         this.viewName = viewName;
     }
 
+    public static JspView redirectTo(String path) {
+        return new JspView(REDIRECT_PREFIX + path);
+    }
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
