@@ -1,13 +1,15 @@
 package com.interface21.webmvc.servlet.mapping;
 
+import com.interface21.webmvc.servlet.Handler;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class HandlerMappingRegistry {
 
@@ -15,17 +17,17 @@ public class HandlerMappingRegistry {
 
     public static HandlerMappingRegistry initialize(
             final String basePackage,
-            final ManualHandlerMapping manualHandlerMapping
+            final ControllerMapping controllerMapping
     ) {
         // todo reflection
-        final AnnotationHandlerMapping annotationHandlerMapping = AnnotationHandlerMapping.from(basePackage);
-        return new HandlerMappingRegistry(List.of(annotationHandlerMapping, manualHandlerMapping));
+        final HandlerExecutionMapping handlerExecutionMapping = HandlerExecutionMapping.from(basePackage);
+        return new HandlerMappingRegistry(List.of(handlerExecutionMapping, controllerMapping));
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        final Set<Object> handlers = handlerMappings.stream()
+    public Handler getHandler(final HttpServletRequest request) {
+        final Set<Handler> handlers = handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
-                .filter(Objects::nonNull)
+                .filter(handler -> handler.instance() != null)
                 .collect(Collectors.toSet());
 
         if (handlers.isEmpty()) {

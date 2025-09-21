@@ -1,5 +1,7 @@
 package com.interface21.webmvc.servlet.adapter;
 
+import com.interface21.webmvc.servlet.Handler;
+import com.interface21.webmvc.servlet.HandlerType;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
@@ -17,27 +19,18 @@ public class HandlerAdapterRegistry {
 
     public static HandlerAdapterRegistry initialize() {
         final Map<HandlerType, HandlerAdapter> handlerAdapters = new HashMap<>();
-        // todo reflection
         handlerAdapters.put(HandlerType.CONTROLLER, new ControllerAdapter());
         handlerAdapters.put(HandlerType.HANDLER_EXECUTION, new HandlerExecutionAdapter());
         return new HandlerAdapterRegistry(handlerAdapters);
     }
 
     public ModelAndView handle(
-            final Object handler,
+            final Handler handler,
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws Exception {
-        return switch (handler) {
-            case final Controller controller ->
-                    handlerAdapters.get(HandlerType.CONTROLLER).handle(controller, request, response);
-            case final HandlerExecution handlerExecution ->
-                    handlerAdapters.get(HandlerType.HANDLER_EXECUTION).handle(handlerExecution, request, response);
-            default -> throw new IllegalArgumentException("Unhandled handler type: " + handler.getClass());
-        };
-    }
-
-    private enum HandlerType {
-        CONTROLLER, HANDLER_EXECUTION
+        return handlerAdapters
+                .get(handler.type())
+                .handle(handler, request, response);
     }
 }
