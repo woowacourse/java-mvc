@@ -16,14 +16,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private Map<HandlerKey, HandlerExecution> handlerExecutions = Map.of();
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
+        final Map<HandlerKey, HandlerExecution> temporaryHandlerExecutions = new HashMap<>();
+
         Reflections reflections = new Reflections(basePackage);
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
         Map<Class<?>, Object> controllerClasses = controllerScanner.getControllers();
@@ -35,9 +36,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
                 for (Method method : ReflectionUtils.getAllMethods(controllerClass,
                         ReflectionUtils.withAnnotation(RequestMapping.class))) {
-                    registerHandler(handler, method);
+                    registerHandler(temporaryHandlerExecutions, handler, method);
                 }
             }
+            this.handlerExecutions = Map.copyOf(temporaryHandlerExecutions);
         } catch (Exception e) {
             log.error("컨트롤러 초기화 중 오류 발생", e);
         }
@@ -50,7 +52,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 
-    private void registerHandler(Object handler, Method method) {
+    private void registerHandler(Map<HandlerKey, HandlerExecution> handlerExecutions, Object handler, Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         RequestMethod[] httpMethods = requestMapping.method();
 
