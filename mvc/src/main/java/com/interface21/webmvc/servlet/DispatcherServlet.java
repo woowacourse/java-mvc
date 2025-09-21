@@ -1,7 +1,7 @@
 package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
