@@ -28,6 +28,7 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
         final ControllerScanner controllerScanner = new ControllerScanner(basePackages);
@@ -63,9 +64,12 @@ public class AnnotationHandlerMapping {
         }
     }
 
-
     public Object getHandler(final HttpServletRequest request) {
         return handlerExecutions.get(
-                new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(request.getMethod())));
+                new HandlerKey(
+                        request.getRequestURI(),
+                        RequestMethod.valueOf(request.getMethod())
+                )
+        );
     }
 }
