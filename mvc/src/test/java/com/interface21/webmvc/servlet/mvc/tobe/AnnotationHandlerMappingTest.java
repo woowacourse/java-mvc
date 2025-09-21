@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 class AnnotationHandlerMappingTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private HandlerMapping handlerMapping;
 
     @BeforeEach
     void setUp() {
