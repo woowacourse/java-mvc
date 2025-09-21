@@ -13,6 +13,7 @@ public class HandlerMappingRegistry {
             return;
         }
 
+        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
     }
 
