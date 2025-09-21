@@ -7,10 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class ControllerAdapter implements HandlerAdapter {
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         try {
-            ModelAndView modelAndView = ((Controller) handler).execute(request, response);
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
+            return ((Controller) handler).execute(request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

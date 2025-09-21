@@ -1,5 +1,7 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.*;
 import com.interface21.webmvc.servlet.mvc.tobe.exception.NoHandlerAdapterFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.exception.NoHandlerMappingFoundException;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -49,7 +52,10 @@ public class DispatcherServlet extends HttpServlet {
             var handler = handlerMapping.getHandler(request);
             // handler를 지원하는 HandlerAdapter 구현체 선택, 실행
             HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
-            handlerAdapter.handle(request, response, handler);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            View view = modelAndView.getView();
+            Map<String, Object> model = modelAndView.getModel();
+            view.render(model, request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
