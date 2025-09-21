@@ -6,11 +6,17 @@ import java.util.Map;
 
 public class ModelAndView {
 
-    private final View view;
+    private View view;
+    private String viewName;
     private final Map<String, Object> model;
 
     public ModelAndView(final View view) {
         this.view = view;
+        this.model = new HashMap<>();
+    }
+
+    public ModelAndView(final String viewName) {
+        this.viewName = viewName;
         this.model = new HashMap<>();
     }
 
@@ -29,5 +35,17 @@ public class ModelAndView {
 
     public View getView() {
         return view;
+    }
+
+    public String getViewName() {
+        return viewName;
+    }
+
+    public void setView(final View view) {
+        this.view = view;
+    }
+
+    public boolean hasView() {
+        return this.view != null;
     }
 }

@@ -2,9 +2,11 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.techcourse.view.ViewResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +21,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
+    private final ViewResolver viewResolver;
 
     public DispatcherServlet() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
+        this.viewResolver = new ViewResolver();
     }
 
     @Override
@@ -51,8 +55,15 @@ public class DispatcherServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
+
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
+
+            if (!modelAndView.hasView()) {
+                final var viewName = modelAndView.getViewName();
+                final var view = viewResolver.resolveViewName(viewName);
+                modelAndView.setView(view);
+            }
 
             final var view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
