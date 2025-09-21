@@ -1,7 +1,5 @@
 package com.interface21.webmvc.servlet.handler;
 
-import com.interface21.webmvc.servlet.controller.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,10 +13,7 @@ public class HandlerAdapter {
 
     public static ModelAndView executeHandler(Object handler, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
         try {
-            if (handler instanceof Controller) {
-                String viewName = ((Controller) handler).execute(httpServletRequest, httpServletResponse);
-                return new ModelAndView(new JspView(viewName));
-            } else if (handler instanceof HandlerExecution) {
+            if (handler instanceof HandlerExecution) {
                 return ((HandlerExecution) handler).handle(httpServletRequest, httpServletResponse);
             } else {
                 throw new ServletException("지원하지 않는 응답 방식입니다.");

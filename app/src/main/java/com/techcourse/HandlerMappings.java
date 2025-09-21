@@ -18,22 +18,14 @@ public class HandlerMappings {
 
     public static HandlerMappings initialize() {
         AnnotationHandlerMapping annotationHandlerMapping = createAnnotationHandlerMappings();
-        ManualHandlerMapping manualHandlerMapping = createManualHandlerMappings();
         List<HandlerMapping> handlerMappings = List.of(
-            annotationHandlerMapping,
-            manualHandlerMapping
+            annotationHandlerMapping
         );
         return new HandlerMappings(handlerMappings);
     }
 
     private static AnnotationHandlerMapping createAnnotationHandlerMappings() {
         AnnotationHandlerMapping mapping = new AnnotationHandlerMapping(DEFAULT_PATH_OF_CONTROLLERS);
-        mapping.initialize();
-        return mapping;
-    }
-
-    private static ManualHandlerMapping createManualHandlerMappings() {
-        ManualHandlerMapping mapping = new ManualHandlerMapping();
         mapping.initialize();
         return mapping;
     }
