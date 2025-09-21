@@ -2,10 +2,11 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,9 +26,11 @@ public class DispatcherServlet extends HttpServlet {
     public static final String RESOURCES_BASE_PACKAGE = "com.techcourse";
 
     private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new ArrayList<>();
+        this.handlerAdapters = new ArrayList<>();
     }
 
     @Override
@@ -36,8 +39,14 @@ public class DispatcherServlet extends HttpServlet {
         HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         annotationHandlerMapping.initialize();
         manualHandlerMapping.initialize();
+
+        HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        HandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+
         handlerMappings.add(annotationHandlerMapping);
         handlerMappings.add(manualHandlerMapping);
+        handlerAdapters.add(annotationHandlerAdapter);
+        handlerAdapters.add(manualHandlerAdapter);
     }
 
     @Override
@@ -47,10 +56,6 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView modelAndView = executeController(request, response);
-            if (modelAndView == null) {
-                throw new IllegalArgumentException(String.format("Not found : %s", request.getRequestURI()));
-            }
-
             move(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage());
@@ -59,28 +64,37 @@ public class DispatcherServlet extends HttpServlet {
 
     private ModelAndView executeController(HttpServletRequest request, HttpServletResponse response) {
         try {
-            for (HandlerMapping handlerMapping : this.handlerMappings) {
-                Object handler = handlerMapping.getHandler(request);
-
-                if (handler == null) {
-                    continue; // 다음 handlerMapping에 매핑될 수 있음.
-                }
-                if (handler instanceof HandlerExecution) {
-                    return ((HandlerExecution) handler).handle(request, response);
-                }
-                if (handler instanceof Controller) {
-                    return ((Controller) handler).execute(request, response);
-                }
-            }
-            return null;
+            Object handler = getHandler(request);
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler, request, response);
+            return handlerAdapter.handle(handlerAdapter, request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    private Object getHandler(HttpServletRequest request) {
+        for (HandlerMapping handlerMapping : this.handlerMappings) {
+            Object handler = handlerMapping.getHandler(request);
+            if (handler != null) {
+                return handler;
+            }
+        }
+        throw new IllegalArgumentException(String.format("Not found : %s", request.getRequestURI()));
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler, HttpServletRequest request, HttpServletResponse response) {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.supports(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new IllegalStateException(String.format("Cannot adapt handler : %s", handler.toString()));
+    }
+
     private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         View view = modelAndView.getView();
         String viewName = view.getViewName();
+
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;

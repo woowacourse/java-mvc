@@ -1,12 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,19 +16,21 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final String[] basePackage;
+    private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
-        handlerExecutions = new HashMap<>();
+        this.controllerScanner = new ControllerScanner(basePackage);
+        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
         for (String bp : basePackage) {
-            Set<Class<?>> controllerTypes = ControllerScanner.getControllerTypes(bp);
+            Set<Class<?>> controllerTypes = controllerScanner.getControllerTypes(bp);
 
             for (Class<?> controllerType : controllerTypes) {
-                Object controller = ControllerScanner.getControllerInstance(controllerType);
+                Object controller = controllerScanner.getControllerInstance(controllerType);
 
                 List<Method> methods = ReflectionUtils.getAllMethods(controllerType, RequestMapping.class);
 
