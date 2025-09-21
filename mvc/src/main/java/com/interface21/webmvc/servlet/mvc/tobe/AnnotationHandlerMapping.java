@@ -28,21 +28,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
         Map<Class<?>, Object> controllerClasses = controllerScanner.getControllers();
+        
+        for (Map.Entry<Class<?>, Object> entry : controllerClasses.entrySet()) {
+            Class<?> controllerClass = entry.getKey();
+            Object handler = entry.getValue();
 
-        try {
-            for (Map.Entry<Class<?>, Object> entry : controllerClasses.entrySet()) {
-                Class<?> controllerClass = entry.getKey();
-                Object handler = entry.getValue();
-
-                for (Method method : ReflectionUtils.getAllMethods(controllerClass,
-                        ReflectionUtils.withAnnotation(RequestMapping.class))) {
-                    registerHandler(temporaryHandlerExecutions, handler, method);
-                }
+            for (Method method : ReflectionUtils.getAllMethods(controllerClass,
+                    ReflectionUtils.withAnnotation(RequestMapping.class))) {
+                registerHandler(temporaryHandlerExecutions, handler, method);
             }
-            this.handlerExecutions = Map.copyOf(temporaryHandlerExecutions);
-        } catch (Exception e) {
-            log.error("컨트롤러 초기화 중 오류 발생", e);
         }
+        this.handlerExecutions = Map.copyOf(temporaryHandlerExecutions);
 
         log.info("Initialized AnnotationHandlerMapping!");
     }
