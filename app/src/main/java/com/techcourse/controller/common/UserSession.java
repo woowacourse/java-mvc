@@ -1,4 +1,4 @@
-package com.techcourse.annotationController;
+package com.techcourse.controller.common;
 
 import com.techcourse.domain.User;
 import jakarta.servlet.http.HttpSession;

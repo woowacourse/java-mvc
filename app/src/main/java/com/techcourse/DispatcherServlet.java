@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.ServletException;
@@ -46,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
             move(viewName, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
-//            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage());
         }
     }
 
@@ -59,17 +60,16 @@ public class DispatcherServlet extends HttpServlet {
                 throw new RuntimeException();
             }
         }
-        return null;
 
-//        Controller controller = manualHandlerMapping.getHandler(request.getRequestURI());
-//        if (controller == null) {
-//            return null;
-//        }
-//        try {
-//            return controller.execute(request, response);
-//        } catch (Exception e) {
-//            throw new RuntimeException();
-//        }
+        Controller controller = manualHandlerMapping.getHandler(request.getRequestURI());
+        if (controller == null) {
+            return null;
+        }
+        try {
+            return controller.execute(request, response);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 
     private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {

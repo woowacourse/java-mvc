@@ -1,6 +1,6 @@
 package com.techcourse;
 
-import com.techcourse.controller.*;
+import com.techcourse.controller.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
