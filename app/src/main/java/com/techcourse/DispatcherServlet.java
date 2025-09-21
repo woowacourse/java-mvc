@@ -1,11 +1,13 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.NoHandlerFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adapter.HandlerAdapterRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +25,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+    protected void service(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
@@ -32,9 +36,20 @@ public class DispatcherServlet extends HttpServlet {
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             var modelAndView = handlerAdapter.handle(request, response, handler);
             render(modelAndView, request, response);
+        } catch (final NoHandlerFoundException e) {
+            log.warn("No Handler Found Exception : {}", e.getMessage());
+            noHandlerFound(response);
         } catch (final Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
+        }
+    }
+
+    private void noHandlerFound(final HttpServletResponse response) throws ServletException {
+        try {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        } catch (final IOException e) {
+            throw new ServletException(e.getMessage(), e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.NoHandlerFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
@@ -30,7 +31,7 @@ public class HandlerMappingRegistry {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(
-                        () -> new ServletException("No handler found for request URI : " + request.getRequestURI())
+                        () -> new NoHandlerFoundException(request.getMethod(), request.getRequestURI())
                 );
     }
 
