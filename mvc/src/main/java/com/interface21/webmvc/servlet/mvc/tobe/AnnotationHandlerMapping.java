@@ -42,10 +42,13 @@ public class AnnotationHandlerMapping {
                         method -> {
                             if (method.isAnnotationPresent(RequestMapping.class)) {
                                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                                handlerExecutions.put(
-                                        new HandlerKey(requestMapping.value(), requestMapping.method()[0]),
-                                        new HandlerExecution(controller, method)
-                                );
+                                for (RequestMethod requestMethod : requestMapping.method()) {
+                                    HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+                                    handlerExecutions.put(
+                                            new HandlerKey(requestMapping.value(), requestMethod),
+                                            handlerExecution
+                                    );
+                                }
                             }
                         }
                 );
