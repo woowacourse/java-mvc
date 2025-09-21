@@ -15,10 +15,12 @@ public class HandlerMappings {
     }
 
     public static HandlerMappings initialize() {
-        AnnotationHandlerMapping annotationHandlerMapping = createAnnotationHandlerMappings();
         List<HandlerMapping> handlerMappings = List.of(
-            annotationHandlerMapping
+            new AnnotationHandlerMapping(DEFAULT_PATH_OF_CONTROLLERS)
         );
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
         return new HandlerMappings(handlerMappings);
     }
 
