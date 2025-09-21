@@ -3,52 +3,59 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+@Slf4j
+@RequiredArgsConstructor
+public class ControllerScanner {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private final Object[] basePackages;
 
-    private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    public Map<HandlerKey, HandlerExecution> process() {
+        final Reflections reflections = new Reflections(basePackages);
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
-    }
-
-
-    public void initialize() {
-        final Reflections reflections = new Reflections(basePackage);
+        final Map<HandlerKey, HandlerExecution> result = new HashMap<>();
 
         final Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (final Class<?> controller : controllers) {
             validateModifier(controller);
             final Object controllerInstance = createControllerInstance(controller);
+
             for (final Method method : controller.getDeclaredMethods()) {
                 validateModifier(method);
                 final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                final RequestMethod[] supportedHttpMethods = requestMapping.method();
+                final RequestMethod[] supportedHttpMethods = getRequestMethods(requestMapping);
                 final String requestPath = requestMapping.value();
 
                 for (final RequestMethod httpMethod : supportedHttpMethods) {
                     final HandlerKey key = new HandlerKey(requestPath, httpMethod);
                     final HandlerExecution execution = HandlerExecution.of(controllerInstance, method);
-                    handlerExecutions.put(key, execution);
+
+                    if (result.containsKey(key)) {
+                        throw new IllegalStateException("중복된 핸들러 매핑 감지, Key: %s".formatted(key));
+                    }
+
+                    result.put(key, execution);
                 }
             }
         }
 
-        log.info("Initialized AnnotationHandlerMapping!");
+        return result;
+    }
+
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
+        if (requestMapping.method().length == 0) {
+            return RequestMethod.values();
+        }
+        return requestMapping.method();
     }
 
     private void validateModifier(final Class<?> controller) {
@@ -70,17 +77,5 @@ public class AnnotationHandlerMapping {
         } catch (final Exception e) {
             throw new IllegalStateException("컨트롤러 인스턴스 생성 실패:" + controller.getName(), e);
         }
-    }
-
-    public HandlerExecution getHandler(final HttpServletRequest request) {
-        final HandlerKey handlerKey = new HandlerKey(
-                request.getRequestURI(),
-                RequestMethod.valueOf(request.getMethod()));
-
-        final HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            throw new IllegalStateException("No HandlerExecution found for key " + handlerKey);
-        }
-        return handlerExecution;
     }
 }

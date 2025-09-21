@@ -1,47 +1,26 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.view.JspView;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.interface21.webmvc.servlet.AbstractDispatcherServlet;
+import com.interface21.webmvc.servlet.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mapping.HandlerMappingRegistry;
 
-public class DispatcherServlet extends HttpServlet {
+public class DispatcherServlet extends AbstractDispatcherServlet {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    public static final String CONTROLLER_PACKAGE = "com.techcourse.controller";
 
-    private ManualHandlerMapping manualHandlerMapping;
-
-    public DispatcherServlet() {
+    private DispatcherServlet(
+            final HandlerMappingRegistry handlerMappingRegistry,
+            final HandlerAdapterRegistry handlerAdapterRegistry
+    ) {
+        super(handlerMappingRegistry, handlerAdapterRegistry);
     }
 
-    @Override
-    public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-    }
-
-    @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
-
-        try {
-            final Controller controller = manualHandlerMapping.getHandler(requestURI);
-
-            // 아마도 나중에 ModelAndView를 반환하지 않을까...
-            final String viewName = controller.execute(request, response);
-            final JspView jspView = new JspView(viewName);
-
-            jspView.render(null, request, response);
-        } catch (final Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
-        }
+    public static DispatcherServlet initialize() {
+        final HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.initialize(
+                CONTROLLER_PACKAGE,
+                ManualMappingConfig.createManualMapping()
+        );
+        final HandlerAdapterRegistry handlerAdapterRegistry = HandlerAdapterRegistry.initialize();
+        return new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
     }
 }
