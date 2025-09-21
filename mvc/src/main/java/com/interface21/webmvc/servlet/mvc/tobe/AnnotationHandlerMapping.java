@@ -9,9 +9,7 @@ import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.sql.Ref;
 import java.util.*;
 
 public class AnnotationHandlerMapping {
@@ -26,13 +24,13 @@ public class AnnotationHandlerMapping {
         handlerExecutions = new HashMap<>();
     }
 
-    public void initialize() throws Exception {
+    public void initialize() {
         for (Object bp : basePackage) {
             Reflections reflections = new Reflections(bp, Scanners.TypesAnnotated);
             Set<Class<?>> controllerTypes = reflections.getTypesAnnotatedWith(Controller.class);
 
             for (Class<?> controllerType : controllerTypes) {
-                Object controller = controllerType.getDeclaredConstructor().newInstance();
+                Object controller = getControllerInstance(controllerType);
 
                 List<Method> methods = Arrays.stream(controllerType.getDeclaredMethods())
                         .filter(method -> method.isAnnotationPresent(RequestMapping.class))
@@ -58,7 +56,15 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    private static Object getControllerInstance(Class<?> controllerType) {
+        try {
+            return controllerType.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
 
