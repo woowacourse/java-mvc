@@ -3,10 +3,9 @@ package com.interface21.webmvc.servlet.view;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class JspView implements View {
 
@@ -22,7 +21,6 @@ public class JspView implements View {
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        // todo
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
@@ -33,7 +31,6 @@ public class JspView implements View {
             request.setAttribute(key, model.get(key));
         });
 
-        // todo
         final var requestDispatcher = request.getRequestDispatcher(viewName);
         requestDispatcher.forward(request, response);
     }
