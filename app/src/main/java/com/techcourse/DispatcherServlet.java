@@ -2,11 +2,17 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,15 +21,24 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private HandlerMappingRegistry mappingRegistry;
+    private HandlerAdapterRegistry adapterRegistry;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
+        mappingRegistry = new HandlerMappingRegistry();
+        adapterRegistry = new HandlerAdapterRegistry();
+
+        // 매핑 등록
+        mappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        mappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+
+        // 어댑터 등록
+        adapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        adapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -32,11 +47,17 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Controller controller = manualHandlerMapping.getHandler(requestURI);
-            final ModelAndView modelAndView = controller.execute(request, response); //컨트롤러가 실행됨
-            final View jspView = modelAndView.getView(); //ModelAndView에 담긴 뷰를 꺼내와야함
+            final Object handler = mappingRegistry.getHandler(request);
+            if (handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
 
-            jspView.render(modelAndView.getModel(), request, response); //그 뷰를 화면에 그려버려
+            final HandlerAdapter handlerAdapter = adapterRegistry.getHandlerAdapter(handler);
+            final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+            final View jspView = modelAndView.getView();
+
+            jspView.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());

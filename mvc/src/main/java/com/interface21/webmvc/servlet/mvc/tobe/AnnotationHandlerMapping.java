@@ -1,59 +1,60 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Map.Entry;
 import java.util.Set;
-import org.reflections.Reflections;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackages;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
 
     public AnnotationHandlerMapping(final Object... basePackages) {
-        this.basePackages = basePackages;
         this.handlerExecutions = new HashMap<>();
+        this.controllerScanner = new ControllerScanner(basePackages);
     }
 
     // 초기화 메서드
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Reflections reflections = new Reflections(basePackages);
+        Map<Class<?>, Object> controllers = controllerScanner.getControllers(); // 컨트롤러와 인스턴스 쌍
 
-        Set<Class<?>> controllerClasses = findControllerClasses(reflections);
-        for (Class<?> controllerClass : controllerClasses) {
-            registerController(controllerClass);
+        for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
+            Class<?> controllerClass = entry.getKey();
+            Object controllerInstance = entry.getValue();
+            registerHandlerMethods(controllerClass, controllerInstance);
         }
     }
 
-    // 컨트롤러 클래스 조회
-    private Set<Class<?>> findControllerClasses(final Reflections reflections) {
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
+    // 핸들러 메서드들 등록
+    private void registerHandlerMethods(final Class<?> controllerClass, final Object controllerInstance) {
+        Set<Method> methods = ReflectionUtils.getAllMethods(
+                controllerClass,
+                ReflectionUtils.withAnnotation(RequestMapping.class),
+                ReflectionUtils.withModifier(Modifier.PUBLIC)
+        );
 
-    // 컨트롤러 등록
-    private void registerController(final Class<?> controllerClass) {
-        Object controller = createInstance(controllerClass);
-        for (Method method : controllerClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(RequestMapping.class) && Modifier.isPublic(method.getModifiers())) {
-                registerHandlerMethod(controller, method);
-            }
+        for (Method method : methods) {
+            registerHandlerMethod(controllerInstance, method);
         }
     }
 
     // 핸들러 메서드 등록
-    private void registerHandlerMethod(final Object controller, final Method method) {
+    private void registerHandlerMethod(final Object controllerInstance, final Method method) {
         RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
         String uri = requestMapping.value();
         RequestMethod[] requestMethods = requestMapping.method();
@@ -64,7 +65,7 @@ public class AnnotationHandlerMapping {
 
         for (RequestMethod requestMethod : requestMethods) {
             HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
 
             validateDuplicateHandlerKey(handlerKey, handlerExecution);
             log.debug("Handler registered: {} {}", requestMethod, uri);
@@ -80,17 +81,8 @@ public class AnnotationHandlerMapping {
         handlerExecutions.put(handlerKey, handlerExecution);
     }
 
-    // 컨트롤러 인스턴스 생성
-    private Object createInstance(final Class<?> controllerClass) {
-        try {
-            return controllerClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            log.info("인스턴스 생성에 실패했습니다. {}", e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
-
     // 요청으로부터 핸들러 조회
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         String uri = request.getRequestURI();
         RequestMethod requestMethod = RequestMethod.from(request.getMethod());
@@ -99,4 +91,3 @@ public class AnnotationHandlerMapping {
         return handlerExecutions.get(handlerKey);
     }
 }
-
