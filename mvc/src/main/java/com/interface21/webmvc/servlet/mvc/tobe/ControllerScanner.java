@@ -38,6 +38,11 @@ public class ControllerScanner {
                 for (final RequestMethod httpMethod : supportedHttpMethods) {
                     final HandlerKey key = new HandlerKey(requestPath, httpMethod);
                     final HandlerExecution execution = HandlerExecution.of(controllerInstance, method);
+
+                    if (result.containsKey(key)) {
+                        throw new IllegalStateException("중복된 핸들러 매핑 감지, Key: %s".formatted(key));
+                    }
+
                     result.put(key, execution);
                 }
             }
@@ -46,7 +51,7 @@ public class ControllerScanner {
         return result;
     }
 
-    private RequestMethod[] getRequestMethods(RequestMapping requestMapping) {
+    private RequestMethod[] getRequestMethods(final RequestMapping requestMapping) {
         if (requestMapping.method().length == 0) {
             return RequestMethod.values();
         }
