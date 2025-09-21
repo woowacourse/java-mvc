@@ -1,12 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -23,23 +18,21 @@ public class DispatcherServlet extends HttpServlet {
     public static final String REDIRECT_PREFIX = "redirect:";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final String basePackage;
+
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
         handlerMappings = new ArrayList<>();
-
-        addHandlerMapping(new ManualHandlerMapping());
-        addHandlerMapping(new AnnotationHandlerMapping("com.interface21"));
-
+        addHandlerMapping(new AnnotationHandlerMapping(basePackage));
         handlerAdapters = new ArrayList<>();
-
         handlerAdapters.add(new AnnotationHandlerAdapter());
-        handlerAdapters.add(new ManualHandlerAdapter());
     }
 
     private void addHandlerMapping(HandlerMapping handlerMapping) {
@@ -55,8 +48,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final var handler = getHandler(request);
-
-            ModelAndView modelAndView = execute(request, response, handler);
+            ModelAndView modelAndView = handle(request, response, handler);
             render(modelAndView, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
@@ -64,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private ModelAndView execute(HttpServletRequest request, HttpServletResponse response, Object handler)
+    private ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         for (HandlerAdapter adapter : handlerAdapters) {
             if (adapter.supports(handler)) {
@@ -87,9 +79,7 @@ public class DispatcherServlet extends HttpServlet {
         throw new IllegalArgumentException("처리할 수 없는 요청입니다.");
     }
 
-    private void render(ModelAndView mav,
-                        HttpServletRequest request,
-                        HttpServletResponse response) throws Exception {
+    private void render(ModelAndView mav, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object view = mav.getView();
 
         if (view instanceof String viewName) {
