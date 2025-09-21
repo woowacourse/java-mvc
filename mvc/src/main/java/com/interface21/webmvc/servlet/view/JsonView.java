@@ -34,9 +34,8 @@ public class JsonView implements View {
         if (model != null && model.size() == 1) {
             Object singleValue = model.values().iterator().next();
             return validateSingleValue(singleValue);
-        } else {
-            return model;
         }
+            return model;
     }
 
     private Object validateSingleValue(Object singleValue) {
