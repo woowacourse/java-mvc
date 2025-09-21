@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationHandlerMapping implements HandlerMapping{
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -25,6 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         scanControllersInPackage(basePackage);
         log.info("Initialized AnnotationHandlerMapping!");
@@ -49,7 +50,8 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     }
 
     private Object createControllerInstance(Class<?> controllerClass) throws Exception {
-        return controllerClass.getConstructor().newInstance();
+        return controllerClass.getConstructor()
+                .newInstance();
     }
 
     private void registerHandlerMethods(Class<?> controllerClass, Object controllerInstance) {
@@ -89,15 +91,19 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         }
     }
 
-    private void registerForSpecificHttpMethods(String url, RequestMethod[] httpMethods,
-                                                Object controllerInstance, Method method) {
+    private void registerForSpecificHttpMethods(
+            String url, RequestMethod[] httpMethods,
+            Object controllerInstance, Method method
+    ) {
         for (RequestMethod requestMethod : httpMethods) {
             addHandlerMapping(url, requestMethod, controllerInstance, method);
         }
     }
 
-    private void addHandlerMapping(String url, RequestMethod requestMethod,
-                                   Object controllerInstance, Method method) {
+    private void addHandlerMapping(
+            String url, RequestMethod requestMethod,
+            Object controllerInstance, Method method
+    ) {
         HandlerKey key = new HandlerKey(url, requestMethod);
         HandlerExecution execution = new HandlerExecution(controllerInstance, method);
         handlerExecutions.put(key, execution);
