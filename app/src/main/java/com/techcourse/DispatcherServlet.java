@@ -29,7 +29,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.interface21.webmvc.controller"));
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse"));
         handlerMappingRegistry.initialize();
 
         handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
