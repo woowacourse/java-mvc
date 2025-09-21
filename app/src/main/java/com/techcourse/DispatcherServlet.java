@@ -21,17 +21,24 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
+    private HandlerMappingRegistry mappingRegistry;
+    private HandlerAdapterRegistry adapterRegistry;
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        this.handlerAdapters = List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter());
-        this.handlerMappings = List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping());
-        handlerMappings.forEach(HandlerMapping::initialize);
+        mappingRegistry = new HandlerMappingRegistry();
+        adapterRegistry = new HandlerAdapterRegistry();
+
+        // 매핑 등록
+        mappingRegistry.addHandlerMapping(new ManualHandlerMapping());
+        mappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+
+        // 어댑터 등록
+        adapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
+        adapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -40,13 +47,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = getHandler(request);
+            final Object handler = mappingRegistry.getHandler(request);
             if (handler == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            final HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            final HandlerAdapter handlerAdapter = adapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             final View jspView = modelAndView.getView();
 
@@ -55,26 +62,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private Object getHandler(final HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-
-        return null;
-    }
-
-    // 핸들러에 맞는 어댑터 찾기
-    private HandlerAdapter getHandlerAdapter(Object handler) {
-        for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
-            }
-        }
-        throw new IllegalStateException("No adapter found for handler: " + handler);
     }
 }
