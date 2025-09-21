@@ -1,7 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
