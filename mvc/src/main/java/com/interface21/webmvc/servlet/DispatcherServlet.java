@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet;
 
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.NoHandlerFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.util.PropertiesLoader;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
@@ -12,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,34 +56,22 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.info("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+        log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             final Object handler = handlerMappingRegistry.getHandler(request);
             log.info("핸들러 조회 결과: {}", handler != null ? handler.getClass().getSimpleName() : "null");
-            if (handler == null) {
-                log.warn("핸들러를 찾을 수 없음: {}", requestURI);
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "요청하신 API를 찾을 수 없습니다.");
-                return;
-            }
             final var adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
-            render(modelAndView, request, response);
-
-        } catch (Throwable e) {
+            modelAndView.render(request,response);
+        } catch (NoHandlerFoundException e) {
+            log.warn(e.getMessage(), e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "요청하신 API를 찾을 수 없습니다.");
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage(), e);
         }
-    }
-
-    private void render(final ModelAndView modelAndView,
-                        final HttpServletRequest request,
-                        final HttpServletResponse response) throws Exception {
-        if (modelAndView == null) {
-            return;
-        }
-        modelAndView.getView().render(modelAndView.getModel(), request, response);
     }
 }
