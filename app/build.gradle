@@ -30,6 +30,26 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
 }
 
+/** ---------- 추가: mvc 산출물(JAR)을 WEB-INF/lib로 복사 ---------- **/
+configurations {
+    mvcJar
+}
+
+dependencies {
+    mvcJar project(path: ':mvc', configuration: 'default')
+}
+
+tasks.register('copyMvcJarToWebInfLib', Copy) {
+    dependsOn configurations.mvcJar
+    from(configurations.mvcJar)
+    into("$projectDir/src/main/webapp/WEB-INF/lib")
+}
+
+tasks.named('classes') {
+    finalizedBy('copyMvcJarToWebInfLib')
+}
+/** ----------------------------------------------------------------- **/
+
 test {
     useJUnitPlatform()
 }

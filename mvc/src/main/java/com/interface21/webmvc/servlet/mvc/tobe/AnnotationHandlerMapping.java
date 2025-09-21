@@ -28,7 +28,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         Reflections reflections = new Reflections(basePackage);
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
         Map<Class<?>, Object> controllerClasses = controllerScanner.getControllers();
-        
+
         for (Map.Entry<Class<?>, Object> entry : controllerClasses.entrySet()) {
             Class<?> controllerClass = entry.getKey();
             Object handler = entry.getValue();
@@ -53,7 +53,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         RequestMethod[] httpMethods = requestMapping.method();
 
         HandlerExecution handlerExecution = new HandlerExecution(handler, method);
-
         String path = determinePath(requestMapping);
 
         if (httpMethods.length == 0) {

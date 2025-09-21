@@ -1,11 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,11 +18,8 @@ public class HandlerAdapter {
 
     public void init() {
         handlerMappings = new ArrayList<>();
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
         handlerMappings.add(annotationHandlerMapping);
     }
 
@@ -48,14 +41,7 @@ public class HandlerAdapter {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestUri);
 
         try {
-            ModelAndView modelAndView;
-            if (handler instanceof Controller) {
-                modelAndView = ((Controller) handler).execute(request, response);
-            } else if (handler instanceof HandlerExecution) {
-                modelAndView = ((HandlerExecution) handler).handle(request, response);
-            } else {
-                throw new ServletException("Unhandled handler type");
-            }
+            ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
             final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
