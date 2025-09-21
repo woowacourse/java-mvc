@@ -1,7 +1,5 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-
 public interface JspViewRenderer {
 
     default ModelAndView showPage(final String viewName) {
