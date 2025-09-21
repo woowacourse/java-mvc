@@ -66,10 +66,11 @@ public class AnnotationHandlerMapping {
 
     public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+
+        log.debug("Request Mapping Uri : {}", requestURI);
+
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
-
         HandlerKey handlerKey = new HandlerKey(requestURI, method);
-
         return handlerExecutions.get(handlerKey);
     }
 }
