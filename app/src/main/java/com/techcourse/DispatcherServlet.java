@@ -1,8 +1,10 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,26 +13,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    public static final String RESOURCES_BASE_PACKAGE = "com.techcourse";
 
-    private ManualHandlerMapping manualHandlerMapping;
-    private AnnotationHandlerMapping annotationHandlerMapping;
+    private final List<HandlerMapping> handlerMappings;
 
     public DispatcherServlet() {
+        this.handlerMappings = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
-        annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse"); // 기존의 코드 변경 없이 리팩토링 진행
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(RESOURCES_BASE_PACKAGE);
+        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         annotationHandlerMapping.initialize();
+        manualHandlerMapping.initialize();
+        handlerMappings.add(annotationHandlerMapping);
+        handlerMappings.add(manualHandlerMapping);
     }
 
     @Override
@@ -46,29 +51,29 @@ public class DispatcherServlet extends HttpServlet {
 
             move(viewName, request, response);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            log.error("Exception : {}", e.getMessage());
         }
     }
 
     private String executeController(HttpServletRequest request, HttpServletResponse response) {
-        HandlerExecution handlerExecution = annotationHandlerMapping.getHandler(request);
-        if (handlerExecution != null) {
-            try {
-                return handlerExecution.handle(request, response).getView().getViewName();
-            } catch (Exception e) {
-                throw new RuntimeException();
-            }
-        }
-
-        Controller controller = manualHandlerMapping.getHandler(request.getRequestURI());
-        if (controller == null) {
-            return null;
-        }
         try {
-            return controller.execute(request, response);
+            for (HandlerMapping handlerMapping : this.handlerMappings) {
+                Object handler = handlerMapping.getHandler(request);
+
+                if (handler == null) {
+                    continue; // 다음 handlerMapping에 매핑될 수 있음.
+                }
+                if (handler instanceof HandlerExecution) {
+                    ModelAndView modelAndView = ((HandlerExecution) handler).handle(request, response);
+                    return modelAndView.getView().getViewName();
+                }
+                if (handler instanceof Controller) {
+                    return ((Controller) handler).execute(request, response);
+                }
+            }
+            return null;
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

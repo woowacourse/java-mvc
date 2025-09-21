@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -32,16 +33,15 @@ public class AnnotationHandlerMapping {
             for (Class<?> controllerType : controllerTypes) {
                 Object controller = getControllerInstance(controllerType);
 
-                List<Method> methods = Arrays.stream(controllerType.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                        .toList();
+                List<Method> methods = ReflectionUtils.getAllMethods(controllerType, RequestMapping.class);
 
                 methods.forEach(
                         method -> {
                             if (method.isAnnotationPresent(RequestMapping.class)) {
                                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                                HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+
                                 for (RequestMethod requestMethod : requestMapping.method()) {
-                                    HandlerExecution handlerExecution = new HandlerExecution(controller, method);
                                     handlerExecutions.put(
                                             new HandlerKey(requestMapping.value(), requestMethod),
                                             handlerExecution
@@ -56,14 +56,7 @@ public class AnnotationHandlerMapping {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    private static Object getControllerInstance(Class<?> controllerType) {
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
-    }
-
+    @Override
     public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
 
@@ -72,5 +65,13 @@ public class AnnotationHandlerMapping {
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(requestURI, method);
         return handlerExecutions.get(handlerKey);
+    }
+
+    private Object getControllerInstance(Class<?> controllerType) {
+        try {
+            return controllerType.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 }
