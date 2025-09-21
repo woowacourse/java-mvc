@@ -2,12 +2,12 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
