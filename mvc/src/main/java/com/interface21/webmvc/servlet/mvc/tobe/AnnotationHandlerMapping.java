@@ -11,7 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -26,7 +26,7 @@ public class AnnotationHandlerMapping {
         this.controllerScanner = new ControllerScanner(basePackage);
     }
 
-    // 여기에서 초기화하면서 handlerExceptions 채우기
+    @Override
     public void initialize() {
         setHandlerExecutions(controllerScanner.getControllerClass());
         log.info("Initialized AnnotationHandlerMapping!");
