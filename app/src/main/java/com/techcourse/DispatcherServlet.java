@@ -1,9 +1,6 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.controller.Controller;
 import com.interface21.webmvc.servlet.handler.HandlerAdapter;
-import com.interface21.webmvc.servlet.handler.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
