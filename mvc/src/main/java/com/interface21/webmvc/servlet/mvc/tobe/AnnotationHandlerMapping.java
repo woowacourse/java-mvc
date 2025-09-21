@@ -43,9 +43,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         final var annotation = method.getAnnotation(RequestMapping.class);
         final var url = annotation.value();
         final var requestMethods = annotation.method();
-        for (RequestMethod requestMethod : requestMethods) {
-            final var handlerKey = new HandlerKey(url, requestMethod);
-            handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+
+        if (requestMethods.length == 0) {
+            for (RequestMethod requestMethod : RequestMethod.values()) {
+                final var handlerKey = new HandlerKey(url, requestMethod);
+                handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+            }
+        } else {
+            for (RequestMethod requestMethod : requestMethods) {
+                final var handlerKey = new HandlerKey(url, requestMethod);
+                handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
+            }
         }
     }
 
