@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
@@ -18,6 +19,24 @@ public class ManualHandlerMapping implements HandlerMapping {
         controllers.put(path, controller);
         log.info("Registered Controller: {} -> {}", path, controller.getClass().getName());
     }
+
+    public void loadFromProperties(Properties props) {
+        props.forEach((key, value) -> {
+            String k = key.toString();
+            String v = value.toString();
+            if (k.startsWith("controller./")) {
+                String path = k.substring("controller.".length());
+                try {
+                    Class<?> clazz = Class.forName(v, true, Thread.currentThread().getContextClassLoader());
+                    Controller controller = (Controller) clazz.getDeclaredConstructor().newInstance();
+                    register(path, controller);
+                } catch (Exception e) {
+                    throw new RuntimeException("컨트롤러 등록 실패: " + v, e);
+                }
+            }
+        });
+    }
+
 
     @Override
     public Object getHandler(final HttpServletRequest request) {
