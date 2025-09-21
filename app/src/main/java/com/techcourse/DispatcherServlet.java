@@ -4,7 +4,9 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMappingRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.HandlerMapping;
 import jakarta.servlet.ServletException;
@@ -15,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
@@ -25,12 +25,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     public static final String RESOURCES_BASE_PACKAGE = "com.techcourse";
 
-    private final List<HandlerMapping> handlerMappings;
-    private final List<HandlerAdapter> handlerAdapters;
+    private final HandlerMappingRegistry handlerMappings;
+    private final HandlerAdapterRegistry handlerAdapters;
 
     public DispatcherServlet() {
-        this.handlerMappings = new ArrayList<>();
-        this.handlerAdapters = new ArrayList<>();
+        this.handlerMappings = new HandlerMappingRegistry();
+        this.handlerAdapters = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -43,10 +43,10 @@ public class DispatcherServlet extends HttpServlet {
         HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
         HandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
 
-        handlerMappings.add(annotationHandlerMapping);
-        handlerMappings.add(manualHandlerMapping);
-        handlerAdapters.add(annotationHandlerAdapter);
-        handlerAdapters.add(manualHandlerAdapter);
+        handlerMappings.addMapping(annotationHandlerMapping);
+        handlerMappings.addMapping(manualHandlerMapping);
+        handlerAdapters.addAdapter(annotationHandlerAdapter);
+        handlerAdapters.addAdapter(manualHandlerAdapter);
     }
 
     @Override
@@ -64,31 +64,12 @@ public class DispatcherServlet extends HttpServlet {
 
     private ModelAndView executeController(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Object handler = getHandler(request);
-            HandlerAdapter handlerAdapter = getHandlerAdapter(handler, request, response);
+            Object handler = handlerMappings.getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler, request, response);
             return handlerAdapter.handle(handler, request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : this.handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        throw new IllegalArgumentException(String.format("Not found : %s", request.getRequestURI()));
-    }
-
-    private HandlerAdapter getHandlerAdapter(Object handler, HttpServletRequest request, HttpServletResponse response) {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(handler)) {
-                return handlerAdapter;
-            }
-        }
-        throw new IllegalStateException(String.format("Cannot adapt handler : %s", handler.toString()));
     }
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
