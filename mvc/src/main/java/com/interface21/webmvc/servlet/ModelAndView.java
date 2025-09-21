@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet;
 
+import com.interface21.webmvc.servlet.view.View;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,20 +15,15 @@ public class ModelAndView {
         this.model = new HashMap<>();
     }
 
-    public ModelAndView addObject(final String attributeName, final Object attributeValue) {
+    public void addObject(final String attributeName, final Object attributeValue) {
         model.put(attributeName, attributeValue);
-        return this;
-    }
-
-    public Object getObject(final String attributeName) {
-        return model.get(attributeName);
-    }
-
-    public Map<String, Object> getModel() {
-        return Collections.unmodifiableMap(model);
     }
 
     public View getView() {
         return view;
+    }
+
+    public Map<String, Object> getModel() {
+        return Collections.unmodifiableMap(model);
     }
 }
