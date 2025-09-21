@@ -67,7 +67,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         }
         for (RequestMethod httpMethod : requestMethods) {
             // 키 설정 : {경로, 요청 메서드}
-            HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod);
+            String normalizedUri = UriUtils.normalize(requestMapping.value());
+            HandlerKey handlerKey = new HandlerKey(normalizedUri, httpMethod);
             // {키, 핸들러(키를 처리할 메서드)} 등록
             handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
         }
@@ -75,20 +76,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public Object getHandler(HttpServletRequest request) {
-        String requestURI = UriUtils.getResourcePath(request);
-        String uri = normalize(requestURI);
-        return handlerExecutions.get(new HandlerKey(uri, RequestMethod.valueOf(request.getMethod())));
+        String resourcePath = UriUtils.getResourcePath(request);
+        return handlerExecutions.get(new HandlerKey(resourcePath, RequestMethod.valueOf(request.getMethod())));
     }
 
-    private String normalize(String uri) {
-        if (uri == null || uri.isEmpty()) {
-            return "/";
-        }
-        // 마지막 / 제거
-        if (uri.length() > 1 && uri.endsWith("/")) {
-            uri = uri.substring(0, uri.length() - 1);
-        }
-        // 중복 슬래시 정리
-        return uri.replaceAll("//+", "/");
-    }
+
 }
