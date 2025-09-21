@@ -1,23 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.util.UriUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.reflections.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -29,45 +24,61 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    /**
+     * ControllerScanner 클래스를 통해 베이스 패키지 내부의 컨트롤러 클래스와 해당 인스턴스들을 가져옵니다. 리플랙션을 통해 컨트롤러 클래스 내부를 스캔하며 RequestMapping 어노테이션이
+     * 붙은 메서드들을 가져옵니다. 각 메서드마다 RequestMapping 어노테이션의 경로와 요청 메서드(Get, Put..)를 HandlerKey로 사용하고, 해당 요청을 처리할 메서드와 클래스의 인스턴스
+     * 정보를 Handler로 HandlerExecutions 에 매핑합니다.
+     */
+    @Override
     public void initialize() {
-        Reflections reflections = new Reflections(basePackage); // 기본 패키지 경로 설정된 리플랙션 객체 생성
-        Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(Controller.class);    // @Controller 붙은 클래스 스캔
-        for(Class<?> clazz : controllers){
-            try {
-                Object controller = clazz.getDeclaredConstructor().newInstance();   // 인스턴스 생성
-                for(Method method : controller.getClass().getDeclaredMethods()){    // 전체 메서드 스캔
-                    RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class); // @RequestMapping 붙은 메서드 스캔
-                    if(requestMapping==null){   // 없으면 패스
-                        continue;
-                    }
-                    RequestMethod[] requestMethods = requestMapping.method();
-                    if(requestMethods.length == 0){ // 별도의 요청 메서드 설정 없으면 전체 범위
-                       requestMethods = RequestMethod.values();
-                    }
-                    for(RequestMethod httpMethod : requestMethods){
-                        HandlerKey handlerKey = new HandlerKey(requestMapping.value(), httpMethod); // {경로, 요청 메서드}로 키 설정
-                        handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));    // {키, 핸들러(키를 처리할 메서드)} 등록
-                    }
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        // @Controller 클래스 - 인스턴스 맵
+        Map<Class<?>, Object> controllerRegistry = controllerScanner.getControllerRegistry();
+        controllerRegistry.entrySet().forEach(entry -> {
+            Set<Method> allMethods = ReflectionUtils.getAllMethods(entry.getKey(),
+                    ReflectionUtils.withAnnotation(RequestMapping.class));
+            mappingAllHandlerMethods(allMethods, entry.getValue());
+        });
         log.info("Initialized AnnotationHandlerMapping!");
     }
-    
-    public Object getHandler(final HttpServletRequest request) {
-        String uri = normalize(request.getRequestURI());
-        return handlerExecutions.get(new HandlerKey(uri, RequestMethod.valueOf(request.getMethod())));
+
+    @Override
+    public boolean support(HttpServletRequest request) {
+        return getHandler(request) != null;
     }
 
-    private String normalize(String uri) {
-        if (uri == null || uri.isEmpty()) return "/";
-        // 마지막 / 제거
-        if (uri.length() > 1 && uri.endsWith("/")) {
-            uri = uri.substring(0, uri.length() - 1);
-        }
-        // 중복 슬래시 정리
-        return uri.replaceAll("//+", "/");
+    private void mappingAllHandlerMethods(Set<Method> allMethods, Object controller) {
+        allMethods.forEach(method -> handlerMapping(
+                        method,
+                        controller,
+                        method.getDeclaredAnnotation(RequestMapping.class)
+                )
+        );
     }
+
+    private void handlerMapping(Method method, Object controller, RequestMapping requestMapping) {
+        if (requestMapping == null) {
+            return;
+        }
+        RequestMethod[] requestMethods = requestMapping.method();
+        // 별도의 요청 메서드 설정 없으면 모든 요청 메서드 지원
+        if (requestMethods.length == 0) {
+            requestMethods = RequestMethod.values();
+        }
+        for (RequestMethod httpMethod : requestMethods) {
+            // 키 설정 : {경로, 요청 메서드}
+            String normalizedUri = UriUtils.normalize(requestMapping.value());
+            HandlerKey handlerKey = new HandlerKey(normalizedUri, httpMethod);
+            // {키, 핸들러(키를 처리할 메서드)} 등록
+            handlerExecutions.put(handlerKey, new HandlerExecution(controller, method));
+        }
+    }
+
+    @Override
+    public Object getHandler(HttpServletRequest request) {
+        String resourcePath = UriUtils.getResourcePath(request);
+        return handlerExecutions.get(new HandlerKey(resourcePath, RequestMethod.valueOf(request.getMethod())));
+    }
+
+
 }
