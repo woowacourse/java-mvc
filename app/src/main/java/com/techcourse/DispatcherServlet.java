@@ -44,7 +44,7 @@ public class DispatcherServlet extends HttpServlet {
      */
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             // request를 처리할 수 있는 handlerMapping 구현체 선택, 실행
@@ -56,7 +56,10 @@ public class DispatcherServlet extends HttpServlet {
             View view = modelAndView.getView();
             Map<String, Object> model = modelAndView.getModel();
             view.render(model, request, response);
-        } catch (Exception e) {
+        } catch (NoHandlerMappingFoundException handlerMappingFoundException){
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+        catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
@@ -68,7 +71,6 @@ public class DispatcherServlet extends HttpServlet {
                 return handlerMapping;
             }
         }
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
         throw new NoHandlerMappingFoundException("No HandlerMapping Found!");
     }
 
