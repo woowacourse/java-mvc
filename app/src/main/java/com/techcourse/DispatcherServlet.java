@@ -1,5 +1,14 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,20 +17,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
 
+import java.util.Map;
+
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    public static final String RESOURCES_BASE_PACKAGE = "com.techcourse";
 
-    private ManualHandlerMapping manualHandlerMapping;
+    private final HandlerMappingRegistry handlerMappings;
+    private final HandlerAdapterRegistry handlerAdapters;
 
     public DispatcherServlet() {
+        this.handlerMappings = new HandlerMappingRegistry();
+        this.handlerAdapters = new HandlerAdapterRegistry();
     }
 
     @Override
     public void init() {
-        manualHandlerMapping = new ManualHandlerMapping();
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(RESOURCES_BASE_PACKAGE);
+        HandlerMapping manualHandlerMapping = new ManualHandlerMapping();
+        annotationHandlerMapping.initialize();
         manualHandlerMapping.initialize();
+
+        HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        HandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
+
+        handlerMappings.addMapping(annotationHandlerMapping);
+        handlerMappings.addMapping(manualHandlerMapping);
+        handlerAdapters.addAdapter(annotationHandlerAdapter);
+        handlerAdapters.addAdapter(manualHandlerAdapter);
     }
 
     @Override
@@ -30,22 +55,33 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final var controller = manualHandlerMapping.getHandler(requestURI);
-            final var viewName = controller.execute(request, response);
-            move(viewName, request, response);
+            ModelAndView modelAndView = handle(request, response);
+            move(modelAndView, request, response);
         } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            log.error("Exception : {}", e.getMessage());
         }
     }
 
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    private ModelAndView handle(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            Object handler = handlerMappings.getHandler(request);
+            HandlerAdapter handlerAdapter = handlerAdapters.getHandlerAdapter(handler, request, response);
+            return handlerAdapter.handle(handler, request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        View view = modelAndView.getView();
+        String viewName = view.getViewName();
+
         if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
             response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
             return;
         }
 
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
+        Map<String, Object> model = modelAndView.getModel();
+        view.render(model, request, response);
     }
 }

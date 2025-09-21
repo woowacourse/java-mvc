@@ -17,17 +17,17 @@ public class KoreanServlet extends HttpServlet {
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
-        getServletContext().log("init() 호출");
+        getServletContext().log(String.format("[%s] init() 호출", Thread.currentThread().getName()));
     }
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        getServletContext().log("service() 호출");
+        getServletContext().log(String.format("[%s] service() 호출", Thread.currentThread().getName()));
         response.getWriter().write(인코딩);
     }
 
     @Override
     public void destroy() {
-        getServletContext().log("destroy() 호출");
+        getServletContext().log(String.format("[%s] destroy() 호출", Thread.currentThread().getName()));
     }
 }

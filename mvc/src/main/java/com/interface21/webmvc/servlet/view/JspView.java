@@ -29,13 +29,19 @@ public class JspView implements View {
             return;
         }
 
+        // model의 속성을 HttpServletRequest의 속성으로 옮긴다.
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
 
-        String path = "/webapp/" + viewName + ".jsp";
-        RequestDispatcher dispatcher = request.getRequestDispatcher(path);
-        dispatcher.forward(request, response);
+        // 실제 Jsp로 포워딩된다.
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewName);
+        requestDispatcher.forward(request, response);
+    }
+
+    @Override
+    public String getViewName() {
+        return viewName;
     }
 }
