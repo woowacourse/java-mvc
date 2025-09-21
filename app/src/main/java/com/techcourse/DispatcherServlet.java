@@ -1,20 +1,18 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.*;
 import com.interface21.webmvc.servlet.mvc.tobe.exception.NoHandlerAdapterFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.exception.NoHandlerMappingFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -47,24 +45,33 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             // request를 처리할 수 있는 handlerMapping 구현체 선택, 실행
-            for (HandlerMapping handlerMapping : handlerMappings){
-                if(handlerMapping.support(request)){
-                    var handler = handlerMapping.getHandler(request);
-                    // handler를 지원하는 핸들러 어댑터 구현체 선택, 실행
-                    for (HandlerAdapter handlerAdapter : handlerAdapters) {
-                        if (handlerAdapter.support(handler)) {
-                            handlerAdapter.handle(request, response, handler);
-                            return;
-                        }
-                    }
-                    throw new NoHandlerAdapterFoundException("No HandlerAdapter Found!");
-                }
-            }
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            throw new NoHandlerMappingFoundException("No HandlerMapping Found!");
+            HandlerMapping handlerMapping = getHandlerMapping(request, response);
+            var handler = handlerMapping.getHandler(request);
+            // handler를 지원하는 HandlerAdapter 구현체 선택, 실행
+            HandlerAdapter handlerAdapter = getHandlerAdapter(handler);
+            handlerAdapter.handle(request, response, handler);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private HandlerMapping getHandlerMapping(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            if (handlerMapping.support(request)) {
+                return handlerMapping;
+            }
+        }
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        throw new NoHandlerMappingFoundException("No HandlerMapping Found!");
+    }
+
+    private HandlerAdapter getHandlerAdapter(Object handler) {
+        for (HandlerAdapter handlerAdapter : handlerAdapters) {
+            if (handlerAdapter.support(handler)) {
+                return handlerAdapter;
+            }
+        }
+        throw new NoHandlerAdapterFoundException("No HandlerAdapter Found!");
     }
 }
