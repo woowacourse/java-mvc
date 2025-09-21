@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,8 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
+        ComponentScanner componentScanner = new ComponentScanner();
+        handlerMapping = new AnnotationHandlerMapping(componentScanner, "samples");
         handlerMapping.initialize();
     }
 
@@ -25,10 +27,13 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/get-test");
-        when(request.getMethod()).thenReturn("GET");
+        String path = "/get-test";
+        when(request.getRequestURI()).thenReturn(path);
+        String requestMethod = "GET";
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        when(request.getMethod()).thenReturn(requestMethod);
+
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(path, RequestMethod.GET);
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
@@ -40,10 +45,12 @@ class AnnotationHandlerMappingTest {
         final var response = mock(HttpServletResponse.class);
 
         when(request.getAttribute("id")).thenReturn("gugu");
-        when(request.getRequestURI()).thenReturn("/post-test");
-        when(request.getMethod()).thenReturn("POST");
+        String path = "/post-test";
+        when(request.getRequestURI()).thenReturn(path);
+        String requestMethod = "POST";
+        when(request.getMethod()).thenReturn(requestMethod);
 
-        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
+        final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(path, RequestMethod.valueOf(requestMethod));
         final var modelAndView = handlerExecution.handle(request, response);
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
