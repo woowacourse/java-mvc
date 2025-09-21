@@ -4,6 +4,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 import com.interface21.context.stereotype.Controller;
+import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
@@ -37,7 +38,9 @@ public class ControllerScanner {
 
     private Object instantiateController(Class<?> controllerClass) {
         try {
-            return controllerClass.getDeclaredConstructor().newInstance();
+            final Constructor<?> constructor = getDeclaredConstructor(controllerClass);
+            constructor.setAccessible(true);
+            return constructor.newInstance();
         } catch (final NoSuchMethodException e) {
             log.error("Exception : 컨트롤러 기본 생성자가 필요합니다. | {}", e.getMessage(), e);
             throw new RuntimeException(e);
@@ -45,5 +48,9 @@ public class ControllerScanner {
             log.error("Exception : {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    private static Constructor<?> getDeclaredConstructor(final Class<?> controllerClass) throws NoSuchMethodException {
+        return controllerClass.getDeclaredConstructor();
     }
 }

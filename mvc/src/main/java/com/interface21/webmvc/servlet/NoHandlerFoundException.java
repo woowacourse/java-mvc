@@ -6,6 +6,5 @@ public class NoHandlerFoundException extends ServletException {
 
     public NoHandlerFoundException(String httpMethod, String requestURL) {
         super("No endpoint " + httpMethod + " " + requestURL + ".");
-
     }
 }
