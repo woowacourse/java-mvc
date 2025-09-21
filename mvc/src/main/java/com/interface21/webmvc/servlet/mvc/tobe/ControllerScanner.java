@@ -34,13 +34,15 @@ public class ControllerScanner {
         return controllers.stream()
                 .collect(Collectors.toMap(
                         clazz -> clazz,
-                        clazz -> {
-                            try {
-                                return clazz.getDeclaredConstructor().newInstance();
-                            } catch (Exception e) {
-                                throw new IllegalArgumentException("controller 생성 실패");
-                            }
-                        }
+                        clazz -> getInstance(clazz)
                 ));
+    }
+
+    private static Object getInstance(final Class<?> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("controller 생성 실패");
+        }
     }
 }
