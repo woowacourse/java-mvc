@@ -31,17 +31,17 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
-            new ModelAndView(new JspView("redirect:/index.jsp"));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
 
         if (req.getParameter("account") == null) {
-            new ModelAndView(new JspView("redirect:/404.jsp"));
+            return new ModelAndView(new JspView("redirect:/404.jsp"));
         }
 
-        Optional<User> account = InMemoryUserRepository.findByAccount(req.getParameter("account"));
-        if (account.isPresent()) {
-            log.info("User : {}", account.get());
-            return processLogin(req, account.get());
+        Optional<User> user = InMemoryUserRepository.findByAccount(req.getParameter("account"));
+        if (user.isPresent()) {
+            log.info("User : {}", user.get());
+            return processLogin(req, user.get());
         }
         return new ModelAndView(new JspView("redirect:/401.jsp"));
     }
