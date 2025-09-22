@@ -24,6 +24,6 @@ public class RegisterController {
 
         InMemoryUserRepository.save(user);
 
-        return new ModelAndView(new RedirectView("/"));
+        return new ModelAndView(new RedirectView("/index.jsp"));
     }
 }
