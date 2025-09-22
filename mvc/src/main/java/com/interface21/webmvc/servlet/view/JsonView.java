@@ -37,8 +37,9 @@ public class JsonView implements View {
         if (model.isEmpty()) {
             return "";
         } else if (model.size() == 1) {
-            String key = model.keySet().stream().toList().getFirst();
-            return objectMapper.writeValueAsString(model.get(key));
+            Object value = model.values().stream().findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("비어있는 모델의 값을 JSON으로 변환하려고 하고 있습니다."));
+            return objectMapper.writeValueAsString(value);
         }
         return objectMapper.writeValueAsString(model);
     }
