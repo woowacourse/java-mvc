@@ -23,6 +23,7 @@ public class DispatcherServlet extends HttpServlet {
                              final HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
         this.handlerAdapterRegistry = handlerAdapterRegistry;
+        log.info("DispatcherServlet 생성");
     }
 
     @Override
@@ -30,8 +31,12 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
             final Object handler = handlerMapping.getHandler(request);
+            log.info(String.format("%s %s 요청에 대한 handler 찾기 성공: %s", request.getRequestURI(), request.getMethod(),
+                    handler.getClass().getSimpleName()));
 
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            log.info(String.format("%s %s 요청에 대한 adapter 찾기 성공: %s", request.getRequestURI(), request.getMethod(),
+                    handlerAdapter.getClass().getSimpleName()));
             final ModelAndView mav = handlerAdapter.handle(handler, request, response);
 
             mav.render(request, response);
