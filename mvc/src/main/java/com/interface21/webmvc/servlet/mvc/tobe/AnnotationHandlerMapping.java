@@ -20,9 +20,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
     // 스캔할 base package 목록
-    private final Object[] basePackages;
+    private final String[] basePackages;
 
-    public AnnotationHandlerMapping(final Object... basePackages) {
+    public AnnotationHandlerMapping(final String... basePackages) {
         this.handlerExecutions = new HashMap<>();
         this.basePackages = basePackages;
     }

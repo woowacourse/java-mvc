@@ -18,8 +18,8 @@ public class ControllerScanner {
         this.controllers = Collections.unmodifiableMap(scanAndInstantiate());
     }
 
-    public static ControllerScanner from(final Object[] basePackages) {
-        return new ControllerScanner(new Reflections(basePackages));
+    public static ControllerScanner from(final String... basePackages) {
+        return new ControllerScanner(new Reflections((Object[]) basePackages));
     }
 
     /**
