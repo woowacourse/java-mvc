@@ -1,12 +1,14 @@
 package com.techcourse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.interface21.webmvc.servlet.view.JspView;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -34,6 +36,10 @@ public class DispatcherServlet extends HttpServlet {
             final var viewName = controller.execute(request, response);
             move(viewName, request, response);
         } catch (Throwable e) {
+            if (e instanceof IllegalArgumentException) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
