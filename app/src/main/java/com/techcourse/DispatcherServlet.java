@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private HandlerMappingRegistry handlerMappingRegistry;
@@ -36,7 +37,7 @@ public class DispatcherServlet extends HttpServlet {
     private void initHandlerMappingRegistry() {
         handlerMappingRegistry = new HandlerMappingRegistry(List.of(
                 new ManualHandlerMapping(),
-                new AnnotationHandlerMapping()
+                new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE)
         ));
     }
 
