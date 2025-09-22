@@ -1,14 +1,15 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,83 +18,65 @@ public class AnnotationHandlerMapping {
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
     }
 
     public void initialize() {
-        Set<Class<?>> controllers = findControllers();
-        registerHandlerExecutions(controllers);
-        log.info("Initialized AnnotationHandlerMapping!");
-    }
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        final Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
 
-    private Set<Class<?>> findControllers() {
-        Reflections reflections = new Reflections(basePackage);
-        return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    private void registerHandlerExecutions(Set<Class<?>> controllers) {
-        for (Class<?> controller : controllers) {
-            try {
-                Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-                addHandlers(controllerInstance);
-            } catch (Exception e) {
-                log.error("Failed to instantiate controller: {}", controller, e);
-            }
+        for (Method method : requestMappingMethods) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            addHandlerExecutions(controllers, method, requestMapping);
         }
     }
 
-    private void addHandlers(Object controllerInstance) {
-        Method[] methods = controllerInstance.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            addHandler(controllerInstance, method);
-        }
+    public Object getHandler(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.of(request.getMethod());
+        return handlerExecutions.get(new HandlerKey(requestUri, requestMethod));
     }
 
-    private void addHandler(Object controllerInstance, Method method) {
-        if (!method.isAnnotationPresent(RequestMapping.class)) {
-            return;
-        }
+    private void addHandlerExecutions(Map<Class<?>, Object> controllers, Method method, RequestMapping requestMapping) {
+        List<HandlerKey> handlerKeys = mapHandlerKeys(requestMapping.value(), requestMapping.method());
+        Object controller = controllers.get(method.getDeclaringClass());
+        HandlerExecution handlerExecution = new HandlerExecution(controller, method);
 
-        RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-        String uri = mapping.value();
-        RequestMethod[] requestMethods = getRequestMethods(mapping);
-        for (RequestMethod requestMethod : requestMethods) {
-            if (requestMethod == null) {
-                continue;
-            }
-            HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+        for (HandlerKey handlerKey : handlerKeys) {
+            log.info("Mapped : {}, Handler : {}", handlerKey, handlerExecution);
             handlerExecutions.put(handlerKey, handlerExecution);
-            log.debug("Mapped [{}] {} -> {}", requestMethod, uri, method);
         }
     }
 
-    private RequestMethod[] getRequestMethods(final RequestMapping mapping) {
-        RequestMethod[] requestMethods = mapping.method();
-        if (requestMethods.length == 0) {
-            return RequestMethod.values();
+    private Set<Method> getRequestMappingMethods(Set<Class<?>> controllers) {
+        Set<Method> requestMappingMethods = new HashSet<>();
+        for (Class<?> controller : controllers) {
+            Method[] methods = controller.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(RequestMapping.class)) {
+                    requestMappingMethods.add(method);
+                }
+            }
         }
-        return requestMethods;
+        return requestMappingMethods;
     }
 
-    public Object getHandler(final HttpServletRequest request) {
-        String method = request.getMethod();
-        RequestMethod requestMethod = RequestMethod.of(method);
-        if (requestMethod == null) {
-            return null;
+    private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
+        List<HandlerKey> handlerKeys = new ArrayList<>();
+        if (requestMethods == null || requestMethods.length == 0) {
+            for (RequestMethod method : RequestMethod.values()) {
+                handlerKeys.add(new HandlerKey(url, method));
+            }
+            return handlerKeys;
         }
 
-        String uri = request.getRequestURI();
-        HandlerKey handlerKey = new HandlerKey(uri, requestMethod);
-        HandlerExecution handlerExecution = handlerExecutions.get(handlerKey);
-        if (handlerExecution == null) {
-            log.debug("No handler found for {}", handlerKey);
-            return null;
+        for (RequestMethod method : requestMethods) {
+            handlerKeys.add(new HandlerKey(url, method));
         }
-        return handlerExecution;
+        return handlerKeys;
     }
 }
