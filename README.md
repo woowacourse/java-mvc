@@ -54,3 +54,16 @@ public class RegisterController {
     public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {...}
 }
 ```
+
+## 🚀 3단계 - JSON View 구현하기
+
+### 기능 요구 사항
+
+- [ ] JsonView 클래스를 구현한다.
+    - webmvc.org.springframework.web.servlet.view 패키지에서 JsonView 클래스를 찾을 수 있다.
+    - HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현해보자.
+
+- [ ] Legacy MVC 제거하기
+    - app 모듈에 있는 모든 컨트롤러를 어노테이션 기반 MVC로 변경한다.
+    - asis 패키지에 있는 레거시 코드를 삭제해도 서비스가 정상 동작해야한다.
+    - Legacy MVC를 제거하고 나서 DispatcherServlet도 app 패키지가 아닌 mvc 패키지로 옮겨야 한다.
