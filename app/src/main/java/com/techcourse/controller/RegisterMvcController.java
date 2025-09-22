@@ -27,6 +27,6 @@ public class RegisterMvcController {
                 request.getParameter("email")
         );
         InMemoryUserRepository.save(user);
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
+        return new ModelAndView(new JspView("redirect:/login.jsp"));
     }
 }
