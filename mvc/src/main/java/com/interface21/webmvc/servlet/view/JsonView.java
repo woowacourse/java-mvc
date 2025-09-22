@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interface21.web.http.MediaType;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,8 +14,18 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding("UTF-8");
-        objectMapper.writeValue(response.getWriter(), model);
+
+        Object result = getResult(model);
+        objectMapper.writeValue(response.getWriter(), result);
+    }
+
+    private Object getResult(final Map<String, ?> model) {
+        Object result = model;
+        if (model.size() == 1){
+            result = model.values().iterator().next();
+        }
+        return result;
     }
 }
