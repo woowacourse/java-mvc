@@ -49,6 +49,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
             for (Method requestMappingMethod : requestMappingMethods) {
                 RequestMapping annotation = requestMappingMethod.getAnnotation(RequestMapping.class);
+                if (annotation == null) {
+                    continue;
+                }
                 addHandlerExecutions(controller, requestMappingMethod, annotation);
             }
         }
