@@ -1,7 +1,10 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.mapping;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -26,7 +29,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        System.out.println("annotaion.request.getRequestURI() = " + request.getRequestURI());
         String method = request.getMethod();
         HandlerKey handlerKey = new HandlerKey(request.getRequestURI(), RequestMethod.valueOf(method));
         return handlerExecutions.get(handlerKey);
@@ -65,8 +67,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void addHandlerExecutions(Object controller, Method handlerMethod, RequestMapping annotation) {
         String route = annotation.value();
-        RequestMethod[] httpMethods = annotation.method();
         HandlerExecution handlerExecution = new HandlerExecution(controller, handlerMethod);
+        RequestMethod[] httpMethods = annotation.method();
 
         List<HandlerKey> handlerKeys = mapHandlerKeys(route, httpMethods);
         for (HandlerKey handlerKey : handlerKeys) {
@@ -76,8 +78,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private List<HandlerKey> mapHandlerKeys(String url, RequestMethod[] requestMethods) {
         List<HandlerKey> handlerKeys = new ArrayList<>();
-        for (RequestMethod requestMethod : requestMethods) {
-            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+
+        if (requestMethods.length == 0) {
+            RequestMethod[] httpMethods = RequestMethod.values();
+            for (RequestMethod httpMethod : httpMethods) {
+                HandlerKey handlerKey = new HandlerKey(url, httpMethod);
+                handlerKeys.add(handlerKey);
+            }
+            return handlerKeys;
+        }
+
+        for (RequestMethod httpMethod : requestMethods) {
+            HandlerKey handlerKey = new HandlerKey(url, httpMethod);
             handlerKeys.add(handlerKey);
         }
         return handlerKeys;

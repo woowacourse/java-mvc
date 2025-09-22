@@ -2,9 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,23 +20,14 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdaptorRegistry handlerAdaptorRegistry;
 
-    public DispatcherServlet() {
-        handlerMappingRegistry = new HandlerMappingRegistry();
-        handlerAdaptorRegistry = new HandlerAdaptorRegistry();
+    public DispatcherServlet(HandlerMappingRegistry handlerMappingRegistry,
+                             HandlerAdaptorRegistry handlerAdaptorRegistry) {
+        this.handlerMappingRegistry = handlerMappingRegistry;
+        this.handlerAdaptorRegistry = handlerAdaptorRegistry;
     }
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
-
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
-        annotationHandlerMapping.initialize();
-        handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-
-        handlerAdaptorRegistry.addHandlerAdapter(new ControllerHandlerAdaptor());
-        handlerAdaptorRegistry.addHandlerAdapter(new HandlerExecutionHandlerAdaptor());
     }
 
     @Override
@@ -46,7 +36,6 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            System.out.println(requestURI);
             HandlerMapping handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(IllegalArgumentException::new);
 
@@ -64,15 +53,5 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
-    }
-
-    private void move(final String viewName, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        final var requestDispatcher = request.getRequestDispatcher(viewName);
-        requestDispatcher.forward(request, response);
     }
 }
