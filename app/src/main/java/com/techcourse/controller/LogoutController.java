@@ -1,16 +1,20 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.RedirectView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-public class LogoutController implements Controller {
+@Controller
+public class LogoutController {
 
-    @Override
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var session = req.getSession();
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ModelAndView executeLogout(final HttpServletRequest req, final HttpServletResponse res) {
+        HttpSession session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
         return new ModelAndView(new RedirectView("/"));
     }
