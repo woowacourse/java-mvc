@@ -15,19 +15,23 @@ public abstract class AbstractHandlerAdapter implements HandlerAdapter {
             final HttpServletResponse response
     ) throws Exception {
         validate(handler);
-        preHandle(handler, request, response);
+
         ModelAndView modelAndView = null;
         Exception exception = null;
+        boolean preHandleCalled = false;
+
         try {
+            preHandle(handler, request, response);
+            preHandleCalled = true;
+
             modelAndView = doHandle(handler, request, response);
+            postHandle(modelAndView, request, response);
             return modelAndView;
         } catch (final Exception e) {
             exception = e;
             throw e;
         } finally {
-            try {
-                postHandle(modelAndView, request, response);
-            } finally {
+            if (preHandleCalled) {
                 afterCompletion(handler, request, response, exception);
             }
         }
