@@ -25,18 +25,24 @@ public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
-        if (req.getParameter("account") == null ||
-                req.getParameter("password") == null ||
-                req.getParameter("email") == null
-        ) {
+        if (!isValidSaveRequest(req)) {
             return new ModelAndView(new JspView("redirect:/404.jsp"));
         }
+        User user = makeUser(req);
+        InMemoryUserRepository.save(user);
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
+    }
 
-        final var user = new User(2,
+    private boolean isValidSaveRequest(HttpServletRequest req) {
+        return req.getParameter("account") != null &&
+                req.getParameter("password") != null &&
+                req.getParameter("email") != null;
+    }
+
+    private User makeUser(HttpServletRequest req) {
+        return new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
-        InMemoryUserRepository.save(user);
-        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 }
