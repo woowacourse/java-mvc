@@ -59,7 +59,7 @@ public class RegisterController {
 
 ### 기능 요구 사항
 
-- [ ] JsonView 클래스를 구현한다.
+- [x] JsonView 클래스를 구현한다.
     - webmvc.org.springframework.web.servlet.view 패키지에서 JsonView 클래스를 찾을 수 있다.
     - HTML 이외에 JSON으로 응답할 수 있도록 JsonView 클래스를 구현해보자.
 
