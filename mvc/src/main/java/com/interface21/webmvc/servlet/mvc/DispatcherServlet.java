@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.Map;
 
@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

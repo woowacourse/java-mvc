@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.servlet.mvc.adapter;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 
@@ -15,6 +15,6 @@ public interface HandlerAdapter {
     /**
      * Returns 지정된 핸들러를 사용하여 주어진 요청을 처리한 ModelAndView.
      */
-    ModelAndView handle(final Object handler, final HttpServletRequest request, final HttpServletResponse response) throws
-        Exception;
+    ModelAndView handle(final Object handler, final HttpServletRequest request,
+        final HttpServletResponse response) throws Exception;
 }
