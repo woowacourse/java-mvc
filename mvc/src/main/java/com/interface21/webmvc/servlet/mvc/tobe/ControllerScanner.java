@@ -15,10 +15,12 @@ public class ControllerScanner {
         this.reflections = reflections;
     }
 
-    public Map<Class<?>, Object> getControllers() {
-        Map<Class<?>, Object> controllerMap = new HashMap<>();
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+    public Set<Class<?>> findControllerClasses() {
+        return reflections.getTypesAnnotatedWith(Controller.class);
+    }
 
+    public Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllerClasses) {
+        Map<Class<?>, Object> controllerMap = new HashMap<>();
         for (Class<?> c : controllerClasses) {
             try {
                 Object instance = c.getDeclaredConstructor().newInstance();
@@ -27,7 +29,11 @@ public class ControllerScanner {
                 throw new IllegalStateException("Failed to instantiate @Controller: " + c, e);
             }
         }
-
         return controllerMap;
+    }
+
+    public Map<Class<?>, Object> buildControllerRegistry() {
+        Set<Class<?>> classes = findControllerClasses();
+        return instantiateControllers(classes);
     }
 }
