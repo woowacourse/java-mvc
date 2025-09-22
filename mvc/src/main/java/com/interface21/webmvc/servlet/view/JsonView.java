@@ -20,12 +20,13 @@ public class JsonView implements View {
     ) throws Exception {
         if (isEmptyModel(model)) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            return;
         }
         String content = convertJson(model);
-        PrintWriter writer = response.getWriter();
-        writer.print(content);
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
+        PrintWriter writer = response.getWriter();
+        writer.print(content);
     }
 
     private boolean isEmptyModel(Map<String, ?> model) {
