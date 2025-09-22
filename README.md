@@ -55,7 +55,9 @@ public class RegisterController {
 }
 ```
 ## STEP 3
-- [ ] `JsonView` 구현
+- [x] `JsonView` 구현
+  - 응답의 ContentType은 `MediaType.APPLICATION_JSON_UTF8_VALUE`
+  - model 데이터가 1개면 그대로, 2개 이상이면 Map 형태 그대로 반환
 - [ ] Legacy MVC 구현
   - app 모듈의 모든 컨트롤러를 어노테이션 기반 MVC로 변경
   - Legacy Code 삭제
