@@ -5,6 +5,18 @@ public enum RequestMethod {
     ;
 
     public static RequestMethod from(String method) {
-        return RequestMethod.valueOf(method.toUpperCase());
+        if (isAllUpperCase(method)) {
+            return RequestMethod.valueOf(method.toUpperCase());
+        }
+        throw new IllegalArgumentException("Invalid HTTP method: " + method);
+    }
+
+    private static boolean isAllUpperCase(String str) {
+        for (char c : str.toCharArray()) {
+            if (!Character.isUpperCase(c)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
