@@ -4,14 +4,18 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
+
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
@@ -35,14 +39,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
                 Class<?> clazz = entry.getKey();
                 Object instance = entry.getValue();
-
                 // @RequestMapping 붙은 메서드만 골라냄 ex) findUserId(), save()
-                List<Method> methods = getRequestMappingMethods(clazz);
+                Set<Method> methods = getRequestMappingMethods(clazz);
                 // HandlerExecution 테이블에 등록
-                methods.forEach(method -> putHandlerExecutionByRequestMapping(handlerExecutions, instance, method));
+                methods.forEach(method -> putHandlerExecutionByRequestMapping(instance, method));
             }
         } catch (Exception e) {
             throw new IllegalStateException("HandlerMapping initialization failed", e);
+        }
+
+        if (log.isInfoEnabled()) {
+            log.info("Initialized AnnotationHandlerMapping: {} handlers", handlerExecutions.size());
+            handlerExecutions.keySet().forEach(key -> log.info("Handler mapped: {}", key));
         }
     }
 
@@ -53,21 +61,18 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+        String path = requestURI.substring(request.getContextPath().length());
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
-        HandlerKey handlerKey = new HandlerKey(requestURI, method);
+        HandlerKey handlerKey = new HandlerKey(path, method);
 
         return handlerExecutions.get(handlerKey);
     }
 
-    private List<Method> getRequestMappingMethods(final Class<?> controllerClass) {
-        return Arrays.stream(controllerClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(RequestMapping.class))
-                .peek(method -> method.setAccessible(true))
-                .toList();
+    private Set<Method> getRequestMappingMethods(final Class<?> controllerClass) {
+        return ReflectionUtils.getAllMethods(controllerClass, ReflectionUtils.withAnnotation(RequestMapping.class));
     }
 
     private void putHandlerExecutionByRequestMapping(
-            final Map<HandlerKey, HandlerExecution> handlerExecutions,
             final Object instance,
             final Method method
     ) {
