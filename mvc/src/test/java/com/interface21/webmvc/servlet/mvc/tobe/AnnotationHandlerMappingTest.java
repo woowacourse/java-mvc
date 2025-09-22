@@ -16,8 +16,8 @@ class AnnotationHandlerMappingTest {
 
     @BeforeEach
     void setUp() {
-        ComponentScanner componentScanner = new ComponentScanner();
-        handlerMapping = new AnnotationHandlerMapping(componentScanner, "samples");
+        ComponentScanner componentScanner = new ComponentScanner("samples");
+        handlerMapping = new AnnotationHandlerMapping(componentScanner);
         handlerMapping.initialize();
     }
 

@@ -37,8 +37,7 @@ public class DispatcherServlet extends HttpServlet {
         manualHandlerMapping.initialize();
         handlerMappings.add(manualHandlerMapping);
 
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(new ComponentScanner(),
-                BASE_PACKAGE);
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(new ComponentScanner(BASE_PACKAGE));
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
 
