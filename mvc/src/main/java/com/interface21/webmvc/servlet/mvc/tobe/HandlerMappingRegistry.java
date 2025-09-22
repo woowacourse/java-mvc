@@ -12,10 +12,11 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    public HandlerMapping getHandler(HttpServletRequest request) {
-        return handlerMappings.stream()
-                .filter(handlerMapping -> handlerMapping.getHandler(request) != null)
+    public Object getHandler(HttpServletRequest request) {
+        final HandlerMapping handlerMapping = handlerMappings.stream()
+                .filter(handler -> handler.getHandler(request) != null)
                 .findFirst()
                 .orElseThrow(() -> new UnsupportedOperationException("핸들러가 존재하지 않습니다."));
+        return handlerMapping.getHandler(request);
     }
 }

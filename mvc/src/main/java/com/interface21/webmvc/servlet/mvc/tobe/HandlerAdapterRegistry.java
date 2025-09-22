@@ -13,7 +13,7 @@ public class HandlerAdapterRegistry {
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
-                .filter(handlerMapping -> handlerMapping.canHandle(handler))
+                .filter(handlerAdapter -> handlerAdapter.canHandle(handler))
                 .findFirst()
                 .orElseThrow(() -> new UnsupportedOperationException("존재하지 않는 핸들러입니다."));
     }

@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
         manualHandlerMapping.initialize();
         handlerMappingRegistry.add(manualHandlerMapping);
 
-        final AnnotationHandlerMapping annotationHandlerMapping= new AnnotationHandlerMapping();
+        final AnnotationHandlerMapping annotationHandlerMapping= new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.add(annotationHandlerMapping);
 
@@ -47,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
             final var handler = handlerMappingRegistry.getHandler(request);
             final var handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final var modelAndView = handlerAdapter.handle(request, response, handler);
-            modelAndView.getView().render(Collections.emptyMap(), request, response);
+            modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
