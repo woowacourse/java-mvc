@@ -24,16 +24,22 @@ dependencies {
 
     implementation 'org.springframework:spring-context:6.2.10'
 
+    testImplementation platform('org.junit:junit-bom:5.13.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'org.mockito:mockito-core:5.19.0'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.13.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.13.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
+
     testImplementation 'com.h2database:h2:2.3.232'
 }
 
 test {
-    maxParallelForks 3
+    maxParallelForks = 3
     useJUnitPlatform()
 }
 
