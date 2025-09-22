@@ -22,7 +22,6 @@ public class JsonView implements View {
         PrintWriter writer = response.getWriter();
         writer.write(mapToJson(model));
         writer.flush();
-        writer.close();
     }
 
     private String mapToJson(Map<String, ?> model) throws JsonProcessingException {
