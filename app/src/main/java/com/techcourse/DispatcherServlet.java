@@ -24,12 +24,9 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
 
-    public DispatcherServlet(
-            final HandlerMappingRegistry handlerMappingRegistry,
-            final HandlerAdapterRegistry handlerAdapterRegistry
-    ) {
-        this.handlerMappingRegistry = handlerMappingRegistry;
-        this.handlerAdapterRegistry = handlerAdapterRegistry;
+    public DispatcherServlet() {
+        this.handlerMappingRegistry = new HandlerMappingRegistry();
+        this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
     @Override
@@ -38,7 +35,7 @@ public class DispatcherServlet extends HttpServlet {
         manual.initialize();
         handlerMappingRegistry.addHandlerMapping(manual);
 
-        AnnotationHandlerMapping annotation = new AnnotationHandlerMapping("com.techcourse");
+        AnnotationHandlerMapping annotation = new AnnotationHandlerMapping("com.techcourse.controller");
         annotation.initialize();
         handlerMappingRegistry.addHandlerMapping(annotation);
 
