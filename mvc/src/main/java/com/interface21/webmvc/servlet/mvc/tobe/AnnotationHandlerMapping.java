@@ -30,10 +30,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
      * requestMethod)키로 HandlerExecution를 등록한다
      */
     public void initialize() {
-
         Reflections reflections = new Reflections(basePackage);
         ControllerScanner controllerScanner = new ControllerScanner(reflections);
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        Map<Class<?>, Object> controllers = controllerScanner.buildControllerRegistry();
 
         try {
             for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
@@ -61,7 +60,13 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     @Override
     public Object getHandler(final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        String path = requestURI.substring(request.getContextPath().length());
+        System.out.println("context path: " + request.getContextPath());
+        String contextPath = request.getContextPath();
+        if (contextPath == null) {
+            contextPath = "";
+        }
+        String path = requestURI.substring(contextPath.length());
+
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         HandlerKey handlerKey = new HandlerKey(path, method);
 
