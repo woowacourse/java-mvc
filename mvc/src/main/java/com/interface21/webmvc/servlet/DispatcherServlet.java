@@ -1,10 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
