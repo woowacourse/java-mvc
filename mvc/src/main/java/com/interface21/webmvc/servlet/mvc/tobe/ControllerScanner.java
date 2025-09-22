@@ -1,8 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -27,15 +28,11 @@ public class ControllerScanner {
     }
 
     private Map<Class<?>, Object> instantiateControllers(final Set<Class<?>> classes) {
-        Map<Class<?>, Object> controllers = new HashMap<>();
-        for (Class<?> clazz : classes) {
-            Object instance = toInstance(clazz);
-            if (controllers.containsKey(clazz)) {
-                throw new IllegalArgumentException("이미 존재하는 컨트롤러 인스턴스 입니다.");
-            }
-            controllers.put(clazz, instance);
-        }
-        return controllers;
+        return classes.stream()
+            .collect(Collectors.toMap(
+                Function.identity(),
+                this::toInstance
+            ));
     }
 
     private Object toInstance(Class<?> clazz) {

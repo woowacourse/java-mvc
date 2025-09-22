@@ -1,7 +1,6 @@
 package com.techcourse;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,10 +57,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
-        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-        if (handler.isPresent()) {
-            return handler.get();
-        }
-        throw new IllegalArgumentException("지원하지 않는 핸들러입니다.");
+        return handlerMappingRegistry.getHandler(request)
+            .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 핸들러입니다."));
     }
 }

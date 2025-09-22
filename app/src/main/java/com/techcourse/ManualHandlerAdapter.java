@@ -28,6 +28,9 @@ public class ManualHandlerAdapter implements HandlerAdapter {
         final HttpServletResponse response) throws Exception {
         String viewName = handler.execute(request, response);
         int extensionIndex = viewName.lastIndexOf(".");
+        if (extensionIndex == -1) {
+            throw new IllegalArgumentException("뷰 이름에 확장자가 포함되어야 합니다: " + viewName);
+        }
         String originExtension = viewName.substring((extensionIndex));
         if (originExtension.equals(JSP_EXTENSION)) {
             return viewName;
