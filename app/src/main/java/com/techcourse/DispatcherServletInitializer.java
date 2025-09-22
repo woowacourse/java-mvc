@@ -1,9 +1,12 @@
 package com.techcourse;
 
+import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.webmvc.servlet.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +20,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = DispatcherServlet.initialize();
+        final var dispatcherServlet = createDispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +32,15 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet createDispatcherServlet() {
+        final String controllerPackage = "com.techcourse.controller";
+        final HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.initialize(
+                controllerPackage,
+                ManualMappingConfig.createManualMapping()
+        );
+        final HandlerAdapterRegistry handlerAdapterRegistry = HandlerAdapterRegistry.initialize();
+        return new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
     }
 }
