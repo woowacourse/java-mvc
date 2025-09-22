@@ -2,7 +2,6 @@ package com.techcourse;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapterExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ComponentScanner;
@@ -69,7 +68,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             ModelAndView modelAndView = executeHandler(request, response, handler);
-            move(modelAndView, request, response);
+            modelAndView.render(request, response);
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -83,11 +82,5 @@ public class DispatcherServlet extends HttpServlet {
             return adapter.get().handle(request, response, handler);
         }
         throw new ServletException("No HandlerAdapter for handler: " + handler.getClass().getName());
-    }
-
-    private void move(final ModelAndView modelAndView, final HttpServletRequest request,
-                      final HttpServletResponse response) throws Exception {
-        View view = modelAndView.getView();
-        view.render(modelAndView.getModel(), request, response);
     }
 }
