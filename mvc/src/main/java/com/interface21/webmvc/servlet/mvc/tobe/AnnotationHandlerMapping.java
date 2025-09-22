@@ -1,47 +1,36 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+    public AnnotationHandlerMapping(final Object... basePackages) {
+        this.controllerScanner = new ControllerScanner(basePackages);
     }
 
     public void initialize() {
-        final var reflections = new Reflections(basePackage);
-        final var controllers = reflections.getTypesAnnotatedWith(Controller.class);
+        final var controllers = controllerScanner.scan();
 
-        for (final var controllerClass : controllers) {
-            registerController(controllerClass);
-        }
-    }
-
-    private void registerController(final Class<?> controllerClass) {
-        try {
-            final var controller = controllerClass.getDeclaredConstructor()
-                    .newInstance();
+        for (final var entry : controllers.entrySet()) {
+            final var controllerClass = entry.getKey();
+            final var controllerInstance = entry.getValue();
 
             for (final var method : controllerClass.getDeclaredMethods()) {
-                registerHandlerMethods(controller, method);
+                registerHandlerMethods(controllerInstance, method);
             }
-        } catch (final Exception e) {
-            throw new IllegalStateException("Failed to instantiate controller: " + controllerClass.getName(), e);
         }
     }
 
@@ -95,11 +84,6 @@ public class AnnotationHandlerMapping {
         final var method = RequestMethod.from(methodName)
                 .orElseThrow(() -> new IllegalStateException("Unsupported HTTP method: " + methodName + " for " + uri));
 
-        final var handler = handlerExecutions.get(new HandlerKey(uri, method));
-        if (handler == null) {
-            throw new IllegalStateException("No handler found: " + method + " " + uri);
-        }
-
-        return handler;
+        return handlerExecutions.get(new HandlerKey(uri, method));
     }
 }
