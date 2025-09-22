@@ -1,6 +1,15 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.tobe.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.ExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletContext;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.interface21.web.WebApplicationInitializer;
@@ -17,7 +26,22 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final String basePackage = "com.techcourse";
+        List<HandlerMapping> handlerMappings = List.of(
+                new ManualHandlerMapping(),
+                new AnnotationHandlerMapping(basePackage)
+        );
+
+        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry(handlerMappings);
+
+        List<HandlerAdapter> handlerAdapters = List.of(
+                new ControllerHandlerAdapter(),
+                new ExecutionHandlerAdapter()
+        );
+
+        HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry(handlerAdapters);
+
+        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
