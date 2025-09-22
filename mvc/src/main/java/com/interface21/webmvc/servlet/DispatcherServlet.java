@@ -1,18 +1,16 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.ManualHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +30,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse");
         annotationHandlerMapping.initialize();
-
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
@@ -52,6 +44,10 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+            if (handler.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                throw new NoSuchElementException();
+            }
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
             ModelAndView modelAndView = handlerAdapter.handle(handler.get(), request, response);
             render(modelAndView, request, response);
@@ -72,3 +68,5 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 }
+
+
