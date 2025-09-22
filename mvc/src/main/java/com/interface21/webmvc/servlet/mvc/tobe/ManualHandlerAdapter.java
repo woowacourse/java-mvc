@@ -1,7 +1,9 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -16,6 +18,8 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler)
             throws Exception {
-        return ((Controller) handler).execute(request, response);
+        final String execute = ((Controller) handler).execute(request, response);
+        final View jspView = new JspView(execute);
+        return new ModelAndView(jspView);
     }
 }
