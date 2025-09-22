@@ -1,20 +1,17 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.method.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.method.HandlerExecutionAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -23,49 +20,47 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+    private String basePackage;
 
     public DispatcherServlet() {
+        this("com.techcourse.controller");
+    }
+
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
         initializeHandlerMappings();
         initializeHandlerAdapters();
-        
-        log.info("DispatcherServlet initialized with {} HandlerMappings and {} HandlerAdapters", 
-            handlerMappings.size(), handlerAdapters.size());
+
+        log.info("DispatcherServlet initialized with {} HandlerMappings and {} HandlerAdapters",
+                handlerMappings.size(), handlerAdapters.size());
     }
 
     private void initializeHandlerMappings() {
         handlerMappings = new ArrayList<>();
-        
-        // Manual HandlerMapping 추가
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
-        
-        // Annotation HandlerMapping 추가
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+
+        // Annotation HandlerMapping만 추가 (Legacy 제거)
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         handlerMappings.add(annotationHandlerMapping);
-        
+
         log.info("Initialized {} HandlerMappings", handlerMappings.size());
     }
 
     private void initializeHandlerAdapters() {
         handlerAdapters = new ArrayList<>();
-        
-        // Controller HandlerAdapter 추가
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        
-        // HandlerExecution HandlerAdapter 추가
+
+        // HandlerExecution HandlerAdapter만 사용 (어노테이션 기반)
         handlerAdapters.add(new HandlerExecutionAdapter());
-        
+
         log.info("Initialized {} HandlerAdapters", handlerAdapters.size());
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) 
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
         final String requestURI = request.getRequestURI();
         final String requestMethod = request.getMethod();
@@ -86,7 +81,7 @@ public class DispatcherServlet extends HttpServlet {
 
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             processModelAndView(modelAndView, request, response);
-            
+
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
@@ -97,12 +92,12 @@ public class DispatcherServlet extends HttpServlet {
         for (final HandlerMapping handlerMapping : handlerMappings) {
             final Object handler = handlerMapping.getHandler(request);
             if (handler != null) {
-                log.debug("Found handler: {} from {}", 
-                    handler.getClass().getSimpleName(), handlerMapping.getClass().getSimpleName());
+                log.debug("Found handler: {} from {}",
+                        handler.getClass().getSimpleName(), handlerMapping.getClass().getSimpleName());
                 return handler;
             }
         }
-        
+
         log.debug("No handler found for request: {} {}", request.getMethod(), request.getRequestURI());
         return null;
     }
@@ -110,29 +105,29 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerAdapter getHandlerAdapter(final Object handler) {
         for (final HandlerAdapter handlerAdapter : handlerAdapters) {
             if (handlerAdapter.supports(handler)) {
-                log.debug("Found adapter: {} for handler: {}", 
-                    handlerAdapter.getClass().getSimpleName(), handler.getClass().getSimpleName());
+                log.debug("Found adapter: {} for handler: {}",
+                        handlerAdapter.getClass().getSimpleName(), handler.getClass().getSimpleName());
                 return handlerAdapter;
             }
         }
-        
+
         log.warn("No adapter found for handler: {}", handler.getClass().getName());
         return null;
     }
 
-    private void handleNoHandlerFound(final HttpServletRequest request, final HttpServletResponse response) 
+    private void handleNoHandlerFound(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         log.warn("No handler found for request: {} {}", request.getMethod(), request.getRequestURI());
         response.sendError(HttpServletResponse.SC_NOT_FOUND, "No handler found");
     }
 
-    private void handleNoAdapterFound(final Object handler, final HttpServletRequest request, 
+    private void handleNoAdapterFound(final Object handler, final HttpServletRequest request,
                                       final HttpServletResponse response) throws Exception {
         log.error("No adapter found for handler: {}", handler.getClass().getName());
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No adapter found for handler");
     }
 
-    private void processModelAndView(final ModelAndView modelAndView, final HttpServletRequest request, 
+    private void processModelAndView(final ModelAndView modelAndView, final HttpServletRequest request,
                                      final HttpServletResponse response) throws Exception {
         if (modelAndView == null) {
             log.debug("ModelAndView is null, nothing to render");

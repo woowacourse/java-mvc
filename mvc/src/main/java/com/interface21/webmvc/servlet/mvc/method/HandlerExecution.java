@@ -1,9 +1,8 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.method;
 
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.ModelAndView;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -19,7 +18,7 @@ public class HandlerExecution {
 
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         validateHandlerState();
-        
+
         try {
             final Object result = method.invoke(handler, request, response);
             return convertToModelAndView(result);
@@ -49,9 +48,17 @@ public class HandlerExecution {
         if (result instanceof ModelAndView) {
             return (ModelAndView) result;
         }
-        
+
         throw new IllegalStateException(
-            String.format("Handler method %s must return ModelAndView, but returned: %s", 
-                method.getName(), result == null ? "null" : result.getClass().getSimpleName()));
+                String.format("Handler method %s must return ModelAndView, but returned: %s",
+                        method.getName(), result == null ? "null" : result.getClass().getSimpleName()));
+    }
+
+    public Object getHandler() {
+        return handler;
+    }
+
+    public Method getMethod() {
+        return method;
     }
 }
