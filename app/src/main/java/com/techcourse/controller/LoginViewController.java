@@ -1,22 +1,25 @@
 package com.techcourse.controller;
 
+import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.RedirectView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 
 public class LoginViewController implements Controller {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
+                    return new ModelAndView(new RedirectView("/index.jsp"));
                 })
-                .orElse("/login.jsp");
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
 }

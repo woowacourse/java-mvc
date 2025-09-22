@@ -20,13 +20,9 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(final HttpServletRequest req, final HttpServletResponse res, final Object handler)
             throws Exception {
-        String viewName = ((Controller) handler).execute(req, res);
-        if (viewName == null || viewName.isBlank()) {
-            return null;
-        }
+        ModelAndView modelAndView = ((Controller) handler).execute(req, res);
 
-        View view = resolveView(viewName);
-        return new ModelAndView(view);
+        return modelAndView;
     }
 
     private View resolveView(final String viewName) {
