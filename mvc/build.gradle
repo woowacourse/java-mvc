@@ -15,6 +15,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.10'
     implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
     implementation 'jakarta.servlet.jsp:jakarta.servlet.jsp-api:4.0.0'
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.2'
