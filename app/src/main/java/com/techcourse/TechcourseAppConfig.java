@@ -2,14 +2,21 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.tobe.dispatcherservlet.AppConfig;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ManualControllerConfigurator {
+public class TechcourseAppConfig implements AppConfig {
 
-    public static Map<String, Controller> getManualControllers() {
+    @Override
+    public Map<String, Controller> getManualControllers() {
         final Map<String, Controller> controllers = new HashMap<>();
         controllers.put("/", new ForwardController("/index.jsp"));
         return controllers;
+    }
+
+    @Override
+    public String getControllerBasePackage() {
+        return "com.techcourse.controller";
     }
 }
