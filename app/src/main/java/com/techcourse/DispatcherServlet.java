@@ -54,8 +54,8 @@ public class DispatcherServlet extends HttpServlet {
         String path = request.getServletPath();
         RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-        Optional<Object> handler = handlerRegistry.getHandler(path, requestMethod);
-        if (handler.isEmpty()) {
+        Optional<Object> optionalHandler = handlerRegistry.getHandler(path, requestMethod);
+        if (optionalHandler.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             try {
                 new JspView("/404.jsp").render(Map.of(), request, response);
@@ -65,6 +65,7 @@ public class DispatcherServlet extends HttpServlet {
             }
             return;
         }
+        Object handler = optionalHandler.get();
 
         try {
             ModelAndView modelAndView = executeHandler(request, response, handler);

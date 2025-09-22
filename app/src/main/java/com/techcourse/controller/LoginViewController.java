@@ -14,7 +14,7 @@ public class LoginViewController implements Controller {
 
     @Override
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return  new ModelAndView(new JspView(UserSession.getUserFrom(req.getSession())
+        return new ModelAndView(new JspView(UserSession.getUserFrom(req.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";

@@ -43,7 +43,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (handlerExecutions.containsKey(handlerKey)) {
             return handlerExecutions.get(handlerKey);
         }
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     private void registerMethod(final Method method, final Object instance) {

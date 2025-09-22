@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.view;
 import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,6 @@ public class JspView implements View {
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
 
     public static final String REDIRECT_PREFIX = "redirect:";
-    private static final String prefix = "/META-INF/views/";
-    private static final String suffix = ".jsp";
     private static final String ROOT = "/";
 
     private final String viewName;
@@ -44,6 +43,6 @@ public class JspView implements View {
         if (viewName.startsWith(ROOT)) {
             return viewName;
         }
-        return prefix + viewName + suffix;
+        return ROOT + viewName;
     }
 }

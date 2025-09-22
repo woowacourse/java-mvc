@@ -21,9 +21,12 @@ public class HandlerRegistry {
     }
 
     public Optional<Object> getHandler(final String path, final RequestMethod requestMethod) {
+        Object handler = null;
         for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(path, requestMethod);
-            return Optional.ofNullable(handler);
+            handler = handlerMapping.getHandler(path, requestMethod);
+            if (handler != null) {
+                return Optional.of(handler);
+            }
         }
         return Optional.empty();
     }
