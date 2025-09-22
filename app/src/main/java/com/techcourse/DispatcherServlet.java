@@ -8,15 +8,13 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ComponentScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,24 +23,22 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
     private static final String BASE_PACKAGE = "com.techcourse.controller";
-    private static final List<HandlerMapping> handlerMappings = new ArrayList<>();
-    private static final List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public DispatcherServlet() {
-    }
+    private final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
     @Override
     public void init() {
         ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
+        handlerRegistry.registerMapping(manualHandlerMapping);
 
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(new ComponentScanner(BASE_PACKAGE));
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
+                new ComponentScanner(BASE_PACKAGE));
         annotationHandlerMapping.initialize();
-        handlerMappings.add(annotationHandlerMapping);
+        handlerRegistry.registerMapping(annotationHandlerMapping);
 
-        handlerAdapters.add(new ControllerHandlerAdapter());
-        handlerAdapters.add(new AnnotationHandlerAdapterExecution());
+        handlerRegistry.registerAdapter(new ControllerHandlerAdapter());
+        handlerRegistry.registerAdapter(new AnnotationHandlerAdapterExecution());
     }
 
     @Override
@@ -56,36 +52,35 @@ public class DispatcherServlet extends HttpServlet {
 
     private void adapt(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            String path = request.getServletPath();
-            RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
-            Object handler = handlerMapping.getHandler(path, requestMethod);
+        String path = request.getServletPath();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
 
-            if (handler == null) {
-                continue;
-            }
-
+        Optional<Object> handler = handlerRegistry.getHandler(path, requestMethod);
+        if (handler.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             try {
-                ModelAndView modelAndView = executeHandler(request, response, handler);
-                move(modelAndView, request, response);
-                return;
-            } catch (Exception e) {
-                log.error("Exception : {}", e.getMessage(), e);
-                throw new ServletException(e.getMessage());
+                new JspView("/404.jsp").render(Map.of(), request, response);
+            } catch (
+                    Exception e) {
+                throw new ServletException(e.getMessage(), e);
             }
+            return;
         }
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
         try {
-            new JspView("/404.jsp").render(Map.of(), request, response);
+            ModelAndView modelAndView = executeHandler(request, response, handler);
+            move(modelAndView, request, response);
         } catch (Exception e) {
-            throw new ServletException(e.getMessage(), e);
+            log.error("Exception : {}", e.getMessage(), e);
+            throw new ServletException(e.getMessage());
         }
     }
 
     private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response,
                                         final Object handler) throws Exception {
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            return handlerAdapter.handle(request, response, handler);
+        Optional<HandlerAdapter> adapter = handlerRegistry.getAdapter(handler);
+        if (adapter.isPresent()) {
+            return adapter.get().handle(request, response, handler);
         }
         throw new ServletException("No HandlerAdapter for handler: " + handler.getClass().getName());
     }
