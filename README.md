@@ -54,3 +54,9 @@ public class RegisterController {
     }
 }
 ```
+## STEP 3
+- [ ] `JsonView` 구현
+- [ ] Legacy MVC 구현
+  - app 모듈의 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+  - Legacy Code 삭제
+  - `DispatcherServlet` mvc 패키지로 이동
