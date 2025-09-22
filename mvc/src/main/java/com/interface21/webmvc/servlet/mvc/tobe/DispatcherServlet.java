@@ -23,10 +23,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-            if (handler.isEmpty()) {
-                throw new IllegalStateException("no handler ");
-            }
+            Object handler = handlerMappingRegistry.getHandler(request)
+                    .orElseThrow(() -> new IllegalStateException("no handler "));
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerAdapter);
 
