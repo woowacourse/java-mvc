@@ -8,8 +8,6 @@ import java.util.Map;
 
 public class JspView implements View {
 
-    public static final String JSP_POSTFIX = ".jsp";
-
     private final String viewName;
 
     public JspView(final String viewName) {

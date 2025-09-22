@@ -8,8 +8,6 @@ import java.util.Map;
 
 public class RedirectView implements View {
 
-    public static final String REDIRECT_PREFIX = "redirect:";
-
     private final String redirectUrl;
 
     public RedirectView(final String redirectUrl) {

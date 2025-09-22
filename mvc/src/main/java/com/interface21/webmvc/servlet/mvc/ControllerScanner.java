@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.context.stereotype.Controller;
 import org.reflections.Reflections;
@@ -29,7 +29,7 @@ public class ControllerScanner {
 
     private Set<Class<?>> findControllerClasses() {
         final var reflections = new Reflections(basePackages);
-        
+
         return reflections.getTypesAnnotatedWith(Controller.class);
     }
 
