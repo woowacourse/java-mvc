@@ -2,10 +2,10 @@ package com.techcourse;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapterExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ComponentScanner;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
@@ -36,8 +36,8 @@ public class DispatcherServlet extends HttpServlet {
         annotationHandlerMapping.initialize();
         handlerRegistry.registerMapping(annotationHandlerMapping);
 
+        handlerRegistry.registerAdapter(new AnnotationHandlerAdapter());
         handlerRegistry.registerAdapter(new ControllerHandlerAdapter());
-        handlerRegistry.registerAdapter(new AnnotationHandlerAdapterExecution());
     }
 
     @Override
