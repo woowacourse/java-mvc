@@ -14,7 +14,7 @@ import com.interface21.context.stereotype.Controller;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView register(final HttpServletRequest req, final HttpServletResponse res) {
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
