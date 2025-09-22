@@ -19,7 +19,7 @@ public class HandlerMappingRegistry {
 
     public HandlerMapping getHandlerMapping(final HttpServletRequest request) {
         for (HandlerMapping handlerMapping : handlerMappings) {
-            if (handlerMapping.getHandler(request) != null) {
+            if (handlerMapping.support(request)) {
                 return handlerMapping;
             }
         }
