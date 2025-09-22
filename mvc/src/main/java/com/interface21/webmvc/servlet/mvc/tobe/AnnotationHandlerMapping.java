@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -22,11 +23,20 @@ public class AnnotationHandlerMapping {
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.controllerScanner = new ControllerScanner(basePackage);
         this.handlerExecutions = new HashMap<>();
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         setHandlerExecutions();
         log.info("Initialized AnnotationHandlerMapping!");
+    }
+
+    @Override
+    public Object getHandler(final HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
+        final String requestMethod = request.getMethod();
+        final HandlerKey key = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod.toUpperCase()));
+        return handlerExecutions.get(key);
     }
 
     private void setHandlerExecutions() {
@@ -74,12 +84,5 @@ public class AnnotationHandlerMapping {
             return RequestMethod.values();
         }
         return requestMethods;
-    }
-
-    public Object getHandler(final HttpServletRequest request) {
-        final String requestURI = request.getRequestURI();
-        final String requestMethod = request.getMethod();
-        final HandlerKey key = new HandlerKey(requestURI, RequestMethod.valueOf(requestMethod.toUpperCase()));
-        return handlerExecutions.get(key);
     }
 }
