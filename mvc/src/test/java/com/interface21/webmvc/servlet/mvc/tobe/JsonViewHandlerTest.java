@@ -65,7 +65,7 @@ class JsonViewHandlerTest {
                 () -> assertThat(modelAndView.getView()).isInstanceOf(JsonView.class),
                 () -> assertThat(modelAndView.getModel()).hasSize(2),
                 () -> assertThat(modelAndView.getObject("user1")).extracting("name").isEqualTo("gugu"),
-                () -> assertThat(modelAndView.getObject("user2")).extracting("name").isEqualTo("sully")
+                () -> assertThat(modelAndView.getObject("user2")).extracting("name").isEqualTo("mj")
         );
     }
 }

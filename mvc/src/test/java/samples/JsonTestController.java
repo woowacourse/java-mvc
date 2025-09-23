@@ -25,7 +25,7 @@ public class JsonTestController {
     public ModelAndView findMultipleObjects(HttpServletRequest request, HttpServletResponse response) {
         final var modelAndView = new ModelAndView(new JsonView());
         modelAndView.addObject("user1", new TestUser("gugu", "gugu@email.com"));
-        modelAndView.addObject("user2", new TestUser("sully", "sully@email.com"));
+        modelAndView.addObject("user2", new TestUser("mj", "mj@email.com"));
         return modelAndView;
     }
 }
