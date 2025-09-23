@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class LogoutController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ModelAndView logout(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
