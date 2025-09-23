@@ -1,8 +1,12 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.HandlerAdapterImpl;
+import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.ViewRenderer;
+import com.interface21.webmvc.servlet.mvc.ViewRendererImpl;
+import com.interface21.webmvc.servlet.mvc.ViewResolverRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,15 +20,17 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    HandlerAdapterImpl handlerAdapter = new HandlerAdapterImpl();
-    private List<HandlerMapping> handlerMappings;
+
+    private final HandlerExecutor handlerExecutor = new HandlerExecutor();
+    private final ViewResolverRegistry viewResolverRegistry = new ViewResolverRegistry();
+    private final ViewRenderer viewRenderer = new ViewRendererImpl();
+    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public DispatcherServlet() {
     }
 
     @Override
     public void init() {
-        handlerMappings = new ArrayList<>();
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
         handlerMappings.forEach(HandlerMapping::initialize);
     }
@@ -40,11 +46,17 @@ public class DispatcherServlet extends HttpServlet {
         try {
             for (HandlerMapping handlerMapping : handlerMappings) {
                 final var handler = handlerMapping.getHandler(request);
-                handlerAdapter.handle(request, response, handler);
+                if (handler instanceof HandlerExecution handlerExecution) {
+                    final var result = handlerExecutor.execute(handlerExecution, request, response);
+                    final var modelAndView = viewResolverRegistry.resolve(result);
+                    viewRenderer.render(modelAndView, request, response);
+                    return;
+                }
             }
-        } catch (Throwable e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage(), e);
         }
     }
 }

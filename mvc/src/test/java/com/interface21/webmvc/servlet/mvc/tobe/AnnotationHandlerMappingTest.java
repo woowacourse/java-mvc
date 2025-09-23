@@ -2,6 +2,7 @@ package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,8 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("GET");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var result = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) result;
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
@@ -46,7 +48,8 @@ class AnnotationHandlerMappingTest {
         when(request.getMethod()).thenReturn("POST");
 
         final var handlerExecution = (HandlerExecution) handlerMapping.getHandler(request);
-        final var modelAndView = handlerExecution.handle(request, response);
+        final var result = handlerExecution.handle(request, response);
+        final var modelAndView = (ModelAndView) result;
 
         assertThat(modelAndView.getObject("id")).isEqualTo("gugu");
     }
