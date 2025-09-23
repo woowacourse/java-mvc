@@ -24,7 +24,7 @@ public class ManualHandlerMapping implements HandlerMapping {
         props.forEach((key, value) -> {
             String propertyKey = key.toString();
             String propertyValue = value.toString();
-            if (propertyKey.startsWith("controller./")) {
+            if ("controller./".startsWith(propertyKey)) {
                 String path = propertyKey.substring("controller.".length());
                 try {
                     Class<?> clazz = Class.forName(propertyValue);
