@@ -1,5 +1,6 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.techcourse.support;
 
+import com.interface21.webmvc.servlet.mvc.UncheckedServletException;
 import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -7,8 +8,6 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanner;
-import com.interface21.web.SpringServletContainerInitializer;
-import java.util.Set;
 
 public class TomcatStarter {
 
@@ -27,8 +26,6 @@ public class TomcatStarter {
         final var docBase = new File(webappDirLocation).getAbsolutePath();
         final var context = (StandardContext) tomcat.addWebapp("", docBase);
 
-        context.addServletContainerInitializer(new SpringServletContainerInitializer(),
-                Set.of(DispatcherServletInitializer.class));
         skipJarScan(context);
         skipClearReferences(context);
     }
