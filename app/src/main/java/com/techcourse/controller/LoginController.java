@@ -41,10 +41,4 @@ public class LoginController {
                 })
                 .orElse(new ModelAndView(new RedirectView("/401.jsp")));
     }
-
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
-        request.getSession().removeAttribute(UserSession.SESSION_KEY);
-        return new ModelAndView(new RedirectView("/login/view"));
-    }
 }
