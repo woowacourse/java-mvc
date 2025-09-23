@@ -1,11 +1,9 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.ViewResolver;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.viewResolver.JspViewResolver;
@@ -13,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,30 +19,27 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final List<HandlerMapping> DEFAULT_HANDLER_MAPPINGS = List.of(
-            new AnnotationHandlerMapping("com.techcourse.controller"),
-            new ManualHandlerMapping()
-    );
-    private static final List<HandlerAdapter> DEFAULT_HANDLER_ADAPTERS = List.of(
-            new AnnotationHandlerAdapter(),
-            new ManualHandlerAdapter()
-    );
-    private static final List<ViewResolver> DEFAULT_VIEW_RESOLVERS = List.of(
-            new JspViewResolver()
-    );
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
-    private List<ViewResolver> viewResolvers;
+    private final List<HandlerMapping> handlerMappings;
+    private final List<HandlerAdapter> handlerAdapters;
+    private final List<ViewResolver> viewResolvers;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage, String... others) {
+        handlerMappings = List.of(
+                new AnnotationHandlerMapping(basePackage, others),
+                new ManualHandlerMapping()
+        );
+        handlerAdapters = List.of(
+                new AnnotationHandlerAdapter(),
+                new ManualHandlerAdapter()
+        );
+        viewResolvers = List.of(
+                new JspViewResolver()
+        );
     }
 
     @Override
     public void init() {
-        handlerMappings = new ArrayList<>(DEFAULT_HANDLER_MAPPINGS);
-        handlerAdapters = new ArrayList<>(DEFAULT_HANDLER_ADAPTERS);
-        viewResolvers = new ArrayList<>(DEFAULT_VIEW_RESOLVERS);
         for (HandlerMapping handlerMapping : handlerMappings) {
             handlerMapping.initialize();
         }

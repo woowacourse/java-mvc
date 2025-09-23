@@ -1,7 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.asis;
 
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
