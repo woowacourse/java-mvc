@@ -10,7 +10,7 @@ import java.util.UUID;
 @Controller
 public class JsonDemoController {
 
-    @RequestMapping(value = "/json", method = RequestMethod.GET)
+    @RequestMapping(value = "/demo/json", method = RequestMethod.GET)
     public ModelAndView get() {
         return new ModelAndView(new JsonView())
                 .addObject("name", "dompoo")
