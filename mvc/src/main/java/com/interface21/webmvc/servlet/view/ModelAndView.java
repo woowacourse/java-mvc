@@ -26,7 +26,7 @@ public class ModelAndView {
         try {
             this.view.render(this.model, httpServletRequest, httpServletResponse);
         } catch (Exception exception) {
-            throw new ServletException("View 렌더링 도중 오류가 발생하였습니다.");
+            throw new ServletException("View 렌더링 도중 오류가 발생하였습니다.", exception);
         }
     }
 

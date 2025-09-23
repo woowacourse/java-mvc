@@ -15,7 +15,7 @@ public class HandlerExecution {
         this.method = method;
     }
 
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return (ModelAndView) this.method.invoke(this.target, request, response);
+    public Object handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return this.method.invoke(this.target, request, response);
     }
 }

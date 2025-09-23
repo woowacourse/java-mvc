@@ -46,3 +46,12 @@ sourceSets {
         java.destinationDirectory.set(file('src/main/webapp/WEB-INF/classes'))
     }
 }
+
+tasks.register('copyMvcClassesToWebInf', Copy) {
+    from(project(':mvc').sourceSets.main.output)
+    into("$projectDir/src/main/webapp/WEB-INF/classes")
+}
+
+tasks.named('classes') {
+    dependsOn 'copyMvcClassesToWebInf'
+}
