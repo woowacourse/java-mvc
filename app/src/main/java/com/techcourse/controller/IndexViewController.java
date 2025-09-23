@@ -9,13 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class LoginViewController {
+public class IndexViewController {
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView show(
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView index(
             final HttpServletRequest request,
             final HttpServletResponse response
-    ) {
-        return new ModelAndView(new JspView("/login.jsp"));
+    ) throws Exception {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }

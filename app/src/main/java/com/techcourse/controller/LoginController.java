@@ -23,7 +23,7 @@ public class LoginController {
             final HttpServletResponse response
     ) throws Exception {
         if (UserSession.isLoggedIn(request.getSession())) {
-            return new ModelAndView(new RedirectView("/index.jsp"));
+            return new ModelAndView(new RedirectView("/"));
         }
 
         final String account = request.getParameter("account");
@@ -43,7 +43,7 @@ public class LoginController {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
 
-            return new ModelAndView(new RedirectView("/index.jsp"));
+            return new ModelAndView(new RedirectView("/"));
         }
 
         return new ModelAndView(new RedirectView("/login.jsp"));
