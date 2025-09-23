@@ -59,7 +59,7 @@ public class DispatcherServlet extends HttpServlet {
         log.info("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
         try {
             final Object handler = handlerMappingRegistry.getHandler(request);
-            log.info("핸들러 조회 결과: {}", handler != null ? handler.getClass().getSimpleName() : "null");
+            log.info("핸들러 조회 결과: {}", handler.getClass().getSimpleName());
             final var adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
             modelAndView.render(request,response);
