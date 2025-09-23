@@ -47,11 +47,9 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void registerHandlerMappings(Properties props) {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.loadFromProperties(props);
+        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping(props);
         handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
-        annotationHandlerMapping.initialize();
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }
 

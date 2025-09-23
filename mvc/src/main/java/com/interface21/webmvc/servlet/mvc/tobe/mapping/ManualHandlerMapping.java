@@ -15,19 +15,27 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    private final Properties properties;
+
+    public ManualHandlerMapping(Properties properties) {
+        this.properties = properties;
+    }
+
     public void register(String path, Controller controller) {
         controllers.put(path, controller);
         log.info("Registered Controller: {} -> {}", path, controller.getClass().getName());
     }
 
-    public void loadFromProperties(Properties props) {
-        props.forEach((key, value) -> {
+    @Override
+    public void initialize() {
+        System.out.println("Initializing ManualHandlerMapping with properties: " + properties);
+        this.properties.forEach((key, value) -> {
             String propertyKey = key.toString();
             String propertyValue = value.toString();
-            if ("controller./".startsWith(propertyKey)) {
+            if (propertyKey.startsWith("controller./")) {
                 String path = propertyKey.substring("controller.".length());
                 try {
-                    Class<?> clazz = Class.forName(propertyValue);
+                    Class<?> clazz = Class.forName(propertyValue, true, Thread.currentThread().getContextClassLoader());
                     Controller controller = (Controller) clazz.getDeclaredConstructor().newInstance();
                     register(path, controller);
                 } catch (Exception e) {
@@ -42,6 +50,7 @@ public class ManualHandlerMapping implements HandlerMapping {
     public Object getHandler(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         log.debug("Request Mapping Uri : {}", requestURI);
+        log.debug("수동 매핑 대상: {}", controllers.keySet());
         return controllers.get(requestURI);
     }
 

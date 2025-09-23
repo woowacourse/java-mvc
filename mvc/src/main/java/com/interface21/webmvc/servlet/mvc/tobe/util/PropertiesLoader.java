@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class PropertiesLoader {
     public static Properties load(ServletContext context, String path) {
-        try (InputStream in = context.getResourceAsStream(path)) {
+        try (InputStream in = context.getClassLoader().getResourceAsStream(path)) {
             if (in == null) {
                 throw new IllegalStateException(path + " 파일을 찾을 수 없습니다.");
             }

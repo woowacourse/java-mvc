@@ -12,6 +12,7 @@ public class HandlerMappingRegistry {
     List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
         handlerMappings.sort(Comparator.comparingInt(HandlerMapping::getOrder));
     }
