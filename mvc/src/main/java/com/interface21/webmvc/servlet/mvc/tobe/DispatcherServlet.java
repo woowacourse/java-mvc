@@ -26,7 +26,7 @@ public class DispatcherServlet extends HttpServlet {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(() -> new IllegalStateException("no handler "));
             HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerAdapter.handle(request, response, handlerAdapter);
+            ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
 
             View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
