@@ -30,16 +30,9 @@ public class ControllerScanner {
         return controllerRegistry;
     }
 
-    private void makeAccessible(Constructor<?> constructor) {
-        if (!constructor.canAccess(null)) {
-            constructor.setAccessible(true);
-        }
-    }
-
     private Object instantiateController(Class<?> controller) {
         try {
             Constructor<?> constructor = controller.getDeclaredConstructor();
-            makeAccessible(constructor);
             return constructor.newInstance();
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("컨트롤러에 기본 생성자가 없습니다: " + controller.getName());
