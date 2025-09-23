@@ -30,7 +30,6 @@ public class DispatcherServlet extends HttpServlet {
         adapterRegistry = new HandlerAdapterRegistry();
 
         // 매핑 등록
-        mappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         mappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
 
         // 어댑터 등록

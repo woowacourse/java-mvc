@@ -5,6 +5,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JsonView;
+import com.techcourse.domain.Account;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +20,9 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
-        final String account = request.getParameter("account");
-        log.debug("user id : {}", account);
+        final String value = request.getParameter("account");
+        final Account account = new Account(value);
+        log.debug("{}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         final User user = getUser(account);
@@ -29,9 +31,8 @@ public class UserController {
         return modelAndView;
     }
 
-    private User getUser(final String account) {
+    private User getUser(final Account account) {
         return InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다. " + account));
     }
 }
-
