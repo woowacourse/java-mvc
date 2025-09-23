@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet.view;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -19,8 +20,7 @@ public class JsonView implements View {
         } else {
             objectToRender = model;
         }
-        var writer = response.getWriter();
-        ObjectMapper objectMapper = new ObjectMapper();
+        PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(objectToRender));
     }
 }
