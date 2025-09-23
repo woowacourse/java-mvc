@@ -4,8 +4,8 @@ import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -21,7 +21,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMappingRegistry handlerMappingRegistry;
     private HandlerAdapterRegistry handlerAdapterRegistry;
-    private HandlerExecutor handlerExecutor;
 
     public DispatcherServlet() {
     }
@@ -33,8 +32,6 @@ public class DispatcherServlet extends HttpServlet {
 
         initHandlerMappings();
         initHandlerAdapters();
-
-        handlerExecutor = new HandlerExecutor(handlerMappingRegistry, handlerAdapterRegistry);
     }
 
     private void initHandlerMappings() {
@@ -57,11 +54,15 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            ModelAndView mav = handlerExecutor.execute(request, response);
-            if (mav == null) {
+            Object handler = handlerMappingRegistry.getHandler(request);
+            if (handler == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
+
+            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            ModelAndView mav = handlerAdapter.handle(request, response, handler);
+
             render(mav, request, response);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
