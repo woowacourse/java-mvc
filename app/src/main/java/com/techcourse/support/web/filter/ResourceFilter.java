@@ -3,13 +3,12 @@ package com.techcourse.support.web.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebFilter("/*")
 public class ResourceFilter implements Filter {
@@ -51,7 +50,7 @@ public class ResourceFilter implements Filter {
 
     private boolean isResourceUrl(final String url) {
         for (final var prefix : resourcePrefixs) {
-            if (url.startsWith(prefix)) {
+            if (url.equals(prefix)) {
                 return true;
             }
         }
