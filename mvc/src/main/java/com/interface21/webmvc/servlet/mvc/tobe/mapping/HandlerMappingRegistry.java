@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
@@ -15,13 +17,15 @@ public class HandlerMappingRegistry {
     }
 
     public Object getHandler(HttpServletRequest request) {
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                return handler;
-            }
-        }
-        throw new NoHandlerFoundException(String.format("요청하신 API를 처리할 핸들러를 찾을 수 없습니다. [HTTP Method=%s, URI=%s]",
-                request.getMethod(), request.getRequestURI()));
+        return handlerMappings.stream()
+                .map(mapping -> mapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new NoHandlerFoundException(
+                        String.format("요청하신 API를 처리할 핸들러를 찾을 수 없습니다. [HTTP Method=%s, URI=%s]",
+                                request.getMethod(),
+                                request.getRequestURI()
+                        ))
+                );
     }
 }
