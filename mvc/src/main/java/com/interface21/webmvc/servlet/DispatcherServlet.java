@@ -17,16 +17,17 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-
     private static final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private static final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
+    private final String basePackage;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
+        handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping(basePackage));
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 

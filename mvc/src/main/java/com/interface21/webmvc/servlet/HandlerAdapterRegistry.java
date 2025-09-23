@@ -12,7 +12,7 @@ public class HandlerAdapterRegistry {
         handlerAdapters.add(handlerAdapter);
     }
 
-    HandlerAdapter getHandlerAdapter(Object handler) {
+    public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream().filter(handlerAdapter -> handlerAdapter.isHandlingPossible(handler))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("핸들러에 맞는 핸들러 어뎁터가 존재하지 않습니다."));
