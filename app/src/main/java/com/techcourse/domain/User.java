@@ -1,5 +1,11 @@
 package com.techcourse.domain;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+
+@Getter
+@RequiredArgsConstructor
 public class User {
 
     private final long id;
@@ -7,19 +13,8 @@ public class User {
     private final String password;
     private final String email;
 
-    public User(long id, String account, String password, String email) {
-        this.id = id;
-        this.account = account;
-        this.password = password;
-        this.email = email;
-    }
-
-    public boolean checkPassword(String password) {
+    public boolean checkPassword(final String password) {
         return this.password.equals(password);
-    }
-
-    public String getAccount() {
-        return account;
     }
 
     @Override
@@ -28,7 +23,6 @@ public class User {
                 "id=" + id +
                 ", account='" + account + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 '}';
     }
 }

@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView getInfo(final HttpServletRequest request, final HttpServletResponse response) {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
@@ -26,6 +26,18 @@ public class UserController {
                 .orElseThrow();
         final Map<String, Object> model = new HashMap<>();
         model.put("user", user);
+
+        return ModelAndView.of(JsonView.init(), model);
+    }
+
+    @RequestMapping(value = "/api/user/email", method = RequestMethod.GET)
+    public ModelAndView getEmail(final HttpServletRequest request, final HttpServletResponse response) {
+        final String account = request.getParameter("account");
+
+        final User user = InMemoryUserRepository.findByAccount(account)
+                .orElseThrow();
+        final Map<String, Object> model = new HashMap<>();
+        model.put("email", user.getEmail());
 
         return ModelAndView.of(JsonView.init(), model);
     }
