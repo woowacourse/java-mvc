@@ -30,7 +30,7 @@ public class HandlerMappingRegistry {
                 .collect(Collectors.toSet());
 
         if (handlers.isEmpty()) {
-            throw new IllegalStateException("요청을 처리할 수 있는 핸들러가 없습니다.");
+            return null;
         }
 
         if (handlers.size() > 1) {
