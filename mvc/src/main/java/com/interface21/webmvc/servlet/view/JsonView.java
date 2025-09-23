@@ -26,6 +26,7 @@ public class JsonView implements View {
             // model이 하나인 경우에는 그 model의 값만 보여준다.
             Collection<?> values = model.values();
             objectMapper.writeValue(outputStream, values.iterator().next());
+            return;
         }
         objectMapper.writeValue(outputStream, model);
     }
