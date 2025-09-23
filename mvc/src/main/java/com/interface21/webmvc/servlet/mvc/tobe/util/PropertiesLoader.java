@@ -7,12 +7,13 @@ import java.util.Properties;
 
 public class PropertiesLoader {
     public static Properties load(ServletContext context, String path) {
-        try (InputStream in = context.getClassLoader().getResourceAsStream(path)) {
-            if (in == null) {
-                throw new IllegalStateException(path + " 파일을 찾을 수 없습니다.");
-            }
+        InputStream inputStream = context.getClassLoader().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new IllegalStateException(path + " 파일을 찾을 수 없습니다.");
+        }
+        try (inputStream) {
             Properties props = new Properties();
-            props.load(in);
+            props.load(inputStream);
             return props;
         } catch (IOException e) {
             throw new RuntimeException(path + " 로드 실패", e);
