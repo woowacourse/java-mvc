@@ -7,10 +7,20 @@ import java.util.Map;
 public class ModelAndView {
 
     private final View view;
+    private final String viewName;
     private final Map<String, Object> model;
 
     public ModelAndView(final View view) {
+        this(view, null);
+    }
+
+    public ModelAndView(final String viewName) {
+        this(null, viewName);
+    }
+
+    private ModelAndView(final View view, final String viewName) {
         this.view = view;
+        this.viewName = viewName;
         this.model = new HashMap<>();
     }
 
@@ -29,5 +39,9 @@ public class ModelAndView {
 
     public View getView() {
         return view;
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }
