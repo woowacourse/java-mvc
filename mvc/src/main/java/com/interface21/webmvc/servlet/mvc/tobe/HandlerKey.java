@@ -1,8 +1,8 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.web.bind.annotation.RequestMethod;
-
 import java.util.Objects;
+
+import com.interface21.web.bind.annotation.RequestMethod;
 
 public class HandlerKey {
 
@@ -33,5 +33,13 @@ public class HandlerKey {
     @Override
     public int hashCode() {
         return Objects.hash(url, requestMethod);
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public RequestMethod getRequestMethod() {
+        return requestMethod;
     }
 }
