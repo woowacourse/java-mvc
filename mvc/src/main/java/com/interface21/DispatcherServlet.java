@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21;
 
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
@@ -17,22 +17,17 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private List<HandlerMapping> handlerMappings;
-    private List<HandlerAdapter> handlerAdapters;
-
-    public DispatcherServlet() {
-    }
+    private transient List<HandlerMapping> handlerMappings;
+    private transient List<HandlerAdapter> handlerAdapters;
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com");
 
-        manualHandlerMapping.initialize();
         annotationHandlerMapping.initialize();
 
-        handlerMappings = List.of(manualHandlerMapping, annotationHandlerMapping);
-        handlerAdapters = List.of(new ManualHandlerAdapter(), new AnnotationHandlerAdapter());
+        handlerMappings = List.of(annotationHandlerMapping);
+        handlerAdapters = List.of(new AnnotationHandlerAdapter());
     }
 
     @Override
@@ -51,9 +46,8 @@ public class DispatcherServlet extends HttpServlet {
                     return;
                 }
             }
-        } catch (Throwable e) {
-            log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+        } catch (final Exception e) {
+            throw new ServletException(e.getMessage(), e);
         }
 
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
