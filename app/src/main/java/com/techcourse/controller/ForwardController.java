@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class ForwardController {
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/index.jsp"));
     }
