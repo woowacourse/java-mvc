@@ -19,6 +19,6 @@ public class CharacterEncodingFilter implements Filter {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-        // chain.doFilter(request, response);
+        chain.doFilter(request, response);
     }
 }
