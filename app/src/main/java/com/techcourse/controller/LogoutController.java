@@ -15,7 +15,7 @@ public class LogoutController {
 
     private static final Logger log = LoggerFactory.getLogger(LogoutController.class);
 
-    @RequestMapping(value = "/api/user/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);

@@ -21,7 +21,7 @@
                             <li><hr class="dropdown-divider" /></li>
                             <!-- 로그아웃 POST form -->
                             <li>
-                                <form action="/api/user/logout" method="POST" style="display:inline;">
+                                <form action="/logout" method="POST" style="display:inline;">
                                     <button type="submit" class="dropdown-item">로그아웃</button>
                                 </form>
                             </li>
@@ -31,7 +31,7 @@
             </div>
             <% } else { %>
             <div class="navbar-nav d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
-                <a class="nav-link" href="/login/view" role="button"><i class="fas fa-user fa-fw"></i>&nbsp;로그인</a>
+                <a class="nav-link" href="/login" role="button"><i class="fas fa-user fa-fw"></i>&nbsp;로그인</a>
             </div>
             <% } %>
         </nav>

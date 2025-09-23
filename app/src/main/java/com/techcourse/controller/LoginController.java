@@ -21,7 +21,7 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping(value = "/api/user/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
@@ -31,7 +31,7 @@ public class LoginController {
                 .orElse(new ModelAndView(new JspView("/login.jsp")));
     }
 
-    @RequestMapping(value = "/api/user/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));

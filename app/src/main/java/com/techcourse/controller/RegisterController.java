@@ -20,7 +20,7 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
-    @RequestMapping(value = "/api/user/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
@@ -30,7 +30,7 @@ public class RegisterController {
                 .orElse(new ModelAndView(new JspView("/register.jsp")));
     }
 
-    @RequestMapping(value = "/api/user/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final Account account = new Account(req.getParameter("account"));
         final Password password = new Password(req.getParameter("password"));
