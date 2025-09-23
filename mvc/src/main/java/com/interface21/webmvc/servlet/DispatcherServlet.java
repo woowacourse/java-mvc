@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,28 +63,18 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object findHandler(HttpServletRequest request, String requestURI) {
-        Object foundHandler = null;
-        for (HandlerMapping handlerMapping : handlerMappings) {
-            final var handler = handlerMapping.getHandler(request);
-            if (handler != null) {
-                foundHandler = handler;
-                break;
-            }
-        }
-        if (foundHandler == null) throw new IllegalArgumentException("No HandlerMapping Found For " + requestURI);
-        return foundHandler;
+        return handlerMappings.stream()
+                .map(handlerMapping -> handlerMapping.getHandler(request))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No HandlerMapping Found For " + requestURI));
     }
 
     private HandlerAdapter findHandlerAdapter(Object foundHandler, String requestURI) {
-        HandlerAdapter foundHandlerAdapter = null;
-        for (HandlerAdapter handlerAdapter : handlerAdapters) {
-            if (handlerAdapter.supports(foundHandler)) {
-                foundHandlerAdapter = handlerAdapter;
-                break;
-            }
-        }
-        if (foundHandlerAdapter == null) throw new IllegalArgumentException("No HandlerAdapter Found For " + requestURI);
-        return foundHandlerAdapter;
+        return handlerAdapters.stream()
+                .filter(handlerAdapter -> handlerAdapter.supports(foundHandler))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No HandlerAdapter Found For " + requestURI));
     }
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -101,14 +92,9 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ViewResolver findViewResolver(String viewName) {
-        ViewResolver foundViewResolver = null;
-        for (ViewResolver viewResolver : viewResolvers) {
-            if (viewResolver.canResolve(viewName)) {
-                foundViewResolver = viewResolver;
-                break;
-            }
-        }
-        if (foundViewResolver == null) throw new IllegalArgumentException("No ViewResolver Found For " + viewName);
-        return foundViewResolver;
+        return viewResolvers.stream()
+                .filter(viewResolver -> viewResolver.canResolve(viewName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No ViewResolver Found For " + viewName));
     }
 }
