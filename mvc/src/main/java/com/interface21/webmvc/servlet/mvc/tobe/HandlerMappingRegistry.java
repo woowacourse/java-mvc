@@ -18,10 +18,6 @@ public class HandlerMappingRegistry {
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "No handler mapping found for request: %s %s",
-                        request.getMethod(),
-                        request.getRequestURI()
-                )));
+                .orElseThrow(() -> new NoHandlerFoundException(request.getMethod(), request.getRequestURI()));
     }
 }

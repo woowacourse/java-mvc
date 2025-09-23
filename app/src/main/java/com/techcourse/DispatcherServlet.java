@@ -7,6 +7,7 @@ import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.NoHandlerFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,9 +60,11 @@ public class DispatcherServlet extends HttpServlet {
 
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             render(modelAndView, request, response);
-        } catch (Throwable e) {
+        } catch (NoHandlerFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (Exception e) {
             log.error("Exception : {}", e.getMessage(), e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e.getMessage(), e);
         }
     }
 
