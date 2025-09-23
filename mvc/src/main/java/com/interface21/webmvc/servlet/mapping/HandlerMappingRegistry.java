@@ -16,12 +16,11 @@ public class HandlerMappingRegistry {
     private final List<HandlerMapping> handlerMappings;
 
     public static HandlerMappingRegistry initialize(
-            final String basePackage,
-            final ControllerMapping controllerMapping
+            final String basePackage
     ) {
         // todo reflection
         final HandlerExecutionMapping handlerExecutionMapping = HandlerExecutionMapping.from(basePackage);
-        return new HandlerMappingRegistry(List.of(handlerExecutionMapping, controllerMapping));
+        return new HandlerMappingRegistry(List.of(handlerExecutionMapping));
     }
 
     public Handler getHandler(final HttpServletRequest request) {

@@ -36,10 +36,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private DispatcherServlet createDispatcherServlet() {
         final String controllerPackage = "com.techcourse.controller";
-        final HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.initialize(
-                controllerPackage,
-                ManualMappingConfig.createManualMapping()
-        );
+        final HandlerMappingRegistry handlerMappingRegistry = HandlerMappingRegistry.initialize(controllerPackage);
         final HandlerAdapterRegistry handlerAdapterRegistry = HandlerAdapterRegistry.initialize();
         return new DispatcherServlet(handlerMappingRegistry, handlerAdapterRegistry);
     }
