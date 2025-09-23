@@ -9,11 +9,9 @@ import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 @Controller
 public class LoginController {
 
@@ -24,7 +22,12 @@ public class LoginController {
         }
 
         final User user = InMemoryUserRepository.findByAccount(request.getParameter("account"))
-                .orElseThrow();
+                .orElse(null);
+
+        if(user == null){
+            return ModelAndView.redirect("/401.jsp");
+        }
+
         if (user.checkPassword(request.getParameter("password"))) {
             final var session = request.getSession();
             session.setAttribute(UserSession.SESSION_KEY, user);
@@ -33,7 +36,7 @@ public class LoginController {
         return ModelAndView.redirect("/401.jsp");
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
     public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return ModelAndView.redirect("/index.jsp");
