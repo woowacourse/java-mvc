@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public String getHomePage(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return "/index.jsp";
     }
 }
