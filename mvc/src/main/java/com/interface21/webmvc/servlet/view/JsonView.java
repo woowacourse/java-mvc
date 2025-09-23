@@ -19,14 +19,14 @@ public class JsonView implements View {
     @Override
     public void render(final HttpServletRequest request, HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        try (ServletOutputStream outputStream = response.getOutputStream()) {
+        try (PrintWriter printWriter = new PrintWriter(response.getOutputStream())) {
 
             ArrayList<String> attributeNames = Collections.list(request.getAttributeNames());
             if (attributeNames.size() == 1) {
                 String name = attributeNames.getFirst();
                 Object attribute = request.getAttribute(name);
 
-                objectMapper.writeValue(outputStream, attribute);
+                objectMapper.writeValue(printWriter, attribute);
                 return;
             }
 
@@ -35,7 +35,7 @@ public class JsonView implements View {
                     name -> name,
                     request::getAttribute
                 ));
-            objectMapper.writeValue(outputStream, attributes);
+            objectMapper.writeValue(printWriter, attributes);
         } catch (Exception e) {
             throw new RuntimeException("응답 처리 중 문제가 발생했습니다.");
         }
