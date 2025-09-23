@@ -12,11 +12,11 @@ public class HandlerAdapterRegistry {
     }
 
     public HandlerAdapter getHandlerAdapter(Object handler) {
-        for (HandlerAdapter adapter : handlerAdapters) {
-            if (adapter.supports(handler)) {
-                return adapter;
-            }
-        }
-        throw new NoHandlerAdapterFoundException("핸들러 [" + handler.getClass().getName() + "] 를 실행할 수 있는 어댑터가 없습니다.");
+        return handlerAdapters.stream()
+                .filter(adapter -> adapter.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new NoHandlerAdapterFoundException(
+                        "핸들러 [" + handler.getClass().getName() + "] 를 실행할 수 있는 어댑터가 없습니다."
+                ));
     }
 }
