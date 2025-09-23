@@ -1,13 +1,13 @@
 package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.NoHandlerFoundException;
-import com.interface21.webmvc.servlet.mvc.tobe.util.PropertiesLoader;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.ManualHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.ManualHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.tobe.mapping.NoHandlerFoundException;
+import com.interface21.webmvc.servlet.mvc.tobe.util.PropertiesLoader;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -62,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
             log.info("핸들러 조회 결과: {}", handler.getClass().getSimpleName());
             final var adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = adapter.handle(request, response, handler);
-            modelAndView.render(request,response);
+            modelAndView.render(request, response);
         } catch (NoHandlerFoundException e) {
             log.warn(e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "요청하신 API를 찾을 수 없습니다.");
