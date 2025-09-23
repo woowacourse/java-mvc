@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
@@ -21,7 +21,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final List<HandlerMapping> handlerMappings = new ArrayList<>(List.of(
-            new ManualHandlerMapping(), new AnnotationHandlerMapping("samples")
+            new ManualHandlerMapping(), new AnnotationHandlerMapping("com.techcourse.controller")
     ));
     private final List<HandlerAdapter> handlerAdapters = new ArrayList<>(List.of(
             new AnnotationHandlerAdapter(),
