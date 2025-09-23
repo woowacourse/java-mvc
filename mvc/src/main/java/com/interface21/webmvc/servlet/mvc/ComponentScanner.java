@@ -26,7 +26,6 @@ public class ComponentScanner {
         for (Class<?> type : types) {
             try {
                 Constructor<?> constructor = type.getDeclaredConstructor();
-                constructor.setAccessible(true);
                 Object instance = constructor.newInstance();
                 instances.put(type, instance);
             } catch (NoSuchMethodException e) {
