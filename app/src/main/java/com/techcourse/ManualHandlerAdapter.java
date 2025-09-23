@@ -16,9 +16,6 @@ public class ManualHandlerAdapter implements HandlerAdapter {
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        if (!(handler instanceof Controller)) {
-            throw new UnsupportedOperationException("이 핸들러로 처리할 수 없습니다:" + handler);
-        }
         return ((Controller) handler).execute(request, response);
     }
 }
