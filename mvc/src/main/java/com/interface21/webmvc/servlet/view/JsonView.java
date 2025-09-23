@@ -6,6 +6,7 @@ import com.interface21.webmvc.servlet.View;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -16,25 +17,28 @@ public class JsonView implements View {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void render(final HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void render(final HttpServletRequest request, HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        ServletOutputStream outputStream = response.getOutputStream();
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
 
-        ArrayList<String> attributeNames = Collections.list(request.getAttributeNames());
-        if (attributeNames.size() == 1) {
-            String name = attributeNames.getFirst();
-            Object attribute = request.getAttribute(name);
+            ArrayList<String> attributeNames = Collections.list(request.getAttributeNames());
+            if (attributeNames.size() == 1) {
+                String name = attributeNames.getFirst();
+                Object attribute = request.getAttribute(name);
 
-            objectMapper.writeValue(outputStream, attribute);
-            return;
+                objectMapper.writeValue(outputStream, attribute);
+                return;
+            }
+
+            Map<String, Object> attributes = attributeNames.stream()
+                .collect(Collectors.toMap(
+                    name -> name,
+                    request::getAttribute
+                ));
+            objectMapper.writeValue(outputStream, attributes);
+        } catch (Exception e) {
+            throw new RuntimeException("응답 처리 중 문제가 발생했습니다.");
         }
-
-        Map<String, Object> attributes = attributeNames.stream()
-            .collect(Collectors.toMap(
-                name -> name,
-                request::getAttribute
-            ));
-        objectMapper.writeValue(outputStream, attributes);
     }
 
     @Override
