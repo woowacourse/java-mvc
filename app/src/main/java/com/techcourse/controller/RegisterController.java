@@ -14,12 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         User user = new User(
                 2,
-                req.getParameter("account"),
-                req.getParameter("password"),
-                req.getParameter("email")
+                request.getParameter("account"),
+                request.getParameter("password"),
+                request.getParameter("email")
         );
         InMemoryUserRepository.save(user);
 
