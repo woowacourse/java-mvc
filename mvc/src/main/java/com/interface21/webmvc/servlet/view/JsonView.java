@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 
 public class JsonView implements View {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
     public void render(final HttpServletRequest request, HttpServletResponse response) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding(MediaType.APPLICATION_JSON_UTF8_VALUE);
         try (PrintWriter printWriter = new PrintWriter(response.getOutputStream())) {
