@@ -19,6 +19,7 @@ public class JsonView implements View {
     @Override
     public void render(final HttpServletRequest request, HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setCharacterEncoding(MediaType.APPLICATION_JSON_UTF8_VALUE);
         try (PrintWriter printWriter = new PrintWriter(response.getOutputStream())) {
 
             ArrayList<String> attributeNames = Collections.list(request.getAttributeNames());
