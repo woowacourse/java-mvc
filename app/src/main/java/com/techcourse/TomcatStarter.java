@@ -55,7 +55,7 @@ public class TomcatStarter {
 
     private void skipJarScan(final Context context) {
         final var jarScanner = (StandardJarScanner) context.getJarScanner();
-        jarScanner.setScanClassPath(false);
+        jarScanner.setScanClassPath(true);
     }
 
     private void skipClearReferences(final StandardContext context) {
