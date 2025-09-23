@@ -22,7 +22,6 @@ public class ManualHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        controllers.put("/logout", new LogoutController());
         controllers.put("/register/view", new RegisterViewController());
         controllers.put("/register", new RegisterController());
 
