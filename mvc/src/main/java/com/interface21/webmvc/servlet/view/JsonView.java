@@ -13,12 +13,13 @@ import java.util.stream.Collectors;
 
 public class JsonView implements View {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void render(final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         ServletOutputStream outputStream = response.getOutputStream();
 
-        ObjectMapper objectMapper = new ObjectMapper();
         ArrayList<String> attributeNames = Collections.list(request.getAttributeNames());
         if (attributeNames.size() == 1) {
             String name = attributeNames.getFirst();
