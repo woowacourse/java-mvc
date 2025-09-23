@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,9 +17,6 @@ public class HandlerAdapterImpl implements HandlerAdapter {
             if (handler instanceof HandlerExecution) {
                 final var modelAndView = ((HandlerExecution) handler).handle(request, response);
                 modelAndView.getView().render(modelAndView.getModel(), request, response);
-            } else if (handler instanceof Controller) {
-                final var viewName = ((Controller) handler).execute(request, response);
-                move(viewName, request, response);
             } else {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
