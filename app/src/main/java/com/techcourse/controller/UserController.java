@@ -37,9 +37,8 @@ public class UserController {
     public ModelAndView allUsers(HttpServletRequest request, HttpServletResponse response) {
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
         var users = InMemoryUserRepository.findAll();
-        for (User user : users) {
-            modelAndView.addObject("user", user);
-        }
+        modelAndView.addObject("users", users);
+        modelAndView.addObject("total", users.size());
         return modelAndView;
     }
 }
