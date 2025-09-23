@@ -1,9 +1,24 @@
 package com.interface21.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Set;
+import org.reflections.Reflections;
 
 public abstract class ReflectionUtils {
+
+    /**
+     * 지정된 패키지에서 특정 어노테이션이 붙은 클래스들을 찾아 반환함.
+     */
+    public static Set<Class<?>> getTypesAnnotatedWith(
+            final String packageName,
+            final Class<? extends Annotation> annotation
+    ) {
+        // Reflections 객체를 생성하고 탐색할 패키지를 지정합니다.
+        final Reflections reflections = new Reflections(packageName);
+        return reflections.getTypesAnnotatedWith(annotation);
+    }
 
     /**
      * Obtain an accessible constructor for the given class and parameters.
