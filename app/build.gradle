@@ -40,6 +40,15 @@ idea {
     }
 }
 
+tasks.register('copyMvcClasses', Copy) {
+    from(project(':mvc').sourceSets.main.output)
+    into(file('src/main/webapp/WEB-INF/classes'))
+}
+
+tasks.named('classes') {
+    dependsOn('copyMvcClasses')
+}
+
 sourceSets {
     main {
         java.destinationDirectory.set(file('src/main/webapp/WEB-INF/classes'))
