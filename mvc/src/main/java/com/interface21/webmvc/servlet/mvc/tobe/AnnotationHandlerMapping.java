@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,17 +30,11 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void registerController(Class<?> clazz, Object instance) {
-        final Object controller;
-        try {
-            controller = clazz.getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("컨트롤러를 생성할 수 없습니다.", e);
-        }
         Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(RequestMapping.class))
                 .forEach(method -> {
                     method.setAccessible(true);
-                    registerHandlerMethod(controller, method);
+                    registerHandlerMethod(instance, method);
                 });
     }
 
