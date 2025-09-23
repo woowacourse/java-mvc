@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.view;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interface21.web.http.MediaType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,17 +30,21 @@ public class JsonView implements View {
         return model;
     }
 
-    private String toJson(Object object) throws Exception {
-        String json = objectMapper.writeValueAsString(object);
-        log.info("JSON response: {}", json);
-        return json;
+    private String toJson(Object object) {
+        try {
+            String json = objectMapper.writeValueAsString(object);
+            log.debug("JSON response: {}", json);
+            return json;
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize object to JSON: {}", object, e);
+            throw new IllegalStateException("JSON serialization failed", e);
+        }
     }
 
     private void writeResponse(HttpServletResponse response, String json) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         try (PrintWriter writer = response.getWriter()) {
             writer.write(json);
-            writer.flush();
         }
     }
 }
