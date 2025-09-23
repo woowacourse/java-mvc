@@ -22,16 +22,16 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     public void loadFromProperties(Properties props) {
         props.forEach((key, value) -> {
-            String k = key.toString();
-            String v = value.toString();
-            if (k.startsWith("controller./")) {
-                String path = k.substring("controller.".length());
+            String propertyKey = key.toString();
+            String propertyValue = value.toString();
+            if (propertyKey.startsWith("controller./")) {
+                String path = propertyKey.substring("controller.".length());
                 try {
-                    Class<?> clazz = Class.forName(v, true, Thread.currentThread().getContextClassLoader());
+                    Class<?> clazz = Class.forName(propertyValue);
                     Controller controller = (Controller) clazz.getDeclaredConstructor().newInstance();
                     register(path, controller);
                 } catch (Exception e) {
-                    throw new RuntimeException("컨트롤러 등록 실패: " + v, e);
+                    throw new RuntimeException("컨트롤러 등록 실패: " + propertyValue, e);
                 }
             }
         });
