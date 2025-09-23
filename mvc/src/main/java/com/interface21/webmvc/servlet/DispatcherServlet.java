@@ -1,8 +1,8 @@
 package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.handler.HandlerAdapter;
+import com.interface21.webmvc.servlet.handler.HandlerReturnValueHandler;
 import com.interface21.webmvc.servlet.handler.mapping.HandlerMappings;
-import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,11 +27,15 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) throws ServletException {
-        final String requestURI = httpServletRequest.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", httpServletRequest.getMethod(), requestURI);
+        try {
+            final String requestURI = httpServletRequest.getRequestURI();
+            log.debug("Method : {}, Request URI : {}", httpServletRequest.getMethod(), requestURI);
 
-        Object handler = this.handlerMappings.getHandler(httpServletRequest);
-        ModelAndView modelAndView = HandlerAdapter.executeHandler(handler, httpServletRequest, httpServletResponse);
-        modelAndView.render(httpServletRequest, httpServletResponse);
+            Object handler = this.handlerMappings.getHandler(httpServletRequest);
+            Object handlerResult = HandlerAdapter.executeHandler(handler, httpServletRequest, httpServletResponse);
+            HandlerReturnValueHandler.handle(handlerResult, httpServletRequest, httpServletResponse);
+        } catch (Exception exception) {
+            throw new ServletException("알 수 없는 오류가 발생하였습니다.", exception);
+        }
     }
 }

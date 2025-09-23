@@ -1,6 +1,5 @@
 package com.interface21.webmvc.servlet.handler;
 
-import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,7 +10,7 @@ public class HandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(HandlerAdapter.class);
 
-    public static ModelAndView executeHandler(Object handler, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
+    public static Object executeHandler(Object handler, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException {
         try {
             if (handler instanceof HandlerExecution) {
                 return ((HandlerExecution) handler).handle(httpServletRequest, httpServletResponse);
