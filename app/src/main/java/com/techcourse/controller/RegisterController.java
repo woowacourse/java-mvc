@@ -17,12 +17,7 @@ public class RegisterController {
     public ModelAndView getRegisterView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return new ModelAndView(new JspView("/register.jsp"));
     }
-
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("redirect:/register.jsp"));
-    }
-
+    
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
         if (!isValidSaveRequest(req)) {
