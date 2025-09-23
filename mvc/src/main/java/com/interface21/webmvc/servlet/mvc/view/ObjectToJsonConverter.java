@@ -1,9 +1,7 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.servlet.mvc.view;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JsonView;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 public class ObjectToJsonConverter implements ViewResolver {
 

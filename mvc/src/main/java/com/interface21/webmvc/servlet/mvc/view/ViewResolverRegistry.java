@@ -1,6 +1,7 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.servlet.mvc.view;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.exception.UnsupportedResponseTypeException;
 import java.util.List;
 
 public class ViewResolverRegistry {

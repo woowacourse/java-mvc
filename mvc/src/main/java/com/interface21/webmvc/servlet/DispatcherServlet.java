@@ -1,12 +1,11 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
-import com.interface21.webmvc.servlet.mvc.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.ViewRenderer;
-import com.interface21.webmvc.servlet.mvc.ViewRendererImpl;
-import com.interface21.webmvc.servlet.mvc.ViewResolverRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerExecutor;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.view.ViewRenderer;
+import com.interface21.webmvc.servlet.mvc.view.ViewResolverRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +22,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private final HandlerExecutor handlerExecutor = new HandlerExecutor();
     private final ViewResolverRegistry viewResolverRegistry = new ViewResolverRegistry();
-    private final ViewRenderer viewRenderer = new ViewRendererImpl();
+    private final ViewRenderer viewRenderer = new ViewRenderer();
     private final List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public DispatcherServlet() {

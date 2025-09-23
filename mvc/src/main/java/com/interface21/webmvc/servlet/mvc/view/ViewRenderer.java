@@ -1,12 +1,11 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.servlet.mvc.view;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ViewRendererImpl implements ViewRenderer {
+public class ViewRenderer {
 
-    @Override
     public void render(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (modelAndView != null) {
             modelAndView.getView().render(modelAndView.getModel(), request, response);

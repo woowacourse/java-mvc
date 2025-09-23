@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc;
+package com.interface21.webmvc.servlet.exception;
 
 public class UnsupportedResponseTypeException extends RuntimeException {
 
