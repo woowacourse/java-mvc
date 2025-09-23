@@ -15,6 +15,6 @@ public class HandlerAdapterRegistry {
     public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.canHandle(handler))
-                .findFirst().orElseThrow(() -> new RuntimeException("잘못된 핸들러입니다."));
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("잘못된 핸들러입니다: " + handler));
     }
 }
