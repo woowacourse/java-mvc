@@ -1,7 +1,8 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.controller.handler;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.controller.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -73,7 +74,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     @Override
-    public Object getHandler(final HttpServletRequest request) {
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         String method = request.getMethod();
         RequestMethod requestMethod = RequestMethod.valueOf(method);

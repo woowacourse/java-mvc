@@ -1,12 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.controller;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.controller.handler.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.controller.handler.HandlerAdapter;
+import com.interface21.webmvc.servlet.controller.handler.HandlerExecution;
+import com.interface21.webmvc.servlet.view.ModelAndView;
+import com.interface21.webmvc.servlet.view.View;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,17 +18,18 @@ public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    private final Object[] basePackage;
     private HandlerAdapter handlerAdapter;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(final Object... basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
         handlerAdapter = new HandlerAdapter(
                 List.of(
-                        new ManualHandlerMapping(),
-                        new AnnotationHandlerMapping("com.interface21.webmvc.servlet.mvc.tobe")
+                        new AnnotationHandlerMapping(basePackage)
                 )
         );
     }
@@ -51,14 +50,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private ModelAndView executeHandler(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        Object handler = handlerAdapter.findHandler(request);
-        if (handler instanceof Controller) {
-            String res = ((Controller) handler).execute(request, response);
-            return new ModelAndView(new JspView(res));
-        } else if (handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(request, response);
-        } else {
+        HandlerExecution handler = handlerAdapter.findHandler(request);
+        if (handler == null) {
             throw new IllegalArgumentException("No handler to handle the request");
         }
+        return handler.handle(request, response);
     }
 }

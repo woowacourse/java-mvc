@@ -9,12 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class LogoutController implements JspViewRenderer {
+public class ForwardController implements JspViewRenderer {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logoutUser(final HttpServletRequest request, final HttpServletResponse response) {
-        final var session = request.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
-        return redirect("/");
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView indexView(final HttpServletRequest request, final HttpServletResponse response) {
+        return showPage("/index.jsp");
     }
 }

@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.controller.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -15,7 +15,7 @@ public class HandlerAdapter {
         }
     }
 
-    public Object findHandler(final HttpServletRequest request) {
+    public HandlerExecution findHandler(final HttpServletRequest request) {
         Optional<HandlerMapping> handlerMapping = handlerMappings.stream()
                 .filter(mapping -> mapping.getHandler(request) != null)
                 .findFirst();
