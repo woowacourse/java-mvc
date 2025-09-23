@@ -8,8 +8,8 @@ import org.reflections.Reflections;
 
 public class ControllerScanner {
 
-    Reflections reflections;
-    Map<Class<?>, Object> controllerInstance = new HashMap<>();
+    private final Reflections reflections;
+    private final Map<Class<?>, Object> controllerInstance = new HashMap<>();
 
     public ControllerScanner(Object... basePackage) {
         this.reflections = new Reflections(basePackage);
