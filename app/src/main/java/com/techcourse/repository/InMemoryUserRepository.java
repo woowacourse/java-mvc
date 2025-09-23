@@ -14,7 +14,7 @@ public class InMemoryUserRepository {
     static {
         final var user1 = new User(1, "gugu", "password1", "hkkang@woowahan.com");
         final var user2 = new User(2, "sana", "password2", "sana@woowahan.com");
-        final var user3 = new User(3, "dompu", "password3", "dompu@woowahan.com");
+        final var user3 = new User(3, "yulmoo", "password3", "yulmoo@woowahan.com");
         database.put(user1.getAccount(), user1);
         database.put(user2.getAccount(), user2);
         database.put(user3.getAccount(), user3);

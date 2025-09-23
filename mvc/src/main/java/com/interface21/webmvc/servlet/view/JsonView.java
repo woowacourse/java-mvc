@@ -16,10 +16,10 @@ public class JsonView implements View {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        PrintWriter writer = response.getWriter();
-        Object value = getSerializableValue(model);
-        objectMapper.writeValue(writer, value);
-        writer.flush();
+        try(PrintWriter writer = response.getWriter()) {
+            Object value = getSerializableValue(model);
+            objectMapper.writeValue(writer, value);
+        }
     }
 
     private Object getSerializableValue(Map<String, ?> model) {
