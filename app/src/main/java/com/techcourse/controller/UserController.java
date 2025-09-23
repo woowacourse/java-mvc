@@ -21,7 +21,7 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
-        if (isValidSaveRequest(request)) {
+        if (!isValidSaveRequest(request)) {
             return new ModelAndView(new JspView("redirect:/401.jsp"));
         }
 
