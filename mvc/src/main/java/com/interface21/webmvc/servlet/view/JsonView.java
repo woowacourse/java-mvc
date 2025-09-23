@@ -42,27 +42,15 @@ public class JsonView implements View {
      * @throws IOException
      */
     private String convertToJson(Map<String, ?> model) throws IOException {
-        // model에 데이터가 1개면 값을 그대로 반환
+        // model에 데이터가 1개라면 값만 추출해 JSON 직렬화
         if (model.size() == 1) {
-            // 값들을 순회하기 위해 Iterator 생성
-            Iterator<?> modelIterator = model.values().iterator();
-            StringBuilder responseJson = new StringBuilder();
-
-            // 모델의 값(객체)을 StringBuilder에 붙임
-            while(modelIterator.hasNext()) {
-                responseJson.append(modelIterator.next());
-            }
-
-            // 값 안에서 JSON 문자열 시작 위치('{')를 찾아 substring 함
-            int jsonStartIndex = responseJson.indexOf("{");
-
-            // substring 한 JSON 문자열을 다시 ObjectMapper를 통해 직렬화
-            return objectMapper.writeValueAsString(responseJson.substring(jsonStartIndex));
+            Object value = model.values().iterator().next();
+            return objectMapper.writeValueAsString(value);
         }
-
-        // 2개 이상이면 Map 형태 그대로 JSON으로 변환해서 반환
+        // 여러 개면 Map 전체를 직렬화
         return objectMapper.writeValueAsString(model);
     }
+
 }
 
 
