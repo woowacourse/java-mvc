@@ -47,7 +47,6 @@ public class LoginController {
 
     private String login(final HttpServletRequest request, final User user) {
         final String password = request.getParameter("password");
-        log.info("password : {}", password);
 
         if (user.checkPassword(password)) {
             final var session = request.getSession();
