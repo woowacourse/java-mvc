@@ -83,30 +83,44 @@ public class AnnotationHandlerMapping implements HandlerMapping {
             Method[] methods = controllerClass.getDeclaredMethods();
 
             for (Method method : methods) {
-                if (method.isAnnotationPresent(RequestMapping.class)) {
-                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    String url = requestMapping.value();
-                    RequestMethod[] requestMethods = requestMapping.method();
-
-                    if (requestMethods.length == 0) {
-                        for (RequestMethod requestMethod : RequestMethod.values()) {
-                            HandlerKey key = new HandlerKey(url, requestMethod);
-                            HandlerExecution execution = new HandlerExecution(controllerInstance, method);
-                            handlerExecutions.put(key, execution);
-                        }
-                    } else {
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey key = new HandlerKey(url, requestMethod);
-                            HandlerExecution execution = new HandlerExecution(controllerInstance, method);
-                            handlerExecutions.put(key, execution);
-                        }
-                    }
-
-                    log.info("Handler 등록: {} -> {}.{}", url, controllerClass.getSimpleName(), method.getName());
-                }
+                registerHandlerMethod(controllerInstance, controllerClass, method);
             }
         } catch (Exception e) {
             log.error("Controller 등록 오류: {}", controllerClass.getName(), e);
+        }
+    }
+
+    private void registerHandlerMethod(Object controllerInstance, Class<?> controllerClass, Method method) {
+        if (!method.isAnnotationPresent(RequestMapping.class)) {
+            return;
+        }
+
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        String url = requestMapping.value();
+        RequestMethod[] requestMethods = requestMapping.method();
+
+        if (requestMethods.length == 0) {
+            registerHandlerForAllRequestMethods(controllerInstance, url, method);
+        } else {
+            registerHandlerForSpecificMethods(controllerInstance, url, method, requestMethods);
+        }
+
+        log.info("Handler 등록: {} -> {}.{}", url, controllerClass.getSimpleName(), method.getName());
+    }
+
+    private void registerHandlerForAllRequestMethods(Object controllerInstance, String url, Method method) {
+        for (RequestMethod requestMethod : RequestMethod.values()) {
+            HandlerKey key = new HandlerKey(url, requestMethod);
+            HandlerExecution execution = new HandlerExecution(controllerInstance, method);
+            handlerExecutions.put(key, execution);
+        }
+    }
+
+    private void registerHandlerForSpecificMethods(Object controllerInstance, String url, Method method, RequestMethod[] requestMethods) {
+        for (RequestMethod requestMethod : requestMethods) {
+            HandlerKey key = new HandlerKey(url, requestMethod);
+            HandlerExecution execution = new HandlerExecution(controllerInstance, method);
+            handlerExecutions.put(key, execution);
         }
     }
 
