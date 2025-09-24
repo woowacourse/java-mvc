@@ -1,9 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 
 public class HandlerAdapterRegistry {
 

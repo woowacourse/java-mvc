@@ -1,14 +1,15 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -30,10 +31,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerAdapterRegistry.addHandlerAdapter(new ManualHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
 
-        handlerMappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         handlerMappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
     }
 
@@ -58,10 +57,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(final HttpServletRequest request) {
-        Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-        if (handler.isPresent()) {
-            return handler.get();
-        }
-        throw new IllegalArgumentException("지원하지 않는 핸들러입니다.");
+        return handlerMappingRegistry.getHandler(request)
+            .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 핸들러입니다."));
     }
 }

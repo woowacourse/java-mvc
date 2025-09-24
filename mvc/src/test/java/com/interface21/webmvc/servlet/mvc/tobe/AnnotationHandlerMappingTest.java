@@ -9,6 +9,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+
 class AnnotationHandlerMappingTest {
 
     private AnnotationHandlerMapping handlerMapping;
