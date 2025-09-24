@@ -47,7 +47,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         for (Map.Entry<Class<?>, Object> entry : controllers.entrySet()) {
             registerControllerMappings(entry.getKey(), entry.getValue());
-
         }
     }
 
