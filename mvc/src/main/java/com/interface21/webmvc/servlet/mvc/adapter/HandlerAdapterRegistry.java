@@ -2,7 +2,6 @@ package com.interface21.webmvc.servlet.mvc.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HandlerAdapterRegistry {
 
@@ -12,10 +11,11 @@ public class HandlerAdapterRegistry {
         this.handlerAdapters = new ArrayList<>();
     }
 
-    public Optional<HandlerAdapter> getHandlerAdapter(Object handler) {
+    public HandlerAdapter getHandlerAdapter(Object handler) {
         return handlerAdapters.stream()
                 .filter(handlerAdapter -> handlerAdapter.supports(handler))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("unsupported handler"));
     }
 
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {

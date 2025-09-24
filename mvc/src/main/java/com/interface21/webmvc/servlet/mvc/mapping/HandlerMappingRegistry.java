@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class HandlerMappingRegistry {
 
@@ -15,11 +14,12 @@ public class HandlerMappingRegistry {
         this.handlerMappings = new ArrayList<>();
     }
 
-    public Optional<Object> getHandler(HttpServletRequest request) {
+    public Object getHandler(HttpServletRequest request) {
         return handlerMappings.stream()
                 .map(handlerMapping -> handlerMapping.getHandler(request))
                 .filter(Objects::nonNull)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("unsupported handler"));
     }
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {

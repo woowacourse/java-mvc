@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry;
@@ -55,12 +54,10 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private HandlerAdapter getHandlerAdapter(Object handler) {
-        return handlerAdapterRegistry.getHandlerAdapter(handler)
-                .orElseThrow(() -> new RuntimeException("unsupported handler"));
+        return handlerAdapterRegistry.getHandlerAdapter(handler);
     }
 
     private Object getHandler(HttpServletRequest request) {
-        return handlerMappingRegistry.getHandler(request)
-                .orElse(null);
+        return handlerMappingRegistry.getHandler(request);
     }
 }
