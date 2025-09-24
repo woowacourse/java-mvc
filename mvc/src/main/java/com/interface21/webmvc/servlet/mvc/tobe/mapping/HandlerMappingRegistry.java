@@ -6,13 +6,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class HandlerMappingRegistry {
 
     List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
-        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
         handlerMappings.sort(Comparator.comparingInt(HandlerMapping::getOrder));
     }
@@ -22,11 +22,14 @@ public class HandlerMappingRegistry {
                 .map(mapping -> mapping.getHandler(request))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new NoHandlerFoundException(
-                        String.format("요청하신 API를 처리할 핸들러를 찾을 수 없습니다. [HTTP Method=%s, URI=%s]",
-                                request.getMethod(),
-                                request.getRequestURI()
-                        ))
-                );
+                .orElseThrow(getNoHandlerFoundExceptionSupplier(request));
+    }
+
+    private Supplier<NoHandlerFoundException> getNoHandlerFoundExceptionSupplier(HttpServletRequest request) {
+        return () -> new NoHandlerFoundException(
+                String.format("요청하신 API를 처리할 핸들러를 찾을 수 없습니다. [HTTP Method=%s, URI=%s]",
+                        request.getMethod(),
+                        request.getRequestURI()
+                ));
     }
 }
