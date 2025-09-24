@@ -16,20 +16,26 @@ import org.slf4j.LoggerFactory;
 public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final String PARAMETER = "account";
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView postLogin(final HttpServletRequest req, final HttpServletResponse res) {
         if (UserSession.isLoggedIn(req.getSession())) {
-            String viewName = "redirect:/index.jsp";
-            return new ModelAndView(new JspView(viewName));
+            return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
-        String viewName = InMemoryUserRepository.findByAccount(req.getParameter("account"))
-                .map(user -> {
-                    log.info("User : {}", user);
-                    return login(req, user);
-                })
-                .orElse("redirect:/401.jsp");
+        final var parameter = req.getParameter(PARAMETER);
+        final var viewName = getViewName(req, parameter);
         return new ModelAndView(new JspView(viewName));
+    }
+
+    private String getViewName(final HttpServletRequest req, final String parameter) {
+        final var nullableUser = InMemoryUserRepository.findByAccount(parameter);
+        if (nullableUser.isEmpty()) {
+            return "redirect:/401.jsp";
+        }
+        final var user = nullableUser.get();
+        log.info("User : {}", user);
+        return login(req, user);
     }
 
     private String login(final HttpServletRequest request, final User user) {

@@ -14,14 +14,20 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        final var user = new User(3,
+    public ModelAndView postRegister(final HttpServletRequest req, final HttpServletResponse res) {
+        saveUser(req);
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
+    }
+
+    private void saveUser(final HttpServletRequest req) {
+        final var user = getUser(req);
+        InMemoryUserRepository.save(user);
+    }
+
+    private User getUser(final HttpServletRequest req) {
+        return new User(3,
                 req.getParameter("account"),
                 req.getParameter("password"),
                 req.getParameter("email"));
-        InMemoryUserRepository.save(user);
-
-        String viewName = "redirect:/index.jsp";
-        return new ModelAndView(new JspView(viewName));
     }
 }

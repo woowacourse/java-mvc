@@ -16,13 +16,18 @@ public class LoginViewController {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        String viewName = UserSession.getUserFrom(req.getSession())
-                .map(user -> {
-                    log.info("logged in {}", user.getAccount());
-                    return "redirect:/index.jsp";
-                })
-                .orElse("/login.jsp");
+    public ModelAndView getLoginView(final HttpServletRequest req, final HttpServletResponse res) {
+        final var viewName = getViewName(req);
         return new ModelAndView(new JspView(viewName));
+    }
+
+    private String getViewName(final HttpServletRequest req) {
+        final var userFrom = UserSession.getUserFrom(req.getSession());
+        if (userFrom.isEmpty()) {
+            return "/login.jsp";
+        }
+        final var user = userFrom.get();
+        log.info("logged in {}", user.getAccount());
+        return "redirect:/index.jsp";
     }
 }

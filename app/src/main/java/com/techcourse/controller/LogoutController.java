@@ -12,10 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LogoutController {
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    public ModelAndView postLogout(final HttpServletRequest req, final HttpServletResponse res) {
         final var session = req.getSession();
         session.removeAttribute(UserSession.SESSION_KEY);
-        String viewName = "redirect:/";
-        return new ModelAndView(new JspView(viewName));
+        return new ModelAndView(new JspView("redirect:/"));
     }
 }
