@@ -15,6 +15,24 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    mvcFramework
+}
+
+dependencies {
+    mvcFramework project(':mvc')
+}
+
+tasks.register('setupMvcFramework', Copy) {
+    dependsOn configurations.mvcFramework
+    from configurations.mvcFramework
+    into "$projectDir/src/main/webapp/WEB-INF/lib"
+}
+
+tasks.named('classes') {
+    finalizedBy('setupMvcFramework')
+}
+
 dependencies {
     implementation project(':mvc')
 

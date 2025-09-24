@@ -21,12 +21,15 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
-    public DispatcherServlet() {
+    private final String[] basePackages;
+
+    public DispatcherServlet(String ... basePackages) {
+        this.basePackages = basePackages;
     }
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com");
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(this.basePackages);
         annotationHandlerMapping.initialize(new ControllerScanner());
 
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
