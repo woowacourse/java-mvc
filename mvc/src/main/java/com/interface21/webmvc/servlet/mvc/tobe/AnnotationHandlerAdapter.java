@@ -14,6 +14,9 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return ((HandlerExecution) handler).handle(request, response);
+        Object view = ((HandlerExecution) handler).handle(request, response);
+        if (view instanceof ModelAndView modelAndView) return modelAndView;
+        else if (view instanceof String viewName) return new ModelAndView(viewName);
+        throw new IllegalStateException("Handler Return Type Not Supported " + view.getClass().getSimpleName());
     }
 }
