@@ -15,14 +15,4 @@ public class PageController {
     public ModelAndView index(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/index.jsp"));
     }
-
-    @RequestMapping(value = "/login/jsp", method = RequestMethod.GET)
-    public ModelAndView login(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/login.jsp"));
-    }
-
-    @RequestMapping(value = "/register/jsp", method = RequestMethod.GET)
-    public ModelAndView register(final HttpServletRequest request, final HttpServletResponse response) {
-        return new ModelAndView(new JspView("/logout.jsp"));
-    }
 }

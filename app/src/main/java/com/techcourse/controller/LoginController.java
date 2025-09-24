@@ -47,6 +47,6 @@ public class LoginController {
             log.info("logged in {}", user.get().getAccount());
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
-        return new ModelAndView(new JspView("/login/jsp"));
+        return new ModelAndView(new JspView("/login.jsp"));
     }
 }
