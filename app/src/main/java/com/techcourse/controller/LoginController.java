@@ -46,6 +46,6 @@ public class LoginController {
             return new ModelAndView(new RedirectView("/"));
         }
 
-        return new ModelAndView(new RedirectView("/login.jsp"));
+        return new ModelAndView(new RedirectView("/401.jsp"));
     }
 }
