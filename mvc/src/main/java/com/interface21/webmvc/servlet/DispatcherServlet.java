@@ -1,6 +1,5 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
 import jakarta.servlet.http.HttpServlet;
@@ -46,7 +45,6 @@ public class DispatcherServlet extends HttpServlet {
         render(modelAndView, req, res);
     }
 
-    // TODO: View 랜더링 로직을 ViewResolver로 분리 필요 = Step 3 [2025-09-18]
     private void render(final ModelAndView modelAndView,
                         final HttpServletRequest req,
                         final HttpServletResponse res) {
