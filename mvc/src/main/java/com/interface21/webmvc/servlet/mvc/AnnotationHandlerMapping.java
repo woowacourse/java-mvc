@@ -5,7 +5,6 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         this.controllerScanner = new ControllerScanner(basePackages);
     }
 
+    @Override
     public void initialize() {
         final var controllers = controllerScanner.scan();
 
