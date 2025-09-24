@@ -6,15 +6,15 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
@@ -37,43 +37,10 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     private void scanPackageForControllers(String packageName) {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            String path = packageName.replace('.', '/');
-            URL resource = classLoader.getResource(path);
-
-            if (resource == null) {
-                log.warn("Package를 찾을 수 없음: {}", packageName);
-                return;
-            }
-
-            File directory = new File(resource.getFile());
-            if (directory.exists()) {
-                scanDirectory(directory, packageName);
-            }
-        } catch (Exception e) {
-            log.error("scanning package 오류: {}", packageName, e);
-        }
-    }
-
-    private void scanDirectory(File directory, String packageName) {
-        File[] files = directory.listFiles();
-        if (files == null) return;
-
-        for (File file : files) {
-            if (file.isFile() && file.getName().endsWith(".class")) {
-                String className = packageName + "." + file.getName().substring(0, file.getName().length() - 6);
-                try {
-                    Class<?> clazz = Class.forName(className);
-                    if (clazz.isAnnotationPresent(Controller.class)) {
-                        registerController(clazz);
-                    }
-                } catch (ClassNotFoundException e) {
-                    log.warn("Class를 찾을 수 없음: {}", className);
-                }
-            } else if (file.isDirectory()) {
-                scanDirectory(file, packageName + "." + file.getName());
-            }
+        Reflections reflections = new Reflections(packageName);
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controllerClass : controllerClasses) {
+            registerController(controllerClass);
         }
     }
 
