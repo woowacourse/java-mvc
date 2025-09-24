@@ -18,11 +18,11 @@ class ReflectionUtilsTest {
         @Test
         void 성공() {
             // given
-            final String packageName = "samples";
+            final String[] packageNames = {"samples"};
             final Class annotation = Controller.class;
 
             // when
-            final Set<Class<?>> result = ReflectionUtils.getTypesAnnotatedWith(packageName, annotation);
+            final Set<Class<?>> result = ReflectionUtils.getTypesAnnotatedWith(packageNames, annotation);
 
             // then
             assertThat(result).hasSize(1);

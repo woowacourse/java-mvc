@@ -7,7 +7,6 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -29,10 +28,7 @@ public class AnnotationHandlerMapping {
         log.info("=== AnnotationHandlerMapping initialize start ===");
 
         // 1. basePackage 패키지 속 @Controller 어노테이션을 가진 클래스 탐색
-        final Set<Class<?>> controllerClasses = new HashSet<>();
-        for (final Object pkg : basePackage) {
-            controllerClasses.addAll(ReflectionUtils.getTypesAnnotatedWith((String) pkg, Controller.class));
-        }
+        final Set<Class<?>> controllerClasses = ReflectionUtils.getTypesAnnotatedWith(basePackage, Controller.class);
 
         // 2. 컨트롤러 어노테이션을 가진 클래스를 handlerExecutions에 등록
         for (final Class<?> controllerClazz : controllerClasses) {
