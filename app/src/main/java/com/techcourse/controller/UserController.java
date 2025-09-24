@@ -17,18 +17,17 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    @RequestMapping(value = "/api/user/empty", method = RequestMethod.GET)
-    public ModelAndView emptyUser(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView(new JsonView());
-    }
-
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView oneUser(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account).orElseThrow();
+        if (account == null || account.isBlank()) {
+            return modelAndView;
+        }
+        final User user = InMemoryUserRepository.findByAccount(account)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         modelAndView.addObject("user", user);
         return modelAndView;
     }
