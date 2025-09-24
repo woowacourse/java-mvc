@@ -9,15 +9,6 @@ public class HandlerExecution {
     private final Object controller;
     private final Method method;
 
-    public HandlerExecution(final Class<?> clazz, final Method method) {
-        try {
-            this.controller = clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create controller instance: " + clazz.getName(), e);
-        }
-        this.method = method;
-    }
-
     public HandlerExecution(final Object controller, final Method method) {
         this.controller = controller;
         this.method = method;
