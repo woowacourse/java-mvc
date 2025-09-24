@@ -1,6 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;

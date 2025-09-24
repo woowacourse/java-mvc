@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +18,6 @@ class AnnotationHandlerMappingTest {
     @BeforeEach
     void setUp() {
         handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
     }
 
     @Test

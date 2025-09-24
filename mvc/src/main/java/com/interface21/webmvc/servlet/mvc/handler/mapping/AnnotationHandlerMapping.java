@@ -1,8 +1,8 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.handler.mapping;
 
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.handler.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.scanner.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public AnnotationHandlerMapping(final Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
-        
+
         log.info("Initialized AnnotationHandlerMapping!");
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
