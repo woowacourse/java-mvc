@@ -19,14 +19,19 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#!">내정보</a></li>
                             <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
+                            <!-- 로그아웃 POST form -->
+                            <li>
+                                <form action="/logout" method="POST" style="display:inline;">
+                                    <button type="submit" class="dropdown-item">로그아웃</button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
                 </ul>
             </div>
             <% } else { %>
             <div class="navbar-nav d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
-                <a class="nav-link" href="/login/view" role="button"><i class="fas fa-user fa-fw"></i>&nbsp;로그인</a>
+                <a class="nav-link" href="/login" role="button"><i class="fas fa-user fa-fw"></i>&nbsp;로그인</a>
             </div>
             <% } %>
         </nav>

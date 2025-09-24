@@ -2,33 +2,37 @@ package com.techcourse.domain;
 
 public class User {
 
-    private final long id;
-    private final String account;
-    private final String password;
-    private final String email;
+    private final Account account;
+    private final Password password;
+    private final Email email;
 
-    public User(long id, String account, String password, String email) {
-        this.id = id;
+    public User(final Account account, final Password password, final Email email) {
         this.account = account;
         this.password = password;
         this.email = email;
     }
 
-    public boolean checkPassword(String password) {
+    public boolean checkPassword(final Password password) {
         return this.password.equals(password);
     }
 
-    public String getAccount() {
-        return account;
+    public boolean checkAccount(final Account account) {
+        return this.account.equals(account);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
+                account + '\'' +
+                email + '\'' +
                 '}';
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public Email getEmail() {
+        return email;
     }
 }
