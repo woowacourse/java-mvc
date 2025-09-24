@@ -1,8 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.adaptor.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
@@ -22,22 +21,20 @@ public class DispatcherServlet extends HttpServlet {
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
     private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
-    public DispatcherServlet() {
+    private final String[] basePackages;
+
+    public DispatcherServlet(String ... basePackages) {
+        this.basePackages = basePackages;
     }
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping();
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(this.basePackages);
         annotationHandlerMapping.initialize(new ControllerScanner());
 
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
 
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
     }
 
     @Override
@@ -48,6 +45,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final var handler = handlerMappingRegistry.getHandlerMapping(request);
             if (handler.isEmpty()) {
+                log.warn("handler is empty: {}", request.getRequestURI());
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
