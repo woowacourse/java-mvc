@@ -79,16 +79,18 @@ public class DispatcherServlet extends HttpServlet {
 
     private void render(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object viewObject = modelAndView.getView();
+        View view = extractView(viewObject);
+        view.render(modelAndView.getModel(), request, response);
+    }
+
+    private View extractView(Object viewObject) {
         if (viewObject instanceof View view) {
-            view.render(modelAndView.getModel(), request, response);
-            return;
+            return view;
         } else if (viewObject instanceof String viewName) {
             ViewResolver viewResolver = findViewResolver(viewName);
-            View view = viewResolver.resolve(viewName);
-            view.render(modelAndView.getModel(), request, response);
-            return;
+            return viewResolver.resolve(viewName);
         }
-        throw new IllegalStateException("Cannot Resolve ModelAndView " + modelAndView);
+        throw new IllegalStateException("Cannot Resolve View " + viewObject);
     }
 
     private ViewResolver findViewResolver(String viewName) {
