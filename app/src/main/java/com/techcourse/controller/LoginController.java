@@ -38,7 +38,7 @@ public class LoginController {
         return "redirect:/401.jsp";
     }
 
-    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String getLoginPage(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         return UserSession.getUserFrom(req.getSession())
                 .map(user -> {
