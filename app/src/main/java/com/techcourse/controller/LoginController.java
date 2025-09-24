@@ -2,6 +2,7 @@ package com.techcourse.controller;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
@@ -17,8 +18,18 @@ public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @RequestMapping("/login")
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView loginView(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    return new ModelAndView(new JspView("redirect:/index.jsp"));
+                })
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
