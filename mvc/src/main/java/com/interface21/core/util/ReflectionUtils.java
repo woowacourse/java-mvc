@@ -1,5 +1,6 @@
 package com.interface21.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
@@ -34,5 +35,13 @@ public abstract class ReflectionUtils {
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);
         }
+    }
+
+    public static void withAnnotation(Class<? extends Annotation> annotation) {
+
+    }
+
+    public static void getAllMethods() {
+
     }
 }
