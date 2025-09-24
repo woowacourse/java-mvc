@@ -16,7 +16,6 @@ public class ControllerScanner {
 
     public Map<Class<?>, Object> getControllers() {
         Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        System.out.println("size: "+controllerClasses.size());
         return instantiateController(controllerClasses);
     }
 
