@@ -1,13 +1,12 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.adapter.AnnotatedHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.registry.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.adapter.ManualHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.registry.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.ManualHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +46,9 @@ public class DispatcherServlet extends HttpServlet {
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
             final View view = modelAndView.getView();
             view.render(modelAndView.getModel(), request, response);
+        } catch (IllegalArgumentException e) {
+            log.error("Exception : {}", e.getMessage(), e);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
