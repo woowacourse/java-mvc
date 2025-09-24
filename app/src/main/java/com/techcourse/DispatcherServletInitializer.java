@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet;
+package com.techcourse;
 
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
