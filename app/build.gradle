@@ -18,10 +18,10 @@ repositories {
 dependencies {
     implementation project(':mvc')
 
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.10'
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:11.0.10'
-    implementation 'ch.qos.logback:logback-classic:1.5.18'
-    implementation 'org.apache.commons:commons-lang3:3.18.0'
 
     testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'org.mockito:mockito-core:5.19.0'

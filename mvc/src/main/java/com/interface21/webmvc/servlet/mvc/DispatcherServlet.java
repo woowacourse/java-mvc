@@ -1,13 +1,19 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
+import com.interface21.context.stereotype.SpringApplication;
+import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.handler.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Set;
+import org.reflections.Reflections;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,15 +32,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappingRegistry.add(manualHandlerMapping);
-
-        final AnnotationHandlerMapping annotationHandlerMapping= new AnnotationHandlerMapping("com.techcourse");
+        final String basePackage = detectBasePackage();
+        final AnnotationHandlerMapping annotationHandlerMapping= new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         handlerMappingRegistry.add(annotationHandlerMapping);
 
-        handlerAdapterRegistry.add(new ManualHandlerAdapter());
         handlerAdapterRegistry.add(new AnnotationHandlerAdapter());
     }
 
@@ -51,5 +53,20 @@ public class DispatcherServlet extends HttpServlet {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private String detectBasePackage() {
+        final Reflections reflections = new Reflections(
+                new ConfigurationBuilder()
+                        .setUrls(ClasspathHelper.forClassLoader())
+                        .setScanners(new TypeAnnotationsScanner())
+        );
+        final Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(SpringApplication.class);
+
+        if (annotatedClasses.isEmpty()) {
+            throw new IllegalStateException("@SpringBootApplication 어노테이션 붙은 클래스 못 찾음");
+        }
+        final Class<?> mainClass = annotatedClasses.iterator().next();
+        return mainClass.getPackage().getName();
     }
 }

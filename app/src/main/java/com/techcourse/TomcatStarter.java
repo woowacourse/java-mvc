@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.mvc.UncheckedServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
@@ -54,7 +55,7 @@ public class TomcatStarter {
 
     private void skipJarScan(final Context context) {
         final var jarScanner = (StandardJarScanner) context.getJarScanner();
-        jarScanner.setScanClassPath(false);
+        jarScanner.setScanClassPath(true);
     }
 
     private void skipClearReferences(final StandardContext context) {
