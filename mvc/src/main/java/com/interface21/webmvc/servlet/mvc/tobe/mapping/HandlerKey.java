@@ -14,6 +14,14 @@ public class HandlerKey {
         this.requestMethod = requestMethod;
     }
 
+    public boolean isSameUrl(final String url) {
+        return this.url.equals(url);
+    }
+
+    public RequestMethod getRequestMethod() {
+        return requestMethod;
+    }
+
     @Override
     public String toString() {
         return "HandlerKey{" +

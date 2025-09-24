@@ -4,6 +4,7 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.execution.HandlerExecution;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.MethodNotAllowedException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -73,11 +74,24 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public Object getHandler(final HttpServletRequest request) {
-        return handlerExecutions.get(
-                new HandlerKey(
-                        request.getRequestURI(),
-                        RequestMethod.valueOf(request.getMethod())
-                )
-        );
+        final var requestURI = request.getRequestURI();
+        final var requestMethod = RequestMethod.valueOf(request.getMethod());
+        final var exactHandlerKey = new HandlerKey(requestURI, requestMethod);
+
+        if (handlerExecutions.containsKey(exactHandlerKey)) {
+            return handlerExecutions.get(exactHandlerKey);
+        }
+
+        final Set<String> allowedMethods = handlerExecutions.keySet()
+                .stream()
+                .filter(key -> key.isSameUrl(requestURI))
+                .map(key -> key.getRequestMethod().name())
+                .collect(Collectors.toSet());
+
+        if (!allowedMethods.isEmpty()) {
+            throw new MethodNotAllowedException(requestURI, allowedMethods);
+        }
+
+        return null;
     }
 }

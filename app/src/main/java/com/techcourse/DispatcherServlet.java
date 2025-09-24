@@ -2,6 +2,8 @@ package com.techcourse;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.MethodNotAllowedException;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.NoHandlerFoundException;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
@@ -12,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
@@ -37,12 +40,16 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             Object handler = handlerMappingRegistry.getHandler(req);
             HandlerAdapter adapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             ModelAndView modelAndView = adapter.handle(req, resp, handler);
             render(modelAndView, req, resp);
+        } catch (NoHandlerFoundException e) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        } catch (MethodNotAllowedException e) {
+            resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         } catch (Exception e) {
             throw new ServletException("DispatcherServlet service error", e);
         }

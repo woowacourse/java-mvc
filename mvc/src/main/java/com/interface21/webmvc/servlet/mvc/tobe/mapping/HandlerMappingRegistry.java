@@ -1,5 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe.mapping;
 
+import com.interface21.webmvc.servlet.mvc.tobe.exception.NoHandlerFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,6 @@ public class HandlerMappingRegistry {
                 return handler;
             }
         }
-        throw new IllegalStateException("No handler found :" + req.getRequestURI());
+        throw new NoHandlerFoundException(req.getRequestURI());
     }
 }
