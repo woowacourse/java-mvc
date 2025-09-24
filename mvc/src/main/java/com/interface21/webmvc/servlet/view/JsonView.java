@@ -19,7 +19,7 @@ public class JsonView implements View {
         ObjectMapper objectMapper = new ObjectMapper();
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        try (PrintWriter printWriter = new PrintWriter(response.getOutputStream())) {
+        try (PrintWriter printWriter = response.getWriter()) {
 
             ArrayList<String> attributeNames = Collections.list(request.getAttributeNames());
             if (attributeNames.size() == 1) {
