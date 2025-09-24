@@ -1,7 +1,5 @@
-package com.interface21.webmvc.servlet.mvc.servlet;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.adapter.AnnotatedHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.registry.HandlerAdapterRegistry;
