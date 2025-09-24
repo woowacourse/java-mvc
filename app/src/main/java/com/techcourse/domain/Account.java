@@ -26,4 +26,8 @@ public class Account {
     public int hashCode() {
         return Objects.hashCode(value);
     }
+
+    public String getValue() {
+        return value;
+    }
 }

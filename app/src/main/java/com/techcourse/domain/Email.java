@@ -12,4 +12,8 @@ public class Email {
     public String toString() {
         return "email= " + value;
     }
+
+    public String getValue() {
+        return value;
+    }
 }

@@ -27,4 +27,12 @@ public class User {
                 email + '\'' +
                 '}';
     }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
 }
