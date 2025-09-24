@@ -25,4 +25,10 @@ public class HandlerMappingRegistry {
         }
         return null;
     }
+
+    public void initialize() {
+        for (HandlerMapping handlerMapping : handlerMappings) {
+            handlerMapping.initialize();
+        }
+    }
 }
