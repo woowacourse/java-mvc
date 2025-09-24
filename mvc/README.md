@@ -12,3 +12,9 @@
 - [x] ManualHandlerMapping / AnnotationHandlerMapping의 Controller 추상화
 - [x] HandlerMappingRegistry / HandlerAdapterRegistry 추가
 - [x] AnnotationHandlerMapping -> ControllerScanner 적용
+
+### 3단계 - JSON View 구현하기
+
+- [x] HTML 이외에 `JSON`으로 응답할 수 있도록 `JsonView` 클래스 구현
+- [x] 모든 컨트롤러를 어노테이션 기반 MVC로 변경
+- [x] 기존 asis 패키지에 있는 레거시 코드를 제거하더라도 서비스 정상 동작
