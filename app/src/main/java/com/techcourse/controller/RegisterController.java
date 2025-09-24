@@ -13,7 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView doPost(HttpServletRequest req, HttpServletResponse res) {
+
         final var user = new User(2,
                 req.getParameter("account"),
                 req.getParameter("password"),
@@ -24,7 +25,7 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView doGet(HttpServletRequest req, HttpServletResponse res) {
         return new ModelAndView("/register.jsp");
     }
 }
