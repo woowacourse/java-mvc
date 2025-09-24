@@ -11,8 +11,8 @@ public class LoginViewController implements Controller {
     private static final Logger log = LoggerFactory.getLogger(LoginViewController.class);
 
     @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return UserSession.getUserFrom(req.getSession())
+    public String execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return UserSession.getUserFrom(request.getSession())
                 .map(user -> {
                     log.info("logged in {}", user.getAccount());
                     return "redirect:/index.jsp";
