@@ -28,9 +28,25 @@ public class JsonView implements View {
         response.setStatus(HttpServletResponse.SC_OK);
 
         try (PrintWriter writer = response.getWriter()) {
-            objectMapper.writeValue(writer, model);
+            write(writer, model);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void write(PrintWriter writer, final Map<String, ?> model) throws IOException {
+        if (model.size() == 1) {
+            objectMapper.writeValue(writer, getFirst(model));
+            return;
+        }
+        objectMapper.writeValue(writer, model);
+    }
+
+    private Object getFirst(final Map<String, ?> model) {
+        return model.keySet()
+                .stream()
+                .map(model::get)
+                .findFirst()
+                .orElseThrow();
     }
 }
