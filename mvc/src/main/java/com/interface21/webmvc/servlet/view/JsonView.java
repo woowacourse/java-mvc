@@ -15,14 +15,14 @@ public class JsonView implements View {
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        final var writer = response.getWriter();
+        try (final var writer = response.getWriter()) {
+            if (model.size() == 1) {
+                final Object value = model.values().iterator().next();
+                writer.write(objectMapper.writeValueAsString(value));
+                return;
+            }
 
-        if (model.size() == 1) {
-            final Object value = model.values().iterator().next();
-            writer.write(objectMapper.writeValueAsString(value));
-            return;
+            writer.write(objectMapper.writeValueAsString(model));
         }
-
-        writer.write(objectMapper.writeValueAsString(model));
     }
 }
