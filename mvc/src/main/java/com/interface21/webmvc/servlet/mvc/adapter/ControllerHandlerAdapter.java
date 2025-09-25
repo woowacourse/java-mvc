@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ControllerHandlerAdapter implements  HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
-        System.out.println(handler instanceof Controller);
         return handler instanceof Controller;
     }
 
