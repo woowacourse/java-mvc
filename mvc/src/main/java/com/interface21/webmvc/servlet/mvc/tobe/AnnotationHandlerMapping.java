@@ -1,9 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
+import static org.reflections.ReflectionUtils.getAllMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
+
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,88 +16,70 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
-    private final Map<HandlerKey, HandlerExecution> handlerExecutions;
+    private final ControllerScanner controllerScanner;
+    private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
-    public AnnotationHandlerMapping(final Object... basePackage) {
-        this.basePackage = basePackage;
-        this.handlerExecutions = new HashMap<>();
+    public AnnotationHandlerMapping(final String... basePackages) {
+        this.controllerScanner = new ControllerScanner(basePackages);
     }
 
     public void initialize() {
-        log.info("Initialized AnnotationHandlerMapping!");
-        
-        for (Object packageName : basePackage) {
-            Set<Class<?>> controllers = findControllers((String) packageName);
-            for (Class<?> controller : controllers) {
-                addHandlerExecutions(controller);
+        handlerExecutions.clear();
+
+        final Map<Class<?>, Object> controllers = controllerScanner.scan();
+        controllers.forEach(this::registerHandlerExecutions);
+
+        log.info("Initialized AnnotationHandlerMapping with {} handler(s)", handlerExecutions.size());
+    }
+
+    private void registerHandlerExecutions(final Class<?> controllerClass, final Object controllerInstance) {
+        final Set<Method> methods = getAllMethods(controllerClass, withAnnotation(RequestMapping.class));
+
+        for (final Method method : methods) {
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            registerHandler(controllerInstance, method, requestMapping);
+        }
+    }
+
+    private void registerHandler(final Object controllerInstance,
+        final Method method,
+        final RequestMapping requestMapping) {
+        final String url = requestMapping.value();
+        final RequestMethod[] declaredRequestMethods = requestMapping.method();
+        final RequestMethod[] requestMethods = declaredRequestMethods.length == 0 ?
+            RequestMethod.values() : declaredRequestMethods;
+
+        if (!method.canAccess(controllerInstance)) {
+            method.setAccessible(true);
+        }
+
+        for (final RequestMethod requestMethod : requestMethods) {
+            final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
+            final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
+            final HandlerExecution previous = handlerExecutions.put(handlerKey, handlerExecution);
+
+            if (previous != null) {
+                log.warn("Duplicate handler mapping detected for {}. Overriding with {}", handlerKey, method);
             }
         }
     }
 
-    private Set<Class<?>> findControllers(String packageName) {
-        Set<Class<?>> controllers = new HashSet<>();
-        try {
-            // ClassPathScanner를 사용해야 하지만, 일단 TestController만 처리
-            if ("samples".equals(packageName)) {
-                Class<?> clazz = Class.forName("samples.TestController");
-                if (clazz.isAnnotationPresent(Controller.class)) {
-                    controllers.add(clazz);
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            log.error("Controller class not found", e);
-        }
-        return controllers;
-    }
-
-    private void addHandlerExecutions(Class<?> controller) {
-        try {
-            Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-            Method[] methods = controller.getDeclaredMethods();
-            
-            for (Method method : methods) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping != null) {
-                    String url = requestMapping.value();
-                    RequestMethod[] requestMethods = requestMapping.method();
-                    
-                    if (requestMethods.length == 0) {
-                        for (RequestMethod requestMethod : RequestMethod.values()) {
-                            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
-                    } else {
-                        for (RequestMethod requestMethod : requestMethods) {
-                            HandlerKey handlerKey = new HandlerKey(url, requestMethod);
-                            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-                            handlerExecutions.put(handlerKey, handlerExecution);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Failed to create handler execution for controller: " + controller.getName(), e);
-        }
-    }
-
+    @Override
     public Object getHandler(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-        
+        final String requestURI = request.getRequestURI();
+        final String method = request.getMethod();
+
         try {
-            RequestMethod requestMethod = RequestMethod.valueOf(method);
-            HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
+            final RequestMethod requestMethod = RequestMethod.valueOf(method);
+            final HandlerKey handlerKey = new HandlerKey(requestURI, requestMethod);
             return handlerExecutions.get(handlerKey);
         } catch (IllegalArgumentException e) {
-            log.warn("Unsupported HTTP method: " + method);
+            log.warn("Unsupported HTTP method: {}", method);
             return null;
         }
     }
