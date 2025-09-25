@@ -46,3 +46,13 @@ sourceSets {
         java.destinationDirectory.set(file('src/main/webapp/WEB-INF/classes'))
     }
 }
+
+tasks.register('copyMvcClasses', Sync) {
+    def mvcSourceSets = project(':mvc').extensions.findByName('sourceSets') as SourceSetContainer
+    from mvcSourceSets.main.output.classesDirs
+    into 'src/main/webapp/WEB-INF/classes'
+}
+
+tasks.named('processResources') {
+    dependsOn(tasks.named('copyMvcClasses'))
+}
