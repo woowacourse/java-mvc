@@ -6,7 +6,6 @@ import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,11 +70,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
         for (Method method : methods) {
-            // RequestMapping 어노테이션이 붙은 메서드 조회
-            Annotation annotation = method.getDeclaredAnnotation(RequestMapping.class);
-            if (annotation != null) {
-                handlerExecutions.putAll(createHandlerExecutions(controller, method));
-            }
+            handlerExecutions.putAll(createHandlerExecutions(controller, method));
         }
         return handlerExecutions;
     }
