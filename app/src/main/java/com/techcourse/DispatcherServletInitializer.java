@@ -1,8 +1,8 @@
 package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
-import com.interface21.webmvc.servlet.mvc.adapter.ControllerHandlerAdaptor;
-import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdaptor;
+import com.interface21.webmvc.servlet.mvc.adapter.ControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.techcourse.controller.LoginController;
@@ -63,8 +63,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private HandlerAdaptorRegistry createHandlerAdaptorRegistry() {
         HandlerAdaptorRegistry registry = new HandlerAdaptorRegistry();
-        registry.addHandlerAdapter(new ControllerHandlerAdaptor());
-        registry.addHandlerAdapter(new HandlerExecutionHandlerAdaptor());
+        registry.addHandlerAdapter(new ControllerHandlerAdapter());
+        registry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
         return registry;
     }
 }
