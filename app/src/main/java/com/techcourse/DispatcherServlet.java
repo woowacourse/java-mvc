@@ -36,8 +36,10 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            HandlerMapping handler = handlerMappingRegistry.getHandler(request)
+            HandlerMapping handlerMapping = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(IllegalArgumentException::new);
+
+            Object handler = handlerMapping.getHandler(request);
 
             HandlerAdapter handlerAdapter = handlerAdaptorRegistry.getHandlerAdapter(handler)
                     .orElseThrow(IllegalArgumentException::new);
