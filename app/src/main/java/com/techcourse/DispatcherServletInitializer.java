@@ -26,12 +26,8 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-        createHandlerMappingRegistry();
-        HandlerAdaptorRegistry handlerAdaptorRegistry = new HandlerAdaptorRegistry();
-        createHandlerAdaptorRegistry();
 
-        final var dispatcherServlet = new DispatcherServlet(handlerMappingRegistry, handlerAdaptorRegistry);
+        final var dispatcherServlet = new DispatcherServlet(createHandlerMappingRegistry(), createHandlerAdaptorRegistry());
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
