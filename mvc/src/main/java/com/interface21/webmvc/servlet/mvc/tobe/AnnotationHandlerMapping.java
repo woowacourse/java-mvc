@@ -1,21 +1,18 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AnnotationHandlerMapping {
+public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
@@ -27,38 +24,27 @@ public class AnnotationHandlerMapping {
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         for (Object packageName : basePackage) {
-            scanControllers(packageName);
+            final Reflections reflections = new Reflections(packageName);
+            final ControllerScanner controllerScanner = new ControllerScanner(reflections);
+            final Map<Class<?>, Object> controllersClasses = controllerScanner.getControllers();
+            for (Object controllerInstance : controllersClasses.values()) {
+                registerControllerMethods(controllerInstance);
+            }
         }
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public Object getHandler(final HttpServletRequest request) {
+    @Override
+    public HandlerExecution getHandler(final HttpServletRequest request) {
         final String url = request.getRequestURI();
         final String method = request.getMethod();
         final RequestMethod requestMethod = RequestMethod.valueOf(method);
 
         final HandlerKey handlerKey = new HandlerKey(url, requestMethod);
         return handlerExecutions.get(handlerKey);
-    }
-
-    private void scanControllers(final Object packageName) {
-        final Reflections reflections = new Reflections(packageName);
-        final Set<Class<?>> controllersClasses = reflections.getTypesAnnotatedWith(Controller.class);
-        for (Class<?> controllerClass : controllersClasses) {
-            final Object controllerInstance = getInstanceBy(controllerClass);
-            registerControllerMethods(controllerInstance);
-        }
-    }
-
-    private Object getInstanceBy(final Class<?> controllersClass) {
-        try {
-            return controllersClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void registerControllerMethods(final Object controllerInstance) {
