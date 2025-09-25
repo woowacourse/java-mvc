@@ -9,6 +9,7 @@ import com.interface21.webmvc.servlet.view.RedirectView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(final HttpServletRequest request) {
+    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
         return InMemoryUserRepository.findByAccount(request.getParameter("account"))
             .map(user -> {
                 log.info("User : {}", user);
@@ -37,7 +38,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login/view", method = RequestMethod.GET)
-    public ModelAndView view(final HttpServletRequest request) {
+    public ModelAndView view(HttpServletRequest request, HttpServletResponse response) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return new ModelAndView(new RedirectView("/index.jsp"));
         }

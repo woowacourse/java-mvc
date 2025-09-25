@@ -9,6 +9,7 @@ import com.interface21.webmvc.servlet.view.RedirectView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class RegisterController {
@@ -19,7 +20,7 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(final HttpServletRequest request) {
+    public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         final var user = new User(
                 Long.valueOf(request.getParameter("id")),
                 request.getParameter("account"),
