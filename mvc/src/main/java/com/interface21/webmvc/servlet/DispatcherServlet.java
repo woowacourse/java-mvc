@@ -1,10 +1,8 @@
 package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -42,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow(()-> new RuntimeException("요청에 맞는 Handler를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new RuntimeException("요청에 맞는 Handler를 찾을 수 없습니다."));
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
