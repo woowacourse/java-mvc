@@ -4,7 +4,6 @@ import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.DispatcherServlet;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.ControllerHandlerAdapter;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +35,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private void addHandlers(final DispatcherServlet dispatcherServlet) {
         // 핸들러 매핑 등록
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
-
-        dispatcherServlet.addHandlerMapping(manualHandlerMapping);
         dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
 
         // 핸들러 어댑터 등록
-        dispatcherServlet.addHandlerAdapter(new ControllerHandlerAdapter());
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 }
