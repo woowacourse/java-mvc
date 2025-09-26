@@ -2,8 +2,8 @@ package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
 import com.interface21.webmvc.servlet.DispatcherServlet;
-import com.interface21.webmvc.servlet.mvc.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handlermapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
