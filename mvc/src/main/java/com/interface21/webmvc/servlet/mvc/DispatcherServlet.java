@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
@@ -29,17 +29,12 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         try {
-            ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
             AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(
                     "com.techcourse.controller");
-            manualHandlerMapping.initialize();
             annotationHandlerMapping.initialize();
-            handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
             handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
-            ManualHandlerAdapter manualHandlerAdapter = new ManualHandlerAdapter();
             AnnotationHandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
-            handlerAdapterRegistry.add(manualHandlerAdapter);
             handlerAdapterRegistry.add(annotationHandlerAdapter);
         } catch (Exception e) {
             log.warn(e.getMessage());
