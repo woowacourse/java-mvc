@@ -1,14 +1,20 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class DispatcherServletTest {
 
@@ -20,10 +26,11 @@ class DispatcherServletTest {
     void setUp() {
         this.dispatcherServlet = new DispatcherServlet();
 
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping("com.techcourse.controller"));
-        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        final var annotationHandlerMapping = new AnnotationHandlerMapping(TestController.class.getPackage().getName());
+        annotationHandlerMapping.initialize();
 
-        dispatcherServlet.init();
+        dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         this.request = mock(HttpServletRequest.class);
         this.response = mock(HttpServletResponse.class);
@@ -49,11 +56,25 @@ class DispatcherServletTest {
         when(request.getMethod()).thenReturn("POST");
 
         final RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-            when(request.getRequestDispatcher("test/post")).thenReturn(requestDispatcher);
+        when(request.getRequestDispatcher("test/post")).thenReturn(requestDispatcher);
 
         dispatcherServlet.service(request, response);
 
         verify(request).getRequestDispatcher("test/post");
         verify(requestDispatcher).forward(request, response);
+    }
+
+    @Controller
+    public static class TestController {
+
+        @RequestMapping(value = "/get-test", method = RequestMethod.GET)
+        public ModelAndView getTest(final HttpServletRequest request, final HttpServletResponse response) {
+            return new ModelAndView(new JspView("test/get"));
+        }
+
+        @RequestMapping(value = "/post-test", method = RequestMethod.POST)
+        public ModelAndView postTest(final HttpServletRequest request, final HttpServletResponse response) {
+            return new ModelAndView(new JspView("test/post"));
+        }
     }
 }
