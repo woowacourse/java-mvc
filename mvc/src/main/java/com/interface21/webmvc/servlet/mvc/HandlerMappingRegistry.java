@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +17,7 @@ public class HandlerMappingRegistry {
         handlerMappings.add(handlerMapping);
     }
 
-    Optional<HandlerMapping> getHandler(HttpServletRequest request) {
+    Optional<HandlerMapping> getHandlerMapping(HttpServletRequest request) {
         return handlerMappings.stream()
                 .filter(handlerMapping ->
                         handlerMapping.getHandler(request) != null
