@@ -33,7 +33,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         for (final var controllerEntry : controllers.entrySet()) {
             final var controllerClass = controllerEntry.getKey();
             final var controllerInstance = controllerEntry.getValue();
-            log.debug("Controller: {}", controllerClass);
+            log.info("Controller: {}", controllerClass);
             final var requestMappingMethods = getRequestMappingMethods(controllerClass);
             addHandlerExecutions(requestMappingMethods, controllerInstance);
         }

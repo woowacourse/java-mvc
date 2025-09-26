@@ -1,8 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.ControllerScanner;
@@ -14,13 +13,9 @@ public class WebMvcConfiguration {
     public static HandlerMappingRegistry handlerMappingRegistry() {
         final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
 
-        final var controllerHandlerMappingInitializer = new ControllerHandlerMappingInitializer();
-        final var controllerHandlerMapping = controllerHandlerMappingInitializer.handle();
-
         final var controllerScanner = new ControllerScanner(APPLICATION_PACKAGE);
         final var annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
 
-        handlerMappingRegistry.addHandlerMapping(controllerHandlerMapping);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
 
         return handlerMappingRegistry;
@@ -29,10 +24,8 @@ public class WebMvcConfiguration {
     public static HandlerAdapterRegistry handlerAdapterRegistry() {
         final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
-        final var controllerHandlerAdapter = new ControllerHandlerAdapter();
         final var annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
-        handlerAdapterRegistry.addHandlerAdapter(controllerHandlerAdapter);
         handlerAdapterRegistry.addHandlerAdapter(annotationHandlerAdapter);
 
         return handlerAdapterRegistry;
