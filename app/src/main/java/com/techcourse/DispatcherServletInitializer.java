@@ -1,15 +1,8 @@
 package com.techcourse;
 
 import com.interface21.web.WebApplicationInitializer;
-import com.interface21.webmvc.servlet.mvc.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
-import com.techcourse.controller.LoginController;
-import com.techcourse.controller.LoginViewController;
-import com.techcourse.controller.LogoutController;
-import com.techcourse.controller.RegisterController;
-import com.techcourse.controller.RegisterViewController;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,16 +37,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private HandlerMappingRegistry createHandlerMappingRegistry() {
         HandlerMappingRegistry registry = new HandlerMappingRegistry();
 
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        manualHandlerMapping.addController("/", new ForwardController("/index.jsp"));
-        manualHandlerMapping.addController("/login", new LoginController());
-        manualHandlerMapping.addController("/login/view", new LoginViewController());
-        manualHandlerMapping.addController("/logout", new LogoutController());
-        manualHandlerMapping.addController("/register/view", new RegisterViewController());
-        manualHandlerMapping.addController("/register", new RegisterController());
-        registry.addHandlerMapping(manualHandlerMapping);
-
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
 
@@ -63,7 +46,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private HandlerAdaptorRegistry createHandlerAdaptorRegistry() {
         HandlerAdaptorRegistry registry = new HandlerAdaptorRegistry();
-        registry.addHandlerAdapter(new ControllerHandlerAdapter());
         registry.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
         return registry;
     }
