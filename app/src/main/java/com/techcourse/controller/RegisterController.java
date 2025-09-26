@@ -16,7 +16,7 @@ public class RegisterController {
 
     private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),
