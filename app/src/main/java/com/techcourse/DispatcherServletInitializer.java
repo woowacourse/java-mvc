@@ -1,14 +1,13 @@
 package com.techcourse;
 
+import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.DispatcherServlet;
+import com.interface21.webmvc.servlet.mvc.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handlermapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
-/**
- * Base class for {@link WebApplicationInitializer}
- * implementations that register a {@link DispatcherServlet} in the servlet context.
- */
 public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
@@ -18,6 +17,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
+
+        // 핸들러 매핑과 어댑터를 생성하고 주입합니다.
+        addHandlers(dispatcherServlet);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +31,15 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private void addHandlers(final DispatcherServlet dispatcherServlet) {
+        // 핸들러 매핑 등록
+        final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        annotationHandlerMapping.initialize();
+        dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
+
+        // 핸들러 어댑터 등록
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 }
