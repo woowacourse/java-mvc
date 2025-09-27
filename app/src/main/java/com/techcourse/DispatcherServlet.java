@@ -23,8 +23,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.handlerMappings = new HandlerMappings(List.of(new ManualHandlerMapping(), new AnnotationHandlerMapping()));
-        this.handlerAdapters = new HandlerAdapters(List.of(new ControllerHandlerAdapter(), new HandlerExecutionAdapter()));
+        this.handlerMappings = new HandlerMappings(List.of(new AnnotationHandlerMapping()));
+        this.handlerAdapters = new HandlerAdapters(List.of(new HandlerExecutionAdapter()));
     }
 
     @Override
