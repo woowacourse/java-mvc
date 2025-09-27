@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
@@ -14,20 +14,19 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final Object[] basePackage;
     private final ComponentScanner componentScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final ComponentScanner componentScanner, final Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(final ComponentScanner componentScanner) {
         this.componentScanner = componentScanner;
         this.handlerExecutions = new HashMap<>();
     }
 
+    @Override
     public void initialize() {
         log.info("Initialized AnnotationHandlerMapping!");
-        Map<Class<?>, Object> controllers = componentScanner.scan(Controller.class, basePackage);
-
+        componentScanner.scan(Controller.class);
+        Map<Class<?>, Object> controllers = componentScanner.getInstances();
         for (Entry<Class<?>, Object> entry : controllers.entrySet()) {
             Class<?> clazz = entry.getKey();
             Object instance = entry.getValue();
@@ -44,7 +43,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         if (handlerExecutions.containsKey(handlerKey)) {
             return handlerExecutions.get(handlerKey);
         }
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     private void registerMethod(final Method method, final Object instance) {

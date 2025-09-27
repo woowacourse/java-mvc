@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class RegisterViewController {
+public class ForwardController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
-        return new ModelAndView(new JspView("/register.jsp"));
+    @RequestMapping(value = "/index.html", method = RequestMethod.GET)
+    public ModelAndView redirectIndexHtml(final HttpServletRequest req, final HttpServletResponse res) {
+        return new ModelAndView(new JspView("/index.jsp"));
     }
 }
