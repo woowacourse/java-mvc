@@ -4,17 +4,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public class JspView implements View {
+public class RedirectView implements View {
 
-    private final String viewName;
+    private final String url;
 
-    public JspView(final String viewName) {
-        this.viewName = viewName;
+    public RedirectView(final String url) {
+        this.url = url;
     }
 
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        model.keySet().forEach(key -> request.setAttribute(key, model.get(key)));
-        request.getRequestDispatcher(viewName).forward(request, response);
+        response.sendRedirect(url);
     }
 }
