@@ -16,12 +16,11 @@ public class HandlerMappingRegistry {
     private final List<HandlerMapping> handlerMappings;
 
     public static HandlerMappingRegistry initialize(
-            final String basePackage,
-            final ControllerMapping controllerMapping
+            final String basePackage
     ) {
         // todo reflection
         final HandlerExecutionMapping handlerExecutionMapping = HandlerExecutionMapping.from(basePackage);
-        return new HandlerMappingRegistry(List.of(handlerExecutionMapping, controllerMapping));
+        return new HandlerMappingRegistry(List.of(handlerExecutionMapping));
     }
 
     public Handler getHandler(final HttpServletRequest request) {
@@ -31,7 +30,7 @@ public class HandlerMappingRegistry {
                 .collect(Collectors.toSet());
 
         if (handlers.isEmpty()) {
-            throw new IllegalStateException("요청을 처리할 수 있는 핸들러가 없습니다.");
+            return null;
         }
 
         if (handlers.size() > 1) {

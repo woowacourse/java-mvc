@@ -6,16 +6,14 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-public class LogoutController {
+public class DefaultController {
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ModelAndView logout(final HttpServletRequest request, final HttpServletResponse response) {
-        final HttpSession session = request.getSession();
-        session.removeAttribute(UserSession.SESSION_KEY);
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         return ModelAndView.redirect("/index.jsp");
-    }}
+    }
+}

@@ -3,8 +3,6 @@ package com.interface21.webmvc.servlet.adapter;
 import com.interface21.webmvc.servlet.Handler;
 import com.interface21.webmvc.servlet.HandlerType;
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -19,7 +17,6 @@ public class HandlerAdapterRegistry {
 
     public static HandlerAdapterRegistry initialize() {
         final Map<HandlerType, HandlerAdapter> handlerAdapters = new HashMap<>();
-        handlerAdapters.put(HandlerType.CONTROLLER, new ControllerAdapter());
         handlerAdapters.put(HandlerType.HANDLER_EXECUTION, new HandlerExecutionAdapter());
         return new HandlerAdapterRegistry(handlerAdapters);
     }

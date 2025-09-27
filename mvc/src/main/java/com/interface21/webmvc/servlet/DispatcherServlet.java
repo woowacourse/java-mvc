@@ -6,13 +6,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractDispatcherServlet extends HttpServlet {
+@RequiredArgsConstructor
+public class DispatcherServlet extends HttpServlet {
 
     private final HandlerMappingRegistry handlerMappingRegistry;
     private final HandlerAdapterRegistry handlerAdapterRegistry;
@@ -31,8 +30,13 @@ public abstract class AbstractDispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
+            final Handler handler = handlerMappingRegistry.getHandler(request);
+            if(handler == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             final ModelAndView modelAndView = handlerAdapterRegistry.handle(
-                    handlerMappingRegistry.getHandler(request),
+                    handler,
                     request,
                     response);
 
