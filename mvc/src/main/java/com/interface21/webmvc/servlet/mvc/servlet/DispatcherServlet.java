@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.mapping.ManualHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerMapping;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.adapter.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
@@ -63,7 +63,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
         final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.info("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
             final Object handler = handlerMappingRegistry.getHandler(request);
