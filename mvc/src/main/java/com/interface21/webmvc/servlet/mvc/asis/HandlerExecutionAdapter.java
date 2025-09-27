@@ -1,15 +1,15 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.asis;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ControllerHandlerAdapter implements HandlerAdapter {
+public class HandlerExecutionAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
-        return handler instanceof Controller;
+        return handler instanceof HandlerExecution;
     }
 
     @Override
@@ -18,6 +18,6 @@ public class ControllerHandlerAdapter implements HandlerAdapter {
             final HttpServletResponse response,
             final Object handler
     ) throws Exception {
-        return ((Controller) handler).execute(request, response);
+        return ((HandlerExecution) handler).handle(request, response);
     }
 }

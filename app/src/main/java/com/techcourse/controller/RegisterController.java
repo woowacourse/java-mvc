@@ -4,6 +4,7 @@ import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ public class RegisterController {
                 request.getParameter("password"),
                 request.getParameter("email"));
         InMemoryUserRepository.save(user);
-        return new ModelAndView("redirect:/index.jsp");
+        return new ModelAndView(new JspView("redirect:/index.jsp"));
     }
 
 }
