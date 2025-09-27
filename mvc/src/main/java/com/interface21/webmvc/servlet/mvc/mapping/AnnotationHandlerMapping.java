@@ -4,7 +4,6 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.ControllerScanner;
 import com.interface21.webmvc.servlet.mvc.execution.HandlerExecution;
-import com.interface21.webmvc.servlet.mvc.asis.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
