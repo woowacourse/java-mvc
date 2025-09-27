@@ -1,14 +1,18 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.adapter;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.View;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handler.Controller;
+import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class AnnotationHandlerAdapter implements HandlerAdapter {
+public class ControllerAdapter implements HandlerAdapter {
 
     @Override
     public boolean supports(final Object handler) {
-        return handler instanceof HandlerExecution;
+        return handler instanceof Controller;
     }
 
     @Override
@@ -17,14 +21,15 @@ public class AnnotationHandlerAdapter implements HandlerAdapter {
         try {
             return doHandle(request, response, handler);
         } catch (final Exception e) {
-            throw new IllegalStateException("AnnotationHandlerAdapter failed to handle request", e);
+            throw new IllegalStateException("ControllerAdapter failed to handle request", e);
         }
     }
 
     private ModelAndView doHandle(final HttpServletRequest request, final HttpServletResponse response,
                                   final Object handler) throws Exception {
-        final HandlerExecution handlerExecution = (HandlerExecution) handler;
-        return handlerExecution.doHandle(request, response);
+        final Controller controller = (Controller) handler;
+        final String viewName = controller.execute(request, response);
+        final View view = new JspView(viewName);
+        return new ModelAndView(view);
     }
 }
-
