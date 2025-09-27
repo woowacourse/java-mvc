@@ -1,14 +1,12 @@
 package com.interface21.webmvc.servlet.mvc.servlet;
 
-import com.interface21.webmvc.servlet.mvc.asis.ManualHandlerMapping;
-import com.interface21.webmvc.servlet.view.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.adapter.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +37,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initializeHandlerMappingRegistry() {
         final List<HandlerMapping> mappings = List.of(
-                new ManualHandlerMapping(),
                 new AnnotationHandlerMapping(basePackage)
         );
 
@@ -51,7 +48,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initializeHandlerAdapterRegistry() {
         final List<HandlerAdapter> adapters = List.of(
-                new ControllerAdapter(),
                 new HandlerExecutionAdapter()
         );
 
