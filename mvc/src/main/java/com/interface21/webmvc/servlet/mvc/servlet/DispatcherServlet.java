@@ -1,5 +1,6 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc.servlet;
 
+import com.interface21.webmvc.servlet.mvc.mapping.ManualHandlerMapping;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.adapter.ControllerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
