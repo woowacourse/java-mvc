@@ -11,11 +11,7 @@ public class HandlerExecutor {
     }
 
     public ModelAndView execute(HandlerAdapter handlerAdapter, Object handler, HttpServletRequest request,
-                                HttpServletResponse response) {
-        try {
-            return handlerAdapter.handle(request, response, handler);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+                                HttpServletResponse response) throws Exception {
+        return handlerAdapter.handle(request, response, handler);
     }
 }
