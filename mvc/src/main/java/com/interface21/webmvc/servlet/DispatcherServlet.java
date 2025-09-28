@@ -4,7 +4,6 @@ import com.interface21.webmvc.servlet.mvc.adapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
-import com.interface21.webmvc.servlet.view.JspView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
