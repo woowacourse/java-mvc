@@ -15,10 +15,12 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse.controller";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        // 자신의 패키지에 맞는 컨트롤러 패키지를 명시적으로 지정
+        final var dispatcherServlet = new DispatcherServlet(CONTROLLER_BASE_PACKAGE);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
