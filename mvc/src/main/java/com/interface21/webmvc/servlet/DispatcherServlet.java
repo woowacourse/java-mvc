@@ -69,8 +69,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void render(final HttpServletRequest request, final HttpServletResponse response, final ModelAndView modelAndView) throws Exception {
         final var view = modelAndView.getView();
-        if (view instanceof JspView) {
-            view.render(modelAndView.getModel(), request, response);
-        }
+        view.render(modelAndView.getModel(), request, response);
     }
 }
