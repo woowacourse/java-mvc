@@ -1,18 +1,16 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.ManualHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +31,6 @@ public class DispatcherServlet extends HttpServlet {
         adapterRegistry = new HandlerAdapterRegistry();
 
         // 매핑 등록
-        mappingRegistry.addHandlerMapping(new ManualHandlerMapping());
         mappingRegistry.addHandlerMapping(new AnnotationHandlerMapping());
 
         // 어댑터 등록
@@ -47,12 +44,13 @@ public class DispatcherServlet extends HttpServlet {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
 
         try {
-            final Object handler = mappingRegistry.getHandler(request);
-            if (handler == null) {
+            final Optional<Object> handlerOpt = mappingRegistry.getHandler(request);
+            if (handlerOpt.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
+            final Object handler = handlerOpt.get();
             final HandlerAdapter handlerAdapter = adapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
             final View jspView = modelAndView.getView();
