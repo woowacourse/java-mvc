@@ -14,13 +14,13 @@ public class JsonView implements View {
             throws Exception {
         final var objectMapper = new ObjectMapper();
         final var outputStream = response.getOutputStream();
-        final var value = processMoel(model);
+        final var value = processModel(model);
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         objectMapper.writeValue(outputStream, value);
     }
 
-    private Object processMoel(final Map<String, ?> model) {
+    private Object processModel(final Map<String, ?> model) {
         if (model.size() == 1) {
             return model.values().iterator().next();
         }
