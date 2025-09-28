@@ -18,17 +18,29 @@ public class User {
         return this.password.equals(password);
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getAccount() {
         return account;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", account='" + account + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+               "id=" + id +
+               ", account='" + account + '\'' +
+               ", email='" + email + '\'' +
+               ", password='" + password + '\'' +
+               '}';
     }
 }
