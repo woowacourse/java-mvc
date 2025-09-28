@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.exception.ControllerInstantiationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +30,9 @@ public class ControllerScanner {
             try {
                 instantiatedControllers.put(controller, controller.getDeclaredConstructor().newInstance());
             } catch (Exception e) {
-                log.error("Failed to instantiate controller: {}", controller, e);
+                log.error("Failed to instantiate controller: {}", controller.getName(), e);
+                throw new ControllerInstantiationException(
+                        "Failed to instantiate controller: " + controller.getName(), e);
             }
         }
         return instantiatedControllers;
