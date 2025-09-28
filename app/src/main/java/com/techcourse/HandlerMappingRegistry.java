@@ -1,8 +1,8 @@
 package com.techcourse;
 
 import com.interface21.webmvc.servlet.NoHandlerFoundException;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.handler.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -15,11 +15,6 @@ public class HandlerMappingRegistry {
 
     public HandlerMappingRegistry() {
         this.handlerMappings = new ArrayList<>();
-
-        final var manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        adHandlerMapping(manualHandlerMapping);
-
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
         adHandlerMapping(annotationHandlerMapping);

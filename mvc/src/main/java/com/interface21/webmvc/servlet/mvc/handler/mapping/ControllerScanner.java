@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handler.mapping;
+package com.interface21.webmvc.servlet.mvc.handler.mapping;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
