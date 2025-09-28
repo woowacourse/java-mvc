@@ -1,7 +1,6 @@
 package com.techcourse;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
-import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
+import com.interface21.webmvc.servlet.mvc.tobe.Controller;
 import com.interface21.webmvc.servlet.mvc.tobe.dispatcherservlet.AppConfig;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +10,6 @@ public class TechcourseAppConfig implements AppConfig {
     @Override
     public Map<String, Controller> getManualControllers() {
         final Map<String, Controller> controllers = new HashMap<>();
-        controllers.put("/", new ForwardController("/index.jsp"));
         return controllers;
     }
 

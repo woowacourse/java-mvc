@@ -1,6 +1,6 @@
 package com.interface21.webmvc.servlet.mvc.tobe.handlermapping;
 
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
+import com.interface21.webmvc.servlet.mvc.tobe.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import org.slf4j.Logger;
