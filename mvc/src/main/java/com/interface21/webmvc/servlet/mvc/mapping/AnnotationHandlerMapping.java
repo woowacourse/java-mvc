@@ -19,22 +19,16 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public AnnotationHandlerMapping(Object... basePackage) {
         this.basePackage = basePackage;
         this.handlerExecutions = new HashMap<>();
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         ControllerScanner controllerScanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
         for (Class<?> controllerType : controllers.keySet()) {
             Set<java.lang.reflect.Method> methods = getRequestMappingMethods(controllerType);
             for (java.lang.reflect.Method method : methods) {
-                if (method.getParameterCount() != 2 ||
-                        !method.getParameterTypes()[0].equals(HttpServletRequest.class) ||
-                        !method.getParameterTypes()[1].equals(jakarta.servlet.http.HttpServletResponse.class) ||
-                        !method.getReturnType().equals(com.interface21.webmvc.servlet.ModelAndView.class)) {
-                    throw new IllegalStateException("Method " + method.getName() + " in " + controllerType.getName()
-                            + " has invalid signature. Expected (HttpServletRequest, HttpServletResponse) -> ModelAndView");
-                }
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
                 addHandlerExecutions(controllers.get(controllerType), method, requestMapping);
             }
