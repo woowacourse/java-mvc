@@ -7,6 +7,7 @@ import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerKey;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,6 +55,7 @@ public class AnnotationHandlerMapping {
         try {
             Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
             Set<Method> annotatedMethods = ReflectionUtils.withAnnotation(controllerClass, RequestMapping.class);
+            validateNoDuplicateMappings(controllerClass, annotatedMethods);
             for (Method method : annotatedMethods) {
                 registerHandlerMethod(controllerInstance, method);
             }
@@ -62,14 +64,32 @@ public class AnnotationHandlerMapping {
         }
     }
 
+    private void validateNoDuplicateMappings(Class<?> controllerClass, Set<Method> methods) {
+        Set<HandlerKey> localKeys = new HashSet<>();
+
+        for (Method method : methods) {
+            RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+            for (RequestMethod requestMethod : resolveRequestMethods(mapping)) {
+                HandlerKey key = new HandlerKey(mapping.value(), requestMethod);
+                if (!localKeys.add(key)) {
+                    throw new IllegalStateException("중복 매핑 발견 (같은 컨트롤러 내): " + key +
+                            " in controller: " + controllerClass.getSimpleName() +
+                            ", method: " + method.getName());
+                }
+                if (handlerExecutions.containsKey(key)) {
+                    throw new IllegalStateException("중복 매핑 발견 (다른 컨트롤러와): " + key +
+                            " in controller: " + controllerClass.getSimpleName() +
+                            ", method: " + method.getName());
+                }
+            }
+        }
+    }
+
     private void registerHandlerMethod(Object controllerInstance, Method method) {
         RequestMapping mapping = method.getAnnotation(RequestMapping.class);
 
         for (RequestMethod requestMethod : resolveRequestMethods(mapping)) {
             HandlerKey handlerKey = new HandlerKey(mapping.value(), requestMethod);
-            if (handlerExecutions.containsKey(handlerKey)) {
-                throw new IllegalStateException("중복 매핑 발견: " + handlerKey);
-            }
             handlerExecutions.put(handlerKey, new HandlerExecution(controllerInstance, method));
         }
     }
