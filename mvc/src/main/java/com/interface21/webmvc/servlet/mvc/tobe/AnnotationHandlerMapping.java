@@ -1,6 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
 import com.interface21.context.stereotype.Controller;
+import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerKey;
@@ -52,7 +53,8 @@ public class AnnotationHandlerMapping {
     private void registerController(Class<?> controllerClass) {
         try {
             Object controllerInstance = controllerClass.getDeclaredConstructor().newInstance();
-            for (Method method : controllerClass.getDeclaredMethods()) {
+            Set<Method> annotatedMethods = ReflectionUtils.withAnnotation(controllerClass, RequestMapping.class);
+            for (Method method : annotatedMethods) {
                 registerHandlerMethod(controllerInstance, method);
             }
         } catch (ReflectiveOperationException e) {
@@ -62,9 +64,6 @@ public class AnnotationHandlerMapping {
 
     private void registerHandlerMethod(Object controllerInstance, Method method) {
         RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-        if (mapping == null) {
-            return;
-        }
 
         for (RequestMethod requestMethod : resolveRequestMethods(mapping)) {
             HandlerKey handlerKey = new HandlerKey(mapping.value(), requestMethod);

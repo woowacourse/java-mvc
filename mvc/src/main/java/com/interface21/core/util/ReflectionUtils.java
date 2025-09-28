@@ -1,7 +1,12 @@
 package com.interface21.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class ReflectionUtils {
 
@@ -34,5 +39,18 @@ public abstract class ReflectionUtils {
                 !Modifier.isPublic(ctor.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
             ctor.setAccessible(true);
         }
+    }
+
+    /**
+     * Find all methods in the given class that are annotated with the specified annotation.
+     * @param clazz the class to search
+     * @param annotationClass the annotation to look for
+     * @return a set of methods that have the specified annotation
+     * @since 5.0
+     */
+    public static Set<Method> withAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(annotationClass))
+                .collect(Collectors.toSet());
     }
 }
