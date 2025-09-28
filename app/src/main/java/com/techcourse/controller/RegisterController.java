@@ -3,8 +3,8 @@ package com.techcourse.controller;
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.view.ModelAndView;
 import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.ModelAndView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView save(final HttpServletRequest request, final HttpServletResponse response) {
         User user = new User(
                 2,
                 request.getParameter("account"),
@@ -27,7 +27,7 @@ public class RegisterController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest req, HttpServletResponse res) {
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView("/register.jsp"));
     }
 }

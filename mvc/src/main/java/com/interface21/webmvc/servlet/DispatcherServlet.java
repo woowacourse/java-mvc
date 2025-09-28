@@ -1,20 +1,16 @@
 package com.interface21.webmvc.servlet;
 
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.ManualHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.mapping.NoHandlerFoundException;
-import com.interface21.webmvc.servlet.mvc.tobe.util.PropertiesLoader;
 import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,22 +29,16 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappingRegistry = new HandlerMappingRegistry();
         handlerAdapterRegistry = new HandlerAdapterRegistry();
 
-        Properties props = PropertiesLoader.load(getServletContext(), "application.properties");
-        log.info("Properties 로드 완료. 총 {} 개 속성", props.size());
-
         // ManualHandlerMapping 등록
-        registerHandlerMappings(props);
+        registerHandlerMappings();
 
         // HandlerAdapter 등록
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
         handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
 
         log.info("DispatcherServlet 초기화 완료");
     }
 
-    private void registerHandlerMappings(Properties props) {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping(props);
-        handlerMappingRegistry.addHandlerMapping(manualHandlerMapping);
+    private void registerHandlerMappings() {
         AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(BASE_PACKAGE);
         handlerMappingRegistry.addHandlerMapping(annotationHandlerMapping);
     }

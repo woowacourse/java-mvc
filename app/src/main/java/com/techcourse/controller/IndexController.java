@@ -1,13 +1,18 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
+import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.servlet.view.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 
-public class IndexController implements Controller {
+@Controller
+public class IndexController {
 
-    @Override
-    public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        return "redirect:/index.jsp";
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
+        return new ModelAndView(JspView.redirectTo("/index.jsp"));
     }
 }
