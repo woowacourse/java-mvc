@@ -1,8 +1,7 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mapping;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.NoHandlerFoundException;
-import com.interface21.webmvc.servlet.mvc.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.handler.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

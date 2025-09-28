@@ -1,6 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.handler.adapter;
+package com.interface21.webmvc.servlet.adapter;
 
-import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerAdapter;
 import jakarta.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
