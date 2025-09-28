@@ -14,7 +14,7 @@ public class User {
         this.email = email;
     }
 
-    public boolean checkPassword(String password) {
+    public boolean isSamePassword(String password) {
         return this.password.equals(password);
     }
 
