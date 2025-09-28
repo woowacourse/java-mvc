@@ -1,9 +1,9 @@
 package com.interface21.webmvc.servlet.view;
 
-import com.interface21.webmvc.servlet.View;
-import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,26 +22,35 @@ public class JspView implements View {
     }
 
     @Override
-    public void render(final Map<String, ?> model,
-                       final HttpServletRequest request,
-                       final HttpServletResponse response) throws Exception {
+    public void render(final Map<String, ?> model, final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        if (handleRedirectIfNeeded(response)) {
+            return;
+        }
+
+        applyModelToRequest(model, request);
+        forward(request, response);
+    }
+
+    private boolean handleRedirectIfNeeded(HttpServletResponse response) throws IOException {
+        if (viewName.startsWith(REDIRECT_PREFIX)) {
+            String redirectPath = viewName.substring(REDIRECT_PREFIX.length());
+            log.debug("Redirecting to: {}", redirectPath);
+            response.sendRedirect(redirectPath);
+            return true;
+        }
+        return false;
+    }
+
+    private void applyModelToRequest(Map<String, ?> model, HttpServletRequest request) {
         model.keySet().forEach(key -> {
             log.debug("attribute name : {}, value : {}", key, model.get(key));
             request.setAttribute(key, model.get(key));
         });
+    }
 
-        /**
-         * redirect or forward
-         *
-         * redirect → 클라이언트에 302 응답 → 브라우저가 새 요청을 보냄 → URL 바뀜.
-         * forward → 서버 내부에서 JSP로 제어를 넘김 → URL 그대로 유지.
-         */
-        if (viewName.startsWith(REDIRECT_PREFIX)) {
-            String redirectPath = viewName.substring(REDIRECT_PREFIX.length());
-            response.sendRedirect(redirectPath);
-        } else {
-            RequestDispatcher dispatcher = request.getRequestDispatcher(viewName);
-            dispatcher.forward(request, response);
-        }
+    private void forward(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("Forwarding to view: {}", viewName);
+        request.getRequestDispatcher(viewName).forward(request, response);
     }
 }
