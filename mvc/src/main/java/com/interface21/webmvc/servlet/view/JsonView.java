@@ -20,6 +20,14 @@ public class JsonView implements View {
         }
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        OBJECT_MAPPER.writeValue(response.getWriter(), model);
+        OBJECT_MAPPER.writeValue(response.getWriter(), getValue(model));
+    }
+
+    private Object getValue(final Map<String, ?> model) {
+        if (model.size() == 1) {
+            return model.values().iterator().next();
+        }
+
+        return model;
     }
 }
