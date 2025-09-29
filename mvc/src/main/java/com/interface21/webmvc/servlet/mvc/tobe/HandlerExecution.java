@@ -8,16 +8,16 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Object handler;
+    private final Object declaredObject;
     private final Method method;
 
-    public HandlerExecution(Object handler, Method method) {
-        this.handler = handler;
+    public HandlerExecution(Object declaredObject, Method method) {
+        this.declaredObject = declaredObject;
         this.method = method;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object result = method.invoke(handler, request, response);
+        Object result = method.invoke(declaredObject, request, response);
 
         if (result instanceof ModelAndView modelAndView) {
             return modelAndView;
