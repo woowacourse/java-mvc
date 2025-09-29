@@ -20,13 +20,23 @@ public class UserController {
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
         final String account = request.getParameter("account");
+        if (account == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new ModelAndView(new JsonView());
+        }
         log.debug("user id : {}", account);
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow(() -> new IllegalArgumentException("account not found"));
 
-        modelAndView.addObject("user", user);
-        return modelAndView;
+        try {
+            final User user = InMemoryUserRepository.findByAccount(account)
+                    .orElseThrow(() -> new IllegalArgumentException("account not found"));
+
+            modelAndView.addObject("user", user);
+            return modelAndView;
+        } catch (IllegalArgumentException exception) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return new ModelAndView(new JsonView());
+        }
     }
 }
