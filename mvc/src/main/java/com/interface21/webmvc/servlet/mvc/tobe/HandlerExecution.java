@@ -7,11 +7,11 @@ import java.lang.reflect.Method;
 
 public class HandlerExecution {
 
-    private final Class<?> clazz;
+    private final Object controller;
     private final Method method;
 
-    public HandlerExecution(final Class<?> clazz, final Method method) {
-        this.clazz = clazz;
+    public HandlerExecution(Object controller, final Method method) {
+        this.controller = controller;
         this.method = method;
     }
 
@@ -19,7 +19,7 @@ public class HandlerExecution {
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ModelAndView modelAndView;
 
-        modelAndView = (ModelAndView) this.method.invoke(this.clazz.newInstance(), request, response);
+        modelAndView = (ModelAndView) this.method.invoke(controller, request, response);
         return modelAndView;
     }
 }
