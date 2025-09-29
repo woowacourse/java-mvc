@@ -1,6 +1,6 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handler.adapter;
+package com.interface21.webmvc.servlet.adapter;
 
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
+import com.interface21.webmvc.servlet.HandlerAdapter;
 import jakarta.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,6 @@ public class HandlerAdapterRegistry {
 
     public HandlerAdapterRegistry() {
         this.handlerAdapters = new ArrayList<>();
-
-        addHandlerAdapter(new ManualHandlerAdapter());
         addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 
