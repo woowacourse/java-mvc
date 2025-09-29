@@ -14,7 +14,7 @@ public abstract class AbstractDispatcherServletInitializer implements WebApplica
     @Override
     public void onStartup(final ServletContext servletContext) {
 
-        final var dispatcherServlet = new DispatcherServlet("com.techcourse");
+        final var dispatcherServlet = new DispatcherServlet(getBasePackage());
 
         dispatcherServlet.init();
 
