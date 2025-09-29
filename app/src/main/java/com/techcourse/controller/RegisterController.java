@@ -1,14 +1,17 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 
-public class RegisterController implements Controller {
+@Controller
+public class RegisterController {
 
-    @Override
+    @RequestMapping("/register")
     public String execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         final var user = new User(2,
                 req.getParameter("account"),

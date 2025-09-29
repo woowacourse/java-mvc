@@ -36,8 +36,7 @@ public class JspView implements View {
             return;
         }
 
-        String jspPath = "/webapp/" + viewName + ".jsp";
-        RequestDispatcher dispatcher = request.getRequestDispatcher(jspPath);
+        RequestDispatcher dispatcher = request.getRequestDispatcher(viewName);
         dispatcher.forward(request, response);
     }
 }
