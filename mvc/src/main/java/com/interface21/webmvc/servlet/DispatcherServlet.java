@@ -1,9 +1,9 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handleradapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.handlermapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handlermapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,12 +24,6 @@ public class DispatcherServlet extends HttpServlet {
         this.handlerAdapterRegistry = new HandlerAdapterRegistry();
     }
 
-    @Override
-    public void init() {
-        handlerMappingRegistry.initialize();
-        handlerAdapterRegistry.initialize();
-    }
-
     public void addHandlerAdapter(HandlerAdapter handlerAdapter) {
         handlerAdapterRegistry.addHandlerAdapter(handlerAdapter);
     }
@@ -46,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             final Object handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow(()-> new RuntimeException("요청에 맞는 Handler를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new RuntimeException("요청에 맞는 Handler를 찾을 수 없습니다."));
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
             final ModelAndView modelAndView = handlerAdapter.handle(handler, request, response);
 
