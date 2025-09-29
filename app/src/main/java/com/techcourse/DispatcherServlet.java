@@ -33,7 +33,6 @@ public class DispatcherServlet extends HttpServlet {
                 new ManualHandlerMapping(),
                 new AnnotationHandlerMapping("com.techcourse.controller")
             ));
-        handlerMappings.forEach(HandlerMapping::initialize);
     }
 
     @Override

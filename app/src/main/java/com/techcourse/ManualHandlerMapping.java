@@ -22,8 +22,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
-    @Override
-    public void initialize() {
+    public ManualHandlerMapping() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
         controllers.put("/login/view", new LoginViewController());
@@ -32,7 +31,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
         log.info("Initialized Handler Mapping!");
         controllers.keySet()
-                .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
+            .forEach(path -> log.info("Path : {}, Controller : {}", path, controllers.get(path).getClass()));
     }
 
     @Override
