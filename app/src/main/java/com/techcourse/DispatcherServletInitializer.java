@@ -18,7 +18,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
 
-        // 핸들러 매핑과 어댑터를 생성하고 주입합니다.
         addHandlers(dispatcherServlet);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
@@ -34,12 +33,9 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     }
 
     private void addHandlers(final DispatcherServlet dispatcherServlet) {
-        // 핸들러 매핑 등록
         final var annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
         annotationHandlerMapping.initialize();
         dispatcherServlet.addHandlerMapping(annotationHandlerMapping);
-
-        // 핸들러 어댑터 등록
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
     }
 }
