@@ -25,8 +25,12 @@ dependencies {
 
     testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'org.mockito:mockito-core:5.19.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.13.4'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.13.4'
+    testImplementation platform('org.junit:junit-bom:5.11.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
 
 test {
@@ -44,4 +48,13 @@ sourceSets {
     main {
         java.destinationDirectory.set(file('src/main/webapp/WEB-INF/classes'))
     }
+}
+
+tasks.register('copyMvcClassesToWebInf', Copy) {
+    from(project(':mvc').sourceSets.main.output)
+    into("$projectDir/src/main/webapp/WEB-INF/classes")
+}
+
+tasks.named('classes') {
+    dependsOn 'copyMvcClassesToWebInf'
 }
