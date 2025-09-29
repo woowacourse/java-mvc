@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -9,10 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +29,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerMappings = new ArrayList<>();
-        handlerMappings.add(new ManualHandlerMapping());
         handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
 
         handlerAdapters = new ArrayList<>();
-        handlerAdapters.add(new ControllerHandlerAdapter());
         handlerAdapters.add(new HandlerExecutionAdapter());
 
         for (HandlerMapping mapping : handlerMappings) {
@@ -88,8 +84,13 @@ public class DispatcherServlet extends HttpServlet {
             return;
         }
 
-        String viewName = modelAndView.getViewName();
-        JspView view = new JspView(viewName);
-        view.render(modelAndView.getModel(), request, response);
+        View view = modelAndView.getView();
+        if (view != null) {
+            view.render(modelAndView.getModel(), request, response);
+        } else {
+            String viewName = modelAndView.getViewName();
+            JspView jspView = new JspView(viewName);
+            jspView.render(modelAndView.getModel(), request, response);
+        }
     }
 }
