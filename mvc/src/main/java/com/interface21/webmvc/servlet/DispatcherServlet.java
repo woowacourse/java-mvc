@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,11 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.handleradapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.handleradapter.HandlerExecutionAdapter;
 import com.interface21.webmvc.servlet.mvc.handlermapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.handlermapping.HandlerMapping;
+import com.interface21.webmvc.servlet.view.View;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
