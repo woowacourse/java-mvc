@@ -46,3 +46,13 @@ sourceSets {
         java.destinationDirectory.set(file('src/main/webapp/WEB-INF/classes'))
     }
 }
+
+tasks.register('copyMvcJar', Copy) {
+    dependsOn(':mvc:jar')
+    from(project(':mvc').tasks.named('jar').flatMap { it.archiveFile })
+    into("${projectDir}/src/main/webapp/WEB-INF/lib")
+}
+
+tasks.named('classes') {
+    dependsOn('copyMvcJar')
+}
