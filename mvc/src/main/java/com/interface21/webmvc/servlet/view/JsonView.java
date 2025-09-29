@@ -27,5 +27,5 @@ public class JsonView implements View {
             return;
         }
             response.getWriter().write(objectMapper.writeValueAsString(model));
-    };
+    }
 }
