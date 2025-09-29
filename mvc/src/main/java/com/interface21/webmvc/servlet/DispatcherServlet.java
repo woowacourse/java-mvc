@@ -1,13 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.SimpleControllerHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +28,9 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         // 1) 레거시 매핑
-        ManualHandlerMapping manual = new ManualHandlerMapping();
-        manual.initialize();
-        handlerMappings.add(manual);
+//        ManualHandlerMapping manual = new ManualHandlerMapping();
+//        manual.initialize();
+//        handlerMappings.add(manual);
 
         // 2) 어노테이션 매핑
         AnnotationHandlerMapping anno = new AnnotationHandlerMapping("com.techcourse.controller");
@@ -41,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         handlerMappings.add(anno);
 
         // 3) 어댑터 등록
-        handlerAdapters.add(new SimpleControllerHandlerAdapter());
+//        handlerAdapters.add(new SimpleControllerHandlerAdapter());
         handlerAdapters.add(new HandlerExecutionHandlerAdapter());
     }
 
