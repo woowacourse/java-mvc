@@ -33,7 +33,7 @@ public class LoginController{
             log.info("로그인 완료된 상태입니다.");
             return new ModelAndView(new JspView("redirect:/index.jsp"));
         }
-        User user = InMemoryUserRepository.findByAccount(req.getParameter("password"))
+        User user = InMemoryUserRepository.findByAccount(req.getParameter("account"))
                 .orElse(null);
         return login(req,user);
     }
