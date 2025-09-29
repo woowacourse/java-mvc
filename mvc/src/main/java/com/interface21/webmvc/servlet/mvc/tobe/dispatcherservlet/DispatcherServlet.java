@@ -23,6 +23,7 @@ public class DispatcherServlet extends HttpServlet {
                              final HandlerAdapterRegistry handlerAdapterRegistry) {
         this.handlerMappingRegistry = handlerMappingRegistry;
         this.handlerAdapterRegistry = handlerAdapterRegistry;
+        log.info("DispatcherServlet 생성");
     }
 
     @Override
@@ -30,25 +31,18 @@ public class DispatcherServlet extends HttpServlet {
         try {
             final HandlerMapping handlerMapping = handlerMappingRegistry.getHandlerMapping(request);
             final Object handler = handlerMapping.getHandler(request);
+            log.info(String.format("%s %s 요청에 대한 handler 찾기 성공: %s", request.getRequestURI(), request.getMethod(),
+                    handler.getClass().getSimpleName()));
 
             final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+            log.info(String.format("%s %s 요청에 대한 adapter 찾기 성공: %s", request.getRequestURI(), request.getMethod(),
+                    handlerAdapter.getClass().getSimpleName()));
             final ModelAndView mav = handlerAdapter.handle(handler, request, response);
 
-            render(mav, request, response);
+            mav.render(request, response);
         } catch (Exception e) {
             throw new IllegalStateException(
                     String.format("%s %s 요청에 대한 핸들러를 처리하는데 실패했습니다.", request.getRequestURI(), request.getMethod()));
-        }
-    }
-
-    private void render(final ModelAndView modelAndView, final HttpServletRequest request,
-                        final HttpServletResponse response) {
-        try {
-            modelAndView.getView().render(modelAndView.getModel(), request, response);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    String.format("%s %s 요청에 대한 응답을 렌더링하는데 실패했습니다.", request.getRequestURI(),
-                            request.getMethod()));
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.interface21.webmvc.servlet;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,13 @@ public class ModelAndView {
         return Collections.unmodifiableMap(model);
     }
 
-    public View getView() {
-        return view;
+    public void render(final HttpServletRequest request, final HttpServletResponse response) {
+        try {
+            view.render(model, request, response);
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                    String.format("%s %s 요청에 대한 응답을 렌더링하는데 실패했습니다.", request.getRequestURI(),
+                            request.getMethod()));
+        }
     }
 }
