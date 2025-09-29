@@ -18,7 +18,7 @@ public class HandlerAdapterRegistry {
         this.handlerAdapters.add(handlerAdapter);
     }
 
-    public HandlerAdapter getHandlerAdapter(Object handler, HttpServletRequest request, HttpServletResponse response) {
+    public HandlerAdapter getHandlerAdapter(Object handler) {
         for (HandlerAdapter handlerAdapter : handlerAdapters) {
             if (handlerAdapter.supports(handler)) {
                 return handlerAdapter;
