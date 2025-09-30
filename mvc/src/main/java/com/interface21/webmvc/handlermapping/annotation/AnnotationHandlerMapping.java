@@ -22,10 +22,12 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     public AnnotationHandlerMapping(final String... basePackage) {
         this.basePackage = basePackage;
         this.controllerScanner = new ControllerScanner(basePackage);
-        this.handlerExecutions = new HashMap<>();
+        this.handlerExecutions = initializeHandlers();
     }
 
-    public void initialize() {
+    private Map<HandlerKey, HandlerExecution> initializeHandlers() {
+        Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+
         for (String bp : basePackage) {
             Set<Class<?>> controllerTypes = controllerScanner.getControllerTypes(bp);
 
@@ -53,6 +55,7 @@ public class AnnotationHandlerMapping implements HandlerMapping{
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
+        return handlerExecutions;
     }
 
     @Override
