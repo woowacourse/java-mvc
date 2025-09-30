@@ -15,47 +15,51 @@ public class AnnotationHandlerMapping implements HandlerMapping{
 
     private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
 
-    private final String[] basePackage;
     private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final String... basePackage) {
-        this.basePackage = basePackage;
-        this.controllerScanner = new ControllerScanner(basePackage);
+    public AnnotationHandlerMapping(final ControllerScanner controllerScanner) {
+        this.controllerScanner = controllerScanner;
         this.handlerExecutions = initializeHandlers();
     }
 
     private Map<HandlerKey, HandlerExecution> initializeHandlers() {
         Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
-        for (String bp : basePackage) {
-            Set<Class<?>> controllerTypes = controllerScanner.getControllerTypes(bp);
+        List<Class<?>> controllerTypes = controllerScanner.getAllControllerTypes();
 
-            for (Class<?> controllerType : controllerTypes) {
-                Object controller = controllerScanner.getControllerInstance(controllerType);
+        for (Class<?> controllerType : controllerTypes) {
+            Object controllerInstance = createControllerInstance(controllerType);
 
-                List<Method> methods = ReflectionUtils.getAllMethods(controllerType, RequestMapping.class);
+            List<Method> methods = ReflectionUtils.getAllMethods(controllerType, RequestMapping.class);
 
-                methods.forEach(
-                        method -> {
-                            if (method.isAnnotationPresent(RequestMapping.class)) {
-                                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                                HandlerExecution handlerExecution = new HandlerExecution(controller, method);
+            methods.forEach(
+                    method -> {
+                        if (method.isAnnotationPresent(RequestMapping.class)) {
+                            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                            HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
 
-                                for (RequestMethod requestMethod : requestMapping.method()) {
-                                    handlerExecutions.put(
-                                            new HandlerKey(requestMapping.value(), requestMethod),
-                                            handlerExecution
-                                    );
-                                }
+                            for (RequestMethod requestMethod : requestMapping.method()) {
+                                handlerExecutions.put(
+                                        new HandlerKey(requestMapping.value(), requestMethod),
+                                        handlerExecution
+                                );
                             }
                         }
-                );
-            }
+                    }
+            );
         }
 
         log.info("Initialized AnnotationHandlerMapping!");
         return handlerExecutions;
+    }
+
+    private Object createControllerInstance(final Class<?> controllerType) {
+        try {
+            return controllerType.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 
     @Override

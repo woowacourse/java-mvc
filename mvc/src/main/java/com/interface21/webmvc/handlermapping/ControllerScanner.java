@@ -4,12 +4,11 @@ import com.interface21.context.stereotype.Controller;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ControllerScanner {
 
+    private final String[] basePackages;
     private final Map<String, Reflections> reflections;
 
     public ControllerScanner(final String... basePackage) {
@@ -19,18 +18,22 @@ public class ControllerScanner {
         }
 
         this.reflections = reflections;
+        this.basePackages = basePackage;
     }
 
-    public Set<Class<?>> getControllerTypes(String basePackage) {
+    public List<Class<?>> getAllControllerTypes() {
+        List<Class<?>> controllerTypes = new ArrayList<>();
+
+        for (String bp : basePackages) {
+            Set<Class<?>> controllerTypesByBasePackage = findControllerTypes(bp);
+            controllerTypes.addAll(controllerTypesByBasePackage);
+        }
+
+        return controllerTypes;
+    }
+
+    private Set<Class<?>> findControllerTypes(final String basePackage) {
         Reflections reflections = this.reflections.get(basePackage);
         return reflections.getTypesAnnotatedWith(Controller.class);
-    }
-
-    public Object getControllerInstance(Class<?> controllerType) {
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
     }
 }

@@ -3,6 +3,7 @@ package com.interface21.webmvc.servlet;
 import com.interface21.webmvc.handleradapter.AnnotationHandlerAdapter;
 import com.interface21.webmvc.handleradapter.HandlerAdapter;
 import com.interface21.webmvc.handleradapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.handlermapping.ControllerScanner;
 import com.interface21.webmvc.handlermapping.HandlerMappingRegistry;
 import com.interface21.webmvc.handlermapping.annotation.AnnotationHandlerMapping;
 import com.interface21.webmvc.handlermapping.annotation.HandlerMapping;
@@ -34,7 +35,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(RESOURCES_BASE_PACKAGE);
+        ControllerScanner controllerScanner = new ControllerScanner(RESOURCES_BASE_PACKAGE);
+        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
         HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
 
         handlerMappings.addMapping(annotationHandlerMapping);
