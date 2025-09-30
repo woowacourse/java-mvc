@@ -16,7 +16,7 @@ public class HandlerMappingRegistry {
 
     public Optional<Object> getHandler(final HttpServletRequest request) {
         for (final HandlerMapping handlerMapping : handlerMappings) {
-            Object handler = handlerMapping.getHandler(request);
+            final Object handler = handlerMapping.getHandler(request);
             if (handler != null) {
                 return Optional.of(handler);
             }
