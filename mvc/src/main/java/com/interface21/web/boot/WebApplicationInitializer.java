@@ -1,4 +1,4 @@
-package com.interface21.web;
+package com.interface21.web.boot;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;

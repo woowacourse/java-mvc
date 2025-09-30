@@ -1,20 +1,20 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.AnnotationHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMappingRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation.HandlerMapping;
+import com.interface21.webmvc.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.handleradapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.handlermapping.HandlerMappingRegistry;
+import com.interface21.webmvc.handlermapping.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.handlermapping.annotation.HandlerMapping;
+import com.interface21.webmvc.view.ModelAndView;
+import com.interface21.webmvc.view.View;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.webmvc.servlet.view.JspView;
+import com.interface21.webmvc.view.JspView;
 
 import java.util.Map;
 

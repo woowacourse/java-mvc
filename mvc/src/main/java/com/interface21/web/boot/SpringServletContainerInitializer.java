@@ -1,4 +1,4 @@
-package com.interface21.web;
+package com.interface21.web.boot;
 
 import com.interface21.core.util.ReflectionUtils;
 import jakarta.servlet.ServletContainerInitializer;

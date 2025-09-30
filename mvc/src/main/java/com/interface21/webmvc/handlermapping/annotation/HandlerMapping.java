@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation;
+package com.interface21.webmvc.handlermapping.annotation;
 
 import jakarta.servlet.http.HttpServletRequest;
 

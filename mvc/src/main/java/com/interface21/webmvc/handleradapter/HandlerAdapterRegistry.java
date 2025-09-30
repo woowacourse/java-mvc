@@ -1,7 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handleradapter;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+package com.interface21.webmvc.handleradapter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,9 @@
-package com.interface21.webmvc.servlet.mvc.tobe.handlermapping.annotation;
+package com.interface21.webmvc.handlermapping.annotation;
 
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.ControllerScanner;
+import com.interface21.webmvc.handlermapping.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
