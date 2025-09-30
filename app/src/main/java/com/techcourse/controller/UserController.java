@@ -23,17 +23,17 @@ public class UserController {
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
 
         if (!isValidRequest(request)) {
-            return new ModelAndView(new JspView("redirect:/401.jsp"));
+            return new ModelAndView(new JspView("redirect:/404.jsp"));
         }
 
         final Optional<User> user = findUser(request);
 
         if (user.isEmpty()) {
-            return new ModelAndView(new JspView("redirect:/401.jsp"));
+            return new ModelAndView(new JspView("redirect:/404.jsp"));
         }
 
         final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        modelAndView.addObject("user", user);
+        modelAndView.addObject("user", user.get());
         return modelAndView;
     }
 

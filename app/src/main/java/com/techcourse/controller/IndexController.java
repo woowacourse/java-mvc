@@ -14,7 +14,7 @@ public class IndexController {
     private static final String INDEX_PATH = "/index.jsp";
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) {
+    public ModelAndView show(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView(new JspView(INDEX_PATH));
     }
 }

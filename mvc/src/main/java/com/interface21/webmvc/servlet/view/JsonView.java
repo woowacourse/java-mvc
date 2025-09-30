@@ -26,7 +26,8 @@ public class JsonView implements View {
 
         try (PrintWriter writer = response.getWriter()) {
             if (model.size() == 1) {
-                writer.print(model); // 근데 이렇게 쓰면 알아서 json이 되나??
+                Object next = model.values().iterator().next();
+                writer.print(next);
                 return;
             }
 
