@@ -1,12 +1,14 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
-import com.interface21.context.stereotype.Controller;
 import com.interface21.core.util.ReflectionUtils;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -27,40 +29,48 @@ public class AnnotationHandlerMapping {
     public void initialize() {
         log.info("=== AnnotationHandlerMapping initialize start ===");
 
-        // 1. basePackage 패키지 속 @Controller 어노테이션을 가진 클래스 탐색
-        final Set<Class<?>> controllerClasses = ReflectionUtils.getTypesAnnotatedWith(basePackage, Controller.class);
+        // @Controller 어노테이션이 붙은 클래스 가져오기
+        final ControllerScanner controllerScanner = new ControllerScanner(basePackage);
+        final Map<Class<?>, Object> controllers = controllerScanner.getControllers();
 
-        // 2. 컨트롤러 어노테이션을 가진 클래스를 handlerExecutions에 등록
-        for (final Class<?> controllerClazz : controllerClasses) {
-            try {
-                final Object controllerInstance = controllerClazz.getDeclaredConstructor().newInstance();
-                final Method[] methods = controllerClazz.getDeclaredMethods();
-                for (final Method method : methods) {
-                    if (!method.isAnnotationPresent(RequestMapping.class)) {
-                        continue;
-                    }
+        // @RequestMapping 어노테이션을 가진 메서드 가져오기
+        final Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
+        for (final Method method : requestMappingMethods) {
+            // RequestMapping 속성 값 추출
+            final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            final String url = requestMapping.value();
+            final RequestMethod[] requestMethods = requestMapping.method();
 
-                    // 3. @RequestMapping 어노테이션이 붙은 자바 메서드만 처리
-                    final RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                    final String url = requestMapping.value();
-                    RequestMethod[] httpMethods = requestMapping.method();
-                    if (requestMapping.method().length == 0) {
-                        httpMethods = RequestMethod.values();
-                    }
-                    for (final RequestMethod httpMethod : httpMethods) {
-                        final HandlerKey handlerKey = new HandlerKey(url, httpMethod);
-                        final HandlerExecution handlerExecution = new HandlerExecution(controllerInstance, method);
-                        handlerExecutions.put(handlerKey, handlerExecution);
-
-                        log.info("Registered HandlerExecution: HTTP Method={}, URL={}, Controller={}.{}",
-                                httpMethod, url, controllerClazz.getSimpleName(), method.getName());
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Failed to initialize controller: {}", controllerClazz.getName(), e);
+            // RequestMapping 속성 값으로 HandlerKey 리스트 생성 후 handlerExecutions 매핑 처리
+            final List<HandlerKey> handlerKeys = mapHandlerKeys(url, requestMethods);
+            final HandlerExecution handlerExecution = new HandlerExecution(controllers.get(method.getDeclaringClass()),
+                    method);
+            for (final HandlerKey handlerKey : handlerKeys) {
+                handlerExecutions.put(handlerKey, handlerExecution);
             }
         }
         log.info("=== AnnotationHandlerMapping initialize end ===");
+    }
+
+    private List<HandlerKey> mapHandlerKeys(final String url, final RequestMethod[] requestMethods) {
+        List<RequestMethod> targetRequestMethods = List.of(requestMethods);
+        if (targetRequestMethods.isEmpty()) {
+            targetRequestMethods = List.of(RequestMethod.values());
+        }
+
+        final List<HandlerKey> handlerKeys = new ArrayList<>();
+        for (final RequestMethod requestMethod : targetRequestMethods) {
+            handlerKeys.add(new HandlerKey(url, requestMethod));
+        }
+        return handlerKeys;
+    }
+
+    private Set<Method> getRequestMappingMethods(final Set<Class<?>> controllerClasses) {
+        final Set<Method> methods = new HashSet<>();
+        for (final Class<?> controllerClazz : controllerClasses) {
+            methods.addAll(ReflectionUtils.getMethodsAnnotatedWith(controllerClazz, RequestMapping.class));
+        }
+        return methods;
     }
 
     public Object getHandler(final HttpServletRequest request) {
