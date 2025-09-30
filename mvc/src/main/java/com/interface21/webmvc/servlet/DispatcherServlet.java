@@ -1,12 +1,10 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.ControllerHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,16 +12,26 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
+    private static final String BASE_PACKAGES_PARAM = "basePackages";
 
+    private final String[] basePackages;
     private List<HandlerMapping> handlerMappings;
     private List<HandlerAdapter> handlerAdapters;
+
+    public DispatcherServlet(final String... basePackages) {
+        this.basePackages = basePackages == null ? new String[0] : basePackages.clone();
+    }
+
+    public DispatcherServlet() {
+        this.basePackages = new String[0];
+    }
 
     @Override
     public void init() {
@@ -32,22 +40,17 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerMappings() {
-        handlerMappings = new ArrayList<>();
+        final String[] packages = resolveBasePackages();
 
-        final ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerMappings.add(manualHandlerMapping);
-
-        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        final AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(packages);
         annotationHandlerMapping.initialize();
-        handlerMappings.add(annotationHandlerMapping);
+        handlerMappings = List.of(annotationHandlerMapping);
+
+        log.info("Initialized DispatcherServlet with base packages: {}", String.join(", ", packages));
     }
 
     private void initHandlerAdapters() {
-        handlerAdapters = List.of(
-                new ControllerHandlerAdapter(),
-                new HandlerExecutionHandlerAdapter()
-        );
+        handlerAdapters = List.of(new HandlerExecutionHandlerAdapter());
     }
 
     @Override
@@ -107,5 +110,26 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         view.render(modelAndView.getModel(), request, response);
+    }
+
+    private String[] resolveBasePackages() {
+        if (basePackages.length > 0) {
+            return basePackages.clone();
+        }
+
+        final ServletConfig servletConfig = getServletConfig();
+        if (servletConfig == null) {
+            return new String[0];
+        }
+
+        final String initParameter = servletConfig.getInitParameter(BASE_PACKAGES_PARAM);
+        if (initParameter == null || initParameter.isBlank()) {
+            return new String[0];
+        }
+
+        return Stream.of(initParameter.split(","))
+                .map(String::trim)
+                .filter(part -> !part.isEmpty())
+                .toArray(String[]::new);
     }
 }
