@@ -5,10 +5,12 @@ import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.view.JsonView;
+import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +21,30 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) {
+
+        if (!isValidRequest(request)) {
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
+        }
+
+        final Optional<User> user = findUser(request);
+
+        if (user.isEmpty()) {
+            return new ModelAndView(new JspView("redirect:/401.jsp"));
+        }
+
+        final ModelAndView modelAndView = new ModelAndView(new JsonView());
+        modelAndView.addObject("user", user);
+        return modelAndView;
+    }
+
+    private boolean isValidRequest(HttpServletRequest request) {
+        return request.getParameter("account") != null;
+    }
+
+    private Optional<User> findUser(HttpServletRequest request) {
         final String account = request.getParameter("account");
         log.info("user id : {}", account);
 
-        final ModelAndView modelAndView = new ModelAndView(new JsonView());
-        final User user = InMemoryUserRepository.findByAccount(account)
-                .orElseThrow();
-
-        modelAndView.addObject("user", user);
-        return modelAndView;
+        return InMemoryUserRepository.findByAccount(account);
     }
 }
