@@ -12,12 +12,11 @@ import java.util.Map;
 public class JspView implements View {
 
     public static final String REDIRECT_PREFIX = "redirect:";
-    public static final String BASE_PATH = "/webapp/";
     private static final Logger log = LoggerFactory.getLogger(JspView.class);
     private final String viewName;
 
     public JspView(final String viewName) {
-        this.viewName = viewName + ".jsp";
+        this.viewName = viewName;
     }
 
     @Override
@@ -37,8 +36,7 @@ public class JspView implements View {
             return;
         }
 
-        String actualPath = BASE_PATH + viewName;
-        RequestDispatcher dispatcher = request.getRequestDispatcher(actualPath);
+        RequestDispatcher dispatcher = request.getRequestDispatcher(viewName);
         dispatcher.forward(request, response);
     }
 }
