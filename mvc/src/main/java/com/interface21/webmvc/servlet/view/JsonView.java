@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JsonView implements View {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @Override
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        String json = new ObjectMapper().writeValueAsString(model);
+        String json = OBJECT_MAPPER.writeValueAsString(model);
         response.getWriter().write(json);
     }
 }
