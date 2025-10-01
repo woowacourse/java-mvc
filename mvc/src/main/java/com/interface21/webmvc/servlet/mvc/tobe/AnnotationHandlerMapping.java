@@ -37,7 +37,7 @@ public class AnnotationHandlerMapping implements HandlerSelector {
         log.info("Initialized AnnotationHandlerMapping!");
     }
 
-    public HandlerExecutions getHandlerExecutions(Object basePackage) throws Exception {
+    private HandlerExecutions getHandlerExecutions(Object basePackage) throws Exception {
         HandlerExecutions handlerExecutions = HandlerExecutions.empty();
         Set<Class<?>> controllerClasses = new Reflections(basePackage).getTypesAnnotatedWith(Controller.class);
 
