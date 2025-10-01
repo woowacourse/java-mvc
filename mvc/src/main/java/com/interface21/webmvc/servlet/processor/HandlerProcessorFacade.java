@@ -12,7 +12,7 @@ public class HandlerProcessorFacade {
     private final List<HandlerProcessor> handlerProcessor = new ArrayList<>();
 
     public HandlerProcessorFacade() {
-        handlerProcessor.add(new ManualHandlerProcessor());
+//        handlerProcessor.add(new ManualHandlerProcessor());
         handlerProcessor.add(new HandlerExecutionProcessor());
     }
 

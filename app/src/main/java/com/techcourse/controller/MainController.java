@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class RegisterViewController {
+public class MainController {
 
-    @RequestMapping(value = "/register/view", method = RequestMethod.GET)
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        return new ModelAndView(new JspView("/register.jsp"));
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse res) {
+        return new ModelAndView(new JspView("index.jsp"));
     }
 }

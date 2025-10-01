@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.web;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.mvc.HandlerSelector;
@@ -22,17 +22,15 @@ public class DispatcherServlet extends HttpServlet {
 
     private final List<HandlerSelector> handlerSelectors = new ArrayList<>();
     private final HandlerProcessorFacade handlerProcessorFacade = new HandlerProcessorFacade();
+    private final String basePackage;
 
-    public DispatcherServlet() {
+    public DispatcherServlet(String basePackage) {
+        this.basePackage = basePackage;
     }
 
     @Override
     public void init() {
-        ManualHandlerMapping manualHandlerMapping = new ManualHandlerMapping();
-        manualHandlerMapping.initialize();
-        handlerSelectors.add(manualHandlerMapping);
-        AnnotationHandlerMapping annotationHandlerMapping =
-                new AnnotationHandlerMapping(this.getClass().getPackageName());
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
         annotationHandlerMapping.initialize();
         handlerSelectors.add(annotationHandlerMapping);
     }
