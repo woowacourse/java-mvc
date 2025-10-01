@@ -28,25 +28,25 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMappings.addAll(
-            List.of(
-                new ManualHandlerMapping(),
-                new AnnotationHandlerMapping("com.techcourse.controller")
-            ));
+        handlerMappings.add(new AnnotationHandlerMapping("com.techcourse.controller"));
     }
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws
+        ServletException {
         log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
             ModelAndView mav = null;
-            for(HandlerMapping handlerMapping : handlerMappings) {
+            for (HandlerMapping handlerMapping : handlerMappings) {
                 final var handler = handlerMapping.getHandler(request);
                 if (handler != null) {
                     mav = handlerAdapter.handle(request, response, handler);
                     break;
                 }
+            }
+            if (mav == null) {
+                throw new IllegalArgumentException("No handler found for request URI : " + request.getRequestURI());
             }
             mav.getView().render(mav.getModel(), request, response);
         } catch (Throwable e) {
