@@ -1,9 +1,7 @@
-package com.interface21.web;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.HandlerSelector;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.processor.HandlerProcessorFacade;
+import com.interface21.webmvc.servlet.handler.HandlerContainerFacade;
+import com.interface21.webmvc.servlet.handler.HandlerProcessorFacade;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,28 +9,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
-    private final List<HandlerSelector> handlerSelectors = new ArrayList<>();
-    private final HandlerProcessorFacade handlerProcessorFacade = new HandlerProcessorFacade();
-    private final String basePackage;
+    private final HandlerContainerFacade handlerContainerFacade;
+    private final HandlerProcessorFacade handlerProcessorFacade;
 
     public DispatcherServlet(String basePackage) {
-        this.basePackage = basePackage;
+        this.handlerContainerFacade = new HandlerContainerFacade(basePackage);
+        this.handlerProcessorFacade = new HandlerProcessorFacade();
     }
 
     @Override
     public void init() {
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(basePackage);
-        annotationHandlerMapping.initialize();
-        handlerSelectors.add(annotationHandlerMapping);
+        log.info("DispatcherServlet initialized");
     }
 
     @Override
@@ -41,12 +33,7 @@ public class DispatcherServlet extends HttpServlet {
         final String requestURI = request.getRequestURI();
         log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
         try {
-            Object handler = handlerSelectors.stream()
-                    .map(mapping -> mapping.getHandler(request))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow(() -> new ServletException("Handler Not Found!"));
-
+            Object handler = handlerContainerFacade.getHandler(request);
             ModelAndView modelAndView = handlerProcessorFacade.process(handler, request, response);
             modelAndView.getView().render(modelAndView.getModel(), request, response);
         } catch (Exception e) {

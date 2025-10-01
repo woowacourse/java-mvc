@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.processor;
+package com.interface21.webmvc.servlet.handler;
 
 import com.interface21.webmvc.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
