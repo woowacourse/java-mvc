@@ -20,12 +20,11 @@ public class JsonView implements View {
         try (PrintWriter writer = response.getWriter()) {
             if (model.size() == 1) {
                 Object next = model.values().iterator().next();
-                writer.print(next);
+                mapper.writeValue(writer, next);
                 return;
             }
 
-            String json = mapper.writeValueAsString(model);
-            writer.print(json);
+            mapper.writeValue(writer, model);
         }
     }
 }
