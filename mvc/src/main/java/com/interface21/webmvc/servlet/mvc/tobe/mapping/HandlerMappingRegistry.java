@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class HandlerMappingRegistry {
@@ -13,6 +12,7 @@ public class HandlerMappingRegistry {
     List<HandlerMapping> handlerMappings = new ArrayList<>();
 
     public void addHandlerMapping(HandlerMapping handlerMapping) {
+        handlerMapping.initialize();
         handlerMappings.add(handlerMapping);
         handlerMappings.sort(Comparator.comparingInt(HandlerMapping::getOrder));
     }

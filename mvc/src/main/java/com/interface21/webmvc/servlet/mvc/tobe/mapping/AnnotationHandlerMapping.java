@@ -6,14 +6,16 @@ import com.interface21.webmvc.servlet.mvc.tobe.util.ControllerScanner;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.reflections.ReflectionUtils;
-
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class AnnotationHandlerMapping implements HandlerMapping {
 
+    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
     private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
 
@@ -23,6 +25,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public void initialize() {
+        log.info("스캔시작");
         ControllerScanner scanner = new ControllerScanner(basePackage);
         Map<Class<?>, Object> controllers = scanner.getControllers();
         registerControllers(controllers);
@@ -57,6 +60,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     private void registerHandlerMethods(Object controllerInstance, Set<Method> methods) {
         for (Method method : methods) {
+            log.info("메서드 등록 {}", method);
             registerHandlerMethod(controllerInstance, method);
         }
     }
