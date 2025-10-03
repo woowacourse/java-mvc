@@ -2,22 +2,27 @@ package com.interface21.core.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.Set;
-import org.reflections.Reflections;
 
 public abstract class ReflectionUtils {
 
     /**
-     * 지정된 패키지들에서 특정 어노테이션이 붙은 클래스들을 찾아 반환함.
+     * 지정된 클래스에서 특정 어노테이션이 붙은 메서드들을 찾아 반환함.
      */
-    public static Set<Class<?>> getTypesAnnotatedWith(
-            final Object[] packageNames,
+    public static Set<Method> getMethodsAnnotatedWith(
+            final Class<?> clazz,
             final Class<? extends Annotation> annotation
     ) {
-        // Reflections 객체를 생성하고 탐색할 패키지를 지정합니다.
-        final Reflections reflections = new Reflections(packageNames);
-        return reflections.getTypesAnnotatedWith(annotation);
+        final Set<Method> methods = new HashSet<>();
+        for (final Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(annotation)) {
+                methods.add(method);
+            }
+        }
+        return methods;
     }
 
     /**
