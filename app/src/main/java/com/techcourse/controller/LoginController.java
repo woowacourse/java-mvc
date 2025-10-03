@@ -16,7 +16,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String login(@RequestParam String account, @RequestParam String password, HttpServletRequest request) {
+    public String login(@RequestParam("account") String account, @RequestParam("password") String password, HttpServletRequest request) {
         if (UserSession.isLoggedIn(request.getSession())) {
             return "redirect:/index.jsp";
         }
