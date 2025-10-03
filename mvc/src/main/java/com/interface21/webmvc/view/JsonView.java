@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Map;
 
 public class JsonView implements View {
@@ -16,21 +17,19 @@ public class JsonView implements View {
     public void render(final Map<String, ?> model, final HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
-        for (String modelName : model.keySet()) {
-            Object modelValue = model.get(modelName);
-            Class<?> modelClass = modelValue.getClass();
+        Object body = getBody(model);
 
-            Field[] fields = modelClass.getFields();
-
-            String output = serialize(fields, modelValue);
-            response.getWriter().write(output);
-        }
+        String jsonBody = objectMapper.writeValueAsString(body);
+        response.getWriter().write(jsonBody);
     }
 
-    private String serialize(Field[] fields, Object modelValue) throws Exception {
-        if (fields.length == 1) {
-            return (String) fields[0].get(modelValue);
+    private Object getBody(final Map<String, ?> model) {
+        if (model == null || model.isEmpty()) {
+            return Collections.emptyMap();
         }
-        return objectMapper.writeValueAsString(modelValue);
+        if (model.size() == 1) {
+            return model.values().iterator().next();
+        }
+        return model;
     }
 }
