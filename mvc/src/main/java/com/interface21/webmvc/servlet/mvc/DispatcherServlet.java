@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.ControllerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handleradapter.HandlerExecutionAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.handlermapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handleradapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.handleradapter.HandlerExecutionAdapter;
+import com.interface21.webmvc.servlet.mvc.handlermapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.handlermapping.HandlerMapping;
+import com.interface21.webmvc.servlet.view.View;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -39,7 +38,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerMapping() {
         handlerMappings = List.of(
-            new ManualHandlerMapping(),
             new AnnotationHandlerMapping("com.techcourse.controller")
         );
 
@@ -50,7 +48,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void initHandlerAdapter() {
         handlerAdapters = List.of(
-            new ControllerAdapter(),
             new HandlerExecutionAdapter()
         );
     }

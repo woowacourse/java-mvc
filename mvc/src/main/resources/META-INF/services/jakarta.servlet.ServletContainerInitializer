@@ -1,1 +1,2 @@
 com.interface21.web.SpringServletContainerInitializer
+com.interface21.webmvc.servlet.mvc.DispatcherServletInitializer

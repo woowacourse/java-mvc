@@ -1,4 +1,4 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.web.bind.annotation.RequestMethod;
 
@@ -12,6 +12,14 @@ public class HandlerKey {
     public HandlerKey(final String url, final RequestMethod requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public RequestMethod getRequestMethod() {
+        return requestMethod;
     }
 
     @Override
