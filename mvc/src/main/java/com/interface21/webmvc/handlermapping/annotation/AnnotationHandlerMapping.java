@@ -18,8 +18,8 @@ public class AnnotationHandlerMapping implements HandlerMapping{
     private final ControllerScanner controllerScanner;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions;
 
-    public AnnotationHandlerMapping(final ControllerScanner controllerScanner) {
-        this.controllerScanner = controllerScanner;
+    public AnnotationHandlerMapping(final String... basePackages) {
+        this.controllerScanner = new ControllerScanner(basePackages);
         this.handlerExecutions = initializeHandlers();
     }
 

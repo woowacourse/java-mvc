@@ -1,6 +1,8 @@
 package com.techcourse;
 
 import com.interface21.web.boot.WebApplicationInitializer;
+import com.interface21.webmvc.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.handlermapping.annotation.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.DispatcherServlet;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
@@ -15,10 +17,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
+    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = setDispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -30,5 +33,15 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet setDispatcherServlet() {
+        final var dispatcherServlet = new DispatcherServlet();
+
+        dispatcherServlet.init();
+
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE));
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        return dispatcherServlet;
     }
 }

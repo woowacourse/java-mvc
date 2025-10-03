@@ -23,10 +23,9 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
-    public static final String RESOURCES_BASE_PACKAGE = "com.techcourse";
 
-    private final HandlerMappingRegistry handlerMappings;
-    private final HandlerAdapterRegistry handlerAdapters;
+    private HandlerMappingRegistry handlerMappings;
+    private HandlerAdapterRegistry handlerAdapters;
 
     public DispatcherServlet() {
         this.handlerMappings = new HandlerMappingRegistry();
@@ -35,12 +34,20 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        ControllerScanner controllerScanner = new ControllerScanner(RESOURCES_BASE_PACKAGE);
-        HandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(controllerScanner);
-        HandlerAdapter annotationHandlerAdapter = new AnnotationHandlerAdapter();
+        if (handlerMappings == null) {
+            this.handlerMappings = new HandlerMappingRegistry();
+        }
+        if (handlerAdapters == null) {
+            this.handlerAdapters = new HandlerAdapterRegistry();
+        }
+    }
 
-        handlerMappings.addMapping(annotationHandlerMapping);
-        handlerAdapters.addAdapter(annotationHandlerAdapter);
+    public void addHandlerMapping(final HandlerMapping handlerMapping) {
+        handlerMappings.addMapping(handlerMapping);
+    }
+
+    public void addHandlerAdapter(final HandlerAdapter handlerAdapter) {
+        handlerAdapters.addAdapter(handlerAdapter);
     }
 
     @Override
@@ -68,12 +75,6 @@ public class DispatcherServlet extends HttpServlet {
 
     private void move(final ModelAndView modelAndView, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         View view = modelAndView.getView();
-        String viewName = view.getViewName();
-
-        if (viewName.startsWith(JspView.REDIRECT_PREFIX)) {
-            response.sendRedirect(viewName.substring(JspView.REDIRECT_PREFIX.length()));
-            return;
-        }
 
         Map<String, Object> model = modelAndView.getModel();
         view.render(model, request, response);
