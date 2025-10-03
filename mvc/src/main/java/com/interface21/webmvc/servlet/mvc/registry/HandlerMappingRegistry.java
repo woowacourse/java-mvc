@@ -1,15 +1,15 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc.registry;
 
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerMappingRegistry {
 
-    private final List<HandlerMapping> handlerMappings = new ArrayList<>();
+    private final List<HandlerMapping> handlerMappings;
 
-    public void addHandler(HandlerMapping handlerMapping) {
-        handlerMappings.add(handlerMapping);
+    public HandlerMappingRegistry(final List<HandlerMapping> handlerMappings) {
+        this.handlerMappings = handlerMappings;
     }
 
     // 처리할 수 있는 핸들러(Controller or Execution Handler) 찾기

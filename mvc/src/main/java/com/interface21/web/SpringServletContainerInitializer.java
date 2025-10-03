@@ -5,7 +5,6 @@ import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.HandlesTypes;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +34,11 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
         }
 
         for (WebApplicationInitializer initializer : initializers) {
-            initializer.onStartup(servletContext);
+            try {
+                initializer.onStartup(servletContext);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

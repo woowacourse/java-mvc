@@ -1,8 +1,10 @@
 package com.techcourse.controller;
 
+import com.interface21.context.stereotype.Controller;
+import com.interface21.web.bind.annotation.RequestMapping;
+import com.interface21.web.bind.annotation.RequestMethod;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.view.JspView;
 import com.techcourse.domain.User;
 import com.techcourse.repository.InMemoryUserRepository;
@@ -11,13 +13,26 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoginController implements Controller {
+@Controller
+public class LoginController {
 
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @Override
-    public ModelAndView execute(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
-        // 유저가 이미 존재하는 경우 index로 리다이렉트
+    @RequestMapping(value = "/login/view", method = RequestMethod.GET)
+    public ModelAndView show(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
+        return UserSession.getUserFrom(req.getSession())
+                .map(user -> {
+                    log.info("logged in {}", user.getAccount());
+                    View view = new JspView("redirect:/index.jsp");
+                    ModelAndView modelAndView = new ModelAndView(view);
+                    modelAndView.addObject("user", user);
+                    return modelAndView;
+                })
+                .orElse(new ModelAndView(new JspView("/login.jsp")));
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ModelAndView login(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
         if (UserSession.isLoggedIn(req.getSession())) {
             View view = new JspView("redirect:/index.jsp");
             return new ModelAndView(view);
