@@ -17,7 +17,6 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServletInitializer.class);
 
     private static final String DEFAULT_SERVLET_NAME = "dispatcher";
-    private static final String CONTROLLER_BASE_PACKAGE = "com.techcourse";
 
     @Override
     public void onStartup(final ServletContext servletContext) {
@@ -40,7 +39,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
         dispatcherServlet.init();
 
-        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(CONTROLLER_BASE_PACKAGE));
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(this.getClass().getPackageName()));
         dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
         return dispatcherServlet;
     }
