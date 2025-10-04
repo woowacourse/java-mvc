@@ -17,13 +17,13 @@ public class ControllerScanner {
         this.reflections = new Reflections(basePackage);
     }
 
-    public Map<Class<?>, Object> getController() {
+    public Map<Class<?>, Map<HandlerKey, HandlerExecution>> getController() {
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Controller.class);
         return instantiateControllers(classes);
     }
 
-    private Map<Class<?>, Object> instantiateControllers(Set<Class<?>> controllers) {
-        Map<Class<?>, Object> controllerMappings = new HashMap<>();
+    private Map<Class<?>, Map<HandlerKey, HandlerExecution>> instantiateControllers(Set<Class<?>> controllers) {
+        Map<Class<?>, Map<HandlerKey, HandlerExecution>> controllerMappings = new HashMap<>();
         for (Class<?> controller : controllers) {
             controllerMappings.put(controller, extractHandlerExecutions(controller));
         }
