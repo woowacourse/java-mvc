@@ -1,5 +1,6 @@
 package com.techcourse;
 
+import com.interface21.webmvc.servlet.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;
 import com.interface21.webmvc.servlet.mvc.asis.ForwardController;
 import com.techcourse.controller.LoginController;
@@ -19,6 +20,7 @@ public class ManualHandlerMapping implements HandlerMapping {
 
     private static final Map<String, Controller> controllers = new HashMap<>();
 
+    @Override
     public void initialize() {
         controllers.put("/", new ForwardController("/index.jsp"));
         controllers.put("/login", new LoginController());
