@@ -3,7 +3,9 @@ package com.interface21.webmvc.servlet;
 import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdapter;
 import com.interface21.webmvc.servlet.mvc.exception.HandlerNotFoundException;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
 import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
@@ -29,7 +31,13 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init() {
         handlerAdapterRegistry = new HandlerAdapterRegistry();
+        addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+
         handlerMappingRegistry = new HandlerMappingRegistry();
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        addHandlerMapping(annotationHandlerMapping);
+        annotationHandlerMapping.initialize();
+
         handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
