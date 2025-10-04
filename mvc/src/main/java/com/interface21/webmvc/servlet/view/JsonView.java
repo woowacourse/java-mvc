@@ -23,8 +23,9 @@ public class JsonView implements View {
             throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         String jsonString = OBJECT_MAPPER.writeValueAsString(determineModel(model));
-        PrintWriter writer = response.getWriter();
-        writer.write(jsonString);
+        try (PrintWriter writer = response.getWriter()) {
+            writer.write(jsonString);
+        }
     }
 
     private Object determineModel(Map<String, ?> model) {
