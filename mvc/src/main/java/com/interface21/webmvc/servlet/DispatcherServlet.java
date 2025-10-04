@@ -1,15 +1,13 @@
-package com.techcourse;
+package com.interface21.webmvc.servlet;
 
-import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.View;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecutor;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerAdapterRegistry;
-import com.interface21.webmvc.servlet.mvc.tobe.adapter.HandlerExecutionHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.exception.HandlerNotFoundException;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.AnnotationHandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMapping;
-import com.interface21.webmvc.servlet.mvc.tobe.mapping.HandlerMappingRegistry;
+import com.interface21.webmvc.servlet.mvc.HandlerExecutor;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerAdapterRegistry;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.exception.HandlerNotFoundException;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMapping;
+import com.interface21.webmvc.servlet.mvc.mapping.HandlerMappingRegistry;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

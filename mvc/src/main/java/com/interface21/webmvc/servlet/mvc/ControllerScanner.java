@@ -1,7 +1,7 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.mvc;
 
 import com.interface21.context.stereotype.Controller;
-import com.interface21.webmvc.servlet.mvc.tobe.exception.ControllerInstantiationException;
+import com.interface21.webmvc.servlet.mvc.exception.ControllerInstantiationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
