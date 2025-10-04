@@ -1,9 +1,12 @@
 package com.techcourse;
 
+import com.interface21.web.boot.WebApplicationInitializer;
+import com.interface21.webmvc.handleradapter.AnnotationHandlerAdapter;
+import com.interface21.webmvc.handlermapping.annotation.AnnotationHandlerMapping;
+import com.interface21.webmvc.servlet.DispatcherServlet;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.interface21.web.WebApplicationInitializer;
 
 /**
  * Base class for {@link WebApplicationInitializer}
@@ -17,7 +20,7 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(final ServletContext servletContext) {
-        final var dispatcherServlet = new DispatcherServlet();
+        final var dispatcherServlet = setDispatcherServlet();
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
@@ -29,5 +32,15 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
         registration.addMapping("/");
 
         log.info("Start AppWebApplication Initializer");
+    }
+
+    private DispatcherServlet setDispatcherServlet() {
+        final var dispatcherServlet = new DispatcherServlet();
+
+        dispatcherServlet.init();
+
+        dispatcherServlet.addHandlerMapping(new AnnotationHandlerMapping(this.getClass().getPackageName()));
+        dispatcherServlet.addHandlerAdapter(new AnnotationHandlerAdapter());
+        return dispatcherServlet;
     }
 }
