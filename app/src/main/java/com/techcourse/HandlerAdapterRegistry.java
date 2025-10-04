@@ -22,6 +22,6 @@ public class HandlerAdapterRegistry {
                 return adapter;
             }
         }
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("Not Found Adapter : " + handler);
     }
 }

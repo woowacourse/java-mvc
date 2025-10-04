@@ -47,7 +47,7 @@ public class DispatcherServlet extends HttpServlet {
 
         try {
             Object handler = handlerMappingRegistry.getHandler(request)
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(() -> new IllegalArgumentException("Not Found Handler"));
             ModelAndView mav = handlerExecutor.handle(request, response, handler);
             render(mav, request, response);
         } catch (Exception e) {
