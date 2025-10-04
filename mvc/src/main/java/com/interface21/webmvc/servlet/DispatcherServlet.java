@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
         addHandlerMapping(annotationHandlerMapping);
         annotationHandlerMapping.initialize();
 
-        handlerExecutor = new HandlerExecutor();
+        handlerExecutor = new HandlerExecutor(handlerAdapterRegistry);
     }
 
     @Override
@@ -50,8 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Object handler = handlerMappingRegistry.getHandler(request)
                     .orElseThrow(() -> new HandlerNotFoundException("handler를 찾을 수 없습니다."));
-            HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
-            ModelAndView modelAndView = handlerExecutor.execute(handlerAdapter, handler, request, response);
+            ModelAndView modelAndView = handlerExecutor.handle(handler, request, response);
             render(modelAndView, request, response);
         } catch (HandlerNotFoundException e) {
             log.warn("Not found handler. message={}", e.getMessage());
