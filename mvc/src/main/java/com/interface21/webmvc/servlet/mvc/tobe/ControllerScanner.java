@@ -31,16 +31,20 @@ public class ControllerScanner {
     }
 
     private Map<HandlerKey, HandlerExecution> extractHandlerExecutions(Class<?> controllerClass) {
-        try {
-            Object instance = controllerClass.getDeclaredConstructor().newInstance();
+        Object instance = instantiateController(controllerClass);
 
-            Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
-            for (Method method : controllerClass.getMethods()) {
-                registerHandlerMethodIfAnnotated(method, instance, executions);
-            }
-            return executions;
+        Map<HandlerKey, HandlerExecution> executions = new HashMap<>();
+        for (Method method : controllerClass.getMethods()) {
+            registerHandlerMethodIfAnnotated(method, instance, executions);
+        }
+        return executions;
+    }
+
+    private Object instantiateController(Class<?> controllerClass) {
+        try {
+            return controllerClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(controllerClass.getName());
         }
     }
 
