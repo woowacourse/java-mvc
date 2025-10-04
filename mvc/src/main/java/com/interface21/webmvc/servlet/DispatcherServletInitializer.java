@@ -1,6 +1,8 @@
 package com.interface21.webmvc.servlet;
 
 import com.interface21.web.WebApplicationInitializer;
+import com.interface21.webmvc.servlet.mvc.adapter.HandlerExecutionHandlerAdapter;
+import com.interface21.webmvc.servlet.mvc.mapping.AnnotationHandlerMapping;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,11 @@ public class DispatcherServletInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) {
         final var dispatcherServlet = new DispatcherServlet();
+        AnnotationHandlerMapping handlerMapping = new AnnotationHandlerMapping("com.techcourse.controller");
+        handlerMapping.initialize();
+
+        dispatcherServlet.addHandlerAdapter(new HandlerExecutionHandlerAdapter());
+        dispatcherServlet.addHandlerMapping(handlerMapping);
 
         final var registration = servletContext.addServlet(DEFAULT_SERVLET_NAME, dispatcherServlet);
         if (registration == null) {
