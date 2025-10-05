@@ -30,30 +30,37 @@ public class DispatcherServlet extends HttpServlet {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws ServletException {
-        final String requestURI = request.getRequestURI();
-        log.debug("Method : {}, Request URI : {}", request.getMethod(), requestURI);
+        log.debug("Method : {}, Request URI : {}", request.getMethod(), request.getRequestURI());
 
         try {
-            final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
-            if (handler.isEmpty()) {
-                // 적절한 핸들러가 없는 경우 404 응답
-                log.warn("요청을 처리할 핸들러를 찾지 못했습니다. request URI: {}", requestURI);
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-
-            final Optional<HandlerAdapter> handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
-            if (handlerAdapter.isEmpty()) {
-                log.warn("핸들러 어댑터를 찾지 못했습니다. handler: {}", handler.get());
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
-            }
-            final ModelAndView mav = handlerAdapter.get().handle(request, response, handler.get());
+            final Object handler = getHandler(request);
+            final HandlerAdapter handlerAdapter = getHandlerAdapter(request);
+            final ModelAndView mav = handlerAdapter.handle(request, response, handler);
             render(request, response, mav);
+        } catch (NotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } catch (InternalServerError e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
             throw new ServletException(e.getMessage());
         }
+    }
+
+    private Object getHandler(final HttpServletRequest request) throws NotFoundException {
+        final Optional<Object> handler = handlerMappingRegistry.getHandler(request);
+        if (handler.isEmpty()) {
+            throw new NotFoundException("요청을 처리할 핸들러를 찾지 못했습니다. request URI: " + request.getRequestURI());
+        }
+        return handler.get();
+    }
+
+    private HandlerAdapter getHandlerAdapter(final Object handler) throws InternalServerError {
+        final Optional<HandlerAdapter> handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler);
+        if (handlerAdapter.isEmpty()) {
+            throw new InternalServerError("핸들러 어댑터를 찾지 못했습니다.");
+        }
+        return handlerAdapter.get();
     }
 
     private void render(
