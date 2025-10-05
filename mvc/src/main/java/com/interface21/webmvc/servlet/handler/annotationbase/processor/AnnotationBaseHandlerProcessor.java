@@ -1,11 +1,12 @@
-package com.interface21.webmvc.servlet.processor;
+package com.interface21.webmvc.servlet.handler.annotationbase.processor;
 
 import com.interface21.webmvc.servlet.ModelAndView;
-import com.interface21.webmvc.servlet.mvc.tobe.HandlerExecution;
+import com.interface21.webmvc.servlet.handler.HandlerProcessor;
+import com.interface21.webmvc.servlet.handler.annotationbase.container.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HandlerExecutionProcessor implements HandlerProcessor {
+public class AnnotationBaseHandlerProcessor implements HandlerProcessor {
 
     @Override
     public boolean supports(Object handler) {

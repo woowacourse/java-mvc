@@ -1,5 +1,7 @@
 package com.interface21.webmvc.servlet.mvc.tobe;
 
+import com.interface21.webmvc.servlet.handler.annotationbase.container.AnnotationBaseHandlerContainer;
+import com.interface21.webmvc.servlet.handler.annotationbase.container.HandlerExecution;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,14 +11,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AnnotationHandlerMappingTest {
+class AnnotationBaseHandlerContainerTest {
 
-    private AnnotationHandlerMapping handlerMapping;
+    private AnnotationBaseHandlerContainer handlerMapping;
 
     @BeforeEach
     void setUp() {
-        handlerMapping = new AnnotationHandlerMapping("samples");
-        handlerMapping.initialize();
+        handlerMapping = new AnnotationBaseHandlerContainer();
+        handlerMapping.initialize("samples");
     }
 
     @Test

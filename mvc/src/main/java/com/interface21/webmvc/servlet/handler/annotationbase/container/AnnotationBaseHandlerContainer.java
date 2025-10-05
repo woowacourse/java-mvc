@@ -1,9 +1,9 @@
-package com.interface21.webmvc.servlet.mvc.tobe;
+package com.interface21.webmvc.servlet.handler.annotationbase.container;
 
 import com.interface21.context.stereotype.Controller;
 import com.interface21.web.bind.annotation.RequestMapping;
 import com.interface21.web.bind.annotation.RequestMethod;
-import com.interface21.webmvc.servlet.mvc.HandlerSelector;
+import com.interface21.webmvc.servlet.handler.HandlerContainer;
 import jakarta.servlet.http.HttpServletRequest;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -14,19 +14,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class AnnotationHandlerMapping implements HandlerSelector {
+public class AnnotationBaseHandlerContainer implements HandlerContainer {
 
-    private static final Logger log = LoggerFactory.getLogger(AnnotationHandlerMapping.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotationBaseHandlerContainer.class);
 
-    private final Object[] basePackages;
-    private final HandlerExecutions handlerExecutions;
+    private final HandlerExecutions handlerExecutions = HandlerExecutions.empty();
 
-    public AnnotationHandlerMapping(final Object... basePackages) {
-        this.basePackages = basePackages;
-        this.handlerExecutions = HandlerExecutions.empty();
+    public AnnotationBaseHandlerContainer() {
     }
 
-    public void initialize() {
+    @Override
+    public void initialize(Object... basePackages) {
         try {
             for (Object basePackage : basePackages) {
                 handlerExecutions.addAll(getHandlerExecutions(basePackage));

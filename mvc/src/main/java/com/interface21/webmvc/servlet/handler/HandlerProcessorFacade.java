@@ -1,6 +1,7 @@
-package com.interface21.webmvc.servlet.processor;
+package com.interface21.webmvc.servlet.handler;
 
 import com.interface21.webmvc.servlet.ModelAndView;
+import com.interface21.webmvc.servlet.handler.annotationbase.processor.AnnotationBaseHandlerProcessor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -12,8 +13,7 @@ public class HandlerProcessorFacade {
     private final List<HandlerProcessor> handlerProcessor = new ArrayList<>();
 
     public HandlerProcessorFacade() {
-        handlerProcessor.add(new ManualHandlerProcessor());
-        handlerProcessor.add(new HandlerExecutionProcessor());
+        handlerProcessor.add(new AnnotationBaseHandlerProcessor());
     }
 
     public ModelAndView process(
