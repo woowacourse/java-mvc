@@ -3,8 +3,6 @@ package com.techcourse;
 import com.interface21.webmvc.servlet.ModelAndView;
 import com.interface21.webmvc.servlet.View;
 import com.interface21.webmvc.servlet.mvc.HandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.asis.ControllerHandlerAdapter;
-import com.interface21.webmvc.servlet.mvc.tobe.AnnotationHandlerAdapter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,15 +17,12 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(DispatcherServlet.class);
 
     private final HandlerMappingRegistry handlerMappingRegistry = new HandlerMappingRegistry();
-    private HandlerAdapterRegistry handlerAdapterRegistry;
+    private final HandlerAdapterRegistry handlerAdapterRegistry = new HandlerAdapterRegistry();
 
     @Override
     public void init() {
         handlerMappingRegistry.initialize();
-
-        handlerAdapterRegistry = new HandlerAdapterRegistry();
-        handlerAdapterRegistry.addHandlerAdapter(new ControllerHandlerAdapter());
-        handlerAdapterRegistry.addHandlerAdapter(new AnnotationHandlerAdapter());
+        handlerAdapterRegistry.initialize();
     }
 
     @Override
