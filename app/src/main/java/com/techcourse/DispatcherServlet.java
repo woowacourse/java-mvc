@@ -42,8 +42,13 @@ public class DispatcherServlet extends HttpServlet {
                 return;
             }
 
-            final HandlerAdapter handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
-            final ModelAndView mav = handlerAdapter.handle(request, response, handler.get());
+            final Optional<HandlerAdapter> handlerAdapter = handlerAdapterRegistry.getHandlerAdapter(handler.get());
+            if (handlerAdapter.isEmpty()) {
+                log.warn("핸들러 어댑터를 찾지 못했습니다. handler: {}", handler.get());
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
+            final ModelAndView mav = handlerAdapter.get().handle(request, response, handler.get());
             render(request, response, mav);
         } catch (Throwable e) {
             log.error("Exception : {}", e.getMessage(), e);
