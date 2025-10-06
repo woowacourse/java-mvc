@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.handler;
 
 import com.interface21.webmvc.servlet.InitializableHandlerMapping;
 import com.interface21.webmvc.servlet.mvc.asis.Controller;

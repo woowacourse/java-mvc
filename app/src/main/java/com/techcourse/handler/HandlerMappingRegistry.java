@@ -1,4 +1,4 @@
-package com.techcourse;
+package com.techcourse.handler;
 
 import com.interface21.webmvc.servlet.HandlerMapping;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class HandlerMappingRegistry {
-
     private final List<HandlerMapping> handlerMappings;
 
     public HandlerMappingRegistry() {
